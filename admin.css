@@ -1,0 +1,30 @@
+.meta_form_row {
+  margin: 10px 0;
+  overflow: auto; }
+  .meta_form_row label, .meta_form_row input, .meta_form_row div.checkboxes {
+    float: left;
+    line-height: 100%; }
+  .meta_form_row label {
+    width: 13%;
+    margin-right: 2%;
+    text-align: right;
+    font-size: 15px;
+    line-height: 40px; }
+  .meta_form_row input[type=text], .meta_form_row input[type=time], .meta_form_row select, .meta_form_row textarea {
+    width: 85%;
+    margin: 0;
+    font-size: 18px;
+    padding: 6px;
+    height: 40px;
+    line-height: normal; }
+  .meta_form_row input[type=radio], .meta_form_row input[type=checkbox] {
+    float: left; }
+  .meta_form_row textarea {
+    height: 100px; }
+  .meta_form_row:last-child {
+    margin-bottom: 0; }
+  .meta_form_row div.checkboxes input {
+    margin: 0 10px 0 0; }
+  .meta_form_row div.checkboxes div {
+    margin: 10px 0;
+    line-height: 16px; }

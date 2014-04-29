@@ -1,0 +1,13 @@
+.meta_form_row { 
+	margin: 10px 0; overflow: auto; 
+	label, input, div.checkboxes { float: left; line-height: 100%; } 
+	label { width: 13%; margin-right: 2%; text-align: right; font-size: 15px; line-height: 40px; }
+	input[type=text], input[type=time], select, textarea { width: 85%; margin: 0; font-size: 18px; padding: 6px; height: 40px; line-height: normal; }
+	input[type=radio], input[type=checkbox] { float: left; }
+	textarea { height: 100px; }
+	&:last-child { margin-bottom: 0; }
+	div.checkboxes {
+		input { margin: 0 10px 0 0; }
+		div { margin: 10px 0; line-height: 16px; }
+	}
+}
