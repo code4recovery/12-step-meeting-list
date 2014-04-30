@@ -9,7 +9,8 @@
     margin-right: 2%;
     text-align: right;
     font-size: 15px;
-    line-height: 40px; }
+    line-height: 40px;
+    white-space: nowrap; }
   .meta_form_row input[type=text], .meta_form_row input[type=time], .meta_form_row select, .meta_form_row textarea, .meta_form_row div.checkboxes {
     width: 85%;
     margin: 0;

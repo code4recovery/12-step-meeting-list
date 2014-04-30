@@ -20,3 +20,21 @@ add_action('admin_print_styles', function(){
 add_action('admin_init', function(){
 	include('admin_init.php');
 });
+
+add_action('save_post', function(){
+	global $post;
+
+	//do server-side validation here
+
+	//save meeting's metadata
+	update_post_meta($post->ID, 'day',		$_POST['day']);
+	update_post_meta($post->ID, 'time',		$_POST['time']);
+	update_post_meta($post->ID, 'type',		$_POST['type']);
+	update_post_meta($post->ID, 'notes',	$_POST['notes']);
+
+	//die('post tags is ' . print_r($_POST['tags']));
+	wp_set_post_terms($post->ID, $_POST['tags'], 'tags');
+
+	//location
+
+});

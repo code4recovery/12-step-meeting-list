@@ -5,28 +5,29 @@ remove_meta_box('tagsdiv-tags', 'meetings', 'side' );
 
 add_meta_box('info', 'General Info', function(){
 	global $post;
+	$custom = get_post_custom($post->ID);
 	?>
 	<div class="meta_form_row">
 		<label for="day">Day</label>
 		<select name="day" id="day">
-			<option value="Sunday">Sunday</option>
-			<option value="Monday">Monday</option>
-			<option value="Tuesday">Tuesday</option>
-			<option value="Wednesday">Wednesday</option>
-			<option value="Thursday">Thursday</option>
-			<option value="Friday">Friday</option>
-			<option value="Saturday">Saturday</option>
+			<option value="Sunday" <?php selected($custom['day'][0], 'Sunday')?>>Sunday</option>
+			<option value="Monday" <?php selected($custom['day'][0], 'Monday')?>>Monday</option>
+			<option value="Tuesday" <?php selected($custom['day'][0], 'Tuesday')?>>Tuesday</option>
+			<option value="Wednesday" <?php selected($custom['day'][0], 'Wednesday')?>>Wednesday</option>
+			<option value="Thursday" <?php selected($custom['day'][0], 'Thursday')?>>Thursday</option>
+			<option value="Friday" <?php selected($custom['day'][0], 'Friday')?>>Friday</option>
+			<option value="Saturday" <?php selected($custom['day'][0], 'Saturday')?>>Saturday</option>
 		</select>
 	</div>
 	<div class="meta_form_row">
 		<label for="time">Time</label>
-		<input type="time" name="time" id="time">
+		<input type="time" name="time" id="time" value="<?php echo $custom['time'][0]?>">
 	</div>
 	<div class="meta_form_row">
 		<label for="type">Type</label>
 		<div class="checkboxes">
-			<label><input type="radio" name="type" value="open" checked> Open</label>
-			<label><input type="radio" name="type" value="closed"> Closed</label>
+			<label><input type="radio" name="type" value="open" <?php checked($custom['type'][0], 'open')?>> Open</label>
+			<label><input type="radio" name="type" value="closed" <?php checked($custom['type'][0], 'closed')?>> Closed</label>
 		</div>
 	</div>
 	<div class="meta_form_row">
@@ -34,15 +35,17 @@ add_meta_box('info', 'General Info', function(){
 		<div class="checkboxes">
 			<?php
 			$tags = get_terms('tags', 'hide_empty=0');
+			if (!$checked = get_the_terms($post->ID, 'tags')) $checked = array();
+			foreach ($checked as &$check) $check = $check->term_id;
 			foreach ($tags as $tag) {
-				echo '<label><input type="checkbox" name="tags[]" value="' . $tag->ID . '"> ' . $tag->name . '</label>';
+				echo '<label><input type="checkbox" name="tags[]" value="' . $tag->name . '"' . (in_array($tag->term_id, $checked) ? ' checked="checked"' : '') . '> ' . $tag->name . '</label>';
 			}
 			?>
 		</div>
 	</div>
 	<div class="meta_form_row">
 		<label for="notes">Notes</label>
-		<textarea name="notes" id="notes" placeholder="eg. Babysitting is available"></textarea>
+		<textarea name="notes" id="notes" placeholder="eg. Babysitting is available"><?php echo $custom['notes'][0]?></textarea>
 	</div>
 	<?php
 }, 'meetings', 'normal', 'low');
