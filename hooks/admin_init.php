@@ -4,6 +4,7 @@
 wp_enqueue_style('meetings_meta_style', plugin_dir_url(__FILE__) . '../css/admin.css');
 remove_meta_box('tagsdiv-region', 'meetings', 'side' );
 remove_meta_box('tagsdiv-tags', 'meetings', 'side' );
+remove_meta_box('revisionsdiv', 'meetings', 'normal' );
 
 //add meta boxes
 add_meta_box('info', 'General Info', function(){
@@ -19,8 +20,8 @@ add_meta_box('info', 'General Info', function(){
 	<div class="meta_form_row">
 		<label for="day">Day</label>
 		<select name="day" id="day">
-			<?php foreach ($days as $day) {?>
-			<option value="Sunday" <?php selected($custom['day'][0], $day)?>><?php echo $day?></option>
+			<?php foreach ($days as $key=>$day) {?>
+			<option value="<?php echo $key?>"<?php selected($custom['day'][0], $key)?>><?php echo $day?></option>
 			<?php }?>
 		</select>
 	</div>
