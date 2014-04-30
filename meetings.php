@@ -9,32 +9,19 @@
  * License: none
  */
 
-add_action('init', function(){
-	include('init.php');
-});
-
-add_action('admin_print_styles', function(){
-	wp_enqueue_style('meetings_meta_style', plugin_dir_url(__FILE__) . 'admin.css' );
-});
+$days = array('Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday');
 
 add_action('admin_init', function(){
-	include('admin_init.php');
+	include('hooks/admin_init.php');
+});
+
+add_action('admin_menu', function(){
+});
+
+add_action('init', function(){
+	include('hooks/init.php');
 });
 
 add_action('save_post', function(){
-	global $post;
-
-	//do server-side validation here
-
-	//save meeting's metadata
-	update_post_meta($post->ID, 'day',		$_POST['day']);
-	update_post_meta($post->ID, 'time',		$_POST['time']);
-	update_post_meta($post->ID, 'type',		$_POST['type']);
-	update_post_meta($post->ID, 'notes',	$_POST['notes']);
-
-	//die('post tags is ' . print_r($_POST['tags']));
-	wp_set_post_terms($post->ID, $_POST['tags'], 'tags');
-
-	//location
-
+	include('hooks/save_post.php');
 });

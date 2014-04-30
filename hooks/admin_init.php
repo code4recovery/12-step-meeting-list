@@ -1,22 +1,27 @@
 <?php
 
+//set up page
+wp_enqueue_style('meetings_meta_style', plugin_dir_url(__FILE__) . '../css/admin.css');
 remove_meta_box('tagsdiv-region', 'meetings', 'side' );
 remove_meta_box('tagsdiv-tags', 'meetings', 'side' );
 
+//add meta boxes
 add_meta_box('info', 'General Info', function(){
-	global $post;
-	$custom = get_post_custom($post->ID);
+	global $post, $days;
+
+	//get post metadata
+	$custom 	= get_post_custom($post->ID);
+	$regions	= get_terms('region', 'hide_empty=0');
+	$tags 		= get_terms('tags', 'hide_empty=0');
+	if (!$checked = get_the_terms($post->ID, 'tags')) $checked = array();
+	foreach ($checked as &$check) $check = $check->term_id;
 	?>
 	<div class="meta_form_row">
 		<label for="day">Day</label>
 		<select name="day" id="day">
-			<option value="Sunday" <?php selected($custom['day'][0], 'Sunday')?>>Sunday</option>
-			<option value="Monday" <?php selected($custom['day'][0], 'Monday')?>>Monday</option>
-			<option value="Tuesday" <?php selected($custom['day'][0], 'Tuesday')?>>Tuesday</option>
-			<option value="Wednesday" <?php selected($custom['day'][0], 'Wednesday')?>>Wednesday</option>
-			<option value="Thursday" <?php selected($custom['day'][0], 'Thursday')?>>Thursday</option>
-			<option value="Friday" <?php selected($custom['day'][0], 'Friday')?>>Friday</option>
-			<option value="Saturday" <?php selected($custom['day'][0], 'Saturday')?>>Saturday</option>
+			<?php foreach ($days as $day) {?>
+			<option value="Sunday" <?php selected($custom['day'][0], $day)?>><?php echo $day?></option>
+			<?php }?>
 		</select>
 	</div>
 	<div class="meta_form_row">
@@ -33,14 +38,12 @@ add_meta_box('info', 'General Info', function(){
 	<div class="meta_form_row">
 		<label for="tags">Tags</label>
 		<div class="checkboxes">
-			<?php
-			$tags = get_terms('tags', 'hide_empty=0');
-			if (!$checked = get_the_terms($post->ID, 'tags')) $checked = array();
-			foreach ($checked as &$check) $check = $check->term_id;
-			foreach ($tags as $tag) {
-				echo '<label><input type="checkbox" name="tags[]" value="' . $tag->name . '"' . (in_array($tag->term_id, $checked) ? ' checked="checked"' : '') . '> ' . $tag->name . '</label>';
-			}
-			?>
+			<?php foreach ($tags as $tag) {?>
+				<label>
+					<input type="checkbox" name="tags[]" value="<?php echo $tag->name?>" <?php if (in_array($tag->term_id, $checked)) {?> checked="checked"<?php }?>>
+					<?php echo $tag->name?>
+				</label>
+			<?php }?>
 		</div>
 	</div>
 	<div class="meta_form_row">
@@ -68,12 +71,9 @@ add_meta_box('location', 'Location', function(){
 	<div class="meta_form_row">
 		<label for="region">Region</label>
 		<select name="region" id="region">
-			<?php
-			$regions = get_terms('region', 'hide_empty=0');
-			foreach ($regions as $region) {
-				echo '<option value="' . $region->ID . '">' . $region->name . '</option>';
-			}
-			?>
+			<?php foreach ($regions as $region) {?>
+				<option value="<?php echo $region->ID?>"><?php echo $region->name?></option>
+			<?php }?>
 		</select>
 	</div>
 	<?php
