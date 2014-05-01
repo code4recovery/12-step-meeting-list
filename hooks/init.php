@@ -5,9 +5,9 @@ register_taxonomy('region', array('meetings'), array(
 	'labels'=>array('menu_name'=>'Regions')
 ));
 
-register_taxonomy('tags', array('meetings'), array(
-	'label'=>'Tags', 
-	'labels'=>array('menu_name'=>'Tags')
+register_taxonomy('meeting_types', array('meetings'), array(
+	'label'=>'Types', 
+	'labels'=>array('menu_name'=>'Types')
 ));
 
 register_post_type('meetings',

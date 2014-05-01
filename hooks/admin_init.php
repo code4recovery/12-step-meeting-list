@@ -59,15 +59,15 @@ add_meta_box('location', 'Location', function(){
 	?>
 	<div class="meta_form_row">
 		<label for="location">Location</label>
-		<input type="text" name="location" id="location" placeholder="Calvary Church">
+		<input type="text" name="location" id="location" placeholder="Saturday Nite Live Group">
 	</div>
 	<div class="meta_form_row">
 		<label for="address1">Address 1</label>
-		<input type="text" name="address1" id="address1" placeholder="123 Main Street">
+		<input type="text" name="address1" id="address1" placeholder="2634 Union Ave.">
 	</div>
 	<div class="meta_form_row">
 		<label for="address2">Address 2</label>
-		<input type="text" name="address2" id="address2" placeholder="2nd Floor">
+		<input type="text" name="address2" id="address2" placeholder="Maplewood Plaza">
 	</div>
 	<div class="meta_form_row">
 		<label for="region">Region</label>

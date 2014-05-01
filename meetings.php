@@ -40,6 +40,13 @@ add_filter('manage_edit-meetings_columns', function($defaults){
     );	
 });
 
+add_filter('manage_edit-locations_columns', function($defaults){
+    return array(
+    	'title' => 'Title',
+    	'date' => 'Date'
+    );	
+});
+
 add_action('manage_meetings_posts_custom_column', function($column_name, $post_ID){
 	global $days;
 	if ($column_name == 'day') {
@@ -77,6 +84,23 @@ add_action('restrict_manage_posts', function() {
 });
 
 add_filter('months_dropdown_results', '__return_empty_array');
+
+add_action('p2p_init', function(){
+    p2p_register_connection_type(array(
+        'name'	=> 'locations_to_meetings',
+        'from'	=> 'locations',
+        'to'	=> 'meetings',
+		'admin_box' => false,
+    ));
+});
+
+/*
+todo handle dependency on posts-to-posts plugin
+include_once( ABSPATH . 'wp-admin/includes/plugin.php');
+if (!is_plugin_active('posts-to-posts')) {
+	echo 'theres a prob';
+}
+*/
 
 /* does not work
 add_filter('parse_query', function($query) {
