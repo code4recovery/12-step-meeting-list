@@ -28,10 +28,4 @@ update_post_meta($location_id, 'address1',	$_POST['address1']);
 update_post_meta($location_id, 'address2',	$_POST['address1']);
 update_post_meta($location_id, 'region',	$_POST['region']);
 
-p2p_create_connection('locations_to_meetings', array(
-    'from'	=> $location_id,
-    'to'	=> $post->ID,
-    'meta'	=> array(
-        'date' => current_time('mysql')
-    )
-));
+update_post_meta($post->ID,    'location',	$location_id);

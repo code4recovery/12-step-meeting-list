@@ -1,4 +1,4 @@
-meetings-plugin
+Meetings Plugin
 ===============
 
-WP plugin for meetings database management
+WP plugin for meetings database management.
