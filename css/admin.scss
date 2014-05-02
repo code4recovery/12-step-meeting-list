@@ -14,4 +14,14 @@
 		input { margin: 0 8px 0 0; }
 		label { margin: 5px 0; line-height: 16px; width: 50%; float: left; text-align: left; font-size: 13px; }
 	}
+	&.city {
+		input { width: 60%; margin-right: 1%; }
+		select { width: 24%; }
+	}
+
+	::-webkit-input-placeholder	{ color: #ccc }
+	:-moz-placeholder			{ color: #ccc; }
+	::-moz-placeholder			{ color: #ccc; }
+	:-ms-input-placeholder		{ color: #ccc; }
+
 }

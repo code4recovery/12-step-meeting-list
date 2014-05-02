@@ -1,22 +1,20 @@
 <?php
-global $post;
+global $post, $states, $regions;
 
+
+//security, todo verify nonce
 if (defined('DOING_AUTOSAVE') && DOING_AUTOSAVE) return;
 //if (!wp_verify_nonce($_POST['meetings_nonce'], plugin_basename(__FILE__))) return;
-
 if ($_POST['post_type'] != 'meetings') return;
 
-//do server-side validation here
-//probably need to check at least the time field
 
-//save meeting's metadata
-update_post_meta($post->ID, 'day',		$_POST['day']);
-update_post_meta($post->ID, 'time',		$_POST['time']);
-update_post_meta($post->ID, 'type',		$_POST['type']);
-update_post_meta($post->ID, 'notes',	$_POST['notes']);
-wp_set_post_terms($post->ID, $_POST['tags'], 'tags');
+//todo server-side validation here (at least time)
 
-//location
+
+//todo look up latitude / longitude, perhaps verify address by api
+
+
+//add a new location
 $_POST['post_type'] = 'locations';
 $location_id = wp_insert_post(array(
   'post_title'	=> $_POST['location'],
@@ -26,6 +24,25 @@ $location_id = wp_insert_post(array(
 ));
 update_post_meta($location_id, 'address1',	$_POST['address1']);
 update_post_meta($location_id, 'address2',	$_POST['address1']);
+update_post_meta($location_id, 'city',		$_POST['address1']);
+update_post_meta($location_id, 'state',		$_POST['address1']);
 update_post_meta($location_id, 'region',	$_POST['region']);
 
-update_post_meta($post->ID,    'location',	$location_id);
+
+//save latest meeting info, todo wipe out all legacy custom data
+$_POST['post_type'] = 'meetings'; //prob unncessary
+
+update_post_meta($post->ID, 'day',		$_POST['day']);
+update_post_meta($post->ID, 'time',		$_POST['time']);
+update_post_meta($post->ID, 'notes',	$_POST['notes']);
+wp_set_post_terms($post->ID, $_POST['types'], 'types');
+update_post_meta($post->ID, 'location',	$location_id);
+
+
+//also update address on meeting, repetitive but speedy
+update_post_meta($post->ID, 'address1',	$_POST['address1']);
+update_post_meta($post->ID, 'address2',	$_POST['address2']);
+update_post_meta($post->ID, 'city',		$_POST['city']);
+update_post_meta($post->ID, 'state',	$states[$_POST['state']]);		//save nicename
+update_post_meta($post->ID, 'region',	$regions[$_POST['region']]);	//save nicename
+

@@ -39,3 +39,16 @@
       float: left;
       text-align: left;
       font-size: 13px; }
+  .meta_form_row.city input {
+    width: 60%;
+    margin-right: 1%; }
+  .meta_form_row.city select {
+    width: 24%; }
+  .meta_form_row ::-webkit-input-placeholder {
+    color: #cccccc; }
+  .meta_form_row :-moz-placeholder {
+    color: #ccc; }
+  .meta_form_row ::-moz-placeholder {
+    color: #ccc; }
+  .meta_form_row :-ms-input-placeholder {
+    color: #ccc; }

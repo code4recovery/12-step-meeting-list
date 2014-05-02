@@ -1,14 +1,19 @@
 <?php
+global $regions, $types;
 
 register_taxonomy('region', array('meetings'), array(
 	'label'=>'Region', 
 	'labels'=>array('menu_name'=>'Regions')
 ));
 
-register_taxonomy('meeting_types', array('meetings'), array(
+$regions	= get_terms('region', 'hide_empty=0');
+
+register_taxonomy('types', array('meetings'), array(
 	'label'=>'Types', 
 	'labels'=>array('menu_name'=>'Types')
 ));
+
+$types 		= get_terms('types', 'hide_empty=0');
 
 register_post_type('meetings',
 	array(
