@@ -1,5 +1,5 @@
 <?php
-global $post, $states, $regions;
+global $post;
 
 
 //security, todo verify nonce
@@ -16,33 +16,46 @@ if ($_POST['post_type'] != 'meetings') return;
 
 //add a new location
 $_POST['post_type'] = 'locations';
-$location_id = wp_insert_post(array(
-  'post_title'	=> $_POST['location'],
-  'post_type'	=> 'locations',
-  'post_status'	=> 'publish',
-  'post_author'	=> 1,
-));
-update_post_meta($location_id, 'address1',	$_POST['address1']);
-update_post_meta($location_id, 'address2',	$_POST['address1']);
-update_post_meta($location_id, 'city',		$_POST['address1']);
-update_post_meta($location_id, 'state',		$_POST['address1']);
-update_post_meta($location_id, 'region',	$_POST['region']);
+if (empty($_POST['location_id'])) {
+	//save new post
+	//todo check if exists
+	$_POST['location_id'] = wp_insert_post(array(
+	  'post_title'	=> $_POST['location'],
+	  'post_type'	=> 'locations',
+	  'post_status'	=> 'publish',
+	  'post_author'	=> 1,
+	));
+} else {
+	//update any changes to title
+	wp_update_post(array(
+		'ID'			=> $_POST['location_id'],
+		'post_title'	=> $_POST['location'],
+	));
+}
 
-
-//save latest meeting info, todo wipe out all legacy custom data
-$_POST['post_type'] = 'meetings'; //prob unncessary
-
-update_post_meta($post->ID, 'day',		$_POST['day']);
-update_post_meta($post->ID, 'time',		$_POST['time']);
-update_post_meta($post->ID, 'notes',	$_POST['notes']);
-wp_set_post_terms($post->ID, $_POST['types'], 'types');
-update_post_meta($post->ID, 'location',	$location_id);
+//update address & info on location
+update_post_meta($_POST['location_id'], 'address1',	$_POST['address1']);
+update_post_meta($_POST['location_id'], 'address2',	$_POST['address2']);
+update_post_meta($_POST['location_id'], 'city',		$_POST['city']);
+update_post_meta($_POST['location_id'], 'state',	$_POST['state']);
+update_post_meta($_POST['location_id'], 'region',	$_POST['region']);
 
 
 //also update address on meeting, repetitive but speedy
-update_post_meta($post->ID, 'address1',	$_POST['address1']);
-update_post_meta($post->ID, 'address2',	$_POST['address2']);
-update_post_meta($post->ID, 'city',		$_POST['city']);
-update_post_meta($post->ID, 'state',	$states[$_POST['state']]);		//save nicename
-update_post_meta($post->ID, 'region',	$regions[$_POST['region']]);	//save nicename
+update_post_meta($post->ID, 'location',		$_POST['location']);
+update_post_meta($post->ID, 'address1',		$_POST['address1']);
+update_post_meta($post->ID, 'address2',		$_POST['address2']);
+update_post_meta($post->ID, 'city',			$_POST['city']);
+update_post_meta($post->ID, 'state',		$_POST['state']);
+update_post_meta($post->ID, 'region',		$_POST['region']);
+
+
+//save latest meeting info
+update_post_meta($post->ID, 'day',			$_POST['day']);
+update_post_meta($post->ID, 'time',			$_POST['time']);
+update_post_meta($post->ID, 'notes',		$_POST['notes']);
+update_post_meta($post->ID, 'location_id',	$_POST['location_id']);
+update_post_meta($post->ID, 'types',		$_POST['types']);
+
+
 

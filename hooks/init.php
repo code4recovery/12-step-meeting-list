@@ -1,19 +1,14 @@
 <?php
-global $regions, $types;
+global $regions;
 
 register_taxonomy('region', array('meetings'), array(
 	'label'=>'Region', 
 	'labels'=>array('menu_name'=>'Regions')
 ));
 
-$regions	= get_terms('region', 'hide_empty=0');
-
-register_taxonomy('types', array('meetings'), array(
-	'label'=>'Types', 
-	'labels'=>array('menu_name'=>'Types')
-));
-
-$types 		= get_terms('types', 'hide_empty=0');
+//build quick access array of regions
+$region_terms = get_terms('region', 'hide_empty=0');
+foreach ($region_terms as $region) $regions[$region->term_id] = $region->name;
 
 register_post_type('meetings',
 	array(

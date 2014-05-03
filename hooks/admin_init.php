@@ -1,8 +1,8 @@
 <?php
-
 //set up page
 wp_enqueue_style('meetings_meta_style', plugin_dir_url(__FILE__) . '../css/admin.css');
-wp_enqueue_script('wp_typeahead_js', plugin_dir_url(__FILE__) . '../js/typeahead.bundle.js', array('jquery'), '', true);
+wp_enqueue_script('meetings_admin_js', plugin_dir_url(__FILE__) . '../js/admin.js', array('jquery'), '', true);
+wp_localize_script('meetings_admin_js', 'myAjax', array('ajaxurl'=>admin_url('admin-ajax.php')));        
 
 remove_meta_box('tagsdiv-region', 'meetings', 'side' );
 remove_meta_box('tagsdiv-types', 'meetings', 'side' );
@@ -13,8 +13,9 @@ add_meta_box('info', 'General Info', function(){
 	global $post, $days, $types, $custom;
 
 	//get post metadata
-	if (!$checked = get_the_terms($post->ID, 'types')) $checked = array();
-	foreach ($checked as &$check) $check = $check->term_id;
+	//if (!$checked = get_the_terms($post->ID, 'types')) $checked = array();
+	//foreach ($checked as &$check) $check = $check->term_id;
+	$checked = array();
 	$custom 	= get_post_custom($post->ID);
 
 	?>
@@ -33,10 +34,10 @@ add_meta_box('info', 'General Info', function(){
 	<div class="meta_form_row">
 		<label for="tags">Types</label>
 		<div class="checkboxes">
-			<?php foreach ($types as $type) {?>
+			<?php foreach ($types as $key=>$type) {?>
 				<label>
-					<input type="checkbox" name="types[]" value="<?php echo $type->name?>" <?php if (in_array($type->term_id, $checked)) {?> checked="checked"<?php }?>>
-					<?php echo $type->name?>
+					<input type="checkbox" name="types[]" value="<?php echo $key?>" <?php if (in_array($key, $checked)) {?> checked="checked"<?php }?>>
+					<?php echo $type?>
 				</label>
 			<?php }?>
 		</div>
@@ -53,7 +54,18 @@ add_meta_box('location', 'Location', function(){
 	?>
 	<div class="meta_form_row">
 		<label for="location">Saved</label>
-		<div class="checkboxes">Hi<?php echo $custom['location_id'][0]?></a>
+		<select name="location_id">
+			<option value="">+ Add New Location</option>
+		<?php 
+		$locations = get_posts('post_type=locations&orderby=title&order=asc&numberposts=-1');
+		foreach ($locations as $location) {
+			$location_custom = get_post_custom($custom['location_id'][0]);
+			?>
+				<option value="<?php echo $location->ID?>"<?php selected($location->ID, $custom['location_id'][0])?>><?php echo $location->post_title?></option>
+			<?php
+		}
+		?>
+		</select>
 	</div>
 	<div class="meta_form_row">
 		<label for="location">Location</label>
@@ -71,16 +83,16 @@ add_meta_box('location', 'Location', function(){
 		<label for="city">City</label>
 		<input type="text" name="city" id="city" value="<?php echo $custom['city'][0]?>" placeholder="San Jose">
 		<select name="state">
-			<?php foreach ($states as $abbr=>$state) {?>
-			<option <?php selected('CA', $abbr)?> value="<?php echo $abbr?>"><?php echo $state?></option>
+			<?php foreach ($states as $key=>$state) {?>
+			<option <?php selected('CA', $key)?> value="<?php echo $key?>"><?php echo $state?></option>
 			<?php }?>
 		</select>
 	</div>
 	<div class="meta_form_row">
 		<label for="region">Region</label>
 		<select name="region" id="region">
-			<?php foreach ($regions as $region) {?>
-				<option value="<?php echo $region->term_id?>"><?php echo $region->name?></option>
+			<?php foreach ($regions as $key=>$region) {?>
+				<option value="<?php echo $key?>" <?php selected($custom['region'][0], $key)?>><?php echo $region?></option>
 			<?php }?>
 		</select>
 	</div>

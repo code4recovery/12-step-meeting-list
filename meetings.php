@@ -21,10 +21,27 @@ $states = array('AL'=>'Alabama', 'AK'=>'Alaska', 'AZ'=>'Arizona', 'AR'=>'Arkansa
 	'TN'=>'Tennessee', 'TX'=>'Texas', 'UT'=>'Utah', 'VT'=>'Vermont', 'VA'=>'Virginia', 'WA'=>'Washington',  
 	'WV'=>'West Virginia', 'WI'=>'Wisconsin', 'WY'=>'Wyoming'
 );
-$regions = $types = $custom = array();
+$types = array(
+	'H'=>'Chips', 
+	'C'=>'Closed', 
+	'G'=>'Gay',
+	'L'=>'Lesbian',
+	'M'=>'Men Only', 
+	'O'=>'Open',
+	'S'=>'Spanish',
+	'X'=>'Wheelchair Accessible',
+	'W'=>'Women Only',
+	'Y'=>'Young People',
+);
+
+$regions = $custom = array();
 
 add_action('admin_init', function(){
 	include('hooks/admin_init.php');
+});
+
+add_action('admin_menu', function() {
+	include('hooks/admin_menu.php');
 });
 
 add_action('init', function(){
@@ -33,6 +50,19 @@ add_action('init', function(){
 
 add_action('save_post', function(){
 	include('hooks/save_post.php');
+});
+
+add_action('wp_ajax_get_location', function(){
+	$post = get_post($_POST['location_id']);
+	$custom = get_post_meta($_POST['location_id']);
+	wp_send_json(array(
+		'location'	=>$post->post_title,
+		'address1'	=>$custom['address1'][0],
+		'address2'	=>$custom['address2'][0],
+		'city'		=>$custom['city'][0],
+		'state'		=>$custom['state'][0],
+		'region'	=>$custom['region'][0],
+	));
 });
 
 add_filter('manage_edit-meetings_columns', function($defaults){
@@ -108,6 +138,7 @@ add_action('restrict_manage_posts', function() {
 add_filter('months_dropdown_results', '__return_empty_array');
 
 function meetings_format_time($string) {
+	//takes 18:30 and returns 6:30 PM
 	if (!strstr($string, ':')) return 'n/a';
 	if ($string == '12:00') return 'Noon';
 	if ($string == '23:59') return 'Midnight';
@@ -116,3 +147,14 @@ function meetings_format_time($string) {
 	$hours = ($hours > 12) ? $hours - 12 : $hours;
 	return $hours . ':' . $minutes . ' ' . $ampm;
 }
+
+function meetings_delete_all_locations() {
+	//deletes all the locations
+	$locations = get_posts('post_type=locations&numberposts=-1');
+	foreach ($locations as $location) {
+		wp_delete_post($location->ID, true);
+	}
+}
+
+
+
