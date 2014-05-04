@@ -11,11 +11,9 @@ if ($_POST['post_type'] != 'meetings') return;
 //todo server-side validation here (at least time)
 
 
-//todo look up latitude / longitude, perhaps verify address by api
-
-
 //add a new location
 $_POST['post_type'] = 'locations';
+
 if (empty($_POST['location_id'])) {
 	//save new post
 	//todo check if exists

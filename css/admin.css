@@ -22,10 +22,16 @@
     float: left; }
     .meta_form_row input[type=radio]:focus, .meta_form_row input[type=checkbox]:focus {
       box-shadow: none; }
-  .meta_form_row .twitter-typeahead {
-    width: 85%; }
-    .meta_form_row .twitter-typeahead input {
-      width: 100%; }
+  .meta_form_row.typeahead {
+    overflow: visible; }
+    .meta_form_row.typeahead .twitter-typeahead {
+      width: 85%; }
+      .meta_form_row.typeahead .twitter-typeahead input {
+        width: 100%; }
+    .meta_form_row.typeahead .tt-hint {
+      color: #ccc; }
+    .meta_form_row.typeahead .tt-dropdown-menu {
+      display: none !important; }
   .meta_form_row textarea {
     height: 100px; }
   .meta_form_row:last-child {

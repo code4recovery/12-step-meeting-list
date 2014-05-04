@@ -29,7 +29,7 @@ add_meta_box('info', 'General Info', function(){
 	</div>
 	<div class="meta_form_row">
 		<label for="time">Time</label>
-		<input type="time" name="time" id="time" value="<?php echo $custom['time'][0]?>">
+		<input type="time" name="time" id="time" value="<?php echo $custom['time'][0]?>" step="900">
 	</div>
 	<div class="meta_form_row">
 		<label for="tags">Types</label>
@@ -52,14 +52,14 @@ add_meta_box('info', 'General Info', function(){
 add_meta_box('location', 'Location', function(){
 	global $regions, $custom;
 	?>
-	<div class="meta_form_row">
+	<div class="meta_form_row typeahead">
 		<label for="location">Location</label>
-		<input type="text" name="location" id="location" value="<?php echo $custom['location'][0]?>" placeholder="Saturday Nite Live Group">
+		<input type="text" name="location" id="location" value="<?php echo $custom['location'][0]?>">
 		<input type="hidden" name="location_id" id="location_id" value="<?php echo $custom['location_id'][0]?>">
 	</div>
 	<div class="meta_form_row">
 		<label for="address">Address</label>
-		<input type="text" name="address" id="address" value="<?php echo $custom['address'][0]?>" placeholder="2634 Union Ave. San Jose">
+		<input type="text" name="address" id="address" value="<?php echo $custom['address'][0]?>">
 		<input type="hidden" name="latitude" id="latitude" value="<?php echo $custom['latitude'][0]?>">
 		<input type="hidden" name="longitude" id="longitude" value="<?php echo $custom['longitude'][0]?>">
 	</div>

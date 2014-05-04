@@ -8,10 +8,16 @@
 		&:focus { box-shadow: none; }
 	}
 
-.twitter-typeahead{
-     width: 85%;
-     input { width: 100%; }
-}
+	&.typeahead {
+		overflow: visible;
+		.twitter-typeahead{
+		     width: 85%;
+		     input { width: 100%; }
+		}
+		.tt-hint { color: #ccc; }
+		.tt-dropdown-menu { display: none !important; }
+
+	}
 
 	textarea { height: 100px; }
 	&:last-child { margin-bottom: 0; }

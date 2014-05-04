@@ -4,11 +4,13 @@ jQuery(function(){
 	var locations = new Bloodhound({
 		datumTokenizer: Bloodhound.tokenizers.obj.whitespace('value'),
 		queryTokenizer: Bloodhound.tokenizers.whitespace,
-		prefetch: myAjax.ajaxurl + '?action=location'
+		prefetch: {
+			url: myAjax.ajaxurl + '?action=location&q=%QUERY',
+			ttl: 10
+		}
 	});
 	locations.initialize();
 	jQuery('input#location').typeahead(null, {
-		name: 'locations',
 		displayKey: 'value',
 		source: locations.ttAdapter()
 	}).on('typeahead:autocompleted', function($e, datum){
