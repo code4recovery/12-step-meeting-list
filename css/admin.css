@@ -1,7 +1,7 @@
 .meta_form_row {
   margin: 10px 0;
   overflow: auto; }
-  .meta_form_row label, .meta_form_row input, .meta_form_row div.checkboxes {
+  .meta_form_row label, .meta_form_row input, .meta_form_row div.checkboxes, .meta_form_row #map {
     float: left;
     line-height: 100%; }
   .meta_form_row label {
@@ -11,7 +11,7 @@
     font-size: 15px;
     line-height: 40px;
     white-space: nowrap; }
-  .meta_form_row input[type=text], .meta_form_row input[type=time], .meta_form_row select, .meta_form_row textarea, .meta_form_row div.checkboxes {
+  .meta_form_row input[type=text], .meta_form_row input[type=time], .meta_form_row select, .meta_form_row textarea, .meta_form_row div.checkboxes, .meta_form_row #map {
     width: 85%;
     margin: 0;
     font-size: 18px;
@@ -22,6 +22,10 @@
     float: left; }
     .meta_form_row input[type=radio]:focus, .meta_form_row input[type=checkbox]:focus {
       box-shadow: none; }
+  .meta_form_row .twitter-typeahead {
+    width: 85%; }
+    .meta_form_row .twitter-typeahead input {
+      width: 100%; }
   .meta_form_row textarea {
     height: 100px; }
   .meta_form_row:last-child {
@@ -52,3 +56,7 @@
     color: #ccc; }
   .meta_form_row :-ms-input-placeholder {
     color: #ccc; }
+  .meta_form_row #map {
+    background-color: #eee;
+    height: 300px;
+    padding: 0; }

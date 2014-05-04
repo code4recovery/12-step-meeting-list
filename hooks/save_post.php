@@ -34,19 +34,17 @@ if (empty($_POST['location_id'])) {
 }
 
 //update address & info on location
-update_post_meta($_POST['location_id'], 'address1',	$_POST['address1']);
-update_post_meta($_POST['location_id'], 'address2',	$_POST['address2']);
-update_post_meta($_POST['location_id'], 'city',		$_POST['city']);
-update_post_meta($_POST['location_id'], 'state',	$_POST['state']);
+update_post_meta($_POST['location_id'], 'address',	$_POST['address']);
+update_post_meta($_POST['location_id'], 'latitude',	$_POST['latitude']);
+update_post_meta($_POST['location_id'], 'longitude',$_POST['longitude']);
 update_post_meta($_POST['location_id'], 'region',	$_POST['region']);
 
 
 //also update address on meeting, repetitive but speedy
 update_post_meta($post->ID, 'location',		$_POST['location']);
-update_post_meta($post->ID, 'address1',		$_POST['address1']);
-update_post_meta($post->ID, 'address2',		$_POST['address2']);
-update_post_meta($post->ID, 'city',			$_POST['city']);
-update_post_meta($post->ID, 'state',		$_POST['state']);
+update_post_meta($post->ID, 'address',		$_POST['address']);
+update_post_meta($post->ID, 'latitude',		$_POST['latitude']);
+update_post_meta($post->ID, 'longitude',	$_POST['longitude']);
 update_post_meta($post->ID, 'region',		$_POST['region']);
 
 

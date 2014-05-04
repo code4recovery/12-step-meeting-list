@@ -52,18 +52,25 @@ add_action('save_post', function(){
 	include('hooks/save_post.php');
 });
 
-add_action('wp_ajax_get_location', function(){
-	$post = get_post($_POST['location_id']);
-	$custom = get_post_meta($_POST['location_id']);
-	wp_send_json(array(
-		'location'	=>$post->post_title,
-		'address1'	=>$custom['address1'][0],
-		'address2'	=>$custom['address2'][0],
-		'city'		=>$custom['city'][0],
-		'state'		=>$custom['state'][0],
-		'region'	=>$custom['region'][0],
-	));
+//for the typeahead
+add_action('wp_ajax_location', function(){
+	$locations = get_posts('post_type=locations&numberposts=-1');
+	$results = array();
+    foreach ($locations as $location) {
+        $title  = get_the_title($location->ID);
+        $custom = get_post_meta($location->ID);
+        $results[] = array(
+            'value'		=> $title,
+            'address'	=> $custom['address'][0],
+            'latitude'	=> $custom['latitude'][0],
+            'longitude'	=> $custom['longitude'][0],
+            'region'	=> $custom['region'][0],
+            'tokens'	=> array_values(array_unique(explode(' ', str_replace(',', '', $title . ' ' . $custom['address'][0])))),
+        );
+	}
+	wp_send_json($results);
 });
+
 
 add_filter('manage_edit-meetings_columns', function($defaults){
     return array(
@@ -127,8 +134,8 @@ add_action('restrict_manage_posts', function() {
 		<select name="region">
 			<option>Everywhere</option>';
 
-		foreach ($regions as $region) {
-			echo '<option value="' . $region->term_id . '">' . $region->name . '</option>';
+		foreach ($regions as $key=>$region) {
+			echo '<option value="' . $key . '">' . $region . '</option>';
 		}
 
 		echo '</select>';
