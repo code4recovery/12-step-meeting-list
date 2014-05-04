@@ -19,6 +19,6 @@ include('includes/admin_edit.php');
 
 include('includes/save.php');
 
-//include('includes/admin_options.php');
+include('includes/admin_lists.php');
 
-//include('includes/admin_lists.php');
+//include('includes/admin_options.php');

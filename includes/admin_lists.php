@@ -50,6 +50,7 @@ add_filter('request', function($vars) {
     return $vars;
 });
 
+/*
 add_action('restrict_manage_posts', function() {
 	global $typenow, $days, $regions;
 	if ($typenow == 'meetings') {
@@ -71,3 +72,4 @@ add_action('restrict_manage_posts', function() {
 });
 
 add_filter('months_dropdown_results', '__return_empty_array');
+*/

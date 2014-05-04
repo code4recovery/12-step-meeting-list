@@ -76,7 +76,6 @@ add_action('admin_init', function(){
 		<div class="meta_form_row typeahead">
 			<label for="location">Location</label>
 			<input type="text" name="location" id="location" value="<?php echo $custom['location'][0]?>">
-			<input type="hidden" name="location_id" id="location_id" value="<?php echo $custom['location_id'][0]?>">
 		</div>
 		<div class="meta_form_row">
 			<label for="address">Address</label>
