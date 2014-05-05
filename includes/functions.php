@@ -7,9 +7,10 @@ function meetings_format_time($string) {
 	if ($string == '12:00') return 'Noon';
 	if ($string == '23:59') return 'Midnight';
 	list($hours, $minutes) = explode(':', $string);
-	$ampm = ($hours > 11) ? 'PM' : 'AM';
+	$hours -= 0;
+	$ampm = ($hours > 11) ? 'p' : 'a';
 	$hours = ($hours > 12) ? $hours - 12 : $hours;
-	return $hours . ':' . $minutes . ' ' . $ampm;
+	return $hours . ':' . $minutes . $ampm;
 }
 
 //function: deletes all the locations in the database
