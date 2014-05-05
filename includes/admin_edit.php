@@ -8,7 +8,7 @@ add_action('wp_ajax_location', function(){
         $title  = get_the_title($location->ID);
         $custom = get_post_meta($location->ID);
         $results[] = array(
-            'value'		=> $title,
+            'value'		=> html_entity_decode($title),
             'address'	=> $custom['address'][0],
             'latitude'	=> $custom['latitude'][0],
             'longitude'	=> $custom['longitude'][0],
