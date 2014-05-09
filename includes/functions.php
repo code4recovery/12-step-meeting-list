@@ -28,6 +28,16 @@ function meetings_delete_all_locations() {
 	}
 }
 
+//function: deletes all the meetings in the database
+//used:		ad-hoc
+function meetings_delete_all_meetings() {
+	//delete locations
+	$meetings = get_posts('post_type=meetings&numberposts=-1');
+	foreach ($meetings as $meeting) {
+		wp_delete_post($meeting->ID, true);
+	}
+}
+
 //function: remove all location info from a meeting
 //used:		in save_post filter and meetings_delete_all_locations
 function meetings_remove_location($meeting_id) {
