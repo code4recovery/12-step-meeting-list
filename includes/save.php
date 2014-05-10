@@ -18,7 +18,6 @@ add_action('save_post', function(){
 	update_post_meta($post->ID, 'notes',		$_POST['notes']);
 	update_post_meta($post->ID, 'types',		$_POST['types']);
 
-
 	//save location information
 	if (empty($_POST['address'])) {
 		meetings_remove_location($post->ID);
