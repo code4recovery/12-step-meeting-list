@@ -2,15 +2,14 @@
 
 add_action('init', function(){
 	global $regions;
-
+	
 	register_taxonomy('region', array('meetings'), array(
 		'label'=>'Region', 
 		'labels'=>array('menu_name'=>'Regions')
 	));
 
 	//build quick access array of regions
-	$region_terms = get_terms('region', 'hide_empty=0');
-	foreach ($region_terms as $region) $regions[$region->term_id] = $region->name;
+	$regions = meetings_get_regions();
 
 	register_post_type('meetings',
 		array(
