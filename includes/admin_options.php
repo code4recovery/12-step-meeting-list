@@ -167,7 +167,7 @@ add_action('admin_menu', function() {
 						update_post_meta($meeting_id, 'longitude',	$info['longitude']);
 						update_post_meta($meeting_id, 'region',		$info['region']);
 
-						wp_set_post_terms($meeting_id, $info['region'], 'region');
+						wp_set_post_terms($meeting_id, $regions[$info['region']], 'region');
 
 						echo 'added ' . $meeting['title'] . '<br>';
 					}
