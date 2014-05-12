@@ -155,10 +155,10 @@ function meetings_list() {
 		<table class="table table-striped">
 			<thead>
 				<tr>
-					<th>Time</th>
-					<th>Name</th>
-					<th>Location</th>
-					<th>Region</th>
+					<th class="time">Time</th>
+					<th class="name">Name</th>
+					<th class="location">Location</th>
+					<th class="region">Region</th>
 				</tr>
 			</head>
 			<tbody>
@@ -167,10 +167,10 @@ function meetings_list() {
 				$custom = get_post_meta($meeting->ID);
 				?>
 				<tr>
-					<td><?php echo meetings_format_time($custom['time'][0])?></td>
-					<td><a href="<?php echo $meeting->post_name ?>"><?php echo $meeting->post_title ?></a></td>
-					<td><?php echo $custom['location'][0]?></td>
-					<td><?php echo $regions[$custom['region'][0]]?></td>
+					<td class="time"><?php echo meetings_format_time($custom['time'][0])?></td>
+					<td class="name"><a href="<?php echo $meeting->post_name ?>"><?php echo $meeting->post_title ?></a></td>
+					<td class="location"><?php echo $custom['location'][0]?></td>
+					<td class="region"><?php echo $regions[$custom['region'][0]]?></td>
 				</tr>
 			<?php }?>
 		</table>
