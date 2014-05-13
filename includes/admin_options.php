@@ -47,6 +47,14 @@ add_action('admin_menu', function() {
 						$location = 'Freedom Fellowship Group';
 					}
 
+					if (trim(strtolower($location)) == 'saturday nite live group') {
+						$address = '2634 Union Ave';
+					}
+
+					if (trim(strtolower($location)) == 'panara bread') {
+						$location = 'Panera Bread';
+					}
+
 					//day
 					if (!in_array($day, $days)) die('day ' . $day . ' not valid day for id ' . $id);
 					$day = array_search($day, $days);
@@ -61,6 +69,8 @@ add_action('admin_menu', function() {
 
 					//title
 					if ($pos = stripos($title, '(')) $title = substr($title, 0, $pos);
+					$title = str_replace('/', ' / ', $title);
+					$title = str_replace('  ', ' ', $title);
 					$title = trim($title);
 
 					//address						

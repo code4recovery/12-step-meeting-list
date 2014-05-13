@@ -8,9 +8,9 @@ function meetings_format_time($string) {
 	if ($string == '23:59') return 'Midnight';
 	list($hours, $minutes) = explode(':', $string);
 	$hours -= 0;
-	$ampm = ($hours > 11) ? 'p' : 'a';
+	$ampm = ($hours > 11) ? 'p.m.' : 'a.m.';
 	$hours = ($hours > 12) ? $hours - 12 : $hours;
-	return $hours . ':' . $minutes . $ampm;
+	return $hours . ':' . $minutes . ' ' . $ampm;
 }
 
 //function: deletes all the locations in the database
@@ -168,7 +168,7 @@ function meetings_list() {
 				?>
 				<tr>
 					<td class="time"><?php echo meetings_format_time($custom['time'][0])?></td>
-					<td class="name"><a href="<?php echo $meeting->post_name ?>"><?php echo $meeting->post_title ?></a></td>
+					<td class="name"><a href="/meetings/<?php echo $meeting->post_name ?>"><?php echo $meeting->post_title ?></a></td>
 					<td class="location"><?php echo $custom['location'][0]?></td>
 					<td class="region"><?php echo $regions[$custom['region'][0]]?></td>
 				</tr>
