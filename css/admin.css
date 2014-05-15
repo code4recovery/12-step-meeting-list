@@ -71,6 +71,6 @@
   .meta_form_row :-ms-input-placeholder {
     color: #ccc; }
   .meta_form_row #map {
-    background-color: #eee;
+    background-color: #f6f6f6;
     height: 300px;
     padding: 0; }

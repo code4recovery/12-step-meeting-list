@@ -64,8 +64,8 @@ add_action('admin_init', function(){
 			</div>
 		</div>
 		<div class="meta_form_row">
-			<label for="notes">Notes</label>
-			<textarea name="notes" id="notes" placeholder="eg. Birthday speaker meeting last Saturday of the month"><?php echo $custom['notes'][0]?></textarea>
+			<label for="content">Notes</label>
+			<textarea name="content" id="content" placeholder="eg. Birthday speaker meeting last Saturday of the month"><?php echo $post->post_content?></textarea>
 		</div>
 		<?php
 	}, 'meetings', 'normal', 'low');

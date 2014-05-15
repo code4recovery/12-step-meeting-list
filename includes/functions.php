@@ -102,15 +102,19 @@ function meetings_print($array, $exit=false) {
 
 //get meetings based on post information
 //used by meetings_list and meetings_map ajax functions (for theme)
-function meetings_get() {
+function meetings_get($day=false) {
 
 	$meta_query = array(
 		'relation'	=> 'AND',
-		array(
-			'key'	=> 'day',
-			'value'	=> empty($_POST['day']) ? date('w') : $_POST['day'],
-		)
 	);
+
+
+	if ($day || !empty($_POST['day'])) {
+		$meta_query[] = array(
+			'key'	=> 'day',
+			'value'	=> $day ? $day : $_POST['day'],
+		);
+	}
 
 	if (!empty($_POST['region'])) {
 		$meta_query[] = array(
@@ -145,10 +149,10 @@ function meetings_get() {
 add_action('wp_ajax_nopriv_meetings_list', 'meetings_list');
 add_action('wp_ajax_meetings_list', 'meetings_list');
 
-function meetings_list() {
+function meetings_list($day=false) {
 
 	global $regions;
-	if (!$meetings = meetings_get()) {?>
+	if (!$meetings = meetings_get($day)) {?>
 		<div class="alert alert-warning">No meetings were found matching those criteria.</div>
 	<?php } else {?>
 

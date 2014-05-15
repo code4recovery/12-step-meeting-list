@@ -40,7 +40,7 @@ add_action('admin_menu', function() {
 				//run through one time and do basic formatting and duplicate location detection
 				$addresses = $regions = array();
 				foreach ($meetings as &$meeting) {
-					list($id, $day, $time, $title, $location, $address, $city, $state, $region, $types) = explode("\t", $meeting);
+					list($id, $day, $time, $title, $location, $address, $city, $state, $region, $types, $notes) = explode("\t", $meeting);
 
 					//ad-hoc replacements (san jose specific)
 					if (trim(strtolower($location)) == 'moffett central shopping center') {
@@ -99,6 +99,7 @@ add_action('admin_menu', function() {
 						'day'=>$day,
 						'time'=>$time,
 						'types'=>$types,
+						'notes'=>$notes,
 					);
 				}
 				echo 'first pass complete<br>';
@@ -165,6 +166,8 @@ add_action('admin_menu', function() {
 							'post_type'		=> 'meetings',
 							'post_status'	=> 'publish',
 							'post_author'	=> 1,
+							'post_parent'	=> $location_id,
+							'post_content'	=> $meeting['notes'],
 						));
 						update_post_meta($meeting_id, 'day',		$meeting['day']);
 						update_post_meta($meeting_id, 'time',		$meeting['time']);
