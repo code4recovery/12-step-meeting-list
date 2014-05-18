@@ -19,13 +19,12 @@ add_action('save_post', function(){
 
 	//save location information
 	if (empty($_POST['address'])) {
-		meetings_remove_location($post->ID);
+
 	} else {
 
 		$_POST['post_type'] = 'locations';
 
 		//see if address is already in the database
-		//echo 'address was ' . $_POST['address'] . '<br>';
 		if ($locations = get_posts('post_type=locations&numberposts=1&orderby=id&order=ASC&meta_key=address&meta_value=' . $_POST['address'])) {
 			$location_id = $locations[0]->ID;
 			wp_update_post(array(
@@ -37,7 +36,6 @@ add_action('save_post', function(){
 			  'post_title'	=> $_POST['location'],
 			  'post_type'	=> 'locations',
 			  'post_status'	=> 'publish',
-			  'post_author'	=> 1,
 			));
 		}
 
@@ -50,19 +48,10 @@ add_action('save_post', function(){
 		//set parent
 		wp_update_post(array(
 			'ID'			=> $post->ID,
-			'post_parent'	=> $_POST['location_id'],
+			'post_parent'	=> $location_id,
 		));
 
-		//also update address on meeting, repetitive but speedy (hope i don't need anymore)
-		update_post_meta($post->ID, 'location_id',	$location_id);
-		update_post_meta($post->ID, 'location',		$_POST['location']);
-		update_post_meta($post->ID, 'address',		$_POST['address']);
-		update_post_meta($post->ID, 'latitude',		$_POST['latitude']);
-		update_post_meta($post->ID, 'longitude',	$_POST['longitude']);
-		update_post_meta($post->ID, 'region',		$_POST['region']);
-
-
-		//delete orphans
+		//clean up orphans
 		meetings_delete_orphaned_locations();
 	}
 

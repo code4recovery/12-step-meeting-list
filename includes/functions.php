@@ -1,7 +1,7 @@
 <?php
 
-//function: takes 18:30 and returns 6:30 PM
-//used:		on list pages and by theme
+//function: takes 18:30 and returns 6:30 p.m.
+//used:		meetings_get and theme
 function meetings_format_time($string) {
 	if (!strstr($string, ':')) return 'n/a';
 	if ($string == '12:00') return 'Noon';
@@ -56,17 +56,6 @@ function meetings_get_regions() {
 	return $regions;
 }
 
-//function: remove all location info from a meeting
-//used:		in save_post filter and meetings_delete_all_locations
-function meetings_remove_location($meeting_id) {
-	delete_post_meta($meeting_id, 'location_id');
-	delete_post_meta($meeting_id, 'location');
-	delete_post_meta($meeting_id, 'address');
-	delete_post_meta($meeting_id, 'latitude');
-	delete_post_meta($meeting_id, 'longitude');
-	delete_post_meta($meeting_id, 'region');	
-}
-
 //function: deletes all orphaned locations (has no meetings associated)
 //used:		save_post filter and ad-hoc
 function meetings_delete_orphaned_locations() {
@@ -75,7 +64,7 @@ function meetings_delete_orphaned_locations() {
 	$active = array();
 	$meetings = get_posts('post_type=meetings&numberposts=-1');
 	foreach ($meetings as $meeting) {
-		$active[] = get_post_meta($meeting->ID, 'location_id', true);
+		$active[] = $meeting->post_parent;
 	}
 
 	//get all location ids
@@ -92,39 +81,34 @@ function meetings_delete_orphaned_locations() {
 	}
 }
 
-//for debugging
-function meetings_print($array, $exit=false) {
-	echo '<pre>';
-	print_r($array);
-	echo '</pre>';
-	if ($exit) exit;
-}
-
 //get meetings based on post information
-//used by meetings_list and meetings_map ajax functions (for theme)
-function meetings_get($day=false) {
+//used by meetings_api and theme 
+function meetings_get($arguments=array()) {
+	global $regions;
+
+	if (empty($arguments) && !empty($_POST)) $arguments = $_POST;
 
 	$meta_query = array(
 		'relation'	=> 'AND',
 	);
 
 
-	if ($day !== false || !empty($_POST['day'])) {
+	if (!empty($arguments['day'])) {
 		$meta_query[] = array(
 			'key'	=> 'day',
-			'value'	=> $day ? $day : $_POST['day'],
+			'value'	=> $arguments['day'],
 		);
 	}
 
-	if (!empty($_POST['region'])) {
+	if (!empty($arguments['region'])) {
 		$meta_query[] = array(
 			'key'	=> 'region',
-			'value'	=> $_POST['region'],
+			'value'	=> $arguments['region'],
 		);
 	}
 
-	if (!empty($_POST['types'])) {
-		foreach ($_POST['types'] as $type) {
+	if (!empty($arguments['types'])) {
+		foreach ($arguments['types'] as $type) {
 			$meta_query[] = array(
 				'key'	=> 'types',
 				'value'	=> '"' . $type . '"',
@@ -133,7 +117,29 @@ function meetings_get($day=false) {
 		}
 	}
 	
-	$meetings = get_posts(array(
+	$meetings = $locations = array();
+
+	$posts = get_posts(array(
+	    'post_type'		=> 'locations',
+	    'numberposts'	=> -1,
+	));
+
+	foreach ($posts as $post) {
+		$custom = get_post_meta($post->ID);
+		$locations[$post->ID] = array(
+			'address'			=>$custom['address'][0],
+			'latitude'			=>$custom['latitude'][0],
+			'longitude'			=>$custom['longitude'][0],
+			'region_id'			=>$custom['region'][0],
+			'region'			=>$regions[$custom['region'][0]],
+			'location'			=>$post->post_title,
+			'location_url'		=>$post->guid,
+			'location_slug'		=>$post->post_name,
+			'location_updated'	=>$post->post_modified_gmt,
+		);
+	}
+
+	$posts = get_posts(array(
 	    'post_type'		=> 'meetings',
 	    'numberposts'	=> -1,
 		'meta_key'		=> 'time',
@@ -142,103 +148,34 @@ function meetings_get($day=false) {
 		'meta_query'	=> $meta_query,
 	));
 
-	foreach ($meetings as &$meeting) {
-		unset($meeting->post_author);
-		unset($meeting->post_date);
-		unset($meeting->post_date_gmt);
-		unset($meeting->post_excerpt);
-		unset($meeting->post_status);
-		unset($meeting->comment_status);
-		unset($meeting->ping_status);
-		unset($meeting->post_password);
-		unset($meeting->to_ping);
-		unset($meeting->pinged);
-		unset($meeting->post_content_filtered);
-		unset($meeting->menu_order);
-		unset($meeting->post_type);
-		unset($meeting->post_mime_type);
-		unset($meeting->comment_count);
-		unset($meeting->filter);
+	foreach ($posts as $post) {
+		$custom = get_post_meta($post->ID);
+		if (empty($locations[$post->post_parent])) {
+			echo $post->post_title;
+			continue;
+		}
+		$meetings[] = array_merge(array(
+			'id'			=>$post->ID,
+			'name'			=>$post->post_title,
+			'slug'			=>$post->post_name,
+			'notes'			=>$post->post_content,
+			'updated'		=>$post->post_modified_gmt,
+			'location_id'	=>$post->post_parent,
+			'url'			=>$post->guid,
+			'time'			=>$custom['time'][0],
+			'day'			=>$custom['day'][0],
+			'types'			=>unserialize($custom['types'][0]),
+		), $locations[$post->post_parent]);
 	}
-
-	//meetings_print($meetings);
 
 	return $meetings;
 }
 
-//get meetings ajax
-add_action('wp_ajax_nopriv_meetings_list', 'meetings_list');
-add_action('wp_ajax_meetings_list', 'meetings_list');
-
-function meetings_list($day=false) {
-
-	global $regions;
-	if (!$meetings = meetings_get($day)) {?>
-		<div class="alert alert-warning">No meetings were found matching those criteria.</div>
-	<?php } else {?>
-
-		<table class="table table-striped">
-			<thead>
-				<tr>
-					<th class="time">Time</th>
-					<th class="name">Name</th>
-					<th class="location">Location</th>
-					<th class="region">Region</th>
-				</tr>
-			</head>
-			<tbody>
-			<?php 
-			foreach ($meetings as $meeting) {
-				$custom = get_post_meta($meeting->ID);
-				?>
-				<tr>
-					<td class="time"><?php echo meetings_format_time($custom['time'][0])?></td>
-					<td class="name"><a href="/meetings/<?php echo $meeting->post_name ?>"><?php echo $meeting->post_title ?></a></td>
-					<td class="location"><?php echo $custom['location'][0]?></td>
-					<td class="region"><?php echo $regions[$custom['region'][0]]?></td>
-				</tr>
-			<?php }?>
-		</table>
-
-	<?php
-	}
-	if (!empty($_POST)) die();
-}
-
-//map json
-add_action('wp_ajax_nopriv_meetings_map', 'meetings_map');
-add_action('wp_ajax_meetings_map', 'meetings_map');
-
-function meetings_map() {
-	global $regions;
-
-	$meetings = meetings_get();
-
-	//group meetings by location
-	$locations = array();
-	foreach ($meetings as &$meeting) {
-		$meeting->custom = get_post_meta($meeting->ID);
-		if (!isset($locations[$meeting->custom['location_id'][0]])) {
-			$locations[$meeting->custom['location_id'][0]] = array(
-				'title'		=>$meeting->custom['location'][0],
-				'latitude'	=>$meeting->custom['latitude'][0],
-				'longitude'	=>$meeting->custom['longitude'][0],
-				'address'	=>$meeting->custom['address'][0],
-				'region'	=>$regions[$meeting->custom['region'][0]],
-				'meetings'	=>array(),
-			);
-		}
-		$locations[$meeting->custom['location_id'][0]]['meetings'][] = $meeting;
-	}
-
-	wp_send_json($locations);
-}
-
-//future one and only api ajax function
-add_action('wp_ajax_meetings', 'api');
-add_action('wp_ajax_nopriv_meetings', 'api');
+//api ajax function
+//used by theme and app
+add_action('wp_ajax_meetings', 'meetings_api');
+add_action('wp_ajax_nopriv_meetings', 'meetings_api');
 
 function api() {
-	$meetings = meetings_get();
-	wp_send_json($meetings);
+	wp_send_json(meetings_get());
 };

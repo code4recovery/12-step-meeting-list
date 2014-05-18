@@ -27,10 +27,9 @@ add_action('admin_menu', function() {
 		    echo '<h2>Import Meetings</h2>';
 
 	    	//import meetings from file
-			if (!$meetings = file('/Users/joshreisner/Dropbox/intergroup/export.txt')) {
+			if (!$meetings = file(dirname(dirname(__FILE__)) . '/export.txt')) {
 				echo 'Import file does not exist';
 			} else {
-
 		    	//delete current data
 				meetings_delete_all_meetings();
 				meetings_delete_all_locations();
@@ -118,12 +117,35 @@ add_action('admin_menu', function() {
 						die('could not get json for address ' . $address);
 					}
 
+					//interpreting result
 					$data = json_decode($file);
 					$formatted_address = $data->results[0]->formatted_address;
+					$address = $city = $state = false;
+					foreach ($data->results[0]->address_components as $component) {
+						if (in_array('street_number', $component->types)) {
+							$address = $component->long_name;
+						} elseif (in_array('route', $component->types)) {
+							$address .= ' ' . $component->long_name;
+						} elseif (in_array('locality', $component->types)) {
+							$city = $component->long_name;
+						} elseif (in_array('administrative_area_level_1', $component->types)) {
+							$state = $component->short_name;
+						} elseif (in_array('point_of_interest', $component->types)) {
+							//remove point of interest, eg Sunnyvale Presbyterian Church, from address
+							$needle = $component->long_name . ', ';
+							if (substr($formatted_address, 0, strlen($needle)) == $needle) {
+								$formatted_address = substr($formatted_address, strlen($needle));
+							}
+						}
+					}
+
 					if (!array_key_exists($formatted_address, $formatted)) {
 						//intialize empty location
 						$formatted[$formatted_address] = array(
 							'meetings'	=>array(),
+							'address'	=>$address,
+							'city'		=>$city,
+							'state'		=>$state,
 							'region'	=>array_search($info['region'], $regions),
 							'location'	=>$info['location'],
 							'latitude'	=>$data->results[0]->geometry->location->lat,
@@ -132,8 +154,8 @@ add_action('admin_menu', function() {
 					}
 
 					//fill empty location title
-					if (empty($formatted[$formatted_address]['locaiton']) && !empty($info['location'])) {
-						$formatted[$formatted_address]['locaiton'] = $info['location'];
+					if (empty($formatted[$formatted_address]['location']) && !empty($info['location'])) {
+						$formatted[$formatted_address]['location'] = $info['location'];
 					}
 
 					//attach meetings to existing location
@@ -145,19 +167,21 @@ add_action('admin_menu', function() {
 				echo 'second pass complete<br>';
 
 				//loop through now and save everything to the database
-				foreach ($formatted as $address=>$info) {
+				foreach ($formatted as $formatted_address=>$info) {
 
 					//save location
 					$location_id = wp_insert_post(array(
 						'post_title'	=> $info['location'],
 						'post_type'		=> 'locations',
 						'post_status'	=> 'publish',
-						'post_author'	=> 1,
 					));
-					update_post_meta($location_id, 'address',	$address);
-					update_post_meta($location_id, 'latitude',	$info['latitude']);
-					update_post_meta($location_id, 'longitude',	$info['longitude']);
-					update_post_meta($location_id, 'region',	$info['region']);
+					update_post_meta($location_id, 'formatted_address',	$formatted_address);
+					update_post_meta($location_id, 'address',			$address);
+					update_post_meta($location_id, 'city',				$city);
+					update_post_meta($location_id, 'state',				$state);
+					update_post_meta($location_id, 'latitude',			$info['latitude']);
+					update_post_meta($location_id, 'longitude',			$info['longitude']);
+					update_post_meta($location_id, 'region',			$info['region']);
 
 					//save meetings to this location
 					foreach ($info['meetings'] as $meeting) {
@@ -165,20 +189,12 @@ add_action('admin_menu', function() {
 							'post_title'	=> $meeting['title'],
 							'post_type'		=> 'meetings',
 							'post_status'	=> 'publish',
-							'post_author'	=> 1,
 							'post_parent'	=> $location_id,
 							'post_content'	=> $meeting['notes'],
 						));
 						update_post_meta($meeting_id, 'day',		$meeting['day']);
 						update_post_meta($meeting_id, 'time',		$meeting['time']);
 						update_post_meta($meeting_id, 'types',		$meeting['types']);
-
-						update_post_meta($meeting_id, 'location_id',$location_id);
-						update_post_meta($meeting_id, 'location',	$info['location']);
-						update_post_meta($meeting_id, 'address',	$address);
-						update_post_meta($meeting_id, 'latitude',	$info['latitude']);
-						update_post_meta($meeting_id, 'longitude',	$info['longitude']);
-						update_post_meta($meeting_id, 'region',		$info['region']);
 
 						wp_set_post_terms($meeting_id, $regions[$info['region']], 'region');
 
