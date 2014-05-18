@@ -109,7 +109,7 @@ function meetings_get($day=false) {
 	);
 
 
-	if ($day || !empty($_POST['day'])) {
+	if ($day !== false || !empty($_POST['day'])) {
 		$meta_query[] = array(
 			'key'	=> 'day',
 			'value'	=> $day ? $day : $_POST['day'],
@@ -132,10 +132,8 @@ function meetings_get($day=false) {
 			);
 		}
 	}
-
-	//meetings_print($meta_query);	
 	
-	return get_posts(array(
+	$meetings = get_posts(array(
 	    'post_type'		=> 'meetings',
 	    'numberposts'	=> -1,
 		'meta_key'		=> 'time',
@@ -143,6 +141,29 @@ function meetings_get($day=false) {
 		'order'			=> 'asc',
 		'meta_query'	=> $meta_query,
 	));
+
+	foreach ($meetings as &$meeting) {
+		unset($meeting->post_author);
+		unset($meeting->post_date);
+		unset($meeting->post_date_gmt);
+		unset($meeting->post_excerpt);
+		unset($meeting->post_status);
+		unset($meeting->comment_status);
+		unset($meeting->ping_status);
+		unset($meeting->post_password);
+		unset($meeting->to_ping);
+		unset($meeting->pinged);
+		unset($meeting->post_content_filtered);
+		unset($meeting->menu_order);
+		unset($meeting->post_type);
+		unset($meeting->post_mime_type);
+		unset($meeting->comment_count);
+		unset($meeting->filter);
+	}
+
+	//meetings_print($meetings);
+
+	return $meetings;
 }
 
 //get meetings ajax
@@ -192,6 +213,8 @@ function meetings_map() {
 	global $regions;
 
 	$meetings = meetings_get();
+
+	//group meetings by location
 	$locations = array();
 	foreach ($meetings as &$meeting) {
 		$meeting->custom = get_post_meta($meeting->ID);
@@ -210,3 +233,12 @@ function meetings_map() {
 
 	wp_send_json($locations);
 }
+
+//future one and only api ajax function
+add_action('wp_ajax_meetings', 'api');
+add_action('wp_ajax_nopriv_meetings', 'api');
+
+function api() {
+	$meetings = meetings_get();
+	wp_send_json($meetings);
+};
