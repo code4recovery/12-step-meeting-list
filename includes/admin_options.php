@@ -144,6 +144,9 @@ add_action('admin_menu', function() {
 						}
 					}
 
+					//empty location names default to (clean) street addresses
+					if (empty($info['location'])) $info['location'] = $address;
+
 					if (!array_key_exists($formatted_address, $formatted)) {
 						//intialize empty location
 						$formatted[$formatted_address] = array(
