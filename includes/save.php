@@ -16,6 +16,7 @@ add_action('save_post', function(){
 	update_post_meta($post->ID, 'day',			$_POST['day']);
 	update_post_meta($post->ID, 'time',			$_POST['time']);
 	update_post_meta($post->ID, 'types',		$_POST['types']);
+	update_post_meta($post->ID, 'region',		$_POST['region']); //double-entry just for searching
 
 	//save location information
 	if (empty($_POST['address'])) {

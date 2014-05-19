@@ -86,14 +86,11 @@ function meetings_delete_orphaned_locations() {
 function meetings_get($arguments=array()) {
 	global $regions;
 
-	if (empty($arguments) && !empty($_POST)) $arguments = $_POST;
-
 	$meta_query = array(
 		'relation'	=> 'AND',
 	);
 
-
-	if (!empty($arguments['day'])) {
+	if (($arguments['day'] == 0) || !empty($arguments['day'])) {
 		$meta_query[] = array(
 			'key'	=> 'day',
 			'value'	=> $arguments['day'],
@@ -128,6 +125,8 @@ function meetings_get($arguments=array()) {
 		$custom = get_post_meta($post->ID);
 		$locations[$post->ID] = array(
 			'address'			=>$custom['address'][0],
+			'city'				=>$custom['city'][0],
+			'state'				=>$custom['state'][0],
 			'latitude'			=>$custom['latitude'][0],
 			'longitude'			=>$custom['longitude'][0],
 			'region_id'			=>$custom['region'][0],
@@ -163,6 +162,7 @@ function meetings_get($arguments=array()) {
 			'location_id'	=>$post->post_parent,
 			'url'			=>$post->guid,
 			'time'			=>$custom['time'][0],
+			'time_formatted'=>meetings_format_time($custom['time'][0]),
 			'day'			=>$custom['day'][0],
 			'types'			=>unserialize($custom['types'][0]),
 		), $locations[$post->post_parent]);
@@ -176,6 +176,6 @@ function meetings_get($arguments=array()) {
 add_action('wp_ajax_meetings', 'meetings_api');
 add_action('wp_ajax_nopriv_meetings', 'meetings_api');
 
-function api() {
-	wp_send_json(meetings_get());
+function meetings_api() {
+	wp_send_json(meetings_get($_POST));
 };

@@ -94,6 +94,7 @@ add_action('admin_menu', function() {
 					}
 
 					$addresses[$address]['meetings'][] = array(
+						'id'=>$id,
 						'title'=>$title,
 						'day'=>$day,
 						'time'=>$time,
@@ -119,6 +120,10 @@ add_action('admin_menu', function() {
 
 					//interpreting result
 					$data = json_decode($file);
+					/*echo '<pre>';
+					print_r($file);
+					exit;*/
+
 					$formatted_address = $data->results[0]->formatted_address;
 					$address = $city = $state = false;
 					foreach ($data->results[0]->address_components as $component) {
@@ -153,6 +158,10 @@ add_action('admin_menu', function() {
 						);
 					}
 
+					//echo '<pre>';
+					//print_r($formatted[$formatted_address]);
+					//exit;
+
 					//fill empty location title
 					if (empty($formatted[$formatted_address]['location']) && !empty($info['location'])) {
 						$formatted[$formatted_address]['location'] = $info['location'];
@@ -176,9 +185,9 @@ add_action('admin_menu', function() {
 						'post_status'	=> 'publish',
 					));
 					update_post_meta($location_id, 'formatted_address',	$formatted_address);
-					update_post_meta($location_id, 'address',			$address);
-					update_post_meta($location_id, 'city',				$city);
-					update_post_meta($location_id, 'state',				$state);
+					update_post_meta($location_id, 'address',			$info['address']);
+					update_post_meta($location_id, 'city',				$info['city']);
+					update_post_meta($location_id, 'state',				$info['state']);
 					update_post_meta($location_id, 'latitude',			$info['latitude']);
 					update_post_meta($location_id, 'longitude',			$info['longitude']);
 					update_post_meta($location_id, 'region',			$info['region']);
@@ -195,6 +204,7 @@ add_action('admin_menu', function() {
 						update_post_meta($meeting_id, 'day',		$meeting['day']);
 						update_post_meta($meeting_id, 'time',		$meeting['time']);
 						update_post_meta($meeting_id, 'types',		$meeting['types']);
+						update_post_meta($meeting_id, 'region',		$info['region']); //double-entry just for searching
 
 						wp_set_post_terms($meeting_id, $regions[$info['region']], 'region');
 
