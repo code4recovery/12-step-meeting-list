@@ -8,12 +8,15 @@ add_action('wp_ajax_location', function(){
         $title  = get_the_title($location->ID);
         $custom = get_post_meta($location->ID);
         $results[] = array(
-            'value'		=> html_entity_decode($title),
-            'address'	=> $custom['address'][0],
-            'latitude'	=> $custom['latitude'][0],
-            'longitude'	=> $custom['longitude'][0],
-            'region'	=> $custom['region'][0],
-            'tokens'	=> array_values(array_unique(explode(' ', str_replace(',', '', $title . ' ' . $custom['address'][0])))),
+            'value'				=> html_entity_decode($title),
+            'formatted_address'	=> $custom['formatted_address'][0],
+            'latitude'			=> $custom['latitude'][0],
+            'longitude'			=> $custom['longitude'][0],
+            'address'			=> $custom['address'][0],
+            'city'				=> $custom['city'][0],
+            'state'				=> $custom['state'][0],
+            'region'			=> $custom['region'][0],
+            'tokens'			=> array_values(array_unique(explode(' ', str_replace(',', '', $title . ' ' . $custom['address'][0])))),
         );
 	}
 	wp_send_json($results);
@@ -29,8 +32,6 @@ add_action('admin_init', function(){
 	wp_localize_script('meetings_admin_js', 'myAjax', array('ajaxurl'=>admin_url('admin-ajax.php')));        
 
 	remove_meta_box('tagsdiv-region', 'meetings', 'side' );
-	remove_meta_box('tagsdiv-types', 'meetings', 'side' );
-	remove_meta_box('revisionsdiv', 'meetings', 'normal' );
 
 	add_meta_box('info', 'General Info', function(){
 		global $post, $days, $types, $custom;
@@ -71,15 +72,20 @@ add_action('admin_init', function(){
 	}, 'meetings', 'normal', 'low');
 
 	add_meta_box('location', 'Location', function(){
-		global $regions, $custom;
+		global $post, $regions;
+		$parent = get_post($post->post_parent);
+		$custom = get_post_meta($post->post_parent);
 		?>
 		<div class="meta_form_row typeahead">
 			<label for="location">Location</label>
-			<input type="text" name="location" id="location" value="<?php echo $custom['location'][0]?>">
+			<input type="text" name="location" id="location" value="<?php echo $parent->post_title?>">
 		</div>
 		<div class="meta_form_row">
-			<label for="address">Address</label>
-			<input type="text" name="address" id="address" value="<?php echo $custom['address'][0]?>">
+			<label for="formatted_address">Address</label>
+			<input type="text" name="formatted_address" id="formatted_address" value="<?php echo $custom['formatted_address'][0]?>">
+			<input type="hidden" name="address" id="address" value="<?php echo $custom['address'][0]?>">
+			<input type="hidden" name="city" id="city" value="<?php echo $custom['city'][0]?>">
+			<input type="hidden" name="state" id="state" value="<?php echo $custom['state'][0]?>">
 			<input type="hidden" name="latitude" id="latitude" value="<?php echo $custom['latitude'][0]?>">
 			<input type="hidden" name="longitude" id="longitude" value="<?php echo $custom['longitude'][0]?>">
 		</div>

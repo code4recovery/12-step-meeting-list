@@ -14,25 +14,31 @@ jQuery(function(){
 		displayKey: 'value',
 		source: locations.ttAdapter()
 	}).on('typeahead:autocompleted', function($e, datum){
-		jQuery("input[name=address]").val(datum.address);
+		jQuery("input[name=formatted_address]").val(datum.formatted_address);
 		jQuery("input[name=latitude]").val(datum.latitude);
 		jQuery("input[name=longitude]").val(datum.longitude);
-		jQuery("select[name=region] option[value='" + datum.region + "']").attr("selected", "selected");
+		jQuery("input[name=address]").val(datum.address);
+		jQuery("input[name=city]").val(datum.city);
+		jQuery("input[name=state]").val(datum.state);
+		jQuery("select[name=region] option[value='" + datum.region + "']").prop("selected", true);
 		setMap(datum.latitude, datum.longitude)
 	});
 
 	//address / map
-	jQuery("input#address").blur(function(){
+	jQuery("input#formatted_address").blur(function(){
 		var val = jQuery(this).val();
 		if (!val.length) {
 			setMap();
+			jQuery("input#address").val("");
+			jQuery("input#city").val("");
+			jQuery("input#state").val("");
 			jQuery("input#latitude").val("");
 			jQuery("input#longitude").val("");
 			return;
 		}
 
 		jQuery.getJSON("https://maps.googleapis.com/maps/api/geocode/json", { address: val, sensor : false }, function(data){
-			jQuery("input#address").val(data.results[0].formatted_address);
+			jQuery("input#formatted_address").val(data.results[0].formatted_address);
 			var latitude = data.results[0].geometry.location.lat;
 			var longitude = data.results[0].geometry.location.lng;
 			jQuery("input#latitude").val(latitude);
@@ -48,6 +54,30 @@ jQuery(function(){
 						return false;
 					}
 				});
+			}
+
+			//get address, city and state
+			for (var i = 0; i < data.results[0].address_components.length; i++) {
+				var component = data.results[0].address_components[i];
+				if (component.types[0] == 'street_number') {
+					//set address as street number
+					jQuery("input#address").val(component.long_name);
+				} else if (component.types[0] == 'route') {
+					//append street name
+					jQuery("input#address").val(jQuery("input#address").val() + " " + component.long_name);
+				} else if (component.types[0] == 'locality') {
+					//set city
+					jQuery("input#city").val(component.long_name);
+				} else if (component.types[0] == 'administrative_area_level_1') {
+					//set state
+					jQuery("input#state").val(component.short_name);
+				} else if (component.types[0] == 'point_of_interest') {
+					//remove point of intrest from front of formatted_address
+					var current_value = jQuery("input#formatted_address").val();
+					if (current_value.substr(0, component.long_name.length + 2) == component.long_name + ', ') {
+						jQuery("input#formatted_address").val(current_value.substr(component.long_name.length + 2));
+					}
+				}
 			}
 		});
 	});

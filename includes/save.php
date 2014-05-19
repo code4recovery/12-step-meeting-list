@@ -41,10 +41,13 @@ add_action('save_post', function(){
 		}
 
 		//update address & info on location
-		update_post_meta($location_id, 'address',	$_POST['address']);
-		update_post_meta($location_id, 'latitude',	$_POST['latitude']);
-		update_post_meta($location_id, 'longitude',	$_POST['longitude']);
-		update_post_meta($location_id, 'region',	$_POST['region']);
+		update_post_meta($location_id, 'formatted_address',	$_POST['formatted_address']);
+		update_post_meta($location_id, 'address',			$_POST['address']);
+		update_post_meta($location_id, 'city',				$_POST['city']);
+		update_post_meta($location_id, 'state',				$_POST['state']);
+		update_post_meta($location_id, 'latitude',			$_POST['latitude']);
+		update_post_meta($location_id, 'longitude',			$_POST['longitude']);
+		update_post_meta($location_id, 'region',			$_POST['region']);
 
 		//set parent
 		wp_update_post(array(
