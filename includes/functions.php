@@ -90,7 +90,7 @@ function meetings_get($arguments=array()) {
 		'relation'	=> 'AND',
 	);
 
-	if (($arguments['day'] == 0) || !empty($arguments['day'])) {
+	if (($arguments['day'] === 0) || !empty($arguments['day'])) {
 		$meta_query[] = array(
 			'key'	=> 'day',
 			'value'	=> $arguments['day'],
