@@ -48,7 +48,7 @@ function meetings_delete_all_regions() {
 }
 
 //function: load the regions array
-//used: init & importer
+//used: init, importer and api
 function meetings_get_regions() {
 	$regions = array();
 	$region_terms = get_terms('region', 'hide_empty=0');
@@ -90,7 +90,7 @@ function meetings_get($arguments=array()) {
 		'relation'	=> 'AND',
 	);
 
-	if (($arguments['day'] === 0) || !empty($arguments['day'])) {
+	if (isset($arguments['day'])) {
 		$meta_query[] = array(
 			'key'	=> 'day',
 			'value'	=> $arguments['day'],
@@ -178,4 +178,16 @@ add_action('wp_ajax_nopriv_meetings', 'meetings_api');
 
 function meetings_api() {
 	wp_send_json(meetings_get($_POST));
+};
+
+add_action('wp_ajax_regions', 'regions_api');
+add_action('wp_ajax_nopriv_regions', 'regions_api');
+
+function regions_api() {
+	$output = array();
+	$regions = meetings_get_regions();
+	foreach ($regions as $id=>$value) {
+		$output[] = array('id'=>$id, 'value'=>$value);
+	}
+	wp_send_json($output);
 };

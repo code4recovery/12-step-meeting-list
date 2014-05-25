@@ -202,7 +202,7 @@ add_action('admin_menu', function() {
 							'post_type'		=> 'meetings',
 							'post_status'	=> 'publish',
 							'post_parent'	=> $location_id,
-							'post_content'	=> $meeting['notes'],
+							'post_content'	=> trim($meeting['notes']),
 						));
 						update_post_meta($meeting_id, 'day',		$meeting['day']);
 						update_post_meta($meeting_id, 'time',		$meeting['time']);

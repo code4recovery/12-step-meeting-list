@@ -595,3 +595,4 @@
 624	Sunday	14:00	First Things First (Women)	NTSI Building	275 North 4th Street	San Jose	CA	San Jose, Downtown	O,W	
 625	Wednesday	18:00	D.I.V.A. (Drinking Isn't Very Attractive)	First Congregational Church	1980 Hamilton & Leigh	San Jose	CA	San Jose, Willow Glen	C,W	
 626	Thursday	20:00	Page Street Firing Squad	Change Recovery House	526 Page St.	San Jose	CA	San Jose, Downtown	O,X	
+627	Thursday	12:15	Campus Group Discussion	Cottage Room, Escondido Administration Building, Cottage Room	859 Escondido Rd.	Palo Alto	CA	Palo Alto	O,W	
