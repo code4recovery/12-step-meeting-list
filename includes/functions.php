@@ -62,7 +62,11 @@ function meetings_delete_orphaned_locations() {
 
 	//get all active location_ids
 	$active = array();
-	$meetings = get_posts('post_type=meetings&numberposts=-1');
+	$meetings = get_posts(array(
+		'post_type'  =>'meetings',
+		'numberposts'=>-1,
+		'post_status'=> array('publish', 'pending', 'draft', 'auto-draft', 'future', 'private', 'inherit', 'trash'),
+	));
 	foreach ($meetings as $meeting) {
 		$active[] = $meeting->post_parent;
 	}
@@ -148,11 +152,10 @@ function meetings_get($arguments=array()) {
 	));
 
 	foreach ($posts as $post) {
+		//shouldn't happen, but just in case
+		if (empty($locations[$post->post_parent])) continue;
+
 		$custom = get_post_meta($post->ID);
-		if (empty($locations[$post->post_parent])) {
-			echo $post->post_title;
-			continue;
-		}
 		$meetings[] = array_merge(array(
 			'id'			=>$post->ID,
 			'name'			=>$post->post_title,
@@ -177,6 +180,7 @@ add_action('wp_ajax_meetings', 'meetings_api');
 add_action('wp_ajax_nopriv_meetings', 'meetings_api');
 
 function meetings_api() {
+	header('Access-Control-Allow-Origin: *');
 	wp_send_json(meetings_get($_POST));
 };
 
@@ -189,5 +193,6 @@ function regions_api() {
 	foreach ($regions as $id=>$value) {
 		$output[] = array('id'=>$id, 'value'=>$value);
 	}
+	header('Access-Control-Allow-Origin: *');
 	wp_send_json($output);
 };

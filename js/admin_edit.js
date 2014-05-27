@@ -24,6 +24,28 @@ jQuery(function(){
 		setMap(datum.latitude, datum.longitude)
 	});
 
+	/*timepicker
+	jQuery('input[type=time]').timepicker({
+		timeFormat: "hh:mm tt",
+		stepMinute: 15
+	});*/
+
+	jQuery("form#post").submit(function(){
+		var timeVal = jQuery("input[name=time]").val();
+		var errors = false;
+		if (timeVal.length != 5) errors = true;
+		if (timeVal.indexOf(':') != 2) errors = true;
+		var hours = timeVal.substr(0, 2);
+		var minutes = timeVal.substr(3, 2);
+		if (isNaN(hours) || hours < 0 || hours > 23) errors = true;
+		if (isNaN(minutes) || minutes < 0 || minutes > 59) errors = true;
+		if (errors) {
+			alert('Time should be 24-hour format HH:MM.');
+			return false;
+		}
+		return true;
+	});
+
 	//address / map
 	jQuery("input#formatted_address").blur(function(){
 		var val = jQuery(this).val();
@@ -46,15 +68,13 @@ jQuery(function(){
 			setMap(latitude, longitude);
 
 			//guess region
-			if (val != data.results[0].formatted_address) {
-				val = data.results[0].formatted_address;
-				jQuery("select#region option").each(function(){
-					if (val.indexOf(jQuery(this).text()) != -1) {
-						jQuery(this).attr("selected", "selected");
-						return false;
-					}
-				});
-			}
+			val = data.results[0].formatted_address;
+			jQuery("select#region option").each(function(){
+				if (val.indexOf(jQuery(this).text()) != -1) {
+					jQuery(this).attr("selected", "selected");
+					return false;
+				}
+			});
 
 			//get address, city and state
 			for (var i = 0; i < data.results[0].address_components.length; i++) {

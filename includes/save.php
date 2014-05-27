@@ -1,16 +1,20 @@
 <?php
 
 add_action('save_post', function(){
-	global $post;
+	global $post, $nonce;
 
-	//security, todo verify nonce
+	//security
 	if (defined('DOING_AUTOSAVE') && DOING_AUTOSAVE) return;
-	//if (!wp_verify_nonce($_POST['meetings_nonce'], plugin_basename(__FILE__))) return;
+	if (!isset($_POST['meetings_nonce'])) return;
+	if (!wp_verify_nonce($_POST['meetings_nonce'], $nonce)) return;
+	if (!current_user_can('edit_post', $post->ID)) return;
 	if ($_POST['post_type'] != 'meetings') return;
 
-
 	//todo server-side validation here (at least time)
-
+	$post_status = 'publish';
+	if (empty($_POST['time']) || empty($_POST['formatted_address'])) {
+		$_POST['post_status'] = 'draft';
+	}
 
 	//save ordinary meeting metadata
 	update_post_meta($post->ID, 'day',			$_POST['day']);
@@ -53,6 +57,7 @@ add_action('save_post', function(){
 		wp_update_post(array(
 			'ID'			=> $post->ID,
 			'post_parent'	=> $location_id,
+			'post_status'	=> $_POST['post_status'],
 		));
 
 		//clean up orphans

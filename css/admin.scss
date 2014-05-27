@@ -13,7 +13,14 @@
 	margin: 10px 0; overflow: auto; 
 	label, input, div.checkboxes, #map { float: left; line-height: 100%; } 
 	label { width: 13%; margin-right: 2%; text-align: right; font-size: 15px; line-height: 40px; white-space: nowrap; }
-	input[type=text], input[type=time], select, textarea, div.checkboxes, #map { width: 85%; margin: 0; font-size: 18px; padding: 6px; height: 40px; line-height: normal; }
+	input[type=text], input[type=time], select, textarea, div.checkboxes, #map { 
+		width: 85%; margin: 0; font-size: 18px; padding: 6px; height: 40px; line-height: normal; 
+	}
+	input, select { 
+		border: 1px solid #ccc; 
+	    border-radius: 0;
+	    -webkit-border-radius: 0;
+	}
 	input[type=radio], input[type=checkbox] { 
 		float: left;
 		&:focus { box-shadow: none; }

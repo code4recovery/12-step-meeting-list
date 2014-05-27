@@ -30,16 +30,20 @@ add_action('admin_init', function(){
 	wp_enqueue_script('meetings_admin_js', plugin_dir_url(__FILE__) . '../js/admin_edit.js', array('jquery'), '', true);
 	wp_enqueue_script('typeahead_js', plugin_dir_url(__FILE__) . '../js/typeahead.bundle.js', array('jquery'), '', true);
 	wp_localize_script('meetings_admin_js', 'myAjax', array('ajaxurl'=>admin_url('admin-ajax.php')));        
-
+	//wp_enqueue_script('timepicker', plugin_dir_url(__FILE__) . '../js/jquery-ui-timepicker-addon.js', array('jquery-ui-datepicker', 'jquery-ui-slider'));
+	//wp_enqueue_style('jquery-ui', plugin_dir_url(__FILE__) . '../css/jquery-ui-1.10.4.custom.min.css');
 	remove_meta_box('tagsdiv-region', 'meetings', 'side' );
 
 	add_meta_box('info', 'General Info', function(){
-		global $post, $days, $types, $custom;
+		global $post, $days, $types, $custom, $nonce;
 
 		//get post metadata
 		$custom 	= get_post_custom($post->ID);
 		$custom['types'] = unserialize($custom['types'][0]);
 		if (!is_array($custom['types'])) $custom['types'] = array();
+
+		//nonce field
+		wp_nonce_field($nonce, 'meetings_nonce', false);
 		?>
 		<div class="meta_form_row">
 			<label for="day">Day</label>

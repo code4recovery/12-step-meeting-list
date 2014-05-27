@@ -26,6 +26,10 @@
     padding: 6px;
     height: 40px;
     line-height: normal; }
+  .wp-admin .meta_form_row input, .wp-admin .meta_form_row select {
+    border: 1px solid #ccc;
+    border-radius: 0;
+    -webkit-border-radius: 0; }
   .wp-admin .meta_form_row input[type=radio], .wp-admin .meta_form_row input[type=checkbox] {
     float: left; }
     .wp-admin .meta_form_row input[type=radio]:focus, .wp-admin .meta_form_row input[type=checkbox]:focus {

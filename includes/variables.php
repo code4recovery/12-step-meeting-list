@@ -27,3 +27,4 @@ $types = array(
 
 $regions = $custom = array();
 
+$nonce = plugin_basename(__FILE__);
