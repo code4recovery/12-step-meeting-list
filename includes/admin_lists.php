@@ -1,6 +1,6 @@
 <?php
 
-//add custom column headers
+# Custom columns for meetings
 add_filter('manage_edit-meetings_columns', function($defaults){
     return array(
     	'cb'		=>'<input type="checkbox" />',
@@ -12,8 +12,17 @@ add_filter('manage_edit-meetings_columns', function($defaults){
     );	
 });
 
+# Custom columns for locations
+add_filter('manage_edit-locations_columns', function($defaults){
+    return array(
+    	'title'		=> 'Title',
+    	'address'	=> 'Address',
+    	'city'		=> 'City',
+    	'date'		=> 'Date'
+    );	
+});
 
-//add custom columns
+# Custom list values for meetings
 add_action('manage_meetings_posts_custom_column', function($column_name, $post_ID){
 	global $days, $regions;
 	if ($column_name == 'day') {
@@ -25,8 +34,16 @@ add_action('manage_meetings_posts_custom_column', function($column_name, $post_I
 	}
 }, 10, 2);
 
+# Custom list values for locations
+add_action('manage_locations_posts_custom_column', function ($column_name, $post_ID) {
+	if ($column_name == 'address') {
+		echo get_post_meta($post_ID, 'address', true);
+	} elseif ($column_name == 'city') {
+		echo get_post_meta($post_ID, 'city', true);
+	}
+}, 10, 2);
 
-//set custom columns to be sortable
+# Set custom meetings columns to be sortable
 add_filter('manage_edit-meetings_sortable_columns', function($columns){
 	$columns['day']		= 'day';
 	$columns['time']	= 'time';
@@ -34,8 +51,7 @@ add_filter('manage_edit-meetings_sortable_columns', function($columns){
 	return $columns;
 });
 
-
-//apply sorting
+# Apply sorting
 add_filter('request', function($vars) {
     if (isset($vars['orderby'])) {
     	switch($vars['orderby']) {
@@ -59,8 +75,7 @@ add_filter('request', function($vars) {
     return $vars;
 });
 
-
-//remove quick edit
+//remove quick edit because meetings could get messed up without custom fields
 if (is_admin()) {
 	add_filter('post_row_actions',function($actions) {
 		global $post;
@@ -110,13 +125,3 @@ add_filter('parse_query', function() {
     }
 });
 */
-
-
-//locations page
-add_filter('manage_edit-locations_columns', function($defaults){
-    return array(
-    	'title' => 'Title',
-    	'date' => 'Date'
-    );	
-});
-

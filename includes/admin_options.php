@@ -54,6 +54,32 @@ add_action('admin_menu', function() {
 						$location = 'Panera Bread';
 					}
 
+					if (trim(strtolower($location)) == 'forged from adversity group') {
+						$address = '1025 The Dalles Ave';
+					}
+
+					if (trim(strtolower($location)) == 'south county fellowship') {
+						$address = '17666 Crest Ave';
+					}
+
+					if (($id == 27) || ($id == 43)) {
+						$address = '1040 Border Rd';
+					} elseif ($id == 178) {
+						$location = 'Stanford Work Life Center Bldg';
+						$address = '845 Escondido Road';
+					} elseif ($id == 181) {
+						$location = 'Mental Health Services';
+						$address = '231 Grant Ave';
+					} elseif ($id == 423) {
+						$location = 'Mt. Olive Lutheran Church';
+						$address = '1989 E Calaveras Blvd';
+					} elseif ($id == 460) {
+						$location = 'Knights of Columbus';
+						$address = '2211 Shamrock Dr';
+					} elseif ($id == 627) {
+						$location = 'Escondido Administration Building, Cottage Room';
+					}
+
 					//day
 					if (!in_array($day, $days)) die('day ' . $day . ' not valid day for id ' . $id);
 					$day = array_search($day, $days);
