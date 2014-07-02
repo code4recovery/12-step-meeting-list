@@ -149,6 +149,7 @@ function meetings_get($arguments=array()) {
 		'orderby'		=> 'meta_value',
 		'order'			=> 'asc',
 		'meta_query'	=> $meta_query,
+		's'				=> $arguments['search'],
 	));
 
 	foreach ($posts as $post) {
