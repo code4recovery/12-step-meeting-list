@@ -172,6 +172,21 @@ function meetings_get($arguments=array()) {
 		), $locations[$post->post_parent]);
 	}
 
+	# Because you can't yet order by multiple meta_keys, manually sort the days
+	if (!isset($arguments['day'])) {
+		$days = array();
+		foreach ($meetings as $meeting) {
+			if (!isset($days[$meeting['day']])) $days[$meeting['day']] = array();
+			$days[$meeting['day']][] = $meeting;
+		}
+		$meetings = array();
+		$day_keys = array_keys($days);
+		sort($day_keys);
+		foreach ($day_keys as $day) {
+			$meetings = array_merge($meetings, $days[$day]);
+		}
+	}
+
 	return $meetings;
 }
 
