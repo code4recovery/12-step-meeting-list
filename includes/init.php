@@ -39,7 +39,7 @@ add_action('init', function(){
 			),
 	        'taxonomies'	=>	array('region'),
 			'supports'		=> array('title', 'revisions'),
-			'public'		=> false,
+			'public'		=> true,
 			'show_ui'		=> true,
 			'has_archive'	=> true,
 			'show_in_menu'	=> 'edit.php?post_type=meetings',

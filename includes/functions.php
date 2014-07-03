@@ -94,6 +94,8 @@ function meetings_get($arguments=array()) {
 		'relation'	=> 'AND',
 	);
 
+	if (!isset($arguments['location_id'])) $arguments['location_id'] = null;
+
 	if (isset($arguments['day'])) {
 		$meta_query[] = array(
 			'key'	=> 'day',
@@ -136,7 +138,7 @@ function meetings_get($arguments=array()) {
 			'region_id'			=>$custom['region'][0],
 			'region'			=>$regions[$custom['region'][0]],
 			'location'			=>$post->post_title,
-			'location_url'		=>$post->guid,
+			'location_url'		=>parse_url($post->guid, PHP_URL_PATH),
 			'location_slug'		=>$post->post_name,
 			'location_updated'	=>$post->post_modified_gmt,
 		);
@@ -150,6 +152,7 @@ function meetings_get($arguments=array()) {
 		'order'			=> 'asc',
 		'meta_query'	=> $meta_query,
 		's'				=> $arguments['search'],
+		'post_parent'	=> $arguments['location_id'],
 	));
 
 	foreach ($posts as $post) {
@@ -164,7 +167,7 @@ function meetings_get($arguments=array()) {
 			'notes'			=>$post->post_content,
 			'updated'		=>$post->post_modified_gmt,
 			'location_id'	=>$post->post_parent,
-			'url'			=>$post->guid,
+			'url'			=>parse_url($post->guid, PHP_URL_PATH),
 			'time'			=>$custom['time'][0],
 			'time_formatted'=>meetings_format_time($custom['time'][0]),
 			'day'			=>$custom['day'][0],
