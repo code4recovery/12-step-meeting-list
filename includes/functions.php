@@ -122,6 +122,7 @@ function meetings_get($arguments=array()) {
 	
 	$meetings = $locations = array();
 
+	//build locations array
 	$posts = get_posts(array(
 	    'post_type'		=> 'locations',
 	    'numberposts'	=> -1,
@@ -138,12 +139,13 @@ function meetings_get($arguments=array()) {
 			'region_id'			=>$custom['region'][0],
 			'region'			=>$regions[$custom['region'][0]],
 			'location'			=>$post->post_title,
-			'location_url'		=>parse_url($post->guid, PHP_URL_PATH),
+			'location_url'		=>get_permalink($post->ID),
 			'location_slug'		=>$post->post_name,
 			'location_updated'	=>$post->post_modified_gmt,
 		);
 	}
 
+	//build meetings array
 	$posts = get_posts(array(
 	    'post_type'		=> 'meetings',
 	    'numberposts'	=> -1,
@@ -156,7 +158,7 @@ function meetings_get($arguments=array()) {
 	));
 
 	foreach ($posts as $post) {
-		//shouldn't happen, but just in case
+		//shouldn't ever happen, but just in case
 		if (empty($locations[$post->post_parent])) continue;
 
 		$custom = get_post_meta($post->ID);
@@ -167,7 +169,7 @@ function meetings_get($arguments=array()) {
 			'notes'			=>$post->post_content,
 			'updated'		=>$post->post_modified_gmt,
 			'location_id'	=>$post->post_parent,
-			'url'			=>parse_url($post->guid, PHP_URL_PATH),
+			'url'			=>get_permalink($post->ID),
 			'time'			=>$custom['time'][0],
 			'time_formatted'=>meetings_format_time($custom['time'][0]),
 			'day'			=>$custom['day'][0],
