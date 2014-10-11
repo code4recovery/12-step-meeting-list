@@ -90,6 +90,9 @@ function meetings_delete_orphaned_locations() {
 function meetings_get($arguments=array()) {
 	global $regions;
 
+	//debugging
+	//$arguments = $_GET;
+
 	$meta_query = array(
 		'relation'	=> 'AND',
 	);
@@ -122,12 +125,13 @@ function meetings_get($arguments=array()) {
 	
 	$meetings = $locations = array();
 
-	//build locations array
+	# Get all locations
 	$posts = get_posts(array(
-	    'post_type'		=> 'locations',
-	    'numberposts'	=> -1,
+		'post_type'		=> 'locations',
+		'numberposts'	=> -1,
 	));
 
+	# Make an array of all locations
 	foreach ($posts as $post) {
 		$custom = get_post_meta($post->ID);
 		$locations[$post->ID] = array(
@@ -145,18 +149,46 @@ function meetings_get($arguments=array()) {
 		);
 	}
 
-	//build meetings array
+	# If searching, three extra queries
+	$post_ids = array();
+	if (!empty($arguments['search'])) {
+		$post_ids = get_posts(array(
+			'post_type'			=> 'meetings',
+			'numberposts'		=> -1,
+			's'					=> $arguments['search'],
+			'fields'			=> 'ids',
+		));
+		$parents = get_posts(array(
+			'post_type'			=> 'locations',
+			'numberposts'		=> -1,
+			's'					=> $arguments['search'],
+			'fields'			=> 'ids',
+		));
+		if (count($parents)) {
+			$children = get_posts(array(
+				'post_type'			=> 'meetings',
+				'numberposts'		=> -1,
+				'post_parent__in'	=> $parents,
+				'fields'			=> 'ids',
+			));
+			$post_ids = array_unique(array_merge($post_ids, $children));
+		}
+	}
+
+	# Search meetings
 	$posts = get_posts(array(
-	    'post_type'		=> 'meetings',
-	    'numberposts'	=> -1,
+		'post_type'		=> 'meetings',
+		'numberposts'	=> -1,
 		'meta_key'		=> 'time',
 		'orderby'		=> 'meta_value',
 		'order'			=> 'asc',
 		'meta_query'	=> $meta_query,
-		's'				=> $arguments['search'],
+		//'s'				=> $arguments['search'],
+		'post__in'		=> $post_ids,
 		'post_parent'	=> $arguments['location_id'],
 	));
 
+	# Make an array of the meetings
 	foreach ($posts as $post) {
 		//shouldn't ever happen, but just in case
 		if (empty($locations[$post->post_parent])) continue;
