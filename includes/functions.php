@@ -237,6 +237,65 @@ function meetings_api() {
 	wp_send_json(meetings_get($_POST));
 };
 
+//csv function
+//made by request from intergroup chair
+add_action('wp_ajax_csv', 'meetings_csv');
+add_action('wp_ajax_nopriv_csv', 'meetings_csv');
+
+function meetings_csv() {
+
+	//going to need this later
+	global $days;
+
+	//get data source
+	$meetings = meetings_get();
+
+	//define columns to output
+	$columns = array(
+		'time' =>		'Time',
+		'day' =>		'Day',
+		'name' =>		'Name',
+		'location' =>	'Location',
+		'address' =>	'Address',
+		'city' =>		'City',
+		'state' =>		'State',
+		'region' =>		'Region',
+	);
+
+	//helper vars
+	$delimiter = ",";
+	$line_ending = "\r\n";
+	$escape = '"';
+	
+	//do header
+	$return = implode($delimiter, array_values($columns)) . $line_ending;
+
+	//append meetings
+	foreach ($meetings as $meeting) {
+		$line = array();
+		foreach ($columns as $column=>$value) {
+			if ($column == 'day') {
+				$line[] = $days[$meeting[$column]];
+			} else {
+				$line[] = $escape . str_replace($escape, '', $meeting[$column]) . $escape;
+			}
+		}
+		$return .= implode($delimiter, $line) . $line_ending;
+	}
+
+	//headers to trigger file download
+	header('Cache-Control: maxage=1');
+	header('Pragma: public');
+	header('Content-Description: File Transfer');
+	header('Content-Type: text/plain');
+	header('Content-Length: ' . strlen($return));
+	header('Content-Disposition: attachment; filename="meetings.csv"');
+	
+	//output
+	die($return);
+};
+
+//todo: consider whether we really need this
 add_action('wp_ajax_regions', 'regions_api');
 add_action('wp_ajax_nopriv_regions', 'regions_api');
 

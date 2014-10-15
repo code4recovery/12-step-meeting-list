@@ -1,12 +1,12 @@
 <?php
 /**
- * Plugin Name: Meetings
- * Plugin URI: https://github.com/intergroup/plugin
- * Description: CMS for maintaining database of meetings and locations
- * Version: 1.0
- * Author: Santa Clara County Intergroup
- * Author URI: http://aasanjose.org
- * License: none
+ * Plugin Name:	Meetings
+ * Plugin URI:	github.com/intergroup/plugin
+ * Description:	CMS for maintaining database of meetings and locations
+ * Version:		1.0
+ * Author:		Santa Clara County Intergroup
+ * Author URI:	aasanjose.org
+ * License:		none
  */
 
 include('includes/variables.php');
