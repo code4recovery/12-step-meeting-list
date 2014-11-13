@@ -20,6 +20,7 @@ $types = array(
 	'M'=>'Men Only', 
 	'O'=>'Open',
 	'S'=>'Spanish',
+	'T'=>'Transgender',
 	'X'=>'Wheelchair Accessible',
 	'W'=>'Women Only',
 	'Y'=>'Young People',
