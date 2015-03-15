@@ -227,6 +227,37 @@ function meetings_get($arguments=array()) {
 	return $meetings;
 }
 
+//get all locations
+function locations_get() {
+	$locations = array();
+	
+	# Get all locations
+	$posts = get_posts(array(
+		'post_type'		=> 'locations',
+		'numberposts'	=> -1,
+	));
+
+	# Make an array of all locations
+	foreach ($posts as $post) {
+		$custom = get_post_meta($post->ID);
+		$locations[] = array(
+			'location'			=>$post->post_title,
+			'address'			=>$custom['address'][0],
+			'city'				=>$custom['city'][0],
+			'state'				=>$custom['state'][0],
+			'latitude'			=>$custom['latitude'][0],
+			'longitude'			=>$custom['longitude'][0],
+			'region_id'			=>$custom['region'][0],
+			'region'			=>$regions[$custom['region'][0]],
+			'location_url'		=>get_permalink($post->ID),
+			'location_slug'		=>$post->post_name,
+			'location_updated'	=>$post->post_modified_gmt,
+		);
+	}
+	
+	return $locations;
+}
+
 //api ajax function
 //used by theme and app
 add_action('wp_ajax_meetings', 'meetings_api');
@@ -235,6 +266,16 @@ add_action('wp_ajax_nopriv_meetings', 'meetings_api');
 function meetings_api() {
 	header('Access-Control-Allow-Origin: *');
 	wp_send_json(meetings_get($_POST));
+};
+
+//api ajax function
+//used by ios
+add_action('wp_ajax_locations', 'locations_api');
+add_action('wp_ajax_nopriv_locations', 'locations_api');
+
+function locations_api() {
+	header('Access-Control-Allow-Origin: *');
+	wp_send_json(locations_get($_POST));
 };
 
 //csv function
