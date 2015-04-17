@@ -229,6 +229,8 @@ function meetings_get($arguments=array()) {
 
 //get all locations
 function locations_get() {
+	global $regions;
+
 	$locations = array();
 	
 	# Get all locations
@@ -241,6 +243,7 @@ function locations_get() {
 	foreach ($posts as $post) {
 		$custom = get_post_meta($post->ID);
 		$locations[] = array(
+			'id'				=>$post->ID,
 			'location'			=>$post->post_title,
 			'address'			=>$custom['address'][0],
 			'city'				=>$custom['city'][0],
