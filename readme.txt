@@ -3,7 +3,7 @@ Contributors: joshreisner
 Tags: meetings, aa, na, 12-step, locations
 Requires at least: 3.2
 Tested up to: 4.2
-Stable tag: 1.10.7
+Stable tag: 1.0
 
 This plugin is for maintaining database of meetings and locations. Has 
 address standardization features.
@@ -39,8 +39,4 @@ Some notes:
 == Changelog ==
 
 = 1.0 =
-* A change since the previous version.
-* Another change.
-
-= 0.5 =
-* List versions from most recent at top to oldest at bottom.
+* Preparing for submission to the WordPress plugins directory
