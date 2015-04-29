@@ -21,9 +21,10 @@ Some notes:
 * You can fill in a very basic address and then when you leave that field you will see it try to standardize the address for you. it means you write "1000 trancas, napa" and it will come back with "1000 Trancas Street, Napa, CA 94558, USA"
 
 == Installation ==
-1. upload files to your plugin folder
-2. activate plugin
-3. you may use the meetings_get() function in your theme
+1. Upload files to your plugin folder.
+2. Activate plugin.
+3. Enter meetings.
+4. The meetings archive should now be displaying data. You may also use the meetings_get() tag.
 
 == Frequently Asked Questions ==
 
