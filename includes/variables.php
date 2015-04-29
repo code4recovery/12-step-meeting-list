@@ -27,6 +27,19 @@ $types = array(
 	'Y'=>'Young People',
 );
 
+$programs = array(
+	'AA' => 'Alcoholics Anonymous',
+	'Al-Anon' => 'Al-Anon/Alateen',
+	'CA' => 'Cocaine Anonymous',
+	'CMA' => 'Crystal Meth Anonymous',
+	'DA' => 'Debtors Anonymous',
+	'GA' => 'Gamblers Anonymous',
+	'HA' => 'Heroin Anonymous',
+	'MA' => 'Marijuana Anonymous',
+	'NA' => 'Narcotics Anonymous',
+	'SLAA' => 'Sex and Love Addicts Anonymous',
+);
+
 $regions = $custom = array();
 
 $nonce = plugin_basename(__FILE__);

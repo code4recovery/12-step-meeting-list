@@ -1,5 +1,17 @@
 <?php
 
+//function: sanitize data passed from admin form to setting
+//used:		init.php (register_setting())
+function meetings_callback_share($post_data) {
+	return (empty($post_data)) ? 0 : 1;
+}
+
+//function: sanitize data passed from admin form to setting
+//used:		init.php (register_setting())
+function meetings_callback_program($post_data) {
+	return ($post_data == 'other') ? $_POST['other'] : $post_data;
+}
+
 //function: takes 18:30 and returns 6:30 p.m.
 //used:		meetings_get and theme
 function meetings_format_time($string) {

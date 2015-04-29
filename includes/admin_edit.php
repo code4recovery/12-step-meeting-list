@@ -90,6 +90,7 @@ add_action('admin_init', function(){
 			<input type="hidden" name="address" id="address" value="<?php echo $custom['address'][0]?>">
 			<input type="hidden" name="city" id="city" value="<?php echo $custom['city'][0]?>">
 			<input type="hidden" name="state" id="state" value="<?php echo $custom['state'][0]?>">
+			<input type="hidden" name="country" id="country" value="<?php echo $custom['country'][0]?>">
 			<input type="hidden" name="latitude" id="latitude" value="<?php echo $custom['latitude'][0]?>">
 			<input type="hidden" name="longitude" id="longitude" value="<?php echo $custom['longitude'][0]?>">
 		</div>

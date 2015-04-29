@@ -20,6 +20,7 @@ jQuery(function(){
 		jQuery("input[name=address]").val(datum.address);
 		jQuery("input[name=city]").val(datum.city);
 		jQuery("input[name=state]").val(datum.state);
+		jQuery("input[name=country]").val(datum.country);
 		jQuery("select[name=region] option[value='" + datum.region + "']").prop("selected", true);
 		setMap(datum.latitude, datum.longitude)
 	});
@@ -54,6 +55,7 @@ jQuery(function(){
 			jQuery("input#address").val("");
 			jQuery("input#city").val("");
 			jQuery("input#state").val("");
+			jQuery("input#country").val("");
 			jQuery("input#latitude").val("");
 			jQuery("input#longitude").val("");
 			return;
@@ -75,7 +77,7 @@ jQuery(function(){
 					return false;
 				}
 			});
-
+			
 			//get address, city and state
 			for (var i = 0; i < data.results[0].address_components.length; i++) {
 				var component = data.results[0].address_components[i];
@@ -91,6 +93,9 @@ jQuery(function(){
 				} else if (component.types[0] == 'administrative_area_level_1') {
 					//set state
 					jQuery("input#state").val(component.short_name);
+				} else if (component.types[0] == 'country') {
+					//set country
+					jQuery("input#country").val(component.short_name);
 				} else if (component.types[0] == 'point_of_interest') {
 					//remove point of intrest from front of formatted_address
 					var current_value = jQuery("input#formatted_address").val();
