@@ -47,4 +47,12 @@ add_action('init', function(){
 			'capabilities'	=> array('create_posts'=>false),
 		)
 	);
+
+	add_filter('archive_template', function($template) {
+		if (is_post_type_archive('meetings')) {
+			$template = dirname(__FILE__) . '/../templates/archive-meetings.php';
+		}
+		return $template;
+	});
+	
 });	

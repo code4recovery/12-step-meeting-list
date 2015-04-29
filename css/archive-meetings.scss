@@ -1,0 +1,190 @@
+$gray:			#aaaaaa;
+$black:			#333;
+$white: 		#fdfdfc;
+$margin:		15px;
+
+//for fullscreen
+body {
+	position: relative;
+	.site-main { position: static; }
+}
+
+mark {
+	background-color: #ff6;
+}
+
+input:focus, button:focus {
+	outline: 0;	
+}
+
+.infowindow {
+	width: 234px;
+	max-height: 250px;
+	padding-bottom: 5px;
+	h3 {
+		margin: 0 0 $margin 0;
+	}
+	h5 {
+		margin: 0 0 5px 0;
+	}
+	a {
+		color: inherit;
+		&.btn-primary {
+			color: #fff;
+		}
+		small::before {
+			content: " / "
+		}
+	}
+	p {
+		margin-bottom: $margin;
+		&:last-child {
+			margin-bottom: 0;
+		}
+	}
+	dl {
+		overflow: auto;
+		margin: 0;
+		dt, dd {
+			float: left;			
+		}
+		dt {
+			color: $gray;
+			font-weight: normal;
+			width: 62px;
+			clear: left;
+			margin-right: 6px;
+			text-align: right;
+		}
+		dd {
+			width: 166px;
+		}
+	}
+}
+
+/* meetings */
+#meetings {
+	min-height: 500px;
+	margin: $margin auto;
+
+	.controls {
+		margin-top: $margin;
+		min-height: 34px;
+		form, .dropdown {
+			margin-bottom: $margin;
+		}
+		ul {
+			min-width: 100%;
+		}
+		.btn-group {
+			margin-left: $margin;
+		}
+	}
+
+	.results {
+		min-height: 600px;
+		margin-bottom: -60px;
+
+		h1 small {
+			font-size: inherit;
+			&::before {
+				content: " / ";
+			}
+		}
+		
+		table {
+			width: 100%;
+			display: none;
+			thead tr th {
+				line-height: 1;
+				padding-top: 0;
+				text-transform: none;
+			}
+			.region, .address {
+				display: none;
+			}
+			.time {
+				padding-left: 15px;
+				white-space: nowrap;
+			}
+			small {
+				color: $black;
+				&::before {
+					content: " / ";
+				}
+			}
+		}
+			
+		#map {
+			height: 600px;
+			background-color: darken($white, 10%);
+			display: none;
+			margin: 0;
+		}
+	}
+
+	&.fullscreen {
+		position: fixed;
+		padding: 0 $margin;
+		background-color: $white;
+		top: 0;
+		bottom: 0;
+		left: 0;
+		right: 0;
+		z-index: 100;
+		#action {
+			display: none;
+		}
+		#map_options {
+			display: none;
+		}
+	}
+
+	&[data-type=map] {
+		#map {
+			display: block;
+		}
+		#map_options {
+			display: block;
+		}
+	}
+
+	&[data-type=list] {
+		table {
+			display: table;
+		}
+		#map_options {
+			display: none;
+		}
+	}
+}
+
+body.admin-bar {
+	#meetings.fullscreen {
+		padding-top: 32px;
+	}
+}
+
+
+/* Small devices (tablets, 768px and up) */
+@media (min-width: 768px) {
+	#meetings .results table {
+		margin: 0;
+		.region {
+			display: table-cell;
+		}
+	}
+}
+
+
+/* Medium devices (desktops, 992px and up) */
+@media (min-width: 992px) {
+	
+}
+
+/* Large devices (large desktops, 1200px and up) */
+@media (min-width: 1200px) {
+	#meetings .results table .address {
+		display: table-cell;
+	}
+}

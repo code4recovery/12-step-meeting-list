@@ -13,6 +13,17 @@ function meetings_format_time($string) {
 	return $hours . ':' . $minutes . ' ' . $ampm;
 }
 
+//function:	appends men or women if type present
+//used:		archive-meetings.php
+function meetings_name($name, $types) {
+	if (in_array('M', $types)) {
+		$name .= ' <small>Men</small>';
+	} elseif (in_array('W', $types)) {
+		$name .= ' <small>Women</small>';
+	}
+	return $name;
+}
+
 //function: deletes all the locations in the database
 //used:		importer
 function meetings_delete_all_locations() {
@@ -205,7 +216,7 @@ function meetings_get($arguments=array()) {
 			'time'			=>$custom['time'][0],
 			'time_formatted'=>meetings_format_time($custom['time'][0]),
 			'day'			=>$custom['day'][0],
-			'types'			=>unserialize($custom['types'][0]),
+			'types'			=>empty($custom['types'][0]) ? array() : unserialize($custom['types'][0]),
 		), $locations[$post->post_parent]);
 	}
 
