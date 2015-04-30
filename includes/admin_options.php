@@ -8,6 +8,10 @@ add_action('admin_init', function(){
 
 //announcement function
 add_action('meetings_announce', function(){
+
+	//user must explicitly opt in
+	if (!get_option('share')) return;
+	
 	$modified  = get_posts('orderby=modified&sort_order=desc&posts_per_page=1');
 	$meetings  = wp_count_posts('meetings');
 	$locations = wp_count_posts('locations');
@@ -20,7 +24,6 @@ add_action('meetings_announce', function(){
 			'meetings'	=> $meetings->publish,
 			'locations'	=> $locations->publish,
 			'updated'	=> $modified[0]->post_modified_gmt,
-			'share'		=> get_option('share'),
 			'program'	=> get_option('program'),
 		))
 	);
@@ -28,13 +31,6 @@ add_action('meetings_announce', function(){
 
 add_action('admin_menu', function() {
 
-	//schedule daily announce event if sharing
-	if (get_option('share')) {
-		wp_schedule_event(time(), 'daily', 'meetings_announce');
-	} else {
-		wp_clear_scheduled_hook('meetings_announce');			
-	}
-	
 	//import text file
 	add_options_page('Meetings Options', 'Meetings', 'manage_options', 'meetings', function(){
 		global $programs;

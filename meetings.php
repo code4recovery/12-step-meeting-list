@@ -9,6 +9,7 @@
  * License:		none
  */
 
+//include key files
 include('includes/variables.php');
 
 include('includes/functions.php');
@@ -22,3 +23,13 @@ include('includes/save.php');
 include('includes/admin_lists.php');
 
 include('includes/admin_options.php');
+
+
+//these hooks are easier in this file
+register_activation_hook(__FILE__, function(){
+	wp_schedule_event(time(), 'daily', 'meetings_announce');
+});
+
+register_deactivation_hook(__FILE__, function(){
+	wp_clear_scheduled_hook('meetings_announce');
+});
