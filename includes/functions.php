@@ -9,7 +9,7 @@ function md_assets($context) {
 	
 	if ($context == 'public') {
 		wp_enqueue_style('bootstrap_css', plugin_dir_url(__DIR__ . '/../css') . '/css/bootstrap.min.css');
-		wp_enqueue_script('bootstrap_js', plugin_dir_url(__DIR__ . '/../js') . '/css/bootstrap.min.js', array('jquery'), '', true);
+		wp_enqueue_script('bootstrap_js', plugin_dir_url(__DIR__ . '/../js') . '/js/bootstrap.min.js', array('jquery'), '', true);
 		wp_enqueue_script('md_public_js', plugin_dir_url(__DIR__ . '/../js') . '/js/archive-meetings.js', array('jquery'), '', true);
 		wp_localize_script('md_public_js', 'myAjax', array('ajaxurl' => admin_url('admin-ajax.php')));
 		wp_enqueue_style('md_public_css', plugin_dir_url(__DIR__ . '/../css') . '/css/archive-meetings.min.css');		
