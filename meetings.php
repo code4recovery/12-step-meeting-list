@@ -32,4 +32,5 @@ register_activation_hook(__FILE__, function(){
 
 register_deactivation_hook(__FILE__, function(){
 	wp_clear_scheduled_hook('meetings_announce');
+	flush_rewrite_rules();
 });
