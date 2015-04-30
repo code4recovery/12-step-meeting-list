@@ -5,6 +5,7 @@ wp_enqueue_style('bootstrap-css', '//maxcdn.bootstrapcdn.com/bootstrap/3.3.4/css
 wp_enqueue_script('bootstrap-js', '//maxcdn.bootstrapcdn.com/bootstrap/3.3.4/js/bootstrap.min.js', array('jquery'));
 wp_enqueue_script('google_maps-js',	'//maps.googleapis.com/maps/api/js?sensor=false');
 wp_enqueue_script('main.js', plugin_dir_url(__DIR__ . '/../js') . '/js/archive-meetings.js');
+wp_localize_script('main.js', 'meetings', array('ajaxurl' => admin_url('admin-ajax.php')));
 wp_enqueue_style('main.css', plugin_dir_url(__DIR__ . '/../css') . '/css/archive-meetings.min.css');
 
 get_header();

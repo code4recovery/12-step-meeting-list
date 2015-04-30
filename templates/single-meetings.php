@@ -14,7 +14,7 @@ get_header(); ?>
 		
 			<?php 
 			$custom = get_post_meta($post->ID);
-			$custom['types'][0] = unserialize($custom['types'][0]);
+			$custom['types'][0] = empty($custom['types'][0]) ? [] : unserialize($custom['types'][0]);
 			$parent = get_post($post->post_parent);
 			$custom = array_merge($custom, get_post_meta($parent->ID));
 			?>
@@ -41,10 +41,12 @@ get_header(); ?>
 						<dd><?php echo $regions[$custom['region'][0]]?></dd>
 						<br>
 						<?php 
-						foreach ($custom['types'][0] as &$type) $type = $types[trim($type)];
-						?>
-						<dt>Type</dt>
-						<dd><?php echo implode(', ', $custom['types'][0])?></dd>
+						if (count($custom['types'][0])) {
+							foreach ($custom['types'][0] as &$type) $type = $types[trim($type)];
+							?>
+							<dt>Type</dt>
+							<dd><?php echo implode(', ', $custom['types'][0])?></dd>
+						<?php }?>
 						<?php if (!empty($post->post_content)) {?>
 						<br>
 						<dt>Notes</dt>

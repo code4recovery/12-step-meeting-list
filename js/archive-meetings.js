@@ -36,7 +36,7 @@ jQuery(function(){
 		});
 
 		//request new meetings result
-		jQuery.post('/wp-admin/admin-ajax.php', data, function(response){
+		jQuery.post(meetings.ajaxurl, data, function(response){
 			var tbody = jQuery("#meetings tbody").html("");
 			if (response.length) {
 				jQuery("#meetings table").removeClass("hidden");
