@@ -65,5 +65,4 @@ add_action('save_post', function(){
 		meetings_delete_orphaned_locations();
 	}
 
-
 });

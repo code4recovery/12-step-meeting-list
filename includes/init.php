@@ -61,18 +61,11 @@ add_action('init', function(){
 	add_filter('single_template', function($template) {
 		global $post;
 		if ($post->post_type == 'meetings') {
-			return dirname( __FILE__ ) . '/../templates/single-meetings.php';
+			return dirname(__FILE__) . '/../templates/single-meetings.php';
 		} elseif ($post->post_type == 'locations') {
-			return dirname( __FILE__ ) . '/../templates/single-locations.php';
+			return dirname(__FILE__) . '/../templates/single-locations.php';
 		}
 		return $template;
 	});
 
-});
-	
-	
-//for admin users
-add_action('admin_init', function(){
-	register_setting('meetings', 'share', 'meetings_callback_share');
-	register_setting('meetings', 'program', 'meetings_callback_program');
 });

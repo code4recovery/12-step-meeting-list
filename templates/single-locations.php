@@ -19,7 +19,7 @@ get_header(); ?>
 		
 			<div class="page-header">
 				<h1><?php echo $post->post_title ?></h1>
-				<a href="/meetings"><i class="glyphicon glyphicon-chevron-right"></i> Back to Meetings</a>
+				<a href="<?php echo get_post_type_archive_link('meetings'); ?>"><i class="glyphicon glyphicon-chevron-right"></i> Back to Meetings</a>
 			</div>
 
 			<div class="row location">
