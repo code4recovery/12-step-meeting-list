@@ -10,9 +10,9 @@ wp_enqueue_style('main.css', plugin_dir_url(__DIR__ . '/../css') . '/css/archive
 
 get_header();
 
-$today = date('w');
+$today = current_time('w');
 $locations = array();
-$meetings = meetings_get(array('day'=>date('w')));
+$meetings = meetings_get(array('day'=>$today));
 
 ?>
 <div id="meetings" data-type="list" class="container">
@@ -171,7 +171,7 @@ jQuery(function(){
 				<?php foreach ($location['meetings'] as $meeting) {?>
 				dl += "<dt><?php echo $meeting['time']?></dt><dd><a href='<?php echo $meeting['url']?>'><?php echo meetings_name($meeting['name'], $meeting['types'])?></a></dd>";
 				<?php }?>
-				infowindow.setContent("<div class='infowindow'><h3><a href='<?php echo $location['url']?>'><?php echo $location['name']?></a></h3><address><?php echo $location['address']?><br><?php echo $location['city_state']?></address><h5><?php echo $days[date('w')]?></h5><dl>" + dl + "</dl></div>");
+				infowindow.setContent("<div class='infowindow'><h3><a href='<?php echo $location['url']?>'><?php echo $location['name']?></a></h3><address><?php echo $location['address']?><br><?php echo $location['city_state']?></address><h5><?php echo $days[$today]?></h5><dl>" + dl + "</dl></div>");
 				infowindow.open(map, marker);
 			}
 		})(marker));					

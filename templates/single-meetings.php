@@ -14,7 +14,7 @@ get_header(); ?>
 		
 			<?php 
 			$custom = get_post_meta($post->ID);
-			$custom['types'][0] = empty($custom['types'][0]) ? [] : unserialize($custom['types'][0]);
+			$custom['types'][0] = empty($custom['types'][0]) ? array() : unserialize($custom['types'][0]);
 			$parent = get_post($post->post_parent);
 			$custom = array_merge($custom, get_post_meta($parent->ID));
 			?>

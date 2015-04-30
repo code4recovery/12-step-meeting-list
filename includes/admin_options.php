@@ -5,6 +5,8 @@ add_action('admin_menu', function() {
 	//import text file
 	add_options_page('Meetings Options', 'Meetings', 'manage_options', 'meetings', function() {
 		global $programs;
+		
+		//die(get_post_type_archive_link('meetings'));
 	    ?>
 		<div class="wrap">
 		    <h2>Meetings Settings</h2>
