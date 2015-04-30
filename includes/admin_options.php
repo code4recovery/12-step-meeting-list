@@ -2,15 +2,15 @@
 
 //register the options
 add_action('admin_init', function(){
-	register_setting('meetings', 'share', 'meetings_callback_share');
-	register_setting('meetings', 'program', 'meetings_callback_program');
+	register_setting('meetings', 'meetings_share', 'meetings_callback_share');
+	register_setting('meetings', 'meetings_program', 'meetings_callback_program');
 });
 
 //announcement function
 add_action('meetings_announce', function(){
 
 	//user must explicitly opt in
-	if (!get_option('share')) return;
+	if (!get_option('meetings_share')) return;
 	
 	$modified  = get_posts('orderby=modified&sort_order=desc&posts_per_page=1');
 	$meetings  = wp_count_posts('meetings');
@@ -54,19 +54,19 @@ add_action('admin_menu', function() {
 							<form method="post" action="options.php">
 								<?php settings_fields('meetings'); ?>
 								<?php do_settings_sections('meetings'); ?>
-								<p><label><input type="checkbox" name="share"<?php checked(get_option('share')); ?>> Yes, we would like to share our information.</label></p>
+								<p><label><input type="checkbox" name="meetings_share"<?php checked(get_option('meetings_share')); ?>> Yes, we would like to share our information.</label></p>
 								
 								<p>We are listing this type of meetings:
 								<?php foreach ($programs as $code => $description) {?>
 								<label style="display:block; margin:2px 0;">
-									<input type="radio" name="program" value="<?php echo $code; ?>"<?php checked(get_option('program') == $code); ?>>
+									<input type="radio" name="meetings_program" value="<?php echo $code; ?>"<?php checked(get_option('meetings_program') == $code); ?>>
 									<span><?php echo $description; ?></span>
 								</label>
 								<?php } ?>
 								<label style="display:block;">
-									<input type="radio" name="program" value="other"<?php checked(!in_array(get_option('program'), array_keys($programs))); ?>> 
+									<input type="radio" name="meetings_program" value="other"<?php checked(!in_array(get_option('meetings_program'), array_keys($programs))); ?>> 
 									<span>Other</span>
-									<input type="text" name="other" value="<?php if (!in_array(get_option('program'), array_keys($programs))) echo get_option('program'); ?>" style="vertical-align:top;">
+									<input type="text" name="other" value="<?php if (!in_array(get_option('meetings_program'), array_keys($programs))) echo get_option('meetings_program'); ?>" style="vertical-align:top;">
 								</label>
 								</p>
 								

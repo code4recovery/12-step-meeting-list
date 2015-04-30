@@ -1,12 +1,13 @@
 <?php
-	
+
+//check	
 if (!defined('WP_UNINSTALL_PLUGIN')) exit();
 
-//delete settings
-unregister_setting('meetings', 'share');
-unregister_setting('meetings', 'program');
 
-exit;
+//delete settings
+delete_option('meetings_share');
+delete_option('meetings_program');
+
 
 //delete taxonomy
 global $wpdb;
@@ -28,5 +29,6 @@ foreach ($locations as $location) wp_delete_post($location->ID, true);
 $meetings = get_posts('post_type=meetings&numberposts=-1');
 foreach ($meetings as $meeting) wp_delete_post($meeting->ID, true);
 
-//flush rewrite
+
+//flush rewrite once more for good measure
 flush_rewrite_rules();
