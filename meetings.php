@@ -28,6 +28,8 @@ include('includes/admin_options.php');
 //these hooks are easier in this file
 register_activation_hook(__FILE__, function(){
 	wp_schedule_event(time(), 'daily', 'meetings_announce');
+	meetings_custom_post_types();
+	flush_rewrite_rules();
 });
 
 register_deactivation_hook(__FILE__, function(){

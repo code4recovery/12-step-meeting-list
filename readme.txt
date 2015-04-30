@@ -23,8 +23,9 @@ Some notes:
 == Installation ==
 1. Upload files to your plugin folder.
 2. Activate plugin.
-3. Enter meetings.
-4. The meetings archive should now be displaying data. You may also use the meetings_get() tag.
+3. Go to Settings > Permalinks and Save Changes.
+4. Enter meetings.
+5. The meetings archive should now be displaying data. You may also use the meetings_get() tag.
 
 == Frequently Asked Questions ==
 

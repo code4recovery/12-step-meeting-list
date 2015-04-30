@@ -9,6 +9,7 @@ wp_enqueue_style('main.css', plugin_dir_url(__DIR__ . '/../css') . '/css/archive
 
 get_header(); ?>
 
+<div class="container">
 	<div class="row">
 		<div class="col-md-10 col-md-offset-1">
 		
@@ -93,5 +94,6 @@ get_header(); ?>
 		
 		</div>
 	</div>
+</div>
 
 <?php get_footer(); ?>
