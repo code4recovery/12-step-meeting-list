@@ -1,5 +1,5 @@
 === Meetings ===
-Contributors: joshreisner
+Contributors: aasanjose
 Tags: meetings, aa, na, 12-step, locations
 Requires at least: 3.2
 Tested up to: 4.2
