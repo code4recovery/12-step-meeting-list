@@ -1,11 +1,6 @@
 <?php 
 
-//get assets for page
-wp_enqueue_style('bootstrap-css', '//maxcdn.bootstrapcdn.com/bootstrap/3.3.4/css/bootstrap.min.css');
-wp_enqueue_script('bootstrap-js', '//maxcdn.bootstrapcdn.com/bootstrap/3.3.4/js/bootstrap.min.js', array('jquery'));
-wp_enqueue_script('google_maps-js',	'//maps.googleapis.com/maps/api/js?sensor=false');
-wp_enqueue_script('main.js', plugin_dir_url(__DIR__ . '/../js') . '/js/archive-meetings.js');
-wp_enqueue_style('main.css', plugin_dir_url(__DIR__ . '/../css') . '/css/archive-meetings.min.css');
+md_assets('public');
 
 get_header(); ?>
 
@@ -14,7 +9,7 @@ get_header(); ?>
 		<div class="col-md-10 col-md-offset-1">
 		
 			<?php 
-			$custom = get_post_meta($post->ID);
+			$md_custom = get_post_meta($post->ID);
 			$parent = get_post($post->post_parent);
 			?>
 		
@@ -27,23 +22,23 @@ get_header(); ?>
 				<div class="col-md-4 meta">
 					<dl>
 						<dt>Location</dt>
-						<dd><?php echo $custom['address'][0]?><br><?php echo $custom['city'][0]?>, <?php echo $custom['state'][0]?></dd>
+						<dd><?php echo $md_custom['address'][0]?><br><?php echo $md_custom['city'][0]?>, <?php echo $md_custom['state'][0]?></dd>
 
 						<dt>Region</dt>
-						<dd><?php echo $regions[$custom['region'][0]]?></dd>
+						<dd><?php echo $md_regions[$md_custom['region'][0]]?></dd>
 						<?php if (!empty($post->post_content)) {?>
 
 						<dt>Notes</dt>
 						<dd><?php echo nl2br($post->post_content)?></dd>
 						<?php } 
-						$meetings = meetings_get(array('location_id'=>$post->ID));
-						$days = array();
+						$meetings = md_get_meetings(array('location_id'=>$post->ID));
+						$md_days = array();
 						foreach ($meetings as $meeting) {
-							if (!isset($days[$meeting['day']])) $days[$meeting['day']] = array();
-							$days[$meeting['day']][] = '<li><span>' . $meeting['time_formatted'] . '</span> <a href="' . $meeting['url'] . '">'. meetings_name($meeting['name'], $meeting['types']) . '</a></li>';
+							if (!isset($md_days[$meeting['day']])) $md_days[$meeting['day']] = array();
+							$md_days[$meeting['day']][] = '<li><span>' . $meeting['time_formatted'] . '</span> <a href="' . $meeting['url'] . '">'. md_format_name($meeting['name'], $meeting['types']) . '</a></li>';
 						}
-						ksort($days);
-						foreach ($days as $day=>$meetings) {
+						ksort($md_days);
+						foreach ($md_days as $day=>$meetings) {
 							echo '<dt>' . $aasj_days[$day] . '</dt><dd><ul>' . implode($meetings) . '</ul></dd>';
 						}
 						?>
@@ -61,14 +56,14 @@ get_header(); ?>
 								panControl: false,
 								mapTypeControl: false,
 								zoomControlOptions: { style: google.maps.ZoomControlStyle.SMALL },
-								center: new google.maps.LatLng(<?php echo $custom['latitude'][0] + .0025 ?>,<?php echo $custom['longitude'][0]?>),
+								center: new google.maps.LatLng(<?php echo $md_custom['latitude'][0] + .0025 ?>,<?php echo $md_custom['longitude'][0]?>),
 								mapTypeId: google.maps.MapTypeId.ROADMAP
 							});
 
 							var contentString = '<div class="infowindow">'+
 							  '<h3><?php esc_attr_e($parent->post_title)?></h3>'+
-							  '<p><?php esc_attr_e($custom['address'][0])?><br><?php esc_attr_e($custom['city'][0])?>, <?php echo $custom['state'][0]?></p>'+
-							  '<p><a class="btn btn-default" href="http://maps.apple.com/?q=<?php echo urlencode($custom['formatted_address'][0])?>" target="_blank">Directions</a></p>' +
+							  '<p><?php esc_attr_e($md_custom['address'][0])?><br><?php esc_attr_e($md_custom['city'][0])?>, <?php echo $md_custom['state'][0]?></p>'+
+							  '<p><a class="btn btn-default" href="http://maps.apple.com/?q=<?php echo urlencode($md_custom['formatted_address'][0])?>" target="_blank">Directions</a></p>' +
 							  '</div>';
 
 							var infowindow = new google.maps.InfoWindow({
@@ -76,7 +71,7 @@ get_header(); ?>
 							});
 
 							var marker = new google.maps.Marker({
-							  position: new google.maps.LatLng(<?php echo $custom['latitude'][0]?>,<?php echo $custom['longitude'][0]?>),
+							  position: new google.maps.LatLng(<?php echo $md_custom['latitude'][0]?>,<?php echo $md_custom['longitude'][0]?>),
 							  map: map,
 							  title: '<?php the_title(); ?>'
 							});

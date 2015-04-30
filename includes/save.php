@@ -1,12 +1,12 @@
 <?php
 
 add_action('save_post', function(){
-	global $post, $nonce;
+	global $post, $md_nonce;
 
 	//security
 	if (defined('DOING_AUTOSAVE') && DOING_AUTOSAVE) return;
-	if (!isset($_POST['meetings_nonce'])) return;
-	if (!wp_verify_nonce($_POST['meetings_nonce'], $nonce)) return;
+	if (!isset($_POST['md_nonce'])) return;
+	if (!wp_verify_nonce($_POST['md_nonce'], $md_nonce)) return;
 	if (!current_user_can('edit_post', $post->ID)) return;
 	if ($_POST['post_type'] != 'meetings') return;
 
@@ -62,7 +62,7 @@ add_action('save_post', function(){
 		));
 
 		//clean up orphans
-		meetings_delete_orphaned_locations();
+		md_delete_orphaned_locations();
 	}
 
 });

@@ -24,13 +24,13 @@ add_filter('manage_edit-locations_columns', function($defaults){
 
 # Custom list values for meetings
 add_action('manage_meetings_posts_custom_column', function($column_name, $post_ID){
-	global $days, $regions;
+	global $md_days, $md_regions;
 	if ($column_name == 'day') {
-		echo @$days[get_post_meta($post_ID, 'day', true)];
+		echo @$md_days[get_post_meta($post_ID, 'day', true)];
 	} elseif ($column_name == 'time') {
-		echo meetings_format_time(get_post_meta($post_ID, 'time', true));
+		echo md_format_time(get_post_meta($post_ID, 'time', true));
 	} elseif ($column_name == 'region') {
-		echo @$regions[get_post_meta($post_ID, 'region', true)];
+		echo @$md_regions[get_post_meta($post_ID, 'region', true)];
 	}
 }, 10, 2);
 
@@ -85,43 +85,3 @@ if (is_admin()) {
 	    return $actions;
 	},10,2);
 }
-
-
-/*add filter dropdowns to meeting list
-add_action('restrict_manage_posts', function() {
-	global $typenow, $days, $regions;
-	if ($typenow == 'meetings') {
-		echo '<select name="day"><option>All days</option>';
-			foreach ($days as $key=>$day) {
-				echo '<option value="' . $key . '"' . selected($key, $_GET['day']) . '>' . $day . '</option>';
-			}
-		echo '
-		</select>
-		<select name="region">
-			<option>Everywhere</option>';
-
-		foreach ($regions as $key=>$region) {
-			echo '<option value="' . $key . '"' . selected($key, $_GET['region']) . '>' . $region . '</option>';
-		}
-
-		echo '</select>';
-	}
-});
-
-
-//remove when posted filter
-add_filter('months_dropdown_results', '__return_empty_array');
-
-
-//actually filter by added dropdowns
-add_filter('parse_query', function() {
-    global $pagenow, $post_type;
-    if (is_admin() && ($pagenow == 'edit.php') && !empty($_GET['region'])) {
-		set_query_var('meta_query', array(array(
-			'key' => 'region', 
-			'value' => $_GET['region'],
-			'type'=>'numeric',
-		)));
-    }
-});
-*/

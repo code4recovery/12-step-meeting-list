@@ -4,9 +4,7 @@
 if (!defined('WP_UNINSTALL_PLUGIN')) exit();
 
 
-//delete settings
-delete_option('meetings_share');
-delete_option('meetings_program');
+//delete settings (removed settings)
 
 
 //delete taxonomy
@@ -16,10 +14,6 @@ $wpdb->query('DELETE t.*, tt.*
 		INNER JOIN ' . $wpdb->term_taxonomy . ' AS tt ON t.term_id = tt.term_id 
 		WHERE tt.taxonomy = "region"');
 $wpdb->delete($wpdb->term_taxonomy, array('taxonomy' => 'region'), array('%s'));
-
-
-//clear crons
-wp_clear_scheduled_hook('meetings_announce');
 
 
 //remove custom post types

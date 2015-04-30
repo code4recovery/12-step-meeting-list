@@ -1,9 +1,9 @@
 <?php
 /**
- * Plugin Name:	Meetings
+ * Plugin Name:	Meeting Directory
  * Plugin URI:	github.com/intergroup/plugin
- * Description:	CMS for maintaining database of meetings and locations
- * Version:		1.0
+ * Description:	CMS for maintaining database of 12-step meetings and locations
+ * Version:		1.0.1
  * Author:		Santa Clara County Intergroup
  * Author URI:	aasanjose.org
  * License:		none
@@ -22,17 +22,17 @@ include('includes/save.php');
 
 include('includes/admin_lists.php');
 
-include('includes/admin_options.php');
+//coming soon
+//include('includes/admin_options.php');
 
 
 //these hooks are easier in this file
 register_activation_hook(__FILE__, function(){
-	wp_schedule_event(time(), 'daily', 'meetings_announce');
-	meetings_custom_post_types();
+	md_custom_post_types();
 	flush_rewrite_rules();
 });
 
 register_deactivation_hook(__FILE__, function(){
-	wp_clear_scheduled_hook('meetings_announce');
+	md_custom_post_types();
 	flush_rewrite_rules();
 });
