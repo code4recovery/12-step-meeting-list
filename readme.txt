@@ -1,4 +1,4 @@
-=== Meetings ===
+=== Meeting Directory ===
 Contributors: aasanjose
 Tags: meetings, aa, na, 12-step, locations
 Requires at least: 3.2
