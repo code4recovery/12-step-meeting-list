@@ -4,7 +4,7 @@
 add_action('init', function(){
 
 	//register post types and taxonomies
-	md_custom_post_types();
+	tsml_custom_post_types();
 
 	//meeting list page
 	add_filter('archive_template', function($template) {

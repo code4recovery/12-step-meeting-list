@@ -36,7 +36,7 @@ add_action('admin_menu', function() {
 						<div class="postbox">
 							<h3>Where's My Info?</h3>
 							<div class="inside">
-								<p>Your meeting list page is <a href="<?php echo get_post_type_archive_link('md_meetings'); ?>">right here</a>.</p>
+								<p>Your meeting list page is <a href="<?php echo get_post_type_archive_link('tsml_meetings'); ?>">right here</a>.</p>
 							</div>
 						</div>
 						<div class="postbox">

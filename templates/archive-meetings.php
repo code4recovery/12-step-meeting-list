@@ -1,13 +1,13 @@
 <?php
 
 //get assets for page
-md_assets('public');
+tsml_assets('public');
 
 get_header();
 
 $today = current_time('w');
 $locations = array();
-$meetings = md_get_meetings(array('day'=>$today));
+$meetings = tsml_get_meetings(array('day'=>$today));
 
 ?>
 <div id="meetings" data-type="list" class="container">
@@ -25,13 +25,13 @@ $meetings = md_get_meetings(array('day'=>$today));
 		<div class="col-md-2">
 			<div class="dropdown" id="day">
 				<a data-toggle="dropdown" class="btn btn-default btn-block">
-					<span class="selected"><?php echo $md_days[$today]?></span>
+					<span class="selected"><?php echo $tsml_days[$today]?></span>
 					<span class="caret"></span>
 				</a>
 				<ul class="dropdown-menu">
 					<li><a href="#">Any Day</a></li>
 					<li class="divider"></li>
-					<?php foreach ($md_days as $key=>$day) {?>
+					<?php foreach ($tsml_days as $key=>$day) {?>
 					<li<?php if ($key == $today) echo ' class="active"'?>><a href="#" data-id="<?php echo $key?>"><?php echo $day?></a></li>
 					<?php }?>
 				</ul>
@@ -46,7 +46,7 @@ $meetings = md_get_meetings(array('day'=>$today));
 				<ul class="dropdown-menu">
 					<li class="active"><a href="#">Everywhere</a></li>
 					<li class="divider"></li>
-					<?php foreach ($md_regions as $key=>$region) {?>
+					<?php foreach ($tsml_regions as $key=>$region) {?>
 					<li><a href="#" data-id="<?php echo $key?>"><?php echo $region?></a></li>
 					<?php }?>
 				</ul>
@@ -59,7 +59,7 @@ $meetings = md_get_meetings(array('day'=>$today));
 					<span class="caret"></span>
 				</a>
 				<ul class="dropdown-menu">
-					<?php foreach ($md_types as $key=>$type) {?>
+					<?php foreach ($tsml_types as $key=>$type) {?>
 					<li><a href="#" data-id="<?php echo $key?>"><?php echo $type?></a></li>
 					<?php } ?>
 				</ul>
@@ -124,7 +124,7 @@ $meetings = md_get_meetings(array('day'=>$today));
 						?>
 					<tr>
 						<td class="time"><?php echo $meeting['time_formatted']?></td>
-						<td class="name"><a href="<?php echo $meeting['url']?>"><?php echo md_format_name($meeting['name'], $meeting['types'])?></a></td>
+						<td class="name"><a href="<?php echo $meeting['url']?>"><?php echo tsml_format_name($meeting['name'], $meeting['types'])?></a></td>
 						<td class="location"><?php echo $meeting['location']?></td>
 						<td class="address"><?php echo $meeting['address']?></td>
 						<td class="region"><?php echo $meeting['region']?></td>
@@ -164,9 +164,9 @@ jQuery(function(){
 			return function() {
 				var dl  = '';
 				<?php foreach ($location['meetings'] as $meeting) {?>
-				dl += "<dt><?php echo $meeting['time']?></dt><dd><a href='<?php echo $meeting['url']?>'><?php echo md_format_name($meeting['name'], $meeting['types'])?></a></dd>";
+				dl += "<dt><?php echo $meeting['time']?></dt><dd><a href='<?php echo $meeting['url']?>'><?php echo tsml_format_name($meeting['name'], $meeting['types'])?></a></dd>";
 				<?php }?>
-				infowindow.setContent("<div class='infowindow'><h3><a href='<?php echo $location['url']?>'><?php echo $location['name']?></a></h3><address><?php echo $location['address']?><br><?php echo $location['city_state']?></address><h5><?php echo $md_days[$today]?></h5><dl>" + dl + "</dl></div>");
+				infowindow.setContent("<div class='infowindow'><h3><a href='<?php echo $location['url']?>'><?php echo $location['name']?></a></h3><address><?php echo $location['address']?><br><?php echo $location['city_state']?></address><h5><?php echo $tsml_days[$today]?></h5><dl>" + dl + "</dl></div>");
 				infowindow.open(map, marker);
 			}
 		})(marker));					

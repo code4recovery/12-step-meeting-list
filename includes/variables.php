@@ -2,7 +2,7 @@
 
 //define global variables
 
-$md_days	= array(
+$tsml_days	= array(
 	0 => array(0=>'Sunday', 1=>'Monday', 2=>'Tuesday', 3=>'Wednesday', 4=>'Thursday', 5=>'Friday', 6=>'Saturday'),
 	1 => array(1=>'Monday', 2=>'Tuesday', 3=>'Wednesday', 4=>'Thursday', 5=>'Friday', 6=>'Saturday', 0=>'Sunday'),
 	2 => array(2=>'Tuesday', 3=>'Wednesday', 4=>'Thursday', 5=>'Friday', 6=>'Saturday', 0=>'Sunday', 1=>'Monday'),
@@ -11,9 +11,9 @@ $md_days	= array(
 	5 => array(5=>'Friday', 6=>'Saturday', 0=>'Sunday', 1=>'Monday', 2=>'Tuesday', 3=>'Wednesday', 4=>'Thursday'),
 	6 => array(6=>'Saturday', 0=>'Sunday', 1=>'Monday', 2=>'Tuesday', 3=>'Wednesday', 4=>'Thursday', 5=>'Friday'),
 );
-$md_days = $md_days[get_option('start_of_week')];
+$tsml_days = $tsml_days[get_option('start_of_week')];
 
-$md_types = array(
+$tsml_types = array(
 	'A'=>'Atheist / Agnostic',
 	'B'=>'Big Book',
 	'H'=>'Chips', 
@@ -29,6 +29,6 @@ $md_types = array(
 	'Y'=>'Young People',
 );
 
-$md_regions = $md_custom = array();
+$tsml_regions = $tsml_custom = array();
 
-$md_nonce = plugin_basename(__FILE__);
+$tsml_nonce = plugin_basename(__FILE__);

@@ -1,6 +1,6 @@
 <?php
 /**
- * Plugin Name:	Meeting Directory
+ * Plugin Name:	12 Step Meeting List
  * Plugin URI:	github.com/intergroup/plugin
  * Description:	CMS for maintaining database of 12-step meetings and locations
  * Version:		1.0.1
@@ -28,11 +28,11 @@ include('includes/admin_lists.php');
 
 //these hooks are easier in this file
 register_activation_hook(__FILE__, function(){
-	md_custom_post_types();
+	tsml_custom_post_types();
 	flush_rewrite_rules();
 });
 
 register_deactivation_hook(__FILE__, function(){
-	md_custom_post_types();
+	tsml_custom_post_types();
 	flush_rewrite_rules();
 });

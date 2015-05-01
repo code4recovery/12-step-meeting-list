@@ -2,7 +2,7 @@
 
 //function: enqueue assets for public or admin page
 //used: in templates and on admin_edit.php
-function md_assets($context) {
+function tsml_assets($context) {
 	
 	//google maps api needed for maps and address verification, can't be onboarded
 	wp_enqueue_script('google_maps_api', '//maps.googleapis.com/maps/api/js?sensor=false');
@@ -10,21 +10,21 @@ function md_assets($context) {
 	if ($context == 'public') {
 		wp_enqueue_style('bootstrap_css', plugin_dir_url(__DIR__ . '/../css') . '/css/bootstrap.min.css');
 		wp_enqueue_script('bootstrap_js', plugin_dir_url(__DIR__ . '/../js') . '/js/bootstrap.min.js', array('jquery'), '', true);
-		wp_enqueue_script('md_public_js', plugin_dir_url(__DIR__ . '/../js') . '/js/archive-meetings.js', array('jquery'), '', true);
-		wp_localize_script('md_public_js', 'myAjax', array('ajaxurl' => admin_url('admin-ajax.php')));
-		wp_enqueue_style('md_public_css', plugin_dir_url(__DIR__ . '/../css') . '/css/archive-meetings.min.css');		
+		wp_enqueue_script('tsml_public_js', plugin_dir_url(__DIR__ . '/../js') . '/js/archive-meetings.js', array('jquery'), '', true);
+		wp_localize_script('tsml_public_js', 'myAjax', array('ajaxurl' => admin_url('admin-ajax.php')));
+		wp_enqueue_style('tsml_public_css', plugin_dir_url(__DIR__ . '/../css') . '/css/archive-meetings.min.css');		
 	} elseif ($context == 'admin') {
-		wp_enqueue_style('md_admin_style', plugin_dir_url(__FILE__) . '../css/admin.css');
-		wp_enqueue_script('md_admin_js', plugin_dir_url(__FILE__) . '../js/admin_edit.js', array('jquery'), '', true);
-		wp_localize_script('md_admin_js', 'myAjax', array('ajaxurl'=>admin_url('admin-ajax.php')));        
+		wp_enqueue_style('tsml_admin_style', plugin_dir_url(__FILE__) . '../css/admin.css');
+		wp_enqueue_script('tsml_admin_js', plugin_dir_url(__FILE__) . '../js/admin_edit.js', array('jquery'), '', true);
+		wp_localize_script('tsml_admin_js', 'myAjax', array('ajaxurl'=>admin_url('admin-ajax.php')));        
 		wp_enqueue_script('typeahead_js', plugin_dir_url(__FILE__) . '../js/typeahead.bundle.js', array('jquery'), '', true);
 	}
 }
 
 //function: register custom post types
 //used: 	init.php on every request, also meeting.php in plugin activation hook
-function md_custom_post_types() {
-	global $md_regions;
+function tsml_custom_post_types() {
+	global $tsml_regions;
 	
 	register_taxonomy('region', array('meetings'), array(
 		'label'=>'Region', 
@@ -32,7 +32,7 @@ function md_custom_post_types() {
 	));
 
 	//build quick access array of regions
-	$md_regions = md_get_regions();
+	$tsml_regions = tsml_get_regions();
 
 	register_post_type('meetings',
 		array(
@@ -73,8 +73,8 @@ function md_custom_post_types() {
 }
 
 //function: takes 18:30 and returns 6:30 p.m.
-//used:		md_get_meetings and theme
-function md_format_time($string) {
+//used:		tsml_get_meetings and theme
+function tsml_format_time($string) {
 	if (!strstr($string, ':')) return 'n/a';
 	if ($string == '12:00') return 'Noon';
 	if ($string == '23:59') return 'Midnight';
@@ -87,27 +87,27 @@ function md_format_time($string) {
 
 //function:	appends men or women if type present
 //used:		archive-meetings.php
-function md_format_name($name, $md_types) {
-	if (in_array('M', $md_types)) {
+function tsml_format_name($name, $tsml_types) {
+	if (in_array('M', $tsml_types)) {
 		$name .= ' <small>Men</small>';
-	} elseif (in_array('W', $md_types)) {
+	} elseif (in_array('W', $tsml_types)) {
 		$name .= ' <small>Women</small>';
 	}
-	return $name;
+	return esc_html($name);
 }
 
 //function: load the regions array
 //used: init and api
-function md_get_regions() {
-	$md_regions = array();
+function tsml_get_regions() {
+	$tsml_regions = array();
 	$region_terms = get_terms('region', 'hide_empty=0');
-	foreach ($region_terms as $region) $md_regions[$region->term_id] = $region->name;
-	return $md_regions;
+	foreach ($region_terms as $region) $tsml_regions[$region->term_id] = $region->name;
+	return $tsml_regions;
 }
 
 //function: deletes all orphaned locations (has no meetings associated)
 //used:		save_post filter
-function md_delete_orphaned_locations() {
+function tsml_delete_orphaned_locations() {
 
 	//get all active location_ids
 	$active = array();
@@ -135,30 +135,26 @@ function md_delete_orphaned_locations() {
 }
 
 //get meetings based on post information
-//used by md_meetings_api and meeting list page 
-function md_get_meetings($arguments=array()) {
-	global $md_regions;
+//used by tsml_meetings_api and meeting list page 
+function tsml_get_meetings($arguments=array()) {
+	global $tsml_regions;
 
-	//debugging
-	//$arguments = $_GET;
+	$meta_query = array('relation'	=> 'AND');
 
-	$meta_query = array(
-		'relation'	=> 'AND',
-	);
-
-	if (!isset($arguments['location_id'])) $arguments['location_id'] = null;
+	//sanitize input
+	$arguments['location_id'] = (isset($arguments['location_id'])) ? intval($arguments['location_id']) : null;
 
 	if (isset($arguments['day'])) {
 		$meta_query[] = array(
 			'key'	=> 'day',
-			'value'	=> $arguments['day'],
+			'value'	=> intval($arguments['day']),
 		);
 	}
 
 	if (!empty($arguments['region'])) {
 		$meta_query[] = array(
 			'key'	=> 'region',
-			'value'	=> $arguments['region'],
+			'value'	=> intval($arguments['region']),
 		);
 	}
 
@@ -166,7 +162,7 @@ function md_get_meetings($arguments=array()) {
 		foreach ($arguments['types'] as $type) {
 			$meta_query[] = array(
 				'key'	=> 'types',
-				'value'	=> '"' . $type . '"',
+				'value'	=> '"' . sanitize_text_field($type) . '"',
 				'compare'=>'LIKE',
 			);
 		}
@@ -182,15 +178,15 @@ function md_get_meetings($arguments=array()) {
 
 	# Make an array of all locations
 	foreach ($posts as $post) {
-		$md_custom = get_post_meta($post->ID);
+		$tsml_custom = get_post_meta($post->ID);
 		$locations[$post->ID] = array(
-			'address'			=>$md_custom['address'][0],
-			'city'				=>$md_custom['city'][0],
-			'state'				=>$md_custom['state'][0],
-			'latitude'			=>$md_custom['latitude'][0],
-			'longitude'			=>$md_custom['longitude'][0],
-			'region_id'			=>$md_custom['region'][0],
-			'region'			=>$md_regions[$md_custom['region'][0]],
+			'address'			=>$tsml_custom['address'][0],
+			'city'				=>$tsml_custom['city'][0],
+			'state'				=>$tsml_custom['state'][0],
+			'latitude'			=>$tsml_custom['latitude'][0],
+			'longitude'			=>$tsml_custom['longitude'][0],
+			'region_id'			=>$tsml_custom['region'][0],
+			'region'			=>$tsml_regions[$tsml_custom['region'][0]],
 			'location'			=>$post->post_title,
 			'location_url'		=>get_permalink($post->ID),
 			'location_slug'		=>$post->post_name,
@@ -204,13 +200,13 @@ function md_get_meetings($arguments=array()) {
 		$post_ids = get_posts(array(
 			'post_type'			=> 'meetings',
 			'numberposts'		=> -1,
-			's'					=> $arguments['search'],
+			's'					=> sanitize_text_field($arguments['search']),
 			'fields'			=> 'ids',
 		));
 		$parents = get_posts(array(
 			'post_type'			=> 'locations',
 			'numberposts'		=> -1,
-			's'					=> $arguments['search'],
+			's'					=> sanitize_text_field($arguments['search']),
 			'fields'			=> 'ids',
 		));
 		if (count($parents)) {
@@ -241,7 +237,7 @@ function md_get_meetings($arguments=array()) {
 		//shouldn't ever happen, but just in case
 		if (empty($locations[$post->post_parent])) continue;
 
-		$md_custom = get_post_meta($post->ID);
+		$tsml_custom = get_post_meta($post->ID);
 		$meetings[] = array_merge(array(
 			'id'			=>$post->ID,
 			'name'			=>$post->post_title,
@@ -250,25 +246,25 @@ function md_get_meetings($arguments=array()) {
 			'updated'		=>$post->post_modified_gmt,
 			'location_id'	=>$post->post_parent,
 			'url'			=>get_permalink($post->ID),
-			'time'			=>$md_custom['time'][0],
-			'time_formatted'=>md_format_time($md_custom['time'][0]),
-			'day'			=>$md_custom['day'][0],
-			'types'			=>empty($md_custom['types'][0]) ? array() : unserialize($md_custom['types'][0]),
+			'time'			=>$tsml_custom['time'][0],
+			'time_formatted'=>tsml_format_time($tsml_custom['time'][0]),
+			'day'			=>$tsml_custom['day'][0],
+			'types'			=>empty($tsml_custom['types'][0]) ? array() : unserialize($tsml_custom['types'][0]),
 		), $locations[$post->post_parent]);
 	}
 
 	# Because you can't yet order by multiple meta_keys, manually sort the days
 	if (!isset($arguments['day'])) {
-		$md_days = array();
+		$tsml_days = array();
 		foreach ($meetings as $meeting) {
-			if (!isset($md_days[$meeting['day']])) $md_days[$meeting['day']] = array();
-			$md_days[$meeting['day']][] = $meeting;
+			if (!isset($tsml_days[$meeting['day']])) $tsml_days[$meeting['day']] = array();
+			$tsml_days[$meeting['day']][] = $meeting;
 		}
 		$meetings = array();
-		$day_keys = array_keys($md_days);
+		$day_keys = array_keys($tsml_days);
 		sort($day_keys);
 		foreach ($day_keys as $day) {
-			$meetings = array_merge($meetings, $md_days[$day]);
+			$meetings = array_merge($meetings, $tsml_days[$day]);
 		}
 	}
 
@@ -276,8 +272,8 @@ function md_get_meetings($arguments=array()) {
 }
 
 //get all locations
-function md_get_locations() {
-	global $md_regions;
+function tsml_get_locations() {
+	global $tsml_regions;
 
 	$locations = array();
 	
@@ -289,17 +285,17 @@ function md_get_locations() {
 
 	# Make an array of all locations
 	foreach ($posts as $post) {
-		$md_custom = get_post_meta($post->ID);
+		$tsml_custom = get_post_meta($post->ID);
 		$locations[] = array(
 			'id'				=>$post->ID,
 			'location'			=>$post->post_title,
-			'address'			=>$md_custom['address'][0],
-			'city'				=>$md_custom['city'][0],
-			'state'				=>$md_custom['state'][0],
-			'latitude'			=>$md_custom['latitude'][0],
-			'longitude'			=>$md_custom['longitude'][0],
-			'region_id'			=>$md_custom['region'][0],
-			'region'			=>$md_regions[$md_custom['region'][0]],
+			'address'			=>$tsml_custom['address'][0],
+			'city'				=>$tsml_custom['city'][0],
+			'state'				=>$tsml_custom['state'][0],
+			'latitude'			=>$tsml_custom['latitude'][0],
+			'longitude'			=>$tsml_custom['longitude'][0],
+			'region_id'			=>$tsml_custom['region'][0],
+			'region'			=>$tsml_regions[$tsml_custom['region'][0]],
 			'location_url'		=>get_permalink($post->ID),
 			'location_slug'		=>$post->post_name,
 			'location_updated'	=>$post->post_modified_gmt,
@@ -311,36 +307,36 @@ function md_get_locations() {
 
 //api ajax function
 //used by theme and app
-add_action('wp_ajax_meetings', 'md_meetings_api');
-add_action('wp_ajax_nopriv_meetings', 'md_meetings_api');
+add_action('wp_ajax_meetings', 'tsml_meetings_api');
+add_action('wp_ajax_nopriv_meetings', 'tsml_meetings_api');
 
-function md_meetings_api() {
+function tsml_meetings_api() {
 	header('Access-Control-Allow-Origin: *');
-	wp_send_json(md_get_meetings($_POST));
+	wp_send_json(tsml_get_meetings($_POST)); //tsml_get_meetings sanitizes input
 };
 
 //api ajax function
 //used by ios
-add_action('wp_ajax_locations', 'md_locations_api');
-add_action('wp_ajax_nopriv_locations', 'md_locations_api');
+add_action('wp_ajax_locations', 'tsml_locations_api');
+add_action('wp_ajax_nopriv_locations', 'tsml_locations_api');
 
-function md_locations_api() {
+function tsml_locations_api() {
 	header('Access-Control-Allow-Origin: *');
-	wp_send_json(md_get_locations($_POST));
+	wp_send_json(tsml_get_locations());
 };
 
 //csv function
 //made by request from intergroup chair
-add_action('wp_ajax_csv', 'md_meetings_csv');
-add_action('wp_ajax_nopriv_csv', 'md_meetings_csv');
+add_action('wp_ajax_csv', 'tsml_meetings_csv');
+add_action('wp_ajax_nopriv_csv', 'tsml_meetings_csv');
 
-function md_meetings_csv() {
+function tsml_meetings_csv() {
 
 	//going to need this later
-	global $md_days;
+	global $tsml_days;
 
 	//get data source
-	$meetings = md_get_meetings();
+	$meetings = tsml_get_meetings();
 
 	//define columns to output
 	$columns = array(
@@ -367,7 +363,7 @@ function md_meetings_csv() {
 		$line = array();
 		foreach ($columns as $column=>$value) {
 			if ($column == 'day') {
-				$line[] = $md_days[$meeting[$column]];
+				$line[] = $tsml_days[$meeting[$column]];
 			} else {
 				$line[] = $escape . str_replace($escape, '', $meeting[$column]) . $escape;
 			}
@@ -388,13 +384,13 @@ function md_meetings_csv() {
 };
 
 //todo: consider whether we really need this
-add_action('wp_ajax_regions', 'md_regions_api');
-add_action('wp_ajax_nopriv_regions', 'md_regions_api');
+add_action('wp_ajax_regions', 'tsml_regions_api');
+add_action('wp_ajax_nopriv_regions', 'tsml_regions_api');
 
-function md_regions_api() {
+function tsml_regions_api() {
 	$output = array();
-	$md_regions = md_get_regions();
-	foreach ($md_regions as $id=>$value) {
+	$tsml_regions = tsml_get_regions();
+	foreach ($tsml_regions as $id=>$value) {
 		$output[] = array('id'=>$id, 'value'=>$value);
 	}
 	header('Access-Control-Allow-Origin: *');

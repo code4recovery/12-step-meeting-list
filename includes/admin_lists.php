@@ -24,13 +24,13 @@ add_filter('manage_edit-locations_columns', function($defaults){
 
 # Custom list values for meetings
 add_action('manage_meetings_posts_custom_column', function($column_name, $post_ID){
-	global $md_days, $md_regions;
+	global $tsml_days, $tsml_regions;
 	if ($column_name == 'day') {
-		echo @$md_days[get_post_meta($post_ID, 'day', true)];
+		echo @$tsml_days[get_post_meta($post_ID, 'day', true)];
 	} elseif ($column_name == 'time') {
-		echo md_format_time(get_post_meta($post_ID, 'time', true));
+		echo tsml_format_time(get_post_meta($post_ID, 'time', true));
 	} elseif ($column_name == 'region') {
-		echo @$md_regions[get_post_meta($post_ID, 'region', true)];
+		echo @$tsml_regions[get_post_meta($post_ID, 'region', true)];
 	}
 }, 10, 2);
 
