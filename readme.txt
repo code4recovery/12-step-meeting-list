@@ -5,13 +5,11 @@ Requires at least: 3.2
 Tested up to: 4.2
 Stable tag: 1.0.1
 
-This plugin is designed to help 12 step programs list their meetings and locations. It standardizes
-addresses, and displays in a list or map.
+This plugin is designed to help 12 step programs list their meetings and locations. It standardizes addresses, and displays in a list or map.
 
 == Description ==
 
-This plugin was originally designed to maintain a list of AA meetings in Santa Clara County, CA. 
-It's currently in use in that capacity at <http://aasanjose.org/meetings>.
+This plugin was originally designed to maintain a list of AA meetings in Santa Clara County, CA. It's currently in use in that capacity at <http://aasanjose.org/meetings>.
 
 It can be used, however, to list any type of 12 step program meeting, such as Al-Anon, OA, or NA.
 
