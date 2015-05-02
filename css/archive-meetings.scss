@@ -2,10 +2,10 @@ $gray:			#aaaaaa;
 $black:			#333;
 $white: 		#fdfdfc;
 $margin:		15px;
+$height:		550px;
 
 //for fullscreen
 body {
-	position: relative;
 	.site-main { position: static; }
 }
 
@@ -64,12 +64,12 @@ input:focus, button:focus {
 
 /* meetings */
 #meetings {
-	min-height: 500px;
-	margin: $margin auto;
+	min-height: $height;
+	padding-bottom: $margin;
 
 	.controls {
-		margin-top: $margin;
 		min-height: 34px;
+		margin-bottom: 5px;
 		form, .dropdown {
 			margin-bottom: $margin;
 		}
@@ -82,7 +82,6 @@ input:focus, button:focus {
 	}
 
 	.results {
-		min-height: 600px;
 		margin-bottom: -60px;
 
 		h1 small {
@@ -93,7 +92,6 @@ input:focus, button:focus {
 		}
 		
 		table {
-			width: 100%;
 			display: none;
 			thead tr th {
 				line-height: 1;
@@ -116,7 +114,7 @@ input:focus, button:focus {
 		}
 			
 		#map {
-			height: 600px;
+			height: $height;
 			display: none;
 			margin: 0;
 		}
@@ -167,10 +165,15 @@ body.admin-bar {
 
 /* Small devices (tablets, 768px and up) */
 @media (min-width: 768px) {
-	#meetings .results table {
-		margin: 0;
-		.region {
-			display: table-cell;
+	#meetings {
+		.controls {
+			margin-bottom: 0;
+		}
+		.results table {
+			margin: 0;
+			.region {
+				display: table-cell;
+			}
 		}
 	}
 }

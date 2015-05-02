@@ -93,7 +93,7 @@ function tsml_format_name($name, $tsml_types) {
 	} elseif (in_array('W', $tsml_types)) {
 		$name .= ' <small>Women</small>';
 	}
-	return esc_html($name);
+	return $name;
 }
 
 //function: load the regions array

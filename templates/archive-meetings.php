@@ -12,7 +12,7 @@ $meetings = tsml_get_meetings(array('day'=>$today));
 ?>
 <div id="meetings" data-type="list" class="container">
 	<div class="row controls">
-		<div class="col-md-2">
+		<div class="col-md-2 col-sm-6">
 			<form id="search">
 				<div class="input-group">
 					<input type="text" name="query" class="form-control" placeholder="Search">
@@ -22,7 +22,7 @@ $meetings = tsml_get_meetings(array('day'=>$today));
 				</div>
 			</form>
 		</div>
-		<div class="col-md-2">
+		<div class="col-md-2 col-sm-6">
 			<div class="dropdown" id="day">
 				<a data-toggle="dropdown" class="btn btn-default btn-block">
 					<span class="selected"><?php echo $tsml_days[$today]?></span>
@@ -37,7 +37,7 @@ $meetings = tsml_get_meetings(array('day'=>$today));
 				</ul>
 			</div>
 		</div>
-		<div class="col-md-2">
+		<div class="col-md-2 col-sm-6">
 			<div class="dropdown" id="region">
 				<a data-toggle="dropdown" class="btn btn-default btn-block">
 					<span class="selected">Everywhere</span>
@@ -52,7 +52,7 @@ $meetings = tsml_get_meetings(array('day'=>$today));
 				</ul>
 			</div>
 		</div>
-		<div class="col-md-2">
+		<div class="col-md-2 col-sm-6">
 			<div class="dropdown" id="types">
 				<a data-toggle="dropdown" class="btn btn-default btn-block">
 					<span class="selected">Meeting Type</span>
@@ -65,7 +65,7 @@ $meetings = tsml_get_meetings(array('day'=>$today));
 				</ul>
 			</div>
 		</div>
-		<div class="col-md-4 visible-md visible-lg visible-xl">
+		<div class="col-md-4 col-sm-12 visible-md visible-lg visible-xl">
 			<div class="btn-group pull-right" id="action">
 				<a class="btn btn-default active" data-id="list">
 					<i class="dashicons dashicons-list-view"></i> List
@@ -92,46 +92,49 @@ $meetings = tsml_get_meetings(array('day'=>$today));
 			</div>
 			
 			<div id="map"></div>
-			<table class="table table-striped<?php if (!count($meetings)) {?> hidden<?php }?>">
-				<thead>
-					<th class="time">Time</th>
-					<th class="name">Meeting</th>
-					<th class="location">Location</th>
-					<th class="address">Address</th>
-					<th class="region">Region</th>
-				</thead>
-				<tbody>
-					<?php
-					foreach ($meetings as $meeting) {
-						if (!isset($locations[$meeting['location_id']])) {
-							$locations[$meeting['location_id']] = array(
-								'name'=>$meeting['location'],
-								'coords'=>$meeting['latitude'] . ',' . $meeting['longitude'],
-								'url'=>$meeting['location_url'],
-								'address'=>$meeting['address'],
-								'city_state'=>$meeting['city'] . ', ' . $meeting['state'],
-								'meetings'=>array(),
+			
+			<div id="table-wrapper">
+				<table class="table table-striped<?php if (!count($meetings)) {?> hidden<?php }?>">
+					<thead>
+						<th class="time">Time</th>
+						<th class="name">Meeting</th>
+						<th class="location">Location</th>
+						<th class="address">Address</th>
+						<th class="region">Region</th>
+					</thead>
+					<tbody>
+						<?php
+						foreach ($meetings as $meeting) {
+							if (!isset($locations[$meeting['location_id']])) {
+								$locations[$meeting['location_id']] = array(
+									'name'=>$meeting['location'],
+									'coords'=>$meeting['latitude'] . ',' . $meeting['longitude'],
+									'url'=>$meeting['location_url'],
+									'address'=>$meeting['address'],
+									'city_state'=>$meeting['city'] . ', ' . $meeting['state'],
+									'meetings'=>array(),
+								);
+							}
+		
+							$locations[$meeting['location_id']]['meetings'][] = array(
+								'time'=>$meeting['time_formatted'],
+								'day'=>$meeting['day'],
+								'name'=>$meeting['name'],
+								'url'=>$meeting['url'],
+								'types'=>$meeting['types'],
 							);
-						}
-	
-						$locations[$meeting['location_id']]['meetings'][] = array(
-							'time'=>$meeting['time_formatted'],
-							'day'=>$meeting['day'],
-							'name'=>$meeting['name'],
-							'url'=>$meeting['url'],
-							'types'=>$meeting['types'],
-						);
-						?>
-					<tr>
-						<td class="time"><?php echo $meeting['time_formatted']?></td>
-						<td class="name"><a href="<?php echo $meeting['url']?>"><?php echo tsml_format_name($meeting['name'], $meeting['types'])?></a></td>
-						<td class="location"><?php echo $meeting['location']?></td>
-						<td class="address"><?php echo $meeting['address']?></td>
-						<td class="region"><?php echo $meeting['region']?></td>
-					</tr>
-					<?php }?>
-				</tbody>
-			</table>
+							?>
+						<tr>
+							<td class="time"><?php echo $meeting['time_formatted']?></td>
+							<td class="name"><a href="<?php echo $meeting['url']?>"><?php echo tsml_format_name($meeting['name'], $meeting['types'])?></a></td>
+							<td class="location"><?php echo $meeting['location']?></td>
+							<td class="address"><?php echo $meeting['address']?></td>
+							<td class="region"><?php echo $meeting['region']?></td>
+						</tr>
+						<?php }?>
+					</tbody>
+				</table>
+			</div>
 		</div>
 	</div>
 </div>
