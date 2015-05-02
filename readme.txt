@@ -3,7 +3,7 @@ Contributors: aasanjose
 Tags: meetings, aa, na, 12-step, locations
 Requires at least: 3.2
 Tested up to: 4.2
-Stable tag: 1.0.1
+Stable tag: 1.0.2
 
 This plugin is designed to help 12 step programs list their meetings and locations. It standardizes addresses, and displays in a list or map.
 
@@ -45,6 +45,9 @@ Currently no, but if someone will help translate, we will add the translation.
 5. Meeting map
 
 == Changelog ==
+
+= 1.0.2 =
+* Adding 'Speaker' to types
 
 = 1.0.1 =
 * Updates requested by WordPress team
