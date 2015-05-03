@@ -3,7 +3,7 @@
  * Plugin Name:	12 Step Meeting List
  * Plugin URI:	github.com/intergroup/plugin
  * Description:	CMS for maintaining database of 12-step meetings and locations
- * Version:		1.0.4
+ * Version:		1.0.5
  * Author:		Santa Clara County Intergroup
  * Author URI:	aasanjose.org
  * License:		none

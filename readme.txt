@@ -3,7 +3,7 @@ Contributors: aasanjose
 Tags: meetings, aa, na, 12-step, locations
 Requires at least: 3.2
 Tested up to: 4.2
-Stable tag: 1.0.4
+Stable tag: 1.0.5
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -52,6 +52,9 @@ Currently no, but if someone will volunteer to help with the translating, we wil
 
 == Changelog ==
 
+= 1.0.5 =
+* Fixed CSS issue with fullscreen map
+
 = 1.0.4 =
 * Fixed issue with men/women tags in page header
 * CSS fixes
@@ -69,6 +72,9 @@ Currently no, but if someone will volunteer to help with the translating, we wil
 * Preparing for submission to the WordPress plugins directory
 
 == Upgrade Notice ==
+
+= 1.0.5 =
+Fixes fullscreen CSS issue.
 
 = 1.0.4 =
 Fixes potentially annoying / Men or / Women tag issue.
