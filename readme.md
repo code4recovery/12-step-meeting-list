@@ -1,4 +1,5 @@
-== 12 Step Meeting List ==
+12 Step Meeting List
+====================
 
 This plugin is designed to help 12 step programs list their meetings and locations. It standardizes addresses, and displays in a list or map.
 
