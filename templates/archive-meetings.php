@@ -9,6 +9,15 @@ $today = current_time('w');
 $locations = array();
 $meetings = tsml_get_meetings(array('day'=>$today));
 
+class Walker_Regions_Dropdown extends Walker_Category {
+	function start_el(&$output, $item, $depth=0, $args=array()) {
+		$output .= '<li><a href="#" data-id="' . esc_attr($item->term_id) . '">' . esc_attr($item->name) . '</a>';
+	}
+	function end_el(&$output, $item, $depth=0, $args=array()) {
+		$output .= '</li>';
+	}
+}
+
 ?>
 <div id="meetings" data-type="list" class="container">
 	<div class="row controls">
@@ -46,9 +55,14 @@ $meetings = tsml_get_meetings(array('day'=>$today));
 				<ul class="dropdown-menu">
 					<li class="active"><a href="#">Everywhere</a></li>
 					<li class="divider"></li>
-					<?php foreach ($tsml_regions as $key=>$region) {?>
-					<li><a href="#" data-id="<?php echo $key?>"><?php echo $region?></a></li>
-					<?php }?>
+					<?php wp_list_categories(array(
+						'taxonomy' => 'region',
+						'hierarchical' => true,
+						'orderby' => 'name',
+						'title_li' => '',
+						'hide_empty' => false,
+						'walker' => new Walker_Regions_Dropdown,
+					)); ?>
 				</ul>
 			</div>
 		</div>

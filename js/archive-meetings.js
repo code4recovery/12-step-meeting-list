@@ -13,12 +13,16 @@ jQuery(function(){
 		//define search
 		var days = [ "Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
 
+		var region = jQuery('#region li.active a').attr('data-id') ? jQuery('#region li.active a').attr('data-id') : '';
+		
+		console.log('searching with region ' + region);
+		
 		//prepare data for ajax
 		var data = { 
 			action: 'meetings',
 			search: search,
 			day: 	jQuery('#day li.active a').attr('data-id'),
-			region: jQuery('#region li.active a').attr('data-id') ? jQuery('#region li.active a').attr('data-id') : '',
+			region: region,
 			types: 	[]
 		}
 

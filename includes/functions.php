@@ -27,8 +27,9 @@ function tsml_custom_post_types() {
 	global $tsml_regions;
 	
 	register_taxonomy('region', array('meetings'), array(
-		'label'=>'Region', 
-		'labels'=>array('menu_name'=>'Regions')
+		'label' => 'Region', 
+		'labels' => array('menu_name'=>'Regions'),
+		'hierarchical' => true,
 	));
 
 	//build quick access array of regions
@@ -87,7 +88,7 @@ function tsml_format_time($string) {
 
 //function:	appends men or women if type present
 //used:		archive-meetings.php
-function tsml_format_name($name, $tsml_types) {
+function tsml_format_name($name, $tsml_types=array()) {
 	if (in_array('M', $tsml_types)) {
 		$name .= ' <small>Men</small>';
 	} elseif (in_array('W', $tsml_types)) {
@@ -96,11 +97,17 @@ function tsml_format_name($name, $tsml_types) {
 	return $name;
 }
 
-//function: load the regions array
-//used: init and api
+//function: load only the currently-used regions into a flat array
+//used: init, for displaying in admin lists, api
 function tsml_get_regions() {
+	global $wpdb;
+	$regions = $wpdb->get_col('SELECT DISTINCT
+			m.meta_value
+		FROM ' . $wpdb->postmeta . ' m
+		JOIN ' . $wpdb->posts . ' p ON m.post_id = p.id
+		WHERE p.post_type = "meetings" AND m.meta_key = "region" AND p.post_status = "publish"');
 	$tsml_regions = array();
-	$region_terms = get_terms('region', 'hide_empty=0');
+	$region_terms = get_terms('region', array('include' => $regions, 'hide_empty' => false));
 	foreach ($region_terms as $region) $tsml_regions[$region->term_id] = $region->name;
 	return $tsml_regions;
 }
@@ -152,10 +159,22 @@ function tsml_get_meetings($arguments=array()) {
 	}
 
 	if (!empty($arguments['region'])) {
-		$meta_query[] = array(
-			'key'	=> 'region',
-			'value'	=> intval($arguments['region']),
-		);
+		$region = intval($arguments['region']);
+		$regions = get_term_children($region, 'region');
+		if (empty($regions)) {
+			$meta_query[] = array(
+				'key'	=> 'region',
+				'value'	=> $region,
+			);
+		} else {
+			$regions[] = $region;
+			$meta_query[] = array(
+				'key'	=> 'region',
+				'compare' => 'IN',
+				'value'	=> $regions,
+			);
+		}
+		
 	}
 
 	if (!empty($arguments['types'])) {

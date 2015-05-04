@@ -10,9 +10,9 @@ get_header(); ?>
 		
 			<?php 
 			$tsml_custom = get_post_meta($post->ID);
-			$tsml_custom['types'][0] = empty($tsml_custom['types'][0]) ? array() : unserialize($tsml_custom['types'][0]);
 			$parent = get_post($post->post_parent);
 			$tsml_custom = array_merge($tsml_custom, get_post_meta($parent->ID));
+			$tsml_custom['types'][0] = empty($tsml_custom['types'][0]) ? array() : unserialize($tsml_custom['types'][0]);
 			?>
 		
 			<div class="page-header">
