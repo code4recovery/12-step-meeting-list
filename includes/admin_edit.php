@@ -15,6 +15,8 @@ add_action('wp_ajax_location', function(){
             'address'			=> $tsml_custom['address'][0],
             'city'				=> $tsml_custom['city'][0],
             'state'				=> $tsml_custom['state'][0],
+            'postal_code'		=> $tsml_custom['postal_code'][0],
+            'country'			=> $tsml_custom['country'][0],
             'region'			=> $tsml_custom['region'][0],
             'tokens'			=> array_values(array_unique(explode(' ', str_replace(',', '', $title . ' ' . $tsml_custom['address'][0])))),
         );
@@ -85,6 +87,7 @@ add_action('admin_init', function(){
 			<input type="hidden" name="address" id="address" value="<?php echo $tsml_custom['address'][0]?>">
 			<input type="hidden" name="city" id="city" value="<?php echo $tsml_custom['city'][0]?>">
 			<input type="hidden" name="state" id="state" value="<?php echo $tsml_custom['state'][0]?>">
+			<input type="hidden" name="postal_code" id="postal_code" value="<?php echo $tsml_custom['postal_code'][0]?>">
 			<input type="hidden" name="country" id="country" value="<?php echo $tsml_custom['country'][0]?>">
 			<input type="hidden" name="latitude" id="latitude" value="<?php echo $tsml_custom['latitude'][0]?>">
 			<input type="hidden" name="longitude" id="longitude" value="<?php echo $tsml_custom['longitude'][0]?>">

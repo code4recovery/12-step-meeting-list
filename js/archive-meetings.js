@@ -55,7 +55,7 @@ jQuery(function(){
 					//add gender designation
 					if (jQuery.inArray('M', obj.types) != -1) {
 						obj.name += ' <small>Men</small>';
-					} else if (jQuery.inArray('M', obj.types) != -1) {
+					} else if (jQuery.inArray('W', obj.types) != -1) {
 						obj.name += ' <small>Women</small>';
 					}
 

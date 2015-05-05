@@ -49,6 +49,7 @@ add_action('save_post', function(){
 		update_post_meta($location_id, 'address',			sanitize_text_field($_POST['address']));
 		update_post_meta($location_id, 'city',				sanitize_text_field($_POST['city']));
 		update_post_meta($location_id, 'state',				sanitize_text_field($_POST['state']));
+		update_post_meta($location_id, 'postal_code',		sanitize_text_field($_POST['postal_code']));
 		update_post_meta($location_id, 'country',			sanitize_text_field($_POST['country']));
 		update_post_meta($location_id, 'latitude',			floatval($_POST['latitude']));
 		update_post_meta($location_id, 'longitude',			floatval($_POST['longitude']));

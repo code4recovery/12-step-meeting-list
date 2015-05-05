@@ -3,7 +3,7 @@ Contributors: aasanjose
 Tags: meetings, aa, na, 12-step, locations
 Requires at least: 3.2
 Tested up to: 4.2
-Stable tag: 1.1.0
+Stable tag: 1.1.1
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -52,6 +52,9 @@ Currently no, but if someone will volunteer to help with the translating, we wil
 
 == Changelog ==
 
+= 1.1.1 =
+* New columns in CSV, fixed javascript issue affecting meeting name display
+
 = 1.1.0 =
 * Regions are hierarchical now
 
@@ -76,8 +79,11 @@ Currently no, but if someone will volunteer to help with the translating, we wil
 
 == Upgrade Notice ==
 
+= 1.1.1 =
+Added columns to CSV.
+
 = 1.1.0 =
-You can have sub-regions.
+You can now have sub-regions.
 
 = 1.0.5 =
 Fixes fullscreen CSS issue.

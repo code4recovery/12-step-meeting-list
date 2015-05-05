@@ -199,17 +199,19 @@ function tsml_get_meetings($arguments=array()) {
 	foreach ($posts as $post) {
 		$tsml_custom = get_post_meta($post->ID);
 		$locations[$post->ID] = array(
-			'address'			=>$tsml_custom['address'][0],
-			'city'				=>$tsml_custom['city'][0],
-			'state'				=>$tsml_custom['state'][0],
-			'latitude'			=>$tsml_custom['latitude'][0],
-			'longitude'			=>$tsml_custom['longitude'][0],
-			'region_id'			=>$tsml_custom['region'][0],
-			'region'			=>$tsml_regions[$tsml_custom['region'][0]],
-			'location'			=>$post->post_title,
-			'location_url'		=>get_permalink($post->ID),
-			'location_slug'		=>$post->post_name,
-			'location_updated'	=>$post->post_modified_gmt,
+			'address'			=> $tsml_custom['address'][0],
+			'city'				=> $tsml_custom['city'][0],
+			'state'				=> $tsml_custom['state'][0],
+			'postal_code'		=> $tsml_custom['postal_code'][0],
+			'country'			=> $tsml_custom['country'][0],
+			'latitude'			=> $tsml_custom['latitude'][0],
+			'longitude'			=> $tsml_custom['longitude'][0],
+			'region_id'			=> $tsml_custom['region'][0],
+			'region'			=> $tsml_regions[$tsml_custom['region'][0]],
+			'location'			=> $post->post_title,
+			'location_url'		=> get_permalink($post->ID),
+			'location_slug'		=> $post->post_name,
+			'location_updated'	=> $post->post_modified_gmt,
 		);
 	}
 
@@ -306,18 +308,20 @@ function tsml_get_locations() {
 	foreach ($posts as $post) {
 		$tsml_custom = get_post_meta($post->ID);
 		$locations[] = array(
-			'id'				=>$post->ID,
-			'location'			=>$post->post_title,
-			'address'			=>$tsml_custom['address'][0],
-			'city'				=>$tsml_custom['city'][0],
-			'state'				=>$tsml_custom['state'][0],
-			'latitude'			=>$tsml_custom['latitude'][0],
-			'longitude'			=>$tsml_custom['longitude'][0],
-			'region_id'			=>$tsml_custom['region'][0],
-			'region'			=>$tsml_regions[$tsml_custom['region'][0]],
-			'location_url'		=>get_permalink($post->ID),
-			'location_slug'		=>$post->post_name,
-			'location_updated'	=>$post->post_modified_gmt,
+			'id'				=> $post->ID,
+			'location'			=> $post->post_title,
+			'address'			=> $tsml_custom['address'][0],
+			'city'				=> $tsml_custom['city'][0],
+			'state'				=> $tsml_custom['state'][0],
+			'postal_code'		=> $tsml_custom['postal_code'][0],
+			'country'			=> $tsml_custom['country'][0],
+			'latitude'			=> $tsml_custom['latitude'][0],
+			'longitude'			=> $tsml_custom['longitude'][0],
+			'region_id'			=> $tsml_custom['region'][0],
+			'region'			=> $tsml_regions[$tsml_custom['region'][0]],
+			'location_url'		=> get_permalink($post->ID),
+			'location_slug'		=> $post->post_name,
+			'location_updated'	=> $post->post_modified_gmt,
 		);
 	}
 	
@@ -345,28 +349,33 @@ function tsml_locations_api() {
 };
 
 //csv function
-//made by request from intergroup chair
+//useful for exporting data
 add_action('wp_ajax_csv', 'tsml_meetings_csv');
 add_action('wp_ajax_nopriv_csv', 'tsml_meetings_csv');
 
 function tsml_meetings_csv() {
 
 	//going to need this later
-	global $tsml_days;
+	global $tsml_days, $tsml_types;
 
 	//get data source
 	$meetings = tsml_get_meetings();
 
 	//define columns to output
 	$columns = array(
-		'time' =>		'Time',
-		'day' =>		'Day',
-		'name' =>		'Name',
-		'location' =>	'Location',
-		'address' =>	'Address',
-		'city' =>		'City',
-		'state' =>		'State',
-		'region' =>		'Region',
+		'time' =>		 'Time',
+		'day' =>		 'Day',
+		'name' =>		 'Name',
+		'location' =>	 'Location',
+		'address' =>	 'Address',
+		'city' =>		 'City',
+		'state' =>		 'State',
+		'postal_code' => 'Postal Code',
+		'country' =>	 'Country',
+		'region' =>		 'Region',
+		'types' => 		 'Types',
+		'notes' => 		 'Notes',
+		'updated' =>	 'Updated',
 	);
 
 	//helper vars
@@ -383,6 +392,13 @@ function tsml_meetings_csv() {
 		foreach ($columns as $column=>$value) {
 			if ($column == 'day') {
 				$line[] = $tsml_days[$meeting[$column]];
+			} elseif ($column == 'types') {
+				$types = $meeting[$column];
+				foreach ($types as &$type) $type = $tsml_types[$type];
+				sort($types);
+				$line[] = $escape . implode(', ', $types) . $escape;
+			} elseif ($column == 'notes') {
+				$line[] = $escape . strip_tags($meeting[$column]) . $escape;
 			} else {
 				$line[] = $escape . str_replace($escape, '', $meeting[$column]) . $escape;
 			}
@@ -397,7 +413,8 @@ function tsml_meetings_csv() {
 	header('Content-Type: text/plain');
 	header('Content-Length: ' . strlen($return));
 	header('Content-Disposition: attachment; filename="meetings.csv"');
-	
+
+	//echo '<pre>';
 	//output
 	die($return);
 };
