@@ -2,7 +2,7 @@ jQuery(function(){
 
 	var userMarker;
 	if (navigator.geolocation) {
-		jQuery("#map_options").removeClass("hidden");
+		jQuery('#map_options').removeClass('hidden');
 	}
 
 	//run search (triggered by dropdown toggle or form submit)
@@ -11,7 +11,7 @@ jQuery(function(){
 		var search = jQuery('#search input[name=query]').val().trim();
 
 		//define search
-		var days = [ "Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
+		var days = [ 'Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
 
 		var region = jQuery('#region li.active a').attr('data-id') ? jQuery('#region li.active a').attr('data-id') : '';
 		
@@ -28,7 +28,7 @@ jQuery(function(){
 
 		//prepare search terms for highlighter
 		if (search) {
-			search = search.split(" ");
+			search = search.split(' ');
 			for (var i = 0; i < search.length; i++) {
 				search[i] = new RegExp( '(' + search[i] + ')', 'gi');
 			}
@@ -41,10 +41,10 @@ jQuery(function(){
 
 		//request new meetings result
 		jQuery.post(myAjax.ajaxurl, data, function(response){
-			var tbody = jQuery("#meetings tbody").html("");
+			var tbody = jQuery('#meetings tbody').html('');
 			if (response.length) {
-				jQuery("#meetings table").removeClass("hidden");
-				jQuery("#alert").addClass("hidden");
+				jQuery('#meetings table').removeClass('hidden');
+				jQuery('#alert').addClass('hidden');
 				var locations = [];
 
 				//console.log('data.day was ' + data.day);
@@ -82,7 +82,7 @@ jQuery(function(){
 					};
 
 					//add new table row
-					tbody.append("<tr><td class='time'>" + (data.day ? obj.time_formatted : days[obj.day] + ", " + obj.time_formatted) + "</td><td class='name'><a href='" + obj.url + "'>" + highlight(obj.name, search) + "</a></td><td class='location'>" + highlight(obj.location, search) + "</td><td class='address'>" + obj.address + "</td><td class='region'>" + obj.region + "</td></tr>")
+					tbody.append('<tr><td class="time">' + (data.day ? obj.time_formatted : days[obj.day] + ', ' + obj.time_formatted) + '</td><td class="name"><a href="' + obj.url + '">' + highlight(obj.name, search) + '</a></td><td class="location">' + highlight(obj.location, search) + '</td><td class="address">' + obj.address + '</td><td class="region">' + obj.region + '</td></tr>')
 				});
 
 				//remove old markers and reset bounds
@@ -129,18 +129,18 @@ jQuery(function(){
 					map.fitBounds(bounds);
 				} else if (markers.length == 1) {
 					map.setCenter(bounds.getCenter());
-   					if (jQuery("#map").is(":visible")) google.maps.event.trigger(markers[0],'click');
+   					if (jQuery('#map').is(':visible')) google.maps.event.trigger(markers[0],'click');
    					map.setZoom(14);
 				} else if (markers.length == 0) {
 					//currently holds last position, not sure if that's good
 				}
 
 			} else {
-				jQuery("#meetings table").addClass("hidden");
-				jQuery("#alert").html("No results matched those criteria.").removeClass("hidden");
+				jQuery('#meetings table').addClass('hidden');
+				jQuery('#alert').html('No results matched those criteria.').removeClass('hidden');
 			}
 
-		}, "json");		
+		}, 'json');		
 	}
 
 	//highlight search string
@@ -153,7 +153,7 @@ jQuery(function(){
 		return str;
 	}
 
-	jQuery("#meetings #search").submit(function(e){
+	jQuery('#meetings #search').submit(function(e){
 
 		//when submitting from input, clear dropdown values
 		jQuery('#day li').removeClass('active').first().addClass('active');
@@ -200,25 +200,42 @@ jQuery(function(){
 	});
 
 	//toggle between list and map
-	jQuery('#meetings #action a').click(function(e){
+	jQuery('#meetings #action .toggle-view').click(function(e){
 		e.preventDefault();
-		jQuery('#meetings #action a').toggleClass('active');
-		jQuery('#meetings').attr('data-type', jQuery(this).attr('data-id'));
+		
+		//what's going on
+		var action = jQuery(this).attr('data-id');
+		var previous = jQuery('#meetings').attr('data-type');
+		
+		//toggle control, meetings div
+		if (action == 'list') {
+			closeFullscreen();
+			jQuery('#meetings #action .toggle-view[data-id=list]').addClass('active');
+			jQuery('#meetings #action .toggle-view[data-id=map]').removeClass('active');			
+		} else if (action == 'map') {
+			jQuery('#meetings #action .toggle-view[data-id=map]').addClass('active');
+			jQuery('#meetings #action .toggle-view[data-id=list]').removeClass('active');			
+		}
 
-		//wake up the map
-		google.maps.event.trigger(map, 'resize');
-		map.fitBounds(bounds);
-   		if ((markers.length == 1) && jQuery("#map").is(":visible")) {
-   			map.setZoom(14);
-   			google.maps.event.trigger(markers[0],'click');
-   		}
+		//set meetings div
+		jQuery('#meetings').attr('data-type', action);
+		
+		//wake up the map if needed
+		if (action == 'map' && action != previous) {
+			google.maps.event.trigger(map, 'resize');
+			map.fitBounds(bounds);
+	   		if ((markers.length == 1) && jQuery('#map').is(':visible')) {
+	   			map.setZoom(14);
+	   			google.maps.event.trigger(markers[0],'click');
+	   		}
+		}
 	});
 
-	jQuery("#geolocator").click(function(e){
+	jQuery('a[href=#geolocator]').click(function(e){
 		e.preventDefault();
-		jQuery(this).toggleClass("active");
+		jQuery(this).toggleClass('active');
 
-		if (jQuery(this).hasClass("active")) {
+		if (jQuery(this).hasClass('active')) {
 			navigator.geolocation.getCurrentPosition(function(position) {
 				var pos = new google.maps.LatLng(position.coords.latitude, position.coords.longitude);
 
@@ -226,33 +243,60 @@ jQuery(function(){
 					icon: 'http://maps.google.com/mapfiles/ms/icons/blue-dot.png',
 				    position: pos,
 				    map: map,
-				    title: "You"
+				    title: 'You'
 				});
 
 				map.setCenter(pos);
 				map.setZoom(13);
 			}, function(err) {
   				console.log('ERROR(' + err.code + '): ' + err.message);
-  				jQuery(this).removeClass("active")
+  				jQuery(this).removeClass('active')
   			});
 		} else if (userMarker !== undefined) {
 			userMarker.setMap(null);
 		}
 	});
 
-	jQuery("#fullscreen").click(function(){
+	jQuery('a[href=#fullscreen]').click(function(e){
+		e.preventDefault();
 		var center = map.getCenter();
-		jQuery(this).toggleClass("active");
-		jQuery("#meetings").toggleClass("fullscreen");
-		if (jQuery(this).hasClass("active")) {
+		jQuery(this).toggleClass('active');
+		if (jQuery(this).hasClass('active')) {
+			jQuery('#meetings').addClass('fullscreen');
 			var height = jQuery(window).height() - 79;
-			if (jQuery("body").hasClass("admin-bar")) height -= 32;
-			jQuery("#map").css({height: height + 'px'});
+			if (jQuery('body').hasClass('admin-bar')) height -= 32;
+			jQuery('#map').css('height', height);
 		} else {
-			jQuery("#map").css({height:false});
+			closeFullscreen();
 		}
 		google.maps.event.trigger(map, 'resize');
 		map.setCenter(center);
+	});
+
+	//remove fullscreen with an escape key press
+	jQuery(document).keyup(function(e) {
+		if (e.keyCode == 27) closeFullscreen();
+	});
+	
+	function closeFullscreen() {
+		if (jQuery('#meetings').hasClass('fullscreen')) {
+			jQuery('#meetings').removeClass('fullscreen');
+			jQuery('a[href=#fullscreen]').removeClass('active');
+			jQuery('a[href=#fullscreen]').parent().removeClass('active');
+			jQuery('#map').css('height', 550);
+		}
+	}
+	
+	//resize fullscreen on resize
+	jQuery(window).resize(function(e){
+		if (jQuery('#meetings').hasClass('fullscreen')) {
+			var center = map.getCenter();
+			var height = jQuery(window).height() - 79;
+			if (jQuery('body').hasClass('admin-bar')) height -= 32;
+			jQuery('#map').css('height', height);
+			google.maps.event.trigger(map, 'resize');
+			map.setCenter(center);
+		}
 	});
 
 });

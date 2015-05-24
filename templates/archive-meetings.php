@@ -79,23 +79,21 @@ class Walker_Regions_Dropdown extends Walker_Category {
 				</ul>
 			</div>
 		</div>
-		<div class="col-md-4 col-sm-12 visible-md visible-lg visible-xl">
-			<div class="btn-group pull-right" id="action">
-				<a class="btn btn-default active" data-id="list">
-					<i class="dashicons dashicons-list-view"></i> List
+		<div class="col-md-2 col-md-push-2 col-sm-12 visible-md visible-lg visible-xl">
+			<div class="btn-group btn-group-justified" id="action">
+				<a class="btn btn-default toggle-view active" data-id="list">
+					List
 				</a>
-				<a class="btn btn-default" data-id="map">
-					<i class="dashicons dashicons-location"></i> Map
-				</a>
-			</div>
-
-			<div class="btn-group hidden pull-right" id="map_options">
-				<a class="btn btn-default" id="fullscreen">
-					<!--<i class="dashicons dashicons-editor-expand"></i> -->Expand
-				</a>
-				<a class="btn btn-default" id="geolocator">
-					<!--<i class="dashicons dashicons-admin-site"></i> -->Find Me
-				</a>
+				<div class="btn-group">
+					<a class="btn btn-default toggle-view dropdown-toggle" data-toggle="dropdown" data-id="map">
+						Map
+						<span class="caret"></span>
+					</a>
+					<ul class="dropdown-menu pull-right" role="menu">
+						<li><a href="#fullscreen">Expand</a></li>
+						<li><a href="#geolocator">Find Me</a></li>
+					</ul>
+				</div>
 			</div>
 		</div>
 	</div>

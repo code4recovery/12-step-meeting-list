@@ -102,7 +102,6 @@ input:focus, button:focus {
 			}
 		}
 		a { overflow: hidden; }
-		.btn-group { margin-left: $margin; }
 	}
 
 	.results {
@@ -153,12 +152,6 @@ input:focus, button:focus {
 	    z-index: 9999;
 		padding: $margin;
 		background-color: $white;
-		#action {
-			display: none;
-		}
-		#map_options {
-			display: none;
-		}
 	}
 
 	&[data-type=map] {
