@@ -179,7 +179,7 @@ function tsml_get_meetings($arguments=array()) {
 
 	if (!empty($arguments['types'])) {
 		foreach ($arguments['types'] as $type) {
-			$meta_query[] = array(
+			if (!empty($type)) $meta_query[] = array(
 				'key'	=> 'types',
 				'value'	=> '"' . sanitize_text_field($type) . '"',
 				'compare'=>'LIKE',

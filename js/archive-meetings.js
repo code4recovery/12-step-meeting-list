@@ -7,43 +7,55 @@ jQuery(function(){
 
 	//run search (triggered by dropdown toggle or form submit)
 	function doSearch() {
-		//see what's selected
-		var search = jQuery('#search input[name=query]').val().trim();
 
-		//define search
+		//need these later
 		var days = [ 'Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
-
-		var region = jQuery('#region li.active a').attr('data-id') ? jQuery('#region li.active a').attr('data-id') : '';
-		
-		console.log('searching with region ' + region);
 		
 		//prepare data for ajax
 		var data = { 
 			action: 'meetings',
-			search: search,
+			search: jQuery('#search input[name=query]').val().trim(),
 			day: 	jQuery('#day li.active a').attr('data-id'),
-			region: region,
+			region: jQuery('#region li.active a').attr('data-id'),
 			types: 	[]
 		}
-
-		//prepare search terms for highlighter
-		if (search) {
-			search = search.split(' ');
-			for (var i = 0; i < search.length; i++) {
-				search[i] = new RegExp( '(' + search[i] + ')', 'gi');
-			}
-		}
-
+		
 		//load types with selected menu items
 		jQuery('#types li.active').each(function(){
 			data['types'][data['types'].length] = jQuery(this).find('a').attr('data-id');
 		});
+		
+		//save the query in the query string, if the browser is up to it
+		if (history.pushState) {
+			var url = window.location.protocol + '//' + window.location.host + window.location.pathname;
+			var querystring = {};
+			if (data.search) querystring.s = data.search;
+			if (data.day) querystring.d = data.day;
+			if (data.region) querystring.r = data.region;
+			if (data.types.length) querystring.t = data.types.join('-');
+			if (Object.keys(querystring).length) url += '?' + jQuery.param(querystring);
+			window.history.pushState({path:url}, '', url);
+		}
 
+		//prepare search terms for highlighter
+		var search = [];
+		if (data.search) {
+			search = data.search.split(' ');
+			for (var i = 0; i < search.length; i++) {
+				search[i] = new RegExp( '(' + search[i] + ')', 'gi');
+			}
+		}
+		
 		//request new meetings result
 		jQuery.post(myAjax.ajaxurl, data, function(response){
 			var tbody = jQuery('#meetings tbody').html('');
 			if (response.length) {
 				jQuery('#meetings table').removeClass('hidden');
+				if (jQuery('#meetings #map').hasClass('hidden')) {
+					jQuery('#meetings #map').removeClass('hidden');
+					google.maps.event.trigger(map, 'resize');
+				}
+				
 				jQuery('#alert').addClass('hidden');
 				var locations = [];
 
@@ -137,6 +149,7 @@ jQuery(function(){
 
 			} else {
 				jQuery('#meetings table').addClass('hidden');
+				jQuery('#meetings #map').addClass('hidden');
 				jQuery('#alert').html('No results matched those criteria.').removeClass('hidden');
 			}
 
