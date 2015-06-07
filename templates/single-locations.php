@@ -10,9 +10,9 @@ $tsml_back		= wp_get_referer() ?: get_post_type_archive_link('meetings');
 
 ?>
 
-<div class="container">
+<div id="location" class="container">
 	<div class="row">
-		<div class="col-md-10 col-md-offset-1">
+		<div class="col-md-10 col-md-offset-1 main">
 		
 			<div class="page-header">
 				<h1><?php echo $post->post_title?></h1>
@@ -24,23 +24,25 @@ $tsml_back		= wp_get_referer() ?: get_post_type_archive_link('meetings');
 					<dl>
 						<dt>Location</dt>
 						<dd><?php echo $tsml_custom['address'][0]?><br><?php echo $tsml_custom['city'][0]?>, <?php echo $tsml_custom['state'][0]?></dd>
-
+						<br>
 						<dt>Region</dt>
 						<dd><?php echo $tsml_regions[$tsml_custom['region'][0]]?></dd>
 						<?php if (!empty($post->post_content)) {?>
-
+						<br>
 						<dt>Notes</dt>
 						<dd><?php echo nl2br(esc_html($post->post_content))?></dd>
-						<?php } 
+						<?php }?>
+						<br>
+						<?php
 						$meetings = tsml_get_meetings(array('location_id'=>$post->ID));
-						$tsml_days = array();
+						$location_days = array();
 						foreach ($meetings as $meeting) {
-							if (!isset($tsml_days[$meeting['day']])) $tsml_days[$meeting['day']] = array();
-							$tsml_days[$meeting['day']][] = '<li><span>' . $meeting['time_formatted'] . '</span> <a href="' . $meeting['url'] . '">'. tsml_format_name($meeting['name'], $meeting['types']) . '</a></li>';
+							if (!isset($location_days[$meeting['day']])) $location_days[$meeting['day']] = array();
+							$location_days[$meeting['day']][] = '<li><span>' . $meeting['time_formatted'] . '</span> <a href="' . $meeting['url'] . '">'. tsml_format_name($meeting['name'], $meeting['types']) . '</a></li>';
 						}
-						ksort($tsml_days);
-						foreach ($tsml_days as $day=>$meetings) {
-							echo '<dt>' . $aasj_days[$day] . '</dt><dd><ul>' . implode($meetings) . '</ul></dd>';
+						ksort($location_days);
+						foreach ($location_days as $day=>$meetings) {
+							echo '<dt>' . $tsml_days[$day] . '</dt><dd><ul>' . implode($meetings) . '</ul></dd>';
 						}
 						?>
 

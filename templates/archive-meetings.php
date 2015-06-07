@@ -5,14 +5,27 @@ tsml_assets('public');
 
 get_header();
 
-//parse query string (tsml_get_meetings below does input filtering)
-$search		= $_GET['s'];
-$day		= empty($_GET['d']) ? false : intval($_GET['d']);
+//parse query string
+$search		= sanitize_text_field($_GET['sq']);
 $region     = intval($_GET['r']);
-$types		= explode('-', $_GET['t']);
+$types		= array_values(array_intersect(array_keys($tsml_types), explode('-', $_GET['t'])));
+if (!isset($_GET['d'])) {
+	$day = intval(current_time('w')); //if not specified, day is current day
+} elseif ($_GET['d'] == 'any') {
+	$day = false;
+} else {
+	$day = intval($_GET['d']);
+}
 
-//if there's no search at all, only show today
-if (empty($GET['s']) && empty($_GET['d']) && empty($_GET['r']) && empty($_GET['t'])) $day = current_time('w');
+//labels
+$day_default = 'Any Day';
+$day_label = ($day === false) ? $day_default : $tsml_days[$day];
+$region_default = 'Everywhere';
+$region_label = $region ? $tsml_regions[$region] : $region_default;
+$types_default = 'Meeting Type';
+$types_count = count($types);
+$types_label = $types_count ? $types_default . ' [' . $types_count . ']': $types_default;
+if ($types_count == 1) $types_label = $tsml_types[$types[0]];
 
 //need this later
 $locations	= array();
@@ -46,14 +59,14 @@ class Walker_Regions_Dropdown extends Walker_Category {
 		<div class="col-md-2 col-sm-6">
 			<div class="dropdown" id="day">
 				<a data-toggle="dropdown" class="btn btn-default btn-block">
-					<span class="selected"><?php echo $tsml_days[$day]?></span>
+					<span class="selected"><?php echo $day_label?></span>
 					<span class="caret"></span>
 				</a>
 				<ul class="dropdown-menu">
-					<li><a href="#">Any Day</a></li>
+					<li<?php if ($day === false) echo ' class="active"'?>><a href="#"><?php echo $day_default?></a></li>
 					<li class="divider"></li>
 					<?php foreach ($tsml_days as $key=>$value) {?>
-					<li<?php if ($key == $day) echo ' class="active"'?>><a href="#" data-id="<?php echo $key?>"><?php echo $value?></a></li>
+					<li<?php if (intval($key) === $day) echo ' class="active"'?>><a href="#" data-id="<?php echo $key?>"><?php echo $value?></a></li>
 					<?php }?>
 				</ul>
 			</div>
@@ -61,11 +74,11 @@ class Walker_Regions_Dropdown extends Walker_Category {
 		<div class="col-md-2 col-sm-6">
 			<div class="dropdown" id="region">
 				<a data-toggle="dropdown" class="btn btn-default btn-block">
-					<span class="selected"><?php if ($region) { echo $tsml_regions[$region]; } else { echo 'Everywhere'; }?></span>
+					<span class="selected"><?php echo $region_label?></span>
 					<span class="caret"></span>
 				</a>
 				<ul class="dropdown-menu">
-					<li<?php if (empty($region)) echo ' class="active"'?>><a href="#">Everywhere</a></li>
+					<li<?php if (empty($region)) echo ' class="active"'?>><a href="#"><?php echo $region_default?></a></li>
 					<li class="divider"></li>
 					<?php wp_list_categories(array(
 						'taxonomy' => 'region',
@@ -75,6 +88,7 @@ class Walker_Regions_Dropdown extends Walker_Category {
 						'hide_empty' => false,
 						'walker' => new Walker_Regions_Dropdown,
 						'value' => $region,
+						'show_option_none' => '',
 					)); ?>
 				</ul>
 			</div>
@@ -82,7 +96,7 @@ class Walker_Regions_Dropdown extends Walker_Category {
 		<div class="col-md-2 col-sm-6">
 			<div class="dropdown" id="types">
 				<a data-toggle="dropdown" class="btn btn-default btn-block">
-					<span class="selected">Meeting Type</span>
+					<span class="selected"><?php echo $types_label?></span>
 					<span class="caret"></span>
 				</a>
 				<ul class="dropdown-menu">

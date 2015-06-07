@@ -17,15 +17,25 @@ input:focus, button:focus {
 	outline: 0;	
 }
 
+.container {
+	max-width: 100%;
+}
+
 .infowindow {
 	width: 234px;
 	max-height: 250px;
 	padding-bottom: 5px;
 	h3 {
 		margin: 0 0 $margin 0;
+		font-size: 24px;
 	}
 	h5 {
 		margin: 0 0 5px 0;
+		font-size: 14px;
+	}
+	address {
+		font-style: normal;
+		margin: 0 0 $margin 0;
 	}
 	a {
 		color: inherit;
@@ -46,7 +56,9 @@ input:focus, button:focus {
 		overflow: auto;
 		margin: 0;
 		dt, dd {
-			float: left;			
+			float: left;
+			margin: 0;
+			padding: 0;
 		}
 		dt {
 			color: $gray;
@@ -65,7 +77,8 @@ input:focus, button:focus {
 /* meetings */
 #meetings {
 	min-height: $height;
-	padding-bottom: $margin;
+	padding: $margin;
+	clear: both;
 
 	.controls {
 		min-height: 34px;
@@ -171,6 +184,14 @@ input:focus, button:focus {
 			display: none;
 		}
 	}
+}
+
+#meeting, #location {
+	margin-bottom: $margin * 2;
+	.page-header { background-color: transparent; } //2013
+	h1 { font-size: 36px; margin-bottom: 4px; }
+	dl, dd, dt { margin: 0; }
+	ul { padding: 0; margin: 0 0 $margin; list-style: none; }
 }
 
 body.admin-bar {

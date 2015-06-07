@@ -1,12 +1,12 @@
 <?php
-/**
- * Plugin Name:	12 Step Meeting List
- * Plugin URI:	github.com/intergroup/plugin
- * Description:	CMS for maintaining database of 12-step meetings and locations
- * Version:		1.1.2
- * Author:		Santa Clara County Intergroup
- * Author URI:	aasanjose.org
- * License:		none
+/*
+Plugin Name: 12 Step Meeting List
+Plugin URI: https://wordpress.org/plugins/12-step-meeting-list/
+Description: CMS for maintaining database of 12-step meetings and locations
+Version: 1.2.3
+Author: Santa Clara County Intergroup
+Author URI: aasanjose.org
+License: none
  */
 
 //include key files
@@ -22,8 +22,7 @@ include('includes/save.php');
 
 include('includes/admin_lists.php');
 
-//coming soon
-//include('includes/admin_options.php');
+include('includes/admin_import.php');
 
 
 //these hooks are easier in this file

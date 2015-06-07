@@ -73,44 +73,6 @@ function tsml_custom_post_types() {
 	);	
 }
 
-//function: takes 18:30 and returns 6:30 p.m.
-//used:		tsml_get_meetings and theme
-function tsml_format_time($string) {
-	if (!strstr($string, ':')) return 'n/a';
-	if ($string == '12:00') return 'Noon';
-	if ($string == '23:59') return 'Midnight';
-	list($hours, $minutes) = explode(':', $string);
-	$hours -= 0;
-	$ampm = ($hours > 11) ? 'p.m.' : 'a.m.';
-	$hours = ($hours > 12) ? $hours - 12 : $hours;
-	return $hours . ':' . $minutes . ' ' . $ampm;
-}
-
-//function:	appends men or women if type present
-//used:		archive-meetings.php
-function tsml_format_name($name, $tsml_types=array()) {
-	if (in_array('M', $tsml_types)) {
-		$name .= ' <small>Men</small>';
-	} elseif (in_array('W', $tsml_types)) {
-		$name .= ' <small>Women</small>';
-	}
-	return $name;
-}
-
-//function: load only the currently-used regions into a flat array
-//used: init, for displaying in admin lists, api
-function tsml_get_regions() {
-	global $wpdb;
-	$regions = $wpdb->get_col('SELECT DISTINCT
-			m.meta_value
-		FROM ' . $wpdb->postmeta . ' m
-		JOIN ' . $wpdb->posts . ' p ON m.post_id = p.id
-		WHERE p.post_type = "meetings" AND m.meta_key = "region" AND p.post_status = "publish"');
-	$tsml_regions = array();
-	$region_terms = get_terms('region', array('include' => $regions, 'hide_empty' => false));
-	foreach ($region_terms as $region) $tsml_regions[$region->term_id] = $region->name;
-	return $tsml_regions;
-}
 
 //function: deletes all orphaned locations (has no meetings associated)
 //used:		save_post filter
@@ -141,6 +103,68 @@ function tsml_delete_orphaned_locations() {
 	}
 }
 
+//function:	appends men or women if type present
+//used:		archive-meetings.php
+function tsml_format_name($name, $tsml_types=array()) {
+	$name = str_replace('"', '', $name);
+	if (in_array('M', $tsml_types)) {
+		$name .= ' <small>Men</small>';
+	} elseif (in_array('W', $tsml_types)) {
+		$name .= ' <small>Women</small>';
+	}
+	return $name;
+}
+
+//function: takes 18:30 and returns 6:30 p.m.
+//used:		tsml_get_meetings and theme
+function tsml_format_time($string) {
+	if (!strstr($string, ':')) return 'n/a';
+	if ($string == '12:00') return 'Noon';
+	if ($string == '23:59') return 'Midnight';
+	list($hours, $minutes) = explode(':', $string);
+	$hours -= 0;
+	$ampm = ($hours > 11) ? 'p.m.' : 'a.m.';
+	$hours = ($hours > 12) ? $hours - 12 : $hours;
+	return $hours . ':' . $minutes . ' ' . $ampm;
+}
+
+
+//get all locations
+function tsml_get_locations() {
+	global $tsml_regions;
+
+	$locations = array();
+	
+	# Get all locations
+	$posts = get_posts(array(
+		'post_type'		=> 'locations',
+		'numberposts'	=> -1,
+	));
+
+	# Make an array of all locations
+	foreach ($posts as $post) {
+		$tsml_custom = get_post_meta($post->ID);
+		$locations[] = array(
+			'id'				=> $post->ID,
+			'location'			=> $post->post_title,
+			'address'			=> $tsml_custom['address'][0],
+			'city'				=> $tsml_custom['city'][0],
+			'state'				=> $tsml_custom['state'][0],
+			'postal_code'		=> $tsml_custom['postal_code'][0],
+			'country'			=> $tsml_custom['country'][0],
+			'latitude'			=> $tsml_custom['latitude'][0],
+			'longitude'			=> $tsml_custom['longitude'][0],
+			'region_id'			=> $tsml_custom['region'][0],
+			'region'			=> $tsml_regions[$tsml_custom['region'][0]],
+			'location_url'		=> get_permalink($post->ID),
+			'location_slug'		=> $post->post_name,
+			'location_updated'	=> $post->post_modified_gmt,
+		);
+	}
+	
+	return $locations;
+}
+
 //get meetings based on post information
 //used by tsml_meetings_api and meeting list page 
 function tsml_get_meetings($arguments=array()) {
@@ -151,7 +175,7 @@ function tsml_get_meetings($arguments=array()) {
 	//sanitize input
 	$arguments['location_id'] = (isset($arguments['location_id'])) ? intval($arguments['location_id']) : null;
 
-	if (isset($arguments['day'])) {
+	if (isset($arguments['day']) && ($arguments['day'] !== false)) {
 		$meta_query[] = array(
 			'key'	=> 'day',
 			'value'	=> intval($arguments['day']),
@@ -292,40 +316,19 @@ function tsml_get_meetings($arguments=array()) {
 	return $meetings;
 }
 
-//get all locations
-function tsml_get_locations() {
-	global $tsml_regions;
-
-	$locations = array();
-	
-	# Get all locations
-	$posts = get_posts(array(
-		'post_type'		=> 'locations',
-		'numberposts'	=> -1,
-	));
-
-	# Make an array of all locations
-	foreach ($posts as $post) {
-		$tsml_custom = get_post_meta($post->ID);
-		$locations[] = array(
-			'id'				=> $post->ID,
-			'location'			=> $post->post_title,
-			'address'			=> $tsml_custom['address'][0],
-			'city'				=> $tsml_custom['city'][0],
-			'state'				=> $tsml_custom['state'][0],
-			'postal_code'		=> $tsml_custom['postal_code'][0],
-			'country'			=> $tsml_custom['country'][0],
-			'latitude'			=> $tsml_custom['latitude'][0],
-			'longitude'			=> $tsml_custom['longitude'][0],
-			'region_id'			=> $tsml_custom['region'][0],
-			'region'			=> $tsml_regions[$tsml_custom['region'][0]],
-			'location_url'		=> get_permalink($post->ID),
-			'location_slug'		=> $post->post_name,
-			'location_updated'	=> $post->post_modified_gmt,
-		);
-	}
-	
-	return $locations;
+//function: load only the currently-used regions into a flat array
+//used: init, for displaying in admin lists, api
+function tsml_get_regions() {
+	global $wpdb;
+	$regions = $wpdb->get_col('SELECT DISTINCT
+			m.meta_value
+		FROM ' . $wpdb->postmeta . ' m
+		JOIN ' . $wpdb->posts . ' p ON m.post_id = p.id
+		WHERE p.post_type = "meetings" AND m.meta_key = "region" AND p.post_status = "publish"');
+	$tsml_regions = array();
+	$region_terms = get_terms('region', array('include' => $regions, 'hide_empty' => false));
+	foreach ($region_terms as $region) $tsml_regions[$region->term_id] = $region->name;
+	return $tsml_regions;
 }
 
 //api ajax function
@@ -432,3 +435,285 @@ function tsml_regions_api() {
 	header('Access-Control-Allow-Origin: *');
 	wp_send_json($output);
 };
+
+//sanitize and import meeting data
+//used by admin_import.php
+function tsml_import($meetings, $delete='nothing') {
+	global $tsml_types, $tsml_days;
+	
+	//uppercasing for value matching later
+	$tsml_types = array_map('strtoupper', $tsml_types);
+		
+	//type translations for other groups
+	$type_translations = array(
+		'BB' => 'B',
+		'BC' => 'H', 
+		'CL' => 'C',
+		'GL' => 'G',
+		'GM' => 'G',
+		'LGBTQ' => 'T',
+		'LW' => 'L',
+		'MN' => 'M',
+		'NT' => 'A',
+		'SPK' => 'SP',
+		'SPK-F' => 'SP',
+		'SPK-L' => 'SP',
+		'SS' => 'ST',
+		'WC' => 'X',
+		'WM' => 'W',
+		'WP/TRANS' => 'T',
+		'YP' => 'Y',
+		'E' => 'S',
+	);
+	
+	//counter of successful meetings imported
+	$success = 0;
+	
+	//counter for errors
+	$row_counter = 1;
+
+	//arrays we will need
+	$addresses = $locations = array();
+	
+	//get sanitized delete mode
+	$delete = in_array(sanitize_text_field($delete), array('everything', 'individual', 'nothing')) ? $delete : 'nothing';
+
+	//remove line breaks between rows
+	$meetings = preg_replace('#\\n(?=[^"]*"[^"]*(?:"[^"]*"[^"]*)*$)#' , ' ', $meetings);
+
+	//split data into rows
+	$meetings = explode(PHP_EOL, $meetings);
+	if (count($meetings) < 2) return tsml_admin_notice('Nothing was imported because no data rows were found.', 'error');
+	
+	//get header
+	$header = explode("\t", array_shift($meetings));
+	$header = array_map('sanitize_text_field', $header);
+	$header = array_map('strtolower', $header);
+	$header_count = count($header);
+	
+	//check header for required fields
+	if (!in_array('time', $header)) return tsml_admin_notice('Time column is required.', 'error');
+	if (!in_array('day', $header)) return tsml_admin_notice('Day column is required.', 'error');
+	if (!in_array('address', $header)) return tsml_admin_notice('Address column is required.', 'error');
+
+	//all the data is set, now delete everything
+	if ($delete == 'everything') {
+		$all_meetings = get_posts('post_type=meetings&numberposts=-1');
+		foreach ($all_meetings as $meeting) wp_delete_post($meeting->ID, true);
+		$all_locations = get_posts('post_type=locations&numberposts=-1');
+		foreach ($all_locations as $location) wp_delete_post($location->ID, true);
+		$all_regions = get_terms('region', array( 'fields' => 'ids', 'hide_empty' => false ) );
+		foreach ($all_regions as $region) wp_delete_term($region, 'region');
+	}
+		
+	//loop through data and group by address
+	foreach ($meetings as $meeting) {
+		$row_counter++;
+		$meeting = explode("\t", $meeting);
+		if ($header_count != count($meeting)) {
+			return tsml_admin_notice('Row #' . $row_counter . ' has ' . count($meeting) . ' rows while the header has ' . $header_count . '.', 'error');
+		}
+		$meeting = array_map('stripslashes', $meeting); //removing quotes
+		$meeting = array_map('sanitize_text_field', $meeting); //safety
+		$meeting = array_combine($header, $meeting); //apply header field names to array
+
+		//check required fields
+		if (empty($meeting['time'])) return tsml_admin_notice('Found a meeting with no time.', 'error');
+		if (empty($meeting['day'])) return tsml_admin_notice('Found a meeting with no day.', 'error');
+		if (empty($meeting['address'])) return tsml_admin_notice('Found a meeting with no address.', 'error');
+
+		//sanitize time
+		$meeting['time'] = date_parse($meeting['time']);
+		$meeting['time'] = sprintf('%02d', $meeting['time']['hour']) . ':' . sprintf('%02d', $meeting['time']['minute']);
+		if ($meeting['time'] == '00:00') $meeting['time'] = '23:59';
+		
+		//use address if location is missing
+		if (empty($meeting['location'])) $meeting['location'] = $meeting['address'];
+	
+		//use location, day, and time for meeting name if missing
+		if (empty($meeting['name'])) $meeting['name'] = $meeting['location'] . ' ' . $meeting['day'] . 's at ' . tsml_format_time($meeting['time']);
+	
+		//sanitize day
+		if (!in_array($meeting['day'], $tsml_days)) return tsml_admin_notice('"' . $meeting['day'] . '" is an invalid value for day.', 'error');
+		$meeting['day'] = array_search($meeting['day'], $tsml_days);
+
+		//append city, state, and country to address if not already in it
+		if (!empty($meeting['city']) && !stristr($meeting['address'], $meeting['city'])) $meeting['address'] .= ', ' . $meeting['city'];
+		if (!empty($meeting['state']) && !stristr($meeting['address'], $meeting['state'])) $meeting['address'] .= ', ' . $meeting['state'];
+		if (!empty($meeting['country']) && !stristr($meeting['address'], $meeting['country'])) $meeting['address'] .= ', ' . $meeting['country'];
+
+		//add region to taxonomy if it doesn't exist yet
+		if (!empty($meeting['region'])) {
+			if ($term = term_exists($meeting['region'], 'region')) {
+				$meeting['region'] = $term['term_id'];
+			} else {
+				$term = wp_insert_term($meeting['region'], 'region');
+				$meeting['region'] = $term['term_id'];
+			}
+		}
+
+		//sanitize types
+		$types = explode(',', $meeting['types']);
+		$meeting['types'] = array();
+		foreach ($types as $type) {
+			$type = trim($type);
+			if (in_array($type, array_keys($tsml_types))) {
+				$meeting['types'][] = $type;
+			} elseif (in_array($type, array_values($tsml_types))) {
+				$meeting['types'][] = array_search($type, $tsml_types);
+			} elseif (in_array($type, array_keys($type_translations))) {
+				$meeting['types'][] = $type_translations[$type];
+			}
+		}
+				
+		//group by address
+		if (!array_key_exists($meeting['address'], $addresses)) {
+			$addresses[$meeting['address']] = array(
+				'meetings' => array(),
+				'region' => $meeting['region'],
+				'location' => $meeting['location'],		
+			);
+		}
+		
+		//attach meeting to address object
+		$addresses[$meeting['address']]['meetings'][] = array(
+			'name' => $meeting['name'],
+			'day' => $meeting['day'],
+			'time' => $meeting['time'],
+			'types' => $meeting['types'],
+			'notes' => $meeting['notes'],
+		);
+	}
+	
+	//dd($addresses);
+	//die('exiting before geocoding ' . count($addresses) . ' addresses.');
+		
+	//loop through again and geocode the addresses, making a location
+	$ch = curl_init();
+	curl_setopt_array($ch, array(
+		CURLOPT_HEADER => 0, 
+        CURLOPT_RETURNTRANSFER => TRUE, 
+        CURLOPT_TIMEOUT => 4,
+    ));
+	foreach ($addresses as $address=>$info) {
+		curl_setopt($ch, CURLOPT_URL, 'http://maps.googleapis.com/maps/api/geocode/json?address=' . urlencode($address));
+		if (!$result = curl_exec($ch)) {
+			return tsml_admin_notice('Google did not respond for address "' . $address . '"', 'error');
+		}
+		
+		//interpret result
+		$data = json_decode($result);
+		
+		if ($data->status == 'OVER_QUERY_LIMIT') {
+			sleep(2);
+			$data = json_decode(curl_exec($ch));
+			if ($data->status == 'OVER_QUERY_LIMIT') {
+				return tsml_admin_notice('You are over your rate limit for the Google Geocoding API, you will need an API Key to continue.', 'error');
+			}
+		}
+		
+		if (empty($data->results[0]->address_components)) {
+			return tsml_admin_notice('Google did not respond for address "' . $address . '". Response was <pre>' . var_export($data, true) . '</pre>', 'error');
+		}
+		
+		$formatted_address = $data->results[0]->formatted_address;
+		$address = $city = $state = $postal_code = $country = false;
+		foreach ($data->results[0]->address_components as $component) {
+			if (in_array('street_number', $component->types)) {
+				$address = $component->long_name;
+			} elseif (in_array('route', $component->types)) {
+				$address .= ' ' . $component->long_name;
+			} elseif (in_array('locality', $component->types)) {
+				$city = $component->long_name;
+			} elseif (in_array('administrative_area_level_1', $component->types)) {
+				$state = $component->short_name;
+			} elseif (in_array('postal_code', $component->types)) {
+				$postal_code = $component->short_name;
+			} elseif (in_array('country', $component->types)) {
+				$country = $component->short_name;
+			} elseif (in_array('point_of_interest', $component->types)) {
+				//remove point of interest, eg Sunnyvale Presbyterian Church, from address
+				$needle = $component->long_name . ', ';
+				if (substr($formatted_address, 0, strlen($needle)) == $needle) {
+					$formatted_address = substr($formatted_address, strlen($needle));
+				}
+			}
+		}
+		
+		//intialize empty location
+		if (!array_key_exists($formatted_address, $locations)) {
+			$locations[$formatted_address] = array(
+				'meetings'		=>array(),
+				'address'		=>$address,
+				'city'			=>$city,
+				'state'			=>$state,
+				'postal_code'	=>$postal_code,
+				'country'    	=>$country,
+				'region'		=>$info['region'],
+				'location'		=>$info['location'],
+				'latitude'		=>$data->results[0]->geometry->location->lat,
+				'longitude'		=>$data->results[0]->geometry->location->lng,
+			);
+		}
+
+		//attach meetings to existing location
+		$locations[$formatted_address]['meetings'] = array_merge(
+			$locations[$formatted_address]['meetings'],
+			$info['meetings']
+		);
+	}
+	
+	//loop through and save everything to the database
+	foreach ($locations as $formatted_address=>$location) {
+		//save location
+		$location_id = wp_insert_post(array(
+			'post_title'	=> $location['location'],
+			'post_type'		=> 'locations',
+			'post_status'	=> 'publish',
+		));
+		update_post_meta($location_id, 'formatted_address',	$formatted_address);
+		update_post_meta($location_id, 'address',			$location['address']);
+		update_post_meta($location_id, 'city',				$location['city']);
+		update_post_meta($location_id, 'state',				$location['state']);
+		update_post_meta($location_id, 'postal_code',		$location['postal_code']);
+		update_post_meta($location_id, 'country',			$location['country']);
+		update_post_meta($location_id, 'latitude',			$location['latitude']);
+		update_post_meta($location_id, 'longitude',			$location['longitude']);
+		update_post_meta($location_id, 'region',			$location['region']);
+
+		//save meetings to this location
+		foreach ($location['meetings'] as $meeting) {
+			$meeting_id = wp_insert_post(array(
+				'post_title'	=> $meeting['name'],
+				'post_type'		=> 'meetings',
+				'post_status'	=> 'publish',
+				'post_parent'	=> $location_id,
+				'post_content'	=> $meeting['notes'],
+			));
+			update_post_meta($meeting_id, 'day',		$meeting['day']);
+			update_post_meta($meeting_id, 'time',		$meeting['time']);
+			update_post_meta($meeting_id, 'types',		$meeting['types']);
+			update_post_meta($meeting_id, 'region',		$location['region']); //double-entry just for searching
+			wp_set_object_terms($meeting_id, intval($location['region']), 'region');
+			$success++;
+		}
+	}
+	
+	//success
+	return tsml_admin_notice('Successfully added ' . $success . ' meetings.');
+}
+
+//admin screen update message
+//used by tsml_import
+function tsml_admin_notice($message, $type='updated') {
+	add_action('admin_notices', function() use ($message, $type) {
+		echo '<div class="' . $type . '"><p>' . $message . '</p></div>';
+	});
+}
+
+//helper for debugging
+function dd($array) {
+	echo '<pre>';
+	print_r($array);
+	exit;	
+}

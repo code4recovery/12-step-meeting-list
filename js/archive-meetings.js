@@ -29,8 +29,12 @@ jQuery(function(){
 		if (history.pushState) {
 			var url = window.location.protocol + '//' + window.location.host + window.location.pathname;
 			var querystring = {};
-			if (data.search) querystring.s = data.search;
-			if (data.day) querystring.d = data.day;
+			if (data.search) querystring.sq = data.search;
+			if (data.day) {
+				querystring.d = data.day;
+			} else {
+				querystring.d = 'any';
+			}
 			if (data.region) querystring.r = data.region;
 			if (data.types.length) querystring.t = data.types.join('-');
 			if (Object.keys(querystring).length) url += '?' + jQuery.param(querystring);
@@ -168,14 +172,15 @@ jQuery(function(){
 
 	jQuery('#meetings #search').submit(function(e){
 
-		//when submitting from input, clear dropdown values
+		/*when submitting from input, clear dropdown values
 		jQuery('#day li').removeClass('active').first().addClass('active');
 		jQuery('#day span.selected').html('Any Day');
 		jQuery('#region li').removeClass('active').first().addClass('active');
 		jQuery('#region span.selected').html('Everywhere');
 		jQuery('#types li').removeClass('active');
 		jQuery('#types span.selected').html('Meeting Type');
-
+		*/
+		
 		doSearch();
 		return false;
 	});
