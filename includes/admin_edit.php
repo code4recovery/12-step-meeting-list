@@ -33,7 +33,7 @@ add_action('admin_init', function(){
 	remove_meta_box('wii_post-box1', 'meetings', 'normal'); //removes weaver ii from east bay site
 
 	add_meta_box('info', 'General Info', function(){
-		global $post, $tsml_days, $tsml_types, $tsml_custom, $tsml_nonce;
+		global $post, $tsml_days, $tsml_types, $tsml_program, $tsml_custom, $tsml_nonce;
 
 		//get post metadata
 		$tsml_custom 	= get_post_custom($post->ID);
@@ -58,7 +58,7 @@ add_action('admin_init', function(){
 		<div class="meta_form_row">
 			<label for="tags">Types</label>
 			<div class="checkboxes">
-				<?php foreach ($tsml_types as $key=>$type) {?>
+				<?php foreach ($tsml_types[$tsml_program] as $key=>$type) {?>
 					<label>
 						<input type="checkbox" name="types[]" value="<?php echo $key?>" <?php if (in_array($key, $tsml_custom['types'])) {?> checked="checked"<?php }?>>
 						<?php echo $type?>

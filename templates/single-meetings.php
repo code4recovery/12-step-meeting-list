@@ -38,7 +38,7 @@ $tsml_back		= wp_get_referer() ?: get_post_type_archive_link('meetings');
 						<br>
 						<?php 
 						if (count($tsml_custom['types'][0])) {
-							foreach ($tsml_custom['types'][0] as &$type) $type = $tsml_types[trim($type)];
+							foreach ($tsml_custom['types'][0] as &$type) $type = $tsml_types[$tsml_program][trim($type)];
 							?>
 							<dt>Type</dt>
 							<dd><?php echo implode(', ', $tsml_custom['types'][0])?></dd>
