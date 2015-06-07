@@ -64,6 +64,9 @@ add_action('save_post', function(){
 
 		//clean up orphans
 		tsml_delete_orphaned_locations();
+		
+		//update types in use
+		tsml_update_types_in_use();
 	}
 
 });

@@ -94,6 +94,7 @@ class Walker_Regions_Dropdown extends Walker_Category {
 			</div>
 		</div>
 		<div class="col-md-2 col-sm-6">
+			<?php if (count($tsml_types_in_use)) {?>
 			<div class="dropdown" id="types">
 				<a data-toggle="dropdown" class="btn btn-default btn-block">
 					<span class="selected"><?php echo $types_label?></span>
@@ -107,6 +108,7 @@ class Walker_Regions_Dropdown extends Walker_Category {
 					<?php } ?>
 				</ul>
 			</div>
+			<?php }?>
 		</div>
 		<div class="col-md-2 col-md-push-2 col-sm-12 visible-md visible-lg visible-xl">
 			<div class="btn-group btn-group-justified" id="action">

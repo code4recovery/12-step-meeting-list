@@ -440,7 +440,7 @@ function tsml_import($meetings, $delete='nothing') {
 	global $tsml_types, $tsml_program, $tsml_days;
 	
 	//uppercasing for value matching later
-	$tsml_types = array_map('strtoupper', $tsml_types[$tsml_program]);
+	$upper_types = array_map('strtoupper', $tsml_types[$tsml_program]);
 		
 	//type translations for other groups
 	$type_translations = array(
@@ -496,9 +496,9 @@ function tsml_import($meetings, $delete='nothing') {
 
 	//all the data is set, now delete everything
 	if ($delete == 'everything') {
-		$all_meetings = get_posts('post_type=meetings&numberposts=-1');
+		$all_meetings = get_posts('post_type=meetings&post_status=any&numberposts=-1');
 		foreach ($all_meetings as $meeting) wp_delete_post($meeting->ID, true);
-		$all_locations = get_posts('post_type=locations&numberposts=-1');
+		$all_locations = get_posts('post_type=locations&post_status=any&numberposts=-1');
 		foreach ($all_locations as $location) wp_delete_post($location->ID, true);
 		$all_regions = get_terms('region', array( 'fields' => 'ids', 'hide_empty' => false ) );
 		foreach ($all_regions as $region) wp_delete_term($region, 'region');
@@ -555,10 +555,10 @@ function tsml_import($meetings, $delete='nothing') {
 		$meeting['types'] = array();
 		foreach ($types as $type) {
 			$type = trim($type);
-			if (in_array($type, array_keys($tsml_types))) {
+			if (in_array($type, array_keys($upper_types))) {
 				$meeting['types'][] = $type;
-			} elseif (in_array($type, array_values($tsml_types))) {
-				$meeting['types'][] = array_search($type, $tsml_types);
+			} elseif (in_array($type, array_values($upper_types))) {
+				$meeting['types'][] = array_search($type, $upper_types);
 			} elseif (in_array($type, array_keys($type_translations))) {
 				$meeting['types'][] = $type_translations[$type];
 			}
@@ -697,8 +697,42 @@ function tsml_import($meetings, $delete='nothing') {
 		}
 	}
 	
+	//update types in use
+	tsml_update_types_in_use();
+	
 	//success
 	return tsml_admin_notice('Successfully added ' . $success . ' meetings.');
+}
+
+//set an option with the currently-used types
+//used by tsml_import() and save.php
+function tsml_update_types_in_use() {
+	global $tsml_types_in_use, $wpdb;
+	
+	//shortcut to getting all meta values without getting all posts first
+	$types = $wpdb->get_col('SELECT
+			m.meta_value 
+		FROM ' . $wpdb->postmeta . ' m
+		JOIN ' . $wpdb->posts . ' p ON m.post_id = p.id
+		WHERE p.post_type = "meetings" AND m.meta_key = "types" AND p.post_status = "publish"');
+		
+	//master array
+	$all_types = array();
+	
+	//loop through results and append to master array
+	foreach ($types as $type) {
+		$all_types = array_merge($all_types, unserialize($type));
+	}
+	
+	//update global variable
+	$tsml_types_in_use = array_unique($all_types);
+	
+	//set option value
+	if (get_option('tsml_types_in_use') === false) {
+		add_option('tsml_types_in_use', $tsml_types_in_use);
+	} else {
+		update_option('tsml_types_in_use', $tsml_types_in_use);
+	}
 }
 
 //admin screen update message

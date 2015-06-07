@@ -3,7 +3,7 @@ Contributors: aasanjose
 Tags: meetings, aa, na, 12-step, locations
 Requires at least: 3.2
 Tested up to: 4.2.2
-Stable tag: 1.2.3
+Stable tag: 1.2.4
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -52,6 +52,9 @@ Currently no, but if someone will volunteer to help with the translating, we wil
 
 == Changelog ==
 
+= 1.2.4 =
+* More types, only shows types in use
+
 = 1.2.3 =
 * Bumping version
 
@@ -67,45 +70,10 @@ Currently no, but if someone will volunteer to help with the translating, we wil
 = 1.1.6 =
 * Empty region dropdown nicer
 
-= 1.1.5 =
-* Fixing bug with header
-
-= 1.1.4 =
-* Minor bug fixes in day dropdown
-
-= 1.1.3 =
-* Searches are now linkable (in modern browsers)
-* Going back to meetings preserves your search
-
-= 1.1.2 =
-* Moving map controls under map button
-
-= 1.1.1 =
-* New columns in CSV, fixed javascript issue affecting meeting name display
-
-= 1.1.0 =
-* Regions are hierarchical now
-
-= 1.0.5 =
-* Fixed CSS issue with fullscreen map
-
-= 1.0.4 =
-* Fixed issue with men/women tags in page header
-* CSS fixes
-
-= 1.0.3 =
-* Updating Readme
-
-= 1.0.2 =
-* Adding 'Speaker' to types
-
-= 1.0.1 =
-* Updates requested by WordPress team
-
-= 1.0 =
-* Preparing for submission to the WordPress plugins directory
-
 == Upgrade Notice ==
+
+= 1.2.4 =
+More types, only shows types in use
 
 = 1.2.3 =
 Bumping version
@@ -121,36 +89,3 @@ New import feature
 
 = 1.1.6 =
 Region dropdown nicer now when empty
-
-= 1.1.5 =
-Hopefully fixing header
-
-= 1.1.4 =
-Minor bug fixes in day dropdown
-
-= 1.1.3 =
-On modern browsers, search maintains state in URL
-
-= 1.1.2 =
-Better map controls.
-
-= 1.1.1 =
-Added columns to CSV.
-
-= 1.1.0 =
-You can now have sub-regions.
-
-= 1.0.5 =
-Fixes fullscreen CSS issue.
-
-= 1.0.4 =
-Fixes potentially annoying / Men or / Women tag issue.
-
-= 1.0.3 =
-Not really a big update.
-
-= 1.0.2 =
-Standardizing types; you want to have the latest types.
-
-= 1.0.1 =
-First public version of the plugin.
