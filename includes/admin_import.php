@@ -83,7 +83,7 @@ add_action('admin_menu', function() {
 							<h3>Where's My Info?</h3>
 							<div class="inside">
 								<p>Your meeting list page is <a href="<?php echo get_post_type_archive_link('meetings'); ?>">right here</a>. 
-								Link this page from your site's nav menu to make it visible to the public.</p>
+								Link that page from your site's nav menu to make it visible to the public.</p>
 								<p>You can also download your meetings in <a href="<?php echo admin_url('admin-ajax.php')?>?action=csv">CSV format</a>.</p>
 								<p style="margin-bottom:0;">You have:</p>
 								<ul class="ul-disc" style="margin-top:4px">

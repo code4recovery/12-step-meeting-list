@@ -46,6 +46,7 @@ $tsml_types = array(
 		'Y'   => 'Alateen',
 		'A'   => 'Atheist / Agnostic',
 		'BA'  => 'Babysitter',
+		'BE'  => 'Beginner',
 		'C'   => 'Closed', 
 		'AA'  => 'Concurrent with AA Meeting',
 		'AL'  => 'Concurrent with Alateen Meeting',
