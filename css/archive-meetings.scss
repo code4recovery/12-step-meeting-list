@@ -86,6 +86,9 @@ input:focus, button:focus {
 		form, .dropdown {
 			margin-bottom: $margin;
 		}
+		input[name=query] {
+			padding: 6px 12px;
+		}
 		ul { 
 			min-width: 100%; 
 			&.children {
@@ -191,7 +194,7 @@ input:focus, button:focus {
 	.page-header { background-color: transparent; } //2013
 	h1 { font-size: 36px; margin-bottom: 4px; }
 	dl, dd, dt { margin: 0; }
-	ul { padding: 0; margin: 0 0 $margin; list-style: none; }
+	ul { padding: 0; margin: 0; list-style: none; }
 }
 
 body.admin-bar {

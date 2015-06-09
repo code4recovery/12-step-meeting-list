@@ -8,7 +8,6 @@ $tsml_custom	= get_post_meta($post->ID);
 $tsml_parent	= get_post($post->post_parent);
 $tsml_custom	= array_merge($tsml_custom, get_post_meta($tsml_parent->ID));
 $tsml_custom['types'][0] = empty($tsml_custom['types'][0]) ? array() : unserialize($tsml_custom['types'][0]);
-$tsml_back		= wp_get_referer() ?: get_post_type_archive_link('meetings');
 ?>
 
 <div id="meeting" class="container">
@@ -17,7 +16,7 @@ $tsml_back		= wp_get_referer() ?: get_post_type_archive_link('meetings');
 		
 			<div class="page-header">
 				<h1><?php echo tsml_format_name($post->post_title, $tsml_custom['types'][0])?></h1>
-				<a href="<?php echo $tsml_back?>"><i class="glyphicon glyphicon-chevron-right"></i> Back to Meetings</a>
+				<?php echo tsml_link(get_post_type_archive_link('meetings'), '<i class="glyphicon glyphicon-chevron-right"></i> Back to Meetings')?>
 			</div>
 
 			<div class="row">
@@ -30,24 +29,28 @@ $tsml_back		= wp_get_referer() ?: get_post_type_archive_link('meetings');
 						</dd>
 						<br>
 						<dt>Location</dt>
-						<dd><a href="<?php echo get_permalink($tsml_parent->ID)?>"><?php echo $tsml_parent->post_title?></a></dd>
+						<dd><?php echo tsml_link(get_permalink($tsml_parent->ID), $tsml_parent->post_title)?></dd>
 						<dd><?php echo $tsml_custom['address'][0]?><br><?php echo $tsml_custom['city'][0]?>, <?php echo $tsml_custom['state'][0]?></dd>
+						<?php if (!empty($tsml_regions[$tsml_custom['region'][0]])) {?>
 						<br>
 						<dt>Region</dt>
 						<dd><?php echo $tsml_regions[$tsml_custom['region'][0]]?></dd>
-						<br>
-						<?php 
+						<?php }
 						if (count($tsml_custom['types'][0])) {
 							foreach ($tsml_custom['types'][0] as &$type) $type = $tsml_types[$tsml_program][trim($type)];
 							?>
+							<br>
 							<dt>Type</dt>
 							<dd><?php echo implode(', ', $tsml_custom['types'][0])?></dd>
-						<?php }?>
-						<?php if (!empty($post->post_content)) {?>
+						<?php }
+						if (!empty($post->post_content)) {?>
 						<br>
 						<dt>Notes</dt>
 						<dd><?php echo nl2br(esc_html($post->post_content))?></dd>
 						<?php } ?>
+						<br>
+						<dt>Updated</dt>
+						<dd><?php the_modified_date()?></dd>
 					</dl>
 				</div>
 				<div class="col-md-8">

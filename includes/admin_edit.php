@@ -102,7 +102,7 @@ add_action('admin_init', function(){
 				'hide_empty' => false,
 				'orderby' => 'name',
 				'selected' => $tsml_custom['region'][0],
-			)); ?>
+			))?>
 		</div>
 		<div class="meta_form_row">
 			<label for="map">Map</label>

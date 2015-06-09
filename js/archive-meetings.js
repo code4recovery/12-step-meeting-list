@@ -24,20 +24,20 @@ jQuery(function(){
 		jQuery('#types li.active').each(function(){
 			data['types'][data['types'].length] = jQuery(this).find('a').attr('data-id');
 		});
+
+		//get current query string for history and appending to links
+		var querystring = {};
+		if (data.search) querystring.sq = data.search;
+		querystring.d = data.day ? data.day : 'any';
+		if (data.region) querystring.r = data.region;
+		if (data.types.length) querystring.t = data.types.join('-');
+		querystring = jQuery.param(querystring);
+		if (querystring.length) querystring = '?' + querystring;
+		//console.log('querystring is ' + querystring)
 		
 		//save the query in the query string, if the browser is up to it
 		if (history.pushState) {
-			var url = window.location.protocol + '//' + window.location.host + window.location.pathname;
-			var querystring = {};
-			if (data.search) querystring.sq = data.search;
-			if (data.day) {
-				querystring.d = data.day;
-			} else {
-				querystring.d = 'any';
-			}
-			if (data.region) querystring.r = data.region;
-			if (data.types.length) querystring.t = data.types.join('-');
-			if (Object.keys(querystring).length) url += '?' + jQuery.param(querystring);
+			var url = window.location.protocol + '//' + window.location.host + window.location.pathname + querystring;
 			window.history.pushState({path:url}, '', url);
 		}
 
@@ -98,7 +98,7 @@ jQuery(function(){
 					};
 
 					//add new table row
-					tbody.append('<tr><td class="time">' + (data.day ? obj.time_formatted : days[obj.day] + ', ' + obj.time_formatted) + '</td><td class="name"><a href="' + obj.url + '">' + highlight(obj.name, search) + '</a></td><td class="location">' + highlight(obj.location, search) + '</td><td class="address">' + obj.address + '</td><td class="region">' + obj.region + '</td></tr>')
+					tbody.append('<tr><td class="time">' + (data.day ? obj.time_formatted : days[obj.day] + ', ' + obj.time_formatted) + '</td><td class="name"><a href="' + obj.url + querystring + '">' + highlight(obj.name, search) + '</a></td><td class="location">' + highlight(obj.location, search) + '</td><td class="address">' + obj.address + '</td><td class="region">' + obj.region + '</td></tr>')
 				});
 
 				//remove old markers and reset bounds

@@ -54,11 +54,7 @@ add_action('admin_menu', function() {
 									<?php wp_nonce_field($tsml_nonce, 'tsml_nonce', false)?>
 									<p>It takes a while for the address verification to do its thing, please be patient. Importing 500 meetings usually takes about one minute.</p>
 									<textarea name="tsml_import" class="widefat" rows="5" placeholder="Paste spreadsheet data here"></textarea>
-									<!--
-									<div style="margin-top:10px;"><label><input type="radio" name="tsml_delete" value="nothing" disabled> Don't overwrite anything that's in the system already</label></div>
-									<div><label><input type="radio" name="tsml_delete" value="individual" disabled> Replace meetings at the same time and place with new data</label></div>
-									-->
-									<div style="margin-top:10px;"><label><input type="radio" name="tsml_delete" value="everything" checked> Start fresh: delete all meetings, locations, and regions.</label></div>
+									<p>This will delete all meetings, locations, and regions currently in the system.</p>
 									<div style="margin-top:12px;"><input type="submit" class="button button-primary" value="Begin"></div>
 								</form>
 						    </div>
@@ -89,6 +85,12 @@ add_action('admin_menu', function() {
 								<p>Your meeting list page is <a href="<?php echo get_post_type_archive_link('meetings'); ?>">right here</a>. 
 								Link this page from your site's nav menu to make it visible to the public.</p>
 								<p>You can also download your meetings in <a href="<?php echo admin_url('admin-ajax.php')?>?action=csv">CSV format</a>.</p>
+								<p style="margin-bottom:0;">You have:</p>
+								<ul class="ul-disc" style="margin-top:4px">
+									<li style="margin: 0 0 2px;"><?php echo count(tsml_get_all_meetings())?> meetings</li>
+									<li style="margin: 0 0 2px;"><?php echo count(tsml_get_all_locations())?> locations</li>
+									<li style="margin: 0 0 2px;"><?php echo count(tsml_get_all_regions())?> regions</li>
+								</ul>
 							</div>
 						</div>
 						<div class="postbox">

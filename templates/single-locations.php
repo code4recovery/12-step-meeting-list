@@ -6,8 +6,6 @@ get_header();
 
 $tsml_custom	= get_post_meta($post->ID);
 $tsml_parent	= get_post($post->post_parent);
-$tsml_back		= wp_get_referer() ?: get_post_type_archive_link('meetings');
-
 ?>
 
 <div id="location" class="container">
@@ -16,7 +14,7 @@ $tsml_back		= wp_get_referer() ?: get_post_type_archive_link('meetings');
 		
 			<div class="page-header">
 				<h1><?php echo $post->post_title?></h1>
-				<a href="<?php echo $tsml_back?>"><i class="glyphicon glyphicon-chevron-right"></i> Back to Meetings</a>
+				<?php echo tsml_link(get_post_type_archive_link('meetings'), '<i class="glyphicon glyphicon-chevron-right"></i> Back to Meetings')?>
 			</div>
 
 			<div class="row location">
@@ -38,14 +36,16 @@ $tsml_back		= wp_get_referer() ?: get_post_type_archive_link('meetings');
 						$location_days = array();
 						foreach ($meetings as $meeting) {
 							if (!isset($location_days[$meeting['day']])) $location_days[$meeting['day']] = array();
-							$location_days[$meeting['day']][] = '<li><span>' . $meeting['time_formatted'] . '</span> <a href="' . $meeting['url'] . '">'. tsml_format_name($meeting['name'], $meeting['types']) . '</a></li>';
+							$location_days[$meeting['day']][] = '<li><span>' . $meeting['time_formatted'] . '</span> ' . tsml_link($meeting['url'], tsml_format_name($meeting['name'], $meeting['types'])) . '</li>';
 						}
 						ksort($location_days);
 						foreach ($location_days as $day=>$meetings) {
 							echo '<dt>' . $tsml_days[$day] . '</dt><dd><ul>' . implode($meetings) . '</ul></dd>';
 						}
 						?>
-
+						<br>
+						<dt>Updated</dt>
+						<dd><?php the_modified_date()?></dd>
 					</dl>
 				</div>
 				<div class="col-md-8">
