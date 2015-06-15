@@ -455,6 +455,7 @@ function tsml_import($meetings, $delete='nothing') {
 	$type_translations = array(
 		'BB' => 'B',
 		'BC' => 'H', 
+		'BG' => 'BE', 
 		'CL' => 'C',
 		'GL' => 'G',
 		'GM' => 'G',
@@ -725,7 +726,9 @@ function tsml_import($meetings, $delete='nothing') {
 //function: return an html link with query string appended
 //used:		archive-meetings.php, single-locations.php, single-meetings.php
 function tsml_link($url, $string) {
-	if (!empty($_SERVER['QUERY_STRING'])) $url .= '?' . $_SERVER['QUERY_STRING'];
+	if (!empty($_SERVER['QUERY_STRING'])) {
+		$url .= (strstr($url, '?') ? '&' : '?') . $_SERVER['QUERY_STRING'];
+	}
 	return '<a href="' . $url . '">' . $string . '</a>';
 }
 

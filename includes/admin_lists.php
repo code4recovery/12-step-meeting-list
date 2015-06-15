@@ -22,6 +22,12 @@ add_filter('manage_edit-locations_columns', function($defaults){
     );	
 });
 
+# If you're deleting meetings, also delete locations
+add_action('delete_post', function($post_id) {
+	$post = get_post($post_id);
+	if ($post->post_type == 'meetings') tsml_delete_orphaned_locations();
+});
+
 # Custom list values for meetings
 add_action('manage_meetings_posts_custom_column', function($column_name, $post_ID){
 	global $tsml_days, $tsml_regions;
