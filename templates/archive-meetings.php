@@ -166,6 +166,12 @@ class Walker_Regions_Dropdown extends Walker_Category {
 								'url'=>$meeting['url'],
 								'types'=>$meeting['types'],
 							);
+
+							//apply search highlighter if needed
+							if ($search) {
+								$meeting['name'] = highlight($meeting['name'], $search);
+								$meeting['location'] = highlight($meeting['location'], $search);
+							}
 							?>
 						<tr>
 							<td class="time"><?php echo $meeting['time_formatted']?></td>

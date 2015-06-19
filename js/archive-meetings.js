@@ -50,10 +50,31 @@ jQuery(function(){
 			}
 		}
 		
+		//debugging
+		//console.log(myAjax.ajaxurl)
+		//console.log(data);
+
 		//request new meetings result
 		jQuery.post(myAjax.ajaxurl, data, function(response){
-			var tbody = jQuery('#meetings tbody').html('');
-			if (response.length) {
+			if (!response.length) {
+
+				//if keyword and no results, clear other parameters and search again
+				if (data.search && (typeof data.day !== 'undefined' || typeof data.region !== 'undefined' || data.types.length)) {
+					jQuery('#day li').removeClass('active').first().addClass('active');
+					jQuery('#region li').removeClass('active').first().addClass('active');
+					jQuery('#types li').removeClass('active');
+
+					//set selected text
+					jQuery('#day span.selected').html(jQuery('#day li:first-child a').html());
+					jQuery('#region span.selected').html(jQuery('#region li:first-child a').html());
+					jQuery('#types span.selected').html('Meeting Type');
+					return doSearch();
+				}
+
+				jQuery('#meetings table').addClass('hidden');
+				jQuery('#meetings #map').addClass('hidden');
+				jQuery('#alert').html('No results matched those criteria.').removeClass('hidden');
+			} else {
 				jQuery('#meetings table').removeClass('hidden');
 				if (jQuery('#meetings #map').hasClass('hidden')) {
 					jQuery('#meetings #map').removeClass('hidden');
@@ -64,6 +85,8 @@ jQuery(function(){
 				var locations = [];
 
 				//console.log('data.day was ' + data.day);
+
+				var tbody = jQuery('#meetings tbody').html('');
 
 				//loop through JSON meetings
 				jQuery.each(response, function(index, obj){
@@ -151,10 +174,6 @@ jQuery(function(){
 					//currently holds last position, not sure if that's good
 				}
 
-			} else {
-				jQuery('#meetings table').addClass('hidden');
-				jQuery('#meetings #map').addClass('hidden');
-				jQuery('#alert').html('No results matched those criteria.').removeClass('hidden');
 			}
 
 		}, 'json');		
@@ -170,22 +189,14 @@ jQuery(function(){
 		return str;
 	}
 
+	//capture submit event
 	jQuery('#meetings #search').submit(function(e){
-
-		/*when submitting from input, clear dropdown values
-		jQuery('#day li').removeClass('active').first().addClass('active');
-		jQuery('#day span.selected').html('Any Day');
-		jQuery('#region li').removeClass('active').first().addClass('active');
-		jQuery('#region span.selected').html('Everywhere');
-		jQuery('#types li').removeClass('active');
-		jQuery('#types span.selected').html('Meeting Type');
-		*/
-		
 		doSearch();
 		return false;
 	});
 
-	jQuery('#meetings .controls .dropdown-menu a').click(function(e){
+	//capture dropdown change
+	jQuery('#meetings .controls').on('click', '.dropdown-menu a', function(e){
 		e.preventDefault();
 
 		//day only one selected

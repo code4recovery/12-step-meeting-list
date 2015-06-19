@@ -272,6 +272,7 @@ function tsml_get_meetings($arguments=array()) {
 			));
 			$post_ids = array_unique(array_merge($post_ids, $children));
 		}
+		if (empty($post_ids)) return [];
 	}
 
 	# Search meetings
@@ -285,6 +286,10 @@ function tsml_get_meetings($arguments=array()) {
 		'post__in'		=> $post_ids,
 		'post_parent'	=> $arguments['location_id'],
 	));
+
+	//dd($meta_query);
+	//die('count was ' . count($posts));
+	//dd($post_ids);
 
 	# Make an array of the meetings
 	foreach ($posts as $post) {
@@ -347,6 +352,7 @@ add_action('wp_ajax_nopriv_meetings', 'tsml_meetings_api');
 
 function tsml_meetings_api() {
 	header('Access-Control-Allow-Origin: *');
+	if (empty($_POST) && !empty($_GET)) return wp_send_json(tsml_get_meetings($_GET)); //debugging
 	wp_send_json(tsml_get_meetings($_POST)); //tsml_get_meetings sanitizes input
 };
 
@@ -779,4 +785,12 @@ function dd($array) {
 	echo '<pre>';
 	print_r($array);
 	exit;	
+}
+
+//helper for search terms
+function highlight($text, $words) {
+    preg_match_all('~\w+~', $words, $m);
+    if (!$m) return $text;
+    $re = '~\\b(' . implode('|', $m[0]) . ')\\b~i';
+    return preg_replace($re, '<mark>$0</mark>', $text);
 }
