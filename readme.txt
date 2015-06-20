@@ -3,7 +3,7 @@ Contributors: aasanjose
 Tags: meetings, aa, al-anon, na, 12-step, locations
 Requires at least: 3.2
 Tested up to: 4.2.2
-Stable tag: 1.2.9
+Stable tag: 1.3
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -52,6 +52,11 @@ Currently no, but if someone will volunteer to help with the translating, we wil
 
 == Changelog ==
 
+= 1.3 =
+* Linking bugfixes for default permalink style
+* New meeting type (Babysitting available)
+* Search bugfixes
+
 = 1.2.9 =
 * NA meeting types
 
@@ -65,28 +70,10 @@ Currently no, but if someone will volunteer to help with the translating, we wil
 = 1.2.6 =
 * Improvements to importer, time formatting and adding last updated date
 
-= 1.2.5 =
-* Importer and navigation improvements
-
-= 1.2.4 =
-* More types, only shows types in use
-
-= 1.2.3 =
-* Bumping version
-
-= 1.2.2 =
-* Importer improvements
-
-= 1.2.1 =
-* Import error handling, also now deletes regions
-
-= 1.2 =
-* New import feature
-
-= 1.1.6 =
-* Empty region dropdown nicer
-
 == Upgrade Notice ==
+
+= 1.3 =
+Linking bugfixes
 
 = 1.2.9 =
 NA meeting types
@@ -99,24 +86,3 @@ Minor tweaks
 
 = 1.2.6 =
 Improvements to importer, time formatting and adding last updated date
-
-= 1.2.5 =
-Importer and navigation improvements
-
-= 1.2.4 =
-More types, only shows types in use
-
-= 1.2.3 =
-Bumping version
-
-= 1.2.2 =
-Importer improvements
-
-= 1.2.1 =
-Import error handling, also now deletes regions
-
-= 1.2 =
-New import feature
-
-= 1.1.6 =
-Region dropdown nicer now when empty
