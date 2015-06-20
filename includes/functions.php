@@ -271,7 +271,7 @@ function tsml_get_meetings($arguments=array()) {
 			));
 			$post_ids = array_unique(array_merge($post_ids, $children));
 		}
-		if (empty($post_ids)) return [];
+		if (empty($post_ids)) return array();
 	}
 
 	# Search meetings
