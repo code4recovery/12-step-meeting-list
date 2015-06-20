@@ -193,8 +193,15 @@ input:focus, button:focus {
 	margin-bottom: $margin * 2;
 	.page-header { background-color: transparent; } //2013
 	h1 { font-size: 36px; margin-bottom: 4px; }
-	dl, dd, dt { margin: 0; }
+	dl, dt { margin: 0; }
+	dd { margin: 0 0 20px; }
 	ul { padding: 0; margin: 0; list-style: none; }
+	small {
+		color: $black;
+		&::before {
+			content: " / ";
+		}
+	}
 }
 
 body.admin-bar {

@@ -148,6 +148,9 @@ class Walker_Regions_Dropdown extends Walker_Category {
 					<tbody>
 						<?php
 						foreach ($meetings as $meeting) {
+							$meeting['name'] = htmlentities($meeting['name'], ENT_QUOTES);
+							$meeting['location'] = htmlentities($meeting['location'], ENT_QUOTES);
+
 							if (!isset($locations[$meeting['location_id']])) {
 								$locations[$meeting['location_id']] = array(
 									'name'=>$meeting['location'],
@@ -175,7 +178,7 @@ class Walker_Regions_Dropdown extends Walker_Category {
 							?>
 						<tr>
 							<td class="time"><?php echo $meeting['time_formatted']?></td>
-							<td class="name"><?php echo tsml_link($meeting['url'], tsml_format_name($meeting['name'], $meeting['types']))?></td>
+							<td class="name"><?php echo tsml_link($meeting['url'], tsml_format_name($meeting['name'], $meeting['types']), 'post_type')?></td>
 							<td class="location"><?php echo $meeting['location']?></td>
 							<td class="address"><?php echo $meeting['address']?></td>
 							<td class="region"><?php echo $meeting['region']?></td>
@@ -216,9 +219,9 @@ jQuery(function(){
 			return function() {
 				var dl  = '';
 				<?php foreach ($location['meetings'] as $meeting) {?>
-				dl += "<dt><?php echo $meeting['time']?></dt><dd><a href='<?php echo $meeting['url']?>'><?php echo tsml_format_name($meeting['name'], $meeting['types'])?></a></dd>";
+				dl += '<dt><?php echo $meeting['time']?></dt><dd><?php echo tsml_link($meeting['url'], tsml_format_name($meeting['name'], $meeting['types']), 'post_type')?></dd>';
 				<?php }?>
-				infowindow.setContent("<div class='infowindow'><h3><a href='<?php echo $location['url']?>'><?php echo $location['name']?></a></h3><address><?php echo $location['address']?><br><?php echo $location['city_state']?></address><h5><?php echo $tsml_days[$today]?></h5><dl>" + dl + "</dl></div>");
+				infowindow.setContent('<div class="infowindow"><h3><?php echo tsml_link($location['url'], $location['name'], 'post_type')?></h3><address><?php echo $location['address']?><br><?php echo $location['city_state']?></address><h5><?php echo $tsml_days[$today]?></h5><dl>' + dl + '</dl></div>');
 				infowindow.open(map, marker);
 			}
 		})(marker));					

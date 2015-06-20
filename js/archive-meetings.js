@@ -38,6 +38,9 @@ jQuery(function(){
 		//save the query in the query string, if the browser is up to it
 		if (history.pushState) {
 			var url = window.location.protocol + '//' + window.location.host + window.location.pathname + querystring;
+			if (location.search.indexOf('post_type=meetings') > -1) {
+				url = url + ((url.indexOf('?') > -1) ? '&' : '?') + 'post_type=meetings';
+			}
 			window.history.pushState({path:url}, '', url);
 		}
 

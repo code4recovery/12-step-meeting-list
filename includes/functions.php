@@ -120,7 +120,6 @@ function tsml_get_all_regions($status='any') {
 //function:	appends men or women if type present
 //used:		archive-meetings.php
 function tsml_format_name($name, $types=array()) {
-	$name = str_replace('"', '', $name);
 	if (in_array('M', $types)) {
 		$name .= ' <small>Men</small>';
 	} elseif (in_array('W', $types)) {
@@ -731,9 +730,12 @@ function tsml_import($meetings, $delete='nothing') {
 
 //function: return an html link with query string appended
 //used:		archive-meetings.php, single-locations.php, single-meetings.php
-function tsml_link($url, $string) {
-	if (!empty($_SERVER['QUERY_STRING'])) {
-		$url .= (strstr($url, '?') ? '&' : '?') . $_SERVER['QUERY_STRING'];
+function tsml_link($url, $string, $exclude='') {
+	$appends = $_GET;
+	if (array_key_exists($exclude, $appends)) unset($appends[$exclude]);
+	if (!empty($appends)) {
+		$url .= strstr($url, '?') ? '&' : '?';
+		$url .= http_build_query($appends, '', '&amp;');
 	}
 	return '<a href="' . $url . '">' . $string . '</a>';
 }

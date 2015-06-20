@@ -14,7 +14,7 @@ $tsml_parent	= get_post($post->post_parent);
 		
 			<div class="page-header">
 				<h1><?php echo $post->post_title?></h1>
-				<?php echo tsml_link(get_post_type_archive_link('meetings'), '<i class="glyphicon glyphicon-chevron-right"></i> Back to Meetings')?>
+				<?php echo tsml_link(get_post_type_archive_link('meetings'), '<i class="glyphicon glyphicon-chevron-right"></i> Back to Meetings', 'locations')?>
 			</div>
 
 			<div class="row location">
@@ -22,28 +22,28 @@ $tsml_parent	= get_post($post->post_parent);
 					<dl>
 						<dt>Location</dt>
 						<dd><?php echo $tsml_custom['address'][0]?><br><?php echo $tsml_custom['city'][0]?>, <?php echo $tsml_custom['state'][0]?></dd>
-						<br>
+
 						<dt>Region</dt>
 						<dd><?php echo $tsml_regions[$tsml_custom['region'][0]]?></dd>
 						<?php if (!empty($post->post_content)) {?>
-						<br>
+
 						<dt>Notes</dt>
 						<dd><?php echo nl2br(esc_html($post->post_content))?></dd>
 						<?php }?>
-						<br>
+
 						<?php
 						$meetings = tsml_get_meetings(array('location_id'=>$post->ID));
 						$location_days = array();
 						foreach ($meetings as $meeting) {
 							if (!isset($location_days[$meeting['day']])) $location_days[$meeting['day']] = array();
-							$location_days[$meeting['day']][] = '<li><span>' . $meeting['time_formatted'] . '</span> ' . tsml_link($meeting['url'], tsml_format_name($meeting['name'], $meeting['types'])) . '</li>';
+							$location_days[$meeting['day']][] = '<li><span>' . $meeting['time_formatted'] . '</span> ' . tsml_link($meeting['url'], tsml_format_name($meeting['name'], $meeting['types']), 'locations') . '</li>';
 						}
 						ksort($location_days);
 						foreach ($location_days as $day=>$meetings) {
 							echo '<dt>' . $tsml_days[$day] . '</dt><dd><ul>' . implode($meetings) . '</ul></dd>';
 						}
 						?>
-						<br>
+
 						<dt>Updated</dt>
 						<dd><?php the_modified_date()?></dd>
 					</dl>
