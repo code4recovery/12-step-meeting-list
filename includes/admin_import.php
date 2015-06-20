@@ -5,7 +5,7 @@ add_action('admin_menu', function() {
 	
 	//run import
 	if (!empty($_POST['tsml_import']) && isset($_POST['tsml_nonce']) && wp_verify_nonce($_POST['tsml_nonce'], $tsml_nonce)) {
-		tsml_import($_POST['tsml_import'], $_POST['tsml_delete']);
+		tsml_import($_POST['tsml_import']);
 	}
 		
 	//change program

@@ -450,7 +450,7 @@ function tsml_regions_api() {
 
 //sanitize and import meeting data
 //used by admin_import.php
-function tsml_import($meetings, $delete='nothing') {
+function tsml_import($meetings) {
 	global $tsml_types, $tsml_program, $tsml_days;
 	
 	//uppercasing for value matching later

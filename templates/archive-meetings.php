@@ -150,6 +150,8 @@ class Walker_Regions_Dropdown extends Walker_Category {
 						foreach ($meetings as $meeting) {
 							$meeting['name'] = htmlentities($meeting['name'], ENT_QUOTES);
 							$meeting['location'] = htmlentities($meeting['location'], ENT_QUOTES);
+							$meeting['address'] = htmlentities($meeting['address'], ENT_QUOTES);
+							$meeting['city'] = htmlentities($meeting['city'], ENT_QUOTES);
 
 							if (!isset($locations[$meeting['location_id']])) {
 								$locations[$meeting['location_id']] = array(

@@ -32,12 +32,12 @@ jQuery(function(){
 		if (data.region) querystring.r = data.region;
 		if (data.types.length) querystring.t = data.types.join('-');
 		querystring = jQuery.param(querystring);
-		if (querystring.length) querystring = '?' + querystring;
 		//console.log('querystring is ' + querystring)
 		
 		//save the query in the query string, if the browser is up to it
 		if (history.pushState) {
-			var url = window.location.protocol + '//' + window.location.host + window.location.pathname + querystring;
+			var url = window.location.protocol + '//' + window.location.host + window.location.pathname;
+			if (querystring.length) url = url + '?' + querystring;
 			if (location.search.indexOf('post_type=meetings') > -1) {
 				url = url + ((url.indexOf('?') > -1) ? '&' : '?') + 'post_type=meetings';
 			}
@@ -85,14 +85,21 @@ jQuery(function(){
 				}
 				
 				jQuery('#alert').addClass('hidden');
-				var locations = [];
 
-				//console.log('data.day was ' + data.day);
+				var locations = [];
 
 				var tbody = jQuery('#meetings tbody').html('');
 
 				//loop through JSON meetings
 				jQuery.each(response, function(index, obj){
+
+					//console.log(obj);
+
+					//append query string to url
+					if (querystring.length) {
+						obj.url = obj.url + ((obj.url.indexOf('?') > -1) ? '&' : '?');
+						obj.url = obj.url + querystring;
+					}
 
 					//add gender designation
 					if (jQuery.inArray('M', obj.types) != -1) {
@@ -124,7 +131,7 @@ jQuery(function(){
 					};
 
 					//add new table row
-					tbody.append('<tr><td class="time">' + (data.day ? obj.time_formatted : days[obj.day] + ', ' + obj.time_formatted) + '</td><td class="name"><a href="' + obj.url + querystring + '">' + highlight(obj.name, search) + '</a></td><td class="location">' + highlight(obj.location, search) + '</td><td class="address">' + obj.address + '</td><td class="region">' + obj.region + '</td></tr>')
+					tbody.append('<tr><td class="time">' + (data.day ? obj.time_formatted : days[obj.day] + ', ' + obj.time_formatted) + '</td><td class="name"><a href="' + obj.url + '">' + highlight(obj.name, search) + '</a></td><td class="location">' + highlight(obj.location, search) + '</td><td class="address">' + obj.address + '</td><td class="region">' + obj.region + '</td></tr>')
 				});
 
 				//remove old markers and reset bounds
@@ -188,7 +195,6 @@ jQuery(function(){
 		for (var i = 0; i < terms.length; i++) {
 			str = str.replace(terms[i], '<mark>$1</mark>')
 		}
-		//console.log('searhing ' + str + ' for ' + terms.join(' '));
 		return str;
 	}
 
