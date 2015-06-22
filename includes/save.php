@@ -11,7 +11,6 @@ add_action('save_post', function(){
 	if ($_POST['post_type'] != 'meetings') return;
 
 	//todo server-side validation here (at least time)
-	$post_status = 'publish';
 	if (empty($_POST['time']) || empty($_POST['formatted_address'])) {
 		$_POST['post_status'] = 'draft';
 	}

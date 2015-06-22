@@ -16,7 +16,7 @@ add_action('admin_menu', function() {
 		} else {
 			update_option('tsml_program', $tsml_program);
 		}
-		tsml_admin_notice('Program setting updated.');
+		tsml_alert('Program setting updated.');
 	}
 		
 	//import text file
@@ -42,10 +42,10 @@ add_action('admin_menu', function() {
 									<li><strong>Location</strong> is the name of the location, and is optional. Generally it's the group or building name. If it's missing, the address will be used. In the event that there are multiple location names for the same address, the first location name will be used.</li>
 									<li><strong>City</strong>, <strong>State</strong>, and <strong>Country</strong> are optional, but might be useful if your addresses sound ambiguous to Google.</li>
 									<li><strong>Notes</strong> are freeform notes that will show up publicly. This is where 'around back' is useful.</li>
-									<li><strong>Types</strong> should be a comma-separated list of the following options. Either O or Open will work to mark a meeting Open. (If this list doesn't look right, see 'Program' at right.)
+									<li><strong>Types</strong> should be a comma-separated list of the following options. This list is determined by which program is selected at right.
 										<ul style="margin-top:10px;overflow:auto;">
-										<?php foreach ($tsml_types[$tsml_program] as $key=>$value) {?>
-											<li style="margin-bottom:0;width:33.33%;float:left;"><?php echo $key?>: <?php echo $value?></li>
+										<?php foreach ($tsml_types[$tsml_program] as $value) {?>
+											<li style="margin-bottom:0;width:33.33%;float:left;"><?php echo $value?></li>
 										<?php }?>
 										</ul>
 									</li>
@@ -66,7 +66,7 @@ add_action('admin_menu', function() {
 							<div class="inside">
 								<form method="post" action="edit.php?post_type=meetings&page=import">
 								<?php wp_nonce_field($tsml_nonce, 'tsml_nonce', false)?>
-								<p>This will determine what meeting types are available. If your program is 
+								<p>This determines which meeting types are available. If your program is 
 									not listed, please <a href="mailto:web@aasanjose.org">let us know</a> about 
 									your program and what types of meetings you have 
 									(Open, Closed, Big Book, etc).
