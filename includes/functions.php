@@ -155,6 +155,7 @@ function tsml_get_locations() {
 		$locations[] = array(
 			'id'				=> $post->ID,
 			'location'			=> $post->post_title,
+			'formatted_address' => $tsml_custom['formatted_address'][0],
 			'address'			=> $tsml_custom['address'][0],
 			'city'				=> $tsml_custom['city'][0],
 			'state'				=> $tsml_custom['state'][0],
@@ -411,7 +412,9 @@ function tsml_meetings_csv() {
 	foreach ($meetings as $meeting) {
 		$line = array();
 		foreach ($columns as $column=>$value) {
-			if ($column == 'day') {
+			if ($column == 'time') {
+				$line[] = tsml_format_time($meeting[$column]);
+			} elseif ($column == 'day') {
 				$line[] = $tsml_days[$meeting[$column]];
 			} elseif ($column == 'types') {
 				$types = $meeting[$column];
@@ -455,35 +458,12 @@ function tsml_regions_api() {
 
 //sanitize and import meeting data
 //used by admin_import.php
-function tsml_import($meetings) {
+function tsml_import($meetings, $delete=false) {
 	global $tsml_types, $tsml_program, $tsml_days;
 	
 	//uppercasing for value matching later
 	$upper_types = array_map('strtoupper', $tsml_types[$tsml_program]);
 		
-	//type translations for other groups
-	$type_translations = array(
-		'BB' => 'B',
-		'BC' => 'H', 
-		'BG' => 'BE', 
-		'CL' => 'C',
-		'GL' => 'G',
-		'GM' => 'G',
-		'LGBTQ' => 'T',
-		'LW' => 'L',
-		'MN' => 'M',
-		'NT' => 'A',
-		'SPK' => 'SP',
-		'SPK-F' => 'SP',
-		'SPK-L' => 'SP',
-		'SS' => 'ST',
-		'WC' => 'X',
-		'WM' => 'W',
-		'WP/TRANS' => 'T',
-		'YP' => 'Y',
-		'E' => 'S',
-	);
-	
 	//counter of successful meetings imported
 	$success = 0;
 	
@@ -491,7 +471,7 @@ function tsml_import($meetings) {
 	$row_counter = 1;
 
 	//arrays we will need
-	$addresses = $locations = array();
+	$addresses = $existing_addresses = $locations = array();
 	
 	//remove line breaks between rows
 	$meetings = preg_replace('#\\n(?=[^"]*"[^"]*(?:"[^"]*"[^"]*)*$)#' , ' ', $meetings);
@@ -520,12 +500,17 @@ function tsml_import($meetings) {
 	if (!in_array('address', $header)) return tsml_alert('Address column is required.', 'error');
 
 	//all the data is set, now delete everything
-	$all_meetings = tsml_get_all_meetings();
-	foreach ($all_meetings as $meeting) wp_delete_post($meeting->ID, true);
-	$all_locations = tsml_get_all_locations();
-	foreach ($all_locations as $location) wp_delete_post($location->ID, true);
-	$all_regions = tsml_get_all_regions();
-	foreach ($all_regions as $region) wp_delete_term($region, 'region');
+	if ($delete) {
+		$all_meetings = tsml_get_all_meetings();
+		foreach ($all_meetings as $meeting) wp_delete_post($meeting->ID, true);
+		$all_locations = tsml_get_all_locations();
+		foreach ($all_locations as $location) wp_delete_post($location->ID, true);
+		$all_regions = tsml_get_all_regions();
+		foreach ($all_regions as $region) wp_delete_term($region, 'region');
+	} else {
+		$all_locations = tsml_get_locations();
+		foreach ($all_locations as $location) $existing_addresses[$location['formatted_address']] = $location['id'];
+	}
 		
 	//loop through data and group by address
 	foreach ($meetings as $meeting) {
@@ -577,13 +562,9 @@ function tsml_import($meetings) {
 		$types = explode(',', $meeting['types']);
 		$meeting['types'] = $unused_types = array();
 		foreach ($types as $type) {
-			$type = trim($type);
-			if (in_array($type, array_keys($upper_types))) {
-				$meeting['types'][] = $type;
-			} elseif (in_array($type, array_values($upper_types))) {
+			$type = trim(strtoupper($type));
+			if (in_array($type, array_values($upper_types))) {
 				$meeting['types'][] = array_search($type, $upper_types);
-			} elseif (in_array($type, array_keys($type_translations))) {
-				$meeting['types'][] = $type_translations[$type];
 			} else {
 				$unused_types[] = $type;
 			}
@@ -662,7 +643,6 @@ function tsml_import($meetings) {
 		}
 		
 		//unpack response
-		$formatted_address = $data->results[0]->formatted_address;
 		$address = $city = $state = $postal_code = $country = false;
 		foreach ($data->results[0]->address_components as $component) {
 			if (in_array('street_number', $component->types)) {
@@ -677,14 +657,9 @@ function tsml_import($meetings) {
 				$postal_code = $component->short_name;
 			} elseif (in_array('country', $component->types)) {
 				$country = $component->short_name;
-			} elseif (in_array('point_of_interest', $component->types)) {
-				//remove point of interest, eg Sunnyvale Presbyterian Church, from address
-				$needle = $component->long_name . ', ';
-				if (substr($formatted_address, 0, strlen($needle)) == $needle) {
-					$formatted_address = substr($formatted_address, strlen($needle));
-				}
 			}
 		}
+		$formatted_address = $address . ', ' . $city . ', ' . $state . ' ' . $postal_code . ', ' . $country;
 		
 		//intialize empty location if needed
 		if (!array_key_exists($formatted_address, $locations)) {
@@ -712,12 +687,18 @@ function tsml_import($meetings) {
 	//loop through and save everything to the database
 	foreach ($locations as $formatted_address=>$location) {
 
-		//save location
-		$location_id = wp_insert_post(array(
-			'post_title'	=> $location['location'],
-			'post_type'		=> 'locations',
-			'post_status'	=> 'publish',
-		));
+		//save location if not already in the database
+		if (array_key_exists($formatted_address, $existing_addresses)) {
+			$location_id = $existing_addresses[$formatted_address];
+		} else {
+			$location_id = wp_insert_post(array(
+				'post_title'	=> $location['location'],
+				'post_type'		=> 'locations',
+				'post_status'	=> 'publish',
+			));
+		}
+		
+		//update location metadata
 		update_post_meta($location_id, 'formatted_address',	$formatted_address);
 		update_post_meta($location_id, 'address',			$location['address']);
 		update_post_meta($location_id, 'city',				$location['city']);

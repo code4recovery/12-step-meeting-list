@@ -5,7 +5,7 @@ add_action('admin_menu', function() {
 	
 	//run import
 	if (!empty($_POST['tsml_import']) && isset($_POST['tsml_nonce']) && wp_verify_nonce($_POST['tsml_nonce'], $tsml_nonce)) {
-		tsml_import($_POST['tsml_import']);
+		tsml_import($_POST['tsml_import'], !empty($_POST['delete']));
 	}
 		
 	//change program
@@ -54,7 +54,7 @@ add_action('admin_menu', function() {
 									<?php wp_nonce_field($tsml_nonce, 'tsml_nonce', false)?>
 									<p>It takes a while for the address verification to do its thing, please be patient. Importing 500 meetings usually takes about one minute.</p>
 									<textarea name="tsml_import" class="widefat" rows="5" placeholder="Paste spreadsheet data here"></textarea>
-									<p>This will delete all meetings, locations, and regions currently in the system.</p>
+									<p><label><input type="checkbox" name="delete"> Delete all meetings, locations, and regions prior to import</label></p>
 									<div style="margin-top:12px;"><input type="submit" class="button button-primary" value="Begin"></div>
 								</form>
 						    </div>

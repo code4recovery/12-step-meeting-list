@@ -64,7 +64,8 @@ jQuery(function(){
 		}
 
 		jQuery.getJSON("https://maps.googleapis.com/maps/api/geocode/json", { address: val, sensor : false }, function(data){
-			jQuery("input#formatted_address").val(data.results[0].formatted_address);
+
+			//set lat + lng
 			var latitude = data.results[0].geometry.location.lat;
 			var longitude = data.results[0].geometry.location.lng;
 			jQuery("input#latitude").val(latitude);
@@ -103,13 +104,16 @@ jQuery(function(){
 				} else if (component.types[0] == 'country') {
 					//set country
 					jQuery("input#country").val(component.short_name);
-				} else if (component.types[0] == 'point_of_interest') {
-					//remove point of intrest from front of formatted_address
-					var current_value = jQuery("input#formatted_address").val();
-					if (current_value.substr(0, component.long_name.length + 2) == component.long_name + ', ') {
-						jQuery("input#formatted_address").val(current_value.substr(component.long_name.length + 2));
-					}
 				}
+				
+				jQuery("input#formatted_address").val(
+					jQuery("input#address").val() + ', ' +
+					jQuery("input#city").val() + ', ' +
+					jQuery("input#state").val() + ' ' +
+					jQuery("input#postal_code").val() + ', ' +
+					jQuery("input#country").val()
+				);
+				
 			}
 		});
 	});
