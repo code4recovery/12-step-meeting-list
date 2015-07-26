@@ -54,6 +54,13 @@ add_action('save_post', function(){
 	update_post_meta($location_id, 'longitude',			floatval($_POST['longitude']));
 	update_post_meta($location_id, 'region',			intval($_POST['region']));
 
+	//contact info
+	for ($i = 1; $i < 4; $i++) {
+		update_post_meta($location_id, 'contact_' . $i . '_name', sanitize_text_field($_POST['contact_' . $i . '_name']));
+		update_post_meta($location_id, 'contact_' . $i . '_email', sanitize_text_field($_POST['contact_' . $i . '_email']));
+		update_post_meta($location_id, 'contact_' . $i . '_phone', sanitize_text_field($_POST['contact_' . $i . '_phone']));
+	}
+
 	//'cache' region on the meeting for faster searching
 	if (get_post_meta($post->ID, 'region', true) != intval($_POST['region'])) {
 		$meetings = tsml_get_meetings(array('location_id' => $location_id));

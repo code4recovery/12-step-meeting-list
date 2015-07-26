@@ -9,12 +9,15 @@
 	}
 }
 
+#poststuff .inside { margin-top: 0; }
+
 .wp-admin .meta_form_row { 
-	margin: 10px 0; overflow: auto; 
+	padding: 10px 0 0; overflow: auto; 
 	label, input, div.checkboxes, #map { float: left; line-height: 100%; } 
 	label { width: 13%; margin-right: 2%; text-align: right; font-size: 15px; line-height: 40px; white-space: nowrap; }
 	input[type=text], input[type=time], select, textarea, div.checkboxes, #map { 
-		width: 85%; margin: 0; font-size: 18px; padding: 6px; height: 40px; line-height: normal; 
+		width: 85%; margin: 0; font-size: 18px; padding: 6px; height: 40px; line-height: normal; float: left;
+		border-radius: 0;
 	}
 	input, select { 
 		border: 1px solid #ccc; 
@@ -40,7 +43,7 @@
 	textarea { height: 100px; }
 	&:last-child { margin-bottom: 0; }
 	div.checkboxes { 
-		overflow: auto; padding: 8px 0 0 0; height: auto;
+		overflow: auto; padding: 0; height: auto;
 		input { margin: 0 8px 0 0; }
 		label { margin: 5px 0; line-height: 16px; width: 50%; float: left; text-align: left; font-size: 13px; }
 	}
@@ -65,6 +68,23 @@
 		li {
 			span { width: 160px; color: #999; display: inline-block; }
 			&:last-child { margin-bottom: 0; }
+		}
+	}
+	
+	.container {
+		width: 85%;
+		float: left; 
+		display: table;
+		.row {
+			display: table-row;
+			&:first-child div { border-top: 0;	}
+			div {
+				border-left: 10px solid transparent;
+				border-top: 10px solid transparent;
+				display: table-cell;
+				&:first-child { border-left: 0;	}
+				input { width: 100%; }
+			}
 		}
 	}
 }
