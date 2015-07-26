@@ -14,7 +14,7 @@ function tsml_assets($context) {
 		wp_localize_script('tsml_public_js', 'myAjax', array('ajaxurl' => admin_url('admin-ajax.php')));
 		wp_enqueue_style('tsml_public_css', plugin_dir_url(__DIR__ . '/../css') . '/css/archive-meetings.min.css');		
 	} elseif ($context == 'admin') {
-		wp_enqueue_style('tsml_admin_style', plugin_dir_url(__FILE__) . '../css/admin.css');
+		wp_enqueue_style('tsml_admin_style', plugin_dir_url(__FILE__) . '../css/admin.min.css');
 		wp_enqueue_script('tsml_admin_js', plugin_dir_url(__FILE__) . '../js/admin_edit.js', array('jquery'), '', true);
 		wp_localize_script('tsml_admin_js', 'myAjax', array('ajaxurl'=>admin_url('admin-ajax.php')));        
 		wp_enqueue_script('typeahead_js', plugin_dir_url(__FILE__) . '../js/typeahead.bundle.js', array('jquery'), '', true);

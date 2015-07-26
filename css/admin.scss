@@ -56,4 +56,15 @@
 
 
 	#map { background-color: #f6f6f6; height: 300px; padding: 0; }
+	
+	ol {
+		overflow: auto;
+		font-size: 15px;
+		margin: 0;
+		padding: 10px 0 10px 30px;
+		li {
+			span { width: 160px; color: #999; display: inline-block; }
+			&:last-child { margin-bottom: 0; }
+		}
+	}
 }
