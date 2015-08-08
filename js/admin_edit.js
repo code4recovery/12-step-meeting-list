@@ -97,7 +97,7 @@ jQuery(function(){
 				}
 			});
 			
-			console.log(data.results[0].address_components);
+			//console.log(data.results[0].address_components);
 			
 			//get address, city and state
 			for (var i = 0; i < data.results[0].address_components.length; i++) {
