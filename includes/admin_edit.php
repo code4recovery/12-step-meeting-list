@@ -32,7 +32,7 @@ add_action('admin_init', function(){
 	remove_meta_box('regiondiv', 'meetings', 'side');
 	remove_meta_box('wii_post-box1', 'meetings', 'normal'); //removes weaver ii from east bay site
 
-	add_meta_box('info', 'General Info', function(){
+	add_meta_box('info', 'Meeting Info', function(){
 		global $post, $tsml_days, $tsml_types, $tsml_program, $tsml_nonce;
 
 		//get post metadata
@@ -47,13 +47,15 @@ add_action('admin_init', function(){
 			<label for="day">Day</label>
 			<select name="day" id="day">
 				<?php foreach ($tsml_days as $key=>$day) {?>
-				<option value="<?php echo $key?>"<?php selected($meeting_custom['day'][0], $key)?>><?php echo $day?></option>
+				<option value="<?php echo $key?>"<?php if (strcmp($meeting_custom['day'][0], $key) == 0) {?> selected<?php }?>><?php echo $day?></option>
 				<?php }?>
+				<option disabled>──────</option>
+				<option value=""<?php if (empty($meeting_custom['day'][0]) && $meeting_custom['day'][0] !== '0') {?> selected<?php }?>>Appointment</option>
 			</select>
 		</div>
 		<div class="meta_form_row">
 			<label for="time">Time</label>
-			<input type="time" name="time" id="time" value="<?php echo $meeting_custom['time'][0]?>">
+			<input type="time" name="time" id="time" value="<?php echo $meeting_custom['time'][0]?>"<?php if (empty($meeting_custom['day'][0])) {?> disabled<?php }?>>
 		</div>
 		<div class="meta_form_row">
 			<label for="tags">Types</label>
@@ -73,7 +75,7 @@ add_action('admin_init', function(){
 		<?php
 	}, 'meetings', 'normal', 'low');
 
-	add_meta_box('location', 'Location', function(){
+	add_meta_box('location', 'Location Info', function(){
 		global $post, $tsml_days;
 		$location = get_post($post->post_parent);
 		$location_custom = get_post_meta($post->post_parent);
@@ -116,7 +118,7 @@ add_action('admin_init', function(){
 				<?php foreach ($meetings as $meeting) {
 					if ($meeting['id'] != $post->ID) $meeting['name'] = '<a href="' . get_edit_post_link($meeting['id']) . '">' . $meeting['name'] . '</a>';
 				?>
-				<li><span><?php echo $tsml_days[$meeting['day']]?>, <?php echo tsml_format_time($meeting['time'])?></span> <?php echo $meeting['name']?></li>
+				<li><span><?php echo tsml_format_day_and_time($meeting['day'], $meeting['time'])?></span> <?php echo $meeting['name']?></li>
 				<?php }?>
 			</ol>
 		</div>

@@ -6,6 +6,11 @@ add_action('init', function(){
 	//register post types and taxonomies
 	tsml_custom_post_types();
 
+	//load internationalization
+	add_action('plugins_loaded', function(){
+		load_plugin_textdomain('12-step-meeting-list', false, basename(dirname(__FILE__)) . '/languages/');
+	});
+
 	//meeting list page
 	add_filter('archive_template', function($template) {
 		if (is_post_type_archive('meetings')) {

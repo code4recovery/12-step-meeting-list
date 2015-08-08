@@ -10,13 +10,12 @@ add_action('save_post', function(){
 	if (!current_user_can('edit_post', $post->ID)) return;
 	if ($_POST['post_type'] != 'meetings') return;
 
-	//todo server-side validation here (at least time)
-	if (empty($_POST['time']) || empty($_POST['formatted_address'])) {
-		$_POST['post_status'] = 'draft';
-	}
+	//must have an address to be live on site
+	if (empty($_POST['formatted_address'])) $_POST['post_status'] = 'draft';
 
 	//save ordinary meeting metadata
-	update_post_meta($post->ID, 'day',			intval($_POST['day']));
+	if (!empty($_POST['day'])) $_POST['day'] = intval($_POST['day']);
+	update_post_meta($post->ID, 'day',			$_POST['day']);
 	update_post_meta($post->ID, 'time',			sanitize_text_field($_POST['time']));
 	update_post_meta($post->ID, 'types',		array_map('esc_attr', $_POST['types']));
 

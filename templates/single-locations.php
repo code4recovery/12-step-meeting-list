@@ -20,18 +20,18 @@ $tsml_parent	= get_post($post->post_parent);
 			<div class="row location">
 				<div class="col-md-4 meta">
 					<dl>
-						<dt>Location</dt>
+						<dt><?php _e('Location', '12-step-meeting-list')?></dt>
 						<dd><?php echo $tsml_custom['address'][0]?><br><?php echo $tsml_custom['city'][0]?>, <?php echo $tsml_custom['state'][0]?></dd>
 
-						<dt>Region</dt>
+						<dt><?php _e('Region', '12-step-meeting-list')?></dt>
 						<dd><?php echo $tsml_regions[$tsml_custom['region'][0]]?></dd>
-						<?php if (!empty($post->post_content)) {?>
-
-						<dt>Notes</dt>
+						<?php 
+							
+						if (!empty($post->post_content)) {?>
+						<dt><?php _e('Notes', '12-step-meeting-list')?></dt>
 						<dd><?php echo nl2br(esc_html($post->post_content))?></dd>
-						<?php }?>
-
-						<?php
+						<?php }
+						
 						$meetings = tsml_get_meetings(array('location_id'=>$post->ID));
 						$location_days = array();
 						foreach ($meetings as $meeting) {
@@ -39,12 +39,12 @@ $tsml_parent	= get_post($post->post_parent);
 							$location_days[$meeting['day']][] = '<li><span>' . $meeting['time_formatted'] . '</span> ' . tsml_link($meeting['url'], tsml_format_name($meeting['name'], $meeting['types']), 'locations') . '</li>';
 						}
 						ksort($location_days);
-						foreach ($location_days as $day=>$meetings) {
-							echo '<dt>' . $tsml_days[$day] . '</dt><dd><ul>' . implode($meetings) . '</ul></dd>';
-						}
-						?>
+						foreach ($location_days as $day=>$meetings) {?>
+							<dt><?php echo $tsml_days[$day]?></dt>
+							<dd><ul><?php echo implode($meetings)?></ul></dd>
+						<?php }?>
 
-						<dt>Updated</dt>
+						<dt><?php _e('Updated', '12-step-meeting-list')?></dt>
 						<dd><?php the_modified_date()?></dd>
 					</dl>
 				</div>
@@ -64,19 +64,19 @@ $tsml_parent	= get_post($post->post_parent);
 							});
 
 							var contentString = '<div class="infowindow">'+
-							  '<h3><?php esc_attr_e($tsml_parent->post_title)?></h3>'+
-							  '<p><?php esc_attr_e($tsml_custom['address'][0])?><br><?php esc_attr_e($tsml_custom['city'][0])?>, <?php echo $tsml_custom['state'][0]?></p>'+
-							  '<p><a class="btn btn-default" href="http://maps.apple.com/?q=<?php echo urlencode($tsml_custom['formatted_address'][0])?>" target="_blank">Directions</a></p>' +
-							  '</div>';
+								'<h3><?php esc_attr_e($tsml_parent->post_title)?></h3>'+
+								'<p><?php esc_attr_e($tsml_custom['address'][0])?><br><?php esc_attr_e($tsml_custom['city'][0])?>, <?php echo $tsml_custom['state'][0]?></p>'+
+								'<p><a class="btn btn-default" href="http://maps.apple.com/?q=<?php echo urlencode($tsml_custom['formatted_address'][0])?>" target="_blank">Directions</a></p>' +
+								'</div>';
 
 							var infowindow = new google.maps.InfoWindow({
-							  content: contentString
+								content: contentString
 							});
 
 							var marker = new google.maps.Marker({
-							  position: new google.maps.LatLng(<?php echo $tsml_custom['latitude'][0]?>,<?php echo $tsml_custom['longitude'][0]?>),
-							  map: map,
-							  title: '<?php the_title(); ?>'
+								position: new google.maps.LatLng(<?php echo $tsml_custom['latitude'][0]?>,<?php echo $tsml_custom['longitude'][0]?>),
+								map: map,
+								title: '<?php the_title(); ?>'
 							});
 
 							infowindow.open(map,marker);

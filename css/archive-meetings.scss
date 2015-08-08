@@ -67,6 +67,8 @@ input:focus, button:focus {
 			clear: left;
 			margin-right: 6px;
 			text-align: right;
+			overflow: hidden;
+			text-overflow: ellipsis;
 		}
 		dd {
 			width: 166px;

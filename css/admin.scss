@@ -28,6 +28,7 @@
 		float: left;
 		&:focus { box-shadow: none; }
 	}
+	input[disabled] { opacity: .5; cursor: not-allowed; }
 
 	&.typeahead {
 		overflow: visible;
@@ -40,7 +41,7 @@
 
 	}
 
-	textarea { height: 100px; }
+	textarea { height: 140px; }
 	&:last-child { margin-bottom: 0; }
 	div.checkboxes { 
 		overflow: auto; padding: 0; height: auto;

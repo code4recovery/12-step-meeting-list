@@ -126,6 +126,14 @@ $tsml_types = array(
 		'WORK'  => 'Work Book Study',
 		'WRIT'  => 'Writing',
 	),	
+	'saa' => array(
+		'C'		=> 'Closed', 
+		'M'		=> 'Men Only', 
+		'O'		=> 'Open',
+		'ST'	=> 'Step Meeting',
+		'LGBTQ'	=> 'LGBTQ', 
+		'W'		=> 'Women Only',
+	),
 );
 
 $tsml_programs = array(
@@ -133,6 +141,7 @@ $tsml_programs = array(
 	'aa'		=> 'Alcoholics Anonymous',
 	'na'		=> 'Narcotics Anonymous',
 	'oa'		=> 'Overeaters Anonymous',
+	'saa'		=> 'Sex Addicts Anonymous',
 );
 
 $tsml_program = get_option('tsml_program', 'aa');

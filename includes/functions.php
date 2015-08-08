@@ -117,6 +117,14 @@ function tsml_get_all_regions($status='any') {
 	return get_terms('region', array('fields'=>'ids', 'hide_empty'=>false));
 }
 
+//function: takes 0, 18:30 and returns Sunday, 6:30 pm (depending on your settings)
+//used:		admin_edit.php, archive-meetings.php, single-meetings.php
+function tsml_format_day_and_time($day, $time, $separator=', ') {
+	global $tsml_days;
+	if (empty($tsml_days[$day]) || empty($time)) return 'Appointment';
+	return $tsml_days[$day] . $separator . tsml_format_time($time);
+}
+
 //function:	appends men or women if type present
 //used:		archive-meetings.php
 function tsml_format_name($name, $types=array()) {
@@ -128,10 +136,10 @@ function tsml_format_name($name, $types=array()) {
 	return $name;
 }
 
-//function: takes 18:30 and returns 6:30 p.m.
+//function: takes 18:30 and returns 6:30 pm (depending on your settings)
 //used:		tsml_get_meetings(), single-meetings.php, admin_lists.php
 function tsml_format_time($string) {
-	if (!strstr($string, ':')) return 'n/a';
+	if (empty($string)) return 'Appointment';
 	if ($string == '12:00') return 'Noon';
 	if ($string == '23:59') return 'Midnight';
 	$date = strtotime($string);
@@ -186,8 +194,15 @@ function tsml_get_meetings($arguments=array()) {
 
 	if (isset($arguments['day']) && ($arguments['day'] !== false)) {
 		$meta_query[] = array(
-			'key'	=> 'day',
-			'value'	=> intval($arguments['day']),
+			'relation' => 'OR',
+			array(
+				'key'	=> 'day',
+				'value'	=> intval($arguments['day']),
+			),
+			array(
+				'key'	=> 'day',
+				'value'	=> '',
+			),
 		);
 	}
 
@@ -318,7 +333,7 @@ function tsml_get_meetings($arguments=array()) {
 	}
 
 	# Because you can't yet order by multiple meta_keys, manually sort the days
-	if (!isset($arguments['day'])) {
+	if (empty($arguments['day']) && $arguments['day'] !== '0') {
 		$tsml_days = array();
 		foreach ($meetings as $meeting) {
 			if (!isset($tsml_days[$meeting['day']])) $tsml_days[$meeting['day']] = array();
@@ -331,6 +346,16 @@ function tsml_get_meetings($arguments=array()) {
 			$meetings = array_merge($meetings, $tsml_days[$day]);
 		}
 	}
+	
+	# Stick 'by appointment' meetings at the end of the list
+	$temp = array();
+	foreach ($meetings as $key=>$meeting) {
+		if (empty($meeting['time'])) {
+			$temp[] = $meetings[$key];
+			unset($meetings[$key]);
+		}
+	}
+	$meetings = array_merge($meetings, $temp);
 
 	return $meetings;
 }
@@ -495,8 +520,6 @@ function tsml_import($meetings, $delete=false) {
 	$header_count = count($header);
 	
 	//check header for required fields
-	if (!in_array('time', $header)) return tsml_alert('Time column is required.', 'error');
-	if (!in_array('day', $header)) return tsml_alert('Day column is required.', 'error');
 	if (!in_array('address', $header)) return tsml_alert('Address column is required.', 'error');
 
 	//all the data is set, now delete everything
@@ -524,14 +547,16 @@ function tsml_import($meetings, $delete=false) {
 		$meeting = array_combine($header, $meeting); //apply header field names to array
 
 		//check required fields
-		if (empty($meeting['time'])) return tsml_alert('Found a meeting with no time.', 'error');
-		if (empty($meeting['day'])) return tsml_alert('Found a meeting with no day.', 'error');
-		if (empty($meeting['address'])) return tsml_alert('Found a meeting with no address.', 'error');
+		if (empty($meeting['address'])) return tsml_alert('Found a meeting with no address at row #' . $row_counter . '.', 'error');
 
 		//sanitize time
-		$meeting['time'] = date_parse($meeting['time']);
-		$meeting['time'] = sprintf('%02d', $meeting['time']['hour']) . ':' . sprintf('%02d', $meeting['time']['minute']);
-		if ($meeting['time'] == '00:00') $meeting['time'] = '23:59';
+		if (empty($meeting['time'])) {
+			$meeting['time'] = $meeting['day'] = ''; //by appointment
+		} else {
+			$meeting['time'] = date_parse($meeting['time']);
+			$meeting['time'] = sprintf('%02d', $meeting['time']['hour']) . ':' . sprintf('%02d', $meeting['time']['minute']);
+			if ($meeting['time'] == '00:00') $meeting['time'] = '23:59';
+		}
 		
 		//use address if location is missing
 		if (empty($meeting['location'])) $meeting['location'] = $meeting['address'];
@@ -540,8 +565,12 @@ function tsml_import($meetings, $delete=false) {
 		if (empty($meeting['name'])) $meeting['name'] = $meeting['location'] . ' ' . $meeting['day'] . 's at ' . tsml_format_time($meeting['time']);
 	
 		//sanitize day
-		if (!in_array($meeting['day'], $tsml_days)) return tsml_alert('"' . $meeting['day'] . '" is an invalid value for day.', 'error');
-		$meeting['day'] = array_search($meeting['day'], $tsml_days);
+		if (empty($meeting['day'])) {
+			$meeting['time'] = $meeting['day'] = ''; //by appointment
+		} else {
+			if (!in_array($meeting['day'], $tsml_days)) return tsml_alert('"' . $meeting['day'] . '" is an invalid value for day at row #' . $row_counter . '.', 'error');
+			$meeting['day'] = array_search($meeting['day'], $tsml_days);
+		}
 
 		//append city, state, and country to address if not already in it
 		if (!empty($meeting['city']) && !stristr($meeting['address'], $meeting['city'])) $meeting['address'] .= ', ' . $meeting['city'];

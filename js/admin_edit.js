@@ -1,5 +1,17 @@
 jQuery(function(){
 
+	//day picker
+	jQuery('select#day').change(function(){
+		var val = jQuery(this).val();
+		var $time = jQuery('input#time');
+		if (val) {
+			jQuery('input#time').removeAttr('disabled');
+			if (!$time.val() && $time.attr('data-value')) $time.val($time.attr('data-value'));
+		} else {
+			$time.attr('data-value', $time.val()).val('').attr('disabled', 'disabled');
+		}
+	});
+
 	//typeahead
 	var locations = new Bloodhound({
 		datumTokenizer: Bloodhound.tokenizers.obj.whitespace('value'),
@@ -33,7 +45,11 @@ jQuery(function(){
 	});*/
 
 	jQuery("form#post").submit(function(){
-		var timeVal = jQuery("input[name=time]").val();
+		if (!jQuery("select#day").val()) {
+			jQuery("input#time").val(''); //double check is empty
+			return true; //by appointment, don't check time
+		}
+		var timeVal = jQuery("input#time").val();
 		var errors = false;
 		if (timeVal.length != 5) errors = true;
 		if (timeVal.indexOf(':') != 2) errors = true;
