@@ -277,12 +277,26 @@ function tsml_get_meetings($arguments=array()) {
 			's'					=> sanitize_text_field($arguments['search']),
 			'fields'			=> 'ids',
 		));
-		$parents = get_posts(array(
-			'post_type'			=> 'locations',
-			'numberposts'		=> -1,
-			's'					=> sanitize_text_field($arguments['search']),
-			'fields'			=> 'ids',
-		));
+		$parents = array_merge(
+			get_posts(array(
+				'post_type'			=> 'locations',
+				'numberposts'		=> -1,
+				's'					=> sanitize_text_field($arguments['search']),
+				'fields'			=> 'ids',
+			)),
+			get_posts(array(
+				'post_type'			=> 'locations',
+				'numberposts'		=> -1,
+				'fields'			=> 'ids',
+				'meta_query'		=> array(
+					array(
+						'key'		=> 'formatted_address',
+						'value'		=> sanitize_text_field($arguments['search']),
+						'compare'	=> 'LIKE',
+					),
+				),
+			))
+		);
 		if (count($parents)) {
 			$children = get_posts(array(
 				'post_type'			=> 'meetings',

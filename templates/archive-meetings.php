@@ -177,6 +177,7 @@ class Walker_Regions_Dropdown extends Walker_Category {
 							if ($search) {
 								$meeting['name'] = highlight($meeting['name'], $search);
 								$meeting['location'] = highlight($meeting['location'], $search);
+								$meeting['address'] = highlight($meeting['address'], $search);
 							}
 							?>
 						<tr>
