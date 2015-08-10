@@ -14,7 +14,7 @@ add_action('save_post', function(){
 	if (empty($_POST['formatted_address'])) $_POST['post_status'] = 'draft';
 
 	//save ordinary meeting metadata
-	if (!empty($_POST['day'])) $_POST['day'] = intval($_POST['day']);
+	if (strlen($_POST['day'])) $_POST['day'] = intval($_POST['day']);
 	update_post_meta($post->ID, 'day',			$_POST['day']);
 	update_post_meta($post->ID, 'time',			sanitize_text_field($_POST['time']));
 	update_post_meta($post->ID, 'types',		array_map('esc_attr', $_POST['types']));

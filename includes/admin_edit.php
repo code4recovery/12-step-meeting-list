@@ -50,12 +50,12 @@ add_action('admin_init', function(){
 				<option value="<?php echo $key?>"<?php if (strcmp($meeting_custom['day'][0], $key) == 0) {?> selected<?php }?>><?php echo $day?></option>
 				<?php }?>
 				<option disabled>──────</option>
-				<option value=""<?php if (empty($meeting_custom['day'][0]) && $meeting_custom['day'][0] !== '0') {?> selected<?php }?>>Appointment</option>
+				<option value=""<?php if (!strlen($meeting_custom['day'][0])) {?> selected<?php }?>>Appointment</option>
 			</select>
 		</div>
 		<div class="meta_form_row">
 			<label for="time">Time</label>
-			<input type="time" name="time" id="time" value="<?php echo $meeting_custom['time'][0]?>"<?php if (empty($meeting_custom['day'][0])) {?> disabled<?php }?>>
+			<input type="time" name="time" id="time" value="<?php echo $meeting_custom['time'][0]?>"<?php if (!strlen($meeting_custom['day'][0])) {?> disabled<?php }?>>
 		</div>
 		<div class="meta_form_row">
 			<label for="tags">Types</label>
