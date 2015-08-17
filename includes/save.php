@@ -17,7 +17,9 @@ add_action('save_post', function(){
 	if (strlen($_POST['day'])) $_POST['day'] = intval($_POST['day']);
 	update_post_meta($post->ID, 'day',			$_POST['day']);
 	update_post_meta($post->ID, 'time',			sanitize_text_field($_POST['time']));
-	update_post_meta($post->ID, 'types',		array_map('esc_attr', $_POST['types']));
+	if (is_array($_POST['types'])) {
+		update_post_meta($post->ID, 'types',	array_map('esc_attr', $_POST['types']));
+	}
 
 	//exit here if location not ready
 	if (empty($_POST['address'])) return;
