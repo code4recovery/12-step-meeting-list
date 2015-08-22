@@ -3,7 +3,7 @@ Contributors: aasanjose
 Tags: meetings, aa, al-anon, na, 12-step, locations
 Requires at least: 3.2
 Tested up to: 4.3
-Stable tag: 1.4.4
+Stable tag: 1.4.5
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -52,6 +52,9 @@ Currently no, but if someone will volunteer to help with the translating, we wil
 
 == Changelog ==
 
+= 1.4.5 =
+* Fixed issue with saving meetings without a street address
+
 = 1.4.4 =
 * Fixing bugs that resulted in geocoding errors on nonstandard addresses
 
@@ -82,10 +85,10 @@ Currently no, but if someone will volunteer to help with the translating, we wil
 * Deleting existing records now optional with import
 * Fixes to remove building names from the formatted_address field
 
-= 1.3.5 =
-* Adding Wheelchair Accessible NA meeting type
-
 == Upgrade Notice ==
+
+= 1.4.5 =
+Fixed issue with saving meetings without a street address
 
 = 1.4.4 =
 Debugging geocoding script
@@ -113,6 +116,3 @@ Location notes field
 
 = 1.3.6 =
 Import debugs
-
-= 1.3.5 =
-NA meeting type

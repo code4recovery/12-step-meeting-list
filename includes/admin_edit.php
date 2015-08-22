@@ -39,6 +39,9 @@ add_action('admin_init', function(){
 		$meeting_custom 	= get_post_custom($post->ID);
 		$meeting_custom['types'] = unserialize($meeting_custom['types'][0]);
 		if (!is_array($meeting_custom['types'])) $meeting_custom['types'] = array();
+		
+		//default new posts to be Sunday rather than Appointment
+		if ($post->post_status == 'auto-draft') $meeting_custom['day'][0] = 0;
 
 		//nonce field
 		wp_nonce_field($tsml_nonce, 'tsml_nonce', false);
@@ -77,7 +80,7 @@ add_action('admin_init', function(){
 
 	add_meta_box('location', 'Location Info', function(){
 		global $post, $tsml_days;
-		$location = get_post($post->post_parent);
+		if ($post->post_parent) $location = get_post($post->post_parent);
 		$location_custom = get_post_meta($post->post_parent);
 		$meetings = tsml_get_meetings(array('location_id'=>$location->ID));
 		?>

@@ -1,5 +1,13 @@
 <?php
 
+//catch meetings without locations and save them as a draft
+add_filter('wp_insert_post_data', function($post) {
+	if (($post['post_type'] == 'meetings') && empty($post['post_parent'])) {
+		$post['post_status'] = 'draft';
+	}
+	return $post;
+}, '99', 2);
+
 add_action('save_post', function(){
 	global $post, $tsml_nonce;
 
@@ -10,9 +18,6 @@ add_action('save_post', function(){
 	if (!current_user_can('edit_post', $post->ID)) return;
 	if ($_POST['post_type'] != 'meetings') return;
 
-	//must have an address to be live on site
-	if (empty($_POST['formatted_address'])) $_POST['post_status'] = 'draft';
-
 	//save ordinary meeting metadata
 	if (strlen($_POST['day'])) $_POST['day'] = intval($_POST['day']);
 	update_post_meta($post->ID, 'day',			$_POST['day']);
@@ -21,14 +26,16 @@ add_action('save_post', function(){
 		update_post_meta($post->ID, 'types',	array_map('esc_attr', $_POST['types']));
 	}
 
-	//exit here if location not ready
-	if (empty($_POST['formatted_address'])) return;
+	//exit here if the location is not ready
+	if (empty($_POST['formatted_address']) || empty($_POST['latitude']) || empty($_POST['longitude'])) {
+		return;
+	}
 	
 	//save location information (set this value or get caught in a loop)
 	$_POST['post_type'] = 'locations';
 	
 	//see if address is already in the database
-	if ($locations = get_posts('post_type=locations&numberposts=1&orderby=id&order=ASC&meta_key=address&meta_value=' . sanitize_text_field($_POST['address']))) {
+	if ($locations = get_posts('post_type=locations&numberposts=1&orderby=id&order=ASC&meta_key=address&meta_value=' . sanitize_text_field($_POST['formatted_address']))) {
 		$location_id = $locations[0]->ID;
 		wp_update_post(array(
 			'ID'			=> $location_id,
