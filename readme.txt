@@ -3,7 +3,7 @@ Contributors: aasanjose
 Tags: meetings, aa, al-anon, na, 12-step, locations
 Requires at least: 3.2
 Tested up to: 4.3
-Stable tag: 1.4.3
+Stable tag: 1.4.4
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -52,6 +52,9 @@ Currently no, but if someone will volunteer to help with the translating, we wil
 
 == Changelog ==
 
+= 1.4.4 =
+* Fixing bugs that resulted in geocoding errors on nonstandard addresses
+
 = 1.4.3 =
 * Fixing bug that was saving Sunday meetings as appointment meetings
 
@@ -82,11 +85,10 @@ Currently no, but if someone will volunteer to help with the translating, we wil
 = 1.3.5 =
 * Adding Wheelchair Accessible NA meeting type
 
-= 1.3.4 =
-* Adding timezone to API
-* Adding Open and Closed NA meeting types
-
 == Upgrade Notice ==
+
+= 1.4.4 =
+Debugging geocoding script
 
 = 1.4.3 =
 Fixing bug that was saving Sunday meetings as appointment meetings
@@ -114,6 +116,3 @@ Import debugs
 
 = 1.3.5 =
 NA meeting type
-
-= 1.3.4 =
-API improvement, NA meeting types

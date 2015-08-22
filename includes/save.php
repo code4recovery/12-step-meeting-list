@@ -22,7 +22,7 @@ add_action('save_post', function(){
 	}
 
 	//exit here if location not ready
-	if (empty($_POST['address'])) return;
+	if (empty($_POST['formatted_address'])) return;
 	
 	//save location information (set this value or get caught in a loop)
 	$_POST['post_type'] = 'locations';
