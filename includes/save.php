@@ -2,7 +2,7 @@
 
 //catch meetings without locations and save them as a draft
 add_filter('wp_insert_post_data', function($post) {
-	if (($post['post_type'] == 'meetings') && empty($post['post_parent'])) {
+	if (($post['post_type'] == 'meetings') && empty($post['post_parent']) && ($post['post_status'] == 'publish')) {
 		$post['post_status'] = 'draft';
 	}
 	return $post;

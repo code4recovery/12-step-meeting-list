@@ -3,7 +3,7 @@ Contributors: aasanjose
 Tags: meetings, aa, al-anon, na, 12-step, locations
 Requires at least: 3.2
 Tested up to: 4.3
-Stable tag: 1.4.6
+Stable tag: 1.4.7
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -52,6 +52,9 @@ Currently no, but if someone will volunteer to help with the translating, we wil
 
 == Changelog ==
 
+= 1.4.7 =
+* Fixing un-deletable auto-draft issue
+
 = 1.4.6 =
 * Fixing display issue on meeting edit screen
 
@@ -79,12 +82,10 @@ Currently no, but if someone will volunteer to help with the translating, we wil
 = 1.3.8 =
 * Location contacts
 
-= 1.3.7 =
-* Location notes support
-* Navigate between location's meetings on admin screen
-* Debugging saving changes to region
-
 == Upgrade Notice ==
+
+= 1.4.7 =
+Fixing un-deletable auto-draft issue
 
 = 1.4.6 =
 Fixing display issue on meeting edit screen
@@ -112,6 +113,3 @@ Meetings by appointment
 
 = 1.3.8 =
 Location contacts
-
-= 1.3.7 =
-Location notes field
