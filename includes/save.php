@@ -22,6 +22,7 @@ add_action('save_post', function(){
 	if (strlen($_POST['day'])) $_POST['day'] = intval($_POST['day']);
 	update_post_meta($post->ID, 'day',			$_POST['day']);
 	update_post_meta($post->ID, 'time',			sanitize_text_field($_POST['time']));
+	update_post_meta($post->ID, 'region',		intval($_POST['region'])); //cache region on meeting
 	if (is_array($_POST['types'])) {
 		update_post_meta($post->ID, 'types',	array_map('esc_attr', $_POST['types']));
 	}
@@ -35,7 +36,7 @@ add_action('save_post', function(){
 	$_POST['post_type'] = 'locations';
 	
 	//see if address is already in the database
-	if ($locations = get_posts('post_type=locations&numberposts=1&orderby=id&order=ASC&meta_key=address&meta_value=' . sanitize_text_field($_POST['formatted_address']))) {
+	if ($locations = get_posts('post_type=locations&numberposts=1&orderby=id&order=ASC&meta_key=formatted_address&meta_value=' . sanitize_text_field($_POST['formatted_address']))) {
 		$location_id = $locations[0]->ID;
 		wp_update_post(array(
 			'ID'			=> $location_id,
@@ -69,11 +70,9 @@ add_action('save_post', function(){
 		update_post_meta($location_id, 'contact_' . $i . '_phone', sanitize_text_field($_POST['contact_' . $i . '_phone']));
 	}
 
-	//'cache' region on the meeting for faster searching
-	if (get_post_meta($post->ID, 'region', true) != intval($_POST['region'])) {
-		$meetings = tsml_get_meetings(array('location_id' => $location_id));
-		foreach ($meetings as $meeting) update_post_meta($meeting['id'], 'region', intval($_POST['region'])); 	
-	}
+	//update region caches for other meetings at this location
+	$meetings = tsml_get_meetings(array('location_id' => $location_id));
+	foreach ($meetings as $meeting) update_post_meta($meeting['id'], 'region', intval($_POST['region'])); 	
 
 	//set parent
 	wp_update_post(array(

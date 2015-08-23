@@ -35,7 +35,17 @@ jQuery(function(){
 		jQuery('input[name=postal_code]').val(datum.postal_code);
 		jQuery('input[name=country]').val(datum.country);
 		jQuery('select[name=region] option[value=' + datum.region + ']').prop('selected', true);
-		setMap(datum.latitude, datum.longitude)
+		jQuery('input[name=contact_1_name]').val(datum.contact_1_name);
+		jQuery('input[name=contact_1_email]').val(datum.contact_1_email);
+		jQuery('input[name=contact_1_phone]').val(datum.contact_1_phone);
+		jQuery('input[name=contact_2_name]').val(datum.contact_2_name);
+		jQuery('input[name=contact_2_email]').val(datum.contact_2_email);
+		jQuery('input[name=contact_2_phone]').val(datum.contact_2_phone);
+		jQuery('input[name=contact_3_name]').val(datum.contact_3_name);
+		jQuery('input[name=contact_3_email]').val(datum.contact_3_email);
+		jQuery('input[name=contact_3_phone]').val(datum.contact_3_phone);
+		jQuery('textarea[name=location_notes]').val(datum.notes);
+		setMap(datum.latitude, datum.longitude);
 	});
 
 	/*timepicker

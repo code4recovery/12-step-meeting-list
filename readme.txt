@@ -3,7 +3,7 @@ Contributors: aasanjose
 Tags: meetings, aa, al-anon, na, 12-step, locations
 Requires at least: 3.2
 Tested up to: 4.3
-Stable tag: 1.4.7
+Stable tag: 1.4.8
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -52,6 +52,9 @@ Currently no, but if someone will volunteer to help with the translating, we wil
 
 == Changelog ==
 
+= 1.4.8 =
+* Bug fixes: region and grouping
+
 = 1.4.7 =
 * Fixing un-deletable auto-draft issue
 
@@ -79,10 +82,10 @@ Currently no, but if someone will volunteer to help with the translating, we wil
 = 1.3.9 =
 * Meetings by appointment
 
-= 1.3.8 =
-* Location contacts
-
 == Upgrade Notice ==
+
+= 1.4.8 =
+Bug fixes: region and grouping
 
 = 1.4.7 =
 Fixing un-deletable auto-draft issue
@@ -110,6 +113,3 @@ Meeting types for Sex Addicts Anonymous
 
 = 1.3.9 =
 Meetings by appointment
-
-= 1.3.8 =
-Location contacts

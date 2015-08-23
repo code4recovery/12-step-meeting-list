@@ -18,6 +18,16 @@ add_action('wp_ajax_location', function(){
             'postal_code'		=> $location_custom['postal_code'][0],
             'country'			=> $location_custom['country'][0],
             'region'			=> $location_custom['region'][0],
+            'contact_1_name'	=> $location_custom['contact_1_name'][0],
+            'contact_1_email'	=> $location_custom['contact_1_email'][0],
+            'contact_1_phone'	=> $location_custom['contact_1_phone'][0],
+            'contact_2_name'	=> $location_custom['contact_2_name'][0],
+            'contact_2_email'	=> $location_custom['contact_2_email'][0],
+            'contact_2_phone'	=> $location_custom['contact_2_phone'][0],
+            'contact_3_name'	=> $location_custom['contact_3_name'][0],
+            'contact_3_email'	=> $location_custom['contact_3_email'][0],
+            'contact_3_phone'	=> $location_custom['contact_3_phone'][0],
+            'notes'				=> html_entity_decode($location->post_content),
             'tokens'			=> array_values(array_unique(explode(' ', str_replace(',', '', $title . ' ' . $location_custom['address'][0])))),
         );
 	}
