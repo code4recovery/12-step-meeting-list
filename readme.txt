@@ -3,7 +3,7 @@ Contributors: aasanjose
 Tags: meetings, aa, al-anon, na, 12-step, locations
 Requires at least: 3.2
 Tested up to: 4.3
-Stable tag: 1.4.8
+Stable tag: 1.4.9
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -52,6 +52,9 @@ Currently no, but if someone will volunteer to help with the translating, we wil
 
 == Changelog ==
 
+= 1.4.9 =
+* Better region guessing when geocoding
+
 = 1.4.8 =
 * Bug fixes: region and grouping
 
@@ -78,38 +81,3 @@ Currently no, but if someone will volunteer to help with the translating, we wil
 
 = 1.4 =
 * Meeting types for Sex Addicts Anonymous
-
-= 1.3.9 =
-* Meetings by appointment
-
-== Upgrade Notice ==
-
-= 1.4.8 =
-Bug fixes: region and grouping
-
-= 1.4.7 =
-Fixing un-deletable auto-draft issue
-
-= 1.4.6 =
-Fixing display issue on meeting edit screen
-
-= 1.4.5 =
-Fixed issue with saving meetings without a street address
-
-= 1.4.4 =
-Debugging geocoding script
-
-= 1.4.3 =
-Fixing bug that was saving Sunday meetings as appointment meetings
-
-= 1.4.2 =
-Tested in WordPress 4.3
-
-= 1.4.1 =
-Search includes complete address
-
-= 1.4 =
-Meeting types for Sex Addicts Anonymous
-
-= 1.3.9 =
-Meetings by appointment
