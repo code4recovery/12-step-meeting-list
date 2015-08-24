@@ -106,13 +106,14 @@ jQuery(function(){
 			//guess region
 			val = data.results[0].formatted_address;
 			jQuery('select#region option').each(function(){
-				if (val.indexOf(jQuery(this).text()) != -1) {
+				var region_name = jQuery(this).text().replace('&nbsp;', '').trim();
+				if (val.indexOf(region_name) != -1) {
+					jQuery('select#region option').attr('selected', false);
 					jQuery(this).attr('selected', 'selected');
-					return false;
 				}
 			});
 			
-			//console.log(data.results[0].address_components);
+			console.log(data.results[0].address_components);
 			
 			//get address, city and state
 			for (var i = 0; i < data.results[0].address_components.length; i++) {
