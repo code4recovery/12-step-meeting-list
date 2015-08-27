@@ -28,6 +28,7 @@ $tsml_types = array(
 		'G'		=> 'Gay',
 		'GR'	=> 'Grapevine',
 		'L'		=> 'Lesbian',
+		'LGBTQ'	=> 'LGBTQ',
 		'MED'	=> 'Meditation',
 		'M'		=> 'Men Only', 
 		'O'		=> 'Open',

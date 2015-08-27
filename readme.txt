@@ -3,7 +3,7 @@ Contributors: aasanjose
 Tags: meetings, aa, al-anon, na, 12-step, locations
 Requires at least: 3.2
 Tested up to: 4.3
-Stable tag: 1.4.9
+Stable tag: 1.5
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -52,6 +52,9 @@ Currently no, but if someone will volunteer to help with the translating, we wil
 
 == Changelog ==
 
+= 1.5 =
+* Adding LGBTQ meeting type
+
 = 1.4.9 =
 * Better region guessing when geocoding
 
@@ -78,6 +81,3 @@ Currently no, but if someone will volunteer to help with the translating, we wil
 
 = 1.4.1 =
 * Search includes complete address
-
-= 1.4 =
-* Meeting types for Sex Addicts Anonymous
