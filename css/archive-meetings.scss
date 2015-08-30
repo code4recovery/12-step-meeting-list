@@ -241,5 +241,8 @@ body.admin-bar {
 	}
 }
 
-/* special fix for Divi theme */
-div#et-top-navigation ul#top-menu li a { padding-left: 0; padding-right: 0; padding-top: 0; }
+/* special fixes for Divi theme */
+div#et-top-navigation ul#top-menu li a { 
+	padding-left: 0; padding-right: 0; padding-top: 0; 
+	&:hover { background-color: transparent; }
+}
