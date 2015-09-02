@@ -113,7 +113,7 @@ jQuery(function(){
 				}
 			});
 			
-			console.log(data.results[0].address_components);
+			//console.log(data.results[0].address_components);
 			
 			//get address, city and state
 			for (var i = 0; i < data.results[0].address_components.length; i++) {
@@ -154,10 +154,28 @@ jQuery(function(){
 				
 				var country = jQuery('input#country').val();
 				if (country.length) formatted_address[formatted_address.length] = country;
-				
-				jQuery('input#formatted_address').val(formatted_address.join(', '));
-				
 			}
+
+			var formatted_address = formatted_address.join(', ');
+
+			//update address field with corrected address
+			jQuery('input#formatted_address').val(formatted_address);
+			
+			//check if location with same address is already in the system, populate form
+			jQuery.getJSON(myAjax.ajaxurl + '?action=address', { formatted_address: formatted_address }, function(data){
+				if (!jQuery('input[name=location]').val().length) jQuery('input[name=location]').val(data.location);
+				jQuery('textarea[name=location_notes]').val(data.location_notes);
+				jQuery('input[name=contact_1_name]').val(data.contact_1_name);
+				jQuery('input[name=contact_1_email]').val(data.contact_1_email);
+				jQuery('input[name=contact_1_phone]').val(data.contact_1_phone);
+				jQuery('input[name=contact_2_name]').val(data.contact_2_name);
+				jQuery('input[name=contact_2_email]').val(data.contact_2_email);
+				jQuery('input[name=contact_2_phone]').val(data.contact_2_phone);
+				jQuery('input[name=contact_3_name]').val(data.contact_3_name);
+				jQuery('input[name=contact_3_email]').val(data.contact_3_email);
+				jQuery('input[name=contact_3_phone]').val(data.contact_3_phone);
+			});
+
 		});
 	});
 

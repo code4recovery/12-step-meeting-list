@@ -3,7 +3,7 @@ Contributors: aasanjose
 Tags: meetings, aa, al-anon, na, 12-step, locations
 Requires at least: 3.2
 Tested up to: 4.3
-Stable tag: 1.5.1
+Stable tag: 1.5.2
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -51,6 +51,9 @@ Currently no, but if someone will volunteer to help with the translating, we wil
 1. Meeting map
 
 == Changelog ==
+
+= 1.5.2 =
+* When geocoding address, also now checks if location already in database, populates form
 
 = 1.5.1 =
 * CSS fix for Divi theme (Portland and Philadelphia)

@@ -34,6 +34,33 @@ add_action('wp_ajax_location', function(){
 	wp_send_json($results);
 });
 
+//ajax for address checking
+add_action('wp_ajax_address', function(){
+	if (!$posts = get_posts(array(
+		'post_type'		=> 'locations',
+		'numberposts'	=> 1,
+		'meta_key'		=> 'formatted_address',
+		'meta_query'	=> sanitize_text_field($_GET['formatted_address']),
+	))) return array();
+		
+	$custom = get_post_custom($posts[0]->ID);
+	
+	//return info to user
+	wp_send_json(array(
+		'location' => $posts[0]->post_title,
+		'location_notes' => $posts[0]->post_content,
+		'contact_1_name' => $custom['contact_1_name'][0],
+		'contact_1_email' => $custom['contact_1_email'][0],
+		'contact_1_phone' => $custom['contact_1_phone'][0],
+		'contact_2_name' => $custom['contact_2_name'][0],
+		'contact_2_email' => $custom['contact_2_email'][0],
+		'contact_2_phone' => $custom['contact_2_phone'][0],
+		'contact_3_name' => $custom['contact_3_name'][0],
+		'contact_3_email' => $custom['contact_3_email'][0],
+		'contact_3_phone' => $custom['contact_3_phone'][0],
+	));
+});
+
 //edit page
 add_action('admin_init', function(){
 
