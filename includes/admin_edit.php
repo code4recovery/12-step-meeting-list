@@ -40,11 +40,11 @@ add_action('wp_ajax_address', function(){
 		'post_type'		=> 'locations',
 		'numberposts'	=> 1,
 		'meta_key'		=> 'formatted_address',
-		'meta_query'	=> sanitize_text_field($_GET['formatted_address']),
+		'meta_value'	=> sanitize_text_field($_GET['formatted_address']),
 	))) return array();
-		
+
 	$custom = get_post_custom($posts[0]->ID);
-	
+
 	//return info to user
 	wp_send_json(array(
 		'location' => $posts[0]->post_title,

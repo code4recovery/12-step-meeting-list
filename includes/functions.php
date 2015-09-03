@@ -73,6 +73,15 @@ function tsml_custom_post_types() {
 	);	
 }
 
+//function: runs database updates when plugin activated or updated
+//used:		register_activation_hook() on 12-step-meeting-list.php
+function tsml_database_updates() {
+	global $wpdb;
+	
+	//at a certain point, the geocoding script changed USA to US. it's important that the legacy values be updated, otherwise
+	//location addresses won't be grouped.
+	$results = $wpdb->get_results('UPDATE ' . $wpdb->postmeta . ' SET meta_value = LEFT(meta_value, LENGTH(meta_value) - 1) WHERE meta_key = "formatted_address" AND meta_value LIKE "%, USA"');
+}
 
 //function: deletes all orphaned locations (has no meetings associated)
 //used:		save_post filter
@@ -702,8 +711,16 @@ function tsml_import($meetings, $delete=false) {
 				$country = $component->short_name;
 			}
 		}
-		$formatted_address = $address . ', ' . $city . ', ' . $state . ' ' . $postal_code . ', ' . $country;
 		
+		//create formatted address with the same methodology as in admin_edit.js
+		$formatted_address = array();
+		if (!empty($address)) $formatted_address[] = $address;
+		if (!empty($city)) $formatted_address[] = $city;
+		if (!empty($state)) $formatted_address[] = $state;
+		if (!empty($postal_code)) $formatted_address[] = array_pop($formatted_address) . ' ' . $postal_code;
+		if (!empty($country)) $formatted_address[] = $country;
+		$formatted_address = implode(', ', $formatted_address);
+				
 		//intialize empty location if needed
 		if (!array_key_exists($formatted_address, $locations)) {
 			$locations[$formatted_address] = array(

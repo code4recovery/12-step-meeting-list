@@ -163,7 +163,7 @@ jQuery(function(){
 			
 			//check if location with same address is already in the system, populate form
 			jQuery.getJSON(myAjax.ajaxurl + '?action=address', { formatted_address: formatted_address }, function(data){
-				if (!jQuery('input[name=location]').val().length) jQuery('input[name=location]').val(data.location);
+				jQuery('input[name=location]').val(data.location);
 				jQuery('textarea[name=location_notes]').val(data.location_notes);
 				jQuery('input[name=contact_1_name]').val(data.contact_1_name);
 				jQuery('input[name=contact_1_email]').val(data.contact_1_email);
