@@ -35,7 +35,7 @@ $location->post_title		= htmlentities($location->post_title, ENT_QUOTES);
 							<br>
 							<?php echo $meeting_custom['address'][0]?>
 							<br>
-							<?php echo $meeting_custom['city'][0]?>, <?php echo $meeting_custom['state'][0]?>
+							<?php echo $meeting_custom['city'][0]?>, <?php echo $meeting_custom['state'][0]?> <?php echo $meeting_custom['postal_code'][0]?>
 						</dd>
 
 						<?php if (!empty($tsml_regions[$meeting_custom['region'][0]])) {?>
@@ -77,7 +77,7 @@ $location->post_title		= htmlentities($location->post_title, ENT_QUOTES);
 
 							var contentString = '<div class="infowindow">'+
 								'<h3><?php echo tsml_link(get_permalink($location->ID), $location->post_title, 'meetings')?></h3>'+
-								'<p><?php esc_attr_e($meeting_custom['address'][0])?><br><?php esc_attr_e($meeting_custom['city'][0])?>, <?php echo $meeting_custom['state'][0]?></p>'+
+								'<p><?php esc_attr_e($meeting_custom['address'][0])?><br><?php esc_attr_e($meeting_custom['city'][0])?>, <?php echo $meeting_custom['state'][0]?> <?php echo $meeting_custom['postal_code'][0]?></p>'+
 								'<p><a class="btn btn-default" href="http://maps.apple.com/?q=<?php echo urlencode($meeting_custom['formatted_address'][0])?>" target="_blank">Directions</a></p>' +
 								'</div>';
 

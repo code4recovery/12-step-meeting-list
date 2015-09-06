@@ -3,7 +3,7 @@ Contributors: aasanjose
 Tags: meetings, aa, al-anon, na, 12-step, locations
 Requires at least: 3.2
 Tested up to: 4.3
-Stable tag: 1.5.3
+Stable tag: 1.5.4
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -51,6 +51,11 @@ Currently no, but if someone will volunteer to help with the translating, we wil
 1. Meeting map
 
 == Changelog ==
+
+= 1.5.4 =
+* Updated import instructions
+* Including postal code on public address pages
+* More address consistency
 
 = 1.5.3 =
 * Address lookup fix, legacy address data fix

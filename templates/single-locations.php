@@ -21,7 +21,7 @@ $tsml_parent	= get_post($post->post_parent);
 				<div class="col-md-4 meta">
 					<dl>
 						<dt><?php _e('Location', '12-step-meeting-list')?></dt>
-						<dd><?php echo $tsml_custom['address'][0]?><br><?php echo $tsml_custom['city'][0]?>, <?php echo $tsml_custom['state'][0]?></dd>
+						<dd><?php echo $tsml_custom['address'][0]?><br><?php echo $tsml_custom['city'][0]?>, <?php echo $tsml_custom['state'][0]?> <?php echo $tsml_custom['postal_code'][0]?></dd>
 
 						<dt><?php _e('Region', '12-step-meeting-list')?></dt>
 						<dd><?php echo $tsml_regions[$tsml_custom['region'][0]]?></dd>
@@ -65,7 +65,7 @@ $tsml_parent	= get_post($post->post_parent);
 
 							var contentString = '<div class="infowindow">'+
 								'<h3><?php esc_attr_e($tsml_parent->post_title)?></h3>'+
-								'<p><?php esc_attr_e($tsml_custom['address'][0])?><br><?php esc_attr_e($tsml_custom['city'][0])?>, <?php echo $tsml_custom['state'][0]?></p>'+
+								'<p><?php esc_attr_e($tsml_custom['address'][0])?><br><?php esc_attr_e($tsml_custom['city'][0])?>, <?php echo $tsml_custom['state'][0]?> <?php echo $tsml_custom['postal_code'][0]?></p>'+
 								'<p><a class="btn btn-default" href="http://maps.apple.com/?q=<?php echo urlencode($tsml_custom['formatted_address'][0])?>" target="_blank">Directions</a></p>' +
 								'</div>';
 
