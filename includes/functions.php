@@ -184,6 +184,7 @@ function tsml_get_locations() {
 			'region'			=> $tsml_regions[$tsml_custom['region'][0]],
 			'location_url'		=> get_permalink($post->ID),
 			'location_slug'		=> $post->post_name,
+			'location_notes'	=> $post->post_content,
 			'location_updated'	=> $post->post_modified_gmt,
 		);
 	}
@@ -273,6 +274,7 @@ function tsml_get_meetings($arguments=array()) {
 			'location'			=> $post->post_title,
 			'location_url'		=> get_permalink($post->ID),
 			'location_slug'		=> $post->post_name,
+			'location_notes'	=> $post->post_content,
 			'location_updated'	=> $post->post_modified_gmt,
 		);
 	}

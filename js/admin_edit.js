@@ -94,7 +94,7 @@ jQuery(function(){
 			return;
 		}
 
-		jQuery.getJSON('https://maps.googleapis.com/maps/api/geocode/json', { address: val, sensor : false }, function(data){
+		jQuery.getJSON('https://maps.googleapis.com/maps/api/geocode/json', { address: val, sensor: false }, function(data){
 
 			//set lat + lng
 			var latitude = data.results[0].geometry.location.lat;
