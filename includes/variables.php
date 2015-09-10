@@ -32,6 +32,7 @@ $tsml_types = array(
 		'MED'	=> 'Meditation',
 		'M'		=> 'Men Only', 
 		'O'		=> 'Open',
+		'ASL'	=> 'Sign Language',
 		'SM'	=> 'Smoking Permitted',
 		'S'		=> 'Spanish',
 		'SP'	=> 'Speaker',
