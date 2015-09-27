@@ -73,16 +73,6 @@ function tsml_custom_post_types() {
 	);	
 }
 
-//function: runs database updates when plugin activated or updated
-//used:		register_activation_hook() on 12-step-meeting-list.php
-function tsml_database_updates() {
-	global $wpdb;
-	
-	//at a certain point, the geocoding script changed USA to US. it's important that the legacy values be updated, otherwise
-	//location addresses won't be grouped.
-	$results = $wpdb->get_results('UPDATE ' . $wpdb->postmeta . ' SET meta_value = LEFT(meta_value, LENGTH(meta_value) - 1) WHERE meta_key = "formatted_address" AND meta_value LIKE "%, USA"');
-}
-
 //function: deletes all orphaned locations (has no meetings associated)
 //used:		save_post filter
 function tsml_delete_orphaned_locations() {

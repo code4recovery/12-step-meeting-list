@@ -3,7 +3,7 @@
 Plugin Name: 12 Step Meeting List
 Plugin URI: https://wordpress.org/plugins/12-step-meeting-list/
 Description: CMS for maintaining database of 12-step meetings and locations
-Version: 1.5.7
+Version: 1.5.8
 Author: Santa Clara County Intergroup
 Author URI: aasanjose.org
 License: none
@@ -28,7 +28,6 @@ include('includes/admin_import.php');
 //these hooks are easier in this file
 register_activation_hook(__FILE__, function(){
 	tsml_custom_post_types();
-	tsml_database_updates();
 	flush_rewrite_rules();
 });
 

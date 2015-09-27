@@ -103,15 +103,17 @@ jQuery(function(){
 			jQuery('input#longitude').val(longitude);
 			setMap(latitude, longitude);
 
-			//guess region
-			val = data.results[0].formatted_address;
-			jQuery('select#region option').each(function(){
-				var region_name = jQuery(this).text().replace('&nbsp;', '').trim();
-				if (val.indexOf(region_name) != -1) {
-					jQuery('select#region option').attr('selected', false);
-					jQuery(this).attr('selected', 'selected');
-				}
-			});
+			//guess region if not set
+			if (!jQuery('select#region option[selected]').size()) {
+				val = data.results[0].formatted_address;
+				jQuery('select#region option').each(function(){
+					var region_name = jQuery(this).text().replace('&nbsp;', '').trim();
+					if (val.indexOf(region_name) != -1) {
+						jQuery('select#region option').attr('selected', false);
+						jQuery(this).attr('selected', 'selected');
+					}
+				});
+			}
 			
 			//console.log(data.results[0].address_components);
 			
@@ -163,23 +165,26 @@ jQuery(function(){
 			
 			//check if location with same address is already in the system, populate form
 			jQuery.getJSON(myAjax.ajaxurl + '?action=address', { formatted_address: formatted_address }, function(data){
-				jQuery('input[name=location]').val(data.location);
-				jQuery('textarea[name=location_notes]').val(data.location_notes);
-				jQuery('input[name=contact_1_name]').val(data.contact_1_name);
-				jQuery('input[name=contact_1_email]').val(data.contact_1_email);
-				jQuery('input[name=contact_1_phone]').val(data.contact_1_phone);
-				jQuery('input[name=contact_2_name]').val(data.contact_2_name);
-				jQuery('input[name=contact_2_email]').val(data.contact_2_email);
-				jQuery('input[name=contact_2_phone]').val(data.contact_2_phone);
-				jQuery('input[name=contact_3_name]').val(data.contact_3_name);
-				jQuery('input[name=contact_3_email]').val(data.contact_3_email);
-				jQuery('input[name=contact_3_phone]').val(data.contact_3_phone);
+				if (data) {
+					//console.log(data);
+					jQuery('input[name=location]').val(data.location);
+					jQuery('textarea[name=location_notes]').val(data.location_notes);
+					jQuery('input[name=contact_1_name]').val(data.contact_1_name);
+					jQuery('input[name=contact_1_email]').val(data.contact_1_email);
+					jQuery('input[name=contact_1_phone]').val(data.contact_1_phone);
+					jQuery('input[name=contact_2_name]').val(data.contact_2_name);
+					jQuery('input[name=contact_2_email]').val(data.contact_2_email);
+					jQuery('input[name=contact_2_phone]').val(data.contact_2_phone);
+					jQuery('input[name=contact_3_name]').val(data.contact_3_name);
+					jQuery('input[name=contact_3_email]').val(data.contact_3_email);
+					jQuery('input[name=contact_3_phone]').val(data.contact_3_phone);
+				}
 			});
 
 		});
 	});
 
-	setMap(jQuery('input#latitude').val(), jQuery('input#longitude').val());
+	if (jQuery('input#formatted_address').val()) jQuery('input#formatted_address').blur();
 
 	function setMap(latitude, longitude) {
 		if (!latitude || !longitude) {
