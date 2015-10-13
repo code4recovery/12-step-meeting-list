@@ -85,10 +85,15 @@ input:focus, button:focus {
 	.controls {
 		min-height: 34px;
 		margin-bottom: 5px;
-		form, .dropdown {
+		form, .dropdown, .btn-group {
 			margin-bottom: $margin;
+			height: 34px;
 		}
 		input[name=query] {
+			margin: 0;
+		}
+		input, .btn {
+			height: 34px;
 			padding: 6px 12px;
 		}
 		ul { 

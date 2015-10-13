@@ -26,7 +26,7 @@ function tsml_assets($context) {
 function tsml_custom_post_types() {
 	global $tsml_regions;
 	
-	register_taxonomy('region', array('meetings'), array(
+	register_taxonomy('region', 'meetings', array(
 		'label' => 'Region', 
 		'labels' => array('menu_name'=>'Regions'),
 		'hierarchical' => true,
@@ -147,7 +147,7 @@ function tsml_format_time($string) {
 
 
 //function: get all locations with full location information
-//used: tsml_locations_api()
+//used: tsml_import()
 function tsml_get_locations() {
 	global $tsml_regions;
 
@@ -391,7 +391,7 @@ function tsml_get_regions() {
 }
 
 //api ajax function
-//used by theme, web app, ios
+//used by theme, web app
 add_action('wp_ajax_meetings', 'tsml_meetings_api');
 add_action('wp_ajax_nopriv_meetings', 'tsml_meetings_api');
 
@@ -401,15 +401,64 @@ function tsml_meetings_api() {
 	wp_send_json(tsml_get_meetings($_POST)); //tsml_get_meetings sanitizes input
 };
 
-//api ajax function
-//used by ios
-add_action('wp_ajax_locations', 'tsml_locations_api');
-add_action('wp_ajax_nopriv_locations', 'tsml_locations_api');
+//new api function
+//more information at https://github.com/intergroup/api
+add_action('wp_ajax_api', 'tsml_api');
+add_action('wp_ajax_nopriv_api', 'tsml_api');
 
-function tsml_locations_api() {
+function tsml_api() {
+	global $tsml_program, $tsml_version;
 	header('Access-Control-Allow-Origin: *');
-	wp_send_json(tsml_get_locations());
-};
+	$timezone = get_bloginfo('timezone');
+	
+	//prepare locations for output
+	$meetings = tsml_get_meetings();
+	$locations = array();
+	foreach ($meetings as $meeting) {
+		if (!isset($locations[$meeting['location_id']])) {
+			$locations[$meeting['location_id']] = array(
+				'id' => $meeting['location_slug'],
+				'name' => $meeting['location'],
+				'address' => $meeting['address'],
+				'city' => $meeting['city'],
+				'state' => $meeting['state'],
+				'postal_code' => $meeting['postal_code'],
+				'country' => $meeting['country'],
+				'latitude' => $meeting['latitude'],
+				'longitude' => $meeting['longitude'],
+				'timezone' => $timezone,
+				'notes' => $meeting['location_notes'],
+				'regions' => array(),
+				'url' => $meeting['location_url'],
+				'updated' => $meeting['location_updated'],
+				'meetings' => array(),
+			);
+		}
+		$locations[$meeting['location_id']]['meetings'][] = array(
+			'id' => $meeting['slug'],
+			'name' => $meeting['name'],
+			'time' => $meeting['time'],
+			'day' => $meeting['day'],
+			'types' => array(),
+			'group' => null,
+			'notes' => $meeting['notes'],
+			'url' => $meeting['url'],
+			'updated' => $meeting['updated'],
+		);
+	}
+	
+	
+	$array = array(
+		'name' => get_bloginfo('name'),
+		'location' => get_option('tsml_location', null),
+		'program' => strtoupper($tsml_program),
+		'api_version' => '1.0',
+		'software' => '12 Step Meeting List',
+		'software_version' => $tsml_version,
+		'locations' => array_values($locations),
+	);
+	wp_send_json($array);
+}
 
 //csv function
 //useful for exporting data
@@ -822,14 +871,8 @@ function tsml_update_types_in_use() {
 	//update global variable
 	$tsml_types_in_use = array_unique($all_types);
 	
-	//dd($tsml_types_in_use);
-	
 	//set option value
-	if (get_option('tsml_types_in_use') === false) {
-		add_option('tsml_types_in_use', $tsml_types_in_use);
-	} else {
-		update_option('tsml_types_in_use', $tsml_types_in_use);
-	}
+	update_option('tsml_types_in_use', $tsml_types_in_use);
 }
 
 //admin screen update message
@@ -838,6 +881,22 @@ function tsml_alert($message, $type='updated') {
 	add_action('admin_notices', function() use ($message, $type) {
 		echo '<div class="' . $type . '"><p>' . $message . '</p></div>';
 	});
+}
+
+//run any outstanding upgrades, called in init.php
+//depends on variable set in 12-step-meeting-list.php
+function tsml_upgrades() {
+	global $tsml_version, $wpdb;
+	if ($tsml_version != TSML_VERSION) {
+		if (version_compare($tsml_version, '1.6.2', '<')) {
+			//this will get executed when you first install the plugin, as well as when upgrading to 1.6.2
+			//fix any lingering addresses that end in ", USA" (two letter country codes only)
+			$wpdb->get_results('UPDATE ' . $wpdb->postmeta . ' SET meta_value = LEFT(meta_value, LENGTH(meta_value) - 1) WHERE meta_key = "formatted_address" AND meta_value LIKE "%, USA"');
+		}
+	
+		update_option('tsml_version', TSML_VERSION);
+		$tsml_version = TSML_VERSION;		
+	}
 }
 
 //helper for debugging

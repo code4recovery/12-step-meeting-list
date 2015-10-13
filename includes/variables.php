@@ -1,6 +1,8 @@
 <?php
-
-//define global variables
+/*	
+don't make changes! it'll make staying updated much harder.
+for updates / questions, please contact web@aasanjose.org
+*/
 
 $tsml_days	= array(
 	0 => array(0=>'Sunday', 1=>'Monday', 2=>'Tuesday', 3=>'Wednesday', 4=>'Thursday', 5=>'Friday', 6=>'Saturday'),
@@ -154,6 +156,6 @@ $tsml_program = get_option('tsml_program', 'aa');
 $tsml_types_in_use = get_option('tsml_types_in_use', array_keys($tsml_types[$tsml_program]));
 if (!is_array($tsml_types_in_use)) $tsml_types_in_use = array();
 
-$tsml_regions = $tsml_custom = array();
+$tsml_regions = array();
 
 $tsml_nonce = plugin_basename(__FILE__);

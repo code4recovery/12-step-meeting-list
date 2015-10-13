@@ -3,7 +3,7 @@ Contributors: aasanjose
 Tags: meetings, aa, al-anon, na, 12-step, locations
 Requires at least: 3.2
 Tested up to: 4.3
-Stable tag: 1.5.8
+Stable tag: 1.6.2
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -11,11 +11,31 @@ This plugin is designed to help 12 step programs list their meetings and locatio
 
 == Description ==
 
-This plugin was originally designed to maintain a list of AA meetings in Santa Clara County, CA. It's currently in use in that capacity at <http://aasanjose.org/meetings>.
+This plugin was originally designed to maintain a list of AA meetings in Santa Clara County, CA. It's now in use in the following areas:
 
-It can be used, however, to list any type of 12 step program meeting, such as Al-Anon, OA, or NA.
+**AA**
 
-Some notes:
+* [Austin, TX](http://austinaa.org/meetings/)
+* [District 15, Chicago, IL](http://d15aa.org/d15aa.org/?post_type=meetings)
+* [East Bay, CA](http://eastbayaa.org/meetings)
+* [Europe](http://alcoholics-anonymous.eu/index.php/meetings/)
+* [Mesa, AZ](http://aamesaaz.org/meetings/)
+* [Minneapolis, MN](http://aaminneapolis.org/meetings/)
+* [Philadelphia, PA](http://www.aasepia.org/meetings/)
+* [Portland, OR](http://home.pdxaa.org/meetings/)
+* [Santa Clara County, CA](http://aasanjose.org/meetings)
+
+**NA**
+
+* [Chinook, CA](http://chinookna.org/meetings/)
+
+**SAA**
+
+* [Indiana](http://indiana-saa.org/meetings/)
+
+[Let us know](mailto:web@aasanjose.org) if you're using this plugin and would like to be listed here.
+
+= Notes =
 
 * in the admin screen, it's best to use Chrome, because then the time field will be nicest
 * The Notes field is for any non-standardized meeting info, such as Basement, or Building C
@@ -42,6 +62,14 @@ We hope to build a universal database someday.
 = Are there translations to other languages? =
 Currently no, but if someone will volunteer to help with the translating, we will add it.
 
+= The dropdowns aren't opening! =
+Most likely, this is because bootstrap is being included twice. You should add the following to your theme so that the TSML's version is removed.
+
+	add_action('wp_enqueue_scripts', function(){
+		wp_dequeue_style('bootstrap_css');
+		wp_dequeue_script('bootstrap_js');
+	});
+
 == Screenshots ==
 
 1. Edit meeting
@@ -51,6 +79,22 @@ Currently no, but if someone will volunteer to help with the translating, we wil
 1. Meeting map
 
 == Changelog ==
+
+= 1.6.2 =
+* Versioning system for database upgrades
+* Now implements the read-only [12 Step Meetings API](https://github.com/intergroup/api)
+
+= 1.6.1 =
+* Adding new Frequently Asked Question
+* More CSS fixing for the Cannyon theme
+
+= 1.6 =
+* Fixing CSV link
+
+= 1.5.9 =
+* Adding area names / links to Readme
+* Replacing template CSV with XLS (wasn't opening correctly in one area)
+* CSS fix to more firmly lock down meeting list controls appearance
 
 = 1.5.8 =
 * Taking out database activation hook as it doesn't work
@@ -82,12 +126,3 @@ Currently no, but if someone will volunteer to help with the translating, we wil
 
 = 1.5 =
 * Adding LGBTQ meeting type
-
-= 1.4.9 =
-* Better region guessing when geocoding
-
-= 1.4.8 =
-* Bug fixes: region and grouping
-
-= 1.4.7 =
-* Fixing un-deletable auto-draft issue

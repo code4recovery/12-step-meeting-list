@@ -5,7 +5,10 @@ add_action('init', function(){
 
 	//register post types and taxonomies
 	tsml_custom_post_types();
-
+	
+	//run any necessary upgrades
+	tsml_upgrades();
+	
 	//load internationalization
 	add_action('plugins_loaded', function(){
 		load_plugin_textdomain('12-step-meeting-list', false, basename(dirname(__FILE__)) . '/languages/');
@@ -34,6 +37,11 @@ add_action('init', function(){
 			return dirname(__FILE__) . '/../templates/single-locations.php';
 		}
 		return $template;
+	});
+	
+	//add api identification tag to header. more info: https://github.com/intergroup/api
+	add_action('wp_head', function(){
+		echo '<meta name="12_step_meetings_api" content="/wp-admin/admin-ajax.php?action=api">' . PHP_EOL;
 	});
 
 });

@@ -11,11 +11,7 @@ add_action('admin_menu', function() {
 	//change program
 	if (!empty($_POST['tsml_program']) && isset($_POST['tsml_nonce']) && wp_verify_nonce($_POST['tsml_nonce'], $tsml_nonce)) {
 		$tsml_program = sanitize_text_field($_POST['tsml_program']);
-		if (get_option('tsml_program') === false) {
-			add_option('tsml_program', $tsml_program);
-		} else {
-			update_option('tsml_program', $tsml_program);
-		}
+		update_option('tsml_program', $tsml_program);
 		tsml_alert('Program setting updated.');
 	}
 		
@@ -33,7 +29,7 @@ add_action('admin_menu', function() {
 					    <div class="postbox">
 							<h3>Import Data</h3>
 						    <div class="inside">
-								<p>You can import a spreadsheet of meetings by opening it first in Excel, copying everything, and then pasting into the field below. <a href="<?php echo plugin_dir_url(__FILE__) . '../template.csv'?>">Here is a spreadsheet</a> you can use as a template. The header row must kept in place.</p>
+								<p>You can import a spreadsheet of meetings by opening it first in Excel, copying everything, and then pasting into the field below. <a href="<?php echo plugin_dir_url(__FILE__) . '../template.xlsx'?>">Here is a spreadsheet</a> you can use as a template. The header row must kept in place.</p>
 								<ul class="ul-disc">
 									<li><strong>Time</strong>, if present, should be in a standard date format such as 6:00 AM. Non-standard or empty dates will be imported as 'by appointment.'</li>
 									<li><strong>Day</strong>, if present, should either Sunday, Monday, Tuesday, Wednesday, Thursday, Friday, or Saturday. Meetings that occur on multiple days should be listed separately. 'Daily' or 'Mondays' will not work. Non-standard days will be imported as 'by appointment.'</li>
