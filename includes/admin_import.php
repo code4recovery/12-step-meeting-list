@@ -75,15 +75,6 @@ add_action('admin_menu', function() {
 								</form>
 							</div>
 						</div>
-						<?php if ($tsml_program == 'aa') {?>
-						<div class="postbox">
-							<h3>Try the App!</h3>
-							<div class="inside">
-								<p>We are beta-testing a native mobile app for iPhone. If you would like to participate, 
-									please get in touch: <a href="mailto:app@aasanjose.org">app@aasanjose.org</a>.
-							</div>
-						</div>
-						<?php }?>
 						<div class="postbox">
 							<h3>Where's My Info?</h3>
 							<div class="inside">
@@ -98,6 +89,15 @@ add_action('admin_menu', function() {
 								</ul>
 							</div>
 						</div>
+						<?php if ($tsml_program == 'aa') {?>
+						<div class="postbox">
+							<h3>Try the App!</h3>
+							<div class="inside">
+								<p>We are beta-testing a native mobile app for iPhone. If you would like to participate, 
+									please get in touch: <a href="mailto:app@aasanjose.org">app@aasanjose.org</a>.
+							</div>
+						</div>
+						<?php }?>
 						<div class="postbox">
 							<h3>About this Plugin</h3>
 							<div class="inside">

@@ -9,6 +9,14 @@ get_header();
 $search		= sanitize_text_field($_GET['sq']);
 $region     = intval($_GET['r']);
 $types		= array_values(array_intersect(array_keys($tsml_types[$tsml_program]), explode('-', $_GET['t'])));
+$time		= sanitize_text_field(strtolower($_GET['i']));
+$times		= [
+	'morning' => 'Morning',
+	'day' => 'Day',
+	'evening' => 'Evening',
+	'night' => 'Night',
+];
+
 if (!isset($_GET['d'])) {
 	$day = intval(current_time('w')); //if not specified, day is current day
 } elseif ($_GET['d'] == 'any') {
@@ -20,6 +28,8 @@ if (!isset($_GET['d'])) {
 //labels
 $day_default = 'Any Day';
 $day_label = ($day === false) ? $day_default : $tsml_days[$day];
+$time_default = 'Any Time';
+$time_label = $time ? $times[$time] : $time_default;
 $region_default = 'Everywhere';
 $region_label = $region ? $tsml_regions[$region] : $region_default;
 $types_default = 'Meeting Type';
@@ -31,7 +41,7 @@ if ($types_count == 1) $types_label = $tsml_types[$tsml_program][$types[0]];
 $locations	= array();
 
 //run query
-$meetings	= tsml_get_meetings(compact('search', 'day', 'region', 'types'));
+$meetings	= tsml_get_meetings(compact('search', 'day', 'time', 'region', 'types'));
 //dd($meetings);
 
 class Walker_Regions_Dropdown extends Walker_Category {
@@ -68,6 +78,19 @@ class Walker_Regions_Dropdown extends Walker_Category {
 					<li class="divider"></li>
 					<?php foreach ($tsml_days as $key=>$value) {?>
 					<li<?php if (intval($key) === $day) echo ' class="active"'?>><a href="#" data-id="<?php echo $key?>"><?php echo $value?></a></li>
+					<?php }?>
+				</ul>
+			</div>
+		</div>
+		<div class="col-md-2 col-sm-6">
+			<div class="dropdown" id="time">
+				<a data-toggle="dropdown" class="btn btn-default btn-block">
+					<span class="selected"><?php echo $time_label?></span>
+					<span class="caret"></span>
+				</a>
+				<ul class="dropdown-menu">
+					<?php foreach ($times as $key=>$value) {?>
+					<li<?php if ($key === $time) echo ' class="active"'?>><a href="#" data-id="<?php echo $key?>"><?php echo $value?></a></li>
 					<?php }?>
 				</ul>
 			</div>
@@ -111,7 +134,7 @@ class Walker_Regions_Dropdown extends Walker_Category {
 			</div>
 			<?php }?>
 		</div>
-		<div class="col-md-2 col-md-push-2 col-sm-12 visible-md visible-lg visible-xl">
+		<div class="col-md-2 col-sm-12 visible-md visible-lg visible-xl">
 			<div class="btn-group btn-group-justified" id="action">
 				<a class="btn btn-default toggle-view active" data-id="list">
 					List

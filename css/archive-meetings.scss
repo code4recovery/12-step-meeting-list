@@ -121,6 +121,7 @@ input:focus, button:focus {
 							background-color: #f5f5f5;							
 						}
 					}
+					&.active > a { color: #fff; }
 				}
 			}
 		}
@@ -223,6 +224,10 @@ body.admin-bar {
 	#meetings {
 		.controls {
 			margin-bottom: 0;
+			ul.dropdown-menu {
+				max-height: 310px;
+				overflow: auto;
+			}
 		}
 		.results table {
 			margin: 0;

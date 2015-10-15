@@ -16,6 +16,20 @@ $tsml_days	= array(
 
 $tsml_days = $tsml_days[get_option('start_of_week', 0)];
 
+$tsml_nonce = plugin_basename(__FILE__);
+
+$tsml_program = get_option('tsml_program', 'aa');
+
+$tsml_programs = array(
+	'al-anon'	=> 'Al-Anon',
+	'aa'		=> 'Alcoholics Anonymous',
+	'na'		=> 'Narcotics Anonymous',
+	'oa'		=> 'Overeaters Anonymous',
+	'saa'		=> 'Sex Addicts Anonymous',
+);
+
+$tsml_regions = array();
+
 $tsml_types = array(
 	'aa' => array(
 		'A'		=> 'Atheist / Agnostic',
@@ -25,6 +39,7 @@ $tsml_types = array(
 		'CF'	=> 'Child-Friendly', 
 		'H'		=> 'Chips', 
 		'C'		=> 'Closed', 
+		'CAN'	=> 'Candlelight', 
 		'AL-AN'	=> 'Concurrent with Al-Anon',
 		'AL'	=> 'Concurrent with Alateen',
 		'XT'	=> 'Cross Talk Permitted', 
@@ -33,6 +48,7 @@ $tsml_types = array(
 		'G'		=> 'Gay',
 		'GR'	=> 'Grapevine',
 		'L'		=> 'Lesbian',
+		'LIT'	=> 'Literature',
 		'LGBTQ'	=> 'LGBTQ',
 		'MED'	=> 'Meditation',
 		'M'		=> 'Men Only', 
@@ -143,19 +159,5 @@ $tsml_types = array(
 	),
 );
 
-$tsml_programs = array(
-	'al-anon'	=> 'Al-Anon',
-	'aa'		=> 'Alcoholics Anonymous',
-	'na'		=> 'Narcotics Anonymous',
-	'oa'		=> 'Overeaters Anonymous',
-	'saa'		=> 'Sex Addicts Anonymous',
-);
-
-$tsml_program = get_option('tsml_program', 'aa');
-
 $tsml_types_in_use = get_option('tsml_types_in_use', array_keys($tsml_types[$tsml_program]));
 if (!is_array($tsml_types_in_use)) $tsml_types_in_use = array();
-
-$tsml_regions = array();
-
-$tsml_nonce = plugin_basename(__FILE__);

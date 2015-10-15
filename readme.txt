@@ -81,6 +81,8 @@ Most likely, this is because bootstrap is being included twice. You should add t
 == Changelog ==
 
 = 1.6.2 =
+* Filter meetings by time of day
+* Two new meeting types for Tulsa (Literature, Candlelight)
 * Versioning system for database upgrades
 * Now implements the read-only [12 Step Meetings API](https://github.com/intergroup/api)
 

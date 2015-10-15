@@ -41,7 +41,7 @@ add_action('init', function(){
 	
 	//add api identification tag to header. more info: https://github.com/intergroup/api
 	add_action('wp_head', function(){
-		echo '<meta name="12_step_meetings_api" content="/wp-admin/admin-ajax.php?action=api">' . PHP_EOL;
+		echo '<meta name="12_step_meetings_api" content="' . admin_url('admin-ajax.php') . '?action=api">' . PHP_EOL;
 	});
 
 });

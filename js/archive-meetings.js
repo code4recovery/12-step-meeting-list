@@ -16,6 +16,7 @@ jQuery(function(){
 			action: 'meetings',
 			search: jQuery('#search input[name=query]').val().trim(),
 			day: 	jQuery('#day li.active a').attr('data-id'),
+			time: jQuery('#time li.active a').attr('data-id'),
 			region: jQuery('#region li.active a').attr('data-id'),
 			types: 	[]
 		}
@@ -29,6 +30,7 @@ jQuery(function(){
 		var querystring = {};
 		if (data.search) querystring.sq = data.search;
 		querystring.d = data.day ? data.day : 'any';
+		if (data.time) querystring.i = data.time;
 		if (data.region) querystring.r = data.region;
 		if (data.types.length) querystring.t = data.types.join('-');
 		querystring = jQuery.param(querystring);
@@ -64,11 +66,13 @@ jQuery(function(){
 				//if keyword and no results, clear other parameters and search again
 				if (data.search && (typeof data.day !== 'undefined' || typeof data.region !== 'undefined' || data.types.length)) {
 					jQuery('#day li').removeClass('active').first().addClass('active');
+					jQuery('#time li').removeClass('active').first().addClass('active');
 					jQuery('#region li').removeClass('active').first().addClass('active');
 					jQuery('#types li').removeClass('active');
 
 					//set selected text
 					jQuery('#day span.selected').html(jQuery('#day li:first-child a').html());
+					jQuery('#time span.selected').html(jQuery('#time li:first-child a').html());
 					jQuery('#region span.selected').html(jQuery('#region li:first-child a').html());
 					jQuery('#types span.selected').html('Meeting Type');
 					return doSearch();
@@ -212,6 +216,12 @@ jQuery(function(){
 		if (jQuery(this).closest('.dropdown').attr('id') == 'day') {
 			jQuery('#day li').removeClass('active');
 			jQuery('#day span.selected').html(jQuery(this).html());
+		}
+
+		//times only one
+		if (jQuery(this).closest('.dropdown').attr('id') == 'time') {
+			jQuery('#time li').removeClass('active');
+			jQuery('#time span.selected').html(jQuery(this).html());
 		}
 
 		//location only one
