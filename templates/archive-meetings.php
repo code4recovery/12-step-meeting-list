@@ -89,6 +89,8 @@ class Walker_Regions_Dropdown extends Walker_Category {
 					<span class="caret"></span>
 				</a>
 				<ul class="dropdown-menu">
+					<li<?php if (empty($time)) echo ' class="active"'?>><a href="#"><?php echo $time_default?></a></li>
+					<li class="divider"></li>
 					<?php foreach ($times as $key=>$value) {?>
 					<li<?php if ($key === $time) echo ' class="active"'?>><a href="#" data-id="<?php echo $key?>"><?php echo $value?></a></li>
 					<?php }?>

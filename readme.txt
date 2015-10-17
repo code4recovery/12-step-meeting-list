@@ -3,7 +3,7 @@ Contributors: aasanjose
 Tags: meetings, aa, al-anon, na, 12-step, locations
 Requires at least: 3.2
 Tested up to: 4.3
-Stable tag: 1.6.2
+Stable tag: 1.6.3
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -79,6 +79,9 @@ Most likely, this is because bootstrap is being included twice. You should add t
 1. Meeting map
 
 == Changelog ==
+
+= 1.6.3 =
+* 'Any Day' option for time filter
 
 = 1.6.2 =
 * Filter meetings by time of day
