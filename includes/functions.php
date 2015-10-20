@@ -397,6 +397,36 @@ function tsml_get_meetings($arguments=array()) {
 	return $meetings;
 }
 
+//function: template tag to get location, attach custom fields to it
+//used: single-locations.php
+function tsml_get_location() {
+	$location = get_post();
+	$custom = get_post_meta($location->ID);
+	foreach ($custom as $key=>$value) {
+		$location->{$key} = $value[0];
+	}
+	$location->post_title	= htmlentities($location->post_title, ENT_QUOTES);
+	$location->notes 		= nl2br(esc_html($location->post_content));
+	return $location;
+}
+
+//function: template tag to get meeting and location, attach custom fields to it
+//used: single-meetings.php
+function tsml_get_meeting() {
+	$meeting				= get_post();
+	$location				= get_post($meeting->post_parent);
+	$custom					= array_merge(get_post_meta($meeting->ID), get_post_meta($location->ID));
+	foreach ($custom as $key=>$value) {
+		$meeting->{$key} = $value[0];
+	}
+	$meeting->types				= empty($meeting->types) ? array() : unserialize($meeting->types);
+	$meeting->post_title		= htmlentities($meeting->post_title, ENT_QUOTES);
+	$meeting->location			= htmlentities($location->post_title, ENT_QUOTES);
+	$meeting->notes 			= nl2br(esc_html($meeting->post_content));
+	$meeting->location_notes	= nl2br(esc_html($location->post_content));
+	return $meeting;
+}
+
 //function: load only the currently-used regions into a flat array
 //used:		tsml_custom_post_types(), tsml_regions_api()
 function tsml_get_regions() {

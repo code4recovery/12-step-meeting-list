@@ -4,8 +4,8 @@ tsml_assets('public');
 
 get_header(); 
 
-$tsml_custom	= get_post_meta($post->ID);
-$tsml_parent	= get_post($post->post_parent);
+$location = tsml_get_location();
+
 ?>
 
 <div id="location" class="container">
@@ -13,7 +13,7 @@ $tsml_parent	= get_post($post->post_parent);
 		<div class="col-md-10 col-md-offset-1 main">
 		
 			<div class="page-header">
-				<h1><?php echo $post->post_title?></h1>
+				<h1><?php echo $location->post_title?></h1>
 				<?php echo tsml_link(get_post_type_archive_link('meetings'), '<i class="glyphicon glyphicon-chevron-right"></i> Back to Meetings', 'locations')?>
 			</div>
 
@@ -21,18 +21,18 @@ $tsml_parent	= get_post($post->post_parent);
 				<div class="col-md-4 meta">
 					<dl>
 						<dt><?php _e('Location', '12-step-meeting-list')?></dt>
-						<dd><?php echo $tsml_custom['address'][0]?><br><?php echo $tsml_custom['city'][0]?>, <?php echo $tsml_custom['state'][0]?> <?php echo $tsml_custom['postal_code'][0]?></dd>
+						<dd><?php echo $location->address?><br><?php echo $location->city?>, <?php echo $location->state?> <?php echo $location->postal_code?></dd>
 
 						<dt><?php _e('Region', '12-step-meeting-list')?></dt>
-						<dd><?php echo $tsml_regions[$tsml_custom['region'][0]]?></dd>
+						<dd><?php echo $tsml_regions[$location->region]?></dd>
 						<?php 
 							
-						if (!empty($post->post_content)) {?>
+						if (!empty($location->notes)) {?>
 						<dt><?php _e('Notes', '12-step-meeting-list')?></dt>
-						<dd><?php echo nl2br(esc_html($post->post_content))?></dd>
+						<dd><?php echo $location->notes?></dd>
 						<?php }
 						
-						$meetings = tsml_get_meetings(array('location_id'=>$post->ID));
+						$meetings = tsml_get_meetings(array('location_id'=>$location->ID));
 						$location_days = array();
 						foreach ($meetings as $meeting) {
 							if (!isset($location_days[$meeting['day']])) $location_days[$meeting['day']] = array();
@@ -59,14 +59,14 @@ $tsml_parent	= get_post($post->post_parent);
 								panControl: false,
 								mapTypeControl: false,
 								zoomControlOptions: { style: google.maps.ZoomControlStyle.SMALL },
-								center: new google.maps.LatLng(<?php echo $tsml_custom['latitude'][0] + .0025 ?>,<?php echo $tsml_custom['longitude'][0]?>),
+								center: new google.maps.LatLng(<?php echo $location->latitude + .0025 ?>,<?php echo $location->longitude?>),
 								mapTypeId: google.maps.MapTypeId.ROADMAP
 							});
 
 							var contentString = '<div class="infowindow">'+
-								'<h3><?php esc_attr_e($tsml_parent->post_title)?></h3>'+
-								'<p><?php esc_attr_e($tsml_custom['address'][0])?><br><?php esc_attr_e($tsml_custom['city'][0])?>, <?php echo $tsml_custom['state'][0]?> <?php echo $tsml_custom['postal_code'][0]?></p>'+
-								'<p><a class="btn btn-default" href="http://maps.apple.com/?q=<?php echo urlencode($tsml_custom['formatted_address'][0])?>" target="_blank">Directions</a></p>' +
+								'<h3><?php esc_attr_e($location->post_title)?></h3>'+
+								'<p><?php esc_attr_e($location->address)?><br><?php esc_attr_e($location->city)?>, <?php echo $location->state?> <?php echo $location->postal_code?></p>'+
+								'<p><a class="btn btn-default" href="http://maps.apple.com/?q=<?php echo urlencode($location->formatted_address)?>" target="_blank">Directions</a></p>' +
 								'</div>';
 
 							var infowindow = new google.maps.InfoWindow({
@@ -74,7 +74,7 @@ $tsml_parent	= get_post($post->post_parent);
 							});
 
 							var marker = new google.maps.Marker({
-								position: new google.maps.LatLng(<?php echo $tsml_custom['latitude'][0]?>,<?php echo $tsml_custom['longitude'][0]?>),
+								position: new google.maps.LatLng(<?php echo $location->latitude?>,<?php echo $location->longitude?>),
 								map: map,
 								title: '<?php the_title(); ?>'
 							});

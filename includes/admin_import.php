@@ -39,9 +39,9 @@ add_action('admin_menu', function() {
 									<li><strong>City</strong>, <strong>State</strong>, and <strong>Country</strong> are optional, but might be useful if your addresses sound ambiguous to Google.</li>
 									<li><strong>Notes</strong> are freeform notes that will show up publicly. This is where 'around back' is useful.</li>
 									<li><strong>Types</strong> should be a comma-separated list of the following options. This list is determined by which program is selected at right.
-										<ul style="margin-top:10px;overflow:auto;">
+										<ul style="margin-top:10px;overflow:auto; -webkit-columns: 3 auto; -moz-columns: 3 auto; columns: 3 auto;">
 										<?php foreach ($tsml_types[$tsml_program] as $value) {?>
-											<li style="margin-bottom:0;width:33.33%;float:left;"><?php echo $value?></li>
+											<li style="margin-bottom:0;"><?php echo $value?></li>
 										<?php }?>
 										</ul>
 									</li>

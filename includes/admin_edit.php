@@ -97,12 +97,12 @@ add_action('admin_init', function(){
 		<div class="meta_form_row">
 			<label for="tags">Types</label>
 			<div class="checkboxes">
-				<?php foreach ($tsml_types[$tsml_program] as $key=>$type) {?>
-					<label>
-						<input type="checkbox" name="types[]" value="<?php echo $key?>" <?php if (in_array($key, $meeting_custom['types'])) {?> checked="checked"<?php }?>>
-						<?php echo $type?>
-					</label>
-				<?php }?>
+			<?php foreach ($tsml_types[$tsml_program] as $key=>$type) {?>
+				<label>
+					<input type="checkbox" name="types[]" value="<?php echo $key?>" <?php if (in_array($key, $meeting_custom['types'])) {?> checked="checked"<?php }?>>
+					<?php echo $type?>
+				</label>
+			<?php }?>
 			</div>
 		</div>
 		<div class="meta_form_row">
