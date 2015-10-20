@@ -3,7 +3,7 @@ Contributors: aasanjose
 Tags: meetings, aa, al-anon, na, 12-step, locations
 Requires at least: 3.2
 Tested up to: 4.3
-Stable tag: 1.6.4
+Stable tag: 1.6.5
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -111,6 +111,9 @@ These tags are for the meetings page, substitute `$location` for `$meeting` if y
 1. Meeting map
 
 == Changelog ==
+
+= 1.6.5 =
+* Corrected spelling of 'Co-Dependents'
 
 = 1.6.4 =
 * New meeting types for CoDA
