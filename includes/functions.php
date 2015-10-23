@@ -289,6 +289,21 @@ function tsml_get_meetings($arguments=array()) {
 			'location_notes'	=> $post->post_content,
 			'location_updated'	=> $post->post_modified_gmt,
 		);
+		
+		//append contact info if user has permission
+		if (current_user_can('edit_posts')) {
+			$locations[$post->ID] = array_merge($locations[$post->ID], array(
+				'contact_1_name'	=> $tsml_custom['contact_1_name'][0],
+				'contact_1_email'	=> $tsml_custom['contact_1_email'][0],
+				'contact_1_phone'	=> $tsml_custom['contact_1_phone'][0],
+				'contact_2_name'	=> $tsml_custom['contact_2_name'][0],
+				'contact_2_email'	=> $tsml_custom['contact_2_email'][0],
+				'contact_2_phone'	=> $tsml_custom['contact_2_phone'][0],
+				'contact_3_name'	=> $tsml_custom['contact_3_name'][0],
+				'contact_3_email'	=> $tsml_custom['contact_3_email'][0],
+				'contact_3_phone'	=> $tsml_custom['contact_3_phone'][0],
+			));
+		}
 	}
 
 	# If searching, three extra queries
@@ -527,20 +542,35 @@ function tsml_meetings_csv() {
 
 	//define columns to output
 	$columns = array(
-		'time' =>		 'Time',
-		'day' =>		 'Day',
-		'name' =>		 'Name',
-		'location' =>	 'Location',
-		'address' =>	 'Address',
-		'city' =>		 'City',
-		'state' =>		 'State',
-		'postal_code' => 'Postal Code',
-		'country' =>	 'Country',
-		'region' =>		 'Region',
-		'types' => 		 'Types',
-		'notes' => 		 'Notes',
-		'updated' =>	 'Updated',
+		'time' =>				'Time',
+		'day' =>				'Day',
+		'name' =>				'Name',
+		'location' =>			'Location',
+		'address' =>			'Address',
+		'city' =>				'City',
+		'state' =>				'State',
+		'postal_code' =>		'Postal Code',
+		'country' =>			'Country',
+		'region' =>				'Region',
+		'types' =>				'Types',
+		'notes' =>				'Notes',
+		'updated' =>			'Updated',
 	);
+	
+	//append contact info if user has permission
+	if (current_user_can('edit_posts')) {
+		$columns = array_merge($columns, array(
+			'contact_1_name' =>		'Contact 1 Name',
+			'contact_1_email' =>	'Contact 1 Email',
+			'contact_1_phone' =>	'Contact 1 Phone',
+			'contact_2_name' =>		'Contact 2 Name',
+			'contact_2_email' =>	'Contact 2 Email',
+			'contact_2_phone' =>	'Contact 2 Phone',
+			'contact_3_name' =>		'Contact 3 Name',
+			'contact_3_email' =>	'Contact 3 Email',
+			'contact_3_phone' =>	'Contact 3 Phone',
+		));
+	}
 
 	//helper vars
 	$delimiter = ',';
