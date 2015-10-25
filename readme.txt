@@ -3,7 +3,7 @@ Contributors: aasanjose
 Tags: meetings, aa, al-anon, na, 12-step, locations
 Requires at least: 3.2
 Tested up to: 4.3
-Stable tag: 1.6.9
+Stable tag: 1.7
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -112,6 +112,9 @@ These tags are for the meetings page, substitute `$location` for `$meeting` if y
 
 == Changelog ==
 
+= 1.7 =
+* API keys are now included, so go crazy geocoding
+
 = 1.6.9 =
 * When deleting, importer now deletes much more efficiently
 
@@ -149,39 +152,3 @@ These tags are for the meetings page, substitute `$location` for `$meeting` if y
 
 = 1.6 =
 * Fixing CSV link
-
-= 1.5.9 =
-* Adding area names / links to Readme
-* Replacing template CSV with XLS (wasn't opening correctly in one area)
-* CSS fix to more firmly lock down meeting list controls appearance
-
-= 1.5.8 =
-* Taking out database activation hook as it doesn't work
-* Adding three new requested meeting types
-* Fixing javascript geocoding bug
-
-= 1.5.7 =
-* Adding Sign Language meeting type for AA
-
-= 1.5.6 =
-* Message about iOS beta testing
-
-= 1.5.5 =
-* Adding location notes to the API
-
-= 1.5.4 =
-* Updated import instructions
-* Including postal code on public address pages
-* More address consistency
-
-= 1.5.3 =
-* Address lookup fix, legacy address data fix
-
-= 1.5.2 =
-* When geocoding address, also now checks if location already in database, populates form
-
-= 1.5.1 =
-* CSS fix for Divi theme (Portland and Philadelphia)
-
-= 1.5 =
-* Adding LGBTQ meeting type

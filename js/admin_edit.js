@@ -94,7 +94,7 @@ jQuery(function(){
 			return;
 		}
 
-		jQuery.getJSON('https://maps.googleapis.com/maps/api/geocode/json', { address: val, sensor: false }, function(data){
+		jQuery.getJSON('https://maps.googleapis.com/maps/api/geocode/json', { address: val, key: 'AIzaSyBRM9LTED2PgK91UL4qRmiWHVq0TI686tc', sensor: false }, function(data){
 
 			//set lat + lng
 			var latitude = data.results[0].geometry.location.lat;
@@ -114,9 +114,7 @@ jQuery(function(){
 					}
 				});
 			}
-			
-			console.log(data.results[0].address_components);
-			
+						
 			//get address, city and state
 			for (var i = 0; i < data.results[0].address_components.length; i++) {
 				var component = data.results[0].address_components[i];

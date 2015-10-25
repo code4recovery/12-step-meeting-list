@@ -826,7 +826,7 @@ function tsml_import($meetings, $delete=false) {
 		} else {
 			
 			//request from google
-			curl_setopt($ch, CURLOPT_URL, 'http://maps.googleapis.com/maps/api/geocode/json?address=' . urlencode($original_address));
+			curl_setopt($ch, CURLOPT_URL, 'https://maps.googleapis.com/maps/api/geocode/json?key=AIzaSyBVkLkBn0HBI_uZ-djrgYGUx2ki3hYRzP0&address=' . urlencode($original_address));
 			if (!$result = curl_exec($ch)) {
 				return tsml_alert('Google did not respond for address <em>' . $original_address . '</em>.', 'error');
 			}
