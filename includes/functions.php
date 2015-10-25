@@ -636,7 +636,7 @@ function tsml_import($meetings, $delete=false) {
 	$upper_types = array_map('strtoupper', $tsml_types[$tsml_program]);
 		
 	//counter of successful meetings imported
-	$success = 0;
+	$success = $geocoded = 0;
 	
 	//counter for errors
 	$row_counter = 1;
@@ -808,79 +808,99 @@ function tsml_import($meetings, $delete=false) {
         CURLOPT_RETURNTRANSFER => TRUE, 
         CURLOPT_TIMEOUT => 4,
     ));
+    
+    //address cacheing
+    $cached_addresses = get_option('tsml_addresses', array());
 
 	//loop through again and geocode the addresses, making a location
 	foreach ($addresses as $original_address=>$info) {
 		
-		//request from google
-		curl_setopt($ch, CURLOPT_URL, 'http://maps.googleapis.com/maps/api/geocode/json?address=' . urlencode($original_address));
-		if (!$result = curl_exec($ch)) {
-			return tsml_alert('Google did not respond for address <em>' . $original_address . '</em>.', 'error');
-		}
-		
-		//decode result
-		$data = json_decode($result);
-
-		if ($data->status == 'OVER_QUERY_LIMIT') {
-			//if over query limit, wait two seconds and retry, or then exit		
-			sleep(2);
-			$data = json_decode(curl_exec($ch));
-			if ($data->status == 'OVER_QUERY_LIMIT') {
-				return tsml_alert('You are over your rate limit for the Google Geocoding API, you will need an API key to continue.', 'error');
-			}
-		} elseif ($data->status == 'OK') {
-			//ok great
-		} elseif ($data->status == 'ZERO_RESULTS') {
-			$failed_addresses[$original_address] = $info['lines'];
-			continue;
+		if (array_key_exists($original_address, $cached_addresses)) {
+			
+			//retrieve address and skip google
+			extract($cached_addresses[$original_address]);
+			
 		} else {
-			return tsml_alert('Google gave an unexpected response for address <em>' . $original_address . '</em>. Response was <pre>' . var_export($data, true) . '</pre>', 'error');
+			
+			//request from google
+			curl_setopt($ch, CURLOPT_URL, 'http://maps.googleapis.com/maps/api/geocode/json?address=' . urlencode($original_address));
+			if (!$result = curl_exec($ch)) {
+				return tsml_alert('Google did not respond for address <em>' . $original_address . '</em>.', 'error');
+			}
+			
+			//decode result
+			$data = json_decode($result);
+	
+			if ($data->status == 'OVER_QUERY_LIMIT') {
+				//if over query limit, wait two seconds and retry, or then exit		
+				sleep(2);
+				$data = json_decode(curl_exec($ch));
+				if ($data->status == 'OVER_QUERY_LIMIT') {
+					return tsml_alert('You are over your rate limit for the Google Geocoding API, you will need an API key to continue.', 'error');
+				}
+			} elseif ($data->status == 'OK') {
+				//ok great
+			} elseif ($data->status == 'ZERO_RESULTS') {
+				$failed_addresses[$original_address] = $info['lines'];
+				continue;
+			} else {
+				return tsml_alert('Google gave an unexpected response for address <em>' . $original_address . '</em>. Response was <pre>' . var_export($data, true) . '</pre>', 'error');
+			}
+			
+			//unpack response
+			$address = $city = $state = $postal_code = $country = $point_of_interest = false;
+			foreach ($data->results[0]->address_components as $component) {
+				if (in_array('street_number', $component->types)) {
+					$address = $component->long_name;
+				} elseif (in_array('route', $component->types)) {
+					$address .= ' ' . $component->long_name;
+				} elseif (in_array('locality', $component->types)) {
+					$city = $component->long_name;
+				} elseif (in_array('sublocality', $component->types)) {
+					$city = $component->long_name;
+				} elseif (in_array('administrative_area_level_1', $component->types)) {
+					$state = $component->short_name;
+				} elseif (in_array('postal_code', $component->types)) {
+					$postal_code = $component->short_name;
+				} elseif (in_array('country', $component->types)) {
+					$country = $component->short_name;
+				} elseif (in_array('point_of_interest', $component->types) || empty($component->types)) {
+					$point_of_interest = $component->short_name;
+				} 
+			}
+			
+			/*
+			some legitimate meeting locations have no address
+			http://maps.googleapis.com/maps/api/geocode/json?address=bagram%20airfield,%20afghanistan
+			http://maps.googleapis.com/maps/api/geocode/json?address=River%20Light%20Park,%20Cornwall,%20NY,%20USA
+			*/
+			if (empty($address)) $address = $point_of_interest;
+			
+			//check for required values
+			if (empty($address) || empty($city) || empty($data->results[0]->geometry->location->lat)) {
+				$failed_addresses[$original_address] = $info['lines'];
+				continue;
+			}
+			
+			//create formatted address with the same methodology as in admin_edit.js
+			$formatted_address = array();
+			if (!empty($address)) $formatted_address[] = $address;
+			if (!empty($city)) $formatted_address[] = $city;
+			if (!empty($state)) $formatted_address[] = $state;
+			if (!empty($postal_code)) $formatted_address[] = array_pop($formatted_address) . ' ' . $postal_code;
+			if (!empty($country)) $formatted_address[] = $country;
+			$formatted_address = implode(', ', $formatted_address);
+			
+			//lat and lon
+			$latitude = $data->results[0]->geometry->location->lat;
+			$longitude = $data->results[0]->geometry->location->lng;
+			
+			//save in cache
+			$cached_addresses[$original_address] = compact('address', 'city', 'state', 'postal_code', 'country', 'latitude', 'longitude');
+			
+			$geocoded++;
 		}
 		
-		//unpack response
-		$address = $city = $state = $postal_code = $country = $point_of_interest = false;
-		foreach ($data->results[0]->address_components as $component) {
-			if (in_array('street_number', $component->types)) {
-				$address = $component->long_name;
-			} elseif (in_array('route', $component->types)) {
-				$address .= ' ' . $component->long_name;
-			} elseif (in_array('locality', $component->types)) {
-				$city = $component->long_name;
-			} elseif (in_array('sublocality', $component->types)) {
-				$city = $component->long_name;
-			} elseif (in_array('administrative_area_level_1', $component->types)) {
-				$state = $component->short_name;
-			} elseif (in_array('postal_code', $component->types)) {
-				$postal_code = $component->short_name;
-			} elseif (in_array('country', $component->types)) {
-				$country = $component->short_name;
-			} elseif (in_array('point_of_interest', $component->types) || empty($component->types)) {
-				$point_of_interest = $component->short_name;
-			} 
-		}
-		
-		/*
-		some legitimate meeting locations have no address
-		http://maps.googleapis.com/maps/api/geocode/json?address=bagram%20airfield,%20afghanistan
-		http://maps.googleapis.com/maps/api/geocode/json?address=River%20Light%20Park,%20Cornwall,%20NY,%20USA
-		*/
-		if (empty($address)) $address = $point_of_interest;
-		
-		//check for required values
-		if (empty($address) || empty($city) || empty($data->results[0]->geometry->location->lat)) {
-			$failed_addresses[$original_address] = $info['lines'];
-			continue;
-		}
-		
-		//create formatted address with the same methodology as in admin_edit.js
-		$formatted_address = array();
-		if (!empty($address)) $formatted_address[] = $address;
-		if (!empty($city)) $formatted_address[] = $city;
-		if (!empty($state)) $formatted_address[] = $state;
-		if (!empty($postal_code)) $formatted_address[] = array_pop($formatted_address) . ' ' . $postal_code;
-		if (!empty($country)) $formatted_address[] = $country;
-		$formatted_address = implode(', ', $formatted_address);
-				
 		//intialize empty location if needed
 		if (!array_key_exists($formatted_address, $locations)) {
 			$locations[$formatted_address] = array(
@@ -892,8 +912,8 @@ function tsml_import($meetings, $delete=false) {
 				'country'    	=>$country,
 				'region'		=>$info['region'],
 				'location'		=>$info['location'],
-				'latitude'		=>$data->results[0]->geometry->location->lat,
-				'longitude'		=>$data->results[0]->geometry->location->lng,
+				'latitude'		=>$latitude,
+				'longitude'		=>$longitude,
 			);
 		}
 
@@ -903,6 +923,8 @@ function tsml_import($meetings, $delete=false) {
 			$info['meetings']
 		);
 	}
+	
+	update_option('tsml_addresses', $cached_addresses, 'no');
 	
 	//loop through and save everything to the database
 	foreach ($locations as $formatted_address=>$location) {
@@ -958,9 +980,12 @@ function tsml_import($meetings, $delete=false) {
 			$message .= '<li><em>' . $address . '</em> on line ' . implode(', ', $lines) . '</li>';
 		}
 		$message .= '</ul>';
+		if ($geocoded) $message .= ' (Geocoded ' . number_format($geocoded) . ' locations.)';
 		return tsml_alert($message, 'error');		
 	} else {
-		return tsml_alert('Successfully added ' . number_format($success) . ' meetings.');		
+		$message = 'Successfully added ' . number_format($success) . ' meetings.';
+		if ($geocoded) $message .= ' (Geocoded ' . number_format($geocoded) . ' locations.)';
+		return tsml_alert($message);		
 	}
 }
 
