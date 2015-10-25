@@ -630,7 +630,7 @@ function tsml_regions_api() {
 //sanitize and import meeting data
 //used by admin_import.php
 function tsml_import($meetings, $delete=false) {
-	global $tsml_types, $tsml_program, $tsml_days;
+	global $tsml_types, $tsml_program, $tsml_days, $wpdb;
 	
 	//uppercasing for value matching later
 	$upper_types = array_map('strtoupper', $tsml_types[$tsml_program]);
@@ -670,12 +670,15 @@ function tsml_import($meetings, $delete=false) {
 
 	//all the data is set, now delete everything
 	if ($delete) {
-		$all_meetings = tsml_get_all_meetings();
-		foreach ($all_meetings as $meeting) wp_delete_post($meeting->ID, true);
-		$all_locations = tsml_get_all_locations();
-		foreach ($all_locations as $location) wp_delete_post($location->ID, true);
-		$all_regions = tsml_get_all_regions();
-		foreach ($all_regions as $region) wp_delete_term($region, 'region');
+		//must be done with SQL statements becase there could be thousands of records to delete
+		$wpdb->query('DELETE FROM ' . $wpdb->postmeta . ' m JOIN ' . $wpdb->posts . ' p ON m.post_id = p.ID WHERE p.post_type = "meetings"');
+		$wpdb->query('DELETE FROM ' . $wpdb->postmeta . ' m JOIN ' . $wpdb->posts . ' p ON m.post_id = p.ID WHERE p.post_type = "locations"');
+		$wpdb->query('DELETE FROM ' . $wpdb->term_relationships . ' r JOIN ' . $wpdb->posts . ' p ON r.object_id = p.ID where p.post_type = "meetings"');
+		$wpdb->query('DELETE FROM ' . $wpdb->term_relationships . ' r JOIN ' . $wpdb->posts . ' p ON r.object_id = p.ID where p.post_type = "locations"');
+		$wpdb->query('DELETE FROM ' . $wpdb->terms . ' t JOIN ' . $wpdb->term_taxonomy . ' tt ON t.term_id = tt.term_id WHERE tt.taxonomy = "region"');
+		$wpdb->query('DELETE FROM ' . $wpdb->term_taxonomy . ' WHERE taxonomy = "region"');
+		$wpdb->query('DELETE FROM ' . $wpdb->posts . ' WHERE post_type = "meetings"');
+		$wpdb->query('DELETE FROM ' . $wpdb->posts . ' WHERE post_type = "locations"');
 	} else {
 		$all_locations = tsml_get_locations();
 		foreach ($all_locations as $location) $existing_addresses[$location['formatted_address']] = $location['id'];
@@ -896,7 +899,7 @@ function tsml_import($meetings, $delete=false) {
 			$longitude = $data->results[0]->geometry->location->lng;
 			
 			//save in cache
-			$cached_addresses[$original_address] = compact('address', 'city', 'state', 'postal_code', 'country', 'latitude', 'longitude');
+			$cached_addresses[$original_address] = compact('address', 'city', 'state', 'postal_code', 'country', 'latitude', 'longitude', 'formatted_address');
 			
 			$geocoded++;
 		}
