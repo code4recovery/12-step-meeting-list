@@ -688,9 +688,18 @@ function tsml_import($meetings, $delete=false) {
 		if ($header_count != count($meeting)) {
 			return tsml_alert('Row #' . $row_counter . ' has ' . count($meeting) . ' columns while the header has ' . $header_count . '.', 'error');
 		}
-		$meeting = array_map('stripslashes', $meeting); //removing quotes
+		
+		//data cleanup: removing quotes and sanitizing, but preserving newlines in notes field
+		$meeting = array_map('stripslashes', $meeting);
+		if ($index = array_search('notes', $header)) {
+			$notes = str_replace('<br>', PHP_EOL, $meeting[$index]);
+			$notes = str_replace('Notes:', '', $notes);
+			$notes = trim(implode(PHP_EOL, array_map('sanitize_text_field', explode(PHP_EOL, $notes))));
+			if ($notes == 'Cross street:') $notes = ''; //nyc
+		}
 		$meeting = array_map('sanitize_text_field', $meeting); //safety
 		$meeting = array_combine($header, $meeting); //apply header field names to array
+		if ($index) $meeting['notes'] = $notes;
 
 		//check required fields
 		if (empty($meeting['address'])) return tsml_alert('Found a meeting with no address at row #' . $row_counter . '.', 'error');
@@ -717,10 +726,14 @@ function tsml_import($meetings, $delete=false) {
 			if (!in_array($meeting['day'], $tsml_days)) return tsml_alert('"' . $meeting['day'] . '" is an invalid value for day at row #' . $row_counter . '.', 'error');
 			$meeting['day'] = array_search($meeting['day'], $tsml_days);
 		}
+		
+		//sanitize address, remove everything after @
+		if ($pos = strpos($meeting['address'], '@')) $meeting['address'] = substr($meeting['address'], 0, $pos);
 
 		//append city, state, and country to address if not already in it
 		if (!empty($meeting['city']) && !stristr($meeting['address'], $meeting['city'])) $meeting['address'] .= ', ' . $meeting['city'];
 		if (!empty($meeting['state']) && !stristr($meeting['address'], $meeting['state'])) $meeting['address'] .= ', ' . $meeting['state'];
+		if ($meeting['country'] == 'US') $meeting['country'] = 'USA'; //helps geocoding
 		if (!empty($meeting['country']) && !stristr($meeting['address'], $meeting['country'])) $meeting['address'] .= ', ' . $meeting['country'];
 
 		//add region to taxonomy if it doesn't exist yet
@@ -753,6 +766,7 @@ function tsml_import($meetings, $delete=false) {
 		if (!array_key_exists($meeting['address'], $addresses)) {
 			$addresses[$meeting['address']] = array(
 				'meetings' => array(),
+				'lines' => array(),
 				'region' => $meeting['region'],
 				'location' => $meeting['location'],		
 			);
@@ -766,6 +780,9 @@ function tsml_import($meetings, $delete=false) {
 			'types' => $meeting['types'],
 			'notes' => $meeting['notes'],
 		);
+		
+		//attach line number for reference if geocoding fails
+		$addresses[$meeting['address']]['lines'][] = $row_counter;
 	}
 	
 	//make sure script has enough time to run
@@ -773,6 +790,7 @@ function tsml_import($meetings, $delete=false) {
 	$address_count = count($addresses);
 	$seconds_needed = ceil($address_count / 5);
 	$max_execution_time = ini_get('max_execution_time');
+	$failed_addresses = array();
 	if ($seconds_needed > $max_execution_time && !set_time_limit($seconds_needed)) {
 		return tsml_alert('This script needs to geocode ' . number_format($address_count) . ' 
 			addresses, which will take about ' . number_format($seconds_needed) . ' seconds. This  
@@ -792,33 +810,35 @@ function tsml_import($meetings, $delete=false) {
     ));
 
 	//loop through again and geocode the addresses, making a location
-	foreach ($addresses as $address=>$info) {
+	foreach ($addresses as $original_address=>$info) {
 		
 		//request from google
-		curl_setopt($ch, CURLOPT_URL, 'http://maps.googleapis.com/maps/api/geocode/json?address=' . urlencode($address));
+		curl_setopt($ch, CURLOPT_URL, 'http://maps.googleapis.com/maps/api/geocode/json?address=' . urlencode($original_address));
 		if (!$result = curl_exec($ch)) {
-			return tsml_alert('Google did not respond for address <em>' . $address . '</em>.', 'error');
+			return tsml_alert('Google did not respond for address <em>' . $original_address . '</em>.', 'error');
 		}
 		
 		//decode result
 		$data = json_decode($result);
 
-		//if over query limit, wait two seconds and retry, or then exit		
 		if ($data->status == 'OVER_QUERY_LIMIT') {
+			//if over query limit, wait two seconds and retry, or then exit		
 			sleep(2);
 			$data = json_decode(curl_exec($ch));
 			if ($data->status == 'OVER_QUERY_LIMIT') {
 				return tsml_alert('You are over your rate limit for the Google Geocoding API, you will need an API key to continue.', 'error');
 			}
-		}
-		
-		//make sure response is valid
-		if (empty($data->results[0]->address_components)) {
-			return tsml_alert('Google gave an invalid response for address <em>' . $address . '</em>. Response was <pre>' . var_export($data, true) . '</pre>', 'error');
+		} elseif ($data->status == 'OK') {
+			//ok great
+		} elseif ($data->status == 'ZERO_RESULTS') {
+			$failed_addresses[$original_address] = $info['lines'];
+			continue;
+		} else {
+			return tsml_alert('Google gave an unexpected response for address <em>' . $original_address . '</em>. Response was <pre>' . var_export($data, true) . '</pre>', 'error');
 		}
 		
 		//unpack response
-		$address = $city = $state = $postal_code = $country = false;
+		$address = $city = $state = $postal_code = $country = $point_of_interest = false;
 		foreach ($data->results[0]->address_components as $component) {
 			if (in_array('street_number', $component->types)) {
 				$address = $component->long_name;
@@ -826,13 +846,30 @@ function tsml_import($meetings, $delete=false) {
 				$address .= ' ' . $component->long_name;
 			} elseif (in_array('locality', $component->types)) {
 				$city = $component->long_name;
+			} elseif (in_array('sublocality', $component->types)) {
+				$city = $component->long_name;
 			} elseif (in_array('administrative_area_level_1', $component->types)) {
 				$state = $component->short_name;
 			} elseif (in_array('postal_code', $component->types)) {
 				$postal_code = $component->short_name;
 			} elseif (in_array('country', $component->types)) {
 				$country = $component->short_name;
-			}
+			} elseif (in_array('point_of_interest', $component->types) || empty($component->types)) {
+				$point_of_interest = $component->short_name;
+			} 
+		}
+		
+		/*
+		some legitimate meeting locations have no address
+		http://maps.googleapis.com/maps/api/geocode/json?address=bagram%20airfield,%20afghanistan
+		http://maps.googleapis.com/maps/api/geocode/json?address=River%20Light%20Park,%20Cornwall,%20NY,%20USA
+		*/
+		if (empty($address)) $address = $point_of_interest;
+		
+		//check for required values
+		if (empty($address) || empty($city) || empty($data->results[0]->geometry->location->lat)) {
+			$failed_addresses[$original_address] = $info['lines'];
+			continue;
 		}
 		
 		//create formatted address with the same methodology as in admin_edit.js
@@ -914,7 +951,17 @@ function tsml_import($meetings, $delete=false) {
 	tsml_update_types_in_use();
 	
 	//success
-	return tsml_alert('Successfully added ' . number_format($success) . ' meetings.');
+	if (count($failed_addresses)) {
+		$message = $success ? number_format($success) . ' meetings were added successfully, however ' : '';
+		$message .= 'Google rejected the following addresses:<ul style="padding-left:20px;list-style-type:square;">';
+		foreach ($failed_addresses as $address=>$lines) {
+			$message .= '<li><em>' . $address . '</em> on line ' . implode(', ', $lines) . '</li>';
+		}
+		$message .= '</ul>';
+		return tsml_alert($message, 'error');		
+	} else {
+		return tsml_alert('Successfully added ' . number_format($success) . ' meetings.');		
+	}
 }
 
 //function: return an html link with query string appended

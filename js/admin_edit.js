@@ -115,31 +115,41 @@ jQuery(function(){
 				});
 			}
 			
-			//console.log(data.results[0].address_components);
+			console.log(data.results[0].address_components);
 			
 			//get address, city and state
 			for (var i = 0; i < data.results[0].address_components.length; i++) {
 				var component = data.results[0].address_components[i];
-				if (component.types[0] == 'street_number') {
+				var point_of_interest;
+				if (!component.types.length || component.types[0] == 'point_of_interest') {
+					//record the point of interest in case address is empty
+					point_of_interest = component.short_name;
+				} else if (component.types.indexOf('street_number') !== -1) {
 					//set address as street number
 					jQuery('input#address').val(component.long_name);
-				} else if (component.types[0] == 'route') {
+				} else if (component.types.indexOf('route') !== -1) {
 					//append street name
 					var address = jQuery('input#address').val() + ' ' + component.long_name;
 					jQuery('input#address').val(address.trim());
-				} else if (component.types[0] == 'locality') {
+				} else if (component.types.indexOf('locality') !== -1) {
 					//set city
 					jQuery('input#city').val(component.long_name);
-				} else if (component.types[0] == 'administrative_area_level_1') {
+				} else if (component.types.indexOf('sublocality') !== -1) {
+					//set city
+					jQuery('input#city').val(component.long_name);
+				} else if (component.types.indexOf('administrative_area_level_1') !== -1) {
 					//set state
 					jQuery('input#state').val(component.short_name);
-				} else if (component.types[0] == 'postal_code') {
+				} else if (component.types.indexOf('postal_code') !== -1) {
 					//set ZIP
 					jQuery('input#postal_code').val(component.short_name);
-				} else if (component.types[0] == 'country') {
+				} else if (component.types.indexOf('country') !== -1) {
 					//set country
 					jQuery('input#country').val(component.short_name);
 				}
+				
+				//set address to point of interest if empty
+				if (!jQuery('input#address').val().length) jQuery('input#address').val(point_of_interest);
 				
 				//build formatted address from components
 				var formatted_address = [];

@@ -93,7 +93,7 @@ add_action('admin_menu', function() {
 						<div class="postbox">
 							<h3>Try the App!</h3>
 							<div class="inside">
-								<p>We are beta-testing a native mobile app for iPhone. If you would like to participate, 
+								<p>We are beta-testing native mobile apps for iOS and Android. If you would like to participate, 
 									please get in touch: <a href="mailto:app@aasanjose.org">app@aasanjose.org</a>.
 							</div>
 						</div>
