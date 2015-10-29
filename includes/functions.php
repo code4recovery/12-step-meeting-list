@@ -734,8 +734,8 @@ function tsml_import($meetings, $delete=false) {
 		if ($pos = strpos($meeting['address'], '@')) $meeting['address'] = substr($meeting['address'], 0, $pos);
 
 		//append city, state, and country to address if not already in it
-		if (!empty($meeting['city']) && !stristr($meeting['address'], $meeting['city'])) $meeting['address'] .= ', ' . $meeting['city'];
-		if (!empty($meeting['state']) && !stristr($meeting['address'], $meeting['state'])) $meeting['address'] .= ', ' . $meeting['state'];
+		if (!empty($meeting['city'])) $meeting['address'] .= ', ' . $meeting['city'];
+		if (!empty($meeting['state'])) $meeting['address'] .= ', ' . $meeting['state'];
 		if ($meeting['country'] == 'US') $meeting['country'] = 'USA'; //helps geocoding
 		if (!empty($meeting['country']) && !stristr($meeting['address'], $meeting['country'])) $meeting['address'] .= ', ' . $meeting['country'];
 
@@ -860,6 +860,8 @@ function tsml_import($meetings, $delete=false) {
 				} elseif (in_array('locality', $component->types)) {
 					$city = $component->long_name;
 				} elseif (in_array('sublocality', $component->types)) {
+					$city = $component->long_name;
+				} elseif (in_array('administrative_area_level_3', $component->types)) {
 					$city = $component->long_name;
 				} elseif (in_array('administrative_area_level_1', $component->types)) {
 					$state = $component->short_name;
