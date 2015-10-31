@@ -27,6 +27,7 @@ $tsml_programs = array(
 	'na'		=> 'Narcotics Anonymous',
 	'oa'		=> 'Overeaters Anonymous',
 	'saa'		=> 'Sex Addicts Anonymous',
+	'slaa'		=> 'Sex and Love Addicts Anonymous',
 );
 
 $tsml_regions = array();
@@ -195,6 +196,29 @@ $tsml_types = array(
 		'O'		=> 'Open',
 		'ST'	=> 'Step Meeting',
 		'LGBTQ'	=> 'LGBTQ', 
+		'W'		=> 'Women Only',
+	),
+	'slaa' => array(
+		'AN'	=> 'Anorexia Focus',
+		'B'		=> 'Book Study',
+		'H'		=> 'Chips', 
+		'BA'	=> 'Child Care Available',
+		'C'		=> 'Closed', 
+		'FF'	=> 'Fragrance Free',
+		'GC'	=> 'Getting Current',
+		'X'		=> 'Handicapped Accessible',
+		'HR'	=> 'Healthy Relationships',
+		'LIT'	=> 'Literature Reading',
+		'MED'	=> 'Meditation',
+		'M'		=> 'Men Only', 
+		'NC'	=> 'Newcomers',
+		'O'		=> 'Open',
+		'PRI'	=> 'Prison',
+		'S'		=> 'Spanish',
+		'SP'	=> 'Speaker',
+		'ST'	=> 'Step Study',
+		'D'		=> 'Topic Discussion', 
+		'TR'	=> 'Tradition Study',
 		'W'		=> 'Women Only',
 	),
 );
