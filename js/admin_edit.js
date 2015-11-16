@@ -114,11 +114,13 @@ jQuery(function(){
 					}
 				});
 			}
-						
+
+			var point_of_interest;
+			var city = false;
+
 			//get address, city and state
 			for (var i = 0; i < data.results[0].address_components.length; i++) {
 				var component = data.results[0].address_components[i];
-				var point_of_interest;
 				if (!component.types.length || component.types[0] == 'point_of_interest') {
 					//record the point of interest in case address is empty
 					point_of_interest = component.short_name;
@@ -131,10 +133,13 @@ jQuery(function(){
 					jQuery('input#address').val(address.trim());
 				} else if (component.types.indexOf('locality') !== -1) {
 					//set city
-					jQuery('input#city').val(component.long_name);
+					city = component.long_name;
 				} else if (component.types.indexOf('sublocality') !== -1) {
 					//set city
-					jQuery('input#city').val(component.long_name);
+					if (!city) city = component.long_name;
+				} else if (component.types.indexOf('administrative_area_level_3') !== -1) {
+					//set city
+					if (!city) city = component.long_name;
 				} else if (component.types.indexOf('administrative_area_level_1') !== -1) {
 					//set state
 					jQuery('input#state').val(component.short_name);
@@ -145,26 +150,29 @@ jQuery(function(){
 					//set country
 					jQuery('input#country').val(component.short_name);
 				}
-				
-				//set address to point of interest if empty
-				if (!jQuery('input#address').val().length) jQuery('input#address').val(point_of_interest);
-				
-				//build formatted address from components
-				var formatted_address = [];
-
-				var address = jQuery('input#address').val();
-				if (address.length) formatted_address[formatted_address.length] = address;
-				
-				var city = jQuery('input#city').val();
-				if (city.length) formatted_address[formatted_address.length] = city;
-				
-				var state_code = jQuery('input#state').val() + ' ' + jQuery('input#postal_code').val();
-				state_code = state_code.trim();
-				if (state_code.length) formatted_address[formatted_address.length] = state_code;
-				
-				var country = jQuery('input#country').val();
-				if (country.length) formatted_address[formatted_address.length] = country;
 			}
+
+			//set city
+			jQuery('input#city').val(city);
+			
+			//set address to point of interest if empty
+			if (!jQuery('input#address').val().length) jQuery('input#address').val(point_of_interest);
+			
+			//build formatted address from components
+			var formatted_address = [];
+
+			var address = jQuery('input#address').val();
+			if (address.length) formatted_address[formatted_address.length] = address;
+			
+			var city = jQuery('input#city').val();
+			if (city.length) formatted_address[formatted_address.length] = city;
+			
+			var state_code = jQuery('input#state').val() + ' ' + jQuery('input#postal_code').val();
+			state_code = state_code.trim();
+			if (state_code.length) formatted_address[formatted_address.length] = state_code;
+			
+			var country = jQuery('input#country').val();
+			if (country.length) formatted_address[formatted_address.length] = country;
 
 			var formatted_address = formatted_address.join(', ');
 

@@ -6,10 +6,10 @@ tsml_assets('public');
 get_header();
 
 //parse query string
-$search		= sanitize_text_field($_GET['sq']);
-$region     = intval($_GET['r']);
-$types		= array_values(array_intersect(array_keys($tsml_types[$tsml_program]), explode('-', $_GET['t'])));
-$time		= sanitize_text_field(strtolower($_GET['i']));
+$search		= isset($_GET['sq']) ? sanitize_text_field($_GET['sq']) : null;
+$region     = isset($_GET['r']) ? intval($_GET['r']) : null;
+$types		= isset($_GET['t']) ? array_values(array_intersect(array_keys($tsml_types[$tsml_program]), explode('-', $_GET['t']))) : array();
+$time		= isset($_GET['i']) ? sanitize_text_field(strtolower($_GET['i'])) : null;
 $times		= array(
 	'morning' => 'Morning',
 	'day' => 'Day',
@@ -45,9 +45,9 @@ $meetings	= tsml_get_meetings(compact('search', 'day', 'time', 'region', 'types'
 //dd($meetings);
 
 class Walker_Regions_Dropdown extends Walker_Category {
-	function start_el(&$output, $item, $depth=0, $args=array()) {
+	function start_el(&$output, $category, $depth = 0, $args = array(), $id = 0) {
 		//die('args was ' . var_dump($args));
-		$output .= '<li' . ($args['value'] == esc_attr($item->term_id) ? ' class="active"' : '') . '><a href="#" data-id="' . esc_attr($item->term_id) . '">' . esc_attr($item->name) . '</a>';
+		$output .= '<li' . ($args['value'] == esc_attr($category->term_id) ? ' class="active"' : '') . '><a href="#" data-id="' . esc_attr($category->term_id) . '">' . esc_attr($category->name) . '</a>';
 	}
 	function end_el(&$output, $item, $depth=0, $args=array()) {
 		$output .= '</li>';

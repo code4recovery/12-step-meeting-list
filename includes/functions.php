@@ -671,14 +671,15 @@ function tsml_import($meetings, $delete=false) {
 	//all the data is set, now delete everything
 	if ($delete) {
 		//must be done with SQL statements becase there could be thousands of records to delete
-		$wpdb->query('DELETE FROM ' . $wpdb->postmeta . ' m JOIN ' . $wpdb->posts . ' p ON m.post_id = p.ID WHERE p.post_type = "meetings"');
-		$wpdb->query('DELETE FROM ' . $wpdb->postmeta . ' m JOIN ' . $wpdb->posts . ' p ON m.post_id = p.ID WHERE p.post_type = "locations"');
-		$wpdb->query('DELETE FROM ' . $wpdb->term_relationships . ' r JOIN ' . $wpdb->posts . ' p ON r.object_id = p.ID where p.post_type = "meetings"');
-		$wpdb->query('DELETE FROM ' . $wpdb->term_relationships . ' r JOIN ' . $wpdb->posts . ' p ON r.object_id = p.ID where p.post_type = "locations"');
-		$wpdb->query('DELETE FROM ' . $wpdb->terms . ' t JOIN ' . $wpdb->term_taxonomy . ' tt ON t.term_id = tt.term_id WHERE tt.taxonomy = "region"');
-		$wpdb->query('DELETE FROM ' . $wpdb->term_taxonomy . ' WHERE taxonomy = "region"');
-		$wpdb->query('DELETE FROM ' . $wpdb->posts . ' WHERE post_type = "meetings"');
-		$wpdb->query('DELETE FROM ' . $wpdb->posts . ' WHERE post_type = "locations"');
+		if ($post_ids = implode(',', $wpdb->get_col('SELECT id FROM ' . $wpdb->posts . ' WHERE post_type IN ("meetings", "locations")'))) {
+			$wpdb->query('DELETE FROM ' . $wpdb->posts . ' WHERE id IN (' . $post_ids . ')');
+			$wpdb->query('DELETE FROM ' . $wpdb->postmeta . ' WHERE post_id IN (' . $post_ids . ')');
+			$wpdb->query('DELETE FROM ' . $wpdb->term_relationships . ' WHERE object_id IN (' . $post_ids . ')');
+		}
+		if ($term_ids = implode(',', $wpdb->get_col('SELECT term_id FROM ' . $wpdb->term_taxonomy . ' WHERE taxonomy = "region"'))) {
+			$wpdb->query('DELETE FROM ' . $wpdb->terms . ' WHERE term_id IN (' . $term_ids . ')');
+			$wpdb->query('DELETE FROM ' . $wpdb->term_taxonomy . ' WHERE id IN (' . $term_ids . ')');
+		}
 	} else {
 		$all_locations = tsml_get_locations();
 		foreach ($all_locations as $location) $existing_addresses[$location['formatted_address']] = $location['id'];
@@ -739,6 +740,11 @@ function tsml_import($meetings, $delete=false) {
 		if ($meeting['country'] == 'US') $meeting['country'] = 'USA'; //helps geocoding
 		if (!empty($meeting['country']) && !stristr($meeting['address'], $meeting['country'])) $meeting['address'] .= ', ' . $meeting['country'];
 
+		//updated
+		$meeting['updated'] = empty($meeting['updated']) ? time() : strtotime($meeting['updated']);
+		$meeting['post_modified'] = date('Y-m-d H:i:s', $meeting['updated']);
+		$meeting['post_modified_gmt'] = date('Y-m-d H:i:s', $meeting['updated']);
+
 		//add region to taxonomy if it doesn't exist yet
 		if (!empty($meeting['region'])) {
 			if ($term = term_exists($meeting['region'], 'region')) {
@@ -746,6 +752,16 @@ function tsml_import($meetings, $delete=false) {
 			} else {
 				$term = wp_insert_term($meeting['region'], 'region');
 				$meeting['region'] = $term['term_id'];
+			}
+
+			//can only have a subregion if you already have a region
+			if (!empty($meeting['subregion'])) {
+				if ($term = term_exists($meeting['subregion'], 'region', $meeting['region'])) {
+					$meeting['region'] = $term['term_id'];
+				} else {
+					$term = wp_insert_term($meeting['subregion'], 'region', array('parent'=>$meeting['region']));
+					$meeting['region'] = $term['term_id'];
+				}
 			}
 		}
 
@@ -782,6 +798,8 @@ function tsml_import($meetings, $delete=false) {
 			'time' => $meeting['time'],
 			'types' => $meeting['types'],
 			'notes' => $meeting['notes'],
+			'post_modified' => $meeting['post_modified'],
+			'post_modified_gmt' => $meeting['post_modified_gmt'],
 		);
 		
 		//attach line number for reference if geocoding fails
@@ -860,9 +878,9 @@ function tsml_import($meetings, $delete=false) {
 				} elseif (in_array('locality', $component->types)) {
 					$city = $component->long_name;
 				} elseif (in_array('sublocality', $component->types)) {
-					$city = $component->long_name;
+					if (!$city) $city = $component->long_name;
 				} elseif (in_array('administrative_area_level_3', $component->types)) {
-					$city = $component->long_name;
+					if (!$city) $city = $component->long_name;
 				} elseif (in_array('administrative_area_level_1', $component->types)) {
 					$state = $component->short_name;
 				} elseif (in_array('postal_code', $component->types)) {
@@ -959,11 +977,13 @@ function tsml_import($meetings, $delete=false) {
 		//save meetings to this location
 		foreach ($location['meetings'] as $meeting) {
 			$meeting_id = wp_insert_post(array(
-				'post_title'	=> $meeting['name'],
-				'post_type'		=> 'meetings',
-				'post_status'	=> 'publish',
-				'post_parent'	=> $location_id,
-				'post_content'	=> $meeting['notes'],
+				'post_title'		=> $meeting['name'],
+				'post_type'			=> 'meetings',
+				'post_status'		=> 'publish',
+				'post_parent'		=> $location_id,
+				'post_content'		=> $meeting['notes'],
+				'post_modified'		=> $meeting['post_modified'],
+				'post_modified_gmt'	=> $meeting['post_modified_gmt'],
 			));
 			update_post_meta($meeting_id, 'day',		$meeting['day']);
 			update_post_meta($meeting_id, 'time',		$meeting['time']);
