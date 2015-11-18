@@ -91,10 +91,20 @@ add_action('admin_menu', function() {
 						</div>
 						<?php if ($tsml_program == 'aa') {?>
 						<div class="postbox">
-							<h3>Try the App!</h3>
+							<h3>Try the Apps!</h3>
 							<div class="inside">
-								<p>We are beta-testing native mobile apps for iOS and Android. If you would like to participate, 
-									please get in touch: <a href="mailto:app@aasanjose.org">app@aasanjose.org</a>.
+								<p>Want to have your meetings listed in a simple, clean mobile app? Several cities in the US are currently participating,
+									but we always want more! No extra effort is required, simply continue to update your meeting information like you 
+									currently do, and the information flows down to app users.
+								<p style="margin-left:-5px;margin-right:-5px;overflow: auto;">
+									<a href="https://itunes.apple.com/us/app/meeting-guide/id1042822181" style="padding:0 5px;width:50%;float:left;display:block;box-sizing:border-box;">
+										<img src="<?php echo plugin_dir_url(__FILE__)?>../img/apple.svg" style="width:100%;height:auto;">
+									</a>
+									<a href="https://play.google.com/store/apps/details?id=org.meetingguide.app" style="padding:0 5px;width:50%;float:left;display:block;box-sizing:border-box;">
+										<img src="<?php echo plugin_dir_url(__FILE__)?>../img/google.svg" style="width:100%;height:auto;">
+									</a>
+								</p>
+								<p>To get involved, please get in touch by emailing <a href="mailto:app@aasanjose.org">app@meetingguide.org</a>.</p>
 							</div>
 						</div>
 						<?php }?>

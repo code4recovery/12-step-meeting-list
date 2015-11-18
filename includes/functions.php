@@ -5,7 +5,7 @@
 function tsml_assets($context) {
 	
 	//google maps api needed for maps and address verification, can't be onboarded
-	wp_enqueue_script('google_maps_api', '//maps.googleapis.com/maps/api/js?sensor=false');
+	wp_enqueue_script('google_maps_api', '//maps.googleapis.com/maps/api/js');
 	
 	if ($context == 'public') {
 		wp_enqueue_style('bootstrap_css', plugin_dir_url(__DIR__ . '/../css') . '/css/bootstrap.min.css');
@@ -121,7 +121,7 @@ function tsml_get_all_regions($status='any') {
 function tsml_format_day_and_time($day, $time, $separator=', ') {
 	global $tsml_days;
 	if (empty($tsml_days[$day]) || empty($time)) return 'Appointment';
-	return $tsml_days[$day] . $separator . tsml_format_time($time);
+	return $tsml_days[$day] . $separator . '<time>' . tsml_format_time($time) . '</time>';
 }
 
 //function:	appends men or women if type present
@@ -293,15 +293,15 @@ function tsml_get_meetings($arguments=array()) {
 		//append contact info if user has permission
 		if (current_user_can('edit_posts')) {
 			$locations[$post->ID] = array_merge($locations[$post->ID], array(
-				'contact_1_name'	=> $tsml_custom['contact_1_name'][0],
-				'contact_1_email'	=> $tsml_custom['contact_1_email'][0],
-				'contact_1_phone'	=> $tsml_custom['contact_1_phone'][0],
-				'contact_2_name'	=> $tsml_custom['contact_2_name'][0],
-				'contact_2_email'	=> $tsml_custom['contact_2_email'][0],
-				'contact_2_phone'	=> $tsml_custom['contact_2_phone'][0],
-				'contact_3_name'	=> $tsml_custom['contact_3_name'][0],
-				'contact_3_email'	=> $tsml_custom['contact_3_email'][0],
-				'contact_3_phone'	=> $tsml_custom['contact_3_phone'][0],
+				'contact_1_name'	=> array_key_exists('contact_1_name', $tsml_custom) ? $tsml_custom['contact_1_name'][0] : null,
+				'contact_1_email'	=> array_key_exists('contact_1_email', $tsml_custom) ? $tsml_custom['contact_1_email'][0] : null,
+				'contact_1_phone'	=> array_key_exists('contact_1_phone', $tsml_custom) ? $tsml_custom['contact_1_phone'][0] : null,
+				'contact_2_name'	=> array_key_exists('contact_2_name', $tsml_custom) ? $tsml_custom['contact_2_name'][0] : null,
+				'contact_2_email'	=> array_key_exists('contact_2_email', $tsml_custom) ? $tsml_custom['contact_2_email'][0] : null,
+				'contact_2_phone'	=> array_key_exists('contact_2_phone', $tsml_custom) ? $tsml_custom['contact_2_phone'][0] : null,
+				'contact_3_name'	=> array_key_exists('contact_3_name', $tsml_custom) ? $tsml_custom['contact_3_name'][0] : null,
+				'contact_3_email'	=> array_key_exists('contact_3_email', $tsml_custom) ? $tsml_custom['contact_3_email'][0] : null,
+				'contact_3_phone'	=> array_key_exists('contact_3_phone', $tsml_custom) ? $tsml_custom['contact_3_phone'][0] : null,
 			));
 		}
 	}
@@ -385,7 +385,7 @@ function tsml_get_meetings($arguments=array()) {
 	}
 
 	# Because you can't yet order by multiple meta_keys, manually sort the days
-	if (empty($arguments['day']) && $arguments['day'] !== '0') {
+	if (!isset($arguments['day']) || (empty($arguments['day']) && $arguments['day'] !== '0')) {
 		$tsml_days = array();
 		foreach ($meetings as $meeting) {
 			if (!isset($tsml_days[$meeting['day']])) $tsml_days[$meeting['day']] = array();
@@ -442,18 +442,13 @@ function tsml_get_meeting() {
 	return $meeting;
 }
 
-//function: load only the currently-used regions into a flat array
+//function: load only the currently-used regions (and their parents) into a flat array
 //used:		tsml_custom_post_types(), tsml_regions_api()
 function tsml_get_regions() {
-	global $wpdb;
-	$regions = $wpdb->get_col('SELECT DISTINCT
-			m.meta_value
-		FROM ' . $wpdb->postmeta . ' m
-		JOIN ' . $wpdb->posts . ' p ON m.post_id = p.id
-		WHERE p.post_type = "meetings" AND m.meta_key = "region" AND p.post_status = "publish"');
 	$tsml_regions = array();
-	$region_terms = get_terms('region', array('include' => $regions, 'hide_empty' => false));
+	$region_terms = get_terms('region', array('hide_empty' => true));
 	foreach ($region_terms as $region) $tsml_regions[$region->term_id] = $region->name;
+	//dd($tsml_regions);
 	return $tsml_regions;
 }
 
@@ -678,7 +673,7 @@ function tsml_import($meetings, $delete=false) {
 		}
 		if ($term_ids = implode(',', $wpdb->get_col('SELECT term_id FROM ' . $wpdb->term_taxonomy . ' WHERE taxonomy = "region"'))) {
 			$wpdb->query('DELETE FROM ' . $wpdb->terms . ' WHERE term_id IN (' . $term_ids . ')');
-			$wpdb->query('DELETE FROM ' . $wpdb->term_taxonomy . ' WHERE id IN (' . $term_ids . ')');
+			$wpdb->query('DELETE FROM ' . $wpdb->term_taxonomy . ' WHERE term_id IN (' . $term_ids . ')');
 		}
 	} else {
 		$all_locations = tsml_get_locations();
@@ -688,51 +683,45 @@ function tsml_import($meetings, $delete=false) {
 	//loop through data and group by address
 	foreach ($meetings as $meeting) {
 		$row_counter++;
+
+		//preserve <br>s as line breaks if present, otherwise clean up
+		$meeting = preg_replace('/\<br(\s*)?\/?\>/i', PHP_EOL, $meeting);
+		$meeting = stripslashes($meeting);
+
+		//split, check length, sanitize, associate
 		$meeting = explode("\t", $meeting);
 		if ($header_count != count($meeting)) {
 			return tsml_alert('Row #' . $row_counter . ' has ' . count($meeting) . ' columns while the header has ' . $header_count . '.', 'error');
 		}
-		
-		//data cleanup: removing quotes and sanitizing, but preserving newlines in notes field
-		$meeting = array_map('stripslashes', $meeting);
-		if ($index = array_search('notes', $header)) {
-			$notes = str_replace('<br>', PHP_EOL, $meeting[$index]);
-			$notes = str_replace('Notes:', '', $notes);
-			$notes = trim(implode(PHP_EOL, array_map('sanitize_text_field', explode(PHP_EOL, $notes))));
-			if ($notes == 'Cross street:') $notes = ''; //nyc
-		}
-		$meeting = array_map('sanitize_text_field', $meeting); //safety
-		$meeting = array_combine($header, $meeting); //apply header field names to array
-		if ($index) $meeting['notes'] = $notes;
+		$meeting = array_map('strip_tags', $meeting);
+		$meeting = array_map('trim', $meeting);
+		$meeting = array_combine($header, $meeting);
 
+		//dd($meeting);
+		
 		//check required fields
 		if (empty($meeting['address'])) return tsml_alert('Found a meeting with no address at row #' . $row_counter . '.', 'error');
 
-		//sanitize time
-		if (empty($meeting['time'])) {
+		//sanitize time & day
+		if (empty($meeting['time']) || empty($meeting['day'])) {
 			$meeting['time'] = $meeting['day'] = ''; //by appointment
 		} else {
 			$meeting['time'] = date_parse($meeting['time']);
 			$meeting['time'] = sprintf('%02d', $meeting['time']['hour']) . ':' . sprintf('%02d', $meeting['time']['minute']);
 			if ($meeting['time'] == '00:00') $meeting['time'] = '23:59';
-		}
-		
-		//use address if location is missing
-		if (empty($meeting['location'])) $meeting['location'] = $meeting['address'];
-	
-		//use location, day, and time for meeting name if missing
-		if (empty($meeting['name'])) $meeting['name'] = $meeting['location'] . ' ' . $meeting['day'] . 's at ' . tsml_format_time($meeting['time']);
-	
-		//sanitize day
-		if (empty($meeting['day'])) {
-			$meeting['time'] = $meeting['day'] = ''; //by appointment
-		} else {
+
 			if (!in_array($meeting['day'], $tsml_days)) return tsml_alert('"' . $meeting['day'] . '" is an invalid value for day at row #' . $row_counter . '.', 'error');
 			$meeting['day'] = array_search($meeting['day'], $tsml_days);
 		}
 		
-		//sanitize address, remove everything after @
-		if ($pos = strpos($meeting['address'], '@')) $meeting['address'] = substr($meeting['address'], 0, $pos);
+		//if location is missing, use address
+		if (empty($meeting['location'])) $meeting['location'] = $meeting['address'];
+	
+		//if meeting name missing, use location, day, and time
+		if (empty($meeting['name'])) $meeting['name'] = $meeting['location'] . ' ' . $meeting['day'] . 's at ' . tsml_format_time($meeting['time']);
+	
+		//sanitize address, remove everything starting with @ (consider other strings as well?)
+		if ($pos = strpos($meeting['address'], '@')) $meeting['address'] = trim(substr($meeting['address'], 0, $pos));
 
 		//append city, state, and country to address if not already in it
 		if (!empty($meeting['city'])) $meeting['address'] .= ', ' . $meeting['city'];
@@ -778,8 +767,10 @@ function tsml_import($meetings, $delete=false) {
 		}
 		
 		//append unused types to notes
-		if (!empty($meeting['notes'])) $meeting['notes'] .= PHP_EOL . PHP_EOL;
-		$meeting['notes'] .= implode(', ', $unused_types);
+		if (count($unused_types)) {
+			if (!empty($meeting['notes'])) $meeting['notes'] .= PHP_EOL . PHP_EOL;
+			$meeting['notes'] .= implode(', ', $unused_types);
+		}
 				
 		//group by address
 		if (!array_key_exists($meeting['address'], $addresses)) {
@@ -827,7 +818,7 @@ function tsml_import($meetings, $delete=false) {
 	curl_setopt_array($ch, array(
 		CURLOPT_HEADER => 0, 
         CURLOPT_RETURNTRANSFER => TRUE, 
-        CURLOPT_TIMEOUT => 4,
+        CURLOPT_TIMEOUT => 10,
     ));
     
     //address cacheing
@@ -844,7 +835,7 @@ function tsml_import($meetings, $delete=false) {
 		} else {
 			
 			//request from google
-			curl_setopt($ch, CURLOPT_URL, 'https://maps.googleapis.com/maps/api/geocode/json?key=AIzaSyBVkLkBn0HBI_uZ-djrgYGUx2ki3hYRzP0&address=' . urlencode($original_address));
+			curl_setopt($ch, CURLOPT_URL, 'https://maps.googleapis.com/maps/api/geocode/json?key=AIzaSyCC3p6PSf6iQbXi-Itwn9C24_FhkbDUkdg&address=' . urlencode($original_address));
 			if (!$result = curl_exec($ch)) {
 				return tsml_alert('Google did not respond for address <em>' . $original_address . '</em>.', 'error');
 			}

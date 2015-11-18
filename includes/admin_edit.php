@@ -171,9 +171,9 @@ add_action('admin_init', function(){
 			<div class="container">
 				<?php for ($i = 1; $i < 4; $i++) {?>
 				<div class="row">
-					<div><input type="text" name="contact_<?php echo $i?>_name" placeholder="Name" value="<?php echo $location_custom['contact_' . $i . '_name'][0]?>"></div>
-					<div><input type="text" name="contact_<?php echo $i?>_email" placeholder="Email" value="<?php echo $location_custom['contact_' . $i . '_email'][0]?>"></div>
-					<div><input type="text" name="contact_<?php echo $i?>_phone" placeholder="Phone" value="<?php echo $location_custom['contact_' . $i . '_phone'][0]?>"></div>
+					<div><input type="text" name="contact_<?php echo $i?>_name" placeholder="Name" value="<?php echo @$location_custom['contact_' . $i . '_name'][0]?>"></div>
+					<div><input type="text" name="contact_<?php echo $i?>_email" placeholder="Email" value="<?php echo @$location_custom['contact_' . $i . '_email'][0]?>"></div>
+					<div><input type="text" name="contact_<?php echo $i?>_phone" placeholder="Phone" value="<?php echo @$location_custom['contact_' . $i . '_phone'][0]?>"></div>
 				</div>
 				<?php }?>
 			</div>

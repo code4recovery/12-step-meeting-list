@@ -30,8 +30,9 @@ input:focus, button:focus {
 		font-size: 24px;
 	}
 	h5 {
-		margin: 0 0 5px 0;
+		margin: 15px 0 0 0;
 		font-size: 14px;
+		font-weight: bold;
 	}
 	address {
 		font-style: normal;
@@ -69,6 +70,8 @@ input:focus, button:focus {
 			text-align: right;
 			overflow: hidden;
 			text-overflow: ellipsis;
+			word-wrap: nowrap;
+			font-size: 12px;
 		}
 		dd {
 			width: 166px;
@@ -121,7 +124,10 @@ input:focus, button:focus {
 							background-color: #f5f5f5;							
 						}
 					}
-					&.active > a { color: #fff; }
+					&.active > a { 
+						color: #fff; 
+						background-color: #337ab7;
+					}
 				}
 			}
 		}
@@ -137,6 +143,9 @@ input:focus, button:focus {
 				content: " / ";
 			}
 		}
+
+		#table-wrapper { margin: 0 -15px; overflow: hidden; }
+		#table-wrapper table { margin: 0; }
 		
 		table {
 			display: none;
@@ -150,7 +159,9 @@ input:focus, button:focus {
 			}
 			.time {
 				padding-left: 15px;
-				white-space: nowrap;
+				time {
+					white-space: nowrap;
+				}
 			}
 			small {
 				color: $black;

@@ -31,7 +31,7 @@ $day_label = ($day === false) ? $day_default : $tsml_days[$day];
 $time_default = 'Any Time';
 $time_label = $time ? $times[$time] : $time_default;
 $region_default = 'Everywhere';
-$region_label = $region ? $tsml_regions[$region] : $region_default;
+$region_label = ($region && array_key_exists($region, $tsml_regions)) ? $tsml_regions[$region] : $region_default;
 $types_default = 'Meeting Type';
 $types_count = count($types);
 $types_label = $types_count ? $types_default . ' [' . $types_count . ']': $types_default;
@@ -207,10 +207,10 @@ class Walker_Regions_Dropdown extends Walker_Category {
 							?>
 						<tr>
 							<td class="time"><?php 
-								if ($_GET['d'] == 'any' && !empty($meeting['time'])) {
+								if (($day === false) && !empty($meeting['time'])) {
 									echo tsml_format_day_and_time($meeting['day'], $meeting['time']);
 								} else {
-									echo $meeting['time_formatted'];
+									echo '<time>' . $meeting['time_formatted'] . '</time>';
 								}
 								?></td>
 							<td class="name"><?php echo tsml_link($meeting['url'], tsml_format_name($meeting['name'], $meeting['types']), 'post_type')?></td>
@@ -242,7 +242,27 @@ jQuery(function(){
 	});
 	bounds = new google.maps.LatLngBounds();				
 
-	<?php foreach ($locations as $location) {?>
+	<?php 
+	foreach ($locations as $location) {
+		
+		//group location's meetings by day
+		$location_days = array();
+		foreach ($location['meetings'] as $meeting) {
+			if (!array_key_exists($meeting['day'], $location_days)) $location_days[$meeting['day']] = array();
+			$location_days[$meeting['day']][] = $meeting;
+		}
+		$infowindow = '<div class="infowindow"><h3>' . tsml_link($location['url'], $location['name'], 'post_type') . '</h3>';
+		$infowindow .= '<address>' . $location['address'] . '<br>' . $location['city_state'] . '</address>';
+		foreach ($location_days as $location_day=>$meetings) {
+			$infowindow .= '<h5>' . $tsml_days[$location_day] . '</h5><dl>';
+			foreach ($meetings as $meeting) {
+				$infowindow .= '<dt>' . $meeting['time'] . '</dt>';
+				$infowindow .= '<dd>' . tsml_link($meeting['url'], tsml_format_name($meeting['name'], $meeting['types']), 'post_type') . '</dd>';
+			}
+			$infowindow .= '</dl>';
+		}
+		$infowindow .= '</div>';
+		?>
 		var marker = new google.maps.Marker({
 		    position: new google.maps.LatLng(<?php echo $location['coords']?>),
 		    map: map,
@@ -252,11 +272,7 @@ jQuery(function(){
 		//add infowindow event
 		google.maps.event.addListener(marker, 'click', (function(marker) {
 			return function() {
-				var dl  = '';
-				<?php foreach ($location['meetings'] as $meeting) {?>
-				dl += '<dt><?php echo $meeting['time']?></dt><dd><?php echo tsml_link($meeting['url'], tsml_format_name($meeting['name'], $meeting['types']), 'post_type')?></dd>';
-				<?php }?>
-				infowindow.setContent('<div class="infowindow"><h3><?php echo tsml_link($location['url'], $location['name'], 'post_type')?></h3><address><?php echo $location['address']?><br><?php echo $location['city_state']?></address><h5><?php echo $tsml_days[$today]?></h5><dl>' + dl + '</dl></div>');
+				infowindow.setContent('<?php echo $infowindow?>');
 				infowindow.open(map, marker);
 			}
 		})(marker));					

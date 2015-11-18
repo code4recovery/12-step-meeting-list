@@ -3,7 +3,7 @@ Contributors: aasanjose
 Tags: meetings, aa, al-anon, na, 12-step, locations
 Requires at least: 3.2
 Tested up to: 4.3
-Stable tag: 1.7.3
+Stable tag: 1.7.5
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -19,10 +19,12 @@ This plugin was originally designed to maintain a list of AA meetings in Santa C
 * [District 15, Chicago, IL](http://d15aa.org/d15aa.org/?post_type=meetings)
 * [East Bay, CA](http://eastbayaa.org/meetings)
 * [Europe](http://alcoholics-anonymous.eu/index.php/meetings/)
+* [Greensboro, NC](http://nc23.org/meetings/)
 * [Mesa, AZ](http://aamesaaz.org/meetings/)
 * [Minneapolis, MN](http://aaminneapolis.org/meetings/)
 * [Philadelphia, PA](http://www.aasepia.org/meetings/)
 * [Portland, OR](http://home.pdxaa.org/meetings/)
+* [Quad Cities, IA / IL](http://aa-qc.com/meetings/)
 * [Santa Clara County, CA](http://aasanjose.org/meetings)
 
 **CoDA**
@@ -111,6 +113,17 @@ These tags are for the meetings page, substitute `$location` for `$meeting` if y
 1. Meeting map
 
 == Changelog ==
+
+= 1.7.5 =
+* Forgot to commit image assets
+
+= 1.7.4 =
+* Fixing PHP notices as seen in debug mode
+* Refactored code that goes in infowindows
+* CSS to make layout better on mobile devices (as requested by LA SLAA)
+* Importer now imports Subregion and Updated columns (for NYC AA)
+* Refactored import delete code
+* Meeting Guide app info on import & settings page
 
 = 1.7.3 =
 * Fixing city preference for Quad Cities
