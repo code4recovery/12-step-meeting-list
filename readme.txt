@@ -3,7 +3,7 @@ Contributors: aasanjose
 Tags: meetings, aa, al-anon, na, 12-step, locations
 Requires at least: 3.2
 Tested up to: 4.3
-Stable tag: 1.7.5
+Stable tag: 1.7.6
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -11,7 +11,9 @@ This plugin is designed to help 12 step programs list their meetings and locatio
 
 == Description ==
 
-This plugin was originally designed to maintain a list of AA meetings in Santa Clara County, CA. It's now in use in the following areas:
+This plugin is the easiest way to have your area's meetings listed in the [Meeting Guide mobile app](https://meetingguide.org/) for iOS and Android devices.
+
+It was originally designed to maintain a list of AA meetings in Santa Clara County, CA. It's now in use in the following areas:
 
 **AA**
 
@@ -62,12 +64,18 @@ Napa, CA 94558, US."
 == Frequently Asked Questions ==
 
 = My meeting type isn't listed! =
-Please contact us using the information on the **Meetings > Import & Settings** page and and we will add 
-it for you, so long as it is broadly applicable. Our goal is to one day create a [global database of 
-meetings](https://meetingguide.org/) so some consistency will help with that.
+If it's a broadly applicable meeting type, please [contact us](mailto:web@aasanjose.org) so we can include it for you. 
+We want to maintain consistency for the [mobile apps](https://meetingguide.org/), so not all proposals are included.
 
-= Why can't the meeting types be ad-hoc? =
-We hope to build a universal database someday.
+If you have access to your functions.php, you may add additional meeting types for your area. Simply adapt the following
+example to your purposes:
+
+	tsml_custom_types(array(
+		'ASBI' => 'As Bill Sees It',
+	));
+	
+Be careful with the codes ("ASBI" in the above example) as this gives you the ability to replace existing types. 
+Note that custom meeting types will not be imported into the mobile app.
 
 = Are there translations to other languages? =
 Currently no, but if someone will volunteer to help with the translating, we will add it.
@@ -113,6 +121,11 @@ These tags are for the meetings page, substitute `$location` for `$meeting` if y
 1. Meeting map
 
 == Changelog ==
+
+= 1.7.6 =
+* Ability to set custom meeting types (see FAQ)
+* Importer now strips line breaks from non-notes fields
+* Importer now imports location notes
 
 = 1.7.5 =
 * Forgot to commit image assets

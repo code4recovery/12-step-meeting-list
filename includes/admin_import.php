@@ -37,7 +37,8 @@ add_action('admin_menu', function() {
 									<li><strong>Name</strong> is the name of the meeting, and is optional, although it's valuable information for the user. If it's missing, a name will be created by combining the location, day, and time.</li>
 									<li><strong>Location</strong> is the name of the location, and is optional. Generally it's the group or building name. If it's missing, the address will be used. In the event that there are multiple location names for the same address, the first location name will be used.</li>
 									<li><strong>City</strong>, <strong>State</strong>, and <strong>Country</strong> are optional, but might be useful if your addresses sound ambiguous to Google.</li>
-									<li><strong>Notes</strong> are freeform notes that will show up publicly. This is where 'around back' is useful.</li>
+									<li><strong>Notes</strong> are freeform notes that are specific to the meeting. For example, "last Saturday is birthday night."</li>
+									<li><strong>Location Notes</strong> are freeform notes that will show up on every meeting that this location. For example, "Enter from the side."</li>
 									<li><strong>Types</strong> should be a comma-separated list of the following options. This list is determined by which program is selected at right.
 										<ul style="margin-top:10px;overflow:auto; -webkit-columns: 3 auto; -moz-columns: 3 auto; columns: 3 auto;">
 										<?php foreach ($tsml_types[$tsml_program] as $value) {?>

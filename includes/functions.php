@@ -61,16 +61,24 @@ function tsml_custom_post_types() {
 				'not_found'		=>	'No locations added yet.',
 				'add_new_item'	=>	'Add New Location',
 			),
-	        'taxonomies'	=>	array('region'),
+	        'taxonomies'	=> array('region'),
 			'supports'		=> array('title', 'revisions'),
 			'public'		=> true,
-			'show_ui'		=> true,
+			'show_ui'		=> false,
 			'has_archive'	=> true,
-			'show_in_menu'	=> 'edit.php?post_type=meetings',
-			'menu_icon'		=> 'dashicons-location',
 			'capabilities'	=> array('create_posts'=>false),
 		)
 	);	
+}
+
+//fuction:	define custom meeting types for your area
+//used:		theme's functions.php
+function tsml_custom_types($types) {
+	global $tsml_types, $tsml_program;
+	foreach ($types as $key=>$value) {
+		$tsml_types[$tsml_program][$key] = $value;
+	}
+	asort($tsml_types[$tsml_program]);
 }
 
 //function: deletes all orphaned locations (has no meetings associated)
@@ -656,8 +664,7 @@ function tsml_import($meetings, $delete=false) {
 	
 	//get header
 	$header = explode("\t", array_shift($meetings));
-	$header = array_map('sanitize_text_field', $header);
-	$header = array_map('strtolower', $header);
+	$header = array_map('sanitize_title_with_dashes', $header);
 	$header_count = count($header);
 	
 	//check header for required fields
@@ -688,14 +695,21 @@ function tsml_import($meetings, $delete=false) {
 		$meeting = preg_replace('/\<br(\s*)?\/?\>/i', PHP_EOL, $meeting);
 		$meeting = stripslashes($meeting);
 
-		//split, check length, sanitize, associate
+		//split, check length
 		$meeting = explode("\t", $meeting);
 		if ($header_count != count($meeting)) {
 			return tsml_alert('Row #' . $row_counter . ' has ' . count($meeting) . ' columns while the header has ' . $header_count . '.', 'error');
 		}
-		$meeting = array_map('strip_tags', $meeting);
-		$meeting = array_map('trim', $meeting);
+		
+		//associate, sanitize
 		$meeting = array_combine($header, $meeting);
+		foreach ($meeting as $key => $value) {
+			if (in_array($key, array('notes', 'location-notes'))) {
+				$meeting[$key] = trim(strip_tags($value));
+			} else {
+				$meeting[$key] = sanitize_text_field($value);
+			}
+		}
 
 		//dd($meeting);
 		
@@ -778,7 +792,8 @@ function tsml_import($meetings, $delete=false) {
 				'meetings' => array(),
 				'lines' => array(),
 				'region' => $meeting['region'],
-				'location' => $meeting['location'],		
+				'location' => $meeting['location'],
+				'notes' => $meeting['location-notes'],
 			);
 		}
 		
@@ -926,6 +941,7 @@ function tsml_import($meetings, $delete=false) {
 				'country'    	=>$country,
 				'region'		=>$info['region'],
 				'location'		=>$info['location'],
+				'notes'			=>$info['notes'],
 				'latitude'		=>$latitude,
 				'longitude'		=>$longitude,
 			);
@@ -950,6 +966,7 @@ function tsml_import($meetings, $delete=false) {
 			$location_id = wp_insert_post(array(
 				'post_title'	=> $location['location'],
 				'post_type'		=> 'locations',
+				'post_content'	=> $location['notes'],
 				'post_status'	=> 'publish',
 			));
 		}

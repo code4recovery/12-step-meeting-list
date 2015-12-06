@@ -12,16 +12,6 @@ add_filter('manage_edit-meetings_columns', function($defaults){
     );	
 });
 
-# Custom columns for locations
-add_filter('manage_edit-locations_columns', function($defaults){
-    return array(
-    	'title'		=>__('Location', '12-step-meeting-list'),
-    	'address'	=>__('Address', '12-step-meeting-list'),
-    	'city'		=>__('City', '12-step-meeting-list'),
-    	'date'		=>__('Date', '12-step-meeting-list'),
-    );	
-});
-
 # If you're deleting meetings, also delete locations
 add_action('delete_post', function($post_id) {
 	$post = get_post($post_id);
@@ -38,15 +28,6 @@ add_action('manage_meetings_posts_custom_column', function($column_name, $post_I
 		echo tsml_format_time(get_post_meta($post_ID, 'time', true));
 	} elseif ($column_name == 'region') {
 		echo @$tsml_regions[get_post_meta($post_ID, 'region', true)];
-	}
-}, 10, 2);
-
-# Custom list values for locations
-add_action('manage_locations_posts_custom_column', function ($column_name, $post_ID) {
-	if ($column_name == 'address') {
-		echo get_post_meta($post_ID, 'address', true);
-	} elseif ($column_name == 'city') {
-		echo get_post_meta($post_ID, 'city', true);
 	}
 }, 10, 2);
 
