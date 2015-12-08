@@ -135,7 +135,7 @@ jQuery(function(){
 					};
 
 					//add new table row
-					tbody.append('<tr><td class="time">' + (data.day || !obj.day ? obj.time_formatted : days[obj.day] + ', ' + obj.time_formatted) + '</td><td class="name"><a href="' + obj.url + '">' + highlight(obj.name, search) + '</a></td><td class="location">' + highlight(obj.location, search) + '</td><td class="address">' + highlight(obj.address, search) + '</td><td class="region">' + obj.region + '</td></tr>')
+					tbody.append('<tr><td class="time">' + (data.day || !obj.day ? obj.time_formatted : days[obj.day] + ', ' + obj.time_formatted) + '</td><td class="name"><a href="' + obj.url + '">' + highlight(obj.name, search) + '</a></td><td class="location">' + highlight(obj.location, search) + '</td><td class="address">' + highlight(obj.address, search) + '</td><td class="region">' + (obj.region || '') + '</td></tr>')
 				});
 
 				//remove old markers and reset bounds
