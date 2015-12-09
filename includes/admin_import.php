@@ -27,8 +27,8 @@ add_action('admin_menu', function() {
 			    <div id="post-body" class="columns-2">
 				    <div id="post-body-content">
 					    <div class="postbox">
-							<h3>Import Data</h3>
 						    <div class="inside">
+								<h3>Import Data</h3>
 								<p>You can import a spreadsheet of meetings by opening it first in Excel, copying everything, and then pasting into the field below. <a href="<?php echo plugin_dir_url(__FILE__) . '../template.xlsx'?>">Here is a spreadsheet</a> you can use as a template. The header row must kept in place.</p>
 								<ul class="ul-disc">
 									<li><strong>Time</strong>, if present, should be in a standard date format such as 6:00 AM. Non-standard or empty dates will be imported as 'by appointment.'</li>
@@ -59,8 +59,8 @@ add_action('admin_menu', function() {
 					</div>
 				    <div id="postbox-container-1" class="postbox-container">
 						<div class="postbox">
-							<h3>Choose Your Program</h3>
 							<div class="inside">
+								<h3>Choose Your Program</h3>
 								<form method="post" action="edit.php?post_type=meetings&page=import">
 								<?php wp_nonce_field($tsml_nonce, 'tsml_nonce', false)?>
 								<p>This determines which meeting types are available. If your program is 
@@ -77,8 +77,8 @@ add_action('admin_menu', function() {
 							</div>
 						</div>
 						<div class="postbox">
-							<h3>Where's My Info?</h3>
 							<div class="inside">
+								<h3>Where's My Info?</h3>
 								<p>Your meeting list page is <a href="<?php echo get_post_type_archive_link('meetings'); ?>">right here</a>. 
 								Link that page from your site's nav menu to make it visible to the public.</p>
 								<p>You can also download your meetings in <a href="<?php echo admin_url('admin-ajax.php')?>?action=csv">CSV format</a>.</p>
@@ -92,8 +92,8 @@ add_action('admin_menu', function() {
 						</div>
 						<?php if ($tsml_program == 'aa') {?>
 						<div class="postbox">
-							<h3>Try the Apps!</h3>
 							<div class="inside">
+								<h3>Try the Apps!</h3>
 								<p>Want to have your meetings listed in a simple, clean mobile app? Several cities in the US are currently participating,
 									but we always want more! No extra effort is required, simply continue to update your meeting information like you 
 									currently do, and the information flows down to app users.
@@ -110,8 +110,8 @@ add_action('admin_menu', function() {
 						</div>
 						<?php }?>
 						<div class="postbox">
-							<h3>About this Plugin</h3>
 							<div class="inside">
+								<h3>About this Plugin</h3>
 								<p>This plugin was developed by AA volunteers in <a href="http://aasanjose.org/technology">Santa 
 									Clara County</a> to help provide accessible, accurate information about meetings to 
 									those who need it.</p>

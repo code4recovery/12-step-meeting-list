@@ -743,12 +743,19 @@ function tsml_import($meetings, $delete=false) {
 		if ($meeting['country'] == 'US') $meeting['country'] = 'USA'; //helps geocoding
 		if (!empty($meeting['country']) && !stristr($meeting['address'], $meeting['country'])) $meeting['address'] .= ', ' . $meeting['country'];
 
+		//notes
+		if (empty($meeting['notes'])) $meeting['notes'] = '';
+		if (empty($meeting['location-notes'])) $meeting['location-notes'] = '';
+
 		//updated
 		$meeting['updated'] = empty($meeting['updated']) ? time() : strtotime($meeting['updated']);
-		$meeting['post_modified'] = date('Y-m-d H:i:s', $meeting['updated']);
-		$meeting['post_modified_gmt'] = date('Y-m-d H:i:s', $meeting['updated']);
+		$meeting['post_date'] = date('Y-m-d H:i:s', $meeting['updated']);
+		$meeting['post_date_gmt'] = date('Y-m-d H:i:s', $meeting['updated']);
+		
+		//dd($meeting);
 
 		//add region to taxonomy if it doesn't exist yet
+		if (empty($meeting['region']) && !empty($meeting['city'])) $meeting['region'] = $meeting['city'];
 		if (!empty($meeting['region'])) {
 			if ($term = term_exists($meeting['region'], 'region')) {
 				$meeting['region'] = $term['term_id'];
@@ -804,8 +811,8 @@ function tsml_import($meetings, $delete=false) {
 			'time' => $meeting['time'],
 			'types' => $meeting['types'],
 			'notes' => $meeting['notes'],
-			'post_modified' => $meeting['post_modified'],
-			'post_modified_gmt' => $meeting['post_modified_gmt'],
+			'post_date' => $meeting['post_date'],
+			'post_date_gmt' => $meeting['post_date_gmt'],
 		);
 		
 		//attach line number for reference if geocoding fails
@@ -990,8 +997,8 @@ function tsml_import($meetings, $delete=false) {
 				'post_status'		=> 'publish',
 				'post_parent'		=> $location_id,
 				'post_content'		=> $meeting['notes'],
-				'post_modified'		=> $meeting['post_modified'],
-				'post_modified_gmt'	=> $meeting['post_modified_gmt'],
+				'post_date'			=> $meeting['post_date'],
+				'post_date_gmt'		=> $meeting['post_date_gmt'],
 			));
 			update_post_meta($meeting_id, 'day',		$meeting['day']);
 			update_post_meta($meeting_id, 'time',		$meeting['time']);

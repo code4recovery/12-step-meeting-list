@@ -3,7 +3,7 @@ Contributors: aasanjose
 Tags: meetings, aa, al-anon, na, 12-step, locations
 Requires at least: 3.2
 Tested up to: 4.3
-Stable tag: 1.7.7
+Stable tag: 1.7.8
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -121,6 +121,9 @@ These tags are for the meetings page, substitute `$location` for `$meeting` if y
 1. Meeting map
 
 == Changelog ==
+
+= 1.7.8 =
+* Importer debugs
 
 = 1.7.7 =
 * Better support for empty regions
