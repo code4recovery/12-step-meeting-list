@@ -47,6 +47,7 @@ $tsml_types = array(
 		'XT'	=> 'Cross Talk Permitted', 
 		'DLY'	=> 'Daily', 
 		'FF'	=> 'Fragrance Free',
+		'FR'	=> 'French',
 		'G'		=> 'Gay',
 		'GR'	=> 'Grapevine',
 		'L'		=> 'Lesbian',

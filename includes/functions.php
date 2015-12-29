@@ -454,7 +454,7 @@ function tsml_get_meeting() {
 //used:		tsml_custom_post_types(), tsml_regions_api()
 function tsml_get_regions() {
 	$tsml_regions = array();
-	$region_terms = get_terms('region', array('hide_empty' => true));
+	$region_terms = get_terms('region', array('hide_empty' => false));
 	foreach ($region_terms as $region) $tsml_regions[$region->term_id] = $region->name;
 	//dd($tsml_regions);
 	return $tsml_regions;
