@@ -1,6 +1,8 @@
 <?php
 
-add_action('admin_menu', function() {
+add_action('admin_menu', 'tsml_admin_menu');
+
+function tsml_admin_menu() {
 	global $tsml_nonce, $tsml_program;
 	
 	//run import
@@ -16,7 +18,9 @@ add_action('admin_menu', function() {
 	}
 		
 	//import text file
-	add_submenu_page('edit.php?post_type=meetings', 'Import &amp; Settings', 'Import &amp; Settings', 'manage_options', 'import', function(){
+	add_submenu_page('edit.php?post_type=meetings', 'Import &amp; Settings', 'Import &amp; Settings', 'manage_options', 'import', 'tmsl_import_page');
+
+	function tmsl_import_page() {
 		global $tsml_types, $tsml_programs, $tsml_program, $tsml_nonce, $tsml_days;
 
 	    ?>
@@ -123,5 +127,5 @@ add_action('admin_menu', function() {
 		    </div>
 		    
 		<?php
-	});
-});
+	}
+}

@@ -476,6 +476,13 @@ function tsml_meetings_api() {
 add_action('wp_ajax_api', 'tsml_api');
 add_action('wp_ajax_nopriv_api', 'tsml_api');
 
+//called by register_activation_hook in 12-step-meeting-list.php
+//hands off to tsml_custom_post_types
+function tsml_change_activation_state() {
+	tsml_custom_post_types();
+	flush_rewrite_rules();
+}
+
 function tsml_api() {
 	global $tsml_program, $tsml_version;
 	header('Access-Control-Allow-Origin: *');
@@ -654,10 +661,7 @@ function tsml_import($meetings, $delete=false) {
 	$meetings = explode(PHP_EOL, $meetings);
 	
 	//remove empty rows
-	$meetings = array_filter($meetings, function($a){
-		$a = trim($a);
-		return !empty($a);
-	});
+	$meetings = array_filter($meetings, 'tsml_remove_empty_rows');
 	
 	//crash if no data
 	if (count($meetings) < 2) return tsml_alert('Nothing was imported because no data rows were found.', 'error');
@@ -1029,6 +1033,12 @@ function tsml_import($meetings, $delete=false) {
 	}
 }
 
+//remove empty rows from tsml_import()
+function tsml_remove_empty_rows($a){
+	$a = trim($a);
+	return !empty($a);
+}
+
 //function: return an html link with query string appended
 //used:		archive-meetings.php, single-locations.php, single-meetings.php
 function tsml_link($url, $string, $exclude='') {
@@ -1072,9 +1082,19 @@ function tsml_update_types_in_use() {
 //admin screen update message
 //used by tsml_import() and admin_types.php
 function tsml_alert($message, $type='updated') {
-	add_action('admin_notices', function() use ($message, $type) {
+	global $tsml_alerts;
+	$tsml_alerts[] = compact('message', 'type');
+	add_action('admin_notices', 'tsml_alert_messages');
+}
+
+//called by tsml_alert() above
+//run through alert stack and output them all
+function tsml_alert_messages() {
+	global $tsml_alerts;
+	foreach ($tsml_alerts as $alert) {
+		extract($alert);
 		echo '<div class="' . $type . '"><p>' . $message . '</p></div>';
-	});
+	}
 }
 
 //run any outstanding upgrades, called in init.php

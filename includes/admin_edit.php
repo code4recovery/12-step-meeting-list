@@ -1,7 +1,9 @@
 <?php
 
 //ajax for the typeahead
-add_action('wp_ajax_location', function(){
+add_action('wp_ajax_location', 'tsml_admin_ajax_locations');
+
+function tsml_admin_ajax_locations() {
 	$locations = get_posts('post_type=locations&numberposts=-1');
 	$results = array();
     foreach ($locations as $location) {
@@ -32,10 +34,12 @@ add_action('wp_ajax_location', function(){
         );
 	}
 	wp_send_json($results);
-});
+}
 
 //ajax for address checking
-add_action('wp_ajax_address', function(){
+add_action('wp_ajax_address', 'tsml_admin_ajax_address');
+
+function tsml_admin_ajax_address() {
 	if (!$posts = get_posts(array(
 		'post_type'		=> 'locations',
 		'numberposts'	=> 1,
@@ -59,17 +63,21 @@ add_action('wp_ajax_address', function(){
 		'contact_3_email' => $custom['contact_3_email'][0],
 		'contact_3_phone' => $custom['contact_3_phone'][0],
 	));
-});
+}
 
 //edit page
-add_action('admin_init', function(){
+add_action('admin_init', 'tsml_admin_init');
+
+function tsml_admin_init() {
 
 	tsml_assets('admin');
 	
 	remove_meta_box('regiondiv', 'meetings', 'side');
 	remove_meta_box('wii_post-box1', 'meetings', 'normal'); //removes weaver ii from east bay site
 
-	add_meta_box('info', 'Meeting Info', function(){
+	add_meta_box('info', 'Meeting Info', 'tsml_meeting_info', 'meetings', 'normal', 'low');
+
+	function tsml_meeting_info() {
 		global $post, $tsml_days, $tsml_types, $tsml_program, $tsml_nonce;
 
 		//get post metadata
@@ -110,9 +118,11 @@ add_action('admin_init', function(){
 			<textarea name="content" id="content" placeholder="eg. Birthday speaker meeting last Saturday of the month"><?php echo $post->post_content?></textarea>
 		</div>
 		<?php
-	}, 'meetings', 'normal', 'low');
+	}		
 
-	add_meta_box('location', 'Location Info', function(){
+	add_meta_box('location', 'Location Info', 'tsml_location_box', 'meetings', 'normal', 'low');
+	
+	function tsml_location_box() {
 		global $post, $tsml_days;
 		if ($post->post_parent) {
 			$location = get_post($post->post_parent);
@@ -179,5 +189,5 @@ add_action('admin_init', function(){
 			</div>
 		</div>
 		<?php
-	}, 'meetings', 'normal', 'low');
-});
+	}
+}

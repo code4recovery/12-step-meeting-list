@@ -4,6 +4,8 @@ don't make changes! it'll make staying updated much harder.
 for updates / questions, please contact web@aasanjose.org
 */
 
+$tsml_alerts = array();
+
 $tsml_days	= array(
 	0 => array(0=>'Sunday', 1=>'Monday', 2=>'Tuesday', 3=>'Wednesday', 4=>'Thursday', 5=>'Friday', 6=>'Saturday'),
 	1 => array(1=>'Monday', 2=>'Tuesday', 3=>'Wednesday', 4=>'Thursday', 5=>'Friday', 6=>'Saturday', 0=>'Sunday'),

@@ -1,7 +1,8 @@
 <?php
 
 # Custom columns for meetings
-add_filter('manage_edit-meetings_columns', function($defaults){
+add_filter('manage_edit-meetings_columns', 'tmsl_admin_meetings_columns');
+function tmsl_admin_meetings_columns($defaults) {
     return array(
     	'cb'		=>'<input type="checkbox" />',
     	'title'		=>__('Meeting', '12-step-meeting-list'),
@@ -10,16 +11,18 @@ add_filter('manage_edit-meetings_columns', function($defaults){
     	'region'	=>__('Region', '12-step-meeting-list'),
     	'date'		=>__('Date', '12-step-meeting-list'),
     );	
-});
+}
 
 # If you're deleting meetings, also delete locations
-add_action('delete_post', function($post_id) {
+add_action('delete_post', 'tsml_delete_post');
+function tsml_delete_post($post_id) {
 	$post = get_post($post_id);
 	if ($post->post_type == 'meetings') tsml_delete_orphaned_locations();
-});
+}
 
 # Custom list values for meetings
-add_action('manage_meetings_posts_custom_column', function($column_name, $post_ID){
+add_action('manage_meetings_posts_custom_column', 'tmsl_admin_meetings_custom_column', 10, 2);
+function tmsl_admin_meetings_custom_column($column_name, $post_ID) {
 	global $tsml_days, $tsml_regions;
 	if ($column_name == 'day') {
 		$day = get_post_meta($post_ID, 'day', true);
@@ -29,18 +32,20 @@ add_action('manage_meetings_posts_custom_column', function($column_name, $post_I
 	} elseif ($column_name == 'region') {
 		echo @$tsml_regions[get_post_meta($post_ID, 'region', true)];
 	}
-}, 10, 2);
+}
 
 # Set custom meetings columns to be sortable
-add_filter('manage_edit-meetings_sortable_columns', function($columns){
+add_filter('manage_edit-meetings_sortable_columns', 'tsml_admin_meetings_sortable_columns');
+function tsml_admin_meetings_sortable_columns($columns) {
 	$columns['day']		= 'day';
 	$columns['time']	= 'time';
 	$columns['region']	= 'region';
 	return $columns;
-});
+}
 
 # Apply sorting
-add_filter('request', function($vars) {
+add_filter('request', 'tsml_sorting');
+function tsml_sorting($vars) {
     if (isset($vars['orderby'])) {
     	switch($vars['orderby']) {
     		case 'day':
@@ -61,32 +66,35 @@ add_filter('request', function($vars) {
     	}
     }
     return $vars;
-});
+}
 
 //remove quick edit because meetings could get messed up without custom fields
 if (is_admin()) {
-	add_filter('post_row_actions',function($actions) {
+	add_filter('post_row_actions', 'tsml_post_row_actions', 10, 2);
+	function tsml_post_row_actions($actions) {
 		global $post;
 	    if ($post->post_type == 'meetings') {
 			unset($actions['inline hide-if-no-js']);
 		}
 	    return $actions;
-	}, 10, 2);
+	}
 }
 
-# Custom search
-add_action('pre_get_posts', function($query){
+# Custom search // does this do anything?
+add_action('pre_get_posts', 'tsml_pre_get_posts');
+function tsml_pre_get_posts($query) {
 	global $pagenow;
 	if ($pagenow == 'edit.php' && $_GET['post_type'] == 'meetings') {
 		//custom meeting search, can't use tsml_get_meetings() becuase of recursion
 		//need to use wp-query to search locations and the address field
 		//https://codex.wordpress.org/Plugin_API/Action_Reference/pre_get_posts
 	}
-});
+}
 
-# Whatever
-add_action('restrict_manage_posts', function() {
-	global $wpdb, $typenow;
+# Customize post controls
+add_action('restrict_manage_posts', 'tsml_restrict_manage_posts');
+function tsml_restrict_manage_posts() {
+	global $typenow;
 
 	if ($typenow == 'meetings') {
 		wp_dropdown_categories(array(
@@ -99,13 +107,15 @@ add_action('restrict_manage_posts', function() {
 			'selected' => $_GET['region'],
 		));
 	}
-});
+}
 
-add_filter('parse_query', function($query){
+# Make region control work on meeting admin list page
+add_filter('parse_query', 'tsml_parse_query');
+function tsml_parse_query($query){
     global $pagenow;
     $qv = &$query->query_vars;
     if ($pagenow == 'edit.php' && isset($qv['region']) && is_numeric($qv['region'])) {
 		$term = get_term_by('id', $qv['region'], 'region');
 		$qv['region'] = ($term ? $term->slug : '');
     }
-});
+}

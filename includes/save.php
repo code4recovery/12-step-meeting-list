@@ -1,14 +1,17 @@
 <?php
 
 //catch meetings without locations and save them as a draft
-add_filter('wp_insert_post_data', function($post) {
+add_filter('wp_insert_post_data', 'tsml_insert_post_check', '99', 2);
+function tsml_insert_post_check($post) {
 	if (($post['post_type'] == 'meetings') && empty($post['post_parent']) && ($post['post_status'] == 'publish')) {
 		$post['post_status'] = 'draft';
 	}
 	return $post;
-}, '99', 2);
+}
 
-add_action('save_post', function(){
+//handle all the metadata, location
+add_action('save_post', 'tsml_save_post');
+function tsml_save_post(){
 	global $post, $tsml_nonce;
 
 	//security
@@ -87,4 +90,4 @@ add_action('save_post', function(){
 	//update types in use
 	tsml_update_types_in_use();
 
-});
+}
