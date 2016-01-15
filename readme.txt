@@ -3,7 +3,7 @@ Contributors: aasanjose
 Tags: meetings, aa, al-anon, na, 12-step, locations
 Requires at least: 3.2
 Tested up to: 4.4
-Stable tag: 1.8.3
+Stable tag: 1.8.4
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -27,7 +27,8 @@ It was originally designed to maintain a list of AA meetings in Santa Clara Coun
 * [Philadelphia, PA](http://www.aasepia.org/meetings/)
 * [Portland, OR](http://home.pdxaa.org/meetings/)
 * [Quad Cities, IA / IL](http://aa-qc.com/meetings/)
-* [Santa Clara County, CA](http://aasanjose.org/meetings)
+* [Santa Clara County, CA](https://aasanjose.org/meetings)
+* [Western Slope, CA](http://westernsloped22.org/meetings/)
 
 **CoDA**
 
@@ -121,6 +122,9 @@ These tags are for the meetings page, substitute `$location` for `$meeting` if y
 1. Meeting map
 
 == Changelog ==
+
+= 1.8.4 =
+* Meeting-, location- and region-count shortcodes per SEPIA
 
 = 1.8.3 =
 * Preventing API header error encountered by East Bay

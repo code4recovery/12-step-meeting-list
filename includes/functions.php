@@ -21,6 +21,13 @@ function tsml_assets($context) {
 	}
 }
 
+//called by register_activation_hook in 12-step-meeting-list.php
+//hands off to tsml_custom_post_types
+function tsml_change_activation_state() {
+	tsml_custom_post_types();
+	flush_rewrite_rules();
+}
+
 //function: register custom post types
 //used: 	init.php on every request, also meeting.php in plugin activation hook
 function tsml_custom_post_types() {
@@ -106,24 +113,6 @@ function tsml_delete_orphaned_locations() {
 	}
 }
 
-//function: get all locations in the system
-//used:		tsml_import(), tsml_delete_orphaned_locations(), and admin_import.php
-function tsml_get_all_locations($status='any') {
-	return get_posts('post_type=locations&post_status=' . $status . '&numberposts=-1');
-}
-
-//function: get all meetings in the system
-//used:		tsml_import(), tsml_delete_orphaned_locations(), and admin_import.php
-function tsml_get_all_meetings($status='any') {
-	return get_posts('post_type=meetings&post_status=' . $status . '&numberposts=-1');
-}
-
-//function: get all regions in the system
-//used:		tsml_import() and admin_import.php
-function tsml_get_all_regions($status='any') {
-	return get_terms('region', array('fields'=>'ids', 'hide_empty'=>false));
-}
-
 //function: takes 0, 18:30 and returns Sunday, 6:30 pm (depending on your settings)
 //used:		admin_edit.php, archive-meetings.php, single-meetings.php
 function tsml_format_day_and_time($day, $time, $separator=', ') {
@@ -153,6 +142,23 @@ function tsml_format_time($string) {
 	return date(get_option('time_format'), $date);
 }
 
+//function: get all locations in the system
+//used:		tsml_import(), tsml_delete_orphaned_locations(), and admin_import.php
+function tsml_get_all_locations($status='any') {
+	return get_posts('post_type=locations&post_status=' . $status . '&numberposts=-1');
+}
+
+//function: get all meetings in the system
+//used:		tsml_import(), tsml_delete_orphaned_locations(), and admin_import.php
+function tsml_get_all_meetings($status='any') {
+	return get_posts('post_type=meetings&post_status=' . $status . '&numberposts=-1');
+}
+
+//function: get all regions in the system
+//used:		tsml_import() and admin_import.php
+function tsml_get_all_regions($status='any') {
+	return get_terms('region', array('fields'=>'ids', 'hide_empty'=>false));
+}
 
 //function: get all locations with full location information
 //used: tsml_import()
@@ -475,13 +481,6 @@ function tsml_meetings_api() {
 //more information at https://github.com/intergroup/api
 add_action('wp_ajax_api', 'tsml_api');
 add_action('wp_ajax_nopriv_api', 'tsml_api');
-
-//called by register_activation_hook in 12-step-meeting-list.php
-//hands off to tsml_custom_post_types
-function tsml_change_activation_state() {
-	tsml_custom_post_types();
-	flush_rewrite_rules();
-}
 
 function tsml_api() {
 	global $tsml_program, $tsml_version;
@@ -1112,6 +1111,24 @@ function tsml_upgrades() {
 		$tsml_version = TSML_VERSION;		
 	}
 }
+
+//function for shortcode
+function tsml_location_count() {
+	return number_format(count(tsml_get_all_locations()));
+}
+add_shortcode('tsml_location_count', 'tsml_location_count');
+
+//function for shortcode
+function tsml_meeting_count() {
+	return number_format(count(tsml_get_all_meetings()));
+}
+add_shortcode('tsml_meeting_count', 'tsml_meeting_count');
+
+//function for shortcode
+function tsml_region_count() {
+	return number_format(count(tsml_get_all_regions()));
+}
+add_shortcode('tsml_region_count', 'tsml_region_count');
 
 //helper for debugging
 function dd($array) {
