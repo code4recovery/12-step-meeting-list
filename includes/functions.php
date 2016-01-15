@@ -466,7 +466,7 @@ add_action('wp_ajax_meetings', 'tsml_meetings_api');
 add_action('wp_ajax_nopriv_meetings', 'tsml_meetings_api');
 
 function tsml_meetings_api() {
-	header('Access-Control-Allow-Origin: *');
+	if (!headers_sent()) header('Access-Control-Allow-Origin: *');
 	if (empty($_POST) && !empty($_GET)) return wp_send_json(tsml_get_meetings($_GET)); //debugging
 	wp_send_json(tsml_get_meetings($_POST)); //tsml_get_meetings sanitizes input
 };
