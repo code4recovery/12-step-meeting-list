@@ -842,8 +842,9 @@ function tsml_import($meetings, $delete=false) {
 	$ch = curl_init();
 	curl_setopt_array($ch, array(
 		CURLOPT_HEADER => 0, 
-        CURLOPT_RETURNTRANSFER => TRUE, 
+        CURLOPT_RETURNTRANSFER => true, 
         CURLOPT_TIMEOUT => 10,
+        CURLOPT_SSL_VERIFYPEER => false,
     ));
     
     //address cacheing
@@ -861,8 +862,11 @@ function tsml_import($meetings, $delete=false) {
 			
 			//request from google
 			curl_setopt($ch, CURLOPT_URL, 'https://maps.googleapis.com/maps/api/geocode/json?key=AIzaSyCC3p6PSf6iQbXi-Itwn9C24_FhkbDUkdg&address=' . urlencode($original_address));
-			if (!$result = curl_exec($ch)) {
-				return tsml_alert('Google did not respond for address <em>' . $original_address . '</em>.', 'error');
+			$result = curl_exec($ch);
+
+			//could not connect error
+			if (empty($result)) {
+				return tsml_alert('Could not connect to Google, error was <em>' . curl_error($ch) . '</em>', 'error');
 			}
 			
 			//decode result

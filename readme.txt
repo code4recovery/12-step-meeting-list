@@ -3,7 +3,7 @@ Contributors: aasanjose
 Tags: meetings, aa, al-anon, na, 12-step, locations
 Requires at least: 3.2
 Tested up to: 4.4
-Stable tag: 1.8.4
+Stable tag: 1.8.5
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -123,6 +123,9 @@ These tags are for the meetings page, substitute `$location` for `$meeting` if y
 
 == Changelog ==
 
+= 1.8.5 =
+* Importer no longer verifies Google's SSL certificate for Corpus Christi
+
 = 1.8.4 =
 * Meeting-, location- and region-count shortcodes per SEPIA
 
@@ -151,64 +154,3 @@ These tags are for the meetings page, substitute `$location` for `$meeting` if y
 * Ability to set custom meeting types (see FAQ)
 * Importer now strips line breaks from non-notes fields
 * Importer now imports location notes
-
-= 1.7.5 =
-* Forgot to commit image assets
-
-= 1.7.4 =
-* Fixing PHP notices as seen in debug mode
-* Refactored code that goes in infowindows
-* CSS to make layout better on mobile devices (as requested by LA SLAA)
-* Importer now imports Subregion and Updated columns (for NYC AA)
-* Refactored import delete code
-* Meeting Guide app info on import & settings page
-
-= 1.7.3 =
-* Fixing city preference for Quad Cities
-
-= 1.7.2 =
-* Adding SLAA
-
-= 1.7.1 =
-* Now checks for PHP version 
-
-= 1.7 =
-* API keys are now included, so go crazy geocoding
-
-= 1.6.9 =
-* When deleting, importer now deletes much more efficiently
-
-= 1.6.8 =
-* Importer now caches geocoded addresses, speeding up re-importing
-
-= 1.6.7 =
-* Importer now makes a note of bad addresses, skips them, and keeps going
-
-= 1.6.6 =
-* Added location contact information to CSV export, if the user has permission to see it
-* Fixed issue affecting PHP 5.4 sites
-
-= 1.6.5 =
-* Corrected spelling of 'Co-Dependents'
-
-= 1.6.4 =
-* New meeting types for CoDA
-* Cleaned up template detail pages
-* Answered some new FAQs
-* Reordered types checkboxes on meeting edit page
-
-= 1.6.3 =
-* 'Any Day' option for time filter
-
-= 1.6.2 =
-* Filter meetings by time of day
-* Two new meeting types for Tulsa (Literature, Candlelight)
-* Versioning system for database upgrades
-* Now implements the read-only [12 Step Meetings API](https://github.com/intergroup/api)
-
-= 1.6.1 =
-* Adding new Frequently Asked Question
-* More CSS fixing for the Cannyon theme
-
-= 1.6 =
-* Fixing CSV link
