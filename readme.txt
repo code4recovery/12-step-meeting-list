@@ -27,6 +27,7 @@ It was originally designed to maintain a list of AA meetings in Santa Clara Coun
 * [Philadelphia, PA](http://www.aasepia.org/meetings/)
 * [Portland, OR](http://home.pdxaa.org/meetings/)
 * [Quad Cities, IA / IL](http://aa-qc.com/meetings/)
+* [Sacramento, CA](http://aasacramento.org/meetings/)
 * [Santa Clara County, CA](https://aasanjose.org/meetings)
 * [Western Slope, CA](http://westernsloped22.org/meetings/)
 

@@ -9,12 +9,14 @@
 	}
 }
 
+#group.postbox h2.ui-sortable-handle span span { color: #ccc; }
+
 #poststuff .inside { margin-top: 0; }
 
 .wp-admin .meta_form_row { 
 	padding: 10px 0 0; overflow: auto; 
 	label, input, div.checkboxes, #map { float: left; line-height: 100%; } 
-	label { width: 13%; margin-right: 2%; text-align: right; font-size: 15px; line-height: 40px; white-space: nowrap; }
+	label { width: 13%; margin-right: 2%; text-align: right; font-size: 15px; line-height: 1.4; margin-top: 9px; white-space: nowrap; }
 	input[type=text], input[type=time], select, textarea, div.checkboxes, #map { 
 		width: 85%; margin: 0; font-size: 18px; padding: 6px; height: 40px; line-height: normal; float: left;
 		border-radius: 0;
@@ -36,7 +38,7 @@
 		     width: 85%;
 		     input { width: 100%; }
 		}
-		.tt-hint { color: #ccc; }
+		.tt-hint { color: #999; }
 		.tt-dropdown-menu { display: none !important; }
 
 	}

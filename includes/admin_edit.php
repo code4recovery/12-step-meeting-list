@@ -75,9 +75,9 @@ function tsml_admin_init() {
 	remove_meta_box('regiondiv', 'meetings', 'side');
 	remove_meta_box('wii_post-box1', 'meetings', 'normal'); //removes weaver ii from east bay site
 
-	add_meta_box('info', 'Meeting Info', 'tsml_meeting_info', 'meetings', 'normal', 'low');
+	add_meta_box('info', 'Meeting Information', 'tsml_meeting_box', 'meetings', 'normal', 'low');
 
-	function tsml_meeting_info() {
+	function tsml_meeting_box() {
 		global $post, $tsml_days, $tsml_types, $tsml_program, $tsml_nonce;
 
 		//get post metadata
@@ -120,7 +120,30 @@ function tsml_admin_init() {
 		<?php
 	}		
 
-	add_meta_box('location', 'Location Info', 'tsml_location_box', 'meetings', 'normal', 'low');
+	add_meta_box('group', 'Group Information <span>(Optional)</span>', 'tsml_group_box', 'meetings', 'normal', 'low');
+	
+	function tsml_group_box() {
+		?>
+		<div class="meta_form_row typeahead">
+			<label for="group">Group</label>
+			<input type="text" name="group" id="group" value="">
+		</div>
+		<div class="meta_form_row" style="clear:left;">
+			<label>Contacts</label>
+			<div class="container">
+				<?php for ($i = 1; $i < 4; $i++) {?>
+				<div class="row">
+					<div><input type="text" name="contact_<?php echo $i?>_name" placeholder="Name" value=""></div>
+					<div><input type="text" name="contact_<?php echo $i?>_email" placeholder="Email" value=""></div>
+					<div><input type="text" name="contact_<?php echo $i?>_phone" placeholder="Phone" value=""></div>
+				</div>
+				<?php }?>
+			</div>
+		</div>
+		<?php
+	}
+
+	add_meta_box('location', 'Location Information', 'tsml_location_box', 'meetings', 'normal', 'low');
 	
 	function tsml_location_box() {
 		global $post, $tsml_days;
@@ -176,18 +199,33 @@ function tsml_admin_init() {
 			<label>Notes</label>
 			<textarea name="location_notes" placeholder="eg. Around back, basement, ring buzzer"><?php echo $location->post_content?></textarea>
 		</div>
+		<?php
+		//deprecating these fields
+		if (!empty($location_custom['contact_1_name'][0]) || 
+			!empty($location_custom['contact_1_email'][0]) || 
+			!empty($location_custom['contact_1_phone'][0]) || 
+			!empty($location_custom['contact_2_name'][0]) || 
+			!empty($location_custom['contact_2_email'][0]) || 
+			!empty($location_custom['contact_2_phone'][0]) || 
+			!empty($location_custom['contact_3_name'][0]) || 
+			!empty($location_custom['contact_3_email'][0]) || 
+			!empty($location_custom['contact_3_phone'][0])) {?>
 		<div class="meta_form_row">
 			<label>Contacts</label>
 			<div class="container">
-				<?php for ($i = 1; $i < 4; $i++) {?>
+				<?php for ($i = 1; $i < 4; $i++) {
+					if (!empty($location_custom['contact_' . $i . '_name'][0]) || !empty($location_custom['contact_' . $i . '_email'][0]) || !empty($location_custom['contact_' . $i . '_phone'][0])) {
+					?>
 				<div class="row">
 					<div><input type="text" name="contact_<?php echo $i?>_name" placeholder="Name" value="<?php echo @$location_custom['contact_' . $i . '_name'][0]?>"></div>
 					<div><input type="text" name="contact_<?php echo $i?>_email" placeholder="Email" value="<?php echo @$location_custom['contact_' . $i . '_email'][0]?>"></div>
 					<div><input type="text" name="contact_<?php echo $i?>_phone" placeholder="Phone" value="<?php echo @$location_custom['contact_' . $i . '_phone'][0]?>"></div>
 				</div>
-				<?php }?>
+					<?php }
+				}?>
 			</div>
 		</div>
 		<?php
+		}
 	}
 }
