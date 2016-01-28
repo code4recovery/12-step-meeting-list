@@ -1,7 +1,7 @@
 <?php
 
 //get assets for page
-tsml_assets('public');
+tsml_assets();
 
 get_header();
 
@@ -178,12 +178,14 @@ class Walker_Regions_Dropdown extends Walker_Category {
 							$meeting['location'] = htmlentities($meeting['location'], ENT_QUOTES);
 							$meeting['address'] = htmlentities($meeting['address'], ENT_QUOTES);
 							$meeting['city'] = htmlentities($meeting['city'], ENT_QUOTES);
-
+							$meeting['link'] = tsml_link($meeting['url'], tsml_format_name($meeting['name'], $meeting['types']), 'post_type');
+							
 							if (!isset($locations[$meeting['location_id']])) {
 								$locations[$meeting['location_id']] = array(
 									'name'=>$meeting['location'],
-									'coords'=>$meeting['latitude'] . ',' . $meeting['longitude'],
-									'url'=>$meeting['location_url'],
+									'latitude'=>$meeting['latitude'] - 0,
+									'longitude'=>$meeting['longitude'] - 0,
+									'link'=>tsml_link($meeting['location_url'], $meeting['location'], 'post_type'),
 									'address'=>$meeting['address'],
 									'city_state'=>$meeting['city'] . ', ' . $meeting['state'],
 									'meetings'=>array(),
@@ -194,7 +196,7 @@ class Walker_Regions_Dropdown extends Walker_Category {
 								'time'=>$meeting['time_formatted'],
 								'day'=>$meeting['day'],
 								'name'=>$meeting['name'],
-								'url'=>$meeting['url'],
+								'link'=>$meeting['link'],
 								'types'=>$meeting['types'],
 							);
 
@@ -213,7 +215,7 @@ class Walker_Regions_Dropdown extends Walker_Category {
 									echo '<time>' . $meeting['time_formatted'] . '</time>';
 								}
 								?></td>
-							<td class="name"><?php echo tsml_link($meeting['url'], tsml_format_name($meeting['name'], $meeting['types']), 'post_type')?></td>
+							<td class="name"><?php echo $meeting['link']?></td>
 							<td class="location"><?php echo $meeting['location']?></td>
 							<td class="address"><?php echo $meeting['address']?></td>
 							<td class="region"><?php echo $meeting['region']?></td>
@@ -227,66 +229,10 @@ class Walker_Regions_Dropdown extends Walker_Category {
 </div>
 
 <script>
-
-jQuery(function(){
-
-	//set some globals
-	markers = [];
-	infowindow = new google.maps.InfoWindow();
-	map = new google.maps.Map(document.getElementById('map'), {
-		panControl: false,
-		mapTypeControl: false,
-		mapTypeControlOptions: {
-			mapTypeIds: [google.maps.MapTypeId.ROADMAP, 'map_style']
-		}
-	});
-	bounds = new google.maps.LatLngBounds();				
-
-	<?php 
-	foreach ($locations as $location) {
-		
-		//group location's meetings by day
-		$location_days = array();
-		foreach ($location['meetings'] as $meeting) {
-			if (!array_key_exists($meeting['day'], $location_days)) $location_days[$meeting['day']] = array();
-			$location_days[$meeting['day']][] = $meeting;
-		}
-		$infowindow = '<div class="infowindow"><h3>' . tsml_link($location['url'], $location['name'], 'post_type') . '</h3>';
-		$infowindow .= '<address>' . $location['address'] . '<br>' . $location['city_state'] . '</address>';
-		foreach ($location_days as $location_day=>$meetings) {
-			$infowindow .= '<h5>' . $tsml_days[$location_day] . '</h5><dl>';
-			foreach ($meetings as $meeting) {
-				$infowindow .= '<dt>' . $meeting['time'] . '</dt>';
-				$infowindow .= '<dd>' . tsml_link($meeting['url'], tsml_format_name($meeting['name'], $meeting['types']), 'post_type') . '</dd>';
-			}
-			$infowindow .= '</dl>';
-		}
-		$infowindow .= '</div>';
-		?>
-		var marker = new google.maps.Marker({
-		    position: new google.maps.LatLng(<?php echo $location['coords']?>),
-		    map: map,
-		    title: "<?php echo $location['name']?>"
-		});
-
-		//add infowindow event
-		google.maps.event.addListener(marker, 'click', (function(marker) {
-			return function() {
-				infowindow.setContent('<?php echo $infowindow?>');
-				infowindow.open(map, marker);
-			}
-		})(marker));					
-
-		//add to map bounds
-		bounds.extend(marker.position);
-
-		//save marker so it can be removed later
-		markers[markers.length] = marker;
-	<?php }?>
-
-	map.fitBounds(bounds);
+jQuery(document).ready(function($) {
+	var locations = <?php echo json_encode($locations)?>;
+	loadMap(locations);
 });
-
 </script>
 
 <?php

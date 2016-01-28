@@ -1,6 +1,6 @@
 <?php 
 
-tsml_assets('public');
+tsml_assets();
 
 get_header(); 
 

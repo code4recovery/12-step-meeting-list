@@ -8,9 +8,6 @@ jQuery(function(){
 	//run search (triggered by dropdown toggle or form submit)
 	function doSearch() {
 
-		//need these later
-		var days = [ 'Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
-		
 		//prepare data for ajax
 		var data = { 
 			action: 'meetings',
@@ -279,7 +276,7 @@ jQuery(function(){
 		}
 	});
 
-	jQuery('a[href=#geolocator]').click(function(e){
+	jQuery('a[href="#geolocator"]').click(function(e){
 		e.preventDefault();
 		jQuery(this).toggleClass('active');
 
@@ -346,5 +343,73 @@ jQuery(function(){
 			map.setCenter(center);
 		}
 	});
-
+	
 });
+
+//globals
+markers = [];
+map = new google.maps.Map(document.getElementById('map'), {
+	panControl: false,
+	mapTypeControl: false,
+	mapTypeControlOptions: {
+		mapTypeIds: [google.maps.MapTypeId.ROADMAP, 'map_style']
+	}
+});
+bounds = new google.maps.LatLngBounds();
+
+days = [ 'Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+
+infowindow = new google.maps.InfoWindow();
+
+
+//load map, called from archive-meetings.php
+function loadMap(locations) {
+
+	for (var location_id in locations) {
+		if (locations.hasOwnProperty(location_id)) {
+			//console.log(locations[location_id]);
+			
+			var location = locations[location_id];
+
+			//create infowindow content
+			var infowindow_content = '<div class="infowindow"><h3><a href="' + location.url + '">' + location.name + '</h3>' +
+				'<address>' + location.address + '<br>' + location.city_state + '</address>';
+				
+			var current_day = null;
+			for (var i = 0; i < location.meetings.length; i++) {
+				var meeting = location.meetings[i];
+				if (current_day != meeting.day) {
+					if (current_day) infowindow_content += '</dl>';
+					current_day = meeting.day;
+					infowindow_content += '<h5>' + days[current_day] + '</h5><dl>';
+				}
+				infowindow_content += '<dt>' + meeting.time + '</dt><dd>' + meeting.link + '</dd>';
+			}
+			infowindow_content += '</dl></div>';
+			
+			//set new marker
+			var marker = new google.maps.Marker({
+			    position: {lat: location.latitude, lng: location.longitude},
+			    map: map,
+			    title: location.name,
+			});
+			
+			//add infowindow event
+			google.maps.event.addListener(marker, 'click', (function(marker) {
+				return function() {
+					infowindow.setContent(infowindow_content);
+					infowindow.open(map, marker);
+				}
+			})(marker));
+	
+			//add to map bounds
+			bounds.extend(marker.position);
+			
+			markers[markers.length] = marker;
+		}
+	}
+
+	map.fitBounds(bounds);
+	
+}
+

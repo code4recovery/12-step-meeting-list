@@ -35,6 +35,10 @@ function tsml_save_post(){
 		return;
 	}
 	
+	//save group information (set this value or get caught in a loop)
+	$_POST['post_type'] = 'tsml_group';
+	
+	
 	//save location information (set this value or get caught in a loop)
 	$_POST['post_type'] = 'locations';
 	
@@ -68,9 +72,15 @@ function tsml_save_post(){
 
 	//contact info
 	for ($i = 1; $i < 4; $i++) {
-		update_post_meta($location_id, 'contact_' . $i . '_name', sanitize_text_field($_POST['contact_' . $i . '_name']));
-		update_post_meta($location_id, 'contact_' . $i . '_email', sanitize_text_field($_POST['contact_' . $i . '_email']));
-		update_post_meta($location_id, 'contact_' . $i . '_phone', sanitize_text_field($_POST['contact_' . $i . '_phone']));
+		if (!empty($_POST['location_contact_' . $i . '_name'])) {
+			update_post_meta($location_id, 'contact_' . $i . '_name', sanitize_text_field($_POST['location_contact_' . $i . '_name']));
+		}
+		if (!empty($_POST['location_contact_' . $i . '_email'])) {
+			update_post_meta($location_id, 'contact_' . $i . '_email', sanitize_text_field($_POST['location_contact_' . $i . '_email']));
+		}
+		if (!empty($_POST['location_contact_' . $i . '_phone'])) {
+			update_post_meta($location_id, 'contact_' . $i . '_phone', sanitize_text_field($_POST['location_contact_' . $i . '_phone']));
+		}
 	}
 
 	//update region caches for other meetings at this location

@@ -2,22 +2,24 @@
 
 //function: enqueue assets for public or admin page
 //used: in templates and on admin_edit.php
-function tsml_assets($context) {
+function tsml_assets() {
 	
 	//google maps api needed for maps and address verification, can't be onboarded
 	wp_enqueue_script('google_maps_api', '//maps.googleapis.com/maps/api/js');
 	
-	if ($context == 'public') {
-		wp_enqueue_style('bootstrap_css', plugin_dir_url(__DIR__ . '/../css') . '/css/bootstrap.min.css');
-		wp_enqueue_script('bootstrap_js', plugin_dir_url(__DIR__ . '/../js') . '/js/bootstrap.min.js', array('jquery'), '', true);
-		wp_enqueue_script('tsml_public_js', plugin_dir_url(__DIR__ . '/../js') . '/js/archive-meetings.js', array('jquery'), '', true);
-		wp_localize_script('tsml_public_js', 'myAjax', array('ajaxurl' => admin_url('admin-ajax.php')));
-		wp_enqueue_style('tsml_public_css', plugin_dir_url(__DIR__ . '/../css') . '/css/archive-meetings.min.css');		
-	} elseif ($context == 'admin') {
-		wp_enqueue_style('tsml_admin_style', plugin_dir_url(__FILE__) . '../css/admin.min.css');
-		wp_enqueue_script('tsml_admin_js', plugin_dir_url(__FILE__) . '../js/admin_edit.js', array('jquery'), '', true);
+	if (is_admin()) {
+		//dashboard page assets
+		wp_enqueue_style('tsml_admin_style', plugins_url('../css/admin.min.css', __FILE__));
+		wp_enqueue_script('tsml_admin_js', plugins_url('../js/admin_edit.js', __FILE__), array('jquery'), '', true);
 		wp_localize_script('tsml_admin_js', 'myAjax', array('ajaxurl'=>admin_url('admin-ajax.php')));        
-		wp_enqueue_script('typeahead_js', plugin_dir_url(__FILE__) . '../js/typeahead.bundle.js', array('jquery'), '', true);
+		wp_enqueue_script('typeahead_js', plugins_url('../js/typeahead.bundle.js', __FILE__), array('jquery'), '', true);
+	} else {
+		//public page assets
+		wp_enqueue_style('bootstrap_css', plugins_url('../css/bootstrap.min.css', __FILE__));
+		wp_enqueue_script('bootstrap_js', plugins_url('../js/bootstrap.min.js', __FILE__), array('jquery'), '', true);
+		wp_enqueue_script('tsml_public_js', plugins_url('../js/archive-meetings.js', __FILE__), array('jquery'), '', true);
+		wp_localize_script('tsml_public_js', 'myAjax', array('ajaxurl' => admin_url('admin-ajax.php')));
+		wp_enqueue_style('tsml_public_css', plugins_url('../css/archive-meetings.min.css', __FILE__));
 	}
 }
 
@@ -290,8 +292,8 @@ function tsml_get_meetings($arguments=array()) {
 			'address'			=> $tsml_custom['address'][0],
 			'city'				=> $tsml_custom['city'][0],
 			'state'				=> $tsml_custom['state'][0],
-			'postal_code'		=> $tsml_custom['postal_code'][0],
-			'country'			=> $tsml_custom['country'][0],
+			'postal_code'		=> isset($tsml_custom['postal_code'][0]) ? $tsml_custom['postal_code'][0] : null,
+			'country'			=> isset($tsml_custom['country'][0]) ? $tsml_custom['country'][0] : null,
 			'latitude'			=> $tsml_custom['latitude'][0],
 			'longitude'			=> $tsml_custom['longitude'][0],
 			'region_id'			=> $tsml_custom['region'][0],

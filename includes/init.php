@@ -3,7 +3,7 @@
 //for all users
 add_action('init', 'tsml_init');
 
-function tsml_init(){
+function tsml_init() {
 
 	//register post types and taxonomies
 	tsml_custom_post_types();
@@ -43,7 +43,15 @@ function tsml_init(){
 		}
 		return $template;
 	}
-		
+	
+	//add theme name to body class, to target CSS at troublesome themes
+	add_filter('body_class', 'tsml_theme_name');
+	function tsml_theme_name($classes) {
+		$theme = wp_get_theme();
+		$classes[] = sanitize_title($theme->name);
+		return $classes;
+	}
+	
 	//add api identification tag to header. more info: https://github.com/intergroup/api
 	add_action('wp_head', 'tsml_head');
 	function tsml_head() {

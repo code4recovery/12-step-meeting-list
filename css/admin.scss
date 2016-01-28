@@ -13,6 +13,15 @@
 
 #poststuff .inside { margin-top: 0; }
 
+.alert {
+	background-color: #fafade;
+	padding: 12px;
+	text-align: center;
+	margin: 12px -12px 2px;
+	border-top: 1px solid #e5e5e5;
+	border-bottom: 1px solid #e5e5e5;
+}
+
 .wp-admin .meta_form_row { 
 	padding: 10px 0 0; overflow: auto; 
 	label, input, div.checkboxes, #map { float: left; line-height: 100%; } 
@@ -67,11 +76,14 @@
 
 	#map { background-color: #f6f6f6; height: 300px; padding: 0; }
 	
+	//meetings at a location
 	ol {
 		overflow: auto;
 		font-size: 15px;
 		margin: 0;
 		padding: 10px 0 10px 30px;
+		-webkit-columns: 2 auto;
+		-webkit-column-gap: 60px;
 		li {
 			span { width: 160px; color: #999; display: inline-block; }
 			&:last-child { margin-bottom: 0; }

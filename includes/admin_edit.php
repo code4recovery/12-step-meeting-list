@@ -70,7 +70,7 @@ add_action('admin_init', 'tsml_admin_init');
 
 function tsml_admin_init() {
 
-	tsml_assets('admin');
+	tsml_assets();
 	
 	remove_meta_box('regiondiv', 'meetings', 'side');
 	remove_meta_box('wii_post-box1', 'meetings', 'normal'); //removes weaver ii from east bay site
@@ -119,29 +119,6 @@ function tsml_admin_init() {
 		</div>
 		<?php
 	}		
-
-	add_meta_box('group', 'Group Information <span>(Optional)</span>', 'tsml_group_box', 'meetings', 'normal', 'low');
-	
-	function tsml_group_box() {
-		?>
-		<div class="meta_form_row typeahead">
-			<label for="group">Group</label>
-			<input type="text" name="group" id="group" value="">
-		</div>
-		<div class="meta_form_row" style="clear:left;">
-			<label>Contacts</label>
-			<div class="container">
-				<?php for ($i = 1; $i < 4; $i++) {?>
-				<div class="row">
-					<div><input type="text" name="contact_<?php echo $i?>_name" placeholder="Name" value=""></div>
-					<div><input type="text" name="contact_<?php echo $i?>_email" placeholder="Email" value=""></div>
-					<div><input type="text" name="contact_<?php echo $i?>_phone" placeholder="Phone" value=""></div>
-				</div>
-				<?php }?>
-			</div>
-		</div>
-		<?php
-	}
 
 	add_meta_box('location', 'Location Information', 'tsml_location_box', 'meetings', 'normal', 'low');
 	
@@ -210,6 +187,9 @@ function tsml_admin_init() {
 			!empty($location_custom['contact_3_name'][0]) || 
 			!empty($location_custom['contact_3_email'][0]) || 
 			!empty($location_custom['contact_3_phone'][0])) {?>
+		<div class="alert">
+			Location contacts are deprecated. Please move them to the group object below.
+		</div>
 		<div class="meta_form_row">
 			<label>Contacts</label>
 			<div class="container">
@@ -217,9 +197,9 @@ function tsml_admin_init() {
 					if (!empty($location_custom['contact_' . $i . '_name'][0]) || !empty($location_custom['contact_' . $i . '_email'][0]) || !empty($location_custom['contact_' . $i . '_phone'][0])) {
 					?>
 				<div class="row">
-					<div><input type="text" name="contact_<?php echo $i?>_name" placeholder="Name" value="<?php echo @$location_custom['contact_' . $i . '_name'][0]?>"></div>
-					<div><input type="text" name="contact_<?php echo $i?>_email" placeholder="Email" value="<?php echo @$location_custom['contact_' . $i . '_email'][0]?>"></div>
-					<div><input type="text" name="contact_<?php echo $i?>_phone" placeholder="Phone" value="<?php echo @$location_custom['contact_' . $i . '_phone'][0]?>"></div>
+					<div><input type="text" name="location_contact_<?php echo $i?>_name" placeholder="Name" value="<?php echo @$location_custom['contact_' . $i . '_name'][0]?>"></div>
+					<div><input type="text" name="location_contact_<?php echo $i?>_email" placeholder="Email" value="<?php echo @$location_custom['contact_' . $i . '_email'][0]?>"></div>
+					<div><input type="text" name="location_contact_<?php echo $i?>_phone" placeholder="Phone" value="<?php echo @$location_custom['contact_' . $i . '_phone'][0]?>"></div>
 				</div>
 					<?php }
 				}?>
@@ -228,4 +208,28 @@ function tsml_admin_init() {
 		<?php
 		}
 	}
+	
+	add_meta_box('group', 'Group Information <span>(Optional)</span>', 'tsml_group_box', 'meetings', 'normal', 'low');
+	
+	function tsml_group_box() {
+		?>
+		<div class="meta_form_row typeahead">
+			<label for="group">Group</label>
+			<input type="text" name="group" id="group" value="">
+		</div>
+		<div class="meta_form_row" style="clear:left;">
+			<label>Contacts</label>
+			<div class="container">
+				<?php for ($i = 1; $i < 4; $i++) {?>
+				<div class="row">
+					<div><input type="text" name="contact_<?php echo $i?>_name" placeholder="Name" value=""></div>
+					<div><input type="text" name="contact_<?php echo $i?>_email" placeholder="Email" value=""></div>
+					<div><input type="text" name="contact_<?php echo $i?>_phone" placeholder="Phone" value=""></div>
+				</div>
+				<?php }?>
+			</div>
+		</div>
+		<?php
+	}
+	
 }

@@ -3,7 +3,7 @@ Contributors: aasanjose
 Tags: meetings, aa, al-anon, na, 12-step, locations
 Requires at least: 3.2
 Tested up to: 4.4
-Stable tag: 1.8.5
+Stable tag: 1.8.6
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -24,6 +24,7 @@ It was originally designed to maintain a list of AA meetings in Santa Clara Coun
 * [Greensboro, NC](http://nc23.org/meetings/)
 * [Mesa, AZ](http://aamesaaz.org/meetings/)
 * [Minneapolis, MN](http://aaminneapolis.org/meetings/)
+* [Orlando, FL](http://cflintergroup.org/meetings/)
 * [Philadelphia, PA](http://www.aasepia.org/meetings/)
 * [Portland, OR](http://home.pdxaa.org/meetings/)
 * [Quad Cities, IA / IL](http://aa-qc.com/meetings/)
@@ -123,6 +124,11 @@ These tags are for the meetings page, substitute `$location` for `$meeting` if y
 1. Meeting map
 
 == Changelog ==
+
+= 1.8.6 =
+* New group object! Contacts are moving over to it (Greensboro and New York)
+* Refactored javascript on public page, hopefully speeding up large meeting lists (Philadelphia and New York)
+* Improved method of linking to assets, fixing issue with Twenty Fourteen (Oahu)
 
 = 1.8.5 =
 * Importer no longer verifies Google's SSL certificate for Corpus Christi

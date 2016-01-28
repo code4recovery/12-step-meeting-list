@@ -262,8 +262,31 @@ body.admin-bar {
 	}
 }
 
-/* special fixes for Divi theme */
-div#et-top-navigation ul#top-menu li a { 
-	padding-left: 0; padding-right: 0; padding-top: 0; 
-	&:hover { background-color: transparent; }
+/* Special per-theme fixes */
+body {
+	&.divi {
+		div#et-top-navigation ul#top-menu li a { 
+			padding-left: 0; padding-right: 0; padding-top: 0; 
+			&:hover { background-color: transparent; }
+		}
+	}
+	/* bob in oahu elected just to hide the sidebar
+	&.twenty-fourteen {
+		#meetings { 
+			padding: 15px 0 0; width: 100%; 
+			table { 
+				border: 0; 
+				td, th { border-right: 0; }
+			}
+			.row.controls { padding: 0 15px; }
+			.results #table-wrapper { margin: 0; }
+		}
+		@media (min-width: 1008px) {
+			#main { padding-left: 182px; }
+		}	
+		@media (min-width: 1080px) {
+			#main { padding-left: 222px; }
+		}
+	}
+	*/
 }
