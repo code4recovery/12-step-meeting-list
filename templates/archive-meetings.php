@@ -6,10 +6,12 @@ tsml_assets();
 get_header();
 
 //parse query string
-$search		= isset($_GET['sq']) ? sanitize_text_field($_GET['sq']) : null;
-$region     = isset($_GET['r']) ? intval($_GET['r']) : null;
-$types		= isset($_GET['t']) ? array_values(array_intersect(array_keys($tsml_types[$tsml_program]), explode('-', $_GET['t']))) : array();
-$time		= isset($_GET['i']) ? sanitize_text_field(strtolower($_GET['i'])) : null;
+$search	= isset($_GET['sq']) ? sanitize_text_field($_GET['sq']) : null;
+$region	= isset($_GET['r']) && array_key_exists($_GET['r'], $tsml_regions) ? $_GET['r'] : null;
+$type	= isset($_GET['t']) && array_key_exists($_GET['t'], $tsml_types[$tsml_program]) ? $_GET['t'] : null;
+$time	= isset($_GET['i']) ? sanitize_text_field(strtolower($_GET['i'])) : null;
+
+//need later
 $times		= array(
 	'morning' => 'Morning',
 	'day' => 'Day',
@@ -32,16 +34,14 @@ $time_default = 'Any Time';
 $time_label = $time ? $times[$time] : $time_default;
 $region_default = 'Everywhere';
 $region_label = ($region && array_key_exists($region, $tsml_regions)) ? $tsml_regions[$region] : $region_default;
-$types_default = 'Meeting Type';
-$types_count = count($types);
-$types_label = $types_count ? $types_default . ' [' . $types_count . ']': $types_default;
-if ($types_count == 1) $types_label = $tsml_types[$tsml_program][$types[0]];
+$type_default = 'Any Type';
+$type_label = ($type && array_key_exists($type, $tsml_types[$tsml_program])) ? $tsml_types[$tsml_program][$type] : $type_default;
 
 //need this later
 $locations	= array();
 
 //run query
-$meetings	= tsml_get_meetings(compact('search', 'day', 'time', 'region', 'types'));
+$meetings	= tsml_get_meetings(compact('search', 'day', 'time', 'region', 'type'));
 //dd($meetings);
 
 class Walker_Regions_Dropdown extends Walker_Category {
@@ -121,16 +121,18 @@ class Walker_Regions_Dropdown extends Walker_Category {
 		</div>
 		<div class="col-md-2 col-sm-6">
 			<?php if (count($tsml_types_in_use)) {?>
-			<div class="dropdown" id="types">
+			<div class="dropdown" id="type">
 				<a data-toggle="dropdown" class="btn btn-default btn-block">
-					<span class="selected"><?php echo $types_label?></span>
+					<span class="selected"><?php echo $type_label?></span>
 					<span class="caret"></span>
 				</a>
 				<ul class="dropdown-menu">
+					<li<?php if (empty($type)) echo ' class="active"'?>><a href="#"><?php echo $type_default?></a></li>
+					<li class="divider"></li>
 					<?php 
 					$types_to_list = array_intersect_key($tsml_types[$tsml_program], array_flip($tsml_types_in_use));
-					foreach ($types_to_list as $key=>$type) {?>
-					<li<?php if (in_array($key, $types)) echo ' class="active"'?>><a href="#" data-id="<?php echo $key?>"><?php echo $type?></a></li>
+					foreach ($types_to_list as $key=>$thistype) {?>
+					<li<?php if ($key == $type) echo ' class="active"'?>><a href="#" data-id="<?php echo $key?>"><?php echo $thistype?></a></li>
 					<?php } ?>
 				</ul>
 			</div>

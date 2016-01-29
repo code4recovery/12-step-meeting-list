@@ -13,17 +13,8 @@
 
 #poststuff .inside { margin-top: 0; }
 
-.alert {
-	background-color: #fafade;
-	padding: 12px;
-	text-align: center;
-	margin: 12px -12px 2px;
-	border-top: 1px solid #e5e5e5;
-	border-bottom: 1px solid #e5e5e5;
-}
-
 .wp-admin .meta_form_row { 
-	padding: 10px 0 0; overflow: auto; 
+	padding: 10px 0 0; overflow: auto; clear: left;
 	label, input, div.checkboxes, #map { float: left; line-height: 100%; } 
 	label { width: 13%; margin-right: 2%; text-align: right; font-size: 15px; line-height: 1.4; margin-top: 9px; white-space: nowrap; }
 	input[type=text], input[type=time], select, textarea, div.checkboxes, #map { 
@@ -85,7 +76,7 @@
 		-webkit-columns: 2 auto;
 		-webkit-column-gap: 60px;
 		li {
-			span { width: 160px; color: #999; display: inline-block; }
+			span { width: 120px; color: #999; display: inline-block; }
 			&:last-child { margin-bottom: 0; }
 		}
 	}

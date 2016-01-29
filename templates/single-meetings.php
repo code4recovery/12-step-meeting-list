@@ -33,6 +33,14 @@ $meeting = tsml_get_meeting();
 							<?php echo $meeting->city?>, <?php echo $meeting->state?> <?php echo $meeting->postal_code?>
 						</dd>
 						
+						<?php if ($meeting->group_id) {?>
+						<dt><?php _e('Group', '12-step-meeting-list')?></dt>
+						<dd>
+							<?php echo $meeting->group?><br>
+							<?php echo $meeting->group_notes?>
+						</dd>
+						<?php }?>
+						
 						<?php if (!empty($tsml_regions[$meeting->region])) {?>
 						<dt><?php _e('Region', '12-step-meeting-list')?></dt>
 						<dd><?php echo $tsml_regions[$meeting->region]?></dd>

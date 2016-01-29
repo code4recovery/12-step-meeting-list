@@ -1,36 +1,54 @@
 <?php
 
-//ajax for the typeahead
+//ajax for the location typeahead
 add_action('wp_ajax_location', 'tsml_admin_ajax_locations');
 
 function tsml_admin_ajax_locations() {
-	$locations = get_posts('post_type=locations&numberposts=-1');
+	$locations = get_posts('post_type=' . TSML_TYPE_LOCATIONS . '&numberposts=-1');
 	$results = array();
     foreach ($locations as $location) {
         $title  = get_the_title($location->ID);
         $location_custom = get_post_meta($location->ID);
         $results[] = array(
             'value'				=> html_entity_decode($title),
-            'formatted_address'	=> $location_custom['formatted_address'][0],
-            'latitude'			=> $location_custom['latitude'][0],
-            'longitude'			=> $location_custom['longitude'][0],
-            'address'			=> $location_custom['address'][0],
-            'city'				=> $location_custom['city'][0],
-            'state'				=> $location_custom['state'][0],
-            'postal_code'		=> $location_custom['postal_code'][0],
-            'country'			=> $location_custom['country'][0],
-            'region'			=> $location_custom['region'][0],
-            'contact_1_name'	=> $location_custom['contact_1_name'][0],
-            'contact_1_email'	=> $location_custom['contact_1_email'][0],
-            'contact_1_phone'	=> $location_custom['contact_1_phone'][0],
-            'contact_2_name'	=> $location_custom['contact_2_name'][0],
-            'contact_2_email'	=> $location_custom['contact_2_email'][0],
-            'contact_2_phone'	=> $location_custom['contact_2_phone'][0],
-            'contact_3_name'	=> $location_custom['contact_3_name'][0],
-            'contact_3_email'	=> $location_custom['contact_3_email'][0],
-            'contact_3_phone'	=> $location_custom['contact_3_phone'][0],
+            'formatted_address'	=> @$location_custom['formatted_address'][0],
+            'latitude'			=> @$location_custom['latitude'][0],
+            'longitude'			=> @$location_custom['longitude'][0],
+            'address'			=> @$location_custom['address'][0],
+            'city'				=> @$location_custom['city'][0],
+            'state'				=> @$location_custom['state'][0],
+            'postal_code'		=> @$location_custom['postal_code'][0],
+            'country'			=> @$location_custom['country'][0],
+            'region'			=> @$location_custom['region'][0],
             'notes'				=> html_entity_decode($location->post_content),
-            'tokens'			=> array_values(array_unique(explode(' ', str_replace(',', '', $title . ' ' . $location_custom['address'][0])))),
+            'tokens'			=> array_values(array_unique(explode(' ', str_replace(',', '', $title . ' ' . @$location_custom['address'][0])))),
+        );
+	}
+	wp_send_json($results);
+}
+
+//ajax for the group typeahead
+add_action('wp_ajax_tsml_group', 'tsml_admin_ajax_groups');
+
+function tsml_admin_ajax_groups() {
+	$groups = get_posts('post_type=' . TSML_TYPE_GROUPS . '&numberposts=-1');
+	$results = array();
+    foreach ($groups as $group) {
+        $title  = get_the_title($group->ID);
+        $group_custom = get_post_meta($group->ID);
+        $results[] = array(
+            'value'				=> html_entity_decode($title),
+            'contact_1_name'	=> @$group_custom['contact_1_name'][0],
+            'contact_1_email'	=> @$group_custom['contact_1_email'][0],
+            'contact_1_phone'	=> @$group_custom['contact_1_phone'][0],
+            'contact_2_name'	=> @$group_custom['contact_2_name'][0],
+            'contact_2_email'	=> @$group_custom['contact_2_email'][0],
+            'contact_2_phone'	=> @$group_custom['contact_2_phone'][0],
+            'contact_3_name'	=> @$group_custom['contact_3_name'][0],
+            'contact_3_email'	=> @$group_custom['contact_3_email'][0],
+            'contact_3_phone'	=> @$group_custom['contact_3_phone'][0],
+            'notes'				=> html_entity_decode($group->post_content),
+            'tokens'			=> array_values(array_unique(explode(' ', str_replace(',', '', $title)))),
         );
 	}
 	wp_send_json($results);
@@ -41,7 +59,7 @@ add_action('wp_ajax_address', 'tsml_admin_ajax_address');
 
 function tsml_admin_ajax_address() {
 	if (!$posts = get_posts(array(
-		'post_type'		=> 'locations',
+		'post_type'		=> TSML_TYPE_LOCATIONS,
 		'numberposts'	=> 1,
 		'meta_key'		=> 'formatted_address',
 		'meta_value'	=> sanitize_text_field($_GET['formatted_address']),
@@ -72,10 +90,10 @@ function tsml_admin_init() {
 
 	tsml_assets();
 	
-	remove_meta_box('regiondiv', 'meetings', 'side');
-	remove_meta_box('wii_post-box1', 'meetings', 'normal'); //removes weaver ii from east bay site
+	remove_meta_box('regiondiv', TSML_TYPE_MEETINGS, 'side');
+	remove_meta_box('wii_post-box1', TSML_TYPE_MEETINGS, 'normal'); //removes weaver ii from east bay site
 
-	add_meta_box('info', 'Meeting Information', 'tsml_meeting_box', 'meetings', 'normal', 'low');
+	add_meta_box('info', 'Meeting Information', 'tsml_meeting_box', TSML_TYPE_MEETINGS, 'normal', 'low');
 
 	function tsml_meeting_box() {
 		global $post, $tsml_days, $tsml_types, $tsml_program, $tsml_nonce;
@@ -120,10 +138,11 @@ function tsml_admin_init() {
 		<?php
 	}		
 
-	add_meta_box('location', 'Location Information', 'tsml_location_box', 'meetings', 'normal', 'low');
+	add_meta_box('location', 'Location Information', 'tsml_location_box', TSML_TYPE_MEETINGS, 'normal', 'low');
 	
 	function tsml_location_box() {
 		global $post, $tsml_days;
+		$meetings = array();
 		if ($post->post_parent) {
 			$location = get_post($post->post_parent);
 			$location_custom = get_post_meta($post->post_parent);
@@ -167,7 +186,7 @@ function tsml_admin_init() {
 				<?php foreach ($meetings as $meeting) {
 					if ($meeting['id'] != $post->ID) $meeting['name'] = '<a href="' . get_edit_post_link($meeting['id']) . '">' . $meeting['name'] . '</a>';
 				?>
-				<li><span><?php echo tsml_format_day_and_time($meeting['day'], $meeting['time'])?></span> <?php echo $meeting['name']?></li>
+				<li><span><?php echo tsml_format_day_and_time($meeting['day'], $meeting['time'], ', ', true)?></span> <?php echo $meeting['name']?></li>
 				<?php }?>
 			</ol>
 		</div>
@@ -177,54 +196,49 @@ function tsml_admin_init() {
 			<textarea name="location_notes" placeholder="eg. Around back, basement, ring buzzer"><?php echo $location->post_content?></textarea>
 		</div>
 		<?php
-		//deprecating these fields
-		if (!empty($location_custom['contact_1_name'][0]) || 
-			!empty($location_custom['contact_1_email'][0]) || 
-			!empty($location_custom['contact_1_phone'][0]) || 
-			!empty($location_custom['contact_2_name'][0]) || 
-			!empty($location_custom['contact_2_email'][0]) || 
-			!empty($location_custom['contact_2_phone'][0]) || 
-			!empty($location_custom['contact_3_name'][0]) || 
-			!empty($location_custom['contact_3_email'][0]) || 
-			!empty($location_custom['contact_3_phone'][0])) {?>
-		<div class="alert">
-			Location contacts are deprecated. Please move them to the group object below.
-		</div>
-		<div class="meta_form_row">
-			<label>Contacts</label>
-			<div class="container">
-				<?php for ($i = 1; $i < 4; $i++) {
-					if (!empty($location_custom['contact_' . $i . '_name'][0]) || !empty($location_custom['contact_' . $i . '_email'][0]) || !empty($location_custom['contact_' . $i . '_phone'][0])) {
-					?>
-				<div class="row">
-					<div><input type="text" name="location_contact_<?php echo $i?>_name" placeholder="Name" value="<?php echo @$location_custom['contact_' . $i . '_name'][0]?>"></div>
-					<div><input type="text" name="location_contact_<?php echo $i?>_email" placeholder="Email" value="<?php echo @$location_custom['contact_' . $i . '_email'][0]?>"></div>
-					<div><input type="text" name="location_contact_<?php echo $i?>_phone" placeholder="Phone" value="<?php echo @$location_custom['contact_' . $i . '_phone'][0]?>"></div>
-				</div>
-					<?php }
-				}?>
-			</div>
-		</div>
-		<?php
-		}
 	}
 	
-	add_meta_box('group', 'Group Information <span>(Optional)</span>', 'tsml_group_box', 'meetings', 'normal', 'low');
+	add_meta_box('group', 'Group Information <span>(Optional)</span>', 'tsml_group_box', TSML_TYPE_MEETINGS, 'normal', 'low');
 	
 	function tsml_group_box() {
+		global $post;
+		$meeting_custom = get_post_custom($post->ID);
+		$meetings = array();
+		//echo 'post id is ' . $post->ID . ' and location id is ' . $post->post_parent . ' and group id is ' . @$meeting_custom['group_id'][0];
+		if (!empty($meeting_custom['group_id'][0])) {
+			$group = get_post($meeting_custom['group_id'][0]);
+			$group_custom = get_post_meta($group->ID);
+			$meetings = tsml_get_meetings(array('group_id'=>$group->ID));
+		}
 		?>
 		<div class="meta_form_row typeahead">
 			<label for="group">Group</label>
-			<input type="text" name="group" id="group" value="">
+			<input type="text" name="group" id="group" value="<?php echo @$group->post_title?>">
+		</div>
+		<?php if (count($meetings) > 1) {?>
+		<div class="meta_form_row">
+			<label>Meetings</label>
+			<ol>
+				<?php foreach ($meetings as $meeting) {
+					if ($meeting['id'] != $post->ID) $meeting['name'] = '<a href="' . get_edit_post_link($meeting['id']) . '">' . $meeting['name'] . '</a>';
+				?>
+				<li><span><?php echo tsml_format_day_and_time($meeting['day'], $meeting['time'], ', ', true)?></span> <?php echo $meeting['name']?></li>
+				<?php }?>
+			</ol>
+		</div>
+		<?php }?>
+		<div class="meta_form_row">
+			<label>Notes</label>
+			<textarea name="group_notes" placeholder="eg. Group history, when the business meeting is, etc."><?php echo @$group->post_content?></textarea>
 		</div>
 		<div class="meta_form_row" style="clear:left;">
 			<label>Contacts</label>
 			<div class="container">
 				<?php for ($i = 1; $i < 4; $i++) {?>
 				<div class="row">
-					<div><input type="text" name="contact_<?php echo $i?>_name" placeholder="Name" value=""></div>
-					<div><input type="text" name="contact_<?php echo $i?>_email" placeholder="Email" value=""></div>
-					<div><input type="text" name="contact_<?php echo $i?>_phone" placeholder="Phone" value=""></div>
+					<div><input type="text" name="contact_<?php echo $i?>_name" placeholder="Name" value="<?php echo @$group_custom['contact_' . $i . '_name'][0]?>"></div>
+					<div><input type="text" name="contact_<?php echo $i?>_email" placeholder="Email" value="<?php echo @$group_custom['contact_' . $i . '_email'][0]?>"></div>
+					<div><input type="text" name="contact_<?php echo $i?>_phone" placeholder="Phone" value="<?php echo @$group_custom['contact_' . $i . '_phone'][0]?>"></div>
 				</div>
 				<?php }?>
 			</div>

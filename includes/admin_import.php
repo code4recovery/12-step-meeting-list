@@ -43,6 +43,9 @@ function tsml_admin_menu() {
 									<li><strong>City</strong>, <strong>State</strong>, and <strong>Country</strong> are optional, but might be useful if your addresses sound ambiguous to Google.</li>
 									<li><strong>Notes</strong> are freeform notes that are specific to the meeting. For example, "last Saturday is birthday night."</li>
 									<li><strong>Location Notes</strong> are freeform notes that will show up on every meeting that this location. For example, "Enter from the side."</li>
+									<li><strong>Group</strong> is a way of grouping contacts. Meetings with the name Group name will be grouped together and share contact information.</li>
+									<li><strong>Group Notes</strong> is for stuff like a short group history, or when the business meeting meets.</li>
+									<li><strong>Contact 1/2/3 Name/Email/Phone</strong> (nine fields in total) are all optional, but will not be saved if there is not also a Group name specified. By default, contact information is only visible inside the WordPress dashboard.</li>
 									<li><strong>Types</strong> should be a comma-separated list of the following options. This list is determined by which program is selected at right.
 										<ul style="margin-top:10px;overflow:auto; -webkit-columns: 3 auto; -moz-columns: 3 auto; columns: 3 auto;">
 										<?php foreach ($tsml_types[$tsml_program] as $value) {?>
@@ -83,7 +86,7 @@ function tsml_admin_menu() {
 						<div class="postbox">
 							<div class="inside">
 								<h3>Where's My Info?</h3>
-								<p>Your meeting list page is <a href="<?php echo get_post_type_archive_link('meetings'); ?>">right here</a>. 
+								<p>Your meeting list page is <a href="<?php echo get_post_type_archive_link(TSML_TYPE_MEETINGS); ?>">right here</a>. 
 								Link that page from your site's nav menu to make it visible to the public.</p>
 								<p>You can also download your meetings in <a href="<?php echo admin_url('admin-ajax.php')?>?action=csv">CSV format</a>.</p>
 								<p style="margin-bottom:0;">You have:</p>

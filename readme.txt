@@ -126,9 +126,11 @@ These tags are for the meetings page, substitute `$location` for `$meeting` if y
 == Changelog ==
 
 = 1.8.6 =
-* New group object! Contacts are moving over to it (Greensboro and New York)
+* New group object! Location contacts move over to it (Greensboro and New York)
 * Refactored javascript on public page, hopefully speeding up large meeting lists (Philadelphia and New York)
 * Improved method of linking to assets, fixing issue with Twenty Fourteen (Oahu)
+* Users can only select one type at a time now, for security and simplicity (Austin)
+* Correcting a problem with the database upgrader
 
 = 1.8.5 =
 * Importer no longer verifies Google's SSL certificate for Corpus Christi

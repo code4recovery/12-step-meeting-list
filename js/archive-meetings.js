@@ -15,21 +15,16 @@ jQuery(function(){
 			day: 	jQuery('#day li.active a').attr('data-id'),
 			time: jQuery('#time li.active a').attr('data-id'),
 			region: jQuery('#region li.active a').attr('data-id'),
-			types: 	[]
+			type: jQuery('#type li.active a').attr('data-id'),
 		}
 		
-		//load types with selected menu items
-		jQuery('#types li.active').each(function(){
-			data['types'][data['types'].length] = jQuery(this).find('a').attr('data-id');
-		});
-
 		//get current query string for history and appending to links
 		var querystring = {};
 		if (data.search) querystring.sq = data.search;
 		querystring.d = data.day ? data.day : 'any';
 		if (data.time) querystring.i = data.time;
 		if (data.region) querystring.r = data.region;
-		if (data.types.length) querystring.t = data.types.join('-');
+		if (data.type) querystring.t = data.type;
 		querystring = jQuery.param(querystring);
 		//console.log('querystring is ' + querystring)
 		
@@ -61,17 +56,17 @@ jQuery(function(){
 			if (!response.length) {
 
 				//if keyword and no results, clear other parameters and search again
-				if (data.search && (typeof data.day !== 'undefined' || typeof data.region !== 'undefined' || data.types.length)) {
+				if (data.search && (typeof data.day !== 'undefined' || typeof data.region !== 'undefined' || typeof data.time !== 'undefined' || typeof data.type !== 'undefined')) {
 					jQuery('#day li').removeClass('active').first().addClass('active');
 					jQuery('#time li').removeClass('active').first().addClass('active');
 					jQuery('#region li').removeClass('active').first().addClass('active');
-					jQuery('#types li').removeClass('active');
+					jQuery('#type li').removeClass('active').first().addClass('active');
 
 					//set selected text
 					jQuery('#day span.selected').html(jQuery('#day li:first-child a').html());
 					jQuery('#time span.selected').html(jQuery('#time li:first-child a').html());
 					jQuery('#region span.selected').html(jQuery('#region li:first-child a').html());
-					jQuery('#types span.selected').html('Meeting Type');
+					jQuery('#type span.selected').html(jQuery('#type li:first-child a').html());
 					return doSearch();
 				}
 
@@ -227,19 +222,13 @@ jQuery(function(){
 			jQuery('#region span.selected').html(jQuery(this).html());
 		}
 
-		jQuery(this).parent().toggleClass('active');
-
-		//adjust type name
-		if (jQuery(this).closest('.dropdown').attr('id') == 'types') {
-			var count = jQuery('#types li.active').size();
-			if (count == 0) {
-				jQuery('#types span.selected').html('Meeting Type');
-			} else if (count == 1) {
-				jQuery('#types span.selected').html(jQuery('#types li.active a').first().html());
-			} else {
-				jQuery('#types span.selected').html('Meeting Types [' + count + ']');				
-			}
+		//type only one
+		if (jQuery(this).closest('.dropdown').attr('id') == 'type') {
+			jQuery('#type li').removeClass('active');
+			jQuery('#type span.selected').html(jQuery(this).html());
 		}
+
+		jQuery(this).parent().toggleClass('active');
 
 		doSearch();
 	});

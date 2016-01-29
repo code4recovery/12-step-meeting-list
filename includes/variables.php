@@ -4,6 +4,11 @@ don't make changes! it'll make staying updated much harder.
 for updates / questions, please contact web@aasanjose.org
 */
 
+//custom post types
+if (!defined('TSML_TYPE_MEETINGS'))  define('TSML_TYPE_MEETINGS',  'meetings');
+if (!defined('TSML_TYPE_LOCATIONS')) define('TSML_TYPE_LOCATIONS', 'locations');
+if (!defined('TSML_TYPE_GROUPS'))    define('TSML_TYPE_GROUPS',    'tsml_group');
+
 $tsml_alerts = array();
 
 $tsml_days	= array(
@@ -228,3 +233,5 @@ $tsml_types = array(
 
 $tsml_types_in_use = get_option('tsml_types_in_use', array_keys($tsml_types[$tsml_program]));
 if (!is_array($tsml_types_in_use)) $tsml_types_in_use = array();
+
+$tsml_version = get_option('tsml_version');

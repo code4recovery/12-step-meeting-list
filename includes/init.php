@@ -20,7 +20,7 @@ function tsml_init() {
 	//meeting list page
 	add_filter('archive_template', 'tsml_archive_template');
 	function tsml_archive_template($template) {
-		if (is_post_type_archive('meetings')) {
+		if (is_post_type_archive(TSML_TYPE_MEETINGS)) {
 			$user_theme_file = get_stylesheet_directory() . '/archive-meetings.php';
 			if (file_exists($user_theme_file)) return $user_theme_file;
 			return dirname(__FILE__) . '/../templates/archive-meetings.php';
@@ -32,19 +32,19 @@ function tsml_init() {
 	add_filter('single_template', 'tsml_single_template');
 	function tsml_single_template($template) {
 		global $post;
-		if ($post->post_type == 'meetings') {
-			$user_theme_file = get_stylesheet_directory() . '/single-meetings.php';
+		if ($post->post_type == TSML_TYPE_MEETINGS) {
+			$user_theme_file = get_stylesheet_directory() . '/single-' . TSML_TYPE_MEETINGS . '.php';
 			if (file_exists($user_theme_file)) return $user_theme_file;
-			return dirname(__FILE__) . '/../templates/single-meetings.php';
-		} elseif ($post->post_type == 'locations') {
-			$user_theme_file = get_stylesheet_directory() . '/single-locations.php';
+			return dirname(__FILE__) . '/../templates/single-' . TSML_TYPE_MEETINGS . '.php';
+		} elseif ($post->post_type == TSML_TYPE_LOCATIONS) {
+			$user_theme_file = get_stylesheet_directory() . '/single-' . TSML_TYPE_LOCATIONS . '.php';
 			if (file_exists($user_theme_file)) return $user_theme_file;
-			return dirname(__FILE__) . '/../templates/single-locations.php';
+			return dirname(__FILE__) . '/../templates/single-' . TSML_TYPE_LOCATIONS . '.php';
 		}
 		return $template;
 	}
 	
-	//add theme name to body class, to target CSS at troublesome themes
+	//add theme name to body class, for per-theme CSS fixes
 	add_filter('body_class', 'tsml_theme_name');
 	function tsml_theme_name($classes) {
 		$theme = wp_get_theme();

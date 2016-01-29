@@ -17,7 +17,7 @@ function tmsl_admin_meetings_columns($defaults) {
 add_action('delete_post', 'tsml_delete_post');
 function tsml_delete_post($post_id) {
 	$post = get_post($post_id);
-	if ($post->post_type == 'meetings') tsml_delete_orphaned_locations();
+	if ($post->post_type == TSML_TYPE_MEETINGS) tsml_delete_orphaned_locations();
 }
 
 # Custom list values for meetings
@@ -73,7 +73,7 @@ if (is_admin()) {
 	add_filter('post_row_actions', 'tsml_post_row_actions', 10, 2);
 	function tsml_post_row_actions($actions) {
 		global $post;
-	    if ($post->post_type == 'meetings') {
+	    if ($post->post_type == TSML_TYPE_MEETINGS) {
 			unset($actions['inline hide-if-no-js']);
 		}
 	    return $actions;
@@ -84,7 +84,7 @@ if (is_admin()) {
 add_action('pre_get_posts', 'tsml_pre_get_posts');
 function tsml_pre_get_posts($query) {
 	global $pagenow;
-	if ($pagenow == 'edit.php' && $_GET['post_type'] == 'meetings') {
+	if ($pagenow == 'edit.php' && $_GET['post_type'] == TSML_TYPE_MEETINGS) {
 		//custom meeting search, can't use tsml_get_meetings() becuase of recursion
 		//need to use wp-query to search locations and the address field
 		//https://codex.wordpress.org/Plugin_API/Action_Reference/pre_get_posts
@@ -95,8 +95,8 @@ function tsml_pre_get_posts($query) {
 add_action('restrict_manage_posts', 'tsml_restrict_manage_posts');
 function tsml_restrict_manage_posts() {
 	global $typenow;
-
-	if ($typenow == 'meetings') {
+	
+	if ($typenow == TSML_TYPE_MEETINGS) {
 		wp_dropdown_categories(array(
 			'taxonomy' => 'region',
 			'orderby' => 'name',
@@ -104,7 +104,7 @@ function tsml_restrict_manage_posts() {
 			'hide_if_empty' => true,
 			'show_option_all' => __('Regions', '12-step-meeting-list'),
 			'name' => 'region',
-			'selected' => $_GET['region'],
+			'selected' => empty($_GET['region']) ? null : $_GET['region'],
 		));
 	}
 }

@@ -3,7 +3,7 @@
 //catch meetings without locations and save them as a draft
 add_filter('wp_insert_post_data', 'tsml_insert_post_check', '99', 2);
 function tsml_insert_post_check($post) {
-	if (($post['post_type'] == 'meetings') && empty($post['post_parent']) && ($post['post_status'] == 'publish')) {
+	if (($post['post_type'] == TSML_TYPE_MEETINGS) && empty($post['post_parent']) && ($post['post_status'] == 'publish')) {
 		$post['post_status'] = 'draft';
 	}
 	return $post;
@@ -12,14 +12,14 @@ function tsml_insert_post_check($post) {
 //handle all the metadata, location
 add_action('save_post', 'tsml_save_post');
 function tsml_save_post(){
-	global $post, $tsml_nonce;
+	global $post, $tsml_nonce, $wpdb;
 
 	//security
 	if (defined('DOING_AUTOSAVE') && DOING_AUTOSAVE) return;
 	if (!isset($_POST['tsml_nonce'])) return;
 	if (!wp_verify_nonce($_POST['tsml_nonce'], $tsml_nonce)) return;
 	if (!current_user_can('edit_post', $post->ID)) return;
-	if ($_POST['post_type'] != 'meetings') return;
+	if ($_POST['post_type'] != TSML_TYPE_MEETINGS) return;
 
 	//save ordinary meeting metadata
 	if (strlen($_POST['day'])) $_POST['day'] = intval($_POST['day']);
@@ -36,14 +36,54 @@ function tsml_save_post(){
 	}
 	
 	//save group information (set this value or get caught in a loop)
-	$_POST['post_type'] = 'tsml_group';
+	$_POST['post_type'] = TSML_TYPE_GROUPS;
+	if (empty($_POST['group'])) {
+		delete_post_meta($post->ID, 'group_id');
+	} else {
+		if ($group_id = $wpdb->get_var($wpdb->prepare('SELECT id FROM ' . $wpdb->posts . ' WHERE post_type = "' . TSML_TYPE_GROUPS . '" AND post_title = "%s"', sanitize_text_field($_POST['group'])))) {
+			wp_update_post(array(
+				'ID'			=> $group_id,
+				'post_title'	=> sanitize_text_field($_POST['group']),
+				'post_content'  => sanitize_text_field($_POST['group_notes']),
+			));
+		} else {
+			$group_id = wp_insert_post(array(
+			  	'post_type'		=> TSML_TYPE_GROUPS,
+			  	'post_status'	=> 'publish',
+				'post_title'	=> sanitize_text_field($_POST['group']),
+				'post_content'  => sanitize_text_field($_POST['group_notes']),
+			));
+		}
 	
+		//save to post
+		update_post_meta($post->ID, 'group_id', $group_id);
+
+		//contact info
+		for ($i = 1; $i < 4; $i++) {
+			if (!empty($_POST['contact_' . $i . '_name'])) {
+				update_post_meta($group_id, 'contact_' . $i . '_name', sanitize_text_field($_POST['contact_' . $i . '_name']));
+			}
+			if (!empty($_POST['contact_' . $i . '_email'])) {
+				update_post_meta($group_id, 'contact_' . $i . '_email', sanitize_text_field($_POST['contact_' . $i . '_email']));
+			}
+			if (!empty($_POST['contact_' . $i . '_phone'])) {
+				update_post_meta($group_id, 'contact_' . $i . '_phone', sanitize_text_field($_POST['contact_' . $i . '_phone']));
+			}
+		}
+		
+		//delete orphaned groups
+		if ($groups_in_use = $wpdb->get_col('SELECT meta_value FROM ' . $wpdb->postmeta . ' WHERE meta_key = "group_id"')) {
+			$orphans = get_posts('post_type=' . TSML_TYPE_GROUPS . '&numberposts=-1&exclude=' . implode(',', $groups_in_use));
+			foreach ($orphans as $orphan) wp_delete_post($orphan->ID);
+		}
+		
+	}
 	
 	//save location information (set this value or get caught in a loop)
-	$_POST['post_type'] = 'locations';
+	$_POST['post_type'] = TSML_TYPE_LOCATIONS;
 	
 	//see if address is already in the database
-	if ($locations = get_posts('post_type=locations&numberposts=1&orderby=id&order=ASC&meta_key=formatted_address&meta_value=' . sanitize_text_field($_POST['formatted_address']))) {
+	if ($locations = get_posts('post_type=' . TSML_TYPE_LOCATIONS . '&numberposts=1&orderby=id&order=ASC&meta_key=formatted_address&meta_value=' . sanitize_text_field($_POST['formatted_address']))) {
 		$location_id = $locations[0]->ID;
 		wp_update_post(array(
 			'ID'			=> $location_id,
@@ -53,7 +93,7 @@ function tsml_save_post(){
 	} else {
 		$location_id = wp_insert_post(array(
 			'post_title'	=> sanitize_text_field($_POST['location']),
-		  	'post_type'		=> 'locations',
+		  	'post_type'		=> TSML_TYPE_LOCATIONS,
 		  	'post_status'	=> 'publish',
 			'post_content'  => sanitize_text_field($_POST['location_notes']),
 		));
