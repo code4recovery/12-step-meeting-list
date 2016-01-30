@@ -70,6 +70,11 @@ jQuery(function(){
 		timeFormat: 'hh:mm tt',
 		stepMinute: 15
 	});*/
+	
+	jQuery('input#group').change(function(){
+		console.log('hi');
+		jQuery('div#group .apply_group_to_location').removeClass('hidden');
+	});
 
 	jQuery('form#post').submit(function(){
 		if (!jQuery('select#day').val()) {

@@ -152,19 +152,25 @@ function tsml_format_time($string) {
 }
 
 //function: get all locations in the system
-//used:		tsml_import(), tsml_delete_orphaned_locations(), and admin_import.php
+//used:		tsml_group_count()
+function tsml_get_all_groups($status='any') {
+	return get_posts('post_type=' . TSML_TYPE_GROUPS . '&post_status=' . $status . '&numberposts=-1');
+}
+
+//function: get all locations in the system
+//used:		tsml_location_count(), tsml_import(), tsml_delete_orphaned_locations(), and admin_import.php
 function tsml_get_all_locations($status='any') {
 	return get_posts('post_type=' . TSML_TYPE_LOCATIONS . '&post_status=' . $status . '&numberposts=-1');
 }
 
 //function: get all meetings in the system
-//used:		tsml_import(), tsml_delete_orphaned_locations(), and admin_import.php
+//used:		tsml_meeting_count(), tsml_import(), tsml_delete_orphaned_locations(), and admin_import.php
 function tsml_get_all_meetings($status='any') {
 	return get_posts('post_type=' . TSML_TYPE_MEETINGS . '&post_status=' . $status . '&numberposts=-1');
 }
 
 //function: get all regions in the system
-//used:		tsml_import() and admin_import.php
+//used:		tsml_region_count(), tsml_import() and admin_import.php
 function tsml_get_all_regions($status='any') {
 	return get_terms('region', array('fields'=>'ids', 'hide_empty'=>false));
 }
@@ -286,7 +292,14 @@ function tsml_get_meetings($arguments=array()) {
 		);
 	}
 	
-	# Get all regions with parents
+	# Get all regions with parents, need for 'sub_region' parameter below
+	$regions_with_parents = array();
+	$regions = get_categories(array('taxonomy' => 'region'));
+	foreach ($regions as $region) {
+		if ($region->parent) {
+			$regions_with_parents[$region->term_id] = $region->parent;
+		}
+	}
 	
 	$meetings = $locations = $groups = array();
 
@@ -295,6 +308,7 @@ function tsml_get_meetings($arguments=array()) {
 		'post_type' => TSML_TYPE_GROUPS,
 		'numberposts' => -1,
 	));
+	
 	foreach ($posts as $post) {
 		$groups[$post->ID] = array(
 			'group' => $post->post_title,
@@ -331,7 +345,15 @@ function tsml_get_meetings($arguments=array()) {
 		//to be implemented later
 		if (empty($tsml_custom['timezone'][0])) $tsml_custom['timezone'][0] = get_option('timezone_string');
 		
-		//dd($tsml_regions);
+		//get region/subregion
+		if (array_key_exists($tsml_custom['region'][0], $regions_with_parents)) {
+			$region = $tsml_regions[$regions_with_parents[$tsml_custom['region'][0]]];
+			$sub_region = $tsml_regions[$tsml_custom['region'][0]];
+		} else {
+			$region = $tsml_regions[$tsml_custom['region'][0]];
+			$sub_region = '';
+		}
+		
 		$locations[$post->ID] = array(
 			'address'			=> $tsml_custom['address'][0],
 			'city'				=> $tsml_custom['city'][0],
@@ -341,8 +363,8 @@ function tsml_get_meetings($arguments=array()) {
 			'latitude'			=> $tsml_custom['latitude'][0],
 			'longitude'			=> $tsml_custom['longitude'][0],
 			'region_id'			=> $tsml_custom['region'][0],
-			'region'			=> $tsml_regions[$tsml_custom['region'][0]],
-			'sub_region'		=> null,
+			'region'			=> $region,
+			'sub_region'		=> $sub_region,
 			'timezone'			=> $tsml_custom['timezone'][0],
 			'location'			=> $post->post_title,
 			'location_url'		=> get_permalink($post->ID),
@@ -350,9 +372,8 @@ function tsml_get_meetings($arguments=array()) {
 			'location_notes'	=> $post->post_content,
 			'location_updated'	=> $post->post_modified_gmt,
 		);
-		
 	}
-
+	
 	# If searching, three extra queries
 	$post_ids = array();
 	if (!empty($arguments['search'])) {
@@ -410,6 +431,9 @@ function tsml_get_meetings($arguments=array()) {
 	//die('count was ' . count($posts));
 	//dd($post_ids);
 
+	//need this later, need to supply default values to groupless meetings
+	$null_group_info = (current_user_can('edit_posts')) ? array('group' => null, 'group_notes' => null, 'contact_1_name' => null, 'contact_1_email' => null, 'contact_1_phone' => null, 'contact_2_name' => null, 'contact_2_email' => null, 'contact_2_phone' => null, 'contact_3_name' => null, 'contact_3_email' => null, 'contact_3_phone' => null, ) : array('group' => null, 'group_notes' => null);
+
 	# Make an array of the meetings
 	foreach ($posts as $post) {
 		//shouldn't ever happen, but just in case
@@ -434,6 +458,8 @@ function tsml_get_meetings($arguments=array()) {
 		# Append group info to meeting
 		if (!empty($tsml_custom['group_id'][0]) && array_key_exists($tsml_custom['group_id'][0], $groups)) {
 			$array = array_merge($array, $groups[$tsml_custom['group_id'][0]]);
+		} else {
+			$array = array_merge($array, $null_group_info);
 		}
 		
 		$meetings[] = $array;
@@ -464,7 +490,7 @@ function tsml_get_meetings($arguments=array()) {
 	}
 	$meetings = array_merge($meetings, $temp);
 
-	dd($meetings);
+	//dd($meetings);
 	
 	return $meetings;
 }
@@ -514,18 +540,17 @@ function tsml_get_meeting() {
 	return $meeting;
 }
 
-//function: load only the currently-used regions (and their parents) into a flat array
-//used:		tsml_custom_post_types(), tsml_regions_api()
+//function: load all regions into a flat array
+//used:		tsml_custom_post_types(), tsml_regions_api() (deprecated)
 function tsml_get_regions() {
 	$tsml_regions = array();
 	$region_terms = get_terms('region', array('hide_empty' => false));
 	foreach ($region_terms as $region) $tsml_regions[$region->term_id] = $region->name;
-	//dd($tsml_regions);
 	return $tsml_regions;
 }
 
 //api ajax function
-//used by theme, web app
+//used by theme, web app, mobile app
 add_action('wp_ajax_meetings', 'tsml_meetings_api');
 add_action('wp_ajax_nopriv_meetings', 'tsml_meetings_api');
 
@@ -535,13 +560,13 @@ function tsml_meetings_api() {
 	wp_send_json(tsml_get_meetings($_POST)); //tsml_get_meetings sanitizes input
 };
 
-//new api function
+/*new api function
 //more information at https://github.com/intergroup/api
 add_action('wp_ajax_api', 'tsml_api');
 add_action('wp_ajax_nopriv_api', 'tsml_api');
 
 function tsml_api() {
-	global $tsml_program, $tsml_version;
+	global $tsml_program;
 	header('Access-Control-Allow-Origin: *');
 	$timezone = get_bloginfo('timezone');
 	
@@ -588,11 +613,11 @@ function tsml_api() {
 		'program' => strtoupper($tsml_program),
 		'api_version' => '1.0',
 		'software' => '12 Step Meeting List',
-		'software_version' => $tsml_version,
+		'software_version' => TSML_VERSION,
 		'locations' => array_values($locations),
 	);
 	wp_send_json($array);
-}
+}*/
 
 //csv function
 //useful for exporting data
@@ -660,19 +685,17 @@ function tsml_meetings_csv() {
 				$line[] = $tsml_days[$meeting[$column]];
 			} elseif ($column == 'types') {
 				$types = $meeting[$column];
-				foreach ($types as &$type) $type = @$tsml_types[$tsml_program][$type];
+				foreach ($types as &$type) $type = $tsml_types[$tsml_program][trim($type)];
 				sort($types);
 				$line[] = $escape . implode(', ', $types) . $escape;
 			} elseif ($column == 'notes') {
 				$line[] = $escape . strip_tags($meeting[$column]) . $escape;
 			} else {
-				$line[] = $escape . str_replace($escape, '', @$meeting[$column]) . $escape;
+				$line[] = $escape . str_replace($escape, '', $meeting[$column]) . $escape;
 			}
 		}
 		$return .= implode($delimiter, $line) . PHP_EOL;
 	}
-
-	//dd($return);
 
 	//headers to trigger file download
 	header('Cache-Control: maxage=1');
@@ -686,7 +709,20 @@ function tsml_meetings_csv() {
 	wp_die($return);
 };
 
-//todo: consider whether we really need this
+//get all email addresses for europe
+//linked from admin_import.php
+add_action('wp_ajax_contacts', 'tsml_regions_contacts');
+
+function tsml_regions_contacts() {
+	global $wpdb;
+	$group_ids = $wpdb->get_col('SELECT id FROM ' . $wpdb->posts . ' WHERE post_type = "' . TSML_TYPE_GROUPS . '"');
+	$emails = $wpdb->get_col('SELECT meta_value FROM ' . $wpdb->postmeta . ' WHERE meta_key IN ("contact_1_email", "contact_2_email", "contact_3_email") AND post_id IN (' . implode(',', $group_ids) . ')');
+	$emails = array_unique(array_filter($emails));
+	sort($emails);
+	die(implode(',', $emails));
+}
+
+/*todo: consider whether we really need this
 add_action('wp_ajax_regions', 'tsml_regions_api');
 add_action('wp_ajax_nopriv_regions', 'tsml_regions_api');
 
@@ -698,7 +734,7 @@ function tsml_regions_api() {
 	}
 	header('Access-Control-Allow-Origin: *');
 	wp_send_json($output);
-};
+};*/
 
 //sanitize and import meeting data
 //used by admin_import.php
@@ -1164,67 +1200,68 @@ function tsml_alert_messages() {
 	}
 }
 
-//run any outstanding upgrades, called in init.php
-//depends on variable set in 12-step-meeting-list.php
+//run any outstanding database upgrades, called in init.php
+//depends on constant set in 12-step-meeting-list.php
 function tsml_upgrades() {
-	global $tsml_version, $wpdb;
+	global $wpdb;
 
-	if ($tsml_version != TSML_VERSION) {
-		if (version_compare($tsml_version, '1.6.2', '<')) {
-			//this will get executed when you first install the plugin, as well as when upgrading to 1.6.2
-			//fix any lingering addresses that end in ", USA" (two letter country codes only)
-			$wpdb->get_results('UPDATE ' . $wpdb->postmeta . ' SET meta_value = LEFT(meta_value, LENGTH(meta_value) - 1) WHERE meta_key = "formatted_address" AND meta_value LIKE "%, USA"');
-		}
+	$tsml_version = get_option('tsml_version');
+
+	if ($tsml_version == TSML_VERSION) return;
 	
-		if (version_compare($tsml_version, '1.8.6', '<')) {
-			//this will get executed when you first install the plugin, as well as when upgrading to 1.8.6
-			//populate new groups object with any locations that have contact information
-			$locations = array();
-			$all_locations = tsml_get_all_locations();
-			foreach ($all_locations as $location) {
-				$location_custom = get_post_meta($location->ID);
-				if (empty($location_custom['contact_1_name'][0]) &&
-					empty($location_custom['contact_1_email'][0]) &&
-					empty($location_custom['contact_1_phone'][0]) &&
-					empty($location_custom['contact_2_name'][0]) &&
-					empty($location_custom['contact_2_email'][0]) &&
-					empty($location_custom['contact_2_phone'][0]) &&
-					empty($location_custom['contact_3_name'][0]) &&
-					empty($location_custom['contact_3_email'][0]) &&
-					empty($location_custom['contact_3_phone'][0])) continue;
+	if (version_compare($tsml_version, '1.6.2', '<')) {
+		//this will get executed when you first install the plugin, as well as when upgrading to 1.6.2
+		//fix any lingering addresses that end in ", USA" (two letter country codes only)
+		$wpdb->get_results('UPDATE ' . $wpdb->postmeta . ' SET meta_value = LEFT(meta_value, LENGTH(meta_value) - 1) WHERE meta_key = "formatted_address" AND meta_value LIKE "%, USA"');
+	}
 
-				//handle duplicate location names, hopefully won't come up too much 
-				if (array_key_exists($location->post_title, $locations)) {
-					$location->post_title . ' #' . $location->ID;
-				}
-				
-				//create group
-				$group_id = wp_insert_post(array(
-				  	'post_type'		=> TSML_TYPE_GROUPS,
-				  	'post_status'	=> 'publish',
-					'post_title'	=> $location->post_title,
-				));
-				
-				//set contacts for group
-				update_post_meta($group_id, 'contact_1_name', $location_custom['contact_1_name'][0]);
-				update_post_meta($group_id, 'contact_1_email', $location_custom['contact_1_email'][0]);
-				update_post_meta($group_id, 'contact_1_phone', $location_custom['contact_1_phone'][0]);
-				update_post_meta($group_id, 'contact_2_name', $location_custom['contact_2_name'][0]);
-				update_post_meta($group_id, 'contact_2_email', $location_custom['contact_2_email'][0]);
-				update_post_meta($group_id, 'contact_2_phone', $location_custom['contact_2_phone'][0]);
-				update_post_meta($group_id, 'contact_3_name', $location_custom['contact_3_name'][0]);
-				update_post_meta($group_id, 'contact_3_email', $location_custom['contact_3_email'][0]);
-				update_post_meta($group_id, 'contact_3_phone', $location_custom['contact_3_phone'][0]);
-				
-				//tag all the meetings at the locaiton with the group_id
-				$meetings = tsml_get_meetings(array('location_id'=>$location->ID));
-				foreach ($meetings as $meeting) update_post_meta($meeting['id'], 'group_id', $group_id);
+	if (version_compare($tsml_version, '1.8.6', '<')) {
+		//this will get executed when you first install the plugin, as well as when upgrading to 1.8.6
+		//populate new groups object with any locations that have contact information
+		$locations = array();
+		$all_locations = tsml_get_all_locations();
+		foreach ($all_locations as $location) {
+			$location_custom = get_post_meta($location->ID);
+			if (empty($location_custom['contact_1_name'][0]) &&
+				empty($location_custom['contact_1_email'][0]) &&
+				empty($location_custom['contact_1_phone'][0]) &&
+				empty($location_custom['contact_2_name'][0]) &&
+				empty($location_custom['contact_2_email'][0]) &&
+				empty($location_custom['contact_2_phone'][0]) &&
+				empty($location_custom['contact_3_name'][0]) &&
+				empty($location_custom['contact_3_email'][0]) &&
+				empty($location_custom['contact_3_phone'][0])) continue;
 
+			//handle duplicate location names, hopefully won't come up too much 
+			if (array_key_exists($location->post_title, $locations)) {
+				$location->post_title . ' #' . $location->ID;
 			}
+			
+			//create group
+			$group_id = wp_insert_post(array(
+			  	'post_type'		=> TSML_TYPE_GROUPS,
+			  	'post_status'	=> 'publish',
+				'post_title'	=> $location->post_title,
+			));
+			
+			//set contacts for group
+			update_post_meta($group_id, 'contact_1_name', $location_custom['contact_1_name'][0]);
+			update_post_meta($group_id, 'contact_1_email', $location_custom['contact_1_email'][0]);
+			update_post_meta($group_id, 'contact_1_phone', $location_custom['contact_1_phone'][0]);
+			update_post_meta($group_id, 'contact_2_name', $location_custom['contact_2_name'][0]);
+			update_post_meta($group_id, 'contact_2_email', $location_custom['contact_2_email'][0]);
+			update_post_meta($group_id, 'contact_2_phone', $location_custom['contact_2_phone'][0]);
+			update_post_meta($group_id, 'contact_3_name', $location_custom['contact_3_name'][0]);
+			update_post_meta($group_id, 'contact_3_email', $location_custom['contact_3_email'][0]);
+			update_post_meta($group_id, 'contact_3_phone', $location_custom['contact_3_phone'][0]);
+			
+			//tag all the meetings at the locaiton with the group_id
+			$meetings = tsml_get_meetings(array('location_id'=>$location->ID));
+			foreach ($meetings as $meeting) update_post_meta($meeting['id'], 'group_id', $group_id);
+
 		}
 	
 		update_option('tsml_version', TSML_VERSION);
-		$tsml_version = TSML_VERSION;
 	}
 }
 
@@ -1245,6 +1282,12 @@ function tsml_region_count() {
 	return number_format(count(tsml_get_all_regions()));
 }
 add_shortcode('tsml_region_count', 'tsml_region_count');
+
+//function for shortcode
+function tsml_group_count() {
+	return number_format(count(tsml_get_all_groups()));
+}
+add_shortcode('tsml_group_count', 'tsml_group_count');
 
 //helper for debugging
 function dd($array) {

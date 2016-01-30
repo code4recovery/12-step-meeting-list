@@ -40,7 +40,17 @@
 		}
 		.tt-hint { color: #999; }
 		.tt-dropdown-menu { display: none !important; }
-
+	}
+	
+	&.checkbox {
+		padding-left: 15%;
+		line-height: 1;
+		label { 
+			width: auto;
+			margin: 0; 
+			font-size: 13px;
+			input { margin: 1px 7px 0 0; }
+		}
 	}
 
 	textarea { height: 140px; }

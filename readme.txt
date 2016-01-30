@@ -67,7 +67,7 @@ Napa, CA 94558, US."
 == Frequently Asked Questions ==
 
 = My meeting type isn't listed! =
-If it's a broadly applicable meeting type, please [contact us](mailto:web@aasanjose.org) so we can include it for you. 
+If it's a broadly-applicable meeting type, please [contact us](mailto:web@aasanjose.org) so we can include it for you. 
 We want to maintain consistency for the [mobile apps](https://meetingguide.org/), so not all proposals are included.
 
 If you have access to your functions.php, you may add additional meeting types for your area. Simply adapt the following
@@ -77,11 +77,15 @@ example to your purposes:
 		'ASBI' => 'As Bill Sees It',
 	));
 	
-Be careful with the codes ("ASBI" in the above example) as this gives you the ability to replace existing types. 
-Note that custom meeting types will not be imported into the mobile app.
+Please note a few things about custom types:
 
-= Are there translations to other languages? =
-Currently no, but if someone will volunteer to help with the translating, we will add it.
+1. Be careful with the codes ("ASBI" in the above example) as this gives you the ability to replace existing types. 
+1. Note that custom meeting types will not be imported into the mobile app.
+1. They are for searching. If you can't imagine yourself searching for a meeting this way, then
+it's probably not a type you need. Have you ever searched for a 90-minute-meeting? If not, then it's
+probably information that better belongs in the meeting notes.
+1. Don't add a type for the default, eg 'Hour Long Meeting' or 'Non-Smoking.' If you do that, then you
+have to be careful about tagging every single meeting in order to make the data complete.
 
 = The dropdowns aren't opening! =
 Most likely, this is because bootstrap is being included twice. You should add the following to your theme 
@@ -104,6 +108,13 @@ theme from the Theme Directory, you may be better off creating a
 archive-meetings.php file controls the meeting list page, single-meetings.php controls the meetings 
 detail, and single-locations.php controls the location detail.
 
+= Are there any shortcodes? =
+Yes, you can use `[tsml_meeting_count]`, `[tsml_location_count]`, and `[tsml_region_count]` to display human-formatted
+counts of your entities in your posts. "For example, our area currently comprises [tsml_meeting_count] meetings."
+
+= Are there translations to other languages? =
+Currently no, but if someone will volunteer to help with the translating, we will add it.
+
 = I entered contact information into the meeting edit page but don't see it displayed on the site. =
 That's right, we don't display that information by default for the sake of anonymity. To display it in your 
 theme, you should follow the instructions above for overriding the meeting detail and location detail pages 
@@ -113,8 +124,6 @@ and then drop some or all of these tags in your PHP:
 	<?php echo $meeting->contact_1_email?>
 	<?php echo $meeting->contact_1_phone?>
 	
-These tags are for the meetings page, substitute `$location` for `$meeting` if you're on the locations page.
-
 == Screenshots ==
 
 1. Edit meeting
@@ -126,11 +135,14 @@ These tags are for the meetings page, substitute `$location` for `$meeting` if y
 == Changelog ==
 
 = 1.8.6 =
-* New group object! Location contacts move over to it (Greensboro and New York)
-* Refactored javascript on public page, hopefully speeding up large meeting lists (Philadelphia and New York)
+* New optional group object! Location contacts move over to it (Greensboro and New York)
+* Refactored javascript on public page to speed up large meeting lists (Philadelphia and New York)
 * Improved method of linking to assets, fixing issue with Twenty Fourteen (Oahu)
 * Users can only select one type at a time now, for security and simplicity (Austin)
+* Get group contacts' email addresses quickly (Europe)
+* Import/export improvements (Maine)
 * Correcting a problem with the database upgrader
+* Adding some new FAQs
 
 = 1.8.5 =
 * Importer no longer verifies Google's SSL certificate for Corpus Christi
@@ -149,17 +161,3 @@ These tags are for the meetings page, substitute `$location` for `$meeting` if y
 
 = 1.8 =
 * Removing debug statement
-
-= 1.7.9 =
-* Showing 'empty' regions per Europe
-
-= 1.7.8 =
-* Importer debugs
-
-= 1.7.7 =
-* Better support for empty regions
-
-= 1.7.6 =
-* Ability to set custom meeting types (see FAQ)
-* Importer now strips line breaks from non-notes fields
-* Importer now imports location notes

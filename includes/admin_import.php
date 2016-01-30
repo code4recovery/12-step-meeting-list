@@ -42,6 +42,8 @@ function tsml_admin_menu() {
 									<li><strong>Location</strong> is the name of the location, and is optional. Generally it's the group or building name. If it's missing, the address will be used. In the event that there are multiple location names for the same address, the first location name will be used.</li>
 									<li><strong>City</strong>, <strong>State</strong>, and <strong>Country</strong> are optional, but might be useful if your addresses sound ambiguous to Google.</li>
 									<li><strong>Notes</strong> are freeform notes that are specific to the meeting. For example, "last Saturday is birthday night."</li>
+									<li><strong>Region</strong> is user-defined and can be anything. Often this is a small municipality or neighborhood. Since these go in a dropdown, ideally you would have 10 to 20 regions, although it's ok to be over or under.</li>
+									<li><strong>Sub Region</strong> makes the Region hierarchical; in San Jose we have sub regions for East San Jose, West San Jose, etc. New York City might have Manhattan be a Region, and Greenwich Village be a Sub Region.</li>
 									<li><strong>Location Notes</strong> are freeform notes that will show up on every meeting that this location. For example, "Enter from the side."</li>
 									<li><strong>Group</strong> is a way of grouping contacts. Meetings with the name Group name will be grouped together and share contact information.</li>
 									<li><strong>Group Notes</strong> is for stuff like a short group history, or when the business meeting meets.</li>
@@ -91,19 +93,20 @@ function tsml_admin_menu() {
 								<p>You can also download your meetings in <a href="<?php echo admin_url('admin-ajax.php')?>?action=csv">CSV format</a>.</p>
 								<p style="margin-bottom:0;">You have:</p>
 								<ul class="ul-disc" style="margin-top:4px">
-									<li style="margin: 0 0 2px;"><?php echo count(tsml_get_all_meetings())?> meetings</li>
-									<li style="margin: 0 0 2px;"><?php echo count(tsml_get_all_locations())?> locations</li>
-									<li style="margin: 0 0 2px;"><?php echo count(tsml_get_all_regions())?> regions</li>
+									<li style="margin: 0 0 2px;"><?php echo do_shortcode('[tsml_meeting_count]')?> meetings</li>
+									<li style="margin: 0 0 2px;"><?php echo do_shortcode('[tsml_location_count]')?> locations</li>
+									<li style="margin: 0 0 2px;"><?php echo do_shortcode('[tsml_region_count]')?> regions</li>
+									<li style="margin: 0 0 2px;"><?php echo do_shortcode('[tsml_group_count]')?> groups</li>
 								</ul>
+								Want to send a mass email to your group contacts? <a href="<?php echo admin_url('admin-ajax.php')?>?action=contacts">Click here</a> to see their email addresses.
 							</div>
 						</div>
 						<?php if ($tsml_program == 'aa') {?>
 						<div class="postbox">
 							<div class="inside">
 								<h3>Try the Apps!</h3>
-								<p>Want to have your meetings listed in a simple, clean mobile app? Several cities in the US are currently participating,
-									but we always want more! No extra effort is required, simply continue to update your meeting information like you 
-									currently do, and the information flows down to app users.
+								<p>Want to have your meetings listed in a simple, clean mobile app? <a href="https://meetingguide.org/" target="_blank">Several areas are currently participating</a>,
+									but we always want more! No extra effort is required; simply continue to update your meetings here and the updates will flow down to app users.
 								<p style="margin-left:-5px;margin-right:-5px;overflow: auto;">
 									<a href="https://itunes.apple.com/us/app/meeting-guide/id1042822181" style="padding:0 5px;width:50%;float:left;display:block;box-sizing:border-box;">
 										<img src="<?php echo plugin_dir_url(__FILE__)?>../img/apple.svg" style="width:100%;height:auto;">

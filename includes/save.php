@@ -35,50 +35,6 @@ function tsml_save_post(){
 		return;
 	}
 	
-	//save group information (set this value or get caught in a loop)
-	$_POST['post_type'] = TSML_TYPE_GROUPS;
-	if (empty($_POST['group'])) {
-		delete_post_meta($post->ID, 'group_id');
-	} else {
-		if ($group_id = $wpdb->get_var($wpdb->prepare('SELECT id FROM ' . $wpdb->posts . ' WHERE post_type = "' . TSML_TYPE_GROUPS . '" AND post_title = "%s"', sanitize_text_field($_POST['group'])))) {
-			wp_update_post(array(
-				'ID'			=> $group_id,
-				'post_title'	=> sanitize_text_field($_POST['group']),
-				'post_content'  => sanitize_text_field($_POST['group_notes']),
-			));
-		} else {
-			$group_id = wp_insert_post(array(
-			  	'post_type'		=> TSML_TYPE_GROUPS,
-			  	'post_status'	=> 'publish',
-				'post_title'	=> sanitize_text_field($_POST['group']),
-				'post_content'  => sanitize_text_field($_POST['group_notes']),
-			));
-		}
-	
-		//save to post
-		update_post_meta($post->ID, 'group_id', $group_id);
-
-		//contact info
-		for ($i = 1; $i < 4; $i++) {
-			if (!empty($_POST['contact_' . $i . '_name'])) {
-				update_post_meta($group_id, 'contact_' . $i . '_name', sanitize_text_field($_POST['contact_' . $i . '_name']));
-			}
-			if (!empty($_POST['contact_' . $i . '_email'])) {
-				update_post_meta($group_id, 'contact_' . $i . '_email', sanitize_text_field($_POST['contact_' . $i . '_email']));
-			}
-			if (!empty($_POST['contact_' . $i . '_phone'])) {
-				update_post_meta($group_id, 'contact_' . $i . '_phone', sanitize_text_field($_POST['contact_' . $i . '_phone']));
-			}
-		}
-		
-		//delete orphaned groups
-		if ($groups_in_use = $wpdb->get_col('SELECT meta_value FROM ' . $wpdb->postmeta . ' WHERE meta_key = "group_id"')) {
-			$orphans = get_posts('post_type=' . TSML_TYPE_GROUPS . '&numberposts=-1&exclude=' . implode(',', $groups_in_use));
-			foreach ($orphans as $orphan) wp_delete_post($orphan->ID);
-		}
-		
-	}
-	
 	//save location information (set this value or get caught in a loop)
 	$_POST['post_type'] = TSML_TYPE_LOCATIONS;
 	
@@ -110,19 +66,6 @@ function tsml_save_post(){
 	update_post_meta($location_id, 'longitude',			floatval($_POST['longitude']));
 	update_post_meta($location_id, 'region',			intval($_POST['region']));
 
-	//contact info
-	for ($i = 1; $i < 4; $i++) {
-		if (!empty($_POST['location_contact_' . $i . '_name'])) {
-			update_post_meta($location_id, 'contact_' . $i . '_name', sanitize_text_field($_POST['location_contact_' . $i . '_name']));
-		}
-		if (!empty($_POST['location_contact_' . $i . '_email'])) {
-			update_post_meta($location_id, 'contact_' . $i . '_email', sanitize_text_field($_POST['location_contact_' . $i . '_email']));
-		}
-		if (!empty($_POST['location_contact_' . $i . '_phone'])) {
-			update_post_meta($location_id, 'contact_' . $i . '_phone', sanitize_text_field($_POST['location_contact_' . $i . '_phone']));
-		}
-	}
-
 	//update region caches for other meetings at this location
 	$meetings = tsml_get_meetings(array('location_id' => $location_id));
 	foreach ($meetings as $meeting) update_post_meta($meeting['id'], 'region', intval($_POST['region'])); 	
@@ -134,8 +77,60 @@ function tsml_save_post(){
 		'post_status'	=> sanitize_text_field($_POST['post_status']),
 	));
 
-	//clean up orphans
+	//deleted orphaned locations
 	tsml_delete_orphaned_locations();
+	
+	//save group information (set this value or get caught in a loop)
+	$_POST['post_type'] = TSML_TYPE_GROUPS;
+	
+	if (empty($_POST['group'])) {
+		delete_post_meta($post->ID, 'group_id');
+		if (!empty($_POST['apply_group_to_location'])) {
+			foreach ($meetings as $meeting) delete_post_meta($meeting['id'], 'group_id'); 	
+		}
+	} else {
+		if ($group_id = $wpdb->get_var($wpdb->prepare('SELECT id FROM ' . $wpdb->posts . ' WHERE post_type = "' . TSML_TYPE_GROUPS . '" AND post_title = "%s"', sanitize_text_field($_POST['group'])))) {
+			wp_update_post(array(
+				'ID'			=> $group_id,
+				'post_title'	=> sanitize_text_field($_POST['group']),
+				'post_content'  => sanitize_text_field($_POST['group_notes']),
+			));
+		} else {
+			$group_id = wp_insert_post(array(
+			  	'post_type'		=> TSML_TYPE_GROUPS,
+			  	'post_status'	=> 'publish',
+				'post_title'	=> sanitize_text_field($_POST['group']),
+				'post_content'  => sanitize_text_field($_POST['group_notes']),
+			));
+		}
+	
+		//save to meetings(s)
+		if (empty($_POST['apply_group_to_location'])) {
+			update_post_meta($post->ID, 'group_id', $group_id);
+		} else {
+			foreach ($meetings as $meeting) update_post_meta($meeting['id'], 'group_id', $group_id); 	
+		}
+
+		//contact info
+		for ($i = 1; $i < 4; $i++) {
+			if (!empty($_POST['contact_' . $i . '_name'])) {
+				update_post_meta($group_id, 'contact_' . $i . '_name', sanitize_text_field($_POST['contact_' . $i . '_name']));
+			}
+			if (!empty($_POST['contact_' . $i . '_email'])) {
+				update_post_meta($group_id, 'contact_' . $i . '_email', sanitize_text_field($_POST['contact_' . $i . '_email']));
+			}
+			if (!empty($_POST['contact_' . $i . '_phone'])) {
+				update_post_meta($group_id, 'contact_' . $i . '_phone', sanitize_text_field($_POST['contact_' . $i . '_phone']));
+			}
+		}
+		
+		//delete orphaned groups
+		if ($groups_in_use = $wpdb->get_col('SELECT meta_value FROM ' . $wpdb->postmeta . ' WHERE meta_key = "group_id"')) {
+			$orphans = get_posts('post_type=' . TSML_TYPE_GROUPS . '&numberposts=-1&exclude=' . implode(',', $groups_in_use));
+			foreach ($orphans as $orphan) wp_delete_post($orphan->ID);
+		}
+		
+	}
 	
 	//update types in use
 	tsml_update_types_in_use();

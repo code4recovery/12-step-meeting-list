@@ -233,5 +233,3 @@ $tsml_types = array(
 
 $tsml_types_in_use = get_option('tsml_types_in_use', array_keys($tsml_types[$tsml_program]));
 if (!is_array($tsml_types_in_use)) $tsml_types_in_use = array();
-
-$tsml_version = get_option('tsml_version');

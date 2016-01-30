@@ -215,6 +215,9 @@ function tsml_admin_init() {
 			<label for="group">Group</label>
 			<input type="text" name="group" id="group" value="<?php echo @$group->post_title?>">
 		</div>
+		<div class="meta_form_row checkbox apply_group_to_location hidden">
+			<label><input type="checkbox" name="apply_group_to_location"> Apply this group to all meetings at this location</label>
+		</div>
 		<?php if (count($meetings) > 1) {?>
 		<div class="meta_form_row">
 			<label>Meetings</label>

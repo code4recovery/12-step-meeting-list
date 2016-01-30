@@ -53,9 +53,10 @@ function tsml_init() {
 	}
 	
 	//add api identification tag to header. more info: https://github.com/intergroup/api
+	//not ready yet, add version number instead
 	add_action('wp_head', 'tsml_head');
 	function tsml_head() {
-		echo '<meta name="12_step_meetings_api" content="' . admin_url('admin-ajax.php') . '?action=api">' . PHP_EOL;
+		echo '<meta name="12_step_meeting_list" content="' . TSML_VERSION . '">' . PHP_EOL;
+		//echo '<meta name="12_step_meetings_api" content="' . admin_url('admin-ajax.php') . '?action=api">' . PHP_EOL;
 	}
-
 }
