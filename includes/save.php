@@ -15,6 +15,7 @@ function tsml_save_post(){
 	global $post, $tsml_nonce, $wpdb;
 
 	//security
+	if (!isset($post->ID)) return;
 	if (defined('DOING_AUTOSAVE') && DOING_AUTOSAVE) return;
 	if (!isset($_POST['tsml_nonce'])) return;
 	if (!wp_verify_nonce($_POST['tsml_nonce'], $tsml_nonce)) return;
@@ -112,24 +113,22 @@ function tsml_save_post(){
 		}
 
 		//contact info
-		for ($i = 1; $i < 4; $i++) {
-			if (!empty($_POST['contact_' . $i . '_name'])) {
-				update_post_meta($group_id, 'contact_' . $i . '_name', sanitize_text_field($_POST['contact_' . $i . '_name']));
-			}
-			if (!empty($_POST['contact_' . $i . '_email'])) {
-				update_post_meta($group_id, 'contact_' . $i . '_email', sanitize_text_field($_POST['contact_' . $i . '_email']));
-			}
-			if (!empty($_POST['contact_' . $i . '_phone'])) {
-				update_post_meta($group_id, 'contact_' . $i . '_phone', sanitize_text_field($_POST['contact_' . $i . '_phone']));
+		for ($i = 1; $i <= GROUP_CONTACT_COUNT; $i++) {
+			foreach (array('name', 'email', 'phone') as $field) {
+				if (empty($_POST['contact_' . $i . '_' . $field])) {
+					delete_post_meta($group_id, 'contact_' . $i . '_' . $field); 
+				} else {
+					update_post_meta($group_id, 'contact_' . $i . '_' . $field, sanitize_text_field($_POST['contact_' . $i . '_' . $field]));
+				}
 			}
 		}
 		
-		//delete orphaned groups
-		if ($groups_in_use = $wpdb->get_col('SELECT meta_value FROM ' . $wpdb->postmeta . ' WHERE meta_key = "group_id"')) {
-			$orphans = get_posts('post_type=' . TSML_TYPE_GROUPS . '&numberposts=-1&exclude=' . implode(',', $groups_in_use));
-			foreach ($orphans as $orphan) wp_delete_post($orphan->ID);
-		}
-		
+	}
+
+	//delete orphaned groups
+	if ($groups_in_use = $wpdb->get_col('SELECT meta_value FROM ' . $wpdb->postmeta . ' WHERE meta_key = "group_id"')) {
+		$orphans = get_posts('post_type=' . TSML_TYPE_GROUPS . '&numberposts=-1&exclude=' . implode(',', $groups_in_use));
+		foreach ($orphans as $orphan) wp_delete_post($orphan->ID);
 	}
 	
 	//update types in use

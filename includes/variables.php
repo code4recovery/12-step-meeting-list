@@ -8,6 +8,7 @@ for updates / questions, please contact web@aasanjose.org
 if (!defined('TSML_TYPE_MEETINGS'))  define('TSML_TYPE_MEETINGS',  'meetings');
 if (!defined('TSML_TYPE_LOCATIONS')) define('TSML_TYPE_LOCATIONS', 'locations');
 if (!defined('TSML_TYPE_GROUPS'))    define('TSML_TYPE_GROUPS',    'tsml_group');
+if (!defined('GROUP_CONTACT_COUNT')) define('GROUP_CONTACT_COUNT', 3); //number of contacts per group
 
 $tsml_alerts = array();
 

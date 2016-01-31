@@ -100,7 +100,7 @@ function tsml_admin_init() {
 
 		//get post metadata
 		$meeting_custom 	= get_post_custom($post->ID);
-		$meeting_custom['types'] = unserialize($meeting_custom['types'][0]);
+		$meeting_custom['types'] = empty($meeting_custom['types']) ? array() : unserialize($meeting_custom['types'][0]);
 		if (!is_array($meeting_custom['types'])) $meeting_custom['types'] = array();
 		
 		//nonce field
@@ -110,7 +110,7 @@ function tsml_admin_init() {
 			<label for="day">Day</label>
 			<select name="day" id="day">
 				<?php foreach ($tsml_days as $key=>$day) {?>
-				<option value="<?php echo $key?>"<?php if (strcmp($meeting_custom['day'][0], $key) == 0) {?> selected<?php }?>><?php echo $day?></option>
+				<option value="<?php echo $key?>"<?php if (strcmp(@$meeting_custom['day'][0], $key) == 0) {?> selected<?php }?>><?php echo $day?></option>
 				<?php }?>
 				<option disabled>──────</option>
 				<option value=""<?php if (!strlen($meeting_custom['day'][0])) {?> selected<?php }?>>Appointment</option>
@@ -118,7 +118,7 @@ function tsml_admin_init() {
 		</div>
 		<div class="meta_form_row">
 			<label for="time">Time</label>
-			<input type="time" name="time" id="time" value="<?php echo $meeting_custom['time'][0]?>"<?php if (!strlen($meeting_custom['day'][0])) {?> disabled<?php }?>>
+			<input type="time" name="time" id="time" value="<?php echo @$meeting_custom['time'][0]?>"<?php if (!strlen(@$meeting_custom['day'][0])) {?> disabled<?php }?>>
 		</div>
 		<div class="meta_form_row">
 			<label for="tags">Types</label>
@@ -151,18 +151,18 @@ function tsml_admin_init() {
 		?>
 		<div class="meta_form_row typeahead">
 			<label for="location">Location</label>
-			<input type="text" name="location" id="location" value="<?php echo $location->post_title?>">
+			<input type="text" name="location" id="location" value="<?php echo @$location->post_title?>">
 		</div>
 		<div class="meta_form_row">
 			<label for="formatted_address">Address</label>
-			<input type="text" name="formatted_address" id="formatted_address" value="<?php echo $location_custom['formatted_address'][0]?>">
-			<input type="hidden" name="address" id="address" value="<?php echo $location_custom['address'][0]?>">
-			<input type="hidden" name="city" id="city" value="<?php echo $location_custom['city'][0]?>">
-			<input type="hidden" name="state" id="state" value="<?php echo $location_custom['state'][0]?>">
-			<input type="hidden" name="postal_code" id="postal_code" value="<?php echo $location_custom['postal_code'][0]?>">
-			<input type="hidden" name="country" id="country" value="<?php echo $location_custom['country'][0]?>">
-			<input type="hidden" name="latitude" id="latitude" value="<?php echo $location_custom['latitude'][0]?>">
-			<input type="hidden" name="longitude" id="longitude" value="<?php echo $location_custom['longitude'][0]?>">
+			<input type="text" name="formatted_address" id="formatted_address" value="<?php echo @$location_custom['formatted_address'][0]?>">
+			<input type="hidden" name="address" id="address" value="<?php echo @$location_custom['address'][0]?>">
+			<input type="hidden" name="city" id="city" value="<?php echo @$location_custom['city'][0]?>">
+			<input type="hidden" name="state" id="state" value="<?php echo @$location_custom['state'][0]?>">
+			<input type="hidden" name="postal_code" id="postal_code" value="<?php echo @$location_custom['postal_code'][0]?>">
+			<input type="hidden" name="country" id="country" value="<?php echo @$location_custom['country'][0]?>">
+			<input type="hidden" name="latitude" id="latitude" value="<?php echo @$location_custom['latitude'][0]?>">
+			<input type="hidden" name="longitude" id="longitude" value="<?php echo @$location_custom['longitude'][0]?>">
 		</div>
 		<div class="meta_form_row">
 			<label for="region">Region</label>
@@ -172,7 +172,7 @@ function tsml_admin_init() {
 				'hierarchical' => true,
 				'hide_empty' => false,
 				'orderby' => 'name',
-				'selected' => $location_custom['region'][0],
+				'selected' => @$location_custom['region'][0],
 			))?>
 		</div>
 		<div class="meta_form_row">
@@ -193,7 +193,7 @@ function tsml_admin_init() {
 		<?php }?>
 		<div class="meta_form_row">
 			<label>Notes</label>
-			<textarea name="location_notes" placeholder="eg. Around back, basement, ring buzzer"><?php echo $location->post_content?></textarea>
+			<textarea name="location_notes" placeholder="eg. Around back, basement, ring buzzer"><?php echo @$location->post_content?></textarea>
 		</div>
 		<?php
 	}
@@ -237,7 +237,7 @@ function tsml_admin_init() {
 		<div class="meta_form_row" style="clear:left;">
 			<label>Contacts</label>
 			<div class="container">
-				<?php for ($i = 1; $i < 4; $i++) {?>
+				<?php for ($i = 1; $i <= GROUP_CONTACT_COUNT; $i++) {?>
 				<div class="row">
 					<div><input type="text" name="contact_<?php echo $i?>_name" placeholder="Name" value="<?php echo @$group_custom['contact_' . $i . '_name'][0]?>"></div>
 					<div><input type="text" name="contact_<?php echo $i?>_email" placeholder="Email" value="<?php echo @$group_custom['contact_' . $i . '_email'][0]?>"></div>

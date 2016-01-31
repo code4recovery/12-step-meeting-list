@@ -135,12 +135,13 @@ and then drop some or all of these tags in your PHP:
 == Changelog ==
 
 = 1.8.6 =
-* New optional group object! Location contacts move over to it (Greensboro and New York)
-* Refactored javascript on public page to speed up large meeting lists (Philadelphia and New York)
+* New optional group object! Location contacts move over to it (Greensboro, New York and Europe)
+* Refactored javascript on public page to speed up large meeting lists
 * Improved method of linking to assets, fixing issue with Twenty Fourteen (Oahu)
 * Users can only select one type at a time now, for security and simplicity (Austin)
 * Get group contacts' email addresses quickly (Europe)
-* Import/export improvements (Maine)
+* Search for regions (Europe)
+* Import sub regions (Maine)
 * Correcting a problem with the database upgrader
 * Adding some new FAQs
 

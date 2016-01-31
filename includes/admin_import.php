@@ -60,7 +60,7 @@ function tsml_admin_menu() {
 									<?php wp_nonce_field($tsml_nonce, 'tsml_nonce', false)?>
 									<p>It takes a while for the address verification to do its thing, please be patient. Importing 500 meetings usually takes about one minute.</p>
 									<textarea name="tsml_import" class="widefat" rows="5" placeholder="Paste spreadsheet data here"></textarea>
-									<p><label><input type="checkbox" name="delete"> Delete all meetings, locations, and regions prior to import</label></p>
+									<p><label><input type="checkbox" name="delete"> Delete all meetings, locations, regions, and groups prior to import</label></p>
 									<div style="margin-top:12px;"><input type="submit" class="button button-primary" value="Begin"></div>
 								</form>
 						    </div>
