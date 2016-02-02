@@ -15,13 +15,11 @@ function tsml_save_post(){
 	global $post, $tsml_nonce, $wpdb;
 
 	//security
-	if (!isset($post->ID)) return;
 	if (defined('DOING_AUTOSAVE') && DOING_AUTOSAVE) return;
-	if (!isset($_POST['tsml_nonce'])) return;
-	if (!wp_verify_nonce($_POST['tsml_nonce'], $tsml_nonce)) return;
-	if (!current_user_can('edit_post', $post->ID)) return;
-	if ($_POST['post_type'] != TSML_TYPE_MEETINGS) return;
-
+	if (!isset($post->ID) || !current_user_can('edit_post', $post->ID)) return;
+	if (!isset($_POST['tsml_nonce']) || !wp_verify_nonce($_POST['tsml_nonce'], $tsml_nonce)) return;
+	if (!isset($_POST['post_type']) || ($_POST['post_type'] != TSML_TYPE_MEETINGS)) return;
+	
 	//save ordinary meeting metadata
 	if (strlen($_POST['day'])) $_POST['day'] = intval($_POST['day']);
 	update_post_meta($post->ID, 'day',			$_POST['day']);

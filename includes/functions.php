@@ -1289,10 +1289,31 @@ function tsml_upgrades() {
 	if (version_compare($tsml_version, '1.8.6', '<')) {
 		//this will get executed when you first install the plugin, as well as when upgrading to 1.8.6
 		//populate new groups object with any locations that have contact information
-		$locations = array();
-		$all_locations = tsml_get_all_locations();
-		foreach ($all_locations as $location) {
-			$location_custom = get_post_meta($location->ID);
+
+		//clear out old ones in case it crashed earlier
+		if ($post_ids = implode(',', $wpdb->get_col('SELECT id FROM ' . $wpdb->posts . ' WHERE post_type IN ("' . TSML_TYPE_GROUPS . '")'))) {
+			$wpdb->query('DELETE FROM ' . $wpdb->posts . ' WHERE id IN (' . $post_ids . ')');
+			$wpdb->query('DELETE FROM ' . $wpdb->postmeta . ' WHERE post_id IN (' . $post_ids . ')');
+		}
+		
+		//build array of locations with meetings
+		$locations = $group_names = array();
+		$meetings = tsml_get_meetings();
+		foreach ($meetings as $meeting) {
+			if (!array_key_exists($meeting['location_id'], $locations)) {
+				$locations[$meeting['location_id']] = array(
+					'name' => $meeting['location'],
+					'meetings' => array(),
+				);
+				$group_names[] = $meeting['location'];
+			}
+			$locations[$meeting['location_id']]['meetings'][] = $meeting['id'];
+		}
+		
+		$group_names = array_unique($group_names);
+		
+		foreach ($locations as $location_id => $location) {
+			$location_custom = get_post_meta($location_id);
 			if (empty($location_custom['contact_1_name'][0]) &&
 				empty($location_custom['contact_1_email'][0]) &&
 				empty($location_custom['contact_1_phone'][0]) &&
@@ -1304,31 +1325,29 @@ function tsml_upgrades() {
 				empty($location_custom['contact_3_phone'][0])) continue;
 
 			//handle duplicate location names, hopefully won't come up too much 
-			if (array_key_exists($location->post_title, $locations)) {
-				$location->post_title . ' #' . $location->ID;
-			}
+			$group_name = $location['name'];
+			if (in_array($group_name, $group_names)) $group_name .= ' #' . $location_id;
 			
 			//create group
 			$group_id = wp_insert_post(array(
 			  	'post_type'		=> TSML_TYPE_GROUPS,
 			  	'post_status'	=> 'publish',
-				'post_title'	=> $location->post_title,
+				'post_title'	=> $group_name,
 			));
-			
+						
 			//set contacts for group
-			update_post_meta($group_id, 'contact_1_name', $location_custom['contact_1_name'][0]);
-			update_post_meta($group_id, 'contact_1_email', $location_custom['contact_1_email'][0]);
-			update_post_meta($group_id, 'contact_1_phone', $location_custom['contact_1_phone'][0]);
-			update_post_meta($group_id, 'contact_2_name', $location_custom['contact_2_name'][0]);
-			update_post_meta($group_id, 'contact_2_email', $location_custom['contact_2_email'][0]);
-			update_post_meta($group_id, 'contact_2_phone', $location_custom['contact_2_phone'][0]);
-			update_post_meta($group_id, 'contact_3_name', $location_custom['contact_3_name'][0]);
-			update_post_meta($group_id, 'contact_3_email', $location_custom['contact_3_email'][0]);
-			update_post_meta($group_id, 'contact_3_phone', $location_custom['contact_3_phone'][0]);
+			for ($i = 0; $i <= GROUP_CONTACT_COUNT; $i++) {
+				foreach (array('name', 'email', 'phone') as $type) {
+					$fieldname = 'contact_' . $i . '_' . $type;
+					if (!empty($location_custom[$fieldname][0])) {
+						update_post_meta($group_id, $fieldname, $location_custom[$fieldname][0]);
+					}
+				}
+			}
 			
-			//tag all the meetings at the locaiton with the group_id
-			$meetings = tsml_get_meetings(array('location_id'=>$location->ID));
-			foreach ($meetings as $meeting) update_post_meta($meeting['id'], 'group_id', $group_id);
+			foreach ($location['meetings'] as $meeting_id) {
+				update_post_meta($meeting_id, 'group_id', $group_id);
+			}
 
 		}
 	
