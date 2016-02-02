@@ -180,6 +180,7 @@ class Walker_Regions_Dropdown extends Walker_Category {
 							$meeting['location'] = htmlentities($meeting['location'], ENT_QUOTES);
 							$meeting['address'] = htmlentities($meeting['address'], ENT_QUOTES);
 							$meeting['city'] = htmlentities($meeting['city'], ENT_QUOTES);
+							$meeting['region'] = (!empty($meeting['sub_region'])) ? htmlentities($meeting['sub_region'], ENT_QUOTES) : htmlentities($meeting['region'], ENT_QUOTES);
 							$meeting['link'] = tsml_link($meeting['url'], tsml_format_name($meeting['name'], $meeting['types']), 'post_type');
 							
 							if (!isset($locations[$meeting['location_id']])) {
