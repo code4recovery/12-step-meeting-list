@@ -359,22 +359,6 @@ function loadMap(locations) {
 			//console.log(locations[location_id]);
 			
 			var location = locations[location_id];
-
-			//create infowindow content
-			var infowindow_content = '<div class="infowindow"><h3><a href="' + location.url + '">' + location.name + '</h3>' +
-				'<address>' + location.address + '<br>' + location.city_state + '</address>';
-				
-			var current_day = null;
-			for (var i = 0; i < location.meetings.length; i++) {
-				var meeting = location.meetings[i];
-				if (current_day != meeting.day) {
-					if (current_day) infowindow_content += '</dl>';
-					current_day = meeting.day;
-					infowindow_content += '<h5>' + days[current_day] + '</h5><dl>';
-				}
-				infowindow_content += '<dt>' + meeting.time + '</dt><dd>' + meeting.link + '</dd>';
-			}
-			infowindow_content += '</dl></div>';
 			
 			//set new marker
 			var marker = new google.maps.Marker({
@@ -382,11 +366,27 @@ function loadMap(locations) {
 			    map: map,
 			    title: location.name,
 			});
+
+			//create infowindow content
+			marker.content = '<div class="infowindow"><h3><a href="' + location.url + '">' + location.name + '</h3>' +
+				'<address>' + location.address + '<br>' + location.city_state + '</address>';
+				
+			var current_day = null;
+			for (var i = 0; i < location.meetings.length; i++) {
+				var meeting = location.meetings[i];
+				if (current_day != meeting.day) {
+					if (current_day) marker.content += '</dl>';
+					current_day = meeting.day;
+					marker.content += '<h5>' + days[current_day] + '</h5><dl>';
+				}
+				marker.content += '<dt>' + meeting.time + '</dt><dd>' + meeting.link + '</dd>';
+			}
+			marker.content += '</dl></div>';
 			
 			//add infowindow event
 			google.maps.event.addListener(marker, 'click', (function(marker) {
 				return function() {
-					infowindow.setContent(infowindow_content);
+					infowindow.setContent(marker.content);
 					infowindow.open(map, marker);
 				}
 			})(marker));
@@ -401,4 +401,3 @@ function loadMap(locations) {
 	map.fitBounds(bounds);
 	
 }
-
