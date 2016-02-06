@@ -126,17 +126,16 @@ jQuery(function(){
 			setMap(latitude, longitude);
 
 			//guess region if not set
+			var region_id = false;
 			if (!jQuery('select#region option[selected]').size()) {
+				console.log('no');
 				val = data.results[0].formatted_address;
 				jQuery('select#region option').each(function(){
 					var region_name = jQuery(this).text().replace('&nbsp;', '').trim();
-					if (val.indexOf(region_name) != -1) {
-						jQuery('select#region option').attr('selected', false);
-						jQuery(this).attr('selected', 'selected');
-					}
+					if (val.indexOf(region_name) != -1) region_id = jQuery(this).attr('value');
 				});
 			}
-
+			
 			var point_of_interest;
 			var city = false;
 
@@ -206,7 +205,13 @@ jQuery(function(){
 				if (data) {
 					//console.log(data);
 					jQuery('input[name=location]').val(data.location);
+					jQuery('select[name=region] option').prop('selected', false);
+					jQuery('select[name=region] option[value=' + data.region + ']').prop('selected', true);
 					jQuery('textarea[name=location_notes]').val(data.location_notes);
+				} else if (region_id) {
+					//set to guessed region earlier
+					jQuery('select[name=region] option').prop('selected', false);
+					jQuery('select[name=region] option[value=' + region_id + ']').prop('selected', true);
 				}
 			});
 

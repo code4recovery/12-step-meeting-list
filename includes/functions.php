@@ -350,7 +350,7 @@ function tsml_get_meetings($arguments=array()) {
 			$region = $tsml_regions[$regions_with_parents[$tsml_custom['region'][0]]];
 			$sub_region = $tsml_regions[$tsml_custom['region'][0]];
 		} else {
-			$region = $tsml_regions[$tsml_custom['region'][0]];
+			$region = !empty($tsml_regions[$tsml_custom['region'][0]]) ? $tsml_regions[$tsml_custom['region'][0]] : '';
 			$sub_region = '';
 		}
 		
@@ -1280,15 +1280,13 @@ function tsml_upgrades() {
 
 	if ($tsml_version == TSML_VERSION) return;
 	
+	//fix any lingering addresses that end in ", USA" (two letter country codes only)
 	if (version_compare($tsml_version, '1.6.2', '<')) {
-		//this will get executed when you first install the plugin, as well as when upgrading to 1.6.2
-		//fix any lingering addresses that end in ", USA" (two letter country codes only)
 		$wpdb->get_results('UPDATE ' . $wpdb->postmeta . ' SET meta_value = LEFT(meta_value, LENGTH(meta_value) - 1) WHERE meta_key = "formatted_address" AND meta_value LIKE "%, USA"');
 	}
 
+	//populate new groups object with any locations that have contact information
 	if (version_compare($tsml_version, '1.8.6', '<')) {
-		//this will get executed when you first install the plugin, as well as when upgrading to 1.8.6
-		//populate new groups object with any locations that have contact information
 
 		//clear out old ones in case it crashed earlier
 		if ($post_ids = implode(',', $wpdb->get_col('SELECT id FROM ' . $wpdb->posts . ' WHERE post_type IN ("' . TSML_TYPE_GROUPS . '")'))) {
@@ -1350,9 +1348,20 @@ function tsml_upgrades() {
 			}
 
 		}
-	
-		update_option('tsml_version', TSML_VERSION);
 	}
+	
+	//clear old location contact details
+	if (version_compare($tsml_version, '1.9', '<')) {
+		$wpdb->query('DELETE FROM ' . $wpdb->postmeta . ' WHERE meta_key IN (
+			"contact_1_name", "contact_1_email", "contact_1_phone", 
+			"contact_2_name", "contact_2_email", "contact_2_phone",
+			"contact_3_name", "contact_3_email", "contact_3_phone"
+		) AND post_id IN (
+			SELECT ID FROM ' . $wpdb->posts . ' WHERE post_type = "locations"
+		)');
+	}
+
+	update_option('tsml_version', TSML_VERSION);
 }
 
 //function for shortcode
