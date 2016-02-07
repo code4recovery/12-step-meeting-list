@@ -270,23 +270,23 @@ body {
 			&:hover { background-color: transparent; }
 		}
 	}
-	/* bob in oahu elected just to hide the sidebar
 	&.twenty-fourteen {
+		#page::before { display: none; }
 		#meetings { 
-			padding: 15px 0 0; width: 100%; 
+			width: 100%; 
+			padding-top: 20px;
+			padding-bottom: 0;
 			table { 
 				border: 0; 
 				td, th { border-right: 0; }
 			}
-			.row.controls { padding: 0 15px; }
-			.results #table-wrapper { margin: 0; }
 		}
-		@media (min-width: 1008px) {
-			#main { padding-left: 182px; }
-		}	
-		@media (min-width: 1080px) {
-			#main { padding-left: 222px; }
+		#meeting, #location {
+			.page-header { 
+				margin: 0 0 $margin;
+				padding: 0 0 $margin;
+				max-width: none;
+			}
 		}
 	}
-	*/
 }

@@ -3,7 +3,7 @@ Contributors: aasanjose
 Tags: meetings, aa, al-anon, na, 12-step, locations, groups
 Requires at least: 3.2
 Tested up to: 4.4
-Stable tag: 1.9
+Stable tag: 1.9.1
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -134,6 +134,9 @@ and then drop some or all of these tags in your PHP:
 
 == Changelog ==
 
+= 1.9.1 =
+* Twenty-fourteen theme overrides for NEFL
+
 = 1.9 =
 * Location details bug fix and address-field javascript fix
 
@@ -168,9 +171,3 @@ and then drop some or all of these tags in your PHP:
 
 = 1.8.2 =
 * Dropping PHP version requirement, should be compatible with all versions now
-
-= 1.8.1 =
-* Adding French
-
-= 1.8 =
-* Removing debug statement

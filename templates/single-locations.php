@@ -23,9 +23,10 @@ $location = tsml_get_location();
 						<dt><?php _e('Location', '12-step-meeting-list')?></dt>
 						<dd><?php echo $location->address?><br><?php echo $location->city?>, <?php echo $location->state?> <?php echo $location->postal_code?></dd>
 
+						<?php if (!empty($tsml_regions[$location->region])) {?>
 						<dt><?php _e('Region', '12-step-meeting-list')?></dt>
 						<dd><?php echo $tsml_regions[$location->region]?></dd>
-						<?php 
+						<?php }
 							
 						if (!empty($location->notes)) {?>
 						<dt><?php _e('Notes', '12-step-meeting-list')?></dt>
