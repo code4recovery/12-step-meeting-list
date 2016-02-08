@@ -270,12 +270,12 @@ body {
 			&:hover { background-color: transparent; }
 		}
 	}
-	&.twenty-fourteen {
+	&.twentyfourteen {
 		#page::before { display: none; }
 		#meetings { 
 			width: 100%; 
 			padding-top: 20px;
-			padding-bottom: 0;
+			&[data-type=list] { padding-bottom: 0; }
 			table { 
 				border: 0; 
 				td, th { border-right: 0; }

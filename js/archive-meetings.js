@@ -291,7 +291,7 @@ jQuery(function(){
 		}
 	});
 
-	jQuery('a[href=#fullscreen]').click(function(e){
+	jQuery('a[href="#fullscreen"]').click(function(e){
 		e.preventDefault();
 		var center = map.getCenter();
 		jQuery(this).toggleClass('active');

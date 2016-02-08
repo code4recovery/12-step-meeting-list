@@ -48,7 +48,7 @@ function tsml_init() {
 	add_filter('body_class', 'tsml_theme_name');
 	function tsml_theme_name($classes) {
 		$theme = wp_get_theme();
-		$classes[] = sanitize_title($theme->name);
+		$classes[] = sanitize_title($theme->Template);
 		return $classes;
 	}
 	
