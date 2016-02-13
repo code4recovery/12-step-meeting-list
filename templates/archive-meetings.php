@@ -56,7 +56,7 @@ class Walker_Regions_Dropdown extends Walker_Category {
 
 ?>
 <div id="meetings" data-type="list" class="container">
-	<div class="row controls">
+	<div class="row controls hidden-print">
 		<div class="col-md-2 col-sm-6">
 			<form id="search">
 				<div class="input-group">
@@ -166,7 +166,7 @@ class Walker_Regions_Dropdown extends Walker_Category {
 			
 			<div id="table-wrapper">
 				<table class="table table-striped<?php if (!count($meetings)) {?> hidden<?php }?>">
-					<thead>
+					<thead class="hidden-print">
 						<th class="time">Time</th>
 						<th class="name">Meeting</th>
 						<th class="location">Location</th>
@@ -218,10 +218,18 @@ class Walker_Regions_Dropdown extends Walker_Category {
 									echo '<time>' . $meeting['time_formatted'] . '</time>';
 								}
 								?></td>
-							<td class="name"><?php echo $meeting['link']?></td>
-							<td class="location"><?php echo $meeting['location']?></td>
-							<td class="address"><?php echo $meeting['address']?></td>
-							<td class="region"><?php echo $meeting['region']?></td>
+							<td class="name">
+								<?php echo $meeting['link']?>
+								<div class="visible-print-block"><?php echo $meeting['region']?></div>
+							</td>
+							<td class="location">
+								<?php echo $meeting['location']?>
+								<?php if ($meeting['location'] != $meeting['address']) {?>
+								<div class="visible-print-block"><?php echo $meeting['address']?></div>
+								<?php }?>
+							</td>
+							<td class="address hidden-print"><?php echo $meeting['address']?></td>
+							<td class="region hidden-print"><?php echo $meeting['region']?></td>
 						</tr>
 						<?php }?>
 					</tbody>

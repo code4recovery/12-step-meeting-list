@@ -1,8 +1,8 @@
-jQuery(function(){
+jQuery(function($){
 
 	var userMarker;
 	if (navigator.geolocation) {
-		jQuery('#map_options').removeClass('hidden');
+		$('#map_options').removeClass('hidden');
 	}
 
 	//run search (triggered by dropdown toggle or form submit)
@@ -11,11 +11,11 @@ jQuery(function(){
 		//prepare data for ajax
 		var data = { 
 			action: 'meetings',
-			search: jQuery('#search input[name=query]').val().trim(),
-			day: 	jQuery('#day li.active a').attr('data-id'),
-			time: jQuery('#time li.active a').attr('data-id'),
-			region: jQuery('#region li.active a').attr('data-id'),
-			type: jQuery('#type li.active a').attr('data-id'),
+			search: $('#search input[name=query]').val().trim(),
+			day: 	$('#day li.active a').attr('data-id'),
+			time: $('#time li.active a').attr('data-id'),
+			region: $('#region li.active a').attr('data-id'),
+			type: $('#type li.active a').attr('data-id'),
 		}
 		
 		//get current query string for history and appending to links
@@ -37,7 +37,7 @@ jQuery(function(){
 			}
 			window.history.pushState({path:url}, '', url);
 		}
-
+		
 		//prepare search terms for highlighter
 		var search = [];
 		if (data.search) {
@@ -57,34 +57,34 @@ jQuery(function(){
 
 				//if keyword and no results, clear other parameters and search again
 				if (data.search && (typeof data.day !== 'undefined' || typeof data.region !== 'undefined' || typeof data.time !== 'undefined' || typeof data.type !== 'undefined')) {
-					jQuery('#day li').removeClass('active').first().addClass('active');
-					jQuery('#time li').removeClass('active').first().addClass('active');
-					jQuery('#region li').removeClass('active').first().addClass('active');
-					jQuery('#type li').removeClass('active').first().addClass('active');
+					$('#day li').removeClass('active').first().addClass('active');
+					$('#time li').removeClass('active').first().addClass('active');
+					$('#region li').removeClass('active').first().addClass('active');
+					$('#type li').removeClass('active').first().addClass('active');
 
 					//set selected text
-					jQuery('#day span.selected').html(jQuery('#day li:first-child a').html());
-					jQuery('#time span.selected').html(jQuery('#time li:first-child a').html());
-					jQuery('#region span.selected').html(jQuery('#region li:first-child a').html());
-					jQuery('#type span.selected').html(jQuery('#type li:first-child a').html());
+					$('#day span.selected').html($('#day li:first-child a').html());
+					$('#time span.selected').html($('#time li:first-child a').html());
+					$('#region span.selected').html($('#region li:first-child a').html());
+					$('#type span.selected').html($('#type li:first-child a').html());
 					return doSearch();
 				}
 
-				jQuery('#meetings table').addClass('hidden');
-				jQuery('#meetings #map').addClass('hidden');
-				jQuery('#alert').html('No results matched those criteria.').removeClass('hidden');
+				$('#meetings table').addClass('hidden');
+				$('#meetings #map').addClass('hidden');
+				$('#alert').html('No results matched those criteria.').removeClass('hidden');
 			} else {
-				jQuery('#meetings table').removeClass('hidden');
-				if (jQuery('#meetings #map').hasClass('hidden')) {
-					jQuery('#meetings #map').removeClass('hidden');
+				$('#meetings table').removeClass('hidden');
+				if ($('#meetings #map').hasClass('hidden')) {
+					$('#meetings #map').removeClass('hidden');
 					google.maps.event.trigger(map, 'resize');
 				}
 				
-				jQuery('#alert').addClass('hidden');
+				$('#alert').addClass('hidden');
 
 				var locations = [];
 
-				var tbody = jQuery('#meetings tbody').html('');
+				var tbody = $('#meetings tbody').html('');
 
 				//loop through JSON meetings
 				jQuery.each(response, function(index, obj){
@@ -127,7 +127,13 @@ jQuery(function(){
 					};
 
 					//add new table row
-					tbody.append('<tr><td class="time">' + (data.day || !obj.day ? obj.time_formatted : days[obj.day] + ', ' + obj.time_formatted) + '</td><td class="name"><a href="' + obj.url + '">' + highlight(obj.name, search) + '</a></td><td class="location">' + highlight(obj.location, search) + '</td><td class="address">' + highlight(obj.address, search) + '</td><td class="region">' + (obj.sub_region || obj.region || '') + '</td></tr>')
+					tbody.append('<tr>' + 
+						'<td class="time">' + (data.day || !obj.day ? obj.time_formatted : days[obj.day] + ', ' + obj.time_formatted) + '</td>' + 
+						'<td class="name"><a href="' + obj.url + '">' + highlight(obj.name, search) + '</a><div class="visible-print-block">' + (obj.sub_region || obj.region || '') + '</div></td>' + 
+						'<td class="location">' + highlight(obj.location, search) + '<div class="visible-print-block">' + highlight(obj.address, search) + '</div></td>' + 
+						'<td class="address hidden-print">' + highlight(obj.address, search) + '</td>' + 
+						'<td class="region hidden-print">' + (obj.sub_region || obj.region || '') + '</td>' + 
+					'</tr>')
 				});
 
 				//remove old markers and reset bounds
@@ -174,7 +180,7 @@ jQuery(function(){
 					map.fitBounds(bounds);
 				} else if (markers.length == 1) {
 					map.setCenter(bounds.getCenter());
-   					if (jQuery('#map').is(':visible')) google.maps.event.trigger(markers[0],'click');
+   					if ($('#map').is(':visible')) google.maps.event.trigger(markers[0],'click');
    					map.setZoom(14);
 				} else if (markers.length == 0) {
 					//currently holds last position, not sure if that's good
@@ -195,81 +201,82 @@ jQuery(function(){
 	}
 
 	//capture submit event
-	jQuery('#meetings #search').submit(function(e){
+	$('#meetings #search').submit(function(e){
 		doSearch();
 		return false;
 	});
 
 	//capture dropdown change
-	jQuery('#meetings .controls').on('click', '.dropdown-menu a', function(e){
+	$('#meetings .controls').on('click', '.dropdown-menu a', function(e){
 		e.preventDefault();
 
 		//day only one selected
-		if (jQuery(this).closest('.dropdown').attr('id') == 'day') {
-			jQuery('#day li').removeClass('active');
-			jQuery('#day span.selected').html(jQuery(this).html());
+		if ($(this).closest('.dropdown').attr('id') == 'day') {
+			$('#day li').removeClass('active');
+			$('#day span.selected').html($(this).html());
 		}
 
 		//times only one
-		if (jQuery(this).closest('.dropdown').attr('id') == 'time') {
-			jQuery('#time li').removeClass('active');
-			jQuery('#time span.selected').html(jQuery(this).html());
+		if ($(this).closest('.dropdown').attr('id') == 'time') {
+			$('#time li').removeClass('active');
+			$('#time span.selected').html($(this).html());
 		}
 
 		//location only one
-		if (jQuery(this).closest('.dropdown').attr('id') == 'region') {
-			jQuery('#region li').removeClass('active');
-			jQuery('#region span.selected').html(jQuery(this).html());
+		if ($(this).closest('.dropdown').attr('id') == 'region') {
+			$('#region li').removeClass('active');
+			$('#region span.selected').html($(this).html());
 		}
 
 		//type only one
-		if (jQuery(this).closest('.dropdown').attr('id') == 'type') {
-			jQuery('#type li').removeClass('active');
-			jQuery('#type span.selected').html(jQuery(this).html());
+		if ($(this).closest('.dropdown').attr('id') == 'type') {
+			$('#type li').removeClass('active');
+			$('#type span.selected').html($(this).html());
 		}
 
-		jQuery(this).parent().toggleClass('active');
+		$(this).parent().toggleClass('active');
 
+		updateTitle();
 		doSearch();
 	});
 
 	//toggle between list and map
-	jQuery('#meetings #action .toggle-view').click(function(e){
+	$('#meetings #action .toggle-view').click(function(e){
 		e.preventDefault();
 		
 		//what's going on
-		var action = jQuery(this).attr('data-id');
-		var previous = jQuery('#meetings').attr('data-type');
+		var action = $(this).attr('data-id');
+		var previous = $('#meetings').attr('data-type');
 		
 		//toggle control, meetings div
 		if (action == 'list') {
 			closeFullscreen();
-			jQuery('#meetings #action .toggle-view[data-id=list]').addClass('active');
-			jQuery('#meetings #action .toggle-view[data-id=map]').removeClass('active');			
+			$('#meetings #action .toggle-view[data-id=list]').addClass('active');
+			$('#meetings #action .toggle-view[data-id=map]').removeClass('active');			
 		} else if (action == 'map') {
-			jQuery('#meetings #action .toggle-view[data-id=map]').addClass('active');
-			jQuery('#meetings #action .toggle-view[data-id=list]').removeClass('active');			
+			$('#meetings #action .toggle-view[data-id=map]').addClass('active');
+			$('#meetings #action .toggle-view[data-id=list]').removeClass('active');			
 		}
 
 		//set meetings div
-		jQuery('#meetings').attr('data-type', action);
+		$('#meetings').attr('data-type', action);
 		
 		//wake up the map if needed
 		if (action == 'map' && action != previous) {
 			google.maps.event.trigger(map, 'resize');
 			map.fitBounds(bounds);
-	   		if ((markers.length == 1) && jQuery('#map').is(':visible')) {
+	   		if ((markers.length == 1) && $('#map').is(':visible')) {
 	   			map.setZoom(14);
 	   			google.maps.event.trigger(markers[0],'click');
 	   		}
 		}
 	});
 
-	jQuery('a[href="#geolocator"]').click(function(e){
+	$('a[href="#geolocator"]').click(function(e){
 		e.preventDefault();
-		jQuery(this).toggleClass('active');
+		$(this).toggleClass('active');
 
-		if (jQuery(this).hasClass('active')) {
+		if ($(this).hasClass('active')) {
 			navigator.geolocation.getCurrentPosition(function(position) {
 				var pos = new google.maps.LatLng(position.coords.latitude, position.coords.longitude);
 
@@ -284,22 +291,22 @@ jQuery(function(){
 				map.setZoom(13);
 			}, function(err) {
   				console.log('ERROR(' + err.code + '): ' + err.message);
-  				jQuery(this).removeClass('active')
+  				$(this).removeClass('active')
   			});
 		} else if (userMarker !== undefined) {
 			userMarker.setMap(null);
 		}
 	});
 
-	jQuery('a[href="#fullscreen"]').click(function(e){
+	$('a[href="#fullscreen"]').click(function(e){
 		e.preventDefault();
 		var center = map.getCenter();
-		jQuery(this).toggleClass('active');
-		if (jQuery(this).hasClass('active')) {
-			jQuery('#meetings').addClass('fullscreen');
-			var height = jQuery(window).height() - 79;
-			if (jQuery('body').hasClass('admin-bar')) height -= 32;
-			jQuery('#map').css('height', height);
+		$(this).toggleClass('active');
+		if ($(this).hasClass('active')) {
+			$('#meetings').addClass('fullscreen');
+			var height = $(window).height() - 79;
+			if ($('body').hasClass('admin-bar')) height -= 32;
+			$('#map').css('height', height);
 		} else {
 			closeFullscreen();
 		}
@@ -308,26 +315,46 @@ jQuery(function(){
 	});
 
 	//remove fullscreen with an escape key press
-	jQuery(document).keyup(function(e) {
+	$(document).keyup(function(e) {
 		if (e.keyCode == 27) closeFullscreen();
 	});
 	
 	function closeFullscreen() {
-		if (jQuery('#meetings').hasClass('fullscreen')) {
-			jQuery('#meetings').removeClass('fullscreen');
-			jQuery('a[href=#fullscreen]').removeClass('active');
-			jQuery('a[href=#fullscreen]').parent().removeClass('active');
-			jQuery('#map').css('height', 550);
+		if ($('#meetings').hasClass('fullscreen')) {
+			$('#meetings').removeClass('fullscreen');
+			$('a[href=#fullscreen]').removeClass('active');
+			$('a[href=#fullscreen]').parent().removeClass('active');
+			$('#map').css('height', 550);
 		}
 	}
 	
+	//save a string of the current state to the title bar, so that it prints nicely
+	function updateTitle() {
+		var string = '';
+		if ($('#meetings #day li.active').index()) {
+			string += $('#meetings #day span.selected').text();
+		}
+		if ($('#meetings #time li.active').index()) {
+			string += ' ' + $('#meetings #time span.selected').text();
+		}
+		if ($('#meetings #type li.active').index()) {
+			string += ' ' + $('#meetings #type span.selected').text();
+		}
+		string += ' Meetings';
+		if ($('#meetings #region li.active').index()) {
+			string += ' in ' + $('#meetings #region span.selected').text();
+		}
+		document.title = string;
+	}
+	updateTitle();
+	
 	//resize fullscreen on resize
-	jQuery(window).resize(function(e){
-		if (jQuery('#meetings').hasClass('fullscreen')) {
+	$(window).resize(function(e){
+		if ($('#meetings').hasClass('fullscreen')) {
 			var center = map.getCenter();
-			var height = jQuery(window).height() - 79;
-			if (jQuery('body').hasClass('admin-bar')) height -= 32;
-			jQuery('#map').css('height', height);
+			var height = $(window).height() - 79;
+			if ($('body').hasClass('admin-bar')) height -= 32;
+			$('#map').css('height', height);
 			google.maps.event.trigger(map, 'resize');
 			map.setCenter(center);
 		}
