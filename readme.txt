@@ -3,7 +3,7 @@ Contributors: aasanjose
 Tags: meetings, aa, al-anon, na, 12-step, locations, groups
 Requires at least: 3.2
 Tested up to: 4.4
-Stable tag: 1.9.3
+Stable tag: 1.9.4
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -44,7 +44,7 @@ It was originally designed to maintain a list of AA meetings in Santa Clara Coun
 
 **SAA**
 
-* [Indiana](http://indiana-saa.org/meetings/)
+* [Indiana](http://indiana-saa.org/?post_type=meetings)
 
 [Let us know](mailto:web@aasanjose.org) if you're using this plugin and would like to be listed here.
 
@@ -135,6 +135,9 @@ and then drop some or all of these tags in your PHP:
 1. Meeting map
 
 == Changelog ==
+
+= 1.9.4 =
+* Meeting search-by-type bug identified by Central Florida Intergroup
 
 = 1.9.3 =
 * Improved printing style

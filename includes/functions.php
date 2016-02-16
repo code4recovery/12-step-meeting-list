@@ -281,7 +281,7 @@ function tsml_get_meetings($arguments=array()) {
 		$meta_query[] = array(
 			'key'	=> 'types',
 			'compare'=>'LIKE',
-			'value'	=> sanitize_text_field($arguments['type']),
+			'value'	=> '"' . sanitize_text_field($arguments['type']) . '"',
 		);
 	}
 	
