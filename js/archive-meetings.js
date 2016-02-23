@@ -95,6 +95,8 @@ jQuery(function($){
 					if (querystring.length) {
 						obj.url = obj.url + ((obj.url.indexOf('?') > -1) ? '&' : '?');
 						obj.url = obj.url + querystring;
+						obj.location_url = obj.location_url + ((obj.location_url.indexOf('?') > -1) ? '&' : '?');
+						obj.location_url = obj.location_url + querystring;
 					}
 
 					//add gender designation
@@ -107,13 +109,14 @@ jQuery(function($){
 					//save location info
 					if (!locations[obj.location_id]) {
 						locations[obj.location_id] = {
-							name : obj.location,
-							address : obj.address,
-							latitude : obj.latitude,
-							longitude : obj.longitude,
-							city : obj.city,
-							state : obj.state,
-							meetings : []
+							name: obj.location,
+							address: obj.address,
+							latitude: obj.latitude,
+							longitude: obj.longitude,
+							city: obj.city,
+							state: obj.state,
+							url: obj.location_url,
+							meetings: []
 						};
 					}
 
@@ -167,8 +170,7 @@ jQuery(function($){
 								for (var day in meetings) {
 									meetings_list += '<h5>' + day + '</h5><dl>' + meetings[day] + '</dl>';
 								}
-
-								infowindow.setContent('<div class="infowindow"><h3>' + obj.name + '</h3><address>' + obj.address + '<br>' + obj.city + ', ' + obj.state + '</address>' + meetings_list + '</div>');
+								infowindow.setContent('<div class="infowindow"><h3><a href="' + obj.url + '">' + obj.name + '</a></h3><address>' + obj.address + '<br>' + obj.city + ', ' + obj.state + '</address>' + meetings_list + '</div>');
 								infowindow.open(map, marker);
 							}
 						})(marker, obj));					
@@ -395,7 +397,7 @@ function loadMap(locations) {
 			});
 
 			//create infowindow content
-			marker.content = '<div class="infowindow"><h3><a href="' + location.url + '">' + location.name + '</h3>' +
+			marker.content = '<div class="infowindow"><h3>' + location.link + '</h3>' +
 				'<address>' + location.address + '<br>' + location.city_state + '</address>';
 				
 			var current_day = null;

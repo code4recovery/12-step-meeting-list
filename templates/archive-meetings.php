@@ -185,13 +185,13 @@ class Walker_Regions_Dropdown extends Walker_Category {
 							
 							if (!isset($locations[$meeting['location_id']])) {
 								$locations[$meeting['location_id']] = array(
-									'name'=>$meeting['location'],
-									'latitude'=>$meeting['latitude'] - 0,
-									'longitude'=>$meeting['longitude'] - 0,
-									'link'=>tsml_link($meeting['location_url'], $meeting['location'], 'post_type'),
-									'address'=>$meeting['address'],
-									'city_state'=>$meeting['city'] . ', ' . $meeting['state'],
-									'meetings'=>array(),
+									'name' => $meeting['location'],
+									'latitude' => $meeting['latitude'] - 0,
+									'longitude' => $meeting['longitude'] - 0,
+									'link' => tsml_link($meeting['location_url'], $meeting['location'], 'post_type'),
+									'address' => $meeting['address'],
+									'city_state' => $meeting['city'] . ', ' . $meeting['state'],
+									'meetings' => array(),
 								);
 							}
 		
