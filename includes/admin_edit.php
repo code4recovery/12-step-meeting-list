@@ -105,7 +105,7 @@ function tsml_admin_init() {
 				<option value="<?php echo $key?>"<?php if (strcmp(@$meeting_custom['day'][0], $key) == 0) {?> selected<?php }?>><?php echo $day?></option>
 				<?php }?>
 				<option disabled>──────</option>
-				<option value=""<?php if (!strlen($meeting_custom['day'][0])) {?> selected<?php }?>>Appointment</option>
+				<option value=""<?php if (!strlen(@$meeting_custom['day'][0])) {?> selected<?php }?>>Appointment</option>
 			</select>
 		</div>
 		<div class="meta_form_row">

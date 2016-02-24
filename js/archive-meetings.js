@@ -348,7 +348,7 @@ jQuery(function($){
 		}
 		document.title = string;
 	}
-	updateTitle();
+	if ($('body').hasClass('post-type-archive-meetings')) updateTitle();
 	
 	//resize fullscreen on resize
 	$(window).resize(function(e){

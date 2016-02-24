@@ -544,7 +544,7 @@ function tsml_get_location() {
 	$location = get_post();
 	$custom = get_post_meta($location->ID);
 	foreach ($custom as $key=>$value) {
-		$location->{$key} = $value[0];
+		$location->{$key} = htmlentities($value[0], ENT_QUOTES);
 	}
 	$location->post_title	= htmlentities($location->post_title, ENT_QUOTES);
 	$location->notes 		= nl2br(esc_html($location->post_content));
@@ -558,7 +558,7 @@ function tsml_get_meeting() {
 	$location				= get_post($meeting->post_parent);
 	$custom					= array_merge(get_post_meta($meeting->ID), get_post_meta($location->ID));
 	foreach ($custom as $key=>$value) {
-		$meeting->{$key} = $value[0];
+		$meeting->{$key} = ($key == 'types') ? $value[0] : htmlentities($value[0], ENT_QUOTES);
 	}
 	$meeting->types				= empty($meeting->types) ? array() : unserialize($meeting->types);
 	$meeting->post_title		= htmlentities($meeting->post_title, ENT_QUOTES);
@@ -924,7 +924,7 @@ function tsml_import($meetings, $delete=false) {
 		}
 		
 		//handle groups (can't have a group if group name not specified)
-		$meeting['group'] = sanitize_text_field($meeting['group']);
+		if (!empty($meeting['group'])) $meeting['group'] = sanitize_text_field($meeting['group']);
 		if (!empty($meeting['group'])) {
 			if (!array_key_exists($meeting['group'], $groups)) {
 				$group_id = wp_insert_post(array(
