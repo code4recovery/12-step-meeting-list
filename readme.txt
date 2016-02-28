@@ -138,6 +138,7 @@ and then drop some or all of these tags in your PHP:
 
 = 1.9.5 =
 * Location name in map infowindow links to location page
+* Location and meeting template pages work better with apostrophes
 
 = 1.9.4 =
 * Meeting search-by-type bug identified by Central Florida Intergroup
