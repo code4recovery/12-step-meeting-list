@@ -786,6 +786,7 @@ function tsml_import($meetings, $delete=false) {
 	
 	//uppercasing for value matching later
 	$upper_types = array_map('strtoupper', $tsml_types[$tsml_program]);
+	$upper_days = array_map('strtoupper', $tsml_days);
 		
 	//counter of successful meetings imported
 	$success = $geocoded = 0;
@@ -871,9 +872,9 @@ function tsml_import($meetings, $delete=false) {
 			$meeting['time'] = date_parse($meeting['time']);
 			$meeting['time'] = sprintf('%02d', $meeting['time']['hour']) . ':' . sprintf('%02d', $meeting['time']['minute']);
 			if ($meeting['time'] == '00:00') $meeting['time'] = '23:59';
-
-			if (!in_array($meeting['day'], $tsml_days)) return tsml_alert('"' . $meeting['day'] . '" is an invalid value for day at row #' . $row_counter . '.', 'error');
-			$meeting['day'] = array_search($meeting['day'], $tsml_days);
+			
+			if (!in_array(strtoupper($meeting['day']), $upper_days)) return tsml_alert('"' . $meeting['day'] . '" is an invalid value for day at row #' . $row_counter . '.', 'error');
+			$meeting['day'] = array_search(strtoupper($meeting['day']), $upper_days);
 		}
 		
 		//if location is missing, use address
@@ -924,20 +925,19 @@ function tsml_import($meetings, $delete=false) {
 		}
 		
 		//handle groups (can't have a group if group name not specified)
-		if (!empty($meeting['group'])) $meeting['group'] = sanitize_text_field($meeting['group']);
 		if (!empty($meeting['group'])) {
 			if (!array_key_exists($meeting['group'], $groups)) {
 				$group_id = wp_insert_post(array(
 				  	'post_type'		=> TSML_TYPE_GROUPS,
 				  	'post_status'	=> 'publish',
 					'post_title'	=> $meeting['group'],
-					'post_content'  => sanitize_text_field(@$meeting['group-notes']),
+					'post_content'  => @$meeting['group-notes'],
 				));
 				
 				for ($i = 1; $i <= GROUP_CONTACT_COUNT; $i++) {
 					foreach (array('name', 'phone', 'email') as $field) {
 						if (!empty($meeting['contact-' . $i . '-' . $field])) {
-							update_post_meta($group_id, 'contact_' . $i . '_' . $field, sanitize_text_field($meeting['contact-' . $i . '-' . $field]));
+							update_post_meta($group_id, 'contact_' . $i . '_' . $field, $meeting['contact-' . $i . '-' . $field]);
 						}
 					}					
 				}
@@ -984,7 +984,7 @@ function tsml_import($meetings, $delete=false) {
 			'notes' => $meeting['notes'],
 			'post_date' => $meeting['post_date'],
 			'post_date_gmt' => $meeting['post_date_gmt'],
-			'group' => $meeting['group'],
+			'group' => empty($meeting['group']) ? null : $meeting['group'],
 		);
 		
 		//attach line number for reference if geocoding fails

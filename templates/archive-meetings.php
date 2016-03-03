@@ -10,9 +10,10 @@ $search	= isset($_GET['sq']) ? sanitize_text_field($_GET['sq']) : null;
 $region	= isset($_GET['r']) && array_key_exists($_GET['r'], $tsml_regions) ? $_GET['r'] : null;
 $type	= isset($_GET['t']) && array_key_exists($_GET['t'], $tsml_types[$tsml_program]) ? $_GET['t'] : null;
 $time	= isset($_GET['i']) ? sanitize_text_field(strtolower($_GET['i'])) : null;
+$view	= (isset($_GET['v']) && $_GET['v'] == 'map') ? 'map' : 'list';
 
 //need later
-$times		= array(
+$times  = array(
 	'morning' => 'Morning',
 	'day' => 'Day',
 	'evening' => 'Evening',
@@ -55,7 +56,7 @@ class Walker_Regions_Dropdown extends Walker_Category {
 }
 
 ?>
-<div id="meetings" data-type="list" class="container">
+<div id="meetings" data-type="<?php echo $view?>" class="container">
 	<div class="row controls hidden-print">
 		<div class="col-md-2 col-sm-6">
 			<form id="search">

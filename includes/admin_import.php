@@ -93,10 +93,23 @@ function tsml_admin_menu() {
 								<p>You can also download your meetings in <a href="<?php echo admin_url('admin-ajax.php')?>?action=csv">CSV format</a>.</p>
 								<p style="margin-bottom:0;">You have:</p>
 								<ul class="ul-disc" style="margin-top:4px">
-									<li style="margin: 0 0 2px;"><?php echo do_shortcode('[tsml_meeting_count]')?> meetings</li>
-									<li style="margin: 0 0 2px;"><?php echo do_shortcode('[tsml_location_count]')?> locations</li>
-									<li style="margin: 0 0 2px;"><?php echo do_shortcode('[tsml_region_count]')?> regions</li>
-									<li style="margin: 0 0 2px;"><?php echo do_shortcode('[tsml_group_count]')?> groups</li>
+									<?php
+									$meetings = do_shortcode('[tsml_meeting_count]');
+									if ($meetings != '0') {?>
+									<li style="margin: 0 0 2px;"><?php echo $meetings?> meeting<?php if ($meetings != '1') {?>s<?php }?></li>
+									<?php }
+									$locations = do_shortcode('[tsml_location_count]');
+									if ($locations != '0') {?>
+									<li style="margin: 0 0 2px;"><?php echo $locations?> location<?php if ($locations != '1') {?>s<?php }?></li>
+									<?php }
+									$regions = do_shortcode('[tsml_region_count]');
+									if ($regions != '0') {?>
+									<li style="margin: 0 0 2px;"><?php echo $regions?> region<?php if ($regions != '1') {?>s<?php }?></li>
+									<?php }
+									$groups = do_shortcode('[tsml_group_count]');
+									if ($groups != '0') {?>
+									<li style="margin: 0 0 2px;"><?php echo $groups?> group<?php if ($groups != '1') {?>s<?php }?></li>
+									<?php }?>
 								</ul>
 								Want to send a mass email to your group contacts? <a href="<?php echo admin_url('admin-ajax.php')?>?action=contacts">Click here</a> to see their email addresses.
 							</div>

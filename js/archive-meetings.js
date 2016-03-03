@@ -25,6 +25,7 @@ jQuery(function($){
 		if (data.time) querystring.i = data.time;
 		if (data.region) querystring.r = data.region;
 		if (data.type) querystring.t = data.type;
+		querystring.v = $('#meetings .toggle-view.active').attr('data-id');
 		querystring = jQuery.param(querystring);
 		//console.log('querystring is ' + querystring)
 		
@@ -146,12 +147,12 @@ jQuery(function($){
 
 				//loop through new markers and add them (sparse array)
 				for (location_id in locations) {
-				    if (locations.hasOwnProperty(location_id) && /^0$|^[1-9]\d*$/.test(location_id) && location_id <= 4294967294) {
-				        var obj = locations[location_id];
+					if (locations.hasOwnProperty(location_id) && /^0$|^[1-9]\d*$/.test(location_id) && location_id <= 4294967294) {
+						var obj = locations[location_id];
 						var marker = new google.maps.Marker({
-						    position: new google.maps.LatLng(obj.latitude, obj.longitude),
-						    map: map,
-						    title: obj.name
+							position: new google.maps.LatLng(obj.latitude, obj.longitude),
+							map: map,
+							title: obj.name
 						});
 
 						markers[markers.length] = marker;
@@ -174,7 +175,7 @@ jQuery(function($){
 								infowindow.open(map, marker);
 							}
 						})(marker, obj));					
-				    }
+					}
 				}
 
 				//handle zooming
@@ -249,6 +250,12 @@ jQuery(function($){
 		//what's going on
 		var action = $(this).attr('data-id');
 		var previous = $('#meetings').attr('data-type');
+
+		//save the query in the query string, if the browser is up to it
+		if (history.pushState) {
+			var url = updateQueryString('v', action);
+			window.history.pushState({path:url}, '', url);
+		}
 		
 		//toggle control, meetings div
 		if (action == 'list') {
@@ -284,9 +291,9 @@ jQuery(function($){
 
 				userMarker = new google.maps.Marker({
 					icon: 'http://maps.google.com/mapfiles/ms/icons/blue-dot.png',
-				    position: pos,
-				    map: map,
-				    title: 'You'
+					position: pos,
+					map: map,
+					title: 'You'
 				});
 
 				map.setCenter(pos);
@@ -391,9 +398,9 @@ function loadMap(locations) {
 			
 			//set new marker
 			var marker = new google.maps.Marker({
-			    position: {lat: location.latitude, lng: location.longitude},
-			    map: map,
-			    title: location.name,
+				position: {lat: location.latitude, lng: location.longitude},
+				map: map,
+				title: location.name,
 			});
 
 			//create infowindow content
@@ -429,4 +436,30 @@ function loadMap(locations) {
 
 	map.fitBounds(bounds);
 	
+}
+
+function updateQueryString(key, value, url) {
+	if (!url) url = window.location.href;
+	var re = new RegExp("([?&])" + key + "=.*?(&|#|$)(.*)", "gi"), hash;
+
+	if (re.test(url)) {
+		if (typeof value !== 'undefined' && value !== null) {
+			return url.replace(re, '$1' + key + "=" + value + '$2$3');
+		} else {
+			hash = url.split('#');
+			url = hash[0].replace(re, '$1$3').replace(/(&|\?)$/, '');
+			if (typeof hash[1] !== 'undefined' && hash[1] !== null) url += '#' + hash[1];
+			return url;
+		}
+	} else {
+		if (typeof value !== 'undefined' && value !== null) {
+			var separator = url.indexOf('?') !== -1 ? '&' : '?';
+			hash = url.split('#');
+			url = hash[0] + separator + key + '=' + value;
+			if (typeof hash[1] !== 'undefined' && hash[1] !== null) url += '#' + hash[1];
+			return url;
+		} else {
+			return url;
+		}
+	}
 }
