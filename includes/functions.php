@@ -211,16 +211,23 @@ function tsml_get_locations() {
 	return $locations;
 }
 
-//function: get meetings based on post information
+//function: get meetings based on unsanitized $arguments
 //used:		tsml_meetings_api(), single-locations.php, archive-meetings.php 
 function tsml_get_meetings($arguments=array()) {
 	global $tsml_regions;
 
-	$meta_query = array('relation'	=> 'AND');
+	$meta_query = array('relation' => 'AND');
 
-	//sanitize input
-	$arguments['location_id'] = (isset($arguments['location_id'])) ? intval($arguments['location_id']) : null;
+	//location_id can be an array
+	if (empty($arguments['location_id'])) {
+		$arguments['location_id'] = null;
+	} elseif (is_array($arguments['location_id'])) {
+		$arguments['location_id'] = array_map('intval', $arguments['location_id']);
+	} else {
+		$arguments['location_id'] = intval($arguments['location_id']);
+	}
 
+	//day should be in integer 0-6 
 	if (isset($arguments['day']) && ($arguments['day'] !== false)) {
 		$meta_query[] = array(
 			'relation' => 'OR',
@@ -235,6 +242,7 @@ function tsml_get_meetings($arguments=array()) {
 		);
 	}
 
+	//time should be a string 'morning', 'day', 'evening' or 'night'
 	if (!empty($arguments['time'])) {
 		if ($arguments['time'] == 'morning') {
 			$meta_query[] = array(
@@ -257,6 +265,7 @@ function tsml_get_meetings($arguments=array()) {
 		}
 	}
 
+	//region should be an integer region id
 	if (!empty($arguments['region'])) {
 		$region = intval($arguments['region']);
 		$regions = get_term_children($region, 'region');
@@ -276,7 +285,7 @@ function tsml_get_meetings($arguments=array()) {
 		
 	}
 
-	//todo convert this into a tag field or something
+	//todo convert this into a custom taxonomy
 	if (!empty($arguments['type'])) {
 		$meta_query[] = array(
 			'key'	=> 'types',
@@ -285,10 +294,11 @@ function tsml_get_meetings($arguments=array()) {
 		);
 	}
 	
+	//group id must be an integer
 	if (!empty($arguments['group_id'])) {
 		$meta_query[] = array(
 			'key'	=> 'group_id',
-			'value'	=> $arguments['group_id'],
+			'value'	=> intval($arguments['group_id']),
 		);
 	}
 	
@@ -311,6 +321,7 @@ function tsml_get_meetings($arguments=array()) {
 	
 	foreach ($posts as $post) {
 		$groups[$post->ID] = array(
+			'group_id' => $post->ID,
 			'group' => $post->post_title,
 			'group_notes' => $post->post_content,
 		);
@@ -460,14 +471,14 @@ function tsml_get_meetings($arguments=array()) {
 	
 	# Search meetings
 	$posts = get_posts(array(
-		'post_type'		=> TSML_TYPE_MEETINGS,
-		'numberposts'	=> -1,
-		'meta_key'		=> 'time',
-		'orderby'		=> 'meta_value',
-		'order'			=> 'asc',
-		'meta_query'	=> $meta_query,
-		'post__in'		=> $post_ids,
-		'post_parent'	=> $arguments['location_id'],
+		'post_type'			=> TSML_TYPE_MEETINGS,
+		'numberposts'		=> -1,
+		'meta_key'			=> 'time',
+		'orderby'			=> 'meta_value',
+		'order'				=> 'asc',
+		'meta_query'		=> $meta_query,
+		'post__in'			=> $post_ids,
+		'post_parent_in'	=> $arguments['location_id'],
 	));
 
 	//dd($meta_query);
@@ -931,7 +942,7 @@ function tsml_import($meetings, $delete=false) {
 				  	'post_type'		=> TSML_TYPE_GROUPS,
 				  	'post_status'	=> 'publish',
 					'post_title'	=> $meeting['group'],
-					'post_content'  => @$meeting['group-notes'],
+					'post_content'  => empty($meeting['group-notes']) ? '' : $meeting['group-notes'],
 				));
 				
 				for ($i = 1; $i <= GROUP_CONTACT_COUNT; $i++) {
