@@ -3,7 +3,7 @@ Contributors: aasanjose
 Tags: meetings, aa, al-anon, na, 12-step, locations, groups
 Requires at least: 3.2
 Tested up to: 4.4
-Stable tag: 1.9.6
+Stable tag: 1.9.7
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -76,7 +76,7 @@ If you have access to your functions.php, you may add additional meeting types f
 example to your purposes:
 
 	tsml_custom_types(array(
-		'ASBI' => 'As Bill Sees It',
+		'ABSI' => 'As Bill Sees It',
 	));
 	
 Please note a few things about custom types:
@@ -111,8 +111,9 @@ archive-meetings.php file controls the meeting list page, single-meetings.php co
 detail, and single-locations.php controls the location detail.
 
 = Are there any shortcodes? =
-Yes, you can use `[tsml_meeting_count]`, `[tsml_location_count]`, and `[tsml_region_count]` to display human-formatted
-counts of your entities in your posts. "For example, our area currently comprises [tsml_meeting_count] meetings."
+Yes, you can use `[tsml_meeting_count]`, `[tsml_location_count]`, `[tsml_group_count]`, and `[tsml_region_count]` to 
+display human-formatted counts of your entities in your posts. "For example, our area currently comprises 
+[tsml_meeting_count] meetings."
 
 = Are there translations to other languages? =
 Currently no, but if someone will volunteer to help with the translating, we will add it.
@@ -135,6 +136,11 @@ and then drop some or all of these tags in your PHP:
 1. Meeting map
 
 == Changelog ==
+
+= 1.9.7 =
+* Better meeting list sorting: now respects "Week Starts On" user preference
+* Sorting now consumes less memory
+* The location_id parameter for tsml_get_meetings() can be an array
 
 = 1.9.6 =
 * Link to map or list view

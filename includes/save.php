@@ -21,12 +21,11 @@ function tsml_save_post(){
 	if (!isset($_POST['post_type']) || ($_POST['post_type'] != TSML_TYPE_MEETINGS)) return;
 	
 	//save ordinary meeting metadata
-	if (strlen($_POST['day'])) $_POST['day'] = intval($_POST['day']);
-	update_post_meta($post->ID, 'day',			$_POST['day']);
-	update_post_meta($post->ID, 'time',			sanitize_text_field($_POST['time']));
-	update_post_meta($post->ID, 'region',		intval($_POST['region'])); //cache region on meeting
+	if (strlen($_POST['day']))    update_post_meta($post->ID, 'day',    intval($_POST['day']));
+	if (!empty($_POST['time']))   update_post_meta($post->ID, 'time',   sanitize_text_field($_POST['time']));
+	if (!empty($_POST['region'])) update_post_meta($post->ID, 'region', intval($_POST['region'])); //cache region on meeting
 	if (is_array($_POST['types'])) {
-		update_post_meta($post->ID, 'types',	array_map('esc_attr', $_POST['types']));
+		update_post_meta($post->ID, 'types', array_map('esc_attr', $_POST['types']));
 	}
 
 	//exit here if the location is not ready

@@ -24,6 +24,8 @@ $tsml_days	= array(
 
 $tsml_days = $tsml_days[get_option('start_of_week', 0)];
 
+$tsml_days_order = array_keys($tsml_days); //used by tsml_meetings_sort() over and over
+
 $tsml_nonce = plugin_basename(__FILE__);
 
 $tsml_program = get_option('tsml_program', 'aa');
