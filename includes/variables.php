@@ -36,6 +36,7 @@ $tsml_programs = array(
 	'coda'		=> 'Co-Dependents Anonymous',
 	'na'		=> 'Narcotics Anonymous',
 	'oa'		=> 'Overeaters Anonymous',
+	'sa'		=> 'Sexaholics Anonymous',
 	'saa'		=> 'Sex Addicts Anonymous',
 	'slaa'		=> 'Sex and Love Addicts Anonymous',
 );
@@ -201,6 +202,19 @@ $tsml_types = array(
 		'WORK'  => 'Work Book Study',
 		'WRIT'  => 'Writing',
 	),	
+	'sa' => array(
+		'BE'	=> 'Beginner', 
+		'B'		=> 'Book Study', 
+		'C'		=> 'Closed', 
+		'MED'	=> 'Meditation', 
+		'M'		=> 'Men Only', 
+		'MI'	=> 'Mixed', 
+		'O'		=> 'Open',
+		'PP'	=> 'Primary Purpose',
+		'SP'	=> 'Speaker',
+		'ST'	=> 'Step Study',
+		'W'		=> 'Women Only',
+	),
 	'saa' => array(
 		'C'		=> 'Closed', 
 		'M'		=> 'Men Only', 

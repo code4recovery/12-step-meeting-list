@@ -3,7 +3,7 @@ Contributors: aasanjose
 Tags: meetings, aa, al-anon, na, 12-step, locations, groups
 Requires at least: 3.2
 Tested up to: 4.4
-Stable tag: 1.9.7
+Stable tag: 1.9.8
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -136,6 +136,9 @@ and then drop some or all of these tags in your PHP:
 1. Meeting map
 
 == Changelog ==
+
+= 1.9.8 =
+* Adding Sexaholics Anonymous
 
 = 1.9.7 =
 * Better meeting list sorting: now respects "Week Starts On" user preference
