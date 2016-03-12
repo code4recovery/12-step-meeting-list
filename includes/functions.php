@@ -788,7 +788,9 @@ function tsml_import($meetings, $delete=false) {
 	$header_count = count($header);
 	
 	//check header for required fields
-	if (!in_array('address', $header)) return tsml_alert('Address column is required.', 'error');
+	if (!in_array('address', $header) ||
+		(!in_array('city', $header) && !in_array('state', $header) && !in_array('postal_code', $header))
+	) return tsml_alert('Either Address, or City, State and Postal Code are required.', 'error');
 
 	//all the data is set, now delete everything
 	if ($delete) {
@@ -835,9 +837,6 @@ function tsml_import($meetings, $delete=false) {
 			}
 		}
 		
-		//check required fields
-		if (empty($meeting['address'])) return tsml_alert('Found a meeting with no address at row #' . $row_counter . '.', 'error');
-
 		//sanitize time & day
 		if (empty($meeting['time']) || empty($meeting['day'])) {
 			$meeting['time'] = $meeting['day'] = ''; //by appointment
@@ -856,13 +855,21 @@ function tsml_import($meetings, $delete=false) {
 		if (empty($meeting['name'])) $meeting['name'] = $meeting['location'] . ' ' . $meeting['day'] . 's at ' . tsml_format_time($meeting['time']);
 	
 		//sanitize address, remove everything starting with @ (consider other strings as well?)
-		if ($pos = strpos($meeting['address'], '@')) $meeting['address'] = trim(substr($meeting['address'], 0, $pos));
-
-		//append city, state, and country to address if not already in it
-		if (!empty($meeting['city'])) $meeting['address'] .= ', ' . $meeting['city'];
-		if (!empty($meeting['state'])) $meeting['address'] .= ', ' . $meeting['state'];
-		if ($meeting['country'] == 'US') $meeting['country'] = 'USA'; //helps geocoding
-		if (!empty($meeting['country']) && !stristr($meeting['address'], $meeting['country'])) $meeting['address'] .= ', ' . $meeting['country'];
+		if (!empty($meeting['address']) && $pos = strpos($meeting['address'], '@')) $meeting['address'] = trim(substr($meeting['address'], 0, $pos));
+		
+		//google prefers USA for geocoding
+		if (!empty($meeting['country']) && $meeting['country'] == 'US') $meeting['country'] = 'USA'; 
+		
+		//build address
+		$address = array();
+		if (!empty($meeting['address'])) $address[] = $meeting['address'];
+		if (!empty($meeting['city'])) $address[] = $meeting['city'];
+		if (!empty($meeting['state'])) $address[] = $meeting['state'];
+		if (!empty($meeting['postal_code'])) $address[] = $meeting['postal_code'];
+		if (!empty($meeting['country'])) $address[] = $meeting['country'];
+		$address = implode(', ', $address);
+		
+		if (empty($address)) return tsml_alert('Not enough location information at row #' . $row_counter . '.', 'error');
 
 		//notes
 		if (empty($meeting['notes'])) $meeting['notes'] = '';
@@ -937,8 +944,8 @@ function tsml_import($meetings, $delete=false) {
 		}
 				
 		//group by address
-		if (!array_key_exists($meeting['address'], $addresses)) {
-			$addresses[$meeting['address']] = array(
+		if (!array_key_exists($address, $addresses)) {
+			$addresses[$address] = array(
 				'meetings' => array(),
 				'lines' => array(),
 				'region' => $meeting['region'],
@@ -948,7 +955,7 @@ function tsml_import($meetings, $delete=false) {
 		}
 		
 		//attach meeting to address object
-		$addresses[$meeting['address']]['meetings'][] = array(
+		$addresses[$address]['meetings'][] = array(
 			'name' => $meeting['name'],
 			'day' => $meeting['day'],
 			'time' => $meeting['time'],
@@ -960,7 +967,7 @@ function tsml_import($meetings, $delete=false) {
 		);
 		
 		//attach line number for reference if geocoding fails
-		$addresses[$meeting['address']]['lines'][] = $row_counter;
+		$addresses[$address]['lines'][] = $row_counter;
 	}
 	
 	//make sure script has enough time to run
@@ -1029,6 +1036,8 @@ function tsml_import($meetings, $delete=false) {
 				return tsml_alert('Google gave an unexpected response for address <em>' . $original_address . '</em>. Response was <pre>' . var_export($data, true) . '</pre>', 'error');
 			}
 			
+			//dd($data->results[0]->address_components);
+			
 			//unpack response
 			$address = $city = $state = $postal_code = $country = $point_of_interest = false;
 			foreach ($data->results[0]->address_components as $component) {
@@ -1060,12 +1069,6 @@ function tsml_import($meetings, $delete=false) {
 			*/
 			if (empty($address)) $address = $point_of_interest;
 			
-			//check for required values
-			if (empty($address) || empty($city) || empty($data->results[0]->geometry->location->lat)) {
-				$failed_addresses[$original_address] = $info['lines'];
-				continue;
-			}
-			
 			//create formatted address with the same methodology as in admin_edit.js
 			$formatted_address = array();
 			if (!empty($address)) $formatted_address[] = $address;
@@ -1074,6 +1077,12 @@ function tsml_import($meetings, $delete=false) {
 			if (!empty($postal_code)) $formatted_address[] = array_pop($formatted_address) . ' ' . $postal_code;
 			if (!empty($country)) $formatted_address[] = $country;
 			$formatted_address = implode(', ', $formatted_address);
+			
+			//check for required values
+			if (empty($formatted_address) || empty($data->results[0]->geometry->location->lat) || empty($data->results[0]->geometry->location->lng)) {
+				$failed_addresses[$original_address] = $info['lines'];
+				continue;
+			}
 			
 			//lat and lon
 			$latitude = $data->results[0]->geometry->location->lat;
