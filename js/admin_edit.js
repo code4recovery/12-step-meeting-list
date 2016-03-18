@@ -72,7 +72,6 @@ jQuery(function(){
 	});*/
 	
 	jQuery('input#group').change(function(){
-		console.log('hi');
 		jQuery('div#group .apply_group_to_location').removeClass('hidden');
 	});
 
@@ -118,6 +117,9 @@ jQuery(function(){
 
 		jQuery.getJSON('https://maps.googleapis.com/maps/api/geocode/json', { address: val, key: 'AIzaSyBRM9LTED2PgK91UL4qRmiWHVq0TI686tc', sensor: false }, function(data){
 
+			//check status first, eg REQUEST_DENIED, ZERO_RESULTS
+			if (data.status != 'OK') return;
+			
 			//set lat + lng
 			var latitude = data.results[0].geometry.location.lat;
 			var longitude = data.results[0].geometry.location.lng;
@@ -128,7 +130,6 @@ jQuery(function(){
 			//guess region if not set
 			var region_id = false;
 			if (!jQuery('select#region option[selected]').size()) {
-				console.log('no');
 				val = data.results[0].formatted_address;
 				jQuery('select#region option').each(function(){
 					var region_name = jQuery(this).text().replace('&nbsp;', '').trim();
@@ -203,7 +204,6 @@ jQuery(function(){
 			//check if location with same address is already in the system, populate form
 			jQuery.getJSON(myAjax.ajaxurl + '?action=address', { formatted_address: formatted_address }, function(data){
 				if (data) {
-					//console.log(data);
 					jQuery('input[name=location]').val(data.location);
 					jQuery('select[name=region] option').prop('selected', false);
 					jQuery('select[name=region] option[value=' + data.region + ']').prop('selected', true);
