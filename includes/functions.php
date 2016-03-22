@@ -567,7 +567,6 @@ function tsml_sort_meetings($a, $b) {
 			}
 		}
 	}
-	die('hwats???');
 }
 
 //function: template tag to get location, attach custom fields to it
@@ -837,23 +836,26 @@ function tsml_import($meetings, $delete=false) {
 			}
 		}
 		
+		//if location is missing, use address
+		if (empty($meeting['location'])) $meeting['location'] = $meeting['address'];
+	
 		//sanitize time & day
 		if (empty($meeting['time']) || empty($meeting['day'])) {
 			$meeting['time'] = $meeting['day'] = ''; //by appointment
+
+			//if meeting name missing, use location
+			if (empty($meeting['name'])) $meeting['name'] = $meeting['location'] . ' by Appointment';
 		} else {
 			$meeting['time'] = date_parse($meeting['time']);
 			$meeting['time'] = sprintf('%02d', $meeting['time']['hour']) . ':' . sprintf('%02d', $meeting['time']['minute']);
 			
 			if (!in_array(strtoupper($meeting['day']), $upper_days)) return tsml_alert('"' . $meeting['day'] . '" is an invalid value for day at row #' . $row_counter . '.', 'error');
 			$meeting['day'] = array_search(strtoupper($meeting['day']), $upper_days);
+
+			//if meeting name missing, use location, day, and time
+			if (empty($meeting['name'])) $meeting['name'] = $meeting['location'] . ' ' . $tsml_days[$meeting['day']] . 's at ' . tsml_format_time($meeting['time']);
 		}
-		
-		//if location is missing, use address
-		if (empty($meeting['location'])) $meeting['location'] = $meeting['address'];
-	
-		//if meeting name missing, use location, day, and time
-		if (empty($meeting['name'])) $meeting['name'] = $meeting['location'] . ' ' . $meeting['day'] . 's at ' . tsml_format_time($meeting['time']);
-	
+
 		//sanitize address, remove everything starting with @ (consider other strings as well?)
 		if (!empty($meeting['address']) && $pos = strpos($meeting['address'], '@')) $meeting['address'] = trim(substr($meeting['address'], 0, $pos));
 		

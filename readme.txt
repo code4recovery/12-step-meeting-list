@@ -3,7 +3,7 @@ Contributors: aasanjose
 Tags: meetings, aa, al-anon, na, 12-step, locations, groups
 Requires at least: 3.2
 Tested up to: 4.4
-Stable tag: 2.0.1
+Stable tag: 2.0.2
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -138,6 +138,9 @@ and then drop some or all of these tags in your PHP:
 
 == Changelog ==
 
+= 2.0.2 =
+* Better default meeting names when importing
+
 = 2.0.1 =
 * Better fullscreen map CSS
 
@@ -177,35 +180,3 @@ and then drop some or all of these tags in your PHP:
 
 = 1.9 =
 * Location details bug fix and address-field javascript fix
-
-= 1.8.9 =
-* Fixing map bug
-
-= 1.8.8 =
-* Now displaying sub-regions in the meeting list table
-
-= 1.8.7 =
-* Optimized sql upgrade to avoid out of memory error
-
-= 1.8.6 =
-* New optional group object! Location contacts move over to it (Greensboro, New York and Europe)
-* Refactored javascript on public page to speed up large meeting lists
-* Improved method of linking to assets, fixing issue with Twenty Fourteen (Oahu)
-* Users can only select one type at a time now, for security and simplicity (Austin)
-* Get group contacts' email addresses quickly (Europe)
-* Search for regions (Europe)
-* Import sub regions (Maine)
-* Correcting a problem with the database upgrader
-* Adding some new FAQs
-
-= 1.8.5 =
-* Importer no longer verifies Google's SSL certificate for Corpus Christi
-
-= 1.8.4 =
-* Meeting-, location- and region-count shortcodes per SEPIA
-
-= 1.8.3 =
-* Preventing API header error encountered by East Bay
-
-= 1.8.2 =
-* Dropping PHP version requirement, should be compatible with all versions now
