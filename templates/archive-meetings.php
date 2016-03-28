@@ -14,10 +14,10 @@ $view	= (isset($_GET['v']) && $_GET['v'] == 'map') ? 'map' : 'list';
 
 //need later
 $times  = array(
-	'morning' => 'Morning',
-	'day' => 'Day',
-	'evening' => 'Evening',
-	'night' => 'Night',
+	'morning' => __('Morning', 'tsml'),
+	'day' => __('Day', 'tsml'),
+	'evening' => __('Evening', 'tsml'),
+	'night' => __('Night', 'tsml'),
 );
 
 if (!isset($_GET['d'])) {
@@ -29,13 +29,13 @@ if (!isset($_GET['d'])) {
 }
 
 //labels
-$day_default = 'Any Day';
+$day_default = __('Any Day', 'tsml');
 $day_label = ($day === false) ? $day_default : $tsml_days[$day];
-$time_default = 'Any Time';
+$time_default = __('Any Time', 'tsml');
 $time_label = $time ? $times[$time] : $time_default;
-$region_default = 'Everywhere';
+$region_default = __('Everywhere', 'tsml');
 $region_label = ($region && array_key_exists($region, $tsml_regions)) ? $tsml_regions[$region] : $region_default;
-$type_default = 'Any Type';
+$type_default = __('Any Type', 'tsml');
 $type_label = ($type && array_key_exists($type, $tsml_types[$tsml_program])) ? $tsml_types[$tsml_program][$type] : $type_default;
 
 //need this later
@@ -61,7 +61,7 @@ class Walker_Regions_Dropdown extends Walker_Category {
 		<div class="col-md-2 col-sm-6">
 			<form id="search">
 				<div class="input-group">
-					<input type="text" name="query" class="form-control" value="<?php echo $search?>" placeholder="Search">
+					<input type="text" name="query" class="form-control" value="<?php echo $search?>" placeholder="<?php _e('Search', 'tsml')?>">
 					<span class="input-group-btn">
 						<button class="btn btn-default" type="submit"><i class="glyphicon glyphicon-search"></i></button>
 					</span>
@@ -141,17 +141,17 @@ class Walker_Regions_Dropdown extends Walker_Category {
 		</div>
 		<div class="col-md-2 col-sm-12 visible-md visible-lg visible-xl">
 			<div class="btn-group btn-group-justified" id="action">
-				<a class="btn btn-default toggle-view active" data-id="list">
-					List
+				<a class="btn btn-default toggle-view<?php if ($view == 'list') {?> active<?php }?>" data-id="list">
+					<?php _e('List', 'tsml')?>
 				</a>
 				<div class="btn-group">
-					<a class="btn btn-default toggle-view dropdown-toggle" data-toggle="dropdown" data-id="map">
-						Map
+					<a class="btn btn-default toggle-view<?php if ($view == 'map') {?> active<?php }?> dropdown-toggle" data-toggle="dropdown" data-id="map">
+						<?php _e('Map', 'tsml')?>
 						<span class="caret"></span>
 					</a>
 					<ul class="dropdown-menu pull-right" role="menu">
-						<li><a href="#fullscreen">Expand</a></li>
-						<li><a href="#geolocator">Find Me</a></li>
+						<li><a href="#fullscreen"><?php _e('Expand', 'tsml')?></a></li>
+						<li><a href="#geolocator"><?php _e('Find Me', 'tsml')?></a></li>
 					</ul>
 				</div>
 			</div>
@@ -160,7 +160,7 @@ class Walker_Regions_Dropdown extends Walker_Category {
 	<div class="row results">
 		<div class="col-xs-12">
 			<div id="alert" class="alert alert-warning<?php if (count($meetings)) {?> hidden<?php }?>">
-				No results matched those criteria
+				<?php _e('No results matched those criteria', 'tsml')?>
 			</div>
 			
 			<div id="map"></div>
@@ -168,11 +168,11 @@ class Walker_Regions_Dropdown extends Walker_Category {
 			<div id="table-wrapper">
 				<table class="table table-striped<?php if (!count($meetings)) {?> hidden<?php }?>">
 					<thead class="hidden-print">
-						<th class="time">Time</th>
-						<th class="name">Meeting</th>
-						<th class="location">Location</th>
-						<th class="address">Address</th>
-						<th class="region">Region</th>
+						<th class="time"><?php _e('Time', 'tsml')?></th>
+						<th class="name"><?php _e('Meeting', 'tsml')?></th>
+						<th class="location"><?php _e('Location', 'tsml')?></th>
+						<th class="address"><?php _e('Address', 'tsml')?></th>
+						<th class="region"><?php _e('Region', 'tsml')?></th>
 					</thead>
 					<tbody>
 						<?php
@@ -189,9 +189,10 @@ class Walker_Regions_Dropdown extends Walker_Category {
 									'name' => $meeting['location'],
 									'latitude' => $meeting['latitude'] - 0,
 									'longitude' => $meeting['longitude'] - 0,
-									'link' => tsml_link($meeting['location_url'], $meeting['location'], 'post_type'),
+									'url' => $meeting['location_url'], //can't use link here, unfortunately
 									'address' => $meeting['address'],
-									'city_state' => $meeting['city'] . ', ' . $meeting['state'],
+									'city' => $meeting['city'],
+									'state' => $meeting['state'],
 									'meetings' => array(),
 								);
 							}
@@ -200,7 +201,7 @@ class Walker_Regions_Dropdown extends Walker_Category {
 								'time'=>$meeting['time_formatted'],
 								'day'=>$meeting['day'],
 								'name'=>$meeting['name'],
-								'link'=>$meeting['link'],
+								'url'=>$meeting['url'], //can't use link here, unfortunately
 								'types'=>$meeting['types'],
 							);
 

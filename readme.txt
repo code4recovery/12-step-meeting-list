@@ -3,7 +3,7 @@ Contributors: aasanjose
 Tags: meetings, aa, al-anon, na, 12-step, locations, groups
 Requires at least: 3.2
 Tested up to: 4.4
-Stable tag: 2.0.2
+Stable tag: 2.0.3
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -104,6 +104,22 @@ Your meetings will be listed on their special WordPress Archive page. Where that
 Permalinks setup. The easiest way to find the link is to go to the **Meetings > Import & Settings** page 
 and look for the link under "Where's My Info?"
 
+= How can I change some of the text on the template pages? =
+You can make use of the [gettext filter](https://codex.wordpress.org/Plugin_API/Filter_Reference/gettext) 
+to override the plugin's translation strings. For example, if you wanted to replace 'Region' with 'Province,'
+you could add the following to your functions.php file.
+
+	function theme_override_tsml_strings($translated_text, $text, $domain) {
+		if ($domain == 'tsml') {
+			switch ($translated_text) {
+				case 'Region':
+					return 'Province';
+			}
+		}
+		return $translated_text;
+	}
+	add_filter('gettext', 'theme_override_tsml_strings', 20, 3);
+
 = How can I override the meeting list or detail pages? =
 Copy the files from the plugin's templates directory into your theme's root directory. If you're using a 
 theme from the Theme Directory, you may be better off creating a 
@@ -137,6 +153,11 @@ and then drop some or all of these tags in your PHP:
 1. Meeting map
 
 == Changelog ==
+
+= 2.0.3 =
+* More thorough use of translation strings
+* FAQ documentation on overriding them
+* Refactored infowindow javascript
 
 = 2.0.2 =
 * Better default meeting names when importing

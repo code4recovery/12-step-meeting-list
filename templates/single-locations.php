@@ -1,35 +1,30 @@
 <?php 
-
 tsml_assets();
-
 get_header(); 
-
 $location = tsml_get_location();
-
 ?>
-
 <div id="location" class="container">
 	<div class="row">
 		<div class="col-md-10 col-md-offset-1 main">
 		
 			<div class="page-header">
 				<h1><?php echo $location->post_title?></h1>
-				<?php echo tsml_link(get_post_type_archive_link('meetings'), '<i class="glyphicon glyphicon-chevron-right"></i> Back to Meetings', 'locations')?>
+				<?php echo tsml_link(get_post_type_archive_link('meetings'), '<i class="glyphicon glyphicon-chevron-right"></i> ' . __('Back to Meetings', 'tsml'), 'locations')?>
 			</div>
 
 			<div class="row location">
 				<div class="col-md-4 meta">
 					<dl>
-						<dt><?php _e('Location', '12-step-meeting-list')?></dt>
+						<dt><?php _e('Location', 'tsml')?></dt>
 						<dd><?php echo $location->address?><br><?php echo $location->city?>, <?php echo $location->state?> <?php echo $location->postal_code?></dd>
 
 						<?php if (!empty($tsml_regions[$location->region])) {?>
-						<dt><?php _e('Region', '12-step-meeting-list')?></dt>
+						<dt><?php _e('Region', 'tsml')?></dt>
 						<dd><?php echo $tsml_regions[$location->region]?></dd>
 						<?php }
 							
 						if (!empty($location->notes)) {?>
-						<dt><?php _e('Notes', '12-step-meeting-list')?></dt>
+						<dt><?php _e('Notes', 'tsml')?></dt>
 						<dd><?php echo $location->notes?></dd>
 						<?php }
 						
@@ -41,11 +36,11 @@ $location = tsml_get_location();
 						}
 						ksort($location_days);
 						foreach ($location_days as $day=>$meetings) {?>
-							<dt><?php echo $tsml_days[$day]?></dt>
+							<dt><?php if (!empty($tsml_days[$day])) echo $tsml_days[$day]?></dt>
 							<dd><ul><?php echo implode($meetings)?></ul></dd>
 						<?php }?>
 
-						<dt><?php _e('Updated', '12-step-meeting-list')?></dt>
+						<dt><?php _e('Updated', 'tsml')?></dt>
 						<dd><?php the_modified_date()?></dd>
 					</dl>
 				</div>
@@ -67,7 +62,7 @@ $location = tsml_get_location();
 							var contentString = '<div class="infowindow">'+
 								'<h3><?php esc_attr_e($location->post_title)?></h3>'+
 								'<p><?php esc_attr_e($location->address)?><br><?php esc_attr_e($location->city)?>, <?php echo $location->state?> <?php echo $location->postal_code?></p>'+
-								'<p><a class="btn btn-default" href="http://maps.apple.com/?q=<?php echo urlencode($location->formatted_address)?>" target="_blank">Directions</a></p>' +
+								'<p><a class="btn btn-default" href="http://maps.apple.com/?q=<?php echo urlencode($location->formatted_address)?>" target="_blank"><?php _e('Directions', 'tsml')?></a></p>' +
 								'</div>';
 
 							var infowindow = new google.maps.InfoWindow({
@@ -85,7 +80,6 @@ $location = tsml_get_location();
 							google.maps.event.addListener(marker, 'click', function() {
 								infowindow.open(map,marker);
 							});
-
 						});
 					</script>
 				</div>
@@ -94,5 +88,5 @@ $location = tsml_get_location();
 		</div>
 	</div>
 </div>
-
-<?php get_footer(); ?>
+<?php
+get_footer();

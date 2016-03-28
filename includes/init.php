@@ -14,7 +14,7 @@ function tsml_init() {
 	//load internationalization
 	add_action('plugins_loaded', 'tsml_plugins_loaded');
 	function tsml_plugins_loaded() {
-		load_plugin_textdomain('12-step-meeting-list', false, basename(dirname(__FILE__)) . '/languages/');
+		load_plugin_textdomain('tsml', false, basename(dirname(__FILE__)) . '/languages/');
 	}
 
 	//meeting list page

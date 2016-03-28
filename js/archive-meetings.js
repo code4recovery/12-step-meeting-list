@@ -90,16 +90,6 @@ jQuery(function($){
 				//loop through JSON meetings
 				jQuery.each(response, function(index, obj){
 
-					//console.log(obj);
-
-					//append query string to url
-					if (querystring.length) {
-						obj.url = obj.url + ((obj.url.indexOf('?') > -1) ? '&' : '?');
-						obj.url = obj.url + querystring;
-						obj.location_url = obj.location_url + ((obj.location_url.indexOf('?') > -1) ? '&' : '?');
-						obj.location_url = obj.location_url + querystring;
-					}
-
 					//add gender designation
 					if (jQuery.inArray('M', obj.types) != -1) {
 						obj.name += ' <small>Men</small>';
@@ -133,7 +123,7 @@ jQuery(function($){
 					//add new table row
 					tbody.append('<tr>' + 
 						'<td class="time">' + (data.day || !obj.day ? obj.time_formatted : days[obj.day] + ', ' + obj.time_formatted) + '</td>' + 
-						'<td class="name"><a href="' + obj.url + '">' + highlight(obj.name, search) + '</a><div class="visible-print-block">' + (obj.sub_region || obj.region || '') + '</div></td>' + 
+						'<td class="name">' + formatLink(obj.url, highlight(obj.name, search), 'post_type') + '<div class="visible-print-block">' + (obj.sub_region || obj.region || '') + '</div></td>' + 
 						'<td class="location">' + highlight(obj.location, search) + '<div class="visible-print-block">' + highlight(obj.address, search) + '</div></td>' + 
 						'<td class="address hidden-print">' + highlight(obj.address, search) + '</td>' + 
 						'<td class="region hidden-print">' + (obj.sub_region || obj.region || '') + '</td>' + 
@@ -145,53 +135,9 @@ jQuery(function($){
 				markers = [];
 				bounds = new google.maps.LatLngBounds;
 
-				//loop through new markers and add them (sparse array)
-				for (location_id in locations) {
-					if (locations.hasOwnProperty(location_id) && /^0$|^[1-9]\d*$/.test(location_id) && location_id <= 4294967294) {
-						var obj = locations[location_id];
-						var marker = new google.maps.Marker({
-							position: new google.maps.LatLng(obj.latitude, obj.longitude),
-							map: map,
-							title: obj.name
-						});
-
-						markers[markers.length] = marker;
-						bounds.extend(marker.position);
-
-						//add infowindow event
-						google.maps.event.addListener(marker, 'click', (function(marker, obj) {
-							return function() {
-								var meetings = {};
-								for (var i = 0; i < obj.meetings.length; i++) {
-									if (!meetings[days[obj.meetings[i].day]]) meetings[days[obj.meetings[i].day]] = '';
-									meetings[days[obj.meetings[i].day]] += '<dt>' + obj.meetings[i].time + '</dt>' + 
-										'<dd><a href="' + obj.meetings[i].url + '">' + obj.meetings[i].name + '</a></dd>';
-								}
-								var meetings_list = '';
-								for (var day in meetings) {
-									meetings_list += '<h5>' + day + '</h5><dl>' + meetings[day] + '</dl>';
-								}
-								infowindow.setContent('<div class="infowindow"><h3><a href="' + obj.url + '">' + obj.name + '</a></h3><address>' + obj.address + '<br>' + obj.city + ', ' + obj.state + '</address>' + meetings_list + '</div>');
-								infowindow.open(map, marker);
-							}
-						})(marker, obj));					
-					}
-				}
-
-				//handle zooming
-				if (markers.length > 1) {
-					map.fitBounds(bounds);
-				} else if (markers.length == 1) {
-					map.setCenter(bounds.getCenter());
-   					if ($('#map').is(':visible')) google.maps.event.trigger(markers[0],'click');
-   					map.setZoom(14);
-				} else if (markers.length == 0) {
-					//currently holds last position, not sure if that's good
-				}
-
+				loadMap(locations);
 			}
-
-		}, 'json');		
+		}, 'json');	
 	}
 
 	//highlight search string
@@ -398,14 +344,14 @@ function loadMap(locations) {
 			
 			//set new marker
 			var marker = new google.maps.Marker({
-				position: {lat: location.latitude, lng: location.longitude},
+				position: {lat: location.latitude - 0, lng: location.longitude - 0},
 				map: map,
 				title: location.name,
 			});
 
 			//create infowindow content
-			marker.content = '<div class="infowindow"><h3>' + location.link + '</h3>' +
-				'<address>' + location.address + '<br>' + location.city_state + '</address>';
+			marker.content = '<div class="infowindow"><h3>' + formatLink(location.url, location.name, 'post_type') + '</h3>' +
+				'<address>' + location.address + '<br>' + location.city + (location.state ? ', ' + location.state : '') + '</address>';
 				
 			var current_day = null;
 			for (var i = 0; i < location.meetings.length; i++) {
@@ -413,9 +359,10 @@ function loadMap(locations) {
 				if (current_day != meeting.day) {
 					if (current_day) marker.content += '</dl>';
 					current_day = meeting.day;
-					marker.content += '<h5>' + days[current_day] + '</h5><dl>';
+					if (typeof days[current_day] !== 'undefined') marker.content += '<h5>' + days[current_day] + '</h5>';
+					marker.content += '<dl>';
 				}
-				marker.content += '<dt>' + meeting.time + '</dt><dd>' + meeting.link + '</dd>';
+				marker.content += '<dt>' + meeting.time + '</dt><dd>' + formatLink(meeting.url, meeting.name, 'post_type') + '</dd>';
 			}
 			marker.content += '</dl></div>';
 			
@@ -434,8 +381,30 @@ function loadMap(locations) {
 		}
 	}
 
-	map.fitBounds(bounds);
+	if (markers.length > 1) {
+		map.fitBounds(bounds);
+	} else if (markers.length == 1) {
+		map.setCenter(bounds.getCenter());
+		if (jQuery('#map').is(':visible')) google.maps.event.trigger(markers[0],'click');
+		map.setZoom(14);
+	} else if (markers.length == 0) {
+		//currently holds last position, not sure if that's good
+	}
 	
+}
+
+//format a link to a meeting result page, preserving all but the excluded query string keys
+function formatLink(url, text, exclude) {
+	var query_pairs = location.search.substr(1).split('&');
+	var new_query_pairs = [];
+	for (var i = 0; i < query_pairs.length; i++) {
+		var query_parts = query_pairs[i].split('=');
+		if (query_parts[0] != exclude) new_query_pairs[new_query_pairs.length] = query_parts[0] + '=' + query_parts[1];
+	}
+	if (new_query_pairs.length) {
+		url = url + '?' + new_query_pairs.join('&');
+	}
+	return '<a href="' + url + '">' + text + '</a>';
 }
 
 function updateQueryString(key, value, url) {
