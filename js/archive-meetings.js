@@ -402,7 +402,7 @@ function formatLink(url, text, exclude) {
 		if (query_parts[0] != exclude) new_query_pairs[new_query_pairs.length] = query_parts[0] + '=' + query_parts[1];
 	}
 	if (new_query_pairs.length) {
-		url = url + '?' + new_query_pairs.join('&');
+		url += ((url.indexOf('?') == -1) ? '?' : '&') + new_query_pairs.join('&');
 	}
 	return '<a href="' + url + '">' + text + '</a>';
 }
