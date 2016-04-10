@@ -18,37 +18,37 @@ function tsml_admin_menu() {
 	}
 		
 	//import text file
-	add_submenu_page('edit.php?post_type=meetings', 'Import &amp; Settings', 'Import &amp; Settings', 'manage_options', 'import', 'tmsl_import_page');
+	add_submenu_page('edit.php?post_type=meetings', __('Import & Settings', 'tsml'), 'Import &amp; Settings', 'manage_options', 'import', 'tmsl_import_page');
 
 	function tmsl_import_page() {
 		global $tsml_types, $tsml_programs, $tsml_program, $tsml_nonce, $tsml_days;
 
 	    ?>
 		<div class="wrap">
-		    <h2>Import &amp; Settings</h2>
+		    <h2><?php _e('Import & Settings', 'tsml')?></h2>
 		    
 		    <div id="poststuff">
 			    <div id="post-body" class="columns-2">
 				    <div id="post-body-content">
 					    <div class="postbox">
 						    <div class="inside">
-								<h3>Import Data</h3>
+								<h3><?php _e('Import Data', 'tsml')?></h3>
 								<p>You can import a spreadsheet of meetings by opening it first in Excel, copying everything, and then pasting into the field below. <a href="<?php echo plugin_dir_url(__FILE__) . '../template.xlsx'?>">Here is a spreadsheet</a> you can use as a template. The header row must kept in place.</p>
 								<ul class="ul-disc">
-									<li><strong>Time</strong>, if present, should be in a standard date format such as 6:00 AM. Non-standard or empty dates will be imported as 'by appointment.'</li>
-									<li><strong>Day</strong>, if present, should either Sunday, Monday, Tuesday, Wednesday, Thursday, Friday, or Saturday. Meetings that occur on multiple days should be listed separately. 'Daily' or 'Mondays' will not work. Non-standard days will be imported as 'by appointment.'</li>
-									<li><strong>Name</strong> is the name of the meeting, and is optional, although it's valuable information for the user. If it's missing, a name will be created by combining the location, day, and time.</li>
-									<li><strong>Location</strong> is the name of the location, and is optional. Generally it's the group or building name. If it's missing, the address will be used. In the event that there are multiple location names for the same address, the first location name will be used.</li>
- 									<li><strong>Address</strong> is strongly encouraged and will be corrected by Google, so it may look different afterward. Ideally, every address for the same location should be exactly identical, and not contain extra information about the address, such as the building name or descriptors like 'around back.'</li>
+									<li><strong><?php _e('Time', 'tsml')?></strong>, if present, should be in a standard date format such as 6:00 AM. Non-standard or empty dates will be imported as 'by appointment.'</li>
+									<li><strong><?php _e('Day', 'tsml')?></strong>, if present, should either Sunday, Monday, Tuesday, Wednesday, Thursday, Friday, or Saturday. Meetings that occur on multiple days should be listed separately. 'Daily' or 'Mondays' will not work. Non-standard days will be imported as 'by appointment.'</li>
+									<li><strong><?php _e('Name', 'tsml')?></strong> is the name of the meeting, and is optional, although it's valuable information for the user. If it's missing, a name will be created by combining the location, day, and time.</li>
+									<li><strong><?php _e('Location', 'tsml')?></strong> is the name of the location, and is optional. Generally it's the group or building name. If it's missing, the address will be used. In the event that there are multiple location names for the same address, the first location name will be used.</li>
+ 									<li><strong><?php _e('Address', 'tsml')?></strong> is strongly encouraged and will be corrected by Google, so it may look different afterward. Ideally, every address for the same location should be exactly identical, and not contain extra information about the address, such as the building name or descriptors like 'around back.'</li>
 									<li>If Address is specified, then <strong>City</strong>, <strong>State</strong>, and <strong>Country</strong> are optional, but they might be useful if your addresses sound ambiguous to Google. If address is not specified, then these fields are required.</li>
-									<li><strong>Notes</strong> are freeform notes that are specific to the meeting. For example, "last Saturday is birthday night."</li>
-									<li><strong>Region</strong> is user-defined and can be anything. Often this is a small municipality or neighborhood. Since these go in a dropdown, ideally you would have 10 to 20 regions, although it's ok to be over or under.</li>
-									<li><strong>Sub Region</strong> makes the Region hierarchical; in San Jose we have sub regions for East San Jose, West San Jose, etc. New York City might have Manhattan be a Region, and Greenwich Village be a Sub Region.</li>
-									<li><strong>Location Notes</strong> are freeform notes that will show up on every meeting that this location. For example, "Enter from the side."</li>
-									<li><strong>Group</strong> is a way of grouping contacts. Meetings with the name Group name will be grouped together and share contact information.</li>
-									<li><strong>Group Notes</strong> is for stuff like a short group history, or when the business meeting meets.</li>
-									<li><strong>Contact 1/2/3 Name/Email/Phone</strong> (nine fields in total) are all optional, but will not be saved if there is not also a Group name specified. By default, contact information is only visible inside the WordPress dashboard.</li>
-									<li><strong>Types</strong> should be a comma-separated list of the following options. This list is determined by which program is selected at right.
+									<li><strong><?php _e('Notes', 'tsml')?></strong> are freeform notes that are specific to the meeting. For example, "last Saturday is birthday night."</li>
+									<li><strong><?php _e('Region', 'tsml')?></strong> is user-defined and can be anything. Often this is a small municipality or neighborhood. Since these go in a dropdown, ideally you would have 10 to 20 regions, although it's ok to be over or under.</li>
+									<li><strong><?php _e('Sub Region', 'tsml')?></strong> makes the Region hierarchical; in San Jose we have sub regions for East San Jose, West San Jose, etc. New York City might have Manhattan be a Region, and Greenwich Village be a Sub Region.</li>
+									<li><strong><?php _e('Location Notes', 'tsml')?></strong> are freeform notes that will show up on every meeting that this location. For example, "Enter from the side."</li>
+									<li><strong><?php _e('Group', 'tsml')?></strong> is a way of grouping contacts. Meetings with the name Group name will be grouped together and share contact information.</li>
+									<li><strong><?php _e('Group Notes', 'tsml')?></strong> is for stuff like a short group history, or when the business meeting meets.</li>
+									<li><strong><?php _e('Contact 1/2/3 Name/Email/Phone', 'tsml')?></strong> (nine fields in total) are all optional, but will not be saved if there is not also a Group name specified. By default, contact information is only visible inside the WordPress dashboard.</li>
+									<li><strong><?php _e('Types', 'tsml')?></strong> should be a comma-separated list of the following options. This list is determined by which program is selected at right.
 										<ul style="margin-top:10px;overflow:auto; -webkit-columns: 3 auto; -moz-columns: 3 auto; columns: 3 auto;">
 										<?php foreach ($tsml_types[$tsml_program] as $value) {?>
 											<li style="margin-bottom:0;"><?php echo $value?></li>
@@ -69,7 +69,7 @@ function tsml_admin_menu() {
 				    <div id="postbox-container-1" class="postbox-container">
 						<div class="postbox">
 							<div class="inside">
-								<h3>Choose Your Program</h3>
+								<h3><?php _e('Choose Your Program', 'tsml')?></h3>
 								<form method="post" action="edit.php?post_type=meetings&page=import">
 								<?php wp_nonce_field($tsml_nonce, 'tsml_nonce', false)?>
 								<p>This determines which meeting types are available. If your program is 
@@ -87,7 +87,7 @@ function tsml_admin_menu() {
 						</div>
 						<div class="postbox">
 							<div class="inside">
-								<h3>Where's My Info?</h3>
+								<h3><?php _e('Where\'s My Info?', 'tsml')?></h3>
 								<p>Your meeting list page is <a href="<?php echo get_post_type_archive_link(TSML_TYPE_MEETINGS); ?>">right here</a>. 
 								Link that page from your site's nav menu to make it visible to the public.</p>
 								<p>You can also download your meetings in <a href="<?php echo admin_url('admin-ajax.php')?>?action=csv">CSV format</a>.</p>
@@ -96,19 +96,31 @@ function tsml_admin_menu() {
 									<?php
 									$meetings = do_shortcode('[tsml_meeting_count]');
 									if ($meetings != '0') {?>
-									<li style="margin: 0 0 2px;"><?php echo $meetings?> meeting<?php if ($meetings != '1') {?>s<?php }?></li>
+									<li style="margin: 0 0 2px;"><?php printf(
+										    _n('%s meeting', '%s meetings', $meetings, 'tsml'),
+										    number_format_i18n($meetings)
+										)?></li>
 									<?php }
 									$locations = do_shortcode('[tsml_location_count]');
 									if ($locations != '0') {?>
-									<li style="margin: 0 0 2px;"><?php echo $locations?> location<?php if ($locations != '1') {?>s<?php }?></li>
+									<li style="margin: 0 0 2px;"><?php printf(
+										    _n('%s location', '%s locations', $locations, 'tsml'),
+										    number_format_i18n($locations)
+										)?></li>
 									<?php }
 									$regions = do_shortcode('[tsml_region_count]');
 									if ($regions != '0') {?>
-									<li style="margin: 0 0 2px;"><?php echo $regions?> region<?php if ($regions != '1') {?>s<?php }?></li>
+									<li style="margin: 0 0 2px;"><?php printf(
+										    _n('%s region', '%s regions', $regions, 'tsml'),
+										    number_format_i18n($regions)
+										)?></li>
 									<?php }
 									$groups = do_shortcode('[tsml_group_count]');
 									if ($groups != '0') {?>
-									<li style="margin: 0 0 2px;"><?php echo $groups?> group<?php if ($groups != '1') {?>s<?php }?></li>
+									<li style="margin: 0 0 2px;"><?php printf(
+										    _n('%s group', '%s groups', $groups, 'tsml'),
+										    number_format_i18n($groups)
+										)?></li>
 									<?php }?>
 								</ul>
 								Want to send a mass email to your group contacts? <a href="<?php echo admin_url('admin-ajax.php')?>?action=contacts">Click here</a> to see their email addresses.
@@ -117,7 +129,7 @@ function tsml_admin_menu() {
 						<?php if ($tsml_program == 'aa') {?>
 						<div class="postbox">
 							<div class="inside">
-								<h3>Try the Apps!</h3>
+								<h3><?php _e('Try the Apps!', 'tsml')?></h3>
 								<p>Want to have your meetings listed in a simple, clean mobile app? <a href="https://meetingguide.org/" target="_blank">Several areas are currently participating</a>,
 									but we always want more! No extra effort is required; simply continue to update your meetings here and the updates will flow down to app users.
 								<p style="margin-left:-5px;margin-right:-5px;overflow: auto;">
@@ -134,7 +146,7 @@ function tsml_admin_menu() {
 						<?php }?>
 						<div class="postbox">
 							<div class="inside">
-								<h3>About this Plugin</h3>
+								<h3><?php _e('About this Plugin', 'tsml')?></h3>
 								<p>This plugin was developed by AA volunteers in <a href="http://aasanjose.org/technology">Santa 
 									Clara County</a> to help provide accessible, accurate information about meetings to 
 									those who need it.</p>

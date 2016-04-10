@@ -3,7 +3,7 @@ Contributors: aasanjose
 Tags: meetings, aa, al-anon, na, 12-step, locations, groups
 Requires at least: 3.2
 Tested up to: 4.4
-Stable tag: 2.0.4
+Stable tag: 2.0.5
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -34,6 +34,9 @@ It was originally designed to maintain a list of AA meetings in Santa Clara Coun
 * [San Jose, CA](https://aasanjose.org/meetings)
 * [Tri Valley, CA](http://trivalleyaa.org/meetings/)
 * [Western Slope, CA](http://westernsloped22.org/meetings/)
+
+**Al-Anon**
+* [Lancaster, Lebanon PA District 22](http://lanclebalanon.org/)
 
 **CoDA**
 
@@ -153,6 +156,9 @@ and then drop some or all of these tags in your PHP:
 1. Meeting map
 
 == Changelog ==
+
+= 2.0.5 =
+* More internationalization
 
 = 2.0.4 =
 * Query string bug fix
