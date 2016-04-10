@@ -47,13 +47,13 @@ function tsml_custom_post_types() {
 	register_post_type(TSML_TYPE_MEETINGS,
 		array(
 			'labels'		=> array(
-				'name'			=>	__('Meetings', 'tsml'),
-				'singular_name'	=>	__('Meeting', 'tsml'),
-				'not_found'		=>	__('No meetings added yet.', 'tsml'),
-				'add_new_item'	=>	__('Add New Meeting', 'tsml'),
-				'search_items'	=>	__('Search Meetings', 'tsml'),
-				'edit_item'		=>	__('Edit Meeting', 'tsml'),
-				'view_item'		=>	__('View Meeting', 'tsml'),
+				'name'			=>	__('Meetings', '12-step-meeting-list'),
+				'singular_name'	=>	__('Meeting', '12-step-meeting-list'),
+				'not_found'		=>	__('No meetings added yet.', '12-step-meeting-list'),
+				'add_new_item'	=>	__('Add New Meeting', '12-step-meeting-list'),
+				'search_items'	=>	__('Search Meetings', '12-step-meeting-list'),
+				'edit_item'		=>	__('Edit Meeting', '12-step-meeting-list'),
+				'view_item'		=>	__('View Meeting', '12-step-meeting-list'),
 			),
 			'supports'		=> array('title'),
 			'public'		=> true,
@@ -126,7 +126,7 @@ function tsml_delete_orphaned_locations() {
 //used:		admin_edit.php, archive-meetings.php, single-meetings.php
 function tsml_format_day_and_time($day, $time, $separator=', ', $short=false) {
 	global $tsml_days;
-	if (empty($tsml_days[$day]) || empty($time)) return $short ? __('Appt', 'tsml') : __('Appointment', 'tsml');
+	if (empty($tsml_days[$day]) || empty($time)) return $short ? __('Appt', '12-step-meeting-list') : __('Appointment', '12-step-meeting-list');
 	return ($short ? substr($tsml_days[$day], 0, 3) : $tsml_days[$day]) . $separator . '<time>' . tsml_format_time($time) . '</time>';
 }
 
@@ -134,9 +134,9 @@ function tsml_format_day_and_time($day, $time, $separator=', ', $short=false) {
 //used:		archive-meetings.php
 function tsml_format_name($name, $types=array()) {
 	if (in_array('M', $types)) {
-		$name .= ' <small>' . __('Men', 'tsml') . '</small>';
+		$name .= ' <small>' . __('Men', '12-step-meeting-list') . '</small>';
 	} elseif (in_array('W', $types)) {
-		$name .= ' <small>' . __('Women', 'tsml') . '</small>';
+		$name .= ' <small>' . __('Women', '12-step-meeting-list') . '</small>';
 	}
 	return $name;
 }
@@ -144,9 +144,9 @@ function tsml_format_name($name, $types=array()) {
 //function: takes 18:30 and returns 6:30 pm (depending on your settings)
 //used:		tsml_get_meetings(), single-meetings.php, admin_lists.php
 function tsml_format_time($string) {
-	if (empty($string)) return __('Appointment', 'tsml');
-	if ($string == '12:00') return __('Noon', 'tsml');
-	if ($string == '23:59' || $string == '00:00') return __('Midnight', 'tsml');
+	if (empty($string)) return __('Appointment', '12-step-meeting-list');
+	if ($string == '12:00') return __('Noon', '12-step-meeting-list');
+	if ($string == '23:59' || $string == '00:00') return __('Midnight', '12-step-meeting-list');
 	$date = strtotime($string);
 	return date(get_option('time_format'), $date);
 }
@@ -649,37 +649,37 @@ function tsml_meetings_csv() {
 
 	//define columns to output
 	$columns = array(
-		'time' =>				__('Time', 'tsml'),
-		'day' =>				__('Day', 'tsml'),
-		'name' =>				__('Name', 'tsml'),
-		'location' =>			__('Location', 'tsml'),
-		'address' =>			__('Address', 'tsml'),
-		'city' =>				__('City', 'tsml'),
-		'state' =>				__('State', 'tsml'),
-		'postal_code' =>		__('Postal Code', 'tsml'),
-		'country' =>			__('Country', 'tsml'),
-		'region' =>				__('Region', 'tsml'),
-		'sub_region' =>			__('Sub Region', 'tsml'),
-		'types' =>				__('Types', 'tsml'),
-		'notes' =>				__('Notes', 'tsml'),
-		'location_notes' =>		__('Location Notes', 'tsml'),
-		'group' => 				__('Group', 'tsml'),
-		'group_notes' => 		__('Group Notes', 'tsml'),
-		'updated' =>			__('Updated', 'tsml'),
+		'time' =>				__('Time', '12-step-meeting-list'),
+		'day' =>				__('Day', '12-step-meeting-list'),
+		'name' =>				__('Name', '12-step-meeting-list'),
+		'location' =>			__('Location', '12-step-meeting-list'),
+		'address' =>			__('Address', '12-step-meeting-list'),
+		'city' =>				__('City', '12-step-meeting-list'),
+		'state' =>				__('State', '12-step-meeting-list'),
+		'postal_code' =>		__('Postal Code', '12-step-meeting-list'),
+		'country' =>			__('Country', '12-step-meeting-list'),
+		'region' =>				__('Region', '12-step-meeting-list'),
+		'sub_region' =>			__('Sub Region', '12-step-meeting-list'),
+		'types' =>				__('Types', '12-step-meeting-list'),
+		'notes' =>				__('Notes', '12-step-meeting-list'),
+		'location_notes' =>		__('Location Notes', '12-step-meeting-list'),
+		'group' => 				__('Group', '12-step-meeting-list'),
+		'group_notes' => 		__('Group Notes', '12-step-meeting-list'),
+		'updated' =>			__('Updated', '12-step-meeting-list'),
 	);
 	
 	//append contact info if user has permission
 	if (current_user_can('edit_posts')) {
 		$columns = array_merge($columns, array(
-			'contact_1_name' =>		__('Contact 1 Name', 'tsml'),
-			'contact_1_email' =>	__('Contact 1 Email', 'tsml'),
-			'contact_1_phone' =>	__('Contact 1 Phone', 'tsml'),
-			'contact_2_name' =>		__('Contact 2 Name', 'tsml'),
-			'contact_2_email' =>	__('Contact 2 Email', 'tsml'),
-			'contact_2_phone' =>	__('Contact 2 Phone', 'tsml'),
-			'contact_3_name' =>		__('Contact 3 Name', 'tsml'),
-			'contact_3_email' =>	__('Contact 3 Email', 'tsml'),
-			'contact_3_phone' =>	__('Contact 3 Phone', 'tsml'),
+			'contact_1_name' =>		__('Contact 1 Name', '12-step-meeting-list'),
+			'contact_1_email' =>	__('Contact 1 Email', '12-step-meeting-list'),
+			'contact_1_phone' =>	__('Contact 1 Phone', '12-step-meeting-list'),
+			'contact_2_name' =>		__('Contact 2 Name', '12-step-meeting-list'),
+			'contact_2_email' =>	__('Contact 2 Email', '12-step-meeting-list'),
+			'contact_2_phone' =>	__('Contact 2 Phone', '12-step-meeting-list'),
+			'contact_3_name' =>		__('Contact 3 Name', '12-step-meeting-list'),
+			'contact_3_email' =>	__('Contact 3 Email', '12-step-meeting-list'),
+			'contact_3_phone' =>	__('Contact 3 Phone', '12-step-meeting-list'),
 		));
 	}
 
@@ -779,7 +779,7 @@ function tsml_import($meetings, $delete=false) {
 	$meetings = array_filter($meetings, 'tsml_remove_empty_rows');
 	
 	//crash if no data
-	if (count($meetings) < 2) return tsml_alert(__('Nothing was imported because no data rows were found.', 'tsml'), 'error');
+	if (count($meetings) < 2) return tsml_alert(__('Nothing was imported because no data rows were found.', '12-step-meeting-list'), 'error');
 	
 	//get header
 	$header = explode("\t", array_shift($meetings));
@@ -789,7 +789,7 @@ function tsml_import($meetings, $delete=false) {
 	//check header for required fields
 	if (!in_array('address', $header) ||
 		(!in_array('city', $header) && !in_array('state', $header) && !in_array('postal_code', $header))
-	) return tsml_alert(__('Either Address, or City, State and Postal Code are required.', 'tsml'), 'error');
+	) return tsml_alert(__('Either Address, or City, State and Postal Code are required.', '12-step-meeting-list'), 'error');
 
 	//all the data is set, now delete everything
 	if ($delete) {

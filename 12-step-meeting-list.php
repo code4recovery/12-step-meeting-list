@@ -3,15 +3,15 @@
 Plugin Name: 12 Step Meeting List
 Plugin URI: https://wordpress.org/plugins/12-step-meeting-list/
 Description: CMS for maintaining database of 12-step meetings and locations
-Version: 2.0.5
+Version: 2.0.6
 Author: Meeting Guide
 Author URI: meetingguide.org
 License: none
-Text Domain: tsml
+Text Domain: 12-step-meeting-list
 */
 
 //tsml version, for managing updates
-if (!defined('TSML_VERSION')) define('TSML_VERSION', '2.0.5');
+if (!defined('TSML_VERSION')) define('TSML_VERSION', '2.0.6');
 
 //include key files
 include('includes/variables.php');

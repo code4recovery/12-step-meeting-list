@@ -5,11 +5,11 @@ add_filter('manage_edit-meetings_columns', 'tmsl_admin_meetings_columns');
 function tmsl_admin_meetings_columns($defaults) {
     return array(
     	'cb'		=>'<input type="checkbox" />',
-    	'title'		=>__('Meeting', 'tsml'),
-    	'day'		=>__('Day', 'tsml'),
-    	'time'		=>__('Time', 'tsml'),
-    	'region'	=>__('Region', 'tsml'),
-    	'date'		=>__('Date', 'tsml'),
+    	'title'		=>__('Meeting', '12-step-meeting-list'),
+    	'day'		=>__('Day', '12-step-meeting-list'),
+    	'time'		=>__('Time', '12-step-meeting-list'),
+    	'region'	=>__('Region', '12-step-meeting-list'),
+    	'date'		=>__('Date', '12-step-meeting-list'),
     );	
 }
 
@@ -26,7 +26,7 @@ function tmsl_admin_meetings_custom_column($column_name, $post_ID) {
 	global $tsml_days, $tsml_regions;
 	if ($column_name == 'day') {
 		$day = get_post_meta($post_ID, 'day', true);
-		echo (empty($day) && $day !== '0') ? __('Appointment', 'tsml') : $tsml_days[$day];
+		echo (empty($day) && $day !== '0') ? __('Appointment', '12-step-meeting-list') : $tsml_days[$day];
 	} elseif ($column_name == 'time') {
 		echo tsml_format_time(get_post_meta($post_ID, 'time', true));
 	} elseif ($column_name == 'region') {
@@ -102,7 +102,7 @@ function tsml_restrict_manage_posts() {
 			'orderby' => 'name',
 			'hierarchical' => true,
 			'hide_if_empty' => true,
-			'show_option_all' => __('Regions', 'tsml'),
+			'show_option_all' => __('Regions', '12-step-meeting-list'),
 			'name' => 'region',
 			'selected' => empty($_GET['region']) ? null : $_GET['region'],
 		));
