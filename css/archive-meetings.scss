@@ -153,6 +153,25 @@ input:focus, button:focus {
 				line-height: 1;
 				padding-top: 0;
 				text-transform: none;
+				cursor: pointer;
+				position: relative;
+				&[data-sort="asc"]:after, &[data-sort="desc"]:after {
+					content: "";
+					border-style: solid;
+					width: 0;
+					height: 0;
+					position: absolute;
+					right: 10px;
+					top: 4px;
+				}
+				&[data-sort="asc"]:after {
+					border-width: 0 4px 8px;
+					border-color: transparent transparent #aaa transparent;
+				}
+				&[data-sort="desc"]:after {
+					border-width: 8px 4px 0;
+					border-color: #aaa transparent transparent;
+				}
 			}
 			.region, .address {
 				display: none;

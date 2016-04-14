@@ -168,13 +168,13 @@ class Walker_Regions_Dropdown extends Walker_Category {
 			<div id="table-wrapper">
 				<table class="table table-striped<?php if (!count($meetings)) {?> hidden<?php }?>">
 					<thead class="hidden-print">
-						<th class="time"><?php _e('Time', '12-step-meeting-list')?></th>
+						<th class="time" data-sort="asc"><?php _e('Time', '12-step-meeting-list')?></th>
 						<th class="name"><?php _e('Meeting', '12-step-meeting-list')?></th>
 						<th class="location"><?php _e('Location', '12-step-meeting-list')?></th>
 						<th class="address"><?php _e('Address', '12-step-meeting-list')?></th>
 						<th class="region"><?php _e('Region', '12-step-meeting-list')?></th>
 					</thead>
-					<tbody>
+					<tbody id="meetings_tbody">
 						<?php
 						foreach ($meetings as $meeting) {
 							$meeting['name'] = htmlentities($meeting['name'], ENT_QUOTES);
@@ -213,25 +213,25 @@ class Walker_Regions_Dropdown extends Walker_Category {
 							}
 							?>
 						<tr>
-							<td class="time"><?php 
+							<td class="time" data-sort="<?php echo $meeting['day'] . '-' . $meeting['time']?>"><?php 
 								if (($day === false) && !empty($meeting['time'])) {
 									echo tsml_format_day_and_time($meeting['day'], $meeting['time']);
 								} else {
 									echo '<time>' . $meeting['time_formatted'] . '</time>';
 								}
 								?></td>
-							<td class="name">
+							<td class="name" data-sort="<?php echo $meeting['name'] . '-' . $meeting['day'] . '-' . $meeting['time']?>">
 								<?php echo $meeting['link']?>
 								<div class="visible-print-block"><?php echo $meeting['region']?></div>
 							</td>
-							<td class="location">
+							<td class="location" data-sort="<?php echo $meeting['location'] . '-' . $meeting['day'] . '-' . $meeting['time']?>">
 								<?php echo $meeting['location']?>
 								<?php if ($meeting['location'] != $meeting['address']) {?>
 								<div class="visible-print-block"><?php echo $meeting['address']?></div>
 								<?php }?>
 							</td>
-							<td class="address hidden-print"><?php echo $meeting['address']?></td>
-							<td class="region hidden-print"><?php echo $meeting['region']?></td>
+							<td class="address hidden-print" data-sort="<?php echo $meeting['address'] . '-' . $meeting['day'] . '-' . $meeting['time']?>"><?php echo $meeting['address']?></td>
+							<td class="region hidden-print" data-sort="<?php echo $meeting['region'] . '-' . $meeting['day'] . '-' . $meeting['time']?>"><?php echo $meeting['region']?></td>
 						</tr>
 						<?php }?>
 					</tbody>

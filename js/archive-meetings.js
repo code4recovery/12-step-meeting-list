@@ -85,7 +85,7 @@ jQuery(function($){
 
 				var locations = [];
 
-				var tbody = $('#meetings tbody').html('');
+				var tbody = $('#meetings_tbody').html('');
 
 				//loop through JSON meetings
 				jQuery.each(response, function(index, obj){
@@ -122,13 +122,15 @@ jQuery(function($){
 
 					//add new table row
 					tbody.append('<tr>' + 
-						'<td class="time">' + (data.day || !obj.day ? obj.time_formatted : days[obj.day] + ', ' + obj.time_formatted) + '</td>' + 
-						'<td class="name">' + formatLink(obj.url, highlight(obj.name, search), 'post_type') + '<div class="visible-print-block">' + (obj.sub_region || obj.region || '') + '</div></td>' + 
-						'<td class="location">' + highlight(obj.location, search) + '<div class="visible-print-block">' + highlight(obj.address, search) + '</div></td>' + 
-						'<td class="address hidden-print">' + highlight(obj.address, search) + '</td>' + 
-						'<td class="region hidden-print">' + (obj.sub_region || obj.region || '') + '</td>' + 
+						'<td class="time" data-sort="' + obj.day + '-' + obj.time + '">' + (data.day || !obj.day ? obj.time_formatted : days[obj.day] + ', ' + obj.time_formatted) + '</td>' + 
+						'<td class="name" data-sort="' + obj.name + '-' + obj.day + '-' + obj.time + '">' + formatLink(obj.url, highlight(obj.name, search), 'post_type') + '<div class="visible-print-block">' + (obj.sub_region || obj.region || '') + '</div></td>' + 
+						'<td class="location" data-sort="' + obj.location + '-' + obj.day + '-' + obj.time + '">' + highlight(obj.location, search) + '<div class="visible-print-block">' + highlight(obj.address, search) + '</div></td>' + 
+						'<td class="address hidden-print" data-sort="' + obj.address + '-' + obj.day + '-' + obj.time + '">' + highlight(obj.address, search) + '</td>' + 
+						'<td class="region hidden-print" data-sort="' + (obj.sub_region || obj.region || '') + '-' + obj.day + '-' + obj.time + '">' + (obj.sub_region || obj.region || '') + '</td>' + 
 					'</tr>')
 				});
+				
+				sortMeetings();
 
 				//remove old markers and reset bounds
 				for (var i = 0; i < markers.length; i++) markers[i].setMap(null);
@@ -139,7 +141,46 @@ jQuery(function($){
 			}
 		}, 'json');	
 	}
+	
+	//table sorting
+	$('#meetings table thead').on('click', 'th', function(){
+		var sort = $(this).attr('class');
+		var order;
 
+		//update header
+		if ($(this).attr('data-sort')) {
+			order = ($(this).attr('data-sort') == 'asc') ? 'desc' : 'asc';
+		} else {
+			order = 'asc';
+		}
+		$('#meetings table thead th').removeAttr('data-sort');
+		$('#meetings table thead th.' + sort).attr('data-sort', order);
+		sortMeetings();
+	});
+	
+	function sortMeetings() {
+		$sorted = $('#meetings table thead th[data-sort]').first();
+		var sort = $sorted.attr('class');
+		var order = $sorted.attr('data-sort');
+		var tbody = document.getElementById("meetings_tbody");
+		var store = [];
+		var sort_index = $('#meetings table thead th').index($sorted);
+
+		//execute sort
+		for (var i = 0, len = tbody.rows.length; i < len; i++) {
+			var row = tbody.rows[i];
+			store.push([row.cells[sort_index].getAttribute('data-sort'), row]);
+		}
+		store.sort(function(x,y){
+			if (x[0] > y[0]) return (order == 'asc') ? 1 : -1;
+			if (x[0] < y[0]) return (order == 'asc') ? -1 : 1;
+			return 0;
+		});
+		for (var i = 0, len = store.length; i < len; i++){
+			tbody.appendChild(store[i][1]);
+		}		
+	}
+	
 	//highlight search string
 	function highlight(str, terms) {
 		if (!terms.length) return str;
