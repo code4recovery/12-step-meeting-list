@@ -75,6 +75,16 @@ function tsml_admin_ajax_address() {
 	));
 }
 
+//custom title
+function tsml_change_default_title($title){
+	$screen = get_current_screen();
+	if ($screen->post_type == TSML_TYPE_MEETINGS) {
+		$title = 'Enter meeting name';
+    }
+    return $title;
+}
+add_filter('enter_title_here', 'tsml_change_default_title');
+
 //edit page
 add_action('admin_init', 'tsml_admin_init');
 
