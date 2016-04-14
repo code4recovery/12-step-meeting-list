@@ -429,7 +429,7 @@ function tsml_get_meetings($arguments=array()) {
 					array(
 						'key'	=> 'group_id',
 						'compare' => 'IN',
-						'value'	=> $regions,
+						'value'	=> $groups,
 					),
 				),
 				'fields'			=> 'ids',
@@ -548,6 +548,7 @@ function tsml_sort_meetings($a, $b) {
 	} else {
 		//days are the same or both null
 		if ($a['time'] != $b['time']) {
+			/*
 			if (substr_count($a['time'], ':')) { //move meetings earlier than 5am to the end of the list
 				$a_time = explode(':', $a['time'], 2);
 				if (intval($a_time[0]) < 5) $a_time[0] = sprintf("%02d",  $a_time[0] + 24);
@@ -557,7 +558,9 @@ function tsml_sort_meetings($a, $b) {
 				$b_time = explode(':', $b['time'], 2);
 				if (intval($b_time[0]) < 5) $b_time[0] = sprintf("%02d",  $b_time[0] + 24);
 				$b_time = implode(':', $b_time);
-			}
+			}*/
+			$a_time = ($a['time'] == '00:00') ? '23:59' : $a['time'];
+			$b_time = ($b['time'] == '00:00') ? '23:59' : $b['time'];
 			return strcmp($a_time, $b_time);
 		} else {
 			if ($a['location'] != $b['location']) {

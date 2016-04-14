@@ -13,9 +13,9 @@ jQuery(function($){
 			action: 'meetings',
 			search: $('#search input[name=query]').val().trim(),
 			day: 	$('#day li.active a').attr('data-id'),
-			time: $('#time li.active a').attr('data-id'),
+			time:   $('#time li.active a').attr('data-id'),
 			region: $('#region li.active a').attr('data-id'),
-			type: $('#type li.active a').attr('data-id'),
+			type:   $('#type li.active a').attr('data-id'),
 		}
 		
 		//get current query string for history and appending to links
@@ -120,13 +120,15 @@ jQuery(function($){
 						url : obj.url
 					};
 
+					var sort_time = obj.day + '-' + (obj.time == '00:00' ? '11:59' : obj.time);
+					
 					//add new table row
 					tbody.append('<tr>' + 
-						'<td class="time" data-sort="' + obj.day + '-' + obj.time + '">' + (data.day || !obj.day ? obj.time_formatted : days[obj.day] + ', ' + obj.time_formatted) + '</td>' + 
-						'<td class="name" data-sort="' + obj.name + '-' + obj.day + '-' + obj.time + '">' + formatLink(obj.url, highlight(obj.name, search), 'post_type') + '<div class="visible-print-block">' + (obj.sub_region || obj.region || '') + '</div></td>' + 
-						'<td class="location" data-sort="' + obj.location + '-' + obj.day + '-' + obj.time + '">' + highlight(obj.location, search) + '<div class="visible-print-block">' + highlight(obj.address, search) + '</div></td>' + 
-						'<td class="address hidden-print" data-sort="' + obj.address + '-' + obj.day + '-' + obj.time + '">' + highlight(obj.address, search) + '</td>' + 
-						'<td class="region hidden-print" data-sort="' + (obj.sub_region || obj.region || '') + '-' + obj.day + '-' + obj.time + '">' + (obj.sub_region || obj.region || '') + '</td>' + 
+						'<td class="time" data-sort="' + sort_time + '">' + (data.day || !obj.day ? obj.time_formatted : days[obj.day] + ', ' + obj.time_formatted) + '</td>' + 
+						'<td class="name" data-sort="' + sort_time + '-' + obj.time + '">' + formatLink(obj.url, highlight(obj.name, search), 'post_type') + '<div class="visible-print-block">' + (obj.sub_region || obj.region || '') + '</div></td>' + 
+						'<td class="location" data-sort="' + obj.location + '-' + sort_time + '">' + highlight(obj.location, search) + '<div class="visible-print-block">' + highlight(obj.address, search) + '</div></td>' + 
+						'<td class="address hidden-print" data-sort="' + obj.address + '-' + sort_time + '">' + highlight(obj.address, search) + '</td>' + 
+						'<td class="region hidden-print" data-sort="' + (obj.sub_region || obj.region || '') + '-' + sort_time + '">' + (obj.sub_region || obj.region || '') + '</td>' + 
 					'</tr>')
 				});
 				
@@ -162,7 +164,7 @@ jQuery(function($){
 		$sorted = $('#meetings table thead th[data-sort]').first();
 		var sort = $sorted.attr('class');
 		var order = $sorted.attr('data-sort');
-		var tbody = document.getElementById("meetings_tbody");
+		var tbody = document.getElementById('meetings_tbody');
 		var store = [];
 		var sort_index = $('#meetings table thead th').index($sorted);
 
