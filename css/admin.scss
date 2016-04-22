@@ -1,18 +1,40 @@
-.settings_page_meetings {
-	h2.nav-tab-wrapper:before {
-	    content: '\f307';
-	    display: inline-block;
-	    -webkit-font-smoothing: antialiased;
-	    font: normal 29px/1 'dashicons';
-	    vertical-align: middle;
-	    margin-right: 0.3em;
+//Group Information (optional) gray
+#group.postbox h2.ui-sortable-handle span span { color: #ccc; }
+
+//Import & Settings page
+body.meetings_page_import {
+	
+	//meeting types legend
+	#post-body-content {
+		ul.types {
+			margin-top: 10px; overflow: auto;
+			-webkit-columns: 3 auto; -moz-columns: 3 auto; columns: 3 auto;
+			li { margin-bottom: 0; }
+		}
+		p:last-child { margin-bottom: 0; }
+	}
+	
+	//where's my info list margins
+	#wheres_my_info.postbox {
+		ul {
+			margin-top: -10px;
+			li { margin: 0 0 2px; }
+		}
+	}
+	
+	//try the apps app store buttons
+	#try_the_apps.postbox {
+		p.buttons {
+			margin-left: -5px; margin-right: -5px; overflow: auto;
+			a {
+				padding: 0 5px; width: 50%; float: left; display: block; box-sizing: border-box;
+				img { width: 100%; height: auto; }
+			}
+		}
 	}
 }
 
-#group.postbox h2.ui-sortable-handle span span { color: #ccc; }
-
-#poststuff .inside { margin-top: 0; }
-
+//Meeting Add / Edit page
 .wp-admin .meta_form_row { 
 	padding: 10px 0 0; overflow: auto; clear: left;
 	label, input, div.checkboxes, #map { float: left; line-height: 100%; } 

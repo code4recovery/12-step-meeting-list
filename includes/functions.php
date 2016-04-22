@@ -242,25 +242,25 @@ function tsml_get_meetings($arguments=array()) {
 		);
 	}
 
-	//time should be a string 'morning', 'day', 'evening' or 'night'
+	//time should be a string 'morning', 'midday', 'evening' or 'night'
 	if (!empty($arguments['time'])) {
 		if ($arguments['time'] == 'morning') {
 			$meta_query[] = array(
-				array('key' => 'time', 'value' => array('05:00', '09:59'), 'compare' => 'BETWEEN'),
+				array('key' => 'time', 'value' => array('04:00', '10:59'), 'compare' => 'BETWEEN'),
 			);
-		} elseif ($arguments['time'] == 'day') {
+		} elseif ($arguments['time'] == 'midday') {
 			$meta_query[] = array(
 				array('key' => 'time', 'value' => array('10:00', '16:59'), 'compare' => 'BETWEEN'),
 			);
 		} elseif ($arguments['time'] == 'evening') {
 			$meta_query[] = array(
-				array('key' => 'time', 'value' => array('17:00', '19:59'), 'compare' => 'BETWEEN'),
+				array('key' => 'time', 'value' => array('16:00', '19:59'), 'compare' => 'BETWEEN'),
 			);
 		} elseif ($arguments['time'] == 'night') {
 			$meta_query[] = array(
 				'relation' => 'OR',
 				array('key' => 'time', 'value' => '04:59', 'compare' => '<='),
-				array('key' => 'time', 'value' => '20:00', 'compare' => '>='),
+				array('key' => 'time', 'value' => '19:00', 'compare' => '>='),
 			);
 		}
 	}

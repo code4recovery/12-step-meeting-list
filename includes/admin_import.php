@@ -49,9 +49,9 @@ function tsml_admin_menu() {
 									<li><strong><?php _e('Group Notes', '12-step-meeting-list')?></strong> is for stuff like a short group history, or when the business meeting meets.</li>
 									<li><strong><?php _e('Contact 1/2/3 Name/Email/Phone', '12-step-meeting-list')?></strong> (nine fields in total) are all optional, but will not be saved if there is not also a Group name specified. By default, contact information is only visible inside the WordPress dashboard.</li>
 									<li><strong><?php _e('Types', '12-step-meeting-list')?></strong> should be a comma-separated list of the following options. This list is determined by which program is selected at right.
-										<ul style="margin-top:10px;overflow:auto; -webkit-columns: 3 auto; -moz-columns: 3 auto; columns: 3 auto;">
+										<ul class="types">
 										<?php foreach ($tsml_types[$tsml_program] as $value) {?>
-											<li style="margin-bottom:0;"><?php echo $value?></li>
+											<li><?php echo $value?></li>
 										<?php }?>
 										</ul>
 									</li>
@@ -61,7 +61,7 @@ function tsml_admin_menu() {
 									<p>It takes a while for the address verification to do its thing, please be patient. Importing 500 meetings usually takes about one minute.</p>
 									<textarea name="tsml_import" class="widefat" rows="5" placeholder="Paste spreadsheet data here"></textarea>
 									<p><label><input type="checkbox" name="delete"> Delete all meetings, locations, regions, and groups prior to import</label></p>
-									<div style="margin-top:12px;"><input type="submit" class="button button-primary" value="Begin"></div>
+									<p><input type="submit" class="button button-primary" value="Begin"></p>
 								</form>
 						    </div>
 					    </div>
@@ -85,39 +85,35 @@ function tsml_admin_menu() {
 								</form>
 							</div>
 						</div>
-						<div class="postbox">
+						<div class="postbox" id="wheres_my_info">
 							<div class="inside">
 								<h3><?php _e('Where\'s My Info?', '12-step-meeting-list')?></h3>
 								<p>Your meeting list page is <a href="<?php echo get_post_type_archive_link(TSML_TYPE_MEETINGS); ?>">right here</a>. 
 								Link that page from your site's nav menu to make it visible to the public.</p>
 								<p>You can also download your meetings in <a href="<?php echo admin_url('admin-ajax.php')?>?action=csv">CSV format</a>.</p>
-								<p style="margin-bottom:0;">You have:</p>
-								<ul class="ul-disc" style="margin-top:4px">
+								<p>You have:</p>
+								<ul class="ul-disc">
 									<?php
-									$meetings = do_shortcode('[tsml_meeting_count]');
-									if ($meetings != '0') {?>
-									<li style="margin: 0 0 2px;"><?php printf(
+									if ($meetings = count(tsml_get_all_meetings())) {?>
+									<li><?php printf(
 										    _n('%s meeting', '%s meetings', $meetings, '12-step-meeting-list'),
 										    number_format_i18n($meetings)
 										)?></li>
 									<?php }
-									$locations = do_shortcode('[tsml_location_count]');
-									if ($locations != '0') {?>
-									<li style="margin: 0 0 2px;"><?php printf(
+									if ($locations = count(tsml_get_all_locations())) {?>
+									<li><?php printf(
 										    _n('%s location', '%s locations', $locations, '12-step-meeting-list'),
 										    number_format_i18n($locations)
 										)?></li>
 									<?php }
-									$regions = do_shortcode('[tsml_region_count]');
-									if ($regions != '0') {?>
-									<li style="margin: 0 0 2px;"><?php printf(
+									if ($regions = count(tsml_get_all_regions())) {?>
+									<li><?php printf(
 										    _n('%s region', '%s regions', $regions, '12-step-meeting-list'),
 										    number_format_i18n($regions)
 										)?></li>
 									<?php }
-									$groups = do_shortcode('[tsml_group_count]');
-									if ($groups != '0') {?>
-									<li style="margin: 0 0 2px;"><?php printf(
+									if ($groups = count(tsml_get_all_groups())) {?>
+									<li><?php printf(
 										    _n('%s group', '%s groups', $groups, '12-step-meeting-list'),
 										    number_format_i18n($groups)
 										)?></li>
@@ -127,17 +123,17 @@ function tsml_admin_menu() {
 							</div>
 						</div>
 						<?php if ($tsml_program == 'aa') {?>
-						<div class="postbox">
+						<div class="postbox" id="try_the_apps">
 							<div class="inside">
 								<h3><?php _e('Try the Apps!', '12-step-meeting-list')?></h3>
 								<p>Want to have your meetings listed in a simple, clean mobile app? <a href="https://meetingguide.org/" target="_blank">Several areas are currently participating</a>,
 									but we always want more! No extra effort is required; simply continue to update your meetings here and the updates will flow down to app users.
-								<p style="margin-left:-5px;margin-right:-5px;overflow: auto;">
-									<a href="https://itunes.apple.com/us/app/meeting-guide/id1042822181" style="padding:0 5px;width:50%;float:left;display:block;box-sizing:border-box;">
-										<img src="<?php echo plugin_dir_url(__FILE__)?>../img/apple.svg" style="width:100%;height:auto;">
+								<p class="buttons">
+									<a href="https://itunes.apple.com/us/app/meeting-guide/id1042822181">
+										<img src="<?php echo plugin_dir_url(__FILE__)?>../img/apple.svg">
 									</a>
-									<a href="https://play.google.com/store/apps/details?id=org.meetingguide.app" style="padding:0 5px;width:50%;float:left;display:block;box-sizing:border-box;">
-										<img src="<?php echo plugin_dir_url(__FILE__)?>../img/google.svg" style="width:100%;height:auto;">
+									<a href="https://play.google.com/store/apps/details?id=org.meetingguide.app">
+										<img src="<?php echo plugin_dir_url(__FILE__)?>../img/google.svg">
 									</a>
 								</p>
 								<p>To get involved, please get in touch by emailing <a href="mailto:app@aasanjose.org">app@meetingguide.org</a>.</p>

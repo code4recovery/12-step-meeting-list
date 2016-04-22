@@ -15,7 +15,7 @@ $view	= (isset($_GET['v']) && $_GET['v'] == 'map') ? 'map' : 'list';
 //need later
 $times  = array(
 	'morning' => __('Morning', '12-step-meeting-list'),
-	'day' => __('Day', '12-step-meeting-list'),
+	'midday' => __('Midday', '12-step-meeting-list'),
 	'evening' => __('Evening', '12-step-meeting-list'),
 	'night' => __('Night', '12-step-meeting-list'),
 );
