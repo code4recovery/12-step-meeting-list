@@ -3,7 +3,7 @@ Contributors: aasanjose
 Tags: meetings, aa, al-anon, na, 12-step, locations, groups
 Requires at least: 3.2
 Tested up to: 4.5
-Stable tag: 2.1.1
+Stable tag: 2.1.2
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -160,6 +160,9 @@ and then drop some or all of these tags in your PHP:
 
 == Changelog ==
 
+= 2.1.2 =
+* Tweaking time definitions
+
 = 2.1.1 =
 * Looser time definitions
 
@@ -199,37 +202,3 @@ and then drop some or all of these tags in your PHP:
 
 = 2.0.0 =
 * More robust javascript on address field, per Europe
-
-= 1.9.9 =
-* Relaxed address requirements on import for SA in St. Louis
-
-= 1.9.8 =
-* Adding Sexaholics Anonymous
-
-= 1.9.7 =
-* Better meeting list sorting: now respects "Week Starts On" user preference
-* Sorting now consumes less memory
-* The location_id parameter for tsml_get_meetings() can be an array
-
-= 1.9.6 =
-* Link to map or list view
-* Importer improvements
-
-= 1.9.5 =
-* Location name in map infowindow links to location page
-* Location and meeting template pages work better with apostrophes
-
-= 1.9.4 =
-* Meeting search-by-type bug identified by Central Florida Intergroup
-
-= 1.9.3 =
-* Improved printing style
-
-= 1.9.2 =
-* Better theme override slug-finding
-
-= 1.9.1 =
-* Twenty-fourteen theme overrides for NEFL
-
-= 1.9 =
-* Location details bug fix and address-field javascript fix
