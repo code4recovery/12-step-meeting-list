@@ -3,7 +3,7 @@ Contributors: aasanjose
 Tags: meetings, aa, al-anon, na, 12-step, locations, groups
 Requires at least: 3.2
 Tested up to: 4.5
-Stable tag: 2.1.2
+Stable tag: 2.1.3
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -33,6 +33,7 @@ It was originally designed to maintain a list of AA meetings in Santa Clara Coun
 * [Quad Cities, IA / IL](http://aa-qc.com/meetings/)
 * [Sacramento, CA](http://aasacramento.org/meetings/)
 * [San Jose, CA](https://aasanjose.org/meetings)
+* [San Mateo, CA](http://aa-san-mateo.org/meetings)
 * [Tri Valley, CA](http://trivalleyaa.org/meetings/)
 * [Western Slope, CA](http://westernsloped22.org/meetings/)
 
@@ -159,6 +160,9 @@ and then drop some or all of these tags in your PHP:
 1. Meeting map
 
 == Changelog ==
+
+= 2.1.3 =
+* Removing 'Only' from Men and Women meeting types
 
 = 2.1.2 =
 * Tweaking time definitions
