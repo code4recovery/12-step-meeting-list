@@ -874,7 +874,7 @@ function tsml_import($meetings, $delete=false) {
 		if (!empty($meeting['address'])) $address[] = $meeting['address'];
 		if (!empty($meeting['city'])) $address[] = $meeting['city'];
 		if (!empty($meeting['state'])) $address[] = $meeting['state'];
-		if (!empty($meeting['postal_code'])) $address[] = $meeting['postal_code'];
+		if (!empty($meeting['postal-code'])) $address[] = $meeting['postal-code'];
 		if (!empty($meeting['country'])) $address[] = $meeting['country'];
 		$address = implode(', ', $address);
 		
