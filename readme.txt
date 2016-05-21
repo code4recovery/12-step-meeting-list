@@ -3,7 +3,7 @@ Contributors: aasanjose
 Tags: meetings, aa, al-anon, na, 12-step, locations, groups
 Requires at least: 3.2
 Tested up to: 4.5
-Stable tag: 2.1.5
+Stable tag: 2.1.6
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -162,8 +162,16 @@ and then drop some or all of these tags in your PHP:
 
 == Changelog ==
 
+= 2.1.6 =
+* Putting Men / Women back in list
+* Missing release notes for 2.1.5
+
 = 2.1.5 =
-* Readme update
+* New mobile list view for Contra Costa
+* Sorted meeting types on detail page
+* Cleaned up CSS and typeahead code on meeting admin screen
+* Group name duplicate checking bugfix
+* Updated sites in readme
 
 = 2.1.4 =
 * Geocoder fix per Contra Costa County

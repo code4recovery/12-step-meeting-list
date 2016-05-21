@@ -133,9 +133,9 @@ function tsml_format_day_and_time($day, $time, $separator=', ', $short=false) {
 //function:	appends men or women if type present
 //used:		archive-meetings.php
 function tsml_format_name($name, $types=array()) {
-	if (in_array('Men', $types)) {
+	if (in_array('Men', $types) || in_array('M', $types)) {
 		$name .= ' <small>' . __('Men', '12-step-meeting-list') . '</small>';
-	} elseif (in_array('Women', $types)) {
+	} elseif (in_array('Women', $types) || in_array('W', $types)) {
 		$name .= ' <small>' . __('Women', '12-step-meeting-list') . '</small>';
 	}
 	return $name;
