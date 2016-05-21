@@ -3,7 +3,7 @@ Contributors: aasanjose
 Tags: meetings, aa, al-anon, na, 12-step, locations, groups
 Requires at least: 3.2
 Tested up to: 4.5
-Stable tag: 2.1.4
+Stable tag: 2.1.5
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -26,15 +26,16 @@ It was originally designed to maintain a list of AA meetings in Santa Clara Coun
 * [Maine and New Brunswick](http://csoaamaine.org/meetings/)
 * [Mesa, AZ](http://aamesaaz.org/meetings/)
 * [Minneapolis, MN](http://aaminneapolis.org/meetings/)
+* [Northern Minnesota](http://www.area35.org/meetings/)
 * [Oahu, HI](http://oahucentraloffice.com/meetings/)
 * [Orlando, FL](http://cflintergroup.org/meetings/)
 * [Philadelphia, PA](http://www.aasepia.org/meetings/)
 * [Portland, OR](http://home.pdxaa.org/meetings/)
-* [Quad Cities, IA / IL](http://aa-qc.com/meetings/)
 * [Sacramento, CA](http://aasacramento.org/meetings/)
 * [San Jose, CA](https://aasanjose.org/meetings)
 * [San Mateo, CA](http://aa-san-mateo.org/meetings)
 * [Tri Valley, CA](http://trivalleyaa.org/meetings/)
+* [Walnut Creek, CA](http://contracostaaa.org/meetings)
 * [Western Slope, CA](http://westernsloped22.org/meetings/)
 
 **Al-Anon**
@@ -160,6 +161,9 @@ and then drop some or all of these tags in your PHP:
 1. Meeting map
 
 == Changelog ==
+
+= 2.1.5 =
+* Readme update
 
 = 2.1.4 =
 * Geocoder fix per Contra Costa County

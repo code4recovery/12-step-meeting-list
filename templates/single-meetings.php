@@ -46,7 +46,6 @@ $meeting = tsml_get_meeting();
 						<dd><?php echo $tsml_regions[$meeting->region]?></dd>
 						<?php }
 						if (count($meeting->types)) {
-							foreach ($meeting->types as &$type) $type = $tsml_types[$tsml_program][trim($type)];
 							?>
 							<dt><?php _e('Type', '12-step-meeting-list')?></dt>
 							<dd><?php echo implode(', ', $meeting->types)?></dd>

@@ -17,8 +17,7 @@ jQuery(function(){
 		datumTokenizer: Bloodhound.tokenizers.obj.whitespace('value'),
 		queryTokenizer: Bloodhound.tokenizers.whitespace,
 		prefetch: {
-			url: myAjax.ajaxurl + '?action=location&q=%QUERY',
-			ttl: 10
+			url: myAjax.ajaxurl + '?action=location',
 		}
 	});
 	locations.initialize();
@@ -44,7 +43,7 @@ jQuery(function(){
 		datumTokenizer: Bloodhound.tokenizers.obj.whitespace('value'),
 		queryTokenizer: Bloodhound.tokenizers.whitespace,
 		prefetch: {
-			url: myAjax.ajaxurl + '?action=tsml_group&q=%QUERY',
+			url: myAjax.ajaxurl + '?action=tsml_group',
 			ttl: 10
 		}
 	});

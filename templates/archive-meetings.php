@@ -215,13 +215,13 @@ class Walker_Regions_Dropdown extends Walker_Category {
 							$sort_time = $meeting['day'] . '-' . ($meeting['time'] == '00:00' ? '23:59' : $meeting['time']);
 							?>
 						<tr>
-							<td class="time" data-sort="<?php echo $sort_time?>"><?php 
+							<td class="time" data-sort="<?php echo $sort_time?>"><span><?php 
 								if (($day === false) && !empty($meeting['time'])) {
-									echo tsml_format_day_and_time($meeting['day'], $meeting['time']);
+									echo tsml_format_day_and_time($meeting['day'], $meeting['time'], '</span><span>');
 								} else {
-									echo '<time>' . $meeting['time_formatted'] . '</time>';
+									echo $meeting['time_formatted'];
 								}
-								?></td>
+								?></span></td>
 							<td class="name" data-sort="<?php echo $meeting['name'] . '-' . $sort_time?>">
 								<?php echo $meeting['link']?>
 								<div class="visible-print-block"><?php echo $meeting['region']?></div>

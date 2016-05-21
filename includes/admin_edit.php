@@ -21,10 +21,27 @@ function tsml_admin_ajax_locations() {
             'country'			=> @$location_custom['country'][0],
             'region'			=> @$location_custom['region'][0],
             'notes'				=> html_entity_decode($location->post_content),
-            'tokens'			=> array_values(array_unique(explode(' ', str_replace(',', '', $title . ' ' . @$location_custom['address'][0])))),
+            'tokens'			=> tsml_string_tokens($title . ' ' . @$location_custom['address'][0]),
         );
 	}
+	//dd($results);
 	wp_send_json($results);
+}
+
+//tokenize string for the typeaheads
+function tsml_string_tokens($string) {
+
+	//shorten words that have quotes in them instead of splitting them
+	$string = html_entity_decode($string);
+	$string = str_replace("'", '', $string);
+	$string = str_replace('’', '', $string);
+	
+	//remove everything that's not a letter or a number
+	$string = preg_replace("/[^a-zA-Z 0-9]+/", ' ', $string);
+	
+	//return array
+	return array_values(array_unique(array_filter(explode(' ', $string))));
+
 }
 
 //ajax for the group typeahead
@@ -48,7 +65,7 @@ function tsml_admin_ajax_groups() {
             'contact_3_email'	=> @$group_custom['contact_3_email'][0],
             'contact_3_phone'	=> @$group_custom['contact_3_phone'][0],
             'notes'				=> html_entity_decode($group->post_content),
-            'tokens'			=> array_values(array_unique(explode(' ', str_replace(',', '', $title)))),
+            'tokens'			=> tsml_string_tokens($title),
         );
 	}
 	wp_send_json($results);
@@ -188,7 +205,7 @@ function tsml_admin_init() {
 				<?php foreach ($meetings as $meeting) {
 					if ($meeting['id'] != $post->ID) $meeting['name'] = '<a href="' . get_edit_post_link($meeting['id']) . '">' . $meeting['name'] . '</a>';
 				?>
-				<li><span><?php echo tsml_format_day_and_time($meeting['day'], $meeting['time'], ', ', true)?></span> <?php echo $meeting['name']?></li>
+				<li><span><?php echo tsml_format_day_and_time($meeting['day'], $meeting['time'], ' ', true)?></span> <?php echo $meeting['name']?></li>
 				<?php }?>
 			</ol>
 		</div>
@@ -226,7 +243,7 @@ function tsml_admin_init() {
 				<?php foreach ($meetings as $meeting) {
 					if ($meeting['id'] != $post->ID) $meeting['name'] = '<a href="' . get_edit_post_link($meeting['id']) . '">' . $meeting['name'] . '</a>';
 				?>
-				<li><span><?php echo tsml_format_day_and_time($meeting['day'], $meeting['time'], ', ', true)?></span> <?php echo $meeting['name']?></li>
+				<li><span><?php echo tsml_format_day_and_time($meeting['day'], $meeting['time'], ' ', true)?></span> <?php echo $meeting['name']?></li>
 				<?php }?>
 			</ol>
 		</div>

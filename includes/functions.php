@@ -133,9 +133,9 @@ function tsml_format_day_and_time($day, $time, $separator=', ', $short=false) {
 //function:	appends men or women if type present
 //used:		archive-meetings.php
 function tsml_format_name($name, $types=array()) {
-	if (in_array('M', $types)) {
+	if (in_array('Men', $types)) {
 		$name .= ' <small>' . __('Men', '12-step-meeting-list') . '</small>';
-	} elseif (in_array('W', $types)) {
+	} elseif (in_array('Women', $types)) {
 		$name .= ' <small>' . __('Women', '12-step-meeting-list') . '</small>';
 	}
 	return $name;
@@ -592,6 +592,8 @@ function tsml_get_location() {
 //function: template tag to get meeting and location, attach custom fields to it
 //used: single-meetings.php
 function tsml_get_meeting() {
+	global $tsml_types, $tsml_program;
+	
 	$meeting				= get_post();
 	$location				= get_post($meeting->post_parent);
 	$custom					= array_merge(get_post_meta($meeting->ID), get_post_meta($location->ID));
@@ -617,6 +619,10 @@ function tsml_get_meeting() {
 		$meeting->group_id = null;
 		$meeting->group = null;
 	}
+	
+	//sort types alphabetically
+	foreach ($meeting->types as &$type) $type = $tsml_types[$tsml_program][trim($type)];
+	sort($meeting->types);
 	
 	return $meeting;
 }
@@ -886,8 +892,8 @@ function tsml_import($meetings, $delete=false) {
 
 		//updated
 		$meeting['updated'] = empty($meeting['updated']) ? time() : strtotime($meeting['updated']);
-		$meeting['post_date'] = date('Y-m-d H:i:s', $meeting['updated']);
-		$meeting['post_date_gmt'] = date('Y-m-d H:i:s', $meeting['updated']);
+		$meeting['post_modified'] = date('Y-m-d H:i:s', $meeting['updated']);
+		$meeting['post_modified_gmt'] = date('Y-m-d H:i:s', $meeting['updated']);
 		
 		//default region to city if not specified
 		if (empty($meeting['region']) && !empty($meeting['city'])) $meeting['region'] = $meeting['city'];
@@ -1163,8 +1169,8 @@ function tsml_import($meetings, $delete=false) {
 				'post_status'		=> 'publish',
 				'post_parent'		=> $location_id,
 				'post_content'		=> $meeting['notes'],
-				'post_date'			=> $meeting['post_date'],
-				'post_date_gmt'		=> $meeting['post_date_gmt'],
+				'post_modified'		=> $meeting['post_modified'],
+				'post_modified_gmt'	=> $meeting['post_modified_gmt'],
 			));
 			update_post_meta($meeting_id, 'day',		$meeting['day']);
 			update_post_meta($meeting_id, 'time',		$meeting['time']);

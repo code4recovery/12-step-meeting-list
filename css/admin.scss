@@ -104,11 +104,16 @@ body.meetings_page_import {
 		overflow: auto;
 		font-size: 15px;
 		margin: 0;
-		padding: 10px 0 10px 30px;
+		padding: 10px 0 0 0;
 		-webkit-columns: 2 auto;
 		-webkit-column-gap: 60px;
 		li {
-			span { width: 120px; color: #999; display: inline-block; }
+			break-inside: avoid-column;
+			-webkit-column-break-inside: avoid;
+			padding: 0 0 10px 110px;
+			position: relative;
+			margin: 0 0 0 25px;
+			span { color: #999; display: inline-block; position: absolute; left: 0; }
 			&:last-child { margin-bottom: 0; }
 		}
 	}

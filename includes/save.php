@@ -24,7 +24,7 @@ function tsml_save_post(){
 	if (strlen($_POST['day']))    update_post_meta($post->ID, 'day',    intval($_POST['day']));
 	if (!empty($_POST['time']))   update_post_meta($post->ID, 'time',   sanitize_text_field($_POST['time']));
 	if (!empty($_POST['region'])) update_post_meta($post->ID, 'region', intval($_POST['region'])); //cache region on meeting
-	if (is_array($_POST['types'])) {
+	if (!empty($_POST['types']) && is_array($_POST['types'])) {
 		update_post_meta($post->ID, 'types', array_map('esc_attr', $_POST['types']));
 	}
 
@@ -87,7 +87,7 @@ function tsml_save_post(){
 			foreach ($meetings as $meeting) delete_post_meta($meeting['id'], 'group_id'); 	
 		}
 	} else {
-		if ($group_id = $wpdb->get_var($wpdb->prepare('SELECT id FROM ' . $wpdb->posts . ' WHERE post_type = "' . TSML_TYPE_GROUPS . '" AND post_title = "%s"', sanitize_text_field($_POST['group'])))) {
+		if ($group_id = $wpdb->get_var($wpdb->prepare('SELECT id FROM ' . $wpdb->posts . ' WHERE post_type = "%s" AND post_title = "%s" ORDER BY id', TSML_TYPE_GROUPS, sanitize_text_field(stripslashes($_POST['group']))))) {
 			wp_update_post(array(
 				'ID'			=> $group_id,
 				'post_title'	=> sanitize_text_field($_POST['group']),
