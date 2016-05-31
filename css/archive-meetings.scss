@@ -135,7 +135,6 @@ input:focus, button:focus {
 	}
 
 	.results {
-		margin-bottom: -60px;
 
 		h1 small {
 			font-size: inherit;
@@ -233,8 +232,8 @@ input:focus, button:focus {
 	margin-bottom: $margin * 2;
 	.page-header { background-color: transparent; } //2013
 	h1 { font-size: 36px; margin-bottom: 4px; }
-	dl, dt { margin: 0; }
-	dd { margin: 0 0 20px; }
+	dl, dt, dd { margin: 0; }
+	dd { margin-bottom: 20px; }
 	ul { padding: 0; margin: 0; list-style: none; }
 	small {
 		color: $black;
