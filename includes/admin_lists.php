@@ -80,17 +80,6 @@ if (is_admin()) {
 	}
 }
 
-# Custom search // does this do anything?
-add_action('pre_get_posts', 'tsml_pre_get_posts');
-function tsml_pre_get_posts($query) {
-	global $pagenow;
-	if ($pagenow == 'edit.php' && isset($_GET['post_type']) && ($_GET['post_type'] == TSML_TYPE_MEETINGS)) {
-		//custom meeting search, can't use tsml_get_meetings() becuase of recursion
-		//need to use wp-query to search locations and the address field
-		//https://codex.wordpress.org/Plugin_API/Action_Reference/pre_get_posts
-	}
-}
-
 # Customize post controls
 add_action('restrict_manage_posts', 'tsml_restrict_manage_posts');
 function tsml_restrict_manage_posts() {

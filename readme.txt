@@ -3,7 +3,7 @@ Contributors: aasanjose
 Tags: meetings, aa, al-anon, na, 12-step, locations, groups
 Requires at least: 3.2
 Tested up to: 4.5
-Stable tag: 2.1.7
+Stable tag: 2.1.8
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -34,6 +34,7 @@ It was originally designed to maintain a list of AA meetings in Santa Clara Coun
 * [Sacramento, CA](http://aasacramento.org/meetings/)
 * [San Jose, CA](https://aasanjose.org/meetings)
 * [San Mateo, CA](http://aa-san-mateo.org/meetings)
+* [Toronto, Canada](http://aatoronto.org/?post_type=meetings)
 * [Tri Valley, CA](http://trivalleyaa.org/meetings/)
 * [Walnut Creek, CA](http://contracostaaa.org/meetings)
 * [Western Slope, CA](http://westernsloped22.org/meetings/)
@@ -161,6 +162,9 @@ and then drop some or all of these tags in your PHP:
 1. Meeting map
 
 == Changelog ==
+
+= 2.1.8 =
+* When a region name is updated, mark region's meetings as updated (per Central Florida Intergroup)
 
 = 2.1.7 =
 * Removing strange CSS statement that was messing up Sacramento

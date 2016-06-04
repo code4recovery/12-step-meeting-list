@@ -66,14 +66,10 @@ function tsml_save_post(){
 
 	//update region caches for other meetings at this location
 	$meetings = tsml_get_meetings(array('location_id' => $location_id));
-	foreach ($meetings as $meeting) update_post_meta($meeting['id'], 'region', intval($_POST['region'])); 	
+	foreach ($meetings as $meeting) update_post_meta($meeting['id'], 'region', intval($_POST['region']));
 
-	//set parent
-	wp_update_post(array(
-		'ID'			=> $post->ID,
-		'post_parent'	=> $location_id,
-		'post_status'	=> sanitize_text_field($_POST['post_status']),
-	));
+	//set parent on this post (and post status?) without re-triggering the save_posts hook
+	$wpdb->prepare('UPDATE ' . $wpdb->posts . ' SET post_parent = %d, post_status = %s WHERE ID = %d', $location_id, sanitize_text_field($_POST['post_status']), $post->ID);
 
 	//deleted orphaned locations
 	tsml_delete_orphaned_locations();
