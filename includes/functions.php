@@ -716,8 +716,8 @@ function tsml_meetings_csv() {
 				foreach ($types as &$type) $type = $tsml_types[$tsml_program][trim($type)];
 				sort($types);
 				$line[] = $escape . implode(', ', $types) . $escape;
-			} elseif ($column == 'notes') {
-				$line[] = $escape . strip_tags($meeting[$column]) . $escape;
+			} elseif (strstr($column, 'notes')) {
+				$line[] = $escape . strip_tags(str_replace($escape, str_repeat($escape, 2), $meeting[$column])) . $escape;
 			} else {
 				$line[] = $escape . str_replace($escape, '', $meeting[$column]) . $escape;
 			}
@@ -768,7 +768,7 @@ function tsml_regions_api() {
 //used by admin_import.php
 function tsml_import($meetings, $delete=false) {
 	global $tsml_types, $tsml_program, $tsml_days, $wpdb;
-	
+
 	//uppercasing for value matching later
 	$upper_types = array_map('strtoupper', $tsml_types[$tsml_program]);
 	$upper_days = array_map('strtoupper', $tsml_days);
@@ -782,27 +782,20 @@ function tsml_import($meetings, $delete=false) {
 	//arrays we will need
 	$addresses = $existing_addresses = $locations = $groups = array();
 	
-	//remove line breaks between rows
-	$meetings = preg_replace('#\\n(?=[^"]*"[^"]*(?:"[^"]*"[^"]*)*$)#' , ' ', $meetings);
-
-	//split data into rows
-	$meetings = explode(PHP_EOL, $meetings);
-	
-	//remove empty rows
-	$meetings = array_filter($meetings, 'tsml_remove_empty_rows');
-	
 	//crash if no data
 	if (count($meetings) < 2) return tsml_alert(__('Nothing was imported because no data rows were found.', '12-step-meeting-list'), 'error');
 	
 	//get header
-	$header = explode("\t", array_shift($meetings));
+	$header = array_shift($meetings);
 	$header = array_map('sanitize_title_with_dashes', $header);
 	$header_count = count($header);
 	
 	//check header for required fields
 	if (!in_array('address', $header) ||
 		(!in_array('city', $header) && !in_array('state', $header) && !in_array('postal_code', $header))
-	) return tsml_alert(__('Either Address, or City, State and Postal Code are required.', '12-step-meeting-list'), 'error');
+	) {
+		return tsml_alert(__('Either Address, or City, State and Postal Code are required.', '12-step-meeting-list'), 'error');
+	}
 
 	//all the data is set, now delete everything
 	if ($delete) {
@@ -829,15 +822,13 @@ function tsml_import($meetings, $delete=false) {
 	foreach ($meetings as $meeting) {
 		$row_counter++;
 
-		//preserve <br>s as line breaks if present, otherwise clean up
-		$meeting = preg_replace('/\<br(\s*)?\/?\>/i', PHP_EOL, $meeting);
-		$meeting = stripslashes($meeting);
-
 		//split, check length
-		$meeting = explode("\t", $meeting);
 		if ($header_count != count($meeting)) {
 			return tsml_alert('Row #' . $row_counter . ' has ' . count($meeting) . ' columns while the header has ' . $header_count . '.', 'error');
 		}
+		
+		//sanitize fields
+		$meeting = array_map('tsml_import_sanitize_field', $meeting);
 		
 		//associate, sanitize
 		$meeting = array_combine($header, $meeting);
@@ -944,9 +935,8 @@ function tsml_import($meetings, $delete=false) {
 		$types = explode(',', $meeting['types']);
 		$meeting['types'] = $unused_types = array();
 		foreach ($types as $type) {
-			$type = trim(strtoupper($type));
-			if (in_array($type, array_values($upper_types))) {
-				$meeting['types'][] = array_search($type, $upper_types);
+			if (in_array(trim(strtoupper($type)), array_values($upper_types))) {
+				$meeting['types'][] = array_search(trim(strtoupper($type)), $upper_types);
 			} else {
 				$unused_types[] = $type;
 			}
@@ -954,7 +944,7 @@ function tsml_import($meetings, $delete=false) {
 		
 		//append unused types to notes
 		if (count($unused_types)) {
-			if (!empty($meeting['notes'])) $meeting['notes'] .= PHP_EOL . PHP_EOL;
+			if (!empty($meeting['notes'])) $meeting['notes'] .= str_repeat(PHP_EOL, 2);
 			$meeting['notes'] .= implode(', ', $unused_types);
 		}
 				
@@ -976,8 +966,8 @@ function tsml_import($meetings, $delete=false) {
 			'time' => $meeting['time'],
 			'types' => $meeting['types'],
 			'notes' => $meeting['notes'],
-			'post_date' => $meeting['post_date'],
-			'post_date_gmt' => $meeting['post_date_gmt'],
+			'post_modified' => $meeting['post_modified'],
+			'post_modified_gmt' => $meeting['post_modified_gmt'],
 			'group' => empty($meeting['group']) ? null : $meeting['group'],
 		);
 		
@@ -1135,6 +1125,10 @@ function tsml_import($meetings, $delete=false) {
 	
 	update_option('tsml_addresses', $cached_addresses, 'no');
 	
+	//passing post_modified and post_modified_gmt to wp_insert_post() below does not seem to work
+	//todo occasionally remove this to see if it is working
+	add_filter('wp_insert_post_data', 'tsml_import_post_modified', 99, 2);
+	
 	//loop through and save everything to the database
 	foreach ($locations as $formatted_address=>$location) {
 
@@ -1185,6 +1179,9 @@ function tsml_import($meetings, $delete=false) {
 	
 	//update types in use
 	tsml_update_types_in_use();
+
+	//remove post_modified thing added earlier
+	remove_filter('wp_insert_post_data', 'alter_post_modification_time', 99);
 	
 	//success
 	if (count($failed_addresses)) {
@@ -1201,6 +1198,35 @@ function tsml_import($meetings, $delete=false) {
 		if ($geocoded) $message .= ' (Geocoded ' . number_format($geocoded) . ' locations.)';
 		return tsml_alert($message);		
 	}
+}
+
+//turn "string" into string, fix newlines
+function tsml_import_sanitize_field($value) {
+	//preserve <br>s as line breaks if present, otherwise clean up
+	$value = preg_replace('/\<br(\s*)?\/?\>/i', PHP_EOL, $value);
+	$value = stripslashes($value);
+
+	//turn "string" into string
+	//$value = str_replace('""', '"', $value);
+	$value = trim(trim($value, '"'));
+	
+	//fix newlines
+	//$value = preg_split('/$\R?^/m', $value);
+	//$value = array_map('trim', $value);
+	//$value = trim(implode(PHP_EOL, $value));
+	
+	return $value;
+}
+
+//filter workaround for tsml_import()
+function tsml_import_post_modified($data , $postarr) {
+    if (!empty($postarr['post_modified'])) {
+		$data['post_modified'] = $postarr['post_modified'];
+	}
+    if (!empty($postarr['post_modified_gmt'])) {
+		$data['post_modified_gmt'] = $postarr['post_modified_gmt'];
+    }
+    return $data;
 }
 
 //remove empty rows from tsml_import()

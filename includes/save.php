@@ -19,7 +19,7 @@ function tsml_save_post(){
 	if (!isset($post->ID) || !current_user_can('edit_post', $post->ID)) return;
 	if (!isset($_POST['tsml_nonce']) || !wp_verify_nonce($_POST['tsml_nonce'], $tsml_nonce)) return;
 	if (!isset($_POST['post_type']) || ($_POST['post_type'] != TSML_TYPE_MEETINGS)) return;
-	
+		
 	//save ordinary meeting metadata
 	if (strlen($_POST['day']))    update_post_meta($post->ID, 'day',    intval($_POST['day']));
 	if (!empty($_POST['time']))   update_post_meta($post->ID, 'time',   sanitize_text_field($_POST['time']));
@@ -27,7 +27,7 @@ function tsml_save_post(){
 	if (!empty($_POST['types']) && is_array($_POST['types'])) {
 		update_post_meta($post->ID, 'types', array_map('esc_attr', $_POST['types']));
 	}
-
+	
 	//exit here if the location is not ready
 	if (empty($_POST['formatted_address']) || empty($_POST['latitude']) || empty($_POST['longitude'])) {
 		return;
@@ -69,7 +69,7 @@ function tsml_save_post(){
 	foreach ($meetings as $meeting) update_post_meta($meeting['id'], 'region', intval($_POST['region']));
 
 	//set parent on this post (and post status?) without re-triggering the save_posts hook
-	$wpdb->prepare('UPDATE ' . $wpdb->posts . ' SET post_parent = %d, post_status = %s WHERE ID = %d', $location_id, sanitize_text_field($_POST['post_status']), $post->ID);
+	$wpdb->get_var($wpdb->prepare('UPDATE ' . $wpdb->posts . ' SET post_parent = %d, post_status = %s WHERE ID = %d', $location_id, sanitize_text_field($_POST['post_status']), $post->ID));
 
 	//deleted orphaned locations
 	tsml_delete_orphaned_locations();
@@ -126,5 +126,4 @@ function tsml_save_post(){
 	
 	//update types in use
 	tsml_update_types_in_use();
-
 }

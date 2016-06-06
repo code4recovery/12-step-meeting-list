@@ -1,13 +1,30 @@
 <?php
 
+//import page
 add_action('admin_menu', 'tsml_admin_menu');
 
 function tsml_admin_menu() {
 	global $tsml_nonce, $tsml_program;
 	
 	//run import
-	if (!empty($_POST['tsml_import']) && isset($_POST['tsml_nonce']) && wp_verify_nonce($_POST['tsml_nonce'], $tsml_nonce)) {
-		tsml_import($_POST['tsml_import'], !empty($_POST['delete']));
+	if (isset($_FILES['tsml_import']) && isset($_POST['tsml_nonce']) && wp_verify_nonce($_POST['tsml_nonce'], $tsml_nonce)) {
+		$extension = explode('.', strtolower($_FILES['tsml_import']['name']));
+		$extension = end($extension);
+		if ($_FILES['tsml_import']['error'] > 0) {
+			tsml_alert(__('File upload error #' . $_FILES['tsml_import']['error'], '12-step-meeting-list'), 'error');
+		} elseif (empty($extension)) {
+			tsml_alert(__('Uploaded file did not have a file extension. Please add .csv to the end of the file name.', '12-step-meeting-list'), 'error');
+		} elseif ($extension != 'csv') {
+			tsml_alert(__('Please upload a csv file. Your file ended in .' . $extension . '.', '12-step-meeting-list'), 'error');
+		} elseif (!$handle = fopen($_FILES['tsml_import']['tmp_name'], 'r')) {
+			tsml_alert(__('Error opening CSV file', '12-step-meeting-list'), 'error');
+		} else {
+			$meetings = array();
+			while (($data = fgetcsv($handle, 1000, ',')) !== FALSE) {
+				$meetings[] = $data;
+			}
+			tsml_import($meetings, !empty($_POST['delete']));
+		}
 	}
 		
 	//change program
@@ -33,7 +50,7 @@ function tsml_admin_menu() {
 					    <div class="postbox">
 						    <div class="inside">
 								<h3><?php _e('Import Data', '12-step-meeting-list')?></h3>
-								<p>You can import a spreadsheet of meetings by opening it first in Excel, copying everything, and then pasting into the field below. <a href="<?php echo plugin_dir_url(__FILE__) . '../template.xlsx'?>">Here is a spreadsheet</a> you can use as a template. The header row must kept in place.</p>
+								<p>You can import a CSV of meeting info using the form below. <a href="<?php echo plugin_dir_url(__FILE__) . '../template.xlsx'?>">Here is a spreadsheet</a> you can use as a template. Save it as a comma-delimited CSV before uploading it. The header row must kept in place.</p>
 								<ul class="ul-disc">
 									<li><strong><?php _e('Time', '12-step-meeting-list')?></strong>, if present, should be in a standard date format such as 6:00 AM. Non-standard or empty dates will be imported as 'by appointment.'</li>
 									<li><strong><?php _e('Day', '12-step-meeting-list')?></strong>, if present, should either Sunday, Monday, Tuesday, Wednesday, Thursday, Friday, or Saturday. Meetings that occur on multiple days should be listed separately. 'Daily' or 'Mondays' will not work. Non-standard days will be imported as 'by appointment.'</li>
@@ -56,10 +73,10 @@ function tsml_admin_menu() {
 										</ul>
 									</li>
 								</ul>
-								<form method="post" action="edit.php?post_type=meetings&page=import">
+								<form method="post" action="edit.php?post_type=meetings&page=import" enctype="multipart/form-data">
 									<?php wp_nonce_field($tsml_nonce, 'tsml_nonce', false)?>
 									<p>It takes a while for the address verification to do its thing, please be patient. Importing 500 meetings usually takes about one minute.</p>
-									<textarea name="tsml_import" class="widefat" rows="5" placeholder="Paste spreadsheet data here"></textarea>
+									<input type="file" name="tsml_import"></textarea>
 									<p><label><input type="checkbox" name="delete"> Delete all meetings, locations, regions, and groups prior to import</label></p>
 									<p><input type="submit" class="button button-primary" value="Begin"></p>
 								</form>
