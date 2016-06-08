@@ -3,7 +3,8 @@
 //function: enqueue assets for public or admin page
 //used: in templates and on admin_edit.php
 function tsml_assets() {
-	
+	global $tsml_types, $tsml_program;
+		
 	//google maps api needed for maps and address verification, can't be onboarded
 	wp_enqueue_script('google_maps_api', '//maps.googleapis.com/maps/api/js');
 	
@@ -18,7 +19,10 @@ function tsml_assets() {
 		wp_enqueue_style('bootstrap_css', plugins_url('../css/bootstrap.min.css', __FILE__));
 		wp_enqueue_script('bootstrap_js', plugins_url('../js/bootstrap.min.js', __FILE__), array('jquery'), '', true);
 		wp_enqueue_script('tsml_public_js', plugins_url('../js/archive-meetings.js', __FILE__), array('jquery'), '', true);
-		wp_localize_script('tsml_public_js', 'myAjax', array('ajaxurl' => admin_url('admin-ajax.php')));
+		wp_localize_script('tsml_public_js', 'myAjax', array(
+			'ajaxurl' => admin_url('admin-ajax.php'),
+			'types' => $tsml_types[$tsml_program],
+		));
 		wp_enqueue_style('tsml_public_css', plugins_url('../css/archive-meetings.min.css', __FILE__));
 	}
 }
@@ -532,6 +536,19 @@ function tsml_get_meetings($arguments=array()) {
 	return $meetings;
 }
 
+//return spelled-out meeting types
+function tsml_meeting_types($types) {
+	global $tsml_types, $tsml_program;
+	$return = array();
+	foreach ($types as $type) {
+		if (array_key_exists($type, $tsml_types[$tsml_program])) {
+			$return[] = $tsml_types[$tsml_program][$type];
+		}
+	}
+	sort($return);
+	return implode(', ', $return);
+}
+
 //function: sort an array of meetings
 //used: as a callback in tsml_get_meetings()
 //method: sort by 
@@ -822,13 +839,16 @@ function tsml_import($meetings, $delete=false) {
 	foreach ($meetings as $meeting) {
 		$row_counter++;
 
-		//split, check length
+		//sanitize fields
+		$meeting = array_map('tsml_import_sanitize_field', $meeting);
+		
+		//skip empty rows
+		if (empty(implode($meeting))) continue;
+
+		//check length
 		if ($header_count != count($meeting)) {
 			return tsml_alert('Row #' . $row_counter . ' has ' . count($meeting) . ' columns while the header has ' . $header_count . '.', 'error');
 		}
-		
-		//sanitize fields
-		$meeting = array_map('tsml_import_sanitize_field', $meeting);
 		
 		//associate, sanitize
 		$meeting = array_combine($header, $meeting);
@@ -871,10 +891,14 @@ function tsml_import($meetings, $delete=false) {
 		if (!empty($meeting['address'])) $address[] = $meeting['address'];
 		if (!empty($meeting['city'])) $address[] = $meeting['city'];
 		if (!empty($meeting['state'])) $address[] = $meeting['state'];
-		if (!empty($meeting['postal-code'])) $address[] = $meeting['postal-code'];
+		if (!empty($meeting['postal-code'])) {
+			if ((strlen($meeting['postal-code']) < 5) && ($meeting['country'] == 'USA')) $meeting['postal-code'] = str_pad($meeting['postal-code'], 5, '0', STR_PAD_LEFT);
+			$address[] = $meeting['postal-code'];	
+		}
 		if (!empty($meeting['country'])) $address[] = $meeting['country'];
 		$address = implode(', ', $address);
 		
+		//check to make sure there's something to geocode
 		if (empty($address)) return tsml_alert('Not enough location information at row #' . $row_counter . '.', 'error');
 
 		//notes

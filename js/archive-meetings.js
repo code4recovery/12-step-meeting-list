@@ -125,10 +125,11 @@ jQuery(function($){
 					//add new table row
 					tbody.append('<tr>' + 
 						'<td class="time" data-sort="' + sort_time + '"><span>' + (data.day || !obj.day ? obj.time_formatted : days[obj.day] + '</span><span>' + obj.time_formatted) + '</span></td>' + 
-						'<td class="name" data-sort="' + obj.name + '-' + sort_time + '">' + formatLink(obj.url, highlight(obj.name, search), 'post_type') + '<div class="visible-print-block">' + (obj.sub_region || obj.region || '') + '</div></td>' + 
-						'<td class="location" data-sort="' + obj.location + '-' + sort_time + '">' + highlight(obj.location, search) + '<div class="visible-print-block">' + highlight(obj.address, search) + '</div></td>' + 
-						'<td class="address hidden-print" data-sort="' + obj.address + '-' + sort_time + '">' + highlight(obj.address, search) + '</td>' + 
-						'<td class="region hidden-print" data-sort="' + (obj.sub_region || obj.region || '') + '-' + sort_time + '">' + (obj.sub_region || obj.region || '') + '</td>' + 
+						'<td class="name" data-sort="' + obj.name + '-' + sort_time + '">' + formatLink(obj.url, highlight(obj.name, search), 'post_type') + '</td>' + 
+						'<td class="location" data-sort="' + obj.location + '-' + sort_time + '">' + highlight(obj.location, search) + '</td>' + 
+						'<td class="address" data-sort="' + obj.address + '-' + sort_time + '">' + highlight(obj.address, search) + '</td>' + 
+						'<td class="region" data-sort="' + (obj.sub_region || obj.region || '') + '-' + sort_time + '">' + (obj.sub_region || obj.region || '') + '</td>' + 
+						'<td class="types visible-print-block">' + decodeMeetingTypes(obj.types) + '</td>' + 
 					'</tr>')
 				});
 				
@@ -345,6 +346,16 @@ jQuery(function($){
 		document.title = string;
 	}
 	if ($('body').hasClass('post-type-archive-meetings')) updateTitle();
+	
+	//decode meeting types for ajax table rows
+	function decodeMeetingTypes(codes) {
+		var return_types = [];
+		for (var i = 0; i < codes.length; i++) {
+			return_types[return_types.length] = myAjax.types[codes[i]];
+		}
+		return_types.sort();
+		return return_types.join(', ');
+	}
 	
 	//resize fullscreen on resize
 	$(window).resize(function(e){

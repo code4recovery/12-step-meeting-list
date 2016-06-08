@@ -245,7 +245,7 @@ input:focus, button:focus {
 
 body.admin-bar {
 	#meetings.fullscreen {
-		padding-top: 32px;
+		padding-top: 47px;
 	}
 }
 
@@ -352,10 +352,20 @@ body.admin-bar {
 	}
 }
 
-/* Remove Bootstrap's (http://) when printing */
 @media print {
 	a[href]:after {
-		content: none !important;
+		content: none !important; /* Remove Bootstrap's (http://) when printing */
+
+	}
+	#meetings .results table td {
+		&.name, &.location, &.address, &.region {
+			width: auto !important;
+			white-space: normal;
+		}
+		&.name {
+			font-weight: bold;
+			small { display: none; }
+		}
 	}
 }
 

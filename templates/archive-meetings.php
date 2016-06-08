@@ -196,7 +196,7 @@ class Walker_Regions_Dropdown extends Walker_Category {
 									'meetings' => array(),
 								);
 							}
-		
+									
 							$locations[$meeting['location_id']]['meetings'][] = array(
 								'time'=>$meeting['time_formatted'],
 								'day'=>$meeting['day'],
@@ -224,16 +224,13 @@ class Walker_Regions_Dropdown extends Walker_Category {
 								?></span></td>
 							<td class="name" data-sort="<?php echo $meeting['name'] . '-' . $sort_time?>">
 								<?php echo $meeting['link']?>
-								<div class="visible-print-block"><?php echo $meeting['region']?></div>
 							</td>
 							<td class="location" data-sort="<?php echo $meeting['location'] . '-' . $sort_time?>">
 								<?php echo $meeting['location']?>
-								<?php if ($meeting['location'] != $meeting['address']) {?>
-								<div class="visible-print-block"><?php echo $meeting['address']?></div>
-								<?php }?>
 							</td>
-							<td class="address hidden-print" data-sort="<?php echo $meeting['address'] . '-' . $sort_time?>"><?php echo $meeting['address']?></td>
-							<td class="region hidden-print" data-sort="<?php echo $meeting['region'] . '-' . $sort_time?>"><?php echo $meeting['region']?></td>
+							<td class="address" data-sort="<?php echo $meeting['address'] . '-' . $sort_time?>"><?php echo $meeting['address']?></td>
+							<td class="region" data-sort="<?php echo $meeting['region'] . '-' . $sort_time?>"><?php echo $meeting['region']?></td>
+							<td class="types visible-print-block"><?php echo tsml_meeting_types($meeting['types'])?></td>
 						</tr>
 						<?php }?>
 					</tbody>
