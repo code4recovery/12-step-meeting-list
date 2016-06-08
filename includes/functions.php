@@ -843,7 +843,7 @@ function tsml_import($meetings, $delete=false) {
 		$meeting = array_map('tsml_import_sanitize_field', $meeting);
 		
 		//skip empty rows
-		if (empty(implode($meeting))) continue;
+		if (!strlen(implode($meeting))) continue;
 
 		//check length
 		if ($header_count != count($meeting)) {
