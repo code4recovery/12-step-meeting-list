@@ -4,7 +4,7 @@
 add_action('admin_menu', 'tsml_admin_menu');
 
 function tsml_admin_menu() {
-	global $tsml_nonce, $tsml_program;
+	global $tsml_nonce, $tsml_program, $tsml_feedback_addresses;
 	
 	//run import
 	if (isset($_FILES['tsml_import']) && isset($_POST['tsml_nonce']) && wp_verify_nonce($_POST['tsml_nonce'], $tsml_nonce)) {
@@ -34,11 +34,38 @@ function tsml_admin_menu() {
 		tsml_alert('Program setting updated.');
 	}
 		
+	//add a feedback email
+	if (!empty($_POST['tsml_add_feedback_address']) && isset($_POST['tsml_nonce']) && wp_verify_nonce($_POST['tsml_nonce'], $tsml_nonce)) {
+		$email = sanitize_text_field($_POST['tsml_add_feedback_address']);
+		if (!is_email($email)) tsml_alert('"' . $email . '" is not a valid email address. Please try again.', 'error');
+		$tsml_feedback_addresses[] = $email;
+		$tsml_feedback_addresses = array_unique($tsml_feedback_addresses);
+		sort($tsml_feedback_addresses);
+		update_option('tsml_feedback_addresses', $tsml_feedback_addresses);
+		tsml_alert('Feedback address added.');
+	}
+	
+	//remove a feedback email
+	if (!empty($_POST['tsml_remove_feedback_address']) && isset($_POST['tsml_nonce']) && wp_verify_nonce($_POST['tsml_nonce'], $tsml_nonce)) {
+		$email = sanitize_text_field($_POST['tsml_remove_feedback_address']);
+		if (($key = array_search($email, $tsml_feedback_addresses)) !== false) {
+			unset($tsml_feedback_addresses[$key]);
+		} else {
+			tsml_alert('"' . $email . '" was not found in the list of addresses. Please try again.', 'error');
+		}
+		if (empty($tsml_feedback_addresses)) {
+			delete_option('tsml_feedback_addresses');
+		} else {
+			update_option('tsml_feedback_addresses', $tsml_feedback_addresses);
+		}
+		tsml_alert('Feedback address removed.');
+	}
+			
 	//import text file
 	add_submenu_page('edit.php?post_type=meetings', __('Import & Settings', '12-step-meeting-list'), 'Import &amp; Settings', 'manage_options', 'import', 'tmsl_import_page');
 
 	function tmsl_import_page() {
-		global $tsml_types, $tsml_programs, $tsml_program, $tsml_nonce, $tsml_days;
+		global $tsml_types, $tsml_programs, $tsml_program, $tsml_nonce, $tsml_days, $tsml_feedback_addresses;
 
 	    ?>
 		<div class="wrap">
@@ -136,15 +163,45 @@ function tsml_admin_menu() {
 										)?></li>
 									<?php }?>
 								</ul>
-								Want to send a mass email to your group contacts? <a href="<?php echo admin_url('admin-ajax.php')?>?action=contacts">Click here</a> to see their email addresses.
+								Want to send a mass email to your group contacts? <a href="<?php echo admin_url('admin-ajax.php')?>?action=contacts" target="_blank">Click here</a> to see their email addresses.
 							</div>
 						</div>
-						<?php if ($tsml_program == 'aa') {?>
+						<?php if (in_array($_SERVER['HTTP_HOST'], array('aasanjose.dev', 'nc23.org'))) {?>
+						<div class="postbox" id="get_feedback">
+							<div class="inside">
+								<h3>Want Feedback?</h3>
+								<p>Enable a meeting info feedback form by adding email addresses below:</p>
+								<?php if (!empty($tsml_feedback_addresses)) {?>
+								<table>
+									<?php foreach ($tsml_feedback_addresses as $address) {?>
+									<tr>
+										<td><?php echo $address?></td>
+										<td>
+											<form method="post" action="edit.php?post_type=meetings&page=import">
+												<?php wp_nonce_field($tsml_nonce, 'tsml_nonce', false)?>
+												<input type="hidden" name="tsml_remove_feedback_address" value="<?php echo $address?>">
+												<span class="dashicons dashicons-no-alt"></span>
+											</form>
+										</td>
+									</tr>
+									<?php }?>
+								</table>
+								<?php }?>
+								<form method="post" action="edit.php?post_type=meetings&page=import">
+									<?php wp_nonce_field($tsml_nonce, 'tsml_nonce', false)?>
+									<input type="email" name="tsml_add_feedback_address" value="<?php if (!in_array(get_option('admin_email'), $tsml_feedback_addresses)) echo get_option('admin_email')?>" placeholder="john@example.org">
+									<input type="submit" class="button" value="Add">
+								</form>
+							</div>
+						</div>
+						<?php 
+						}
+						if ($tsml_program == 'aa') {?>
 						<div class="postbox" id="try_the_apps">
 							<div class="inside">
 								<h3><?php _e('Try the Apps!', '12-step-meeting-list')?></h3>
-								<p>Want to have your meetings listed in a simple, clean mobile app? <a href="https://meetingguide.org/" target="_blank">Several areas are currently participating</a>,
-									but we always want more! No extra effort is required; simply continue to update your meetings here and the updates will flow down to app users.
+								<p>Want to have your meetings listed in a simple, free mobile app? <a href="https://meetingguide.org/" target="_blank">Many areas are currently participating</a>,
+									but we always want more! No extra effort is required; simply continue to update your meetings in Wordpress and the updates will flow down to app users.
 								<p class="buttons">
 									<a href="https://itunes.apple.com/us/app/meeting-guide/id1042822181">
 										<img src="<?php echo plugin_dir_url(__FILE__)?>../img/apple.svg">

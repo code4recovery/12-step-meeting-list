@@ -3,7 +3,7 @@ Contributors: aasanjose
 Tags: meetings, aa, al-anon, na, 12-step, locations, groups
 Requires at least: 3.2
 Tested up to: 4.5
-Stable tag: 2.2
+Stable tag: 2.2.1
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -18,9 +18,10 @@ It was originally designed to maintain a list of AA meetings in Santa Clara Coun
 **AA**
 
 * [Austin, TX](http://austinaa.org/meetings/)
+* [Bowling Green, KY](http://bowlinggreenaa.org/?post_type=meetings)
 * [Corpus Christi, TX](http://www.cbiaa.org/meetings/)
-* [District 15, Chicago, IL](http://d15aa.org/d15aa.org/?post_type=meetings)
 * [East Bay, CA](http://eastbayaa.org/meetings)
+* [Elk Grove Village, IL](http://d15aa.org/d15aa.org/?post_type=meetings)
 * [Europe](http://alcoholics-anonymous.eu/index.php/meetings/)
 * [Greensboro, NC](http://nc23.org/meetings/)
 * [Maine and New Brunswick](http://csoaamaine.org/meetings/)
@@ -34,6 +35,7 @@ It was originally designed to maintain a list of AA meetings in Santa Clara Coun
 * [Sacramento, CA](http://aasacramento.org/meetings/)
 * [San Jose, CA](https://aasanjose.org/meetings)
 * [San Mateo, CA](http://aa-san-mateo.org/meetings)
+* [State College, PA](http://www.district43.com/meetings/)
 * [Toronto, Canada](http://aatoronto.org/?post_type=meetings)
 * [Tri Valley, CA](http://trivalleyaa.org/meetings/)
 * [Walnut Creek, CA](http://contracostaaa.org/meetings)
@@ -162,6 +164,11 @@ and then drop some or all of these tags in your PHP:
 1. Meeting map
 
 == Changelog ==
+
+= 2.2.1 =
+* Meeting info feedback form (optional)
+* Accessibility markup
+* Adding more sites to the readme (Bowling Green, State College)
 
 = 2.2 =
 * Fixed empty row issue on importer reported by Maine

@@ -56,12 +56,12 @@ class Walker_Regions_Dropdown extends Walker_Category {
 }
 
 ?>
-<div id="meetings" data-type="<?php echo $view?>" class="container">
+<div id="meetings" data-type="<?php echo $view?>" class="container" role="main">
 	<div class="row controls hidden-print">
 		<div class="col-md-2 col-sm-6">
-			<form id="search">
+			<form id="search" role="search">
 				<div class="input-group">
-					<input type="text" name="query" class="form-control" value="<?php echo $search?>" placeholder="<?php _e('Search', '12-step-meeting-list')?>">
+					<input type="text" name="query" class="form-control" value="<?php echo $search?>" placeholder="<?php _e('Search', '12-step-meeting-list')?>" aria-label="Search">
 					<span class="input-group-btn">
 						<button class="btn btn-default" type="submit"><i class="glyphicon glyphicon-search"></i></button>
 					</span>
@@ -70,11 +70,11 @@ class Walker_Regions_Dropdown extends Walker_Category {
 		</div>
 		<div class="col-md-2 col-sm-6">
 			<div class="dropdown" id="day">
-				<a data-toggle="dropdown" class="btn btn-default btn-block">
+				<a data-toggle="dropdown" class="btn btn-default btn-block" role="button" aria-haspopup="true" aria-expanded="false">
 					<span class="selected"><?php echo $day_label?></span>
 					<span class="caret"></span>
 				</a>
-				<ul class="dropdown-menu">
+				<ul class="dropdown-menu" role="menu">
 					<li<?php if ($day === false) echo ' class="active"'?>><a href="#"><?php echo $day_default?></a></li>
 					<li class="divider"></li>
 					<?php foreach ($tsml_days as $key=>$value) {?>
@@ -85,11 +85,11 @@ class Walker_Regions_Dropdown extends Walker_Category {
 		</div>
 		<div class="col-md-2 col-sm-6">
 			<div class="dropdown" id="time">
-				<a data-toggle="dropdown" class="btn btn-default btn-block">
+				<a data-toggle="dropdown" class="btn btn-default btn-block" role="button" aria-haspopup="true" aria-expanded="false">
 					<span class="selected"><?php echo $time_label?></span>
 					<span class="caret"></span>
 				</a>
-				<ul class="dropdown-menu">
+				<ul class="dropdown-menu" role="menu">
 					<li<?php if (empty($time)) echo ' class="active"'?>><a href="#"><?php echo $time_default?></a></li>
 					<li class="divider"></li>
 					<?php foreach ($times as $key=>$value) {?>
@@ -100,11 +100,11 @@ class Walker_Regions_Dropdown extends Walker_Category {
 		</div>
 		<div class="col-md-2 col-sm-6">
 			<div class="dropdown" id="region">
-				<a data-toggle="dropdown" class="btn btn-default btn-block">
+				<a data-toggle="dropdown" class="btn btn-default btn-block" role="button" aria-haspopup="true" aria-expanded="false">
 					<span class="selected"><?php echo $region_label?></span>
 					<span class="caret"></span>
 				</a>
-				<ul class="dropdown-menu">
+				<ul class="dropdown-menu" role="menu">
 					<li<?php if (empty($region)) echo ' class="active"'?>><a href="#"><?php echo $region_default?></a></li>
 					<li class="divider"></li>
 					<?php wp_list_categories(array(
@@ -123,11 +123,11 @@ class Walker_Regions_Dropdown extends Walker_Category {
 		<div class="col-md-2 col-sm-6">
 			<?php if (count($tsml_types_in_use)) {?>
 			<div class="dropdown" id="type">
-				<a data-toggle="dropdown" class="btn btn-default btn-block">
+				<a data-toggle="dropdown" class="btn btn-default btn-block" role="button" aria-haspopup="true" aria-expanded="false">
 					<span class="selected"><?php echo $type_label?></span>
 					<span class="caret"></span>
 				</a>
-				<ul class="dropdown-menu">
+				<ul class="dropdown-menu" role="menu">
 					<li<?php if (empty($type)) echo ' class="active"'?>><a href="#"><?php echo $type_default?></a></li>
 					<li class="divider"></li>
 					<?php 
@@ -141,11 +141,11 @@ class Walker_Regions_Dropdown extends Walker_Category {
 		</div>
 		<div class="col-md-2 col-sm-12 visible-md visible-lg visible-xl">
 			<div class="btn-group btn-group-justified" id="action">
-				<a class="btn btn-default toggle-view<?php if ($view == 'list') {?> active<?php }?>" data-id="list">
+				<a class="btn btn-default toggle-view<?php if ($view == 'list') {?> active<?php }?>" data-id="list" role="button">
 					<?php _e('List', '12-step-meeting-list')?>
 				</a>
 				<div class="btn-group">
-					<a class="btn btn-default toggle-view<?php if ($view == 'map') {?> active<?php }?> dropdown-toggle" data-toggle="dropdown" data-id="map">
+					<a class="btn btn-default toggle-view<?php if ($view == 'map') {?> active<?php }?> dropdown-toggle" data-toggle="dropdown" data-id="map" role="button" aria-haspopup="true" aria-expanded="false">
 						<?php _e('Map', '12-step-meeting-list')?>
 						<span class="caret"></span>
 					</a>

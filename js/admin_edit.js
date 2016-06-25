@@ -1,15 +1,20 @@
-jQuery(function(){
+jQuery(function($){
 
 	//day picker
-	jQuery('select#day').change(function(){
-		var val = jQuery(this).val();
-		var $time = jQuery('input#time');
+	$('select#day').change(function(){
+		var val = $(this).val();
+		var $time = $('input#time');
 		if (val) {
-			jQuery('input#time').removeAttr('disabled');
+			$('input#time').removeAttr('disabled');
 			if (!$time.val() && $time.attr('data-value')) $time.val($time.attr('data-value'));
 		} else {
 			$time.attr('data-value', $time.val()).val('').attr('disabled', 'disabled');
 		}
+	});
+	
+	//delete email contact
+	$('#get_feedback table span').click(function(){
+		$(this).parent().submit();
 	});
 
 	//location typeahead
@@ -21,20 +26,20 @@ jQuery(function(){
 		}
 	});
 	locations.initialize();
-	jQuery('input#location').typeahead(null, {
+	$('input#location').typeahead(null, {
 		displayKey: 'value',
 		source: locations.ttAdapter()
 	}).on('typeahead:autocompleted', function($e, datum){
-		jQuery('input[name=formatted_address]').val(datum.formatted_address);
-		jQuery('input[name=latitude]').val(datum.latitude);
-		jQuery('input[name=longitude]').val(datum.longitude);
-		jQuery('input[name=address]').val(datum.address);
-		jQuery('input[name=city]').val(datum.city);
-		jQuery('input[name=state]').val(datum.state);
-		jQuery('input[name=postal_code]').val(datum.postal_code);
-		jQuery('input[name=country]').val(datum.country);
-		jQuery('select[name=region] option[value=' + datum.region + ']').prop('selected', true);
-		jQuery('textarea[name=location_notes]').val(datum.notes);
+		$('input[name=formatted_address]').val(datum.formatted_address);
+		$('input[name=latitude]').val(datum.latitude);
+		$('input[name=longitude]').val(datum.longitude);
+		$('input[name=address]').val(datum.address);
+		$('input[name=city]').val(datum.city);
+		$('input[name=state]').val(datum.state);
+		$('input[name=postal_code]').val(datum.postal_code);
+		$('input[name=country]').val(datum.country);
+		$('select[name=region] option[value=' + datum.region + ']').prop('selected', true);
+		$('textarea[name=location_notes]').val(datum.notes);
 		setMap(datum.latitude, datum.longitude);
 	});
 
@@ -48,38 +53,38 @@ jQuery(function(){
 		}
 	});
 	groups.initialize();
-	jQuery('input#group').typeahead(null, {
+	$('input#group').typeahead(null, {
 		displayKey: 'value',
 		source: groups.ttAdapter()
 	}).on('typeahead:autocompleted', function($e, datum){
-		jQuery('input[name=contact_1_name]').val(datum.contact_1_name);
-		jQuery('input[name=contact_1_email]').val(datum.contact_1_email);
-		jQuery('input[name=contact_1_phone]').val(datum.contact_1_phone);
-		jQuery('input[name=contact_2_name]').val(datum.contact_2_name);
-		jQuery('input[name=contact_2_email]').val(datum.contact_2_email);
-		jQuery('input[name=contact_2_phone]').val(datum.contact_2_phone);
-		jQuery('input[name=contact_3_name]').val(datum.contact_3_name);
-		jQuery('input[name=contact_3_email]').val(datum.contact_3_email);
-		jQuery('input[name=contact_3_phone]').val(datum.contact_3_phone);
-		jQuery('textarea[name=group_notes]').val(datum.notes);
+		$('input[name=contact_1_name]').val(datum.contact_1_name);
+		$('input[name=contact_1_email]').val(datum.contact_1_email);
+		$('input[name=contact_1_phone]').val(datum.contact_1_phone);
+		$('input[name=contact_2_name]').val(datum.contact_2_name);
+		$('input[name=contact_2_email]').val(datum.contact_2_email);
+		$('input[name=contact_2_phone]').val(datum.contact_2_phone);
+		$('input[name=contact_3_name]').val(datum.contact_3_name);
+		$('input[name=contact_3_email]').val(datum.contact_3_email);
+		$('input[name=contact_3_phone]').val(datum.contact_3_phone);
+		$('textarea[name=group_notes]').val(datum.notes);
 	});
 
 	/*timepicker
-	jQuery('input[type=time]').timepicker({
+	$('input[type=time]').timepicker({
 		timeFormat: 'hh:mm tt',
 		stepMinute: 15
 	});*/
 	
-	jQuery('input#group').change(function(){
-		jQuery('div#group .apply_group_to_location').removeClass('hidden');
+	$('input#group').change(function(){
+		$('div#group .apply_group_to_location').removeClass('hidden');
 	});
 
-	jQuery('form#post').submit(function(){
-		if (!jQuery('select#day').val()) {
-			jQuery('input#time').val(''); //double check is empty
+	$('form#post').submit(function(){
+		if (!$('select#day').val()) {
+			$('input#time').val(''); //double check is empty
 			return true; //by appointment, don't check time
 		}
-		var timeVal = jQuery('input#time').val();
+		var timeVal = $('input#time').val();
 		var errors = false;
 		if (timeVal.length != 5) errors = true;
 		if (timeVal.indexOf(':') != 2) errors = true;
@@ -95,22 +100,22 @@ jQuery(function(){
 	});
 
 	//address / map
-	jQuery('input#formatted_address').blur(function(){
+	$('input#formatted_address').blur(function(){
 
 		//setting new form
-		jQuery('input#address').val('');
-		jQuery('input#city').val('');
-		jQuery('input#state').val('');
-		jQuery('input#zip').val('');
-		jQuery('input#country').val('');
-		jQuery('input#latitude').val('');
-		jQuery('input#longitude').val('');
+		$('input#address').val('');
+		$('input#city').val('');
+		$('input#state').val('');
+		$('input#zip').val('');
+		$('input#country').val('');
+		$('input#latitude').val('');
+		$('input#longitude').val('');
 
-		var val = jQuery(this).val().trim();
+		var val = $(this).val().trim();
 		
 		if (!val.length) {
 			setMap();
-			jQuery('input#formatted_address').val(''); //clear any spaces
+			$('input#formatted_address').val(''); //clear any spaces
 			return;
 		}
 
@@ -122,17 +127,17 @@ jQuery(function(){
 			//set lat + lng
 			var latitude = data.results[0].geometry.location.lat;
 			var longitude = data.results[0].geometry.location.lng;
-			jQuery('input#latitude').val(latitude);
-			jQuery('input#longitude').val(longitude);
+			$('input#latitude').val(latitude);
+			$('input#longitude').val(longitude);
 			setMap(latitude, longitude);
 
 			//guess region if not set
 			var region_id = false;
-			if (!jQuery('select#region option[selected]').size()) {
+			if (!$('select#region option[selected]').size()) {
 				val = data.results[0].formatted_address;
-				jQuery('select#region option').each(function(){
-					var region_name = jQuery(this).text().replace('&nbsp;', '').trim();
-					if (val.indexOf(region_name) != -1) region_id = jQuery(this).attr('value');
+				$('select#region option').each(function(){
+					var region_name = $(this).text().replace('&nbsp;', '').trim();
+					if (val.indexOf(region_name) != -1) region_id = $(this).attr('value');
 				});
 			}
 			
@@ -147,11 +152,11 @@ jQuery(function(){
 					point_of_interest = component.short_name;
 				} else if (component.types.indexOf('street_number') !== -1) {
 					//set address as street number
-					jQuery('input#address').val(component.long_name);
+					$('input#address').val(component.long_name);
 				} else if (component.types.indexOf('route') !== -1) {
 					//append street name
-					var address = jQuery('input#address').val() + ' ' + component.long_name;
-					jQuery('input#address').val(address.trim());
+					var address = $('input#address').val() + ' ' + component.long_name;
+					$('input#address').val(address.trim());
 				} else if (component.types.indexOf('locality') !== -1) {
 					//set city
 					city = component.long_name;
@@ -163,65 +168,65 @@ jQuery(function(){
 					if (!city) city = component.long_name;
 				} else if (component.types.indexOf('administrative_area_level_1') !== -1) {
 					//set state
-					jQuery('input#state').val(component.short_name);
+					$('input#state').val(component.short_name);
 				} else if (component.types.indexOf('postal_code') !== -1) {
 					//set ZIP
-					jQuery('input#postal_code').val(component.short_name);
+					$('input#postal_code').val(component.short_name);
 				} else if (component.types.indexOf('country') !== -1) {
 					//set country
-					jQuery('input#country').val(component.short_name);
+					$('input#country').val(component.short_name);
 				}
 			}
 
 			//set city
-			jQuery('input#city').val(city);
+			$('input#city').val(city);
 			
 			//set address to point of interest if empty
-			if (!jQuery('input#address').val().length) jQuery('input#address').val(point_of_interest);
+			if (!$('input#address').val().length) $('input#address').val(point_of_interest);
 			
 			//build formatted address from components
 			var formatted_address = [];
 
-			var address = jQuery('input#address').val();
+			var address = $('input#address').val();
 			if (address.length) formatted_address[formatted_address.length] = address;
 			
-			var city = jQuery('input#city').val();
+			var city = $('input#city').val();
 			if (city.length) formatted_address[formatted_address.length] = city;
 			
-			var state_code = jQuery('input#state').val() + ' ' + jQuery('input#postal_code').val();
+			var state_code = $('input#state').val() + ' ' + $('input#postal_code').val();
 			state_code = state_code.trim();
 			if (state_code.length) formatted_address[formatted_address.length] = state_code;
 			
-			var country = jQuery('input#country').val();
+			var country = $('input#country').val();
 			if (country.length) formatted_address[formatted_address.length] = country;
 
 			var formatted_address = formatted_address.join(', ');
 
 			//update address field with corrected address
-			jQuery('input#formatted_address').val(formatted_address);
+			$('input#formatted_address').val(formatted_address);
 			
 			//check if location with same address is already in the system, populate form
 			jQuery.getJSON(myAjax.ajaxurl + '?action=address', { formatted_address: formatted_address }, function(data){
 				if (data) {
-					jQuery('input[name=location]').val(data.location);
-					jQuery('select[name=region] option').prop('selected', false);
-					jQuery('select[name=region] option[value=' + data.region + ']').prop('selected', true);
-					jQuery('textarea[name=location_notes]').val(data.location_notes);
+					$('input[name=location]').val(data.location);
+					$('select[name=region] option').prop('selected', false);
+					$('select[name=region] option[value=' + data.region + ']').prop('selected', true);
+					$('textarea[name=location_notes]').val(data.location_notes);
 				} else if (region_id) {
 					//set to guessed region earlier
-					jQuery('select[name=region] option').prop('selected', false);
-					jQuery('select[name=region] option[value=' + region_id + ']').prop('selected', true);
+					$('select[name=region] option').prop('selected', false);
+					$('select[name=region] option[value=' + region_id + ']').prop('selected', true);
 				}
 			});
 
 		});
 	});
 
-	if (jQuery('input#formatted_address').val()) jQuery('input#formatted_address').blur();
+	if ($('input#formatted_address').val()) $('input#formatted_address').blur();
 
 	function setMap(latitude, longitude) {
 		if (!latitude || !longitude) {
-			jQuery('div#map').html('');
+			$('div#map').html('');
 			return;
 		}
 		var myLatlng = new google.maps.LatLng(latitude, longitude);

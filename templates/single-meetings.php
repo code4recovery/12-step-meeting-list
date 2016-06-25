@@ -60,6 +60,33 @@ $meeting = tsml_get_meeting();
 						<?php } ?>
 						<dt><?php _e('Updated', '12-step-meeting-list')?></dt>
 						<dd><?php the_modified_date()?></dd>
+						
+						<!--
+						<dt>Feedback</dt>
+						<dd>
+							See something wrong? <a href="">Report an issue</a> with this listing.
+						</dd>
+						-->
+						
+						<!--
+						<form>
+							<div class="form-group">
+								<label for="tsml_name">Your Name</label>
+								<input type="text" id="tsml_name" name="tsml_name" placeholder="John Q." class="form-control">
+							</div>
+							<div class="form-group">
+								<label for="tsml_email">Email Address</label>
+								<input type="email" id="tsml_email" name="tsml_email" placeholder="john@example.org" class="form-control">
+							</div>
+							<div class="form-group">
+								<label for="tsml_message">Message</label>
+								<textarea id="tsml_message" name="tsml_message" placeholder="Please be specific." class="form-control"></textarea>
+							</div>
+							<input type="submit" class="btn btn-default">
+						</form>
+						-->
+						
+						<div class="alert alert-warning">Thank you for your feedback.</div>
 					</dl>
 				</div>
 				<div class="col-md-8">
