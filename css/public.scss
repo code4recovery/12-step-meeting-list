@@ -241,6 +241,21 @@ input:focus, button:focus {
 			content: " / ";
 		}
 	}
+	#map { margin-bottom: $margin; }
+}
+
+#meeting #feedback {
+	form, .alert { display: none; }
+	textarea { height: 250px; }
+	form { margin-bottom: $margin; }
+	&.form {
+		form { display: block; }
+		dt, dd { display: none; }
+	}
+	&.confirm {
+		.alert { display: block; }
+		dt, dd { display: none; }
+	}
 }
 
 body.admin-bar {

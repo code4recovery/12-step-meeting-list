@@ -1,5 +1,44 @@
 jQuery(function($){
-
+	
+	//single meeting page feedback form
+	$('#meeting #feedback a[href="#report"]').click(function(e){
+		e.preventDefault();
+		$(this).closest('#feedback').attr('class', 'form');
+	});
+	
+	$('#meeting #feedback a[href="#cancel"]').click(function(e){
+		e.preventDefault();
+		$(this).closest('#feedback').attr('class', '');
+	});
+	
+	$('#meeting #feedback form').validate({
+		onfocusout:false,
+    	onkeyup: function(element) { },
+		highlight: function(element, errorClass, validClass) {
+			$(element).closest('div.form-group').addClass('has-error');
+		},
+		unhighlight: function(element, errorClass, validClass) {
+			$(element).closest('div.form-group').removeClass('has-error');
+		},
+		errorPlacement: function(error, element) {
+			return; //don't show message on page, simply highlight
+		}, 
+		submitHandler: function(form){
+			var $form = $(form),
+				$feedback = $form.closest('#feedback'), 
+				$alert = $feedback.find('.alert').first();
+			$.post(myAjax.ajaxurl, $form.serialize(), function(data) {
+				$alert.removeClass('alert-danger').addClass('alert-warning').html(data);
+				$feedback.attr('class', 'confirm');
+			}).fail(function(response) {
+				$alert.removeClass('alert-warning').addClass('alert-danger').html('Email was not sent.');
+				$feedback.attr('class', 'confirm');
+			});
+			return false;
+		}
+	});
+	
+	//meetings list page
 	var userMarker;
 	if (navigator.geolocation) {
 		$('#map_options').removeClass('hidden');
@@ -439,7 +478,7 @@ function loadMap(locations) {
 		map.fitBounds(bounds);
 	} else if (markers.length == 1) {
 		map.setCenter(bounds.getCenter());
-		if (jQuery('#map').is(':visible')) google.maps.event.trigger(markers[0],'click');
+		if ($('#map').is(':visible')) google.maps.event.trigger(markers[0],'click');
 		map.setZoom(14);
 	} else if (markers.length == 0) {
 		//currently holds last position, not sure if that's good

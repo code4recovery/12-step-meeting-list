@@ -3,7 +3,7 @@ Contributors: aasanjose
 Tags: meetings, aa, al-anon, na, 12-step, locations, groups
 Requires at least: 3.2
 Tested up to: 4.5
-Stable tag: 2.2.1
+Stable tag: 2.2.3
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -165,9 +165,15 @@ and then drop some or all of these tags in your PHP:
 
 == Changelog ==
 
-= 2.2.1 =
-* Meeting info feedback form (optional)
+= 2.2.3 =
+* More descriptive error when wp_mail() fails
+* Style tweaks to feedback form
+
+= 2.2.2 =
+* Meeting info feedback form
 * Accessibility markup
+
+= 2.2.1 =
 * Adding more sites to the readme (Bowling Green, State College)
 
 = 2.2 =

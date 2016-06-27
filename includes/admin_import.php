@@ -166,7 +166,6 @@ function tsml_admin_menu() {
 								Want to send a mass email to your group contacts? <a href="<?php echo admin_url('admin-ajax.php')?>?action=contacts" target="_blank">Click here</a> to see their email addresses.
 							</div>
 						</div>
-						<?php if (in_array($_SERVER['HTTP_HOST'], array('aasanjose.dev', 'nc23.org'))) {?>
 						<div class="postbox" id="get_feedback">
 							<div class="inside">
 								<h3>Want Feedback?</h3>
@@ -194,9 +193,7 @@ function tsml_admin_menu() {
 								</form>
 							</div>
 						</div>
-						<?php 
-						}
-						if ($tsml_program == 'aa') {?>
+						<?php if ($tsml_program == 'aa') {?>
 						<div class="postbox" id="try_the_apps">
 							<div class="inside">
 								<h3><?php _e('Try the Apps!', '12-step-meeting-list')?></h3>

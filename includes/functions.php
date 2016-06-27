@@ -10,20 +10,23 @@ function tsml_assets() {
 	
 	if (is_admin()) {
 		//dashboard page assets
-		wp_enqueue_style('tsml_admin_style', plugins_url('../css/admin.min.css', __FILE__));
-		wp_enqueue_script('tsml_admin_js', plugins_url('../js/admin_edit.js', __FILE__), array('jquery'), '', true);
-		wp_localize_script('tsml_admin_js', 'myAjax', array('ajaxurl'=>admin_url('admin-ajax.php')));        
+		wp_enqueue_style('tsml_admin_css', plugins_url('../css/admin.min.css', __FILE__));
+		wp_enqueue_script('tsml_admin_js', plugins_url('../js/admin.min.js', __FILE__), array('jquery'), '', true);
+		wp_localize_script('tsml_admin_js', 'myAjax', array(
+			'ajaxurl'=>admin_url('admin-ajax.php'),
+		));
 		wp_enqueue_script('typeahead_js', plugins_url('../js/typeahead.bundle.js', __FILE__), array('jquery'), '', true);
 	} else {
 		//public page assets
 		wp_enqueue_style('bootstrap_css', plugins_url('../css/bootstrap.min.css', __FILE__));
 		wp_enqueue_script('bootstrap_js', plugins_url('../js/bootstrap.min.js', __FILE__), array('jquery'), '', true);
-		wp_enqueue_script('tsml_public_js', plugins_url('../js/archive-meetings.js', __FILE__), array('jquery'), '', true);
+		wp_enqueue_script('tsml_public_js', plugins_url('../js/public.min.js', __FILE__), array('jquery'), '', true);
 		wp_localize_script('tsml_public_js', 'myAjax', array(
 			'ajaxurl' => admin_url('admin-ajax.php'),
 			'types' => $tsml_types[$tsml_program],
 		));
-		wp_enqueue_style('tsml_public_css', plugins_url('../css/archive-meetings.min.css', __FILE__));
+		wp_enqueue_style('tsml_public_css', plugins_url('../css/public.min.css', __FILE__));
+		wp_enqueue_script('validate_js', plugins_url('../js/jquery.validate.min.js', __FILE__), array('jquery'), '', true);
 	}
 }
 
@@ -124,6 +127,53 @@ function tsml_delete_orphaned_locations() {
 	foreach($inactive_location_ids as $location_id) {
 		wp_delete_post($location_id, true);
 	}
+}
+
+//set content type for emails to html, remember to remove after use
+//used by tsml_feedback()
+function tsml_email_content_type_html() {
+	return 'text/html';
+}
+
+//function: receives AJAX from single-meetings.php, sends email
+add_action('wp_ajax_tsml_feedback', 'tsml_feedback');
+add_action('wp_ajax_nopriv_tsml_feedback', 'tsml_feedback');
+function tsml_feedback() {
+	global $tsml_feedback_addresses, $tsml_nonce;
+	
+	//sanitize input
+	$name     = sanitize_text_field($_POST['tsml_name']);
+	$email    = sanitize_email($_POST['tsml_email']);
+	$message  = stripslashes(implode('<br>', array_map('sanitize_text_field', explode("\n", $_POST['tsml_message']))));
+	
+	//append footer to message
+	$message .= '<br><br><hr>Edit meeting: <a href="' . $_POST['tsml_url'] . '">' . $_POST['tsml_url'] . '</a>';
+	
+	//email vars
+	$subject  = '[12 Step Meeting List] Meeting Feedback Form';
+	$headers  = 'From: ' . $name . ' <' . $email . '>' . "\r\n";
+
+	if (!isset($_POST['tsml_nonce']) || !wp_verify_nonce($_POST['tsml_nonce'], $tsml_nonce)) {
+		echo 'Error: nonce value not set correctly. Email was not sent.';
+	} elseif (empty($tsml_feedback_addresses) || empty($name) || !is_email($email) || empty($message)) {
+		echo 'Error: required form value missing. Email was not sent.';
+	} else {
+		//send HTML email
+		add_filter('wp_mail_content_type', 'tsml_email_content_type_html');
+		if (wp_mail($tsml_feedback_addresses, $subject, $message, $headers)) {
+			echo 'Thank you for your feedback.';
+		} else {
+			global $phpmailer;
+			if (!empty($phpmailer->ErrorInfo)) {
+				echo 'Error: ' . $phpmailer->ErrorInfo;
+			} else {
+				echo 'An error occurred while sending email!';
+			}
+		}
+		remove_filter('wp_mail_content_type', 'tsml_email_content_type_html');
+	}
+	
+	exit;
 }
 
 //function: takes 0, 18:30 and returns Sunday, 6:30 pm (depending on your settings)
