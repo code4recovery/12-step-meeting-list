@@ -119,7 +119,7 @@ jQuery(function($){
 			return;
 		}
 
-		jQuery.getJSON('https://maps.googleapis.com/maps/api/geocode/json', { address: val, key: 'AIzaSyBRM9LTED2PgK91UL4qRmiWHVq0TI686tc', sensor: false }, function(data){
+		jQuery.getJSON('https://maps.googleapis.com/maps/api/geocode/json', { address: val, key: myAjax.google_api_key, sensor: false }, function(data){
 
 			//check status first, eg REQUEST_DENIED, ZERO_RESULTS
 			if (data.status != 'OK') return;

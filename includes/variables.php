@@ -28,6 +28,8 @@ $tsml_days_order = array_keys($tsml_days); //used by tsml_meetings_sort() over a
 
 $tsml_feedback_addresses = get_option('tsml_feedback_addresses', array());
 
+$tsml_google_api_key = 'AIzaSyCC3p6PSf6iQbXi-Itwn9C24_FhkbDUkdg'; //might have to make this user-specific
+
 $tsml_nonce = plugin_basename(__FILE__);
 
 $tsml_program = get_option('tsml_program', 'aa');

@@ -40,8 +40,8 @@ jQuery(function($){
 	
 	//meetings list page
 	var userMarker;
-	if (navigator.geolocation) {
-		$('#map_options').removeClass('hidden');
+	if ((location.protocol === 'https:') && navigator.geolocation) {
+		$('li.geolocator').removeClass('hidden');
 	}
 
 	//run search (triggered by dropdown toggle or form submit)

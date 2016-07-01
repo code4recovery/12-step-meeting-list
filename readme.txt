@@ -3,7 +3,7 @@ Contributors: aasanjose
 Tags: meetings, aa, al-anon, na, 12-step, locations, groups
 Requires at least: 3.2
 Tested up to: 4.5
-Stable tag: 2.2.4
+Stable tag: 2.2.6
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -157,13 +157,21 @@ and then drop some or all of these tags in your PHP:
 	
 == Screenshots ==
 
-1. Edit meeting
-1. Edit location
-1. Meeting detail page
 1. Meeting list page
 1. Meeting map
+1. Meeting detail page
+1. Edit meeting
+1. Edit location
 
 == Changelog ==
+
+= 2.2.6 =
+* Adding Google Maps API key
+* Hiding geolocation on non-https connections
+
+= 2.2.5 =
+* Going back to sample spreadsheet in CSV format, rather than XLSX
+* Fixing ordering of screenshot captions
 
 = 2.2.4 =
 * Importer now supports CR, LF, and CRLF line endings

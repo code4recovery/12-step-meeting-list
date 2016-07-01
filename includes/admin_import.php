@@ -78,7 +78,7 @@ function tsml_admin_menu() {
 					    <div class="postbox">
 						    <div class="inside">
 								<h3><?php _e('Import Data', '12-step-meeting-list')?></h3>
-								<p>You can import a CSV of meeting info using the form below. <a href="<?php echo plugin_dir_url(__FILE__) . '../template.xlsx'?>">Here is a spreadsheet</a> you can use as a template. Save it as a comma-delimited CSV before uploading it. The header row must kept in place.</p>
+								<p>You can import a CSV of meeting info using the form below. <a href="<?php echo plugin_dir_url(__FILE__) . '../template.csv'?>">Here is a spreadsheet</a> you can use as a template. Save it as a comma-delimited CSV before uploading it. The header row must kept in place.</p>
 								<ul class="ul-disc">
 									<li><strong><?php _e('Time', '12-step-meeting-list')?></strong>, if present, should be in a standard date format such as 6:00 AM. Non-standard or empty dates will be imported as 'by appointment.'</li>
 									<li><strong><?php _e('Day', '12-step-meeting-list')?></strong>, if present, should either Sunday, Monday, Tuesday, Wednesday, Thursday, Friday, or Saturday. Meetings that occur on multiple days should be listed separately. 'Daily' or 'Mondays' will not work. Non-standard days will be imported as 'by appointment.'</li>

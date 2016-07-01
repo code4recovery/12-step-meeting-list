@@ -3,17 +3,18 @@
 //function: enqueue assets for public or admin page
 //used: in templates and on admin_edit.php
 function tsml_assets() {
-	global $tsml_types, $tsml_program;
+	global $tsml_types, $tsml_program, $tsml_google_api_key;
 		
 	//google maps api needed for maps and address verification, can't be onboarded
-	wp_enqueue_script('google_maps_api', '//maps.googleapis.com/maps/api/js');
+	wp_enqueue_script('google_maps_api', '//maps.googleapis.com/maps/api/js?key=' . $tsml_google_api_key);
 	
 	if (is_admin()) {
 		//dashboard page assets
 		wp_enqueue_style('tsml_admin_css', plugins_url('../css/admin.min.css', __FILE__));
 		wp_enqueue_script('tsml_admin_js', plugins_url('../js/admin.min.js', __FILE__), array('jquery'), '', true);
 		wp_localize_script('tsml_admin_js', 'myAjax', array(
-			'ajaxurl'=>admin_url('admin-ajax.php'),
+			'ajaxurl' => admin_url('admin-ajax.php'),
+			'google_api_key' => $tsml_google_api_key,
 		));
 		wp_enqueue_script('typeahead_js', plugins_url('../js/typeahead.bundle.js', __FILE__), array('jquery'), '', true);
 	} else {
@@ -834,7 +835,7 @@ function tsml_regions_api() {
 //sanitize and import meeting data
 //used by admin_import.php
 function tsml_import($meetings, $delete=false) {
-	global $tsml_types, $tsml_program, $tsml_days, $wpdb;
+	global $tsml_types, $tsml_program, $tsml_days, $wpdb, $tsml_google_api_key;
 
 	//uppercasing for value matching later
 	$upper_types = array_map('strtoupper', $tsml_types[$tsml_program]);
@@ -1088,7 +1089,7 @@ function tsml_import($meetings, $delete=false) {
 		} else {
 			
 			//request from google
-			curl_setopt($ch, CURLOPT_URL, 'https://maps.googleapis.com/maps/api/geocode/json?key=AIzaSyCC3p6PSf6iQbXi-Itwn9C24_FhkbDUkdg&address=' . urlencode($original_address));
+			curl_setopt($ch, CURLOPT_URL, 'https://maps.googleapis.com/maps/api/geocode/json?key=' . $tsml_google_api_key . '&address=' . urlencode($original_address));
 			$result = curl_exec($ch);
 
 			//could not connect error

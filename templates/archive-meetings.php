@@ -151,7 +151,7 @@ class Walker_Regions_Dropdown extends Walker_Category {
 					</a>
 					<ul class="dropdown-menu pull-right" role="menu">
 						<li><a href="#fullscreen"><?php _e('Expand', '12-step-meeting-list')?></a></li>
-						<li><a href="#geolocator"><?php _e('Find Me', '12-step-meeting-list')?></a></li>
+						<li class="geolocator hidden"><a href="#geolocator"><?php _e('Find Me', '12-step-meeting-list')?></a></li>
 					</ul>
 				</div>
 			</div>
