@@ -67,19 +67,19 @@ function tsml_custom_post_types() {
 			'public'		=> true,
 			'has_archive'	=> true,
 			'menu_icon'		=> 'dashicons-groups',
-			'rewrite'       => array('slug'=>'meetings'),
+			'rewrite'		=> array('slug'=>'meetings'),
 		)
 	);
 
 	register_post_type(TSML_TYPE_LOCATIONS,
 		array(
-	        'taxonomies'	=> array('region'),
+			'taxonomies'	=> array('region'),
 			'supports'		=> array('title'),
 			'public'		=> true,
 			'show_ui'		=> false,
 			'has_archive'	=> true,
 			'capabilities'	=> array('create_posts'=>false),
-			'rewrite'       => array('slug'=>'locations'),
+			'rewrite'		=> array('slug'=>'locations'),
 		)
 	);	
 
@@ -90,7 +90,7 @@ function tsml_custom_post_types() {
 			'show_ui'		=> false,
 			'has_archive'	=> true,
 			'capabilities'	=> array('create_posts'=>false),
-			'rewrite'       => array('slug'=>'groups'),
+			'rewrite'		=> array('slug'=>'groups'),
 		)
 	);	
 }
@@ -136,6 +136,13 @@ function tsml_email_content_type_html() {
 	return 'text/html';
 }
 
+//clear google address cache (only need to do this if the parsing logic changes)
+add_action('wp_ajax_tsml_cache', 'tsml_clear_address_cache');
+function tsml_clear_address_cache() {
+	delete_option('tsml_addresses');
+	die('address cache cleared!');	
+}
+
 //function: receives AJAX from single-meetings.php, sends email
 add_action('wp_ajax_tsml_feedback', 'tsml_feedback');
 add_action('wp_ajax_nopriv_tsml_feedback', 'tsml_feedback');
@@ -143,8 +150,8 @@ function tsml_feedback() {
 	global $tsml_feedback_addresses, $tsml_nonce;
 	
 	//sanitize input
-	$name     = sanitize_text_field($_POST['tsml_name']);
-	$email    = sanitize_email($_POST['tsml_email']);
+	$name	 = sanitize_text_field($_POST['tsml_name']);
+	$email	= sanitize_email($_POST['tsml_email']);
 	$message  = stripslashes(implode('<br>', array_map('sanitize_text_field', explode("\n", $_POST['tsml_message']))));
 	
 	//append footer to message
@@ -486,9 +493,9 @@ function tsml_get_meetings($arguments=array()) {
 				'numberposts'		=> -1,
 				'meta_query'		=> array(
 					array(
-						'key'	=> 'group_id',
-						'compare' => 'IN',
-						'value'	=> $groups,
+						'key'		=> 'group_id',
+						'compare'	=> 'IN',
+						'value'		=> $groups,
 					),
 				),
 				'fields'			=> 'ids',
@@ -1070,13 +1077,13 @@ function tsml_import($meetings, $delete=false) {
 	$ch = curl_init();
 	curl_setopt_array($ch, array(
 		CURLOPT_HEADER => 0, 
-        CURLOPT_RETURNTRANSFER => true, 
-        CURLOPT_TIMEOUT => 10,
-        CURLOPT_SSL_VERIFYPEER => false,
-    ));
-    
-    //address cacheing
-    $cached_addresses = get_option('tsml_addresses', array());
+		CURLOPT_RETURNTRANSFER => true, 
+		CURLOPT_TIMEOUT => 10,
+		CURLOPT_SSL_VERIFYPEER => false,
+	));
+	
+	//address caching
+	$cached_addresses = get_option('tsml_addresses', array());
 
 	//loop through again and geocode the addresses, making a location
 	foreach ($addresses as $original_address=>$info) {
@@ -1118,10 +1125,14 @@ function tsml_import($meetings, $delete=false) {
 			
 			//dd($data->results[0]->address_components);
 			
-			//unpack response
-			$address = $city = $state = $postal_code = $country = $point_of_interest = false;
+			//unpack response -- logic must match admin.js -> parseAddressComponents() 
+			$address = $city = $state = $postal_code = $country = $point_of_interest = $neighborhood = false;
 			foreach ($data->results[0]->address_components as $component) {
-				if (in_array('street_number', $component->types)) {
+				if (empty($component->types) || in_array('point_of_interest', $component->types)) {
+					$point_of_interest = $component->short_name;
+				} elseif (in_array('neighborhood', $component->types)) {
+					$neighborhood = $component->short_name;
+				} elseif (in_array('street_number', $component->types)) {
 					$address = $component->long_name;
 				} elseif (in_array('route', $component->types)) {
 					$address .= ' ' . $component->long_name;
@@ -1137,8 +1148,6 @@ function tsml_import($meetings, $delete=false) {
 					$postal_code = $component->short_name;
 				} elseif (in_array('country', $component->types)) {
 					$country = $component->short_name;
-				} elseif (in_array('point_of_interest', $component->types) || empty($component->types)) {
-					$point_of_interest = $component->short_name;
 				} 
 			}
 			
@@ -1147,15 +1156,28 @@ function tsml_import($meetings, $delete=false) {
 			http://maps.googleapis.com/maps/api/geocode/json?address=bagram%20airfield,%20afghanistan
 			http://maps.googleapis.com/maps/api/geocode/json?address=River%20Light%20Park,%20Cornwall,%20NY,%20USA
 			*/
-			if (empty($address)) $address = $point_of_interest;
-			
-			//create formatted address with the same methodology as in admin_edit.js
 			$formatted_address = array();
+
+			if (empty($address) && !empty($point_of_interest)) $address = $point_of_interest;
+
+			if (empty($address) && !empty($neighborhood)) $address = $neighborhood;
+			
 			if (!empty($address)) $formatted_address[] = $address;
+			
 			if (!empty($city)) $formatted_address[] = $city;
-			if (!empty($state)) $formatted_address[] = $state;
-			if (!empty($postal_code)) $formatted_address[] = array_pop($formatted_address) . ' ' . $postal_code;
+			
+			if (!empty($state)) {
+				if (!empty($address) && !empty($postal_code)) {
+					$formatted_address[] = $state . ' ' . $postal_code;
+				} else {
+					$formatted_address[] = $state;
+				}
+			} else {
+				$formatted_address[] = $postal_code;
+			}
+
 			if (!empty($country)) $formatted_address[] = $country;
+
 			$formatted_address = implode(', ', $formatted_address);
 			
 			//check for required values
@@ -1182,7 +1204,7 @@ function tsml_import($meetings, $delete=false) {
 				'city'			=>$city,
 				'state'			=>$state,
 				'postal_code'	=>$postal_code,
-				'country'    	=>$country,
+				'country'		=>$country,
 				'region'		=>$info['region'],
 				'location'		=>$info['location'],
 				'notes'			=>$info['notes'],
@@ -1295,13 +1317,13 @@ function tsml_import_sanitize_field($value) {
 
 //filter workaround for tsml_import()
 function tsml_import_post_modified($data , $postarr) {
-    if (!empty($postarr['post_modified'])) {
+	if (!empty($postarr['post_modified'])) {
 		$data['post_modified'] = $postarr['post_modified'];
 	}
-    if (!empty($postarr['post_modified_gmt'])) {
+	if (!empty($postarr['post_modified_gmt'])) {
 		$data['post_modified_gmt'] = $postarr['post_modified_gmt'];
-    }
-    return $data;
+	}
+	return $data;
 }
 
 //remove empty rows from tsml_import()
@@ -1494,10 +1516,10 @@ function dd($array) {
 
 //helper for search terms
 function highlight($text, $words) {
-    preg_match_all('~\w+~', $words, $m);
-    if (!$m) return $text;
-    $re = '~\\b(' . implode('|', $m[0]) . ')\\b~i';
-    return preg_replace($re, '<mark>$0</mark>', $text);
+	preg_match_all('~\w+~', $words, $m);
+	if (!$m) return $text;
+	$re = '~\\b(' . implode('|', $m[0]) . ')\\b~i';
+	return preg_replace($re, '<mark>$0</mark>', $text);
 }
 
 //helper to debug out of memory errors

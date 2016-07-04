@@ -29,8 +29,9 @@ $meeting = tsml_get_meeting();
 							<?php echo tsml_link(get_permalink($meeting->post_parent), $meeting->location, 'meetings')?>
 							<br>
 							<?php echo $meeting->address?>
-							<br>
-							<?php echo $meeting->city?>, <?php echo $meeting->state?> <?php echo $meeting->postal_code?>
+							<?php if (!empty($meeting->address)) echo '<br>';?>
+							<?php echo $meeting->city?>, <?php echo $meeting->state?> <?php echo $meeting->postal_code?><br>
+							<?php echo $meeting->country?>
 						</dd>
 						
 						<?php if ($meeting->group_id) {?>

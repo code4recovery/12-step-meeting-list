@@ -16,7 +16,12 @@ $location = tsml_get_location();
 				<div class="col-md-4 meta">
 					<dl>
 						<dt><?php _e('Location', '12-step-meeting-list')?></dt>
-						<dd><?php echo $location->address?><br><?php echo $location->city?>, <?php echo $location->state?> <?php echo $location->postal_code?></dd>
+						<dd><?php echo $location->address?>
+							<?php if (!empty($location->address)) echo '<br>';?>
+							<?php echo $location->city?>, <?php echo $location->state?> <?php echo $location->postal_code?>
+							<br>
+							<?php echo $location->country?>
+						</dd>
 
 						<?php if (!empty($tsml_regions[$location->region])) {?>
 						<dt><?php _e('Region', '12-step-meeting-list')?></dt>

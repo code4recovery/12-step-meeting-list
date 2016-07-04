@@ -119,7 +119,7 @@ jQuery(function($){
 			return;
 		}
 
-		jQuery.getJSON('https://maps.googleapis.com/maps/api/geocode/json', { address: val, key: myAjax.google_api_key, sensor: false }, function(data){
+		jQuery.getJSON('https://maps.googleapis.com/maps/api/geocode/json', { address: val, key: myAjax.google_api_key }, function(data){
 
 			//check status first, eg REQUEST_DENIED, ZERO_RESULTS
 			if (data.status != 'OK') return;
@@ -141,72 +141,17 @@ jQuery(function($){
 				});
 			}
 			
-			var point_of_interest;
-			var city = false;
-
-			//get address, city and state
-			for (var i = 0; i < data.results[0].address_components.length; i++) {
-				var component = data.results[0].address_components[i];
-				if (!component.types.length || component.types[0] == 'point_of_interest') {
-					//record the point of interest in case address is empty
-					point_of_interest = component.short_name;
-				} else if (component.types.indexOf('street_number') !== -1) {
-					//set address as street number
-					$('input#address').val(component.long_name);
-				} else if (component.types.indexOf('route') !== -1) {
-					//append street name
-					var address = $('input#address').val() + ' ' + component.long_name;
-					$('input#address').val(address.trim());
-				} else if (component.types.indexOf('locality') !== -1) {
-					//set city
-					city = component.long_name;
-				} else if (component.types.indexOf('sublocality') !== -1) {
-					//set city
-					if (!city) city = component.long_name;
-				} else if (component.types.indexOf('administrative_area_level_3') !== -1) {
-					//set city
-					if (!city) city = component.long_name;
-				} else if (component.types.indexOf('administrative_area_level_1') !== -1) {
-					//set state
-					$('input#state').val(component.short_name);
-				} else if (component.types.indexOf('postal_code') !== -1) {
-					//set ZIP
-					$('input#postal_code').val(component.short_name);
-				} else if (component.types.indexOf('country') !== -1) {
-					//set country
-					$('input#country').val(component.short_name);
-				}
-			}
-
-			//set city
-			$('input#city').val(city);
-			
-			//set address to point of interest if empty
-			if (!$('input#address').val().length) $('input#address').val(point_of_interest);
-			
-			//build formatted address from components
-			var formatted_address = [];
-
-			var address = $('input#address').val();
-			if (address.length) formatted_address[formatted_address.length] = address;
-			
-			var city = $('input#city').val();
-			if (city.length) formatted_address[formatted_address.length] = city;
-			
-			var state_code = $('input#state').val() + ' ' + $('input#postal_code').val();
-			state_code = state_code.trim();
-			if (state_code.length) formatted_address[formatted_address.length] = state_code;
-			
-			var country = $('input#country').val();
-			if (country.length) formatted_address[formatted_address.length] = country;
-
-			var formatted_address = formatted_address.join(', ');
-
-			//update address field with corrected address
-			$('input#formatted_address').val(formatted_address);
+			//save address
+			var address = parseAddressComponents(data.results[0].address_components);
+			$('input#address').val(address.address);
+			$('input#city').val(address.city);
+			$('input#state').val(address.state);
+			$('input#postal_code').val(address.postal_code);
+			$('input#country').val(address.country);
+			$('input#formatted_address').val(address.formatted);
 			
 			//check if location with same address is already in the system, populate form
-			jQuery.getJSON(myAjax.ajaxurl + '?action=address', { formatted_address: formatted_address }, function(data){
+			jQuery.getJSON(myAjax.ajaxurl + '?action=address', { formatted_address: address.formatted }, function(data){
 				if (data) {
 					$('input[name=location]').val(data.location);
 					$('select[name=region] option').prop('selected', false);
@@ -239,5 +184,70 @@ jQuery(function($){
 			center: myLatlng
 		});
 		var marker = new google.maps.Marker({ position: myLatlng, map: map });
+	}
+	
+	//parse a google address components response into an array of useful values
+	function parseAddressComponents(components) {
+		var point_of_interest, neighborhood, address, city, state, postal_code, country;
+		var formatted = [];
+
+		//get address, city and state
+		for (var i = 0; i < components.length; i++) {
+			var c = components[i];
+			if (!c.types.length || c.types[0] == 'point_of_interest') {
+				//in case address is empty
+				point_of_interest = c.short_name;
+			} else if (c.types.indexOf('neighborhood') !== -1) {
+				neighborhood = c.short_name;
+			} else if (c.types.indexOf('street_number') !== -1) {
+				address = c.long_name;
+			} else if (c.types.indexOf('route') !== -1) {
+				//append street name
+				address = (address) ? address + ' ' + c.long_name : c.long_name;
+			} else if (c.types.indexOf('locality') !== -1) {
+				city = c.long_name;
+			} else if (c.types.indexOf('sublocality') !== -1) {
+				if (!city) city = c.long_name;
+			} else if (c.types.indexOf('administrative_area_level_3') !== -1) {
+				if (!city) city = c.long_name;
+			} else if (c.types.indexOf('administrative_area_level_1') !== -1) {
+				state = c.short_name;
+			} else if (c.types.indexOf('postal_code') !== -1) {
+				postal_code = c.short_name;
+			} else if (c.types.indexOf('country') !== -1) {
+				country = c.short_name;
+			}
+		}
+
+		if (!address && point_of_interest) address = point_of_interest;
+		
+		if (!address && neighborhood) address = neighborhood;
+		
+		if (address) formatted[formatted.length] = address;
+		
+		if (city) formatted[formatted.length] = city;
+		
+		//state and postal code should be part of the same unit if possible
+		if (state) {
+			if (address && postal_code) {
+				formatted[formatted.length] = state + ' ' + postal_code;
+			} else {
+				formatted[formatted.length] = state;
+			}
+		} else if (postal_code) {
+			formatted[formatted.length] = postal_code;
+		}
+		
+		if (country) formatted[formatted.length] = country;
+
+		return {
+			address: address,
+			city: city,
+			state: state,
+			postal_code: postal_code,
+			country: country,
+			formatted: formatted.join(', ')
+		}
+	
 	}
 });
