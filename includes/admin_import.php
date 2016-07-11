@@ -202,10 +202,10 @@ function tsml_admin_menu() {
 									but we always want more! No extra effort is required; simply continue to update your meetings in Wordpress and the updates will flow down to app users.
 								<p class="buttons">
 									<a href="https://itunes.apple.com/us/app/meeting-guide/id1042822181">
-										<img src="<?php echo plugin_dir_url(__FILE__)?>../img/apple.svg">
+										<img src="<?php echo plugin_dir_url(__FILE__)?>../assets/img/apple.svg">
 									</a>
 									<a href="https://play.google.com/store/apps/details?id=org.meetingguide.app">
-										<img src="<?php echo plugin_dir_url(__FILE__)?>../img/google.svg">
+										<img src="<?php echo plugin_dir_url(__FILE__)?>../assets/img/google.svg">
 									</a>
 								</p>
 								<p>To get involved, please get in touch by emailing <a href="mailto:app@aasanjose.org">app@meetingguide.org</a>.</p>

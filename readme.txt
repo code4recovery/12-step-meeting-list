@@ -3,7 +3,7 @@ Contributors: aasanjose
 Tags: meetings, aa, al-anon, na, 12-step, locations, groups
 Requires at least: 3.2
 Tested up to: 4.5
-Stable tag: 2.2.7
+Stable tag: 2.2.8
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -165,6 +165,10 @@ and then drop some or all of these tags in your PHP:
 
 == Changelog ==
 
+= 2.2.8 =
+* Better CSS for expanding the map to fullscreen mode
+* Assets reorganization / using Laravel Elixir
+
 = 2.2.7 =
 * Refactored address correction algorithm: no postal_code without address, neighborhood is ok place-name in lieu of address
 * Fixing bug when updating meeting to be appointment meeting
@@ -232,37 +236,3 @@ and then drop some or all of these tags in your PHP:
 
 = 2.1.0 =
 * Fixing another sort bug
-
-= 2.0.9 =
-* Fixing search bug
-* Fixing sort bug
-
-= 2.0.8 =
-* Table sorting per NYC and St. Louis
-
-= 2.0.7 =
-* Default add meeting placeholder text update per NYC
-* Readme formatting fixes
-
-= 2.0.6 =
-* Trying to correct 'wrong text domain declaration' issue
-
-= 2.0.5 =
-* More internationalization
-
-= 2.0.4 =
-* Query string bug fix
-
-= 2.0.3 =
-* More thorough use of translation strings
-* FAQ documentation on overriding them
-* Refactored infowindow javascript
-
-= 2.0.2 =
-* Better default meeting names when importing
-
-= 2.0.1 =
-* Better fullscreen map CSS
-
-= 2.0.0 =
-* More robust javascript on address field, per Europe

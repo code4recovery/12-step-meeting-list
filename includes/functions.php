@@ -10,24 +10,24 @@ function tsml_assets() {
 	
 	if (is_admin()) {
 		//dashboard page assets
-		wp_enqueue_style('tsml_admin_css', plugins_url('../css/admin.min.css', __FILE__));
-		wp_enqueue_script('tsml_admin_js', plugins_url('../js/admin.min.js', __FILE__), array('jquery'), '', true);
+		wp_enqueue_style('tsml_admin_css', plugins_url('../assets/css/admin.min.css', __FILE__));
+		wp_enqueue_script('tsml_admin_js', plugins_url('../assets/js/admin.min.js', __FILE__), array('jquery'), '', true);
 		wp_localize_script('tsml_admin_js', 'myAjax', array(
 			'ajaxurl' => admin_url('admin-ajax.php'),
 			'google_api_key' => $tsml_google_api_key,
 		));
-		wp_enqueue_script('typeahead_js', plugins_url('../js/typeahead.bundle.js', __FILE__), array('jquery'), '', true);
+		wp_enqueue_script('typeahead_js', plugins_url('../assets/js/typeahead.bundle.js', __FILE__), array('jquery'), '', true);
 	} else {
 		//public page assets
-		wp_enqueue_style('bootstrap_css', plugins_url('../css/bootstrap.min.css', __FILE__));
-		wp_enqueue_script('bootstrap_js', plugins_url('../js/bootstrap.min.js', __FILE__), array('jquery'), '', true);
-		wp_enqueue_script('tsml_public_js', plugins_url('../js/public.min.js', __FILE__), array('jquery'), '', true);
+		wp_enqueue_style('bootstrap_css', plugins_url('../assets/css/bootstrap.min.css', __FILE__));
+		wp_enqueue_script('bootstrap_js', plugins_url('../assets/js/bootstrap.min.js', __FILE__), array('jquery'), '', true);
+		wp_enqueue_script('tsml_public_js', plugins_url('../assets/js/public.min.js', __FILE__), array('jquery'), '', true);
 		wp_localize_script('tsml_public_js', 'myAjax', array(
 			'ajaxurl' => admin_url('admin-ajax.php'),
 			'types' => $tsml_types[$tsml_program],
 		));
-		wp_enqueue_style('tsml_public_css', plugins_url('../css/public.min.css', __FILE__));
-		wp_enqueue_script('validate_js', plugins_url('../js/jquery.validate.min.js', __FILE__), array('jquery'), '', true);
+		wp_enqueue_style('tsml_public_css', plugins_url('../assets/css/public.min.css', __FILE__));
+		wp_enqueue_script('validate_js', plugins_url('../assets/js/jquery.validate.min.js', __FILE__), array('jquery'), '', true);
 	}
 }
 

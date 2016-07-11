@@ -4,11 +4,6 @@ $white: 		#fdfdfc;
 $margin:		15px;
 $height:		550px;
 
-//for fullscreen
-body {
-	.site-main { position: static; }
-}
-
 mark {
 	background-color: #ff6;
 }
@@ -198,17 +193,6 @@ input:focus, button:focus {
 		}
 	}
 
-	&.fullscreen {
-	    position: fixed;
-	    top: 0;
-	    left: 0;
-	    width: 100%;
-	    height: 100%;
-	    z-index: 9999;
-		padding: 0 $margin;
-		background-color: $white;
-	}
-
 	&[data-type=map] {
 		#map {
 			display: block;
@@ -258,12 +242,26 @@ input:focus, button:focus {
 	}
 }
 
-body.admin-bar {
-	#meetings.fullscreen {
-		padding-top: 47px;
+body.tsml_fullscreen {
+	#meetings {
+	    position: fixed;
+	    top: 0;
+	    left: 0;
+	    right: 0;
+	    bottom: 0;
+	    width: 100%;
+	    height: 100%;
+	    z-index: 9999;
+		padding: 0 $margin;
+		background-color: $white;
+		max-width: none;
+	}
+	&.admin-bar {
+		#meetings {
+			padding-top: 47px;
+		}
 	}
 }
-
 
 /* Small devices (tablets, 768px and up) */
 @media (min-width: 768px) {
@@ -390,6 +388,10 @@ body {
 		div#et-top-navigation ul#top-menu li a { 
 			padding-left: 0; padding-right: 0; padding-top: 0; 
 			&:hover { background-color: transparent; }
+		}
+		&.tsml_fullscreen {
+			header#main-header { position: static; }
+			.fbanner { position: static; }
 		}
 	}
 	&.twentyfourteen {
