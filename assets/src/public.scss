@@ -390,7 +390,7 @@ body {
 			&:hover { background-color: transparent; }
 		}
 		&.tsml_fullscreen {
-			header#main-header { position: static; }
+			div#top-header, header#main-header { position: static; }
 			.fbanner { position: static; }
 		}
 	}

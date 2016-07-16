@@ -3,7 +3,7 @@ Contributors: aasanjose
 Tags: meetings, aa, al-anon, na, 12-step, locations, groups
 Requires at least: 3.2
 Tested up to: 4.5
-Stable tag: 2.2.9
+Stable tag: 2.3
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -18,6 +18,7 @@ It was originally designed to maintain a list of AA meetings in Santa Clara Coun
 **AA**
 
 * [Austin, TX](http://austinaa.org/meetings/)
+* [Baton Rouge, LA](http://aabatonrouge.org/meetings/)
 * [Bowling Green, KY](http://bowlinggreenaa.org/?post_type=meetings)
 * [Corpus Christi, TX](http://www.cbiaa.org/meetings/)
 * [East Bay, CA](http://eastbayaa.org/meetings)
@@ -140,8 +141,9 @@ detail, and single-locations.php controls the location detail.
 
 = Are there any shortcodes? =
 Yes, you can use `[tsml_meeting_count]`, `[tsml_location_count]`, `[tsml_group_count]`, and `[tsml_region_count]` to 
-display human-formatted counts of your entities in your posts. "For example, our area currently comprises 
-[tsml_meeting_count] meetings."
+display human-formatted counts of your entities. "For example, our area currently comprises 
+[tsml_meeting_count] meetings." Also `[tsml_next_meetings count="5"]` displays a small table with the next 
+several meetings in it. Use the `count` parameter to adjust how many are diplayed.
 
 = Are there translations to other languages? =
 Currently no, but if someone will volunteer to help with the translating, we will add it.
@@ -164,6 +166,9 @@ and then drop some or all of these tags in your PHP:
 1. Edit location
 
 == Changelog ==
+
+= 2.3 =
+* New shortcode for Next Meetings mini-table
 
 = 2.2.9 =
 * Remembering to minify assets
