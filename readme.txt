@@ -3,7 +3,7 @@ Contributors: aasanjose
 Tags: meetings, aa, al-anon, na, 12-step, locations, groups
 Requires at least: 3.2
 Tested up to: 4.5
-Stable tag: 2.3.1
+Stable tag: 2.3.2
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -17,6 +17,7 @@ It was originally designed to maintain a list of AA meetings in Santa Clara Coun
 
 **AA**
 
+* [Arkansas](http://arkansascentraloffice.org/meetings/)
 * [Austin, TX](http://austinaa.org/meetings/)
 * [Baton Rouge, LA](http://aabatonrouge.org/meetings/)
 * [Bowling Green, KY](http://bowlinggreenaa.org/?post_type=meetings)
@@ -41,6 +42,7 @@ It was originally designed to maintain a list of AA meetings in Santa Clara Coun
 * [Tri Valley, CA](http://trivalleyaa.org/meetings/)
 * [Walnut Creek, CA](http://contracostaaa.org/meetings)
 * [Western Slope, CA](http://westernsloped22.org/meetings/)
+* [Western Kentucky](http://wkintergroup.org/meetings/)
 
 **Al-Anon**
 
@@ -167,6 +169,9 @@ and then drop some or all of these tags in your PHP:
 
 == Changelog ==
 
+= 2.3.2 =
+* Adding logic to prevent a meeting from being both open and closed
+
 = 2.3.1 =
 * Removing shortened ternary operator; doesn't work with PHP < 5.3
 
@@ -209,41 +214,3 @@ and then drop some or all of these tags in your PHP:
 = 2.2 =
 * Fixed empty row issue on importer reported by Maine
 * Print view displays meeting types, per Maine
-
-= 2.1.9 =
-* New import system should fix multi-line or quote-related import errors 
-* Fixed bug affecting saving locations
-* Fixed bug causing updated date not being imported
-* Updated tags in template.xls (changed Men Only to Men, Women Only to Women)
-
-= 2.1.8 =
-* When a region name is updated, mark region's meetings as updated (per Central Florida Intergroup)
-
-= 2.1.7 =
-* Removing strange CSS statement that was messing up Sacramento
-
-= 2.1.6 =
-* Putting Men / Women back in list
-* Missing release notes for 2.1.5
-
-= 2.1.5 =
-* New mobile list view for Contra Costa
-* Sorted meeting types on detail page
-* Cleaned up CSS and typeahead code on meeting admin screen
-* Group name duplicate checking bugfix
-* Updated sites in readme
-
-= 2.1.4 =
-* Geocoder fix per Contra Costa County
-
-= 2.1.3 =
-* Removing 'Only' from Men and Women meeting types
-
-= 2.1.2 =
-* Tweaking time definitions
-
-= 2.1.1 =
-* Looser time definitions
-
-= 2.1.0 =
-* Fixing another sort bug

@@ -23,6 +23,10 @@ function tsml_save_post(){
 	//save ordinary meeting metadata
 	if (!empty($_POST['region'])) update_post_meta($post->ID, 'region', intval($_POST['region'])); //cache region on meeting
 	if (!empty($_POST['types']) && is_array($_POST['types'])) {
+		//check to make sure not open and closed
+		if (in_array('C', $_POST['types']) && in_array('O', $_POST['types'])) {
+			$_POST['types'] = array_diff($_POST['types'], array('C'));
+		}
 		update_post_meta($post->ID, 'types', array_map('esc_attr', $_POST['types']));
 	}
 
@@ -35,7 +39,6 @@ function tsml_save_post(){
 		update_post_meta($post->ID, 'time', '');
 	}
 
-	
 	//exit here if the location is not ready
 	if (empty($_POST['formatted_address']) || empty($_POST['latitude']) || empty($_POST['longitude'])) {
 		return;

@@ -1024,6 +1024,11 @@ function tsml_import($meetings, $delete=false) {
 			}
 		}
 		
+		//don't let a meeting be both open and closed
+		if (in_array('C', $meeting['types']) && in_array('O', $meeting['types'])) {
+			$meeting['types'] = array_diff($meeting['types'], array('C'));
+		}
+		
 		//append unused types to notes
 		if (count($unused_types)) {
 			if (!empty($meeting['notes'])) $meeting['notes'] .= str_repeat(PHP_EOL, 2);

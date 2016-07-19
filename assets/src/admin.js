@@ -12,6 +12,18 @@ jQuery(function($){
 		}
 	});
 	
+	//types checkboxes: ensure not both open and closed
+	$('body.post-type-meetings form#post').on('change', 'input[name="types[]"]', function() {
+		if ($('body.post-type-meetings form#post input[name="types[]"][value="C"]').prop('checked') && 
+			$('body.post-type-meetings form#post input[name="types[]"][value="O"]').prop('checked')) {
+			if ($(this).val() == 'C') {
+				$('body.post-type-meetings form#post input[name="types[]"][value="O"]').prop('checked', false);
+			} else {
+				$('body.post-type-meetings form#post input[name="types[]"][value="C"]').prop('checked', false);
+			}
+		}
+	});
+	
 	//delete email contact
 	$('#get_feedback table span').click(function(){
 		$(this).parent().submit();
