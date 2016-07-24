@@ -370,14 +370,21 @@ body.tsml_fullscreen {
 		content: none !important; /* Remove Bootstrap's (http://) when printing */
 
 	}
-	#meetings .results table td {
-		&.name, &.location, &.address, &.region {
-			width: auto !important;
-			white-space: normal;
+	#meetings .results table {
+		tr {
+			width: 50%;
+			float: left;
+			min-height: 150px;
 		}
-		&.name {
-			font-weight: bold;
-			small { display: none; }
+		td {
+			&.name, &.location, &.address, &.region {
+				width: auto !important;
+				white-space: normal;
+			}
+			&.name {
+				font-weight: bold;
+				small { display: none; }
+			}
 		}
 	}
 }
