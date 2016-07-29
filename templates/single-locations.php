@@ -67,7 +67,7 @@ $location = tsml_get_location();
 							var contentString = '<div class="infowindow">'+
 								'<h3><?php esc_attr_e($location->post_title)?></h3>'+
 								'<p><?php esc_attr_e($location->address)?><br><?php esc_attr_e($location->city)?>, <?php echo $location->state?> <?php echo $location->postal_code?></p>'+
-								'<p><a class="btn btn-default" href="http://maps.apple.com/?q=<?php echo urlencode($location->formatted_address)?>" target="_blank"><?php _e('Directions', '12-step-meeting-list')?></a></p>' +
+								'<p><a class="btn btn-default" href="http://maps.apple.com/?q=<?php echo urlencode($location->post_title)?>&ll=<?php echo $location->latitude?>,<?php echo $location->longitude?>&z=16" target="_blank"><?php _e('Directions', '12-step-meeting-list')?></a></p>' +
 								'</div>';
 
 							var infowindow = new google.maps.InfoWindow({

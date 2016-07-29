@@ -3,7 +3,7 @@ Contributors: aasanjose
 Tags: meetings, aa, al-anon, na, 12-step, locations, groups
 Requires at least: 3.2
 Tested up to: 4.5
-Stable tag: 2.3.3
+Stable tag: 2.3.4
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -22,6 +22,7 @@ It was originally designed to maintain a list of AA meetings in Santa Clara Coun
 * [Baton Rouge, LA](http://aabatonrouge.org/meetings/)
 * [Bowling Green, KY](http://bowlinggreenaa.org/?post_type=meetings)
 * [Corpus Christi, TX](http://www.cbiaa.org/meetings/)
+* [Davis, CA](http://district17cnia.org/meetings/)
 * [East Bay, CA](http://eastbayaa.org/meetings)
 * [Elk Grove Village, IL](http://d15aa.org/d15aa.org/?post_type=meetings)
 * [Europe](http://alcoholics-anonymous.eu/index.php/meetings/)
@@ -29,6 +30,7 @@ It was originally designed to maintain a list of AA meetings in Santa Clara Coun
 * [Maine and New Brunswick](http://csoaamaine.org/meetings/)
 * [Mesa, AZ](http://aamesaaz.org/meetings/)
 * [Minneapolis, MN](http://aaminneapolis.org/meetings/)
+* [New Orleans, LA](http://www.aaneworleans.org/meetings/)
 * [Northern Minnesota](http://www.area35.org/meetings/)
 * [Oahu, HI](http://oahucentraloffice.com/meetings/)
 * [Orlando, FL](http://cflintergroup.org/meetings/)
@@ -40,6 +42,7 @@ It was originally designed to maintain a list of AA meetings in Santa Clara Coun
 * [State College, PA](http://www.district43.com/meetings/)
 * [Toronto, Canada](http://aatoronto.org/?post_type=meetings)
 * [Tri Valley, CA](http://trivalleyaa.org/meetings/)
+* [Virginia Beach, VA](http://www.tidewaterintergroup.org/meetings/)
 * [Walnut Creek, CA](http://contracostaaa.org/meetings)
 * [Western Slope, CA](http://westernsloped22.org/meetings/)
 * [Western Kentucky](http://wkintergroup.org/meetings/)
@@ -168,6 +171,10 @@ and then drop some or all of these tags in your PHP:
 1. Edit location
 
 == Changelog ==
+
+= 2.3.4 =
+* Linking directions to geo coordinates for Apple Maps issue
+* Updating contact email addresses
 
 = 2.3.3 =
 * Print view columns per Maine

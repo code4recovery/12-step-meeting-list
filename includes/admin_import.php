@@ -118,9 +118,9 @@ function tsml_admin_menu() {
 								<form method="post" action="edit.php?post_type=meetings&page=import">
 								<?php wp_nonce_field($tsml_nonce, 'tsml_nonce', false)?>
 								<p>This determines which meeting types are available. If your program is 
-									not listed, please <a href="mailto:web@aasanjose.org">let us know</a> about 
+									not listed, please <a href="mailto:wordpress@meetingguide.org">let us know</a> about 
 									your program and what types of meetings you have 
-									(Open, Closed, Big Book, etc).
+									(Open, Closed, Topic Discussion, etc).
 								</p>
 								<select name="tsml_program" onchange="this.form.submit()">
 									<?php foreach ($tsml_programs as $key=>$value) {?>
@@ -208,7 +208,7 @@ function tsml_admin_menu() {
 										<img src="<?php echo plugin_dir_url(__FILE__)?>../assets/img/google.svg">
 									</a>
 								</p>
-								<p>To get involved, please get in touch by emailing <a href="mailto:app@aasanjose.org">app@meetingguide.org</a>.</p>
+								<p>To get involved, please get in touch by emailing <a href="mailto:app@meetingguide.org">app@meetingguide.org</a>.</p>
 							</div>
 						</div>
 						<?php }?>
@@ -218,7 +218,7 @@ function tsml_admin_menu() {
 								<p>This plugin was developed by AA volunteers in <a href="http://aasanjose.org/technology">Santa 
 									Clara County</a> to help provide accessible, accurate information about meetings to 
 									those who need it.</p>
-								<p>Get in touch by sending email to <a href="mailto:web@aasanjose.org">web@aasanjose.org</a>.</p>
+								<p>Get in touch by sending email to <a href="mailto:wordpress@aasanjose.org">wordpress@aasanjose.org</a>.</p>
 							</div>
 						</div>
 				    </div>

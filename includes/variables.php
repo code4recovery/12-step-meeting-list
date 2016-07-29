@@ -1,7 +1,7 @@
 <?php
 /*	
 don't make changes! it'll make staying updated much harder.
-for updates / questions, please contact web@aasanjose.org
+for updates / questions, please contact wordpress@meetingguide.org
 */
 
 //custom post types
