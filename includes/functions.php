@@ -213,6 +213,13 @@ function tsml_format_time($string) {
 	return date(get_option('time_format'), $date);
 }
 
+//function: takes a time string, eg 6:30 pm, and returns 18:30
+//used:		tsml_import(), tsml_time_duration()
+function tsml_format_time_reverse($string) {
+	$time_parts = date_parse($string);
+	return sprintf('%02d', $time_parts['hour']) . ':' . sprintf('%02d', $time_parts['minute']);
+}
+
 //function: get all locations in the system
 //used:		tsml_group_count()
 function tsml_get_all_groups($status='any') {
@@ -404,6 +411,7 @@ function tsml_get_meetings($arguments=array()) {
 				'contact_3_name'	=> array_key_exists('contact_3_name', $tsml_custom) ? $tsml_custom['contact_3_name'][0] : null,
 				'contact_3_email'	=> array_key_exists('contact_3_email', $tsml_custom) ? $tsml_custom['contact_3_email'][0] : null,
 				'contact_3_phone'	=> array_key_exists('contact_3_phone', $tsml_custom) ? $tsml_custom['contact_3_phone'][0] : null,
+				'last_contact'		=> array_key_exists('last_contact', $tsml_custom) ? $tsml_custom['last_contact'][0] : null,
 			));
 		}
 	}
@@ -768,6 +776,7 @@ function tsml_meetings_csv() {
 			'contact_3_name' =>		__('Contact 3 Name', '12-step-meeting-list'),
 			'contact_3_email' =>	__('Contact 3 Email', '12-step-meeting-list'),
 			'contact_3_phone' =>	__('Contact 3 Phone', '12-step-meeting-list'),
+			'last_contact' => 		__('Last Contact', '12-step-meeting-list'),
 		));
 	}
 
@@ -844,6 +853,11 @@ function tsml_regions_api() {
 function tsml_import($meetings, $delete=false) {
 	global $tsml_types, $tsml_program, $tsml_days, $wpdb, $tsml_google_api_key;
 
+	//allow theme-defined function to reformat CSV ahead of import (for New Hampshire)
+	if (function_exists('tsml_import_reformat')) {
+		$meetings = tsml_import_reformat($meetings);
+	}
+	
 	//uppercasing for value matching later
 	$upper_types = array_map('strtoupper', $tsml_types[$tsml_program]);
 	$upper_days = array_map('strtoupper', $tsml_days);
@@ -928,8 +942,7 @@ function tsml_import($meetings, $delete=false) {
 			//if meeting name missing, use location
 			if (empty($meeting['name'])) $meeting['name'] = $meeting['location'] . ' by Appointment';
 		} else {
-			$meeting['time'] = date_parse($meeting['time']);
-			$meeting['time'] = sprintf('%02d', $meeting['time']['hour']) . ':' . sprintf('%02d', $meeting['time']['minute']);
+			$meeting['time'] = tsml_format_time_reverse($meeting['time']);
 			
 			if (!in_array(strtoupper($meeting['day']), $upper_days)) return tsml_alert('"' . $meeting['day'] . '" is an invalid value for day at row #' . $row_counter . '.', 'error');
 			$meeting['day'] = array_search(strtoupper($meeting['day']), $upper_days);
@@ -1009,6 +1022,10 @@ function tsml_import($meetings, $delete=false) {
 					}					
 				}
 
+				if (!empty($meeting['last-contact']) && ($last_contact = strtotime($meeting['last-contact']))) {
+					update_post_meta($group_id, 'last_contact', date('Y-m-d', $last_contact));
+				}
+				
 				$groups[$meeting['group']] = $group_id;
 			}
 		}

@@ -127,6 +127,13 @@ function tsml_save_post(){
 			}
 		}
 		
+		//last contact
+		if (!empty($_POST['last_contact']) && ($last_contact = strtotime(sanitize_text_field($_POST['last_contact'])))) {
+			update_post_meta($group_id, 'last_contact', date('Y-m-d', $last_contact));
+		} else {
+			delete_post_meta($group_id, 'last_contact');
+		}
+		
 	}
 
 	//delete orphaned groups

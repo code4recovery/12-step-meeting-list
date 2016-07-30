@@ -264,6 +264,10 @@ function tsml_admin_init() {
 				<?php }?>
 			</div>
 		</div>
+		<div class="meta_form_row" style="clear:left;">
+			<label><?php _e('Last Contact', '12-step-meeting-list')?></label>
+			<input type="date" name="last_contact" value="<?php echo @$group_custom['last_contact'][0]?>">
+		</div>
 		<?php
 	}
 	
