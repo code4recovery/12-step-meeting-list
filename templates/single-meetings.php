@@ -28,17 +28,16 @@ $meeting = tsml_get_meeting();
 						<dd>
 							<?php echo tsml_link(get_permalink($meeting->post_parent), $meeting->location, 'meetings')?>
 							<br>
-							<?php echo $meeting->address?>
-							<?php if (!empty($meeting->address)) echo '<br>';?>
-							<?php echo $meeting->city?>, <?php echo $meeting->state?> <?php echo $meeting->postal_code?><br>
-							<?php echo $meeting->country?>
+							<?php if (!empty($meeting->address) && $meeting->address != $meeting->location) echo $meeting->address . '<br>'?>
+							<?php echo $meeting->city?>, <?php echo $meeting->state?> <?php echo $meeting->postal_code?>
+							<?php if (!empty($meeting->country) && $meeting->country != 'US') echo '<br>' . $meeting->country?>
 						</dd>
 						
 						<?php if ($meeting->group_id) {?>
 						<dt><?php _e('Group', '12-step-meeting-list')?></dt>
 						<dd>
-							<?php echo $meeting->group?><br>
-							<?php echo $meeting->group_notes?>
+							<p><?php echo $meeting->group?></p>
+							<?php if (!empty($meeting->group_notes)) {?><p><?php echo $meeting->group_notes?></p><?php }?>
 						</dd>
 						<?php }?>
 						
