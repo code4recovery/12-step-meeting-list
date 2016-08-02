@@ -925,7 +925,7 @@ function tsml_import($meetings, $delete=false) {
 		//associate, sanitize
 		$meeting = array_combine($header, $meeting);
 		foreach ($meeting as $key => $value) {
-			if (in_array($key, array('notes', 'location-notes'))) {
+			if (in_array($key, array('notes', 'location-notes', 'group-notes'))) {
 				$meeting[$key] = trim(strip_tags($value));
 			} else {
 				$meeting[$key] = sanitize_text_field($value);
@@ -975,6 +975,7 @@ function tsml_import($meetings, $delete=false) {
 		//notes
 		if (empty($meeting['notes'])) $meeting['notes'] = '';
 		if (empty($meeting['location-notes'])) $meeting['location-notes'] = '';
+		if (empty($meeting['group-notes'])) $meeting['group-notes'] = '';
 
 		//updated
 		$meeting['updated'] = empty($meeting['updated']) ? time() : strtotime($meeting['updated']);

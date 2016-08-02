@@ -1,9 +1,9 @@
 === 12 Step Meeting List ===
-Contributors: aasanjose
+Contributors: meetingguide, aasanjose
 Tags: meetings, aa, al-anon, na, 12-step, locations, groups
 Requires at least: 3.2
 Tested up to: 4.6
-Stable tag: 2.3.6
+Stable tag: 2.3.7
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -171,6 +171,10 @@ and then drop some or all of these tags in your PHP:
 1. Edit location
 
 == Changelog ==
+
+= 2.3.7 =
+* Possible now to show meeting types as column in list with CSS per Arkansas
+* Group notes line breaks not getting removed by import per NYC
 
 = 2.3.6 =
 * Group name and address spacing per NYC

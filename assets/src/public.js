@@ -168,7 +168,7 @@ jQuery(function($){
 						'<td class="location" data-sort="' + obj.location + '-' + sort_time + '">' + highlight(obj.location, search) + '</td>' + 
 						'<td class="address" data-sort="' + obj.address + '-' + sort_time + '">' + highlight(obj.address, search) + '</td>' + 
 						'<td class="region" data-sort="' + (obj.sub_region || obj.region || '') + '-' + sort_time + '">' + (obj.sub_region || obj.region || '') + '</td>' + 
-						'<td class="types visible-print-block">' + decodeMeetingTypes(obj.types) + '</td>' + 
+						'<td class="types" data-sort="' + decodeMeetingTypes(obj.types) + '-' + sort_time + '">' + decodeMeetingTypes(obj.types) + '</td>' + 
 					'</tr>')
 				});
 				

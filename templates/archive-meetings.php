@@ -173,6 +173,7 @@ class Walker_Regions_Dropdown extends Walker_Category {
 						<th class="location"><?php _e('Location', '12-step-meeting-list')?></th>
 						<th class="address"><?php _e('Address', '12-step-meeting-list')?></th>
 						<th class="region"><?php _e('Region', '12-step-meeting-list')?></th>
+						<th class="types"><?php _e('Types', '12-step-meeting-list')?></th>
 					</thead>
 					<tbody id="meetings_tbody">
 						<?php
@@ -222,15 +223,15 @@ class Walker_Regions_Dropdown extends Walker_Category {
 									echo $meeting['time_formatted'];
 								}
 								?></span></td>
-							<td class="name" data-sort="<?php echo $meeting['name'] . '-' . $sort_time?>">
+							<td class="name" data-sort="<?php echo sanitize_title($meeting['name']) . '-' . $sort_time?>">
 								<?php echo $meeting['link']?>
 							</td>
-							<td class="location" data-sort="<?php echo $meeting['location'] . '-' . $sort_time?>">
+							<td class="location" data-sort="<?php echo sanitize_title($meeting['location']) . '-' . $sort_time?>">
 								<?php echo $meeting['location']?>
 							</td>
-							<td class="address" data-sort="<?php echo $meeting['address'] . '-' . $sort_time?>"><?php echo $meeting['address']?></td>
-							<td class="region" data-sort="<?php echo $meeting['region'] . '-' . $sort_time?>"><?php echo $meeting['region']?></td>
-							<td class="types visible-print-block"><?php echo tsml_meeting_types($meeting['types'])?></td>
+							<td class="address" data-sort="<?php echo sanitize_title($meeting['address']) . '-' . $sort_time?>"><?php echo $meeting['address']?></td>
+							<td class="region" data-sort="<?php echo sanitize_title($meeting['region']) . '-' . $sort_time?>"><?php echo $meeting['region']?></td>
+							<td class="types" data-sort="<?php echo sanitize_title(tsml_meeting_types($meeting['types'])) . '-' . $sort_time?>"><?php echo tsml_meeting_types($meeting['types'])?></td>
 						</tr>
 						<?php }?>
 					</tbody>

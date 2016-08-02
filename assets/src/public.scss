@@ -181,6 +181,9 @@ input:focus, button:focus {
 						&.location, &.address, &.region {
 							width: 220px;
 						}
+						&.types {
+							display: none;
+						}
 					}
 				}
 			}
@@ -301,7 +304,7 @@ body.tsml_fullscreen {
 						border-width: 8px 4px 0;
 						border-color: #aaa transparent transparent;
 					}
-					&.address { 
+					&.address, &.types { 
 						display: none;
 					}
 				}
@@ -309,7 +312,7 @@ body.tsml_fullscreen {
 			tbody tr {
 				display: table-row;
 				td {
-					&.name, &.location, &.time, &.address, &.region {
+					&.name, &.location, &.time, &.address, &.region, &.types {
 						white-space: normal;
 						display: table-cell; 
 						padding: 8px 8px 8px 15px;
@@ -333,7 +336,7 @@ body.tsml_fullscreen {
 					&.location {
 						width: 35%;
 					}
-					&.address { 
+					&.address, &.types { 
 						display: none;
 					}
 				}
@@ -374,12 +377,15 @@ body.tsml_fullscreen {
 		tr {
 			width: 50%;
 			float: left;
-			min-height: 150px;
+			min-height: 170px;
 		}
 		td {
-			&.name, &.location, &.address, &.region {
+			&.name, &.location, &.address, &.region, &.types {
 				width: auto !important;
 				white-space: normal;
+			}
+			&.types {
+				display: block !important;
 			}
 			&.name {
 				font-weight: bold;
