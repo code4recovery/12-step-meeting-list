@@ -26,7 +26,9 @@ $meeting = tsml_get_meeting();
 
 						<dt><?php _e('Location', '12-step-meeting-list')?></dt>
 						<dd>
-							<?php echo tsml_link(get_permalink($meeting->post_parent), $meeting->location, 'meetings')?>
+							<?php 
+							$other_meetings = count($meeting->location_meetings) - 1;
+							echo tsml_link(get_permalink($meeting->post_parent), $meeting->location . (count($meeting->location_meetings) == 1 ? '' : '<br>(' . sprintf(_n('%d other meeting at this location', '%d other meetings at this location', $other_meetings, '12-step-meeting-list'), $other_meetings) . ')'), 'meetings')?>
 							<br>
 							<?php if (!empty($meeting->address) && $meeting->address != $meeting->location) echo $meeting->address . '<br>'?>
 							<?php echo $meeting->city?>, <?php echo $meeting->state?> <?php echo $meeting->postal_code?>

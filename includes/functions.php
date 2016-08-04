@@ -688,6 +688,8 @@ function tsml_get_meeting() {
 	$meeting->location			= htmlentities($location->post_title, ENT_QUOTES);
 	$meeting->notes 			= nl2br(esc_html($meeting->post_content));
 	$meeting->location_notes	= nl2br(esc_html($location->post_content));
+	
+	$meeting->location_meetings = tsml_get_meetings(array('location_id' => $location->ID));
 
 	//if meeting is part of a group, include group info
 	if ($meeting->group_id) {
