@@ -159,7 +159,7 @@ jQuery(function($){
 						url : obj.url
 					};
 
-					var sort_time = obj.day + '-' + (obj.time == '00:00' ? '11:59' : obj.time);
+					var sort_time = obj.day + '-' + (obj.time == '00:00' ? '23:59' : obj.time);
 					
 					//add new table row
 					tbody.append('<tr>' + 
