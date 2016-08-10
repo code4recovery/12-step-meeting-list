@@ -860,6 +860,13 @@ function tsml_import($meetings, $delete=false) {
 		$meetings = tsml_import_reformat($meetings);
 	}
 	
+	//convert the array to UTF-8
+	array_walk_recursive($meetings, function(&$item, $key) {
+		if (!mb_detect_encoding($item, 'utf-8', true)) {
+			$item = utf8_encode($item);
+		}
+	});
+	
 	//uppercasing for value matching later
 	$upper_types = array_map('strtoupper', $tsml_types[$tsml_program]);
 	$upper_days = array_map('strtoupper', $tsml_days);
