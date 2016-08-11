@@ -78,15 +78,6 @@ jQuery(function($){
 			window.history.pushState({path:url}, '', url);
 		}
 		
-		//prepare search terms for highlighter
-		var search = [];
-		if (data.search) {
-			search = data.search.split(' ');
-			for (var i = 0; i < search.length; i++) {
-				search[i] = new RegExp( '(' + search[i] + ')', 'gi');
-			}
-		}
-		
 		//debugging
 		//console.log(myAjax.ajaxurl)
 		//console.log(data);
@@ -164,15 +155,17 @@ jQuery(function($){
 					//add new table row
 					tbody.append('<tr>' + 
 						'<td class="time" data-sort="' + sort_time + '"><span>' + (data.day || !obj.day ? obj.time_formatted : days[obj.day] + '</span><span>' + obj.time_formatted) + '</span></td>' + 
-						'<td class="name" data-sort="' + obj.name + '-' + sort_time + '">' + formatLink(obj.url, highlight(obj.name, search), 'post_type') + '</td>' + 
-						'<td class="location" data-sort="' + obj.location + '-' + sort_time + '">' + highlight(obj.location, search) + '</td>' + 
-						'<td class="address" data-sort="' + obj.address + '-' + sort_time + '">' + highlight(obj.address, search) + '</td>' + 
+						'<td class="name" data-sort="' + obj.name + '-' + sort_time + '">' + formatLink(obj.url, obj.name, 'post_type') + '</td>' + 
+						'<td class="location" data-sort="' + obj.location + '-' + sort_time + '">' + obj.location + '</td>' + 
+						'<td class="address" data-sort="' + obj.address + '-' + sort_time + '">' + obj.address + '</td>' + 
 						'<td class="region" data-sort="' + (obj.sub_region || obj.region || '') + '-' + sort_time + '">' + (obj.sub_region || obj.region || '') + '</td>' + 
 						'<td class="types" data-sort="' + decodeMeetingTypes(obj.types) + '-' + sort_time + '">' + decodeMeetingTypes(obj.types) + '</td>' + 
 					'</tr>')
 				});
 				
 				sortMeetings();
+				
+				if (data.search) $('#meetings').mark(data.search);
 
 				//remove old markers and reset bounds
 				for (var i = 0; i < markers.length; i++) markers[i].setMap(null);
@@ -201,7 +194,7 @@ jQuery(function($){
 	});
 	
 	function sortMeetings() {
-		$sorted = $('#meetings table thead th[data-sort]').first();
+		var $sorted = $('#meetings table thead th[data-sort]').first();
 		var sort = $sorted.attr('class');
 		var order = $sorted.attr('data-sort');
 		var tbody = document.getElementById('meetings_tbody');
@@ -223,20 +216,17 @@ jQuery(function($){
 		}		
 	}
 	
-	//highlight search string
-	function highlight(str, terms) {
-		if (!terms.length) return str;
-		for (var i = 0; i < terms.length; i++) {
-			str = str.replace(terms[i], '<mark>$1</mark>')
-		}
-		return str;
-	}
-
 	//capture submit event
 	$('#meetings #search').submit(function(e){
 		doSearch();
 		return false;
 	});
+	
+	//if already searching, mark results
+	var $search_field = $('#meetings #search input[name=query]');
+	if ($search_field.size() && $search_field.val().length) {
+		$('#meetings').mark($search_field.val());
+	}
 
 	//capture dropdown change
 	$('#meetings .controls').on('click', '.dropdown-menu a', function(e){
@@ -411,19 +401,19 @@ jQuery(function($){
 });
 
 //globals
-markers = [];
-map = new google.maps.Map(document.getElementById('map'), {
+var markers = [];
+var map = new google.maps.Map(document.getElementById('map'), {
 	panControl: false,
 	mapTypeControl: false,
 	mapTypeControlOptions: {
 		mapTypeIds: [google.maps.MapTypeId.ROADMAP, 'map_style']
 	}
 });
-bounds = new google.maps.LatLngBounds();
+var bounds = new google.maps.LatLngBounds();
 
-days = [ 'Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+var days = [ 'Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
 
-infowindow = new google.maps.InfoWindow();
+var infowindow = new google.maps.InfoWindow();
 
 
 //load map, called from archive-meetings.php

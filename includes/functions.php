@@ -1594,14 +1594,6 @@ function dd($array) {
 	exit;	
 }
 
-//helper for search terms
-function highlight($text, $words) {
-	preg_match_all('~\w+~', $words, $m);
-	if (!$m) return $text;
-	$re = '~\\b(' . implode('|', $m[0]) . ')\\b~i';
-	return preg_replace($re, '<mark>$0</mark>', $text);
-}
-
 //helper to debug out of memory errors
 function tsml_report_memory() {
 	$size = memory_get_peak_usage(true);

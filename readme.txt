@@ -3,7 +3,7 @@ Contributors: meetingguide, aasanjose
 Tags: meetings, aa, al-anon, na, 12-step, locations, groups
 Requires at least: 3.2
 Tested up to: 4.6
-Stable tag: 2.4
+Stable tag: 2.4.1
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -172,6 +172,9 @@ and then drop some or all of these tags in your PHP:
 
 == Changelog ==
 
+= 2.4.1 =
+* Fixing search highlighter per NYC
+
 = 2.4 =
 * Converting imported text to UTF-8 per Maine
 
@@ -206,40 +209,3 @@ and then drop some or all of these tags in your PHP:
 
 = 2.3 =
 * New shortcode for Next Meetings mini-table
-
-= 2.2.9 =
-* Remembering to minify assets
-
-= 2.2.8 =
-* Better CSS for expanding the map to fullscreen mode
-* Assets reorganization / using Laravel Elixir
-
-= 2.2.7 =
-* Refactored address correction algorithm: no postal_code without address, neighborhood is ok place-name in lieu of address
-* Fixing bug when updating meeting to be appointment meeting
-
-= 2.2.6 =
-* Adding Google Maps API key
-* Hiding geolocation on non-https connections
-
-= 2.2.5 =
-* Going back to sample spreadsheet in CSV format, rather than XLSX
-* Fixing ordering of screenshot captions
-
-= 2.2.4 =
-* Importer now supports CR, LF, and CRLF line endings
-
-= 2.2.3 =
-* More descriptive error when wp_mail() fails
-* Style tweaks to feedback form
-
-= 2.2.2 =
-* Meeting info feedback form
-* Accessibility markup
-
-= 2.2.1 =
-* Adding more sites to the readme (Bowling Green, State College)
-
-= 2.2 =
-* Fixed empty row issue on importer reported by Maine
-* Print view displays meeting types, per Maine

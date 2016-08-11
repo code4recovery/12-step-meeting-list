@@ -205,13 +205,6 @@ class Walker_Regions_Dropdown extends Walker_Category {
 								'url'=>$meeting['url'], //can't use link here, unfortunately
 								'types'=>$meeting['types'],
 							);
-
-							//apply search highlighter if needed
-							if ($search) {
-								$meeting['name'] = highlight($meeting['name'], $search);
-								$meeting['location'] = highlight($meeting['location'], $search);
-								$meeting['address'] = highlight($meeting['address'], $search);
-							}
 							
 							$sort_time = $meeting['day'] . '-' . ($meeting['time'] == '00:00' ? '23:59' : $meeting['time']);
 							?>
