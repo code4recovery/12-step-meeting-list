@@ -165,7 +165,7 @@ jQuery(function($){
 				
 				sortMeetings();
 				
-				if (data.search) $('#meetings').mark(data.search);
+				if (data.search) $('#meetings .results tbody').mark(data.search);
 
 				//remove old markers and reset bounds
 				for (var i = 0; i < markers.length; i++) markers[i].setMap(null);
@@ -225,7 +225,7 @@ jQuery(function($){
 	//if already searching, mark results
 	var $search_field = $('#meetings #search input[name=query]');
 	if ($search_field.size() && $search_field.val().length) {
-		$('#meetings').mark($search_field.val());
+		$('#meetings .results tbody').mark($search_field.val());
 	}
 
 	//capture dropdown change
