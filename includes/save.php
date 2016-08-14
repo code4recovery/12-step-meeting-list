@@ -33,10 +33,12 @@ function tsml_save_post(){
 	//day could be null for appointment meeting
 	if (strlen($_POST['day'])) {
 		update_post_meta($post->ID, 'day', intval($_POST['day']));
-		if (!empty($_POST['time']))   update_post_meta($post->ID, 'time',   sanitize_text_field($_POST['time']));
+		if (!empty($_POST['time'])) update_post_meta($post->ID, 'time', sanitize_text_field($_POST['time']));
+		if (!empty($_POST['end_time'])) update_post_meta($post->ID, 'end_time', sanitize_text_field($_POST['end_time']));
 	} else {
 		update_post_meta($post->ID, 'day', '');
 		update_post_meta($post->ID, 'time', '');
+		update_post_meta($post->ID, 'end_time', '');
 	}
 
 	//exit here if the location is not ready

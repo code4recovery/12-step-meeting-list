@@ -138,6 +138,7 @@ function tsml_admin_init() {
 		<div class="meta_form_row">
 			<label for="time"><?php _e('Time', '12-step-meeting-list')?></label>
 			<input type="time" name="time" id="time" value="<?php echo @$meeting_custom['time'][0]?>"<?php if (!strlen(@$meeting_custom['day'][0])) {?> disabled<?php }?>>
+			<input type="time" name="end_time" id="end_time" value="<?php echo @$meeting_custom['end_time'][0]?>"<?php if (!strlen(@$meeting_custom['day'][0])) {?> disabled<?php }?>>
 		</div>
 		<div class="meta_form_row">
 			<label for="tags"><?php _e('Types', '12-step-meeting-list')?></label>

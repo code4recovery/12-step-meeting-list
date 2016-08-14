@@ -578,6 +578,7 @@ function tsml_get_meetings($arguments=array()) {
 			'location_id'	=>$post->post_parent,
 			'url'			=>get_permalink($post->ID),
 			'time'			=>$tsml_custom['time'][0],
+			'end_time'		=>$tsml_custom['end_time'][0],
 			'time_formatted'=>tsml_format_time($tsml_custom['time'][0]),
 			'day'			=>$tsml_custom['day'][0],
 			'types'			=>empty($tsml_custom['types'][0]) ? array() : unserialize($tsml_custom['types'][0]),
@@ -748,6 +749,7 @@ function tsml_meetings_csv() {
 	//define columns to output
 	$columns = array(
 		'time' =>				__('Time', '12-step-meeting-list'),
+		'end_time' =>			__('End Time', '12-step-meeting-list'),
 		'day' =>				__('Day', '12-step-meeting-list'),
 		'name' =>				__('Name', '12-step-meeting-list'),
 		'location' =>			__('Location', '12-step-meeting-list'),
@@ -946,12 +948,13 @@ function tsml_import($meetings, $delete=false) {
 	
 		//sanitize time & day
 		if (empty($meeting['time']) || empty($meeting['day'])) {
-			$meeting['time'] = $meeting['day'] = ''; //by appointment
+			$meeting['time'] = $meeting['end_time'] = $meeting['day'] = ''; //by appointment
 
 			//if meeting name missing, use location
 			if (empty($meeting['name'])) $meeting['name'] = $meeting['location'] . ' by Appointment';
 		} else {
 			$meeting['time'] = tsml_format_time_reverse($meeting['time']);
+			$meeting['end_time'] = tsml_format_time_reverse($meeting['end_time']);
 			
 			if (!in_array(strtoupper($meeting['day']), $upper_days)) return tsml_alert('"' . $meeting['day'] . '" is an invalid value for day at row #' . $row_counter . '.', 'error');
 			$meeting['day'] = array_search(strtoupper($meeting['day']), $upper_days);
@@ -1061,7 +1064,7 @@ function tsml_import($meetings, $delete=false) {
 			if (!empty($meeting['notes'])) $meeting['notes'] .= str_repeat(PHP_EOL, 2);
 			$meeting['notes'] .= implode(', ', $unused_types);
 		}
-				
+		
 		//group by address
 		if (!array_key_exists($address, $addresses)) {
 			$addresses[$address] = array(
@@ -1078,6 +1081,7 @@ function tsml_import($meetings, $delete=false) {
 			'name' => $meeting['name'],
 			'day' => $meeting['day'],
 			'time' => $meeting['time'],
+			'end_time' => $meeting['end_time'],
 			'types' => $meeting['types'],
 			'notes' => $meeting['notes'],
 			'post_modified' => $meeting['post_modified'],
@@ -1116,7 +1120,7 @@ function tsml_import($meetings, $delete=false) {
 	
 	//address caching
 	$cached_addresses = get_option('tsml_addresses', array());
-
+	
 	//loop through again and geocode the addresses, making a location
 	foreach ($addresses as $original_address=>$info) {
 		
@@ -1297,6 +1301,7 @@ function tsml_import($meetings, $delete=false) {
 			));
 			update_post_meta($meeting_id, 'day',		$meeting['day']);
 			update_post_meta($meeting_id, 'time',		$meeting['time']);
+			update_post_meta($meeting_id, 'end_time',	$meeting['end_time']);
 			update_post_meta($meeting_id, 'types',		$meeting['types']);
 			update_post_meta($meeting_id, 'region',		$location['region']); //double-entry just for searching
 			if (!empty($meeting['group'])) update_post_meta($meeting_id, 'group_id', $groups[$meeting['group']]);

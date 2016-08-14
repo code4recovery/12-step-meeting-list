@@ -80,7 +80,8 @@ function tsml_admin_menu() {
 								<h3><?php _e('Import Data', '12-step-meeting-list')?></h3>
 								<p>You can import a CSV of meeting info using the form below. <a href="<?php echo plugin_dir_url(__FILE__) . '../template.csv'?>">Here is a spreadsheet</a> you can use as a template. Save it as a comma-delimited CSV before uploading it. The header row must kept in place.</p>
 								<ul class="ul-disc">
-									<li><strong><?php _e('Time', '12-step-meeting-list')?></strong>, if present, should be in a standard date format such as 6:00 AM. Non-standard or empty dates will be imported as 'by appointment.'</li>
+									<li><strong><?php _e('Time', '12-step-meeting-list')?></strong>, if present, should be in a standard date format such as 6:00 AM or 06:00. Non-standard or empty dates will be imported as 'by appointment.'</li>
+									<li><strong><?php _e('End Time', '12-step-meeting-list')?></strong>, if present, should be in a standard date format such as 6:00 AM or 06:00.</li>
 									<li><strong><?php _e('Day', '12-step-meeting-list')?></strong>, if present, should either Sunday, Monday, Tuesday, Wednesday, Thursday, Friday, or Saturday. Meetings that occur on multiple days should be listed separately. 'Daily' or 'Mondays' will not work. Non-standard days will be imported as 'by appointment.'</li>
 									<li><strong><?php _e('Name', '12-step-meeting-list')?></strong> is the name of the meeting, and is optional, although it's valuable information for the user. If it's missing, a name will be created by combining the location, day, and time.</li>
 									<li><strong><?php _e('Location', '12-step-meeting-list')?></strong> is the name of the location, and is optional. Generally it's the group or building name. If it's missing, the address will be used. In the event that there are multiple location names for the same address, the first location name will be used.</li>

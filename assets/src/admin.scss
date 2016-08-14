@@ -69,6 +69,10 @@ body.meetings_page_import {
 		width: 85%; margin: 0; font-size: 18px; padding: 6px; height: 40px; line-height: normal; float: left;
 		border-radius: 0;
 	}
+	input[type=time] {
+		width: 42%;
+		&:last-child { margin-left: 1%; }
+	}
 	input, select { 
 		border: 1px solid #ccc; 
 	    border-radius: 0;
