@@ -73,6 +73,10 @@ $meeting = tsml_get_meeting();
 							
 							<form>
 								<input type="hidden" name="action" value="tsml_feedback">
+								<input type="hidden" name="tsml_address" value="<?php echo $meeting->address;?>">
+								<input type="hidden" name="tsml_city" value="<?php echo $meeting->city;?>">
+								<input type="hidden" name="tsml_state" value="<?php echo $meeting->state;?>">
+								<input type="hidden" name="tsml_postal_code" value="<?php echo $meeting->postal_code;?>">
 								<input type="hidden" name="tsml_url" value="<?php echo admin_url('post.php?post=' . get_the_ID() . '&action=edit')?>">
 								<?php wp_nonce_field($tsml_nonce, 'tsml_nonce', false)?>
 								<div class="form-group">

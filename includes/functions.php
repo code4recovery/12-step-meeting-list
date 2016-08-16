@@ -150,13 +150,18 @@ add_action('wp_ajax_nopriv_tsml_feedback', 'tsml_feedback');
 function tsml_feedback() {
 	global $tsml_feedback_addresses, $tsml_nonce;
 	
+    $address = sanitize_text_field($_POST['tsml_address']);
+    $city    = sanitize_text_field($_POST['tsml_city']);
+    $state   = sanitize_text_field($_POST['tsml_state']);
+    $postal   = sanitize_text_field($_POST['tsml_postal_code']);
+    $name    = sanitize_text_field($_POST['tsml_name']);
+    $email  = sanitize_email($_POST['tsml_email']);
+    $message  = stripslashes(implode('<br>', array_map('sanitize_text_field', explode("\n", $_POST['tsml_message']))));
+
+    //append footer to message
+    $message .= '<br><br>Address: '.$address.'<br>City: '.$city.'<br>State: '.$state.'<br>Postal Code: '.$postal.'<br><br><hr>Edit meeting: <a href="' . $_POST['tsml_url'] . '">' . $_POST['tsml_url'] . '</a>';
+
 	//sanitize input
-	$name	 = sanitize_text_field($_POST['tsml_name']);
-	$email	= sanitize_email($_POST['tsml_email']);
-	$message  = stripslashes(implode('<br>', array_map('sanitize_text_field', explode("\n", $_POST['tsml_message']))));
-	
-	//append footer to message
-	$message .= '<br><br><hr>Edit meeting: <a href="' . $_POST['tsml_url'] . '">' . $_POST['tsml_url'] . '</a>';
 	
 	//email vars
 	$subject  = '[12 Step Meeting List] Meeting Feedback Form';
