@@ -136,17 +136,26 @@ jQuery(function($){
 			//check status first, eg REQUEST_DENIED, ZERO_RESULTS
 			if (data.status != 'OK') return;
 			
+			var google_overrides = jQuery.parseJSON(myAjax.google_overrides);
+			
+			//check if there is an override, because the Google Geocoding API is not always right
+			if (typeof google_overrides[data.results[0].formatted_address] == 'undefined') {
+				var address = parseAddressComponents(data.results[0].address_components);
+				address.latitude = data.results[0].geometry.location.lat;
+				address.longitude = data.results[0].geometry.location.lng;
+			} else {
+				var address = google_overrides[data.results[0].formatted_address];
+			}
+			
 			//set lat + lng
-			var latitude = data.results[0].geometry.location.lat;
-			var longitude = data.results[0].geometry.location.lng;
-			$('input#latitude').val(latitude);
-			$('input#longitude').val(longitude);
-			setMap(latitude, longitude);
+			$('input#latitude').val(address.latitude);
+			$('input#longitude').val(address.longitude);
+			setMap(address.latitude, address.longitude);
 
 			//guess region if not set
 			var region_id = false;
 			if (!$('select#region option[selected]').size()) {
-				val = data.results[0].formatted_address;
+				val = address.formatted_address;
 				$('select#region option').each(function(){
 					var region_name = $(this).text().replace('&nbsp;', '').trim();
 					if (val.indexOf(region_name) != -1) region_id = $(this).attr('value');
@@ -154,16 +163,15 @@ jQuery(function($){
 			}
 			
 			//save address
-			var address = parseAddressComponents(data.results[0].address_components);
 			$('input#address').val(address.address);
 			$('input#city').val(address.city);
 			$('input#state').val(address.state);
 			$('input#postal_code').val(address.postal_code);
 			$('input#country').val(address.country);
-			$('input#formatted_address').val(address.formatted);
+			$('input#formatted_address').val(address.formatted_address);
 			
 			//check if location with same address is already in the system, populate form
-			jQuery.getJSON(myAjax.ajaxurl + '?action=address', { formatted_address: address.formatted }, function(data){
+			jQuery.getJSON(myAjax.ajaxurl + '?action=address', { formatted_address: address.formatted_address }, function(data){
 				if (data) {
 					$('input[name=location]').val(data.location);
 					$('select[name=region] option').prop('selected', false);

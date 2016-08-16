@@ -3,7 +3,7 @@ Contributors: meetingguide, aasanjose
 Tags: meetings, aa, al-anon, na, 12-step, locations, groups
 Requires at least: 3.2
 Tested up to: 4.6
-Stable tag: 2.4.3
+Stable tag: 2.4.4
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -171,6 +171,10 @@ and then drop some or all of these tags in your PHP:
 1. Edit location
 
 == Changelog ==
+
+= 2.4.4 =
+* New system for overriding Google's address lookups due to very infrequent issues in NYC and Maine
+* New language-related meeting types for Toronto
 
 = 2.4.3 =
 * Adding meeting end time per NYC

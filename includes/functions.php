@@ -3,7 +3,7 @@
 //function: enqueue assets for public or admin page
 //used: in templates and on admin_edit.php
 function tsml_assets() {
-	global $tsml_types, $tsml_program, $tsml_google_api_key;
+	global $tsml_types, $tsml_program, $tsml_google_api_key, $tsml_google_overrides;
 		
 	//google maps api needed for maps and address verification, can't be onboarded
 	wp_enqueue_script('google_maps_api', '//maps.googleapis.com/maps/api/js?key=' . $tsml_google_api_key);
@@ -15,6 +15,7 @@ function tsml_assets() {
 		wp_localize_script('tsml_admin_js', 'myAjax', array(
 			'ajaxurl' => admin_url('admin-ajax.php'),
 			'google_api_key' => $tsml_google_api_key,
+			'google_overrides' => json_encode($tsml_google_overrides),
 		));
 		wp_enqueue_script('typeahead_js', plugins_url('../assets/js/typeahead.bundle.js', __FILE__), array('jquery'), '', true);
 	} else {
@@ -855,7 +856,7 @@ function tsml_regions_api() {
 //sanitize and import meeting data
 //used by admin_import.php
 function tsml_import($meetings, $delete=false) {
-	global $tsml_types, $tsml_program, $tsml_days, $wpdb, $tsml_google_api_key;
+	global $tsml_types, $tsml_program, $tsml_days, $wpdb, $tsml_google_api_key, $tsml_google_overrides;
 
 	//allow theme-defined function to reformat CSV ahead of import (for New Hampshire)
 	if (function_exists('tsml_import_reformat')) {
@@ -1161,70 +1162,78 @@ function tsml_import($meetings, $delete=false) {
 			
 			//dd($data->results[0]->address_components);
 			
-			//unpack response -- logic must match admin.js -> parseAddressComponents() 
-			$address = $city = $state = $postal_code = $country = $point_of_interest = $neighborhood = false;
-			foreach ($data->results[0]->address_components as $component) {
-				if (empty($component->types) || in_array('point_of_interest', $component->types)) {
-					$point_of_interest = $component->short_name;
-				} elseif (in_array('neighborhood', $component->types)) {
-					$neighborhood = $component->short_name;
-				} elseif (in_array('street_number', $component->types)) {
-					$address = $component->long_name;
-				} elseif (in_array('route', $component->types)) {
-					$address .= ' ' . $component->long_name;
-				} elseif (in_array('locality', $component->types)) {
-					$city = $component->long_name;
-				} elseif (in_array('sublocality', $component->types)) {
-					if (!$city) $city = $component->long_name;
-				} elseif (in_array('administrative_area_level_3', $component->types)) {
-					if (!$city) $city = $component->long_name;
-				} elseif (in_array('administrative_area_level_1', $component->types)) {
-					$state = $component->short_name;
-				} elseif (in_array('postal_code', $component->types)) {
-					$postal_code = $component->short_name;
-				} elseif (in_array('country', $component->types)) {
-					$country = $component->short_name;
-				} 
-			}
-			
-			/*
-			some legitimate meeting locations have no address
-			http://maps.googleapis.com/maps/api/geocode/json?address=bagram%20airfield,%20afghanistan
-			http://maps.googleapis.com/maps/api/geocode/json?address=River%20Light%20Park,%20Cornwall,%20NY,%20USA
-			*/
-			$formatted_address = array();
-
-			if (empty($address) && !empty($point_of_interest)) $address = $point_of_interest;
-
-			if (empty($address) && !empty($neighborhood)) $address = $neighborhood;
-			
-			if (!empty($address)) $formatted_address[] = $address;
-			
-			if (!empty($city)) $formatted_address[] = $city;
-			
-			if (!empty($state)) {
-				if (!empty($address) && !empty($postal_code)) {
-					$formatted_address[] = $state . ' ' . $postal_code;
-				} else {
-					$formatted_address[] = $state;
-				}
+			//some google API results are bad, and we can override them manually
+			if (array_key_exists($data->results[0]->formatted_address, $tsml_google_overrides)) {
+				
+				extract($tsml_google_overrides[$data->results[0]->formatted_address]);
+				
 			} else {
-				$formatted_address[] = $postal_code;
+								
+				//unpack response -- logic must match admin.js -> parseAddressComponents() 
+				$address = $city = $state = $postal_code = $country = $point_of_interest = $neighborhood = false;
+				foreach ($data->results[0]->address_components as $component) {
+					if (empty($component->types) || in_array('point_of_interest', $component->types)) {
+						$point_of_interest = $component->short_name;
+					} elseif (in_array('neighborhood', $component->types)) {
+						$neighborhood = $component->short_name;
+					} elseif (in_array('street_number', $component->types)) {
+						$address = $component->long_name;
+					} elseif (in_array('route', $component->types)) {
+						$address .= ' ' . $component->long_name;
+					} elseif (in_array('locality', $component->types)) {
+						$city = $component->long_name;
+					} elseif (in_array('sublocality', $component->types)) {
+						if (!$city) $city = $component->long_name;
+					} elseif (in_array('administrative_area_level_3', $component->types)) {
+						if (!$city) $city = $component->long_name;
+					} elseif (in_array('administrative_area_level_1', $component->types)) {
+						$state = $component->short_name;
+					} elseif (in_array('postal_code', $component->types)) {
+						$postal_code = $component->short_name;
+					} elseif (in_array('country', $component->types)) {
+						$country = $component->short_name;
+					} 
+				}
+				
+				/*
+				some legitimate meeting locations have no address
+				http://maps.googleapis.com/maps/api/geocode/json?address=bagram%20airfield,%20afghanistan
+				http://maps.googleapis.com/maps/api/geocode/json?address=River%20Light%20Park,%20Cornwall,%20NY,%20USA
+				*/
+				$formatted_address = array();
+	
+				if (empty($address) && !empty($point_of_interest)) $address = $point_of_interest;
+	
+				if (empty($address) && !empty($neighborhood)) $address = $neighborhood;
+				
+				if (!empty($address)) $formatted_address[] = $address;
+				
+				if (!empty($city)) $formatted_address[] = $city;
+				
+				if (!empty($state)) {
+					if (!empty($address) && !empty($postal_code)) {
+						$formatted_address[] = $state . ' ' . $postal_code;
+					} else {
+						$formatted_address[] = $state;
+					}
+				} else {
+					$formatted_address[] = $postal_code;
+				}
+	
+				if (!empty($country)) $formatted_address[] = $country;
+	
+				$formatted_address = implode(', ', $formatted_address);
+				
+				//check for required values
+				if (empty($formatted_address) || empty($data->results[0]->geometry->location->lat) || empty($data->results[0]->geometry->location->lng)) {
+					$failed_addresses[$original_address] = $info['lines'];
+					continue;
+				}
+				
+				//lat and lon
+				$latitude = $data->results[0]->geometry->location->lat;
+				$longitude = $data->results[0]->geometry->location->lng;
 			}
-
-			if (!empty($country)) $formatted_address[] = $country;
-
-			$formatted_address = implode(', ', $formatted_address);
-			
-			//check for required values
-			if (empty($formatted_address) || empty($data->results[0]->geometry->location->lat) || empty($data->results[0]->geometry->location->lng)) {
-				$failed_addresses[$original_address] = $info['lines'];
-				continue;
-			}
-			
-			//lat and lon
-			$latitude = $data->results[0]->geometry->location->lat;
-			$longitude = $data->results[0]->geometry->location->lng;
 			
 			//save in cache
 			$cached_addresses[$original_address] = compact('address', 'city', 'state', 'postal_code', 'country', 'latitude', 'longitude', 'formatted_address');

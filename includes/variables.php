@@ -30,6 +30,52 @@ $tsml_feedback_addresses = get_option('tsml_feedback_addresses', array());
 
 $tsml_google_api_key = 'AIzaSyCC3p6PSf6iQbXi-Itwn9C24_FhkbDUkdg'; //might have to make this user-specific
 
+/*
+unfortunately the google geocoding API is not perfect. used by tsml_import() and admin.js
+it's useful to use the Places API to find the correct information. For example, start with the Google API
+https://maps.googleapis.com/maps/api/geocode/json?key=AIzaSyCC3p6PSf6iQbXi-Itwn9C24_FhkbDUkdg&address=320%20Beach%2094th%20St,%20Rockaway%20Beach,%20NY%2011693
+and then search by location name near the coordinates	
+https://maps.googleapis.com/maps/api/place/nearbysearch/json?key=AIzaSyAtTOBvcG7UrGE2Cz5xYIwI_yHjWvxlN8o&location=40.5854777,-73.81639299999999&name=first+congregational+church
+*/
+$tsml_google_overrides = array(
+	//first congregational church
+	'Beach 94th St, Queens, NY 11693, USA' => array(
+		'formatted_address'	=> '320 Beach 94th Street, Queens, NY 11693, US',
+		'address'			=> '320 Beach 94th Street',
+		'city'				=> 'Queens',
+		'neighborhood'		=> 'Rockaway Beach',
+		'state'				=> 'NY',
+		'postal_code'		=> '11693',
+		'country'			=> 'US',
+		'latitude'			=> '40.587465',
+		'longitude'			=> '-73.81683149999999',
+	),
+	//franklin memorial hospital
+	'Farmington, ME, USA' => array(
+		'formatted_address'	=> '111 Franklin Health Commons, Farmington, ME 04938, US',
+		'address'			=> '111 Franklin Health Commons',
+		'city'				=> 'Farmington',
+		'neighborhood'		=> '',
+		'state'				=> 'ME',
+		'postal_code'		=> '04938',
+		'country'			=> 'US',
+		'latitude'			=> '44.62654999999999',
+		'longitude'			=> '-70.162092',
+	),
+	//maine va medical center
+	'Augusta, ME 04330, USA' => array(
+		'formatted_address'	=> '1 VA Center, Augusta, ME 04330, US',
+		'address'			=> '1 VA Center',
+		'city'				=> 'Augusta',
+		'neighborhood'		=> '',
+		'state'				=> 'ME',
+		'postal_code'		=> '04330',
+		'country'			=> 'US',
+		'latitude'			=> '44.2803692',
+		'longitude'			=> '-69.7042675',
+	),
+);
+
 $tsml_nonce = plugin_basename(__FILE__);
 
 $tsml_program = get_option('tsml_program', 'aa');
@@ -65,12 +111,17 @@ $tsml_types = array(
 		'FR'	=> __('French', '12-step-meeting-list'),
 		'G'		=> __('Gay', '12-step-meeting-list'),
 		'GR'	=> __('Grapevine', '12-step-meeting-list'),
+		'ITA'	=> __('Italian', '12-step-meeting-list'),
 		'L'		=> __('Lesbian', '12-step-meeting-list'),
 		'LIT'	=> __('Literature', '12-step-meeting-list'),
 		'LGBTQ'	=> __('LGBTQ', '12-step-meeting-list'),
 		'MED'	=> __('Meditation', '12-step-meeting-list'),
 		'M'		=> __('Men', '12-step-meeting-list'),
 		'O'		=> __('Open', '12-step-meeting-list'),
+		'POL'	=> __('Polish', '12-step-meeting-list'),
+		'POR'	=> __('Portuguese', '12-step-meeting-list'),
+		'PUN'	=> __('Punjabi', '12-step-meeting-list'),
+		'RUS'	=> __('Russian', '12-step-meeting-list'),
 		'ASL'	=> __('Sign Language', '12-step-meeting-list'),
 		'SM'	=> __('Smoking Permitted', '12-step-meeting-list'),
 		'S'		=> __('Spanish', '12-step-meeting-list'),
