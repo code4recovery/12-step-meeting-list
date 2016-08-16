@@ -578,10 +578,10 @@ function tsml_get_meetings($arguments=array()) {
 			'updated'		=>$post->post_modified_gmt,
 			'location_id'	=>$post->post_parent,
 			'url'			=>get_permalink($post->ID),
-			'time'			=>$tsml_custom['time'][0],
-			'end_time'		=>$tsml_custom['end_time'][0],
+			'time'			=>@$tsml_custom['time'][0],
+			'end_time'		=>@$tsml_custom['end_time'][0],
 			'time_formatted'=>tsml_format_time($tsml_custom['time'][0]),
-			'day'			=>$tsml_custom['day'][0],
+			'day'			=>@$tsml_custom['day'][0],
 			'types'			=>empty($tsml_custom['types'][0]) ? array() : unserialize($tsml_custom['types'][0]),
 		), $locations[$post->post_parent]);
 		

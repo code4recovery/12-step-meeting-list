@@ -135,7 +135,7 @@ jQuery(function($){
 
 			//check status first, eg REQUEST_DENIED, ZERO_RESULTS
 			if (data.status != 'OK') return;
-			
+						
 			var google_overrides = jQuery.parseJSON(myAjax.google_overrides);
 			
 			//check if there is an override, because the Google Geocoding API is not always right
@@ -266,7 +266,7 @@ jQuery(function($){
 			state: state,
 			postal_code: postal_code,
 			country: country,
-			formatted: formatted.join(', ')
+			formatted_address: formatted.join(', ')
 		}
 	
 	}
