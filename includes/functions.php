@@ -1,5 +1,10 @@
 <?php
 
+//function: sanitize multi-line text, used in tsml_import() and save.php
+function sanitize_text_area($value) {
+	return implode("\n", array_map('sanitize_text_field', explode("\n", $value)));
+}
+
 //function: enqueue assets for public or admin page
 //used: in templates and on admin_edit.php
 function tsml_assets() {
@@ -571,18 +576,18 @@ function tsml_get_meetings($arguments=array()) {
 		$tsml_custom = get_post_meta($post->ID);
 
 		$array = array_merge(array(
-			'id'			=>$post->ID,
-			'name'			=>$post->post_title,
-			'slug'			=>$post->post_name,
-			'notes'			=>$post->post_content,
-			'updated'		=>$post->post_modified_gmt,
-			'location_id'	=>$post->post_parent,
-			'url'			=>get_permalink($post->ID),
-			'time'			=>@$tsml_custom['time'][0],
-			'end_time'		=>@$tsml_custom['end_time'][0],
-			'time_formatted'=>tsml_format_time($tsml_custom['time'][0]),
-			'day'			=>@$tsml_custom['day'][0],
-			'types'			=>empty($tsml_custom['types'][0]) ? array() : unserialize($tsml_custom['types'][0]),
+			'id'				=> $post->ID,
+			'name'				=> $post->post_title,
+			'slug'				=> $post->post_name,
+			'notes'				=> $post->post_content,
+			'updated'			=> $post->post_modified_gmt,
+			'location_id'		=> $post->post_parent,
+			'url'				=> get_permalink($post->ID),
+			'time'				=> @$tsml_custom['time'][0],
+			'end_time'			=> @$tsml_custom['end_time'][0],
+			'time_formatted'	=> tsml_format_time(@$tsml_custom['time'][0]),
+			'day'				=> @$tsml_custom['day'][0],
+			'types'				=> empty($tsml_custom['types'][0]) ? array() : unserialize($tsml_custom['types'][0]),
 		), $locations[$post->post_parent]);
 		
 		# Append group info to meeting
@@ -595,11 +600,7 @@ function tsml_get_meetings($arguments=array()) {
 		$meetings[] = $array;
 	}
 
-	//dd($meetings);
-
 	usort($meetings, 'tsml_sort_meetings');
-
-	//tsml_report_memory();
 	
 	return $meetings;
 }
@@ -938,7 +939,7 @@ function tsml_import($meetings, $delete=false) {
 		$meeting = array_combine($header, $meeting);
 		foreach ($meeting as $key => $value) {
 			if (in_array($key, array('notes', 'location-notes', 'group-notes'))) {
-				$meeting[$key] = trim(strip_tags($value));
+				$meeting[$key] = sanitize_text_area($value);
 			} else {
 				$meeting[$key] = sanitize_text_field($value);
 			}
@@ -955,7 +956,7 @@ function tsml_import($meetings, $delete=false) {
 			if (empty($meeting['name'])) $meeting['name'] = $meeting['location'] . ' by Appointment';
 		} else {
 			$meeting['time'] = tsml_format_time_reverse($meeting['time']);
-			$meeting['end_time'] = tsml_format_time_reverse($meeting['end_time']);
+			if (!empty($meeting['end_time'])) $meeting['end_time'] = tsml_format_time_reverse($meeting['end_time']);
 			
 			if (!in_array(strtoupper($meeting['day']), $upper_days)) return tsml_alert('"' . $meeting['day'] . '" is an invalid value for day at row #' . $row_counter . '.', 'error');
 			$meeting['day'] = array_search(strtoupper($meeting['day']), $upper_days);
@@ -1082,7 +1083,7 @@ function tsml_import($meetings, $delete=false) {
 			'name' => $meeting['name'],
 			'day' => $meeting['day'],
 			'time' => $meeting['time'],
-			'end_time' => $meeting['end_time'],
+			'end_time' => empty($meeting['end_time']) ? null : $meeting['end_time'],
 			'types' => $meeting['types'],
 			'notes' => $meeting['notes'],
 			'post_modified' => $meeting['post_modified'],

@@ -19,26 +19,79 @@ function tsml_save_post(){
 	if (!isset($post->ID) || !current_user_can('edit_post', $post->ID)) return;
 	if (!isset($_POST['tsml_nonce']) || !wp_verify_nonce($_POST['tsml_nonce'], $tsml_nonce)) return;
 	if (!isset($_POST['post_type']) || ($_POST['post_type'] != TSML_TYPE_MEETINGS)) return;
-		
-	//save ordinary meeting metadata
-	if (!empty($_POST['region'])) update_post_meta($post->ID, 'region', intval($_POST['region'])); //cache region on meeting
-	if (!empty($_POST['types']) && is_array($_POST['types'])) {
-		//check to make sure not open and closed
-		if (in_array('C', $_POST['types']) && in_array('O', $_POST['types'])) {
-			$_POST['types'] = array_diff($_POST['types'], array('C'));
+	
+	//get current meeting state to compare against
+	$old_meeting = tsml_get_meeting($post->ID);
+	
+	//track changes to meeting
+	$changes = array();
+	
+	//cache region on meeting
+	if ($old_meeting->region != $_POST['region']) {
+		$changes[] = 'group';
+		if (empty($_POST['region'])) {
+			delete_post_meta($post->ID, 'region');
+		} else {
+			update_post_meta($post->ID, 'region', intval($_POST['region']));
 		}
-		update_post_meta($post->ID, 'types', array_map('esc_attr', $_POST['types']));
 	}
-
+	
+	//check types for errors first
+	if (!is_array($_POST['types'])) $_POST['types'] = array(); //not sure if this actually happens
+	if (in_array('C', $_POST['types']) && in_array('O', $_POST['types'])) {
+		$_POST['types'] = array_diff($_POST['types'], array('C'));
+	}
+	
+	//compare types
+	if (implode(', ', $old_meeting->types) != tsml_meeting_types($_POST['types'])) {
+		$changes[] = 'types';
+		if (empty($_POST['types'])) {
+			delete_post_meta($post->ID, 'types');
+		} else {
+			update_post_meta($post->ID, 'types', array_map('esc_attr', $_POST['types']));
+		}
+	}
+		
 	//day could be null for appointment meeting
 	if (strlen($_POST['day'])) {
-		update_post_meta($post->ID, 'day', intval($_POST['day']));
-		if (!empty($_POST['time'])) update_post_meta($post->ID, 'time', sanitize_text_field($_POST['time']));
-		if (!empty($_POST['end_time'])) update_post_meta($post->ID, 'end_time', sanitize_text_field($_POST['end_time']));
+		if ($old_meeting->day != intval($_POST['day'])) {
+			$changes[] = 'day';
+			update_post_meta($post->ID, 'day', intval($_POST['day']));
+		}
+
+		$_POST['time'] = sanitize_text_field($_POST['time']);
+		if ($old_meeting->time != $_POST['time']) {
+			$changes[] = 'time';
+			if (empty($_POST['time'])) {
+				delete_post_meta($post->ID, 'time');
+			} else {
+				update_post_meta($post->ID, 'time', $_POST['time']);
+			}
+		}
+
+		$_POST['end_time'] = sanitize_text_field($_POST['end_time']);
+		if ($old_meeting->end_time != $_POST['end_time']) {
+			$changes[] = 'end_time';
+			if (empty($_POST['end_time'])) {
+				delete_post_meta($post->ID, 'end_time');
+			} else {
+				update_post_meta($post->ID, 'end_time', sanitize_text_field($_POST['end_time']));
+			}
+		}
 	} else {
-		update_post_meta($post->ID, 'day', '');
-		update_post_meta($post->ID, 'time', '');
-		update_post_meta($post->ID, 'end_time', '');
+		//appointment meeting
+		if (!empty($old_meeting->day)) {
+			$changes[] = 'day';
+			delete_post_meta($post->ID, 'day');
+		}
+		if (!empty($old_meeting->time)) {
+			$changes[] = 'time';
+			delete_post_meta($post->ID, 'time');
+		}
+		if (!empty($old_meeting->end_time)) {
+			$changes[] = 'end_time';
+			delete_post_meta($post->ID, 'end_time');
+		}
 	}
 
 	//exit here if the location is not ready
@@ -48,94 +101,141 @@ function tsml_save_post(){
 	
 	//save location information (set this value or get caught in a loop)
 	$_POST['post_type'] = TSML_TYPE_LOCATIONS;
+	$_POST['location'] = sanitize_text_field($_POST['location']);
+	$_POST['location_notes'] = sanitize_text_area($_POST['location_notes']);
 	
 	//see if address is already in the database
 	if ($locations = get_posts('post_type=' . TSML_TYPE_LOCATIONS . '&numberposts=1&orderby=id&order=ASC&meta_key=formatted_address&meta_value=' . sanitize_text_field($_POST['formatted_address']))) {
 		$location_id = $locations[0]->ID;
-		wp_update_post(array(
-			'ID'			=> $location_id,
-			'post_title'	=> sanitize_text_field($_POST['location']),
-			'post_content'  => sanitize_text_field($_POST['location_notes']),
-		));
+		if ($locations[0]->post_title != $_POST['location'] || $locations[0]->post_content != $_POST['location_notes']) {
+			$changes[] = 'updating location';
+			wp_update_post(array(
+				'ID'			=> $location_id,
+				'post_title'	=> $_POST['location'],
+				'post_content'  => $_POST['location_notes'],
+			));
+		}
 	} else {
+		$changes[] = 'creating new location';
 		$location_id = wp_insert_post(array(
-			'post_title'	=> sanitize_text_field($_POST['location']),
+			'post_title'	=> $_POST['location'],
 		  	'post_type'		=> TSML_TYPE_LOCATIONS,
 		  	'post_status'	=> 'publish',
-			'post_content'  => sanitize_text_field($_POST['location_notes']),
+			'post_content'  => $_POST['location_notes'],
 		));
 	}
 
 	//update address & info on location
-	update_post_meta($location_id, 'formatted_address',	sanitize_text_field($_POST['formatted_address']));
-	update_post_meta($location_id, 'address',			sanitize_text_field($_POST['address']));
-	update_post_meta($location_id, 'city',				sanitize_text_field($_POST['city']));
-	update_post_meta($location_id, 'state',				sanitize_text_field($_POST['state']));
-	update_post_meta($location_id, 'postal_code',		sanitize_text_field($_POST['postal_code']));
-	update_post_meta($location_id, 'country',			sanitize_text_field($_POST['country']));
-	update_post_meta($location_id, 'latitude',			floatval($_POST['latitude']));
-	update_post_meta($location_id, 'longitude',			floatval($_POST['longitude']));
-	update_post_meta($location_id, 'region',			intval($_POST['region']));
+	foreach (array('formatted_address', 'city', 'state', 'postal_code', 'country') as $field) {
+		$_POST[$field] = sanitize_text_field($_POST[$field]);
+		if ($old_meeting->{$field} != $_POST[$field]) {
+			$changes[] = $field;
+			if (empty($_POST[$field])) {
+				delete_post_meta($location_id, $field);
+			} else {
+				update_post_meta($location_id, $field, $_POST[$field]);
+			}
+		}
+	}
+
+	foreach (array('latitude', 'longitude') as $field) {
+		if ($old_meeting->{$field} != $_POST[$field]) {
+			$changes[] = $field;
+			update_post_meta($location_id, $field, floatval($_POST[$field]));
+		}
+	}
 
 	//update region caches for other meetings at this location
-	$meetings = tsml_get_meetings(array('location_id' => $location_id));
-	foreach ($meetings as $meeting) update_post_meta($meeting['id'], 'region', intval($_POST['region']));
+	if ($old_meeting->region != $_POST['region']) {
+		$meetings = tsml_get_meetings(array('location_id' => $location_id));
+		if (empty($_POST['region'])) {
+			delete_post_meta($location_id, 'region');
+			foreach ($meetings as $meeting) delete_post_meta($location_id, 'region');
+		} else {
+			update_post_meta($location_id, 'region', intval($_POST['region']));
+			foreach ($meetings as $meeting) update_post_meta($meeting['id'], 'region', intval($_POST['region']));
+		}
+	}
 
 	//set parent on this post (and post status?) without re-triggering the save_posts hook
-	$wpdb->get_var($wpdb->prepare('UPDATE ' . $wpdb->posts . ' SET post_parent = %d, post_status = %s WHERE ID = %d', $location_id, sanitize_text_field($_POST['post_status']), $post->ID));
+	if (($old_meeting->post_parent != $location_id) || ($old_meeting->post_status != $_POST['post_status'])) {
+		$changes[] = 'post_parent and/or post_status';
+		$wpdb->get_var($wpdb->prepare('UPDATE ' . $wpdb->posts . ' SET post_parent = %d, post_status = %s WHERE ID = %d', $location_id, sanitize_text_field($_POST['post_status']), $post->ID));
+	}
 
 	//deleted orphaned locations
 	tsml_delete_orphaned_locations();
 	
 	//save group information (set this value or get caught in a loop)
 	$_POST['post_type'] = TSML_TYPE_GROUPS;
-	
+	$_POST['group'] = sanitize_text_field($_POST['group']);
+	$_POST['group_notes'] = sanitize_text_area($_POST['group_notes']);
+
 	if (empty($_POST['group'])) {
-		delete_post_meta($post->ID, 'group_id');
-		if (!empty($_POST['apply_group_to_location'])) {
-			foreach ($meetings as $meeting) delete_post_meta($meeting['id'], 'group_id'); 	
+		if (!empty($old_meeting->group)) {
+			$changes[] = 'removing group';
+			delete_post_meta($post->ID, 'group_id');
+			if (!empty($_POST['apply_group_to_location'])) {
+				foreach ($meetings as $meeting) delete_post_meta($meeting['id'], 'group_id'); 	
+			}
 		}
 	} else {
-		if ($group_id = $wpdb->get_var($wpdb->prepare('SELECT id FROM ' . $wpdb->posts . ' WHERE post_type = "%s" AND post_title = "%s" ORDER BY id', TSML_TYPE_GROUPS, sanitize_text_field(stripslashes($_POST['group']))))) {
-			wp_update_post(array(
-				'ID'			=> $group_id,
-				'post_title'	=> sanitize_text_field($_POST['group']),
-				'post_content'  => sanitize_text_field($_POST['group_notes']),
-			));
+		if ($groups = $wpdb->get_results($wpdb->prepare('SELECT ID, post_title, post_content FROM ' . $wpdb->posts . ' WHERE post_type = "%s" AND post_title = "%s" ORDER BY id', TSML_TYPE_GROUPS, stripslashes($_POST['group'])))) {
+			$group_id = $groups[0]->ID;
+			if ($groups[0]->post_title != $_POST['group'] || $groups[0]->post_content != $_POST['group_notes']) {
+				$changes[] = 'updating group';
+				wp_update_post(array(
+					'ID'			=> $group_id,
+					'post_title'	=> $_POST['group'],
+					'post_content'  => $_POST['group_notes'],
+				));
+			}
 		} else {
+			$changes[] = 'creating group';
 			$group_id = wp_insert_post(array(
 			  	'post_type'		=> TSML_TYPE_GROUPS,
 			  	'post_status'	=> 'publish',
-				'post_title'	=> sanitize_text_field($_POST['group']),
-				'post_content'  => sanitize_text_field($_POST['group_notes']),
+				'post_title'	=> $_POST['group'],
+				'post_content'  => $_POST['group_notes'],
 			));
 		}
 	
 		//save to meetings(s)
-		if (empty($_POST['apply_group_to_location'])) {
-			update_post_meta($post->ID, 'group_id', $group_id);
-		} else {
-			foreach ($meetings as $meeting) update_post_meta($meeting['id'], 'group_id', $group_id); 	
+		if ($old_meeting->group_id != $group_id) {
+			$changes[] = 'group_id';
+			if (empty($_POST['apply_group_to_location'])) {
+				update_post_meta($post->ID, 'group_id', $group_id);
+			} else {
+				foreach ($meetings as $meeting) update_post_meta($meeting['id'], 'group_id', $group_id); 	
+			}
 		}
 
 		//contact info
 		for ($i = 1; $i <= GROUP_CONTACT_COUNT; $i++) {
 			foreach (array('name', 'email', 'phone') as $field) {
-				if (empty($_POST['contact_' . $i . '_' . $field])) {
-					delete_post_meta($group_id, 'contact_' . $i . '_' . $field); 
-				} else {
-					update_post_meta($group_id, 'contact_' . $i . '_' . $field, sanitize_text_field($_POST['contact_' . $i . '_' . $field]));
+				$key = 'contact_' . $i . '_' . $field;
+				$_POST[$key] = sanitize_text_field($_POST[$key]);
+				if ($old_meeting->{$key} != $_POST[$key]) {
+					$changes[] = $key;
+					if (empty($_POST[$key])) {
+						delete_post_meta($group_id, $key); 
+					} else {
+						update_post_meta($group_id, $key, $_POST[$key]);
+					}
 				}
 			}
 		}
 		
 		//last contact
-		if (!empty($_POST['last_contact']) && ($last_contact = strtotime(sanitize_text_field($_POST['last_contact'])))) {
-			update_post_meta($group_id, 'last_contact', date('Y-m-d', $last_contact));
-		} else {
-			delete_post_meta($group_id, 'last_contact');
+		if (!empty($_POST['last_contact'])) $_POST['last_contact'] = date('Y-m-d', strtotime(sanitize_text_field($_POST['last_contact'])));
+		if ($old_meeting->last_contact != $_POST['last_contact']) {
+			$changes[] = 'last_contact';
+			if (!empty($_POST['last_contact'])) {
+				update_post_meta($group_id, 'last_contact', $_POST['last_contact']);
+			} else {
+				delete_post_meta($group_id, 'last_contact');
+			}
 		}
-		
 	}
 
 	//delete orphaned groups

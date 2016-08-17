@@ -4,11 +4,15 @@ jQuery(function($){
 	$('select#day').change(function(){
 		var val = $(this).val();
 		var $time = $('input#time');
+		var $end_time = $('input#end_time');
 		if (val) {
-			$('input#time').removeAttr('disabled');
+			$time.removeAttr('disabled');
+			$end_time.removeAttr('disabled');
 			if (!$time.val() && $time.attr('data-value')) $time.val($time.attr('data-value'));
+			if (!$end_time.val() && $end_time.attr('data-value')) $end_time.val($end_time.attr('data-value'));
 		} else {
 			$time.attr('data-value', $time.val()).val('').attr('disabled', 'disabled');
+			$end_time.attr('data-value', $end_time.val()).val('').attr('disabled', 'disabled');
 		}
 	});
 	
