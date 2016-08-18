@@ -46,9 +46,13 @@ $meetings	= tsml_get_meetings(compact('search', 'day', 'time', 'region', 'type')
 //dd($meetings);
 
 class Walker_Regions_Dropdown extends Walker_Category {
-	function start_el(&$output, $category, $depth = 0, $args = array(), $id = 0) {
-		//die('args was ' . var_dump($args));
-		$output .= '<li' . ($args['value'] == esc_attr($category->term_id) ? ' class="active"' : '') . '><a href="#" data-id="' . esc_attr($category->term_id) . '">' . esc_attr($category->name) . '</a>';
+	function start_el(&$output, $category, $depth=0, $args=array(), $id=0) {
+		//dd($args);
+		$classes = array();
+		if ($args['value'] == esc_attr($category->term_id)) $classes[] = 'active';
+		$classes = count($classes) ? ' class="' . implode(' ', $classes) . '"' : '';
+		$output .= '<li' . $classes . '><a href="#" data-id="' . esc_attr($category->term_id) . '">' . esc_attr($category->name) . '</a>';
+		if ($args['has_children']) $output .= '<div class="expand"></div>';
 	}
 	function end_el(&$output, $item, $depth=0, $args=array()) {
 		$output .= '</li>';

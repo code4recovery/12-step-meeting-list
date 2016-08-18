@@ -466,7 +466,6 @@ function tsml_get_meetings($arguments=array()) {
 	
 	# If searching, three extra queries
 	$post_ids = array();
-	$arguments['search'] = empty($arguments['search']) ? null : sanitize_text_field($arguments['search']);
 	if (!empty($arguments['search'])) {
 		$post_ids = get_posts(array(
 			'post_type'			=> TSML_TYPE_MEETINGS,
@@ -711,7 +710,6 @@ function tsml_get_meeting() {
 	//sort types alphabetically
 	foreach ($meeting->types as &$type) $type = $tsml_types[$tsml_program][trim($type)];
 	sort($meeting->types);
-	
 	return $meeting;
 }
 

@@ -96,7 +96,31 @@ input:focus, button:focus {
 		}
 		ul { 
 			min-width: 100%; 
+			max-width: 100%;
+			li {
+				position: relative;
+				& > a {
+					display: block;
+					height: 30px;
+					line-height: 24px;
+				}
+				div.expand {
+					position: absolute;
+					cursor: pointer;
+					top: 0;
+					right: 0;
+					width: 40px;
+					height: 30px;
+					background: url(../img/ionicons-plus.svg) no-repeat center center ;
+					background-size: 24px 24px;
+					box-sizing: content-box;
+					&.expanded {
+						background-image: url(../img/ionicons-minus.svg);
+					}
+				}
+			}
 			&.children {
+				display: none;
 				padding: 0;
 				list-style-type: none;
 				li {
@@ -273,7 +297,15 @@ body.tsml_fullscreen {
 			margin-bottom: 0;
 			ul.dropdown-menu {
 				max-height: 310px;
+				max-width: none;
 				overflow: auto;
+				li {
+					& > a, div.expand {
+						line-height: 18px;
+						height: 24px;
+						background-size: 21px 21px;
+					}
+				}
 			}
 		}
 		.results table {

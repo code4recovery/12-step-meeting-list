@@ -50,7 +50,7 @@ jQuery(function($){
 		//prepare data for ajax
 		var data = { 
 			action: 'meetings',
-			search: $('#search input[name=query]').val().trim(),
+			search: $('#search input[name=query]').val().replace(/[";:,.\/?\\-]/g, '').trim(),
 			day: 	$('#day li.active a').attr('data-id'),
 			time:   $('#time li.active a').attr('data-id'),
 			region: $('#region li.active a').attr('data-id'),
@@ -228,10 +228,17 @@ jQuery(function($){
 		$('#meetings .results tbody').mark($search_field.val());
 	}
 
+	$('#meetings .controls').on('click', 'div.expand', function(e){
+		e.preventDefault();
+		e.stopPropagation();
+		$(this).next('ul.children').slideToggle();
+		$(this).toggleClass('expanded');
+	});
+
 	//capture dropdown change
 	$('#meetings .controls').on('click', '.dropdown-menu a', function(e){
 		e.preventDefault();
-
+		
 		//day only one selected
 		if ($(this).closest('.dropdown').attr('id') == 'day') {
 			$('#day li').removeClass('active');

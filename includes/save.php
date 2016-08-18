@@ -126,7 +126,7 @@ function tsml_save_post(){
 	}
 
 	//update address & info on location
-	foreach (array('formatted_address', 'city', 'state', 'postal_code', 'country') as $field) {
+	foreach (array('formatted_address', 'address', 'city', 'state', 'postal_code', 'country') as $field) {
 		$_POST[$field] = sanitize_text_field($_POST[$field]);
 		if ($old_meeting->{$field} != $_POST[$field]) {
 			$changes[] = $field;

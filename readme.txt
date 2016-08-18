@@ -3,7 +3,7 @@ Contributors: meetingguide, aasanjose
 Tags: meetings, aa, al-anon, na, 12-step, locations, groups
 Requires at least: 3.2
 Tested up to: 4.6
-Stable tag: 2.4.6
+Stable tag: 2.4.7
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -107,6 +107,12 @@ probably information that better belongs in the meeting notes.
 1. Don't add a type for the default, eg 'Hour Long Meeting' or 'Non-Smoking.' If you do that, then you
 have to be careful about tagging every single meeting in order to make the data complete.
 
+= I don't like the new expandable regions dropdown menu! How do I remove it? =
+No problem, just add this CSS to your theme:
+
+	#meetings .controls ul.dropdown-menu div.expand { display: none; }
+	#meetings .controls ul.dropdown-menu ul.children { display: block; }
+
 = The dropdowns aren't opening! =
 Most likely, this is because bootstrap is being included twice. You should add the following to your theme 
 so that the TSML's version is removed.
@@ -171,6 +177,11 @@ and then drop some or all of these tags in your PHP:
 1. Edit location
 
 == Changelog ==
+
+= 2.4.7 
+* New expandable regions menu (if you don't like it, see FAQ for how to remove)
+* Stripping punctuation from search, eg. St. James should now match St James
+* Address-saving bug fix
 
 = 2.4.6 =
 * Saving posts is now more efficient: fewer writes to the database, fewer custom fields

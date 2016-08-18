@@ -22,7 +22,7 @@ $meeting = tsml_get_meeting();
 						<dt><?php _e('Time', '12-step-meeting-list')?></dt>
 						<dd>
 							<?php echo tsml_format_day_and_time($meeting->day, $meeting->time)?>
-							<?php if ($meeting->end_time) echo _e(' to ', '12-step-meeting-list') . tsml_format_time($meeting->end_time)?>
+							<?php if (!empty($meeting->end_time)) echo _e(' to ', '12-step-meeting-list') . tsml_format_time($meeting->end_time)?>
 						</dd>
 
 						<dt><?php _e('Location', '12-step-meeting-list')?></dt>
