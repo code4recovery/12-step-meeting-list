@@ -106,14 +106,14 @@ $meeting = tsml_get_meeting();
 								panControl: false,
 								mapTypeControl: false,
 								zoomControlOptions: { style: google.maps.ZoomControlStyle.SMALL },
-								center: new google.maps.LatLng(<?php echo $meeting->latitude + .0025 ?>,<?php echo $meeting->longitude?>),
+								center: new google.maps.LatLng(<?php echo $meeting->latitude + .0025 . ',' . $meeting->longitude?>),
 								mapTypeId: google.maps.MapTypeId.ROADMAP
 							});
 
 							var contentString = '<div class="infowindow">'+
 								'<h3><?php echo tsml_link(get_permalink($meeting->post_parent), $meeting->location, 'meetings')?></h3>'+
 								'<p><?php esc_attr_e($meeting->address)?><br><?php esc_attr_e($meeting->city)?>, <?php echo $meeting->state?> <?php echo $meeting->postal_code?></p>'+
-								'<p><a class="btn btn-default" href="http://maps.apple.com/?q=<?php echo urlencode($meeting->location)?>&ll=<?php echo $meeting->latitude?>,<?php echo $meeting->longitude?>&z=16" target="_blank"><?php _e('Directions', '12-step-meeting-list')?></a></p>' +
+								'<p><a class="btn btn-default" href="http://maps.apple.com/?q=<?php echo $meeting->latitude . ',' . $meeting->longitude?>&z=16" target="_blank"><?php _e('Directions', '12-step-meeting-list')?></a></p>' +
 								'</div>';
 
 							var infowindow = new google.maps.InfoWindow({

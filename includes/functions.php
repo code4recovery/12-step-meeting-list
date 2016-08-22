@@ -436,26 +436,26 @@ function tsml_get_meetings($arguments=array()) {
 		if (empty($tsml_custom['timezone'][0])) $tsml_custom['timezone'][0] = get_option('timezone_string');
 		
 		//get region/subregion
-		if (array_key_exists($tsml_custom['region'][0], $regions_with_parents)) {
-			$region = $tsml_regions[$regions_with_parents[$tsml_custom['region'][0]]];
-			$sub_region = $tsml_regions[$tsml_custom['region'][0]];
+		if (array_key_exists(@$tsml_custom['region'][0], $regions_with_parents)) {
+			$region = $tsml_regions[$regions_with_parents[@$tsml_custom['region'][0]]];
+			$sub_region = $tsml_regions[@$tsml_custom['region'][0]];
 		} else {
-			$region = !empty($tsml_regions[$tsml_custom['region'][0]]) ? $tsml_regions[$tsml_custom['region'][0]] : '';
+			$region = !empty($tsml_regions[@$tsml_custom['region'][0]]) ? $tsml_regions[@$tsml_custom['region'][0]] : '';
 			$sub_region = '';
 		}
 		
 		$locations[$post->ID] = array(
-			'address'			=> $tsml_custom['address'][0],
-			'city'				=> $tsml_custom['city'][0],
-			'state'				=> $tsml_custom['state'][0],
-			'postal_code'		=> isset($tsml_custom['postal_code'][0]) ? $tsml_custom['postal_code'][0] : null,
-			'country'			=> isset($tsml_custom['country'][0]) ? $tsml_custom['country'][0] : null,
-			'latitude'			=> $tsml_custom['latitude'][0],
-			'longitude'			=> $tsml_custom['longitude'][0],
-			'region_id'			=> $tsml_custom['region'][0],
+			'address'			=> @$tsml_custom['address'][0],
+			'city'				=> @$tsml_custom['city'][0],
+			'state'				=> @$tsml_custom['state'][0],
+			'postal_code'		=> @$tsml_custom['postal_code'][0],
+			'country'			=> @$tsml_custom['country'][0],
+			'latitude'			=> @$tsml_custom['latitude'][0],
+			'longitude'			=> @$tsml_custom['longitude'][0],
+			'region_id'			=> @$tsml_custom['region'][0],
 			'region'			=> $region,
 			'sub_region'		=> $sub_region,
-			'timezone'			=> $tsml_custom['timezone'][0],
+			'timezone'			=> @$tsml_custom['timezone'][0],
 			'location'			=> $post->post_title,
 			'location_url'		=> get_permalink($post->ID),
 			'location_slug'		=> $post->post_name,
@@ -999,10 +999,10 @@ function tsml_import($meetings, $delete=false) {
 		
 		//add region to taxonomy if it doesn't exist yet
 		if (!empty($meeting['region'])) {
-			if ($term = term_exists($meeting['region'], 'region')) {
+			if ($term = term_exists($meeting['region'], 'region', 0)) {
 				$meeting['region'] = $term['term_id'];
 			} else {
-				$term = wp_insert_term($meeting['region'], 'region');
+				$term = wp_insert_term($meeting['region'], 'region', 0);
 				$meeting['region'] = $term['term_id'];
 			}
 

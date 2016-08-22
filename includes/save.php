@@ -53,8 +53,8 @@ function tsml_save_post(){
 	}
 		
 	//day could be null for appointment meeting
-	if (strlen($_POST['day'])) {
-		if ($old_meeting->day != intval($_POST['day'])) {
+	if (in_array($_POST['day'], array('0', '1', '2', '3', '4', '5', '6', '7'))) {
+		if (!isset($old_meeting->day) || $old_meeting->day != intval($_POST['day'])) {
 			$changes[] = 'day';
 			update_post_meta($post->ID, 'day', intval($_POST['day']));
 		}
@@ -80,7 +80,7 @@ function tsml_save_post(){
 		}
 	} else {
 		//appointment meeting
-		if (!empty($old_meeting->day)) {
+		if (!empty($old_meeting->day) || $old_meeting->day == '0') {
 			$changes[] = 'day';
 			delete_post_meta($post->ID, 'day');
 		}
@@ -105,7 +105,14 @@ function tsml_save_post(){
 	$_POST['location_notes'] = sanitize_text_area($_POST['location_notes']);
 	
 	//see if address is already in the database
-	if ($locations = get_posts('post_type=' . TSML_TYPE_LOCATIONS . '&numberposts=1&orderby=id&order=ASC&meta_key=formatted_address&meta_value=' . sanitize_text_field($_POST['formatted_address']))) {
+	if ($locations = get_posts(array(
+		'post_type' => TSML_TYPE_LOCATIONS,
+		'numberposts' => 1,
+		'orderby' => 'id',
+		'order' => 'ASC',
+		'meta_key' => 'formatted_address',
+		'meta_value' => sanitize_text_field($_POST['formatted_address']),
+	))) {
 		$location_id = $locations[0]->ID;
 		if ($locations[0]->post_title != $_POST['location'] || $locations[0]->post_content != $_POST['location_notes']) {
 			$changes[] = 'updating location';

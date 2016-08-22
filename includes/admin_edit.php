@@ -175,11 +175,11 @@ function tsml_admin_init() {
 		</div>
 		<div class="meta_form_row">
 			<label for="formatted_address"><?php _e('Address', '12-step-meeting-list')?></label>
-			<input type="text" name="formatted_address" id="formatted_address" value="<?php echo @$location_custom['formatted_address'][0]?>">
-			<input type="hidden" name="address" id="address" value="<?php echo @$location_custom['address'][0]?>">
-			<input type="hidden" name="city" id="city" value="<?php echo @$location_custom['city'][0]?>">
-			<input type="hidden" name="state" id="state" value="<?php echo @$location_custom['state'][0]?>">
-			<input type="hidden" name="postal_code" id="postal_code" value="<?php echo @$location_custom['postal_code'][0]?>">
+			<input type="text" name="formatted_address" id="formatted_address" value="<?php echo htmlentities(@$location_custom['formatted_address'][0], ENT_QUOTES)?>">
+			<input type="hidden" name="address" id="address" value="<?php echo htmlentities(@$location_custom['address'][0], ENT_QUOTES)?>">
+			<input type="hidden" name="city" id="city" value="<?php echo htmlentities(@$location_custom['city'][0], ENT_QUOTES)?>">
+			<input type="hidden" name="state" id="state" value="<?php echo htmlentities(@$location_custom['state'][0], ENT_QUOTES)?>">
+			<input type="hidden" name="postal_code" id="postal_code" value="<?php echo htmlentities(@$location_custom['postal_code'][0], ENT_QUOTES)?>">
 			<input type="hidden" name="country" id="country" value="<?php echo @$location_custom['country'][0]?>">
 			<input type="hidden" name="latitude" id="latitude" value="<?php echo @$location_custom['latitude'][0]?>">
 			<input type="hidden" name="longitude" id="longitude" value="<?php echo @$location_custom['longitude'][0]?>">
