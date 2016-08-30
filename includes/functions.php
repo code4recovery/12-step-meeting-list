@@ -211,8 +211,8 @@ function tsml_format_name($name, $types=array()) {
 
 //function: takes 18:30 and returns 6:30 pm (depending on your settings)
 //used:		tsml_get_meetings(), single-meetings.php, admin_lists.php
-function tsml_format_time($string) {
-	if (empty($string)) return __('Appointment', '12-step-meeting-list');
+function tsml_format_time($string, $empty='Appointment') {
+	if (empty($string)) return empty($empty) ? '' : __($empty, '12-step-meeting-list');
 	if ($string == '12:00') return __('Noon', '12-step-meeting-list');
 	if ($string == '23:59' || $string == '00:00') return __('Midnight', '12-step-meeting-list');
 	$date = strtotime($string);
@@ -852,6 +852,14 @@ function tsml_regions_api() {
 	wp_send_json($output);
 };*/
 
+//convert a string to utf8 if it needs it
+//used by tsml_import()
+function tsml_format_utf8(&$item, $key) {
+	if (!mb_detect_encoding($item, 'utf-8', true)) {
+		$item = utf8_encode($item);
+	}
+}
+
 //sanitize and import meeting data
 //used by admin_import.php
 function tsml_import($meetings, $delete=false) {
@@ -863,11 +871,7 @@ function tsml_import($meetings, $delete=false) {
 	}
 	
 	//convert the array to UTF-8
-	array_walk_recursive($meetings, function(&$item, $key) {
-		if (!mb_detect_encoding($item, 'utf-8', true)) {
-			$item = utf8_encode($item);
-		}
-	});
+	array_walk_recursive($meetings, 'tsml_format_utf8');
 	
 	//uppercasing for value matching later
 	$upper_types = array_map('strtoupper', $tsml_types[$tsml_program]);

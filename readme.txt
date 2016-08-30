@@ -3,7 +3,7 @@ Contributors: meetingguide, aasanjose
 Tags: meetings, aa, al-anon, na, 12-step, locations, groups
 Requires at least: 3.2
 Tested up to: 4.6
-Stable tag: 2.4.9
+Stable tag: 2.5
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -31,7 +31,7 @@ It was originally designed to maintain a list of AA meetings in Santa Clara Coun
 * [Mesa, AZ](http://aamesaaz.org/meetings/)
 * [Minneapolis, MN](http://aaminneapolis.org/meetings/)
 * [New Orleans, LA](http://www.aaneworleans.org/meetings/)
-* [New York City, NY](http://meetings.nyintergroup.org/)
+* [New York, NY](http://meetings.nyintergroup.org/)
 * [Northern Minnesota](http://www.area35.org/meetings/)
 * [Oahu, HI](http://oahucentraloffice.com/meetings/)
 * [Orlando, FL](http://cflintergroup.org/meetings/)
@@ -178,6 +178,9 @@ and then drop some or all of these tags in your PHP:
 1. Edit location
 
 == Changelog ==
+
+= 2.5 =
+* PHP < 5.3 compatibility per Oahu
 
 = 2.4.9 =
 * Fixing import bug when a sub-region has the name name as a parent region

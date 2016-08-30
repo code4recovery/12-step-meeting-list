@@ -12,7 +12,7 @@ function tsml_insert_post_check($post) {
 //handle all the metadata, location
 add_action('save_post', 'tsml_save_post');
 function tsml_save_post(){
-	global $post, $tsml_nonce, $wpdb;
+	global $post, $tsml_nonce, $wpdb, $tsml_notification_addresses, $tsml_days, $tsml_regions;
 
 	//security
 	if (defined('DOING_AUTOSAVE') && DOING_AUTOSAVE) return;
@@ -25,6 +25,9 @@ function tsml_save_post(){
 	
 	//track changes to meeting
 	$changes = array();
+	
+	if ($old_meeting->post_title != sanitize_text_field($_POST['post_title'])) $changes[] = 'name';
+	if ($old_meeting->post_content != sanitize_text_area($_POST['post_content'])) $changes[] = 'notes';
 	
 	//cache region on meeting
 	if ($old_meeting->region != $_POST['region']) {
@@ -51,7 +54,7 @@ function tsml_save_post(){
 			update_post_meta($post->ID, 'types', array_map('esc_attr', $_POST['types']));
 		}
 	}
-		
+
 	//day could be null for appointment meeting
 	if (in_array($_POST['day'], array('0', '1', '2', '3', '4', '5', '6', '7'))) {
 		if (!isset($old_meeting->day) || $old_meeting->day != intval($_POST['day'])) {
@@ -60,12 +63,14 @@ function tsml_save_post(){
 		}
 
 		$_POST['time'] = sanitize_text_field($_POST['time']);
-		if ($old_meeting->time != $_POST['time']) {
+		if (strcmp($old_meeting->time, $_POST['time']) !== 0) {
 			$changes[] = 'time';
 			if (empty($_POST['time'])) {
 				delete_post_meta($post->ID, 'time');
 			} else {
+				//$time_temp = $old_meeting->time;
 				update_post_meta($post->ID, 'time', $_POST['time']);
+				//if ($time_temp != $old_meeting->time) die('what the fuck');
 			}
 		}
 
@@ -75,7 +80,7 @@ function tsml_save_post(){
 			if (empty($_POST['end_time'])) {
 				delete_post_meta($post->ID, 'end_time');
 			} else {
-				update_post_meta($post->ID, 'end_time', sanitize_text_field($_POST['end_time']));
+				update_post_meta($post->ID, 'end_time', $_POST['end_time']);
 			}
 		}
 	} else {
@@ -93,7 +98,7 @@ function tsml_save_post(){
 			delete_post_meta($post->ID, 'end_time');
 		}
 	}
-
+	
 	//exit here if the location is not ready
 	if (empty($_POST['formatted_address']) || empty($_POST['latitude']) || empty($_POST['longitude'])) {
 		return;
@@ -253,4 +258,62 @@ function tsml_save_post(){
 	
 	//update types in use
 	tsml_update_types_in_use();
+	
+	/* upcoming feature: send out email notifications
+	$user = wp_get_current_user();
+	$changes = array_diff($changes, array('latitude', 'longitude')); //don't notify for lat / lon changes
+	//$tsml_notification_addresses = array_diff($tsml_notification_addresses, array($user->user_email));
+	if (count($tsml_notification_addresses) && count($changes)) {
+		$email = '<p style="font:14px arial;margin:15px 0;">This is to notify you that ' . $user->display_name . ' updated a <a style="color:#6699cc" href="' . get_permalink($post->ID) . '">meeting</a> on the ' . get_bloginfo('name') . ' site.';
+		if (count($changes) == 1) {
+			$email .= ' There was one change.';
+		} elseif (count($changes) < 10) {
+			$numbers = array('one', 'two', 'three', 'four', 'five', 'six', 'seven', 'eight', 'nine');
+			$email .= ' There were ' . $numbers[count($changes) - 1] . ' changes.';
+			//$email .= ' (' . implode(', ', $changes) . ')';
+		} else {
+			$email .= ' There were ' . count($changes) . ' changes.';
+		}
+		$email .= '</p><table style="font:14px arial;width:100%;border-collapse:collapse;padding:0;">';
+		$fields = array('name', 'day', 'time', 'end_time', 'types', 'notes', 'location', 'address', 'city', 'state', 'postal_code', 'country', 'region', 'location_notes', 'group', 'group_notes', 'contact_1_name', 'contact_1_email', 'contact_1_phone', 'contact_2_name', 'contact_2_email', 'contact_2_phone', 'contact_3_name', 'contact_3_email', 'contact_3_phone');
+		foreach ($fields as $field) {
+			
+			if ($field == 'types') {
+				$old = implode(', ', $old_meeting->types);
+				$new = tsml_meeting_types($_POST['types']);
+			} elseif ($field == 'name') {
+				$old = $old_meeting->post_title;
+				$new = $_POST['post_title'];
+			} elseif ($field == 'notes') {
+				$old = $old_meeting->post_content;
+				$new = $_POST['post_content'];
+			} elseif ($field == 'day') {
+				$old = empty($old_meeting->day) ? __('Appointment', '12-step-meeting-list') : $tsml_days[$old_meeting->day];
+				$new = empty($_POST['day']) ? __('Appointment', '12-step-meeting-list') : $tsml_days[$_POST['day']];
+			} elseif ($field == 'time') {
+				$old = empty($old_meeting->time) ? '' : tsml_format_time($old_meeting->time, '');
+				$new = empty($_POST['time']) ? '' : tsml_format_time($_POST['time'], '');
+			} elseif ($field == 'end_time') {
+				$old = empty($old_meeting->end_time) ? '' : tsml_format_time($old_meeting->end_time, '');
+				$new = empty($_POST['end_time']) ? '' : tsml_format_time($_POST['end_time'], '');
+			} elseif ($field == 'region') {
+				$old = $tsml_regions[$old_meeting->{$field}];
+				$new = $tsml_regions[$_POST[$field]];
+			} else {
+				$old = $old_meeting->{$field};
+				$new = $_POST[$field];
+			}
+			
+			$field_name = ucwords(str_replace('_', ' ', $field));
+			
+			if (in_array($field, $changes)) {
+				$email .= '<tr style="border:1px solid #999;background-color:#fff;"><td style="width:150px;padding:5px">' . $field_name . '</td><td style="padding:5px"><strike style="color:#999">' . $old . '</strike> ' . $new . '</td></tr>';
+			} elseif (!empty($old)) {
+				$email .= '<tr style="border:1px solid #999;background-color:#eee;"><td style="width:150px;padding:5px">' . $field_name . '</td><td style="padding:5px">' . $old . '</td></tr>';
+			}
+		}
+		$email .= '</table>';
+		die($email);
+	} 
+	*/
 }

@@ -62,11 +62,38 @@ function tsml_admin_menu() {
 		tsml_alert('Feedback address removed.');
 	}
 			
+	/*add a notification email
+	if (!empty($_POST['tsml_add_notification_address']) && isset($_POST['tsml_nonce']) && wp_verify_nonce($_POST['tsml_nonce'], $tsml_nonce)) {
+		$email = sanitize_text_field($_POST['tsml_add_notification_address']);
+		if (!is_email($email)) tsml_alert('"' . $email . '" is not a valid email address. Please try again.', 'error');
+		$tsml_notification_addresses[] = $email;
+		$tsml_notification_addresses = array_unique($tsml_notification_addresses);
+		sort($tsml_notification_addresses);
+		update_option('tsml_notification_addresses', $tsml_notification_addresses);
+		tsml_alert('Notification address added.');
+	}
+	
+	//remove a notification email
+	if (!empty($_POST['tsml_remove_notification_address']) && isset($_POST['tsml_nonce']) && wp_verify_nonce($_POST['tsml_nonce'], $tsml_nonce)) {
+		$email = sanitize_text_field($_POST['tsml_remove_notification_address']);
+		if (($key = array_search($email, $tsml_notification_addresses)) !== false) {
+			unset($tsml_notification_addresses[$key]);
+		} else {
+			tsml_alert('"' . $email . '" was not found in the list of addresses. Please try again.', 'error');
+		}
+		if (empty($tsml_notification_addresses)) {
+			delete_option('tsml_notification_addresses');
+		} else {
+			update_option('tsml_notification_addresses', $tsml_notification_addresses);
+		}
+		tsml_alert('Notification address removed.');
+	}*/
+			
 	//import text file
 	add_submenu_page('edit.php?post_type=meetings', __('Import & Settings', '12-step-meeting-list'), 'Import &amp; Settings', 'manage_options', 'import', 'tmsl_import_page');
 
 	function tmsl_import_page() {
-		global $tsml_types, $tsml_programs, $tsml_program, $tsml_nonce, $tsml_days, $tsml_feedback_addresses;
+		global $tsml_types, $tsml_programs, $tsml_program, $tsml_nonce, $tsml_days, $tsml_feedback_addresses, $tsml_notification_addresses;
 
 	    ?>
 		<div class="wrap">
@@ -170,7 +197,7 @@ function tsml_admin_menu() {
 						</div>
 						<div class="postbox" id="get_feedback">
 							<div class="inside">
-								<h3>Want Feedback?</h3>
+								<h3>Want User Feedback?</h3>
 								<p>Enable a meeting info feedback form by adding email addresses below:</p>
 								<?php if (!empty($tsml_feedback_addresses)) {?>
 								<table>
@@ -190,12 +217,41 @@ function tsml_admin_menu() {
 								<?php }?>
 								<form method="post" action="edit.php?post_type=meetings&page=import">
 									<?php wp_nonce_field($tsml_nonce, 'tsml_nonce', false)?>
-									<input type="email" name="tsml_add_feedback_address" value="<?php if (!in_array(get_option('admin_email'), $tsml_feedback_addresses)) echo get_option('admin_email')?>" placeholder="john@example.org">
+									<input type="email" name="tsml_add_feedback_address" placeholder="email@example.org">
 									<input type="submit" class="button" value="Add">
 								</form>
 							</div>
 						</div>
-						<?php if ($tsml_program == 'aa') {?>
+						<?php /*
+						<div class="postbox" id="get_feedback">
+							<div class="inside">
+								<h3>Get Notified</h3>
+								<p>Receive notifications of meeting changes by adding email addresses below:</p>
+								<?php if (!empty($tsml_notification_addresses)) {?>
+								<table>
+									<?php foreach ($tsml_notification_addresses as $address) {?>
+									<tr>
+										<td><?php echo $address?></td>
+										<td>
+											<form method="post" action="edit.php?post_type=meetings&page=import">
+												<?php wp_nonce_field($tsml_nonce, 'tsml_nonce', false)?>
+												<input type="hidden" name="tsml_remove_notification_address" value="<?php echo $address?>">
+												<span class="dashicons dashicons-no-alt"></span>
+											</form>
+										</td>
+									</tr>
+									<?php }?>
+								</table>
+								<?php }?>
+								<form method="post" action="edit.php?post_type=meetings&page=import">
+									<?php wp_nonce_field($tsml_nonce, 'tsml_nonce', false)?>
+									<input type="email" name="tsml_add_notification_address" placeholder="email@example.org">
+									<input type="submit" class="button" value="Add">
+								</form>
+							</div>
+						</div>
+						<?php */
+						if ($tsml_program == 'aa') {?>
 						<div class="postbox" id="try_the_apps">
 							<div class="inside">
 								<h3><?php _e('Try the Apps!', '12-step-meeting-list')?></h3>

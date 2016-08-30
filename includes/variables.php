@@ -78,6 +78,8 @@ $tsml_google_overrides = array(
 
 $tsml_nonce = plugin_basename(__FILE__);
 
+$tsml_notification_addresses = get_option('tsml_notification_addresses', array());
+
 $tsml_program = get_option('tsml_program', 'aa');
 
 $tsml_programs = array(
