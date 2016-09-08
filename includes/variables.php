@@ -95,6 +95,8 @@ $tsml_programs = array(
 
 $tsml_regions = array();
 
+$tsml_timestamp = microtime(true);
+
 $tsml_types = array(
 	'aa' => array(
 		'A'		=> __('Atheist / Agnostic', '12-step-meeting-list'),

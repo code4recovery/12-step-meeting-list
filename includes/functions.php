@@ -865,6 +865,8 @@ function tsml_format_utf8(&$item, $key) {
 function tsml_import($meetings, $delete=false) {
 	global $tsml_types, $tsml_program, $tsml_days, $wpdb, $tsml_google_api_key, $tsml_google_overrides;
 
+	tsml_debug('started import');
+
 	//allow theme-defined function to reformat CSV ahead of import (for New Hampshire)
 	if (function_exists('tsml_import_reformat')) {
 		$meetings = tsml_import_reformat($meetings);
@@ -952,13 +954,13 @@ function tsml_import($meetings, $delete=false) {
 	
 		//sanitize time & day
 		if (empty($meeting['time']) || empty($meeting['day'])) {
-			$meeting['time'] = $meeting['end_time'] = $meeting['day'] = ''; //by appointment
+			$meeting['time'] = $meeting['end-time'] = $meeting['day'] = ''; //by appointment
 
 			//if meeting name missing, use location
 			if (empty($meeting['name'])) $meeting['name'] = $meeting['location'] . ' by Appointment';
 		} else {
 			$meeting['time'] = tsml_format_time_reverse($meeting['time']);
-			if (!empty($meeting['end_time'])) $meeting['end_time'] = tsml_format_time_reverse($meeting['end_time']);
+			if (!empty($meeting['end-time'])) $meeting['end-time'] = tsml_format_time_reverse($meeting['end-time']);
 			
 			if (!in_array(strtoupper($meeting['day']), $upper_days)) return tsml_alert('"' . $meeting['day'] . '" is an invalid value for day at row #' . $row_counter . '.', 'error');
 			$meeting['day'] = array_search(strtoupper($meeting['day']), $upper_days);
@@ -1085,7 +1087,7 @@ function tsml_import($meetings, $delete=false) {
 			'name' => $meeting['name'],
 			'day' => $meeting['day'],
 			'time' => $meeting['time'],
-			'end_time' => empty($meeting['end_time']) ? null : $meeting['end_time'],
+			'end_time' => empty($meeting['end-time']) ? null : $meeting['end-time'],
 			'types' => $meeting['types'],
 			'notes' => $meeting['notes'],
 			'post_modified' => $meeting['post_modified'],
@@ -1110,6 +1112,8 @@ function tsml_import($meetings, $delete=false) {
 			Please increase the limit in php.ini before retrying.', 'error');
 	}
 
+	tsml_debug('finished precompiling');
+		
 	//dd($addresses);
 	//wp_die('exiting before geocoding ' . count($addresses) . ' addresses.');
 		
@@ -1267,6 +1271,8 @@ function tsml_import($meetings, $delete=false) {
 			$info['meetings']
 		);
 	}
+
+	tsml_debug('completed address verification');
 	
 	update_option('tsml_addresses', $cached_addresses, 'no');
 	
@@ -1290,15 +1296,15 @@ function tsml_import($meetings, $delete=false) {
 		}
 		
 		//update location metadata
-		update_post_meta($location_id, 'formatted_address',	$formatted_address);
-		update_post_meta($location_id, 'address',			$location['address']);
-		update_post_meta($location_id, 'city',				$location['city']);
-		update_post_meta($location_id, 'state',				$location['state']);
-		update_post_meta($location_id, 'postal_code',		$location['postal_code']);
-		update_post_meta($location_id, 'country',			$location['country']);
-		update_post_meta($location_id, 'latitude',			$location['latitude']);
-		update_post_meta($location_id, 'longitude',			$location['longitude']);
-		update_post_meta($location_id, 'region',			$location['region']);
+		if (!empty($formatted_address))			add_post_meta($location_id, 'formatted_address',	$formatted_address);
+		if (!empty($location['address']))		add_post_meta($location_id, 'address',				$location['address']);
+		if (!empty($location['city']))			add_post_meta($location_id, 'city',					$location['city']);
+		if (!empty($location['state']))			add_post_meta($location_id, 'state',				$location['state']);
+		if (!empty($location['postal_code']))	add_post_meta($location_id, 'postal_code',			$location['postal_code']);
+		if (!empty($location['country']))		add_post_meta($location_id, 'country',				$location['country']);
+		if (!empty($location['latitude']))		add_post_meta($location_id, 'latitude',				$location['latitude']);
+		if (!empty($location['longitude'])) 	add_post_meta($location_id, 'longitude',			$location['longitude']);
+		if (!empty($location['region']))		add_post_meta($location_id, 'region',				$location['region']);
 
 		//save meetings to this location
 		foreach ($location['meetings'] as $meeting) {
@@ -1311,23 +1317,27 @@ function tsml_import($meetings, $delete=false) {
 				'post_modified'		=> $meeting['post_modified'],
 				'post_modified_gmt'	=> $meeting['post_modified_gmt'],
 			));
-			update_post_meta($meeting_id, 'day',		$meeting['day']);
-			update_post_meta($meeting_id, 'time',		$meeting['time']);
-			update_post_meta($meeting_id, 'end_time',	$meeting['end_time']);
-			update_post_meta($meeting_id, 'types',		$meeting['types']);
-			update_post_meta($meeting_id, 'region',		$location['region']); //double-entry just for searching
-			if (!empty($meeting['group'])) update_post_meta($meeting_id, 'group_id', $groups[$meeting['group']]);
+			if (!empty($meeting['time'])) {
+				add_post_meta($meeting_id, 'day',		$meeting['day']);
+				add_post_meta($meeting_id, 'time',		$meeting['time']);
+			}
+			if (!empty($meeting['end_time']))	add_post_meta($meeting_id, 'end_time',	$meeting['end_time']);
+			if (!empty($meeting['types']))		add_post_meta($meeting_id, 'types',		$meeting['types']);
+			if (!empty($location['region']))	add_post_meta($meeting_id, 'region',	$location['region']); //double-entry just for searching
+			if (!empty($meeting['group']))		add_post_meta($meeting_id, 'group_id',	$groups[$meeting['group']]);
 			wp_set_object_terms($meeting_id, intval($location['region']), 'region');
 			
 			$success++;
 		}
 	}
+
+	tsml_debug('saved data');
 	
 	//update types in use
 	tsml_update_types_in_use();
 
 	//remove post_modified thing added earlier
-	remove_filter('wp_insert_post_data', 'alter_post_modification_time', 99);
+	remove_filter('wp_insert_post_data', 'tsml_import_post_modified', 99);
 	
 	//success
 	if (count($failed_addresses)) {
@@ -1365,7 +1375,7 @@ function tsml_import_sanitize_field($value) {
 }
 
 //filter workaround for tsml_import()
-function tsml_import_post_modified($data , $postarr) {
+function tsml_import_post_modified($data, $postarr) {
 	if (!empty($postarr['post_modified'])) {
 		$data['post_modified'] = $postarr['post_modified'];
 	}
@@ -1429,7 +1439,7 @@ function tsml_alert($message, $type='updated') {
 	add_action('admin_notices', 'tsml_alert_messages');
 }
 
-//called by tsml_alert() above
+//called by tsml_alert()
 //run through alert stack and output them all
 function tsml_alert_messages() {
 	global $tsml_alerts;
@@ -1437,6 +1447,14 @@ function tsml_alert_messages() {
 		extract($alert);
 		echo '<div class="' . $type . '"><p>' . $message . '</p></div>';
 	}
+}
+
+//called by tsml_import() and in the future elsewhere
+function tsml_debug($string) {
+	global $tsml_timestamp;
+	if (!WP_DEBUG) return;
+	tsml_alert($string . ' in ' . round(microtime(true) - $tsml_timestamp, 2) . 's', 'notice notice-warning');
+	$tsml_timestamp = microtime(true);
 }
 
 //run any outstanding database upgrades, called in init.php

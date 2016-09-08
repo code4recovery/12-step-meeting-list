@@ -3,7 +3,7 @@ Contributors: meetingguide, aasanjose
 Tags: meetings, aa, al-anon, na, 12-step, locations, groups
 Requires at least: 3.2
 Tested up to: 4.6
-Stable tag: 2.5
+Stable tag: 2.5.1
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -22,7 +22,7 @@ It was originally designed to maintain a list of AA meetings in Santa Clara Coun
 * [Baton Rouge, LA](http://aabatonrouge.org/meetings/)
 * [Bowling Green, KY](http://bowlinggreenaa.org/?post_type=meetings)
 * [Corpus Christi, TX](http://www.cbiaa.org/meetings/)
-* [Davis, CA](http://district17cnia.org/meetings/)
+* [Davis, CA](http://aadavis.org/meetings/)
 * [East Bay, CA](http://eastbayaa.org/meetings)
 * [Elk Grove Village, IL](http://d15aa.org/d15aa.org/?post_type=meetings)
 * [Europe](http://alcoholics-anonymous.eu/index.php/meetings/)
@@ -32,7 +32,6 @@ It was originally designed to maintain a list of AA meetings in Santa Clara Coun
 * [Minneapolis, MN](http://aaminneapolis.org/meetings/)
 * [New Orleans, LA](http://www.aaneworleans.org/meetings/)
 * [New York, NY](http://meetings.nyintergroup.org/)
-* [Northern Minnesota](http://www.area35.org/meetings/)
 * [Oahu, HI](http://oahucentraloffice.com/meetings/)
 * [Orlando, FL](http://cflintergroup.org/meetings/)
 * [Philadelphia, PA](http://www.aasepia.org/meetings/)
@@ -178,6 +177,9 @@ and then drop some or all of these tags in your PHP:
 1. Edit location
 
 == Changelog ==
+
+= 2.5.1 =
+* End times importing correctly, import process sped up per Western Washington
 
 = 2.5 =
 * PHP < 5.3 compatibility per Oahu
