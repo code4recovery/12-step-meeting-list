@@ -15,28 +15,38 @@ Are you looking to get involved with helping develop the plugin? We welcome pull
 * Delete the plugin from your development WordPress site.
 * Clone the repository into your `wp-content/plugins` folder with the following commands (substituting your local path):
 
-    cd /var/www/wordpress-dev/wp-content/plugins
-    git clone https://github.com/YourGitHubUsername/plugin 12-step-meeting-list
-    cd 12-step-meeting-list
+```
+cd /var/www/wordpress-dev/wp-content/plugins
+git clone https://github.com/YourGitHubUsername/plugin 12-step-meeting-list
+cd 12-step-meeting-list
+```
 
 * Add an upstream feed, so you can pull in changes from the root repository:
 
-    git remote add upstream https://github.com/meeting-guide/plugin.git
+```
+git remote add upstream https://github.com/meeting-guide/plugin.git
+````
 
 * You should update your copy from the upstream repository frequently, especially before starting work on a new feature or issuing a pull request. Here is how:
 
-    git fetch --all
-    git checkout master
-    git merge upstream/master
+```
+git fetch --all
+git checkout master
+git merge upstream/master
+```
 
 * To create a new feature, first update your copy from the upstream repository, then from the master branch:
 
-    git checkout -b my-new-feature
+```
+git checkout -b my-new-feature
+```
 
 * Make all of your changes, get it working, test, test, test...
 
-    git commit -am"These is my wonderful new feature!"
-    git push origin my-new-feature
+```
+git commit -am"These is my wonderful new feature!"
+git push origin my-new-feature
+```
 
 * Last, issue a pull request (PR) to the root repository to be merged.
     * In your browser, go to: https://github.com/meeting-guide/plugin
