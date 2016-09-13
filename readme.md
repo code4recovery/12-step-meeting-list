@@ -5,8 +5,7 @@ This plugin is designed to help 12 step programs list their meetings and locatio
 
 The best way to install this plugin is via [its home page](https://wordpress.org/plugins/12-step-meeting-list/) in the WordPress Plugin Directory.
 
-Helping With Development
-========================
+## Helping With Development
 
 Are you looking to get involved with helping develop the plugin? We welcome pull requests! To get started:
 
@@ -17,14 +16,14 @@ Are you looking to get involved with helping develop the plugin? We welcome pull
 
 ```
 cd /var/www/wordpress-dev/wp-content/plugins
-git clone https://github.com/YourGitHubUsername/plugin 12-step-meeting-list
+git clone https://github.com/YourGitHubUsername/12-step-meeting-list
 cd 12-step-meeting-list
 ```
 
 * Add an upstream feed, so you can pull in changes from the root repository:
 
 ```
-git remote add upstream https://github.com/meeting-guide/plugin.git
+git remote add upstream https://github.com/meeting-guide/12-step-meeting-list.git
 ````
 
 * You should update your copy from the upstream repository frequently, especially before starting work on a new feature or issuing a pull request. Here is how:
@@ -49,7 +48,7 @@ git push origin my-new-feature
 ```
 
 * Last, issue a pull request (PR) to the root repository to be merged.
-    * In your browser, go to: https://github.com/meeting-guide/plugin
+    * In your browser, go to: https://github.com/meeting-guide/12-step-meeting-list
     * Click the "New pull request" button
     * Click "Compare across forks"
     * Under the drop down, make the "Head fork" your copy of the repository, and under the "compare" drop down, select "my-new-feature"
