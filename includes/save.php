@@ -3,7 +3,7 @@
 //catch meetings without locations and save them as a draft
 add_filter('wp_insert_post_data', 'tsml_insert_post_check', '99', 2);
 function tsml_insert_post_check($post) {
-	if (($post['post_type'] == TSML_TYPE_MEETINGS) && empty($post['post_parent']) && ($post['post_status'] == 'publish')) {
+	if (($post['post_type'] == 'tsml_meeting') && empty($post['post_parent']) && ($post['post_status'] == 'publish')) {
 		$post['post_status'] = 'draft';
 	}
 	return $post;
@@ -12,13 +12,13 @@ function tsml_insert_post_check($post) {
 //handle all the metadata, location
 add_action('save_post', 'tsml_save_post');
 function tsml_save_post(){
-	global $post, $tsml_nonce, $wpdb, $tsml_notification_addresses, $tsml_days, $tsml_regions;
+	global $post, $tsml_nonce, $wpdb, $tsml_notification_addresses, $tsml_days;
 
 	//security
 	if (defined('DOING_AUTOSAVE') && DOING_AUTOSAVE) return;
 	if (!isset($post->ID) || !current_user_can('edit_post', $post->ID)) return;
 	if (!isset($_POST['tsml_nonce']) || !wp_verify_nonce($_POST['tsml_nonce'], $tsml_nonce)) return;
-	if (!isset($_POST['post_type']) || ($_POST['post_type'] != TSML_TYPE_MEETINGS)) return;
+	if (!isset($_POST['post_type']) || ($_POST['post_type'] != 'tsml_meeting')) return;
 	
 	//get current meeting state to compare against
 	$old_meeting = tsml_get_meeting($post->ID);
@@ -28,23 +28,13 @@ function tsml_save_post(){
 	
 	if ($old_meeting->post_title != sanitize_text_field($_POST['post_title'])) $changes[] = 'name';
 	if ($old_meeting->post_content != sanitize_text_area($_POST['post_content'])) $changes[] = 'notes';
-	
-	//cache region on meeting
-	if ($old_meeting->region != $_POST['region']) {
-		$changes[] = 'group';
-		if (empty($_POST['region'])) {
-			delete_post_meta($post->ID, 'region');
-		} else {
-			update_post_meta($post->ID, 'region', intval($_POST['region']));
-		}
-	}
-	
-	//check types for errors first
+
+	//check types for errors
 	if (!is_array($_POST['types'])) $_POST['types'] = array(); //not sure if this actually happens
 	if (in_array('C', $_POST['types']) && in_array('O', $_POST['types'])) {
 		$_POST['types'] = array_diff($_POST['types'], array('C'));
 	}
-	
+
 	//compare types
 	if (implode(', ', $old_meeting->types) != tsml_meeting_types($_POST['types'])) {
 		$changes[] = 'types';
@@ -105,13 +95,13 @@ function tsml_save_post(){
 	}
 	
 	//save location information (set this value or get caught in a loop)
-	$_POST['post_type'] = TSML_TYPE_LOCATIONS;
+	$_POST['post_type'] = 'tsml_location';
 	$_POST['location'] = sanitize_text_field($_POST['location']);
 	$_POST['location_notes'] = sanitize_text_area($_POST['location_notes']);
 	
 	//see if address is already in the database
 	if ($locations = get_posts(array(
-		'post_type' => TSML_TYPE_LOCATIONS,
+		'post_type' => 'tsml_location',
 		'numberposts' => 1,
 		'orderby' => 'id',
 		'order' => 'ASC',
@@ -131,23 +121,17 @@ function tsml_save_post(){
 		$changes[] = 'creating new location';
 		$location_id = wp_insert_post(array(
 			'post_title'	=> $_POST['location'],
-		  	'post_type'		=> TSML_TYPE_LOCATIONS,
+		  	'post_type'		=> 'tsml_location',
 		  	'post_status'	=> 'publish',
 			'post_content'  => $_POST['location_notes'],
 		));
 	}
 
 	//update address & info on location
-	foreach (array('formatted_address', 'address', 'city', 'state', 'postal_code', 'country') as $field) {
-		$_POST[$field] = sanitize_text_field($_POST[$field]);
-		if ($old_meeting->{$field} != $_POST[$field]) {
-			$changes[] = $field;
-			if (empty($_POST[$field])) {
-				delete_post_meta($location_id, $field);
-			} else {
-				update_post_meta($location_id, $field, $_POST[$field]);
-			}
-		}
+	$_POST['formatted_address'] = sanitize_text_field($_POST['formatted_address']);
+	if ($old_meeting->formatted_address != $_POST['formatted_address']) {
+		$changes[] = $field;
+		update_post_meta($location_id, 'formatted_address', $_POST['formatted_address']);
 	}
 
 	foreach (array('latitude', 'longitude') as $field) {
@@ -157,18 +141,12 @@ function tsml_save_post(){
 		}
 	}
 
-	//update region caches for other meetings at this location
+	//update region
 	if ($old_meeting->region != $_POST['region']) {
-		$meetings = tsml_get_meetings(array('location_id' => $location_id));
-		if (empty($_POST['region'])) {
-			delete_post_meta($location_id, 'region');
-			foreach ($meetings as $meeting) delete_post_meta($location_id, 'region');
-		} else {
-			update_post_meta($location_id, 'region', intval($_POST['region']));
-			foreach ($meetings as $meeting) update_post_meta($meeting['id'], 'region', intval($_POST['region']));
-		}
+		$changes[] = 'region';
+		wp_set_object_terms($location_id, intval($_POST['region']), 'tsml_region');
 	}
-
+	
 	//set parent on this post (and post status?) without re-triggering the save_posts hook
 	if (($old_meeting->post_parent != $location_id) || ($old_meeting->post_status != $_POST['post_status'])) {
 		$changes[] = 'post_parent and/or post_status';
@@ -275,7 +253,7 @@ function tsml_save_post(){
 			$email .= ' There were ' . count($changes) . ' changes.';
 		}
 		$email .= '</p><table style="font:14px arial;width:100%;border-collapse:collapse;padding:0;">';
-		$fields = array('name', 'day', 'time', 'end_time', 'types', 'notes', 'location', 'address', 'city', 'state', 'postal_code', 'country', 'region', 'location_notes', 'group', 'group_notes', 'contact_1_name', 'contact_1_email', 'contact_1_phone', 'contact_2_name', 'contact_2_email', 'contact_2_phone', 'contact_3_name', 'contact_3_email', 'contact_3_phone');
+		$fields = array('name', 'day', 'time', 'end_time', 'types', 'notes', 'location', 'formatted_address', 'region', 'location_notes', 'group', 'group_notes', 'contact_1_name', 'contact_1_email', 'contact_1_phone', 'contact_2_name', 'contact_2_email', 'contact_2_phone', 'contact_3_name', 'contact_3_email', 'contact_3_phone');
 		foreach ($fields as $field) {
 			
 			if ($field == 'types') {
@@ -288,17 +266,14 @@ function tsml_save_post(){
 				$old = $old_meeting->post_content;
 				$new = $_POST['post_content'];
 			} elseif ($field == 'day') {
-				$old = empty($old_meeting->day) ? __('Appointment', '12-step-meeting-list') : $tsml_days[$old_meeting->day];
-				$new = empty($_POST['day']) ? __('Appointment', '12-step-meeting-list') : $tsml_days[$_POST['day']];
+				$old = empty($old_meeting->day) ? __('Appointment') : $tsml_days[$old_meeting->day];
+				$new = empty($_POST['day']) ? __('Appointment') : $tsml_days[$_POST['day']];
 			} elseif ($field == 'time') {
 				$old = empty($old_meeting->time) ? '' : tsml_format_time($old_meeting->time, '');
 				$new = empty($_POST['time']) ? '' : tsml_format_time($_POST['time'], '');
 			} elseif ($field == 'end_time') {
 				$old = empty($old_meeting->end_time) ? '' : tsml_format_time($old_meeting->end_time, '');
 				$new = empty($_POST['end_time']) ? '' : tsml_format_time($_POST['end_time'], '');
-			} elseif ($field == 'region') {
-				$old = $tsml_regions[$old_meeting->{$field}];
-				$new = $tsml_regions[$_POST[$field]];
 			} else {
 				$old = $old_meeting->{$field};
 				$new = $_POST[$field];

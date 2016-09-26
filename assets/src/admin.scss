@@ -2,7 +2,7 @@
 #group.postbox h2.ui-sortable-handle span span { color: #ccc; }
 
 //Import & Settings page
-body.meetings_page_import {
+body.tsml_meeting_page_import {
 	
 	//meeting types legend
 	#post-body-content {
@@ -91,7 +91,7 @@ body.meetings_page_import {
 		     input { width: 100%; }
 		}
 		.tt-hint { color: #999; }
-		.tt-dropdown-menu { display: none !important; }
+		.tt-menu { display: none !important; }
 	}
 	
 	&.checkbox {

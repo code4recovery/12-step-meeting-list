@@ -1,20 +1,12 @@
 <?php
 
-//when region modified, update post_modified for meetings in region
+//when a region is modified, update post_modified for meetings in that region
 
-function tsml_edit_category($region_id) {
-
-	$post_ids = get_posts(array(
-		'numberposts' => -1,
-		'meta_key' => 'region',
-		'meta_value' => $region_id,
-		'fields' => 'ids',
-		'post_type' => 'meetings',
-	));
-	
-	foreach ($post_ids as $post_id) {
-		wp_update_post(array('ID'=>$post_id));
+function tsml_edited_region($region_id) {
+	$meetings = tsml_get_meetings(array('region' => $region_id));
+	foreach ($meetings as $meeting) {
+		wp_update_post(array('ID' => $meeting['id']));
 	}
 }
 
-add_action('edited_region', 'tsml_edit_category');
+add_action('edited_region', 'tsml_edited_region');

@@ -93,6 +93,7 @@ input:focus, button:focus {
 		input, .btn {
 			height: 34px;
 			padding: 6px 12px;
+			margin: 0;
 		}
 		ul { 
 			min-width: 100%; 
@@ -456,6 +457,13 @@ body {
 				padding: 0 0 $margin;
 				max-width: none;
 			}
+		}
+	}
+	&.twentyten {
+		background: #f1f1f1;
+		&.post-type-archive-tsml_meeting {
+			#wrapper { box-sizing: content-box; }
+			#main { padding-top: 20px; }
 		}
 	}
 }

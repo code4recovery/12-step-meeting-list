@@ -3,7 +3,7 @@ Contributors: meetingguide, aasanjose
 Tags: meetings, aa, al-anon, na, 12-step, locations, groups
 Requires at least: 3.2
 Tested up to: 4.6
-Stable tag: 2.5.2
+Stable tag: 2.5.3
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -177,6 +177,16 @@ and then drop some or all of these tags in your PHP:
 1. Edit location
 
 == Changelog ==
+
+= 2.5.3 =
+* Change to the way addresses are handled and formatted (you may need to update your custom templates)
+* Removing all six hidden fields (address, city, state, postal_code, country from locations, region from meetings)
+* Refactored search should now be faster and require less memory
+* Addresses are now geocoded in your language
+* Fixing region bug noticed by Central Texas
+* Hyphens no longer interfering with search per Oakland
+* End time auto-suggested with editing a start time
+* Improved location name autocomplete on edit screen
 
 = 2.5.2 =
 * More notification information courtesy of SEPIA

@@ -131,11 +131,9 @@ jQuery(function($){
 					if (!locations[obj.location_id]) {
 						locations[obj.location_id] = {
 							name: obj.location,
-							address: obj.address,
+							formatted_address: obj.formatted_address,
 							latitude: obj.latitude,
 							longitude: obj.longitude,
-							city: obj.city,
-							state: obj.state,
 							url: obj.location_url,
 							meetings: []
 						};
@@ -157,7 +155,7 @@ jQuery(function($){
 						'<td class="time" data-sort="' + sort_time + '"><span>' + (data.day || !obj.day ? obj.time_formatted : days[obj.day] + '</span><span>' + obj.time_formatted) + '</span></td>' + 
 						'<td class="name" data-sort="' + obj.name + '-' + sort_time + '">' + formatLink(obj.url, obj.name, 'post_type') + '</td>' + 
 						'<td class="location" data-sort="' + obj.location + '-' + sort_time + '">' + obj.location + '</td>' + 
-						'<td class="address" data-sort="' + obj.address + '-' + sort_time + '">' + obj.address + '</td>' + 
+						'<td class="address" data-sort="' + obj.formatted_address + '-' + sort_time + '">' + formatAddress(obj.formatted_address, true) + '</td>' + 
 						'<td class="region" data-sort="' + (obj.sub_region || obj.region || '') + '-' + sort_time + '">' + (obj.sub_region || obj.region || '') + '</td>' + 
 						'<td class="types" data-sort="' + decodeMeetingTypes(obj.types) + '-' + sort_time + '">' + decodeMeetingTypes(obj.types) + '</td>' + 
 					'</tr>')
@@ -422,7 +420,6 @@ var days = [ 'Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', '
 
 var infowindow = new google.maps.InfoWindow();
 
-
 //load map, called from archive-meetings.php
 function loadMap(locations) {
 
@@ -441,7 +438,7 @@ function loadMap(locations) {
 
 			//create infowindow content
 			marker.content = '<div class="infowindow"><h3>' + formatLink(location.url, location.name, 'post_type') + '</h3>' +
-				'<address>' + location.address + '<br>' + location.city + (location.state ? ', ' + location.state : '') + '</address>';
+				'<address>' + formatAddress(location.formatted_address) + '</address>';
 				
 			var current_day = null;
 			for (var i = 0; i < location.meetings.length; i++) {
@@ -481,6 +478,18 @@ function loadMap(locations) {
 		//currently holds last position, not sure if that's good
 	}
 	
+}
+
+//format an address: replace commas with breaks
+function formatAddress(address, street_only) {
+	address = address.split(', ');
+	if (street_only) return address[0];
+	if (address[address.length-1] == 'USA') {
+		address.pop(); //don't show USA
+		var state_and_zip = address.pop();
+		address[address.length-1] += ', ' + state_and_zip;
+	}
+	return address.join('<br>');
 }
 
 //format a link to a meeting result page, preserving all but the excluded query string keys

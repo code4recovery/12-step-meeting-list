@@ -16,6 +16,16 @@ jQuery(function($){
 		}
 	});
 	
+	//auto-suggest end time
+	$('input#time').change(function(){
+		var parts = $(this).val().split(':');
+		var hours = parts[0] - 0;
+		hours = (hours == 23) ? 0 : hours + 1;
+		hours += '';
+		if (hours.length == 1) hours = '0' + hours;
+		$('input#end_time').val(hours + ':' + parts[1]);
+	});
+	
 	//types checkboxes: ensure not both open and closed
 	$('body.post-type-meetings form#post').on('change', 'input[name="types[]"]', function() {
 		if ($('body.post-type-meetings form#post input[name="types[]"][value="C"]').prop('checked') && 
@@ -38,7 +48,8 @@ jQuery(function($){
 		datumTokenizer: Bloodhound.tokenizers.obj.whitespace('value'),
 		queryTokenizer: Bloodhound.tokenizers.whitespace,
 		prefetch: {
-			url: myAjax.ajaxurl + '?action=location',
+			url: myAjax.ajaxurl + '?action=location_autocomplete',
+			cache: false
 		}
 	});
 	locations.initialize();
@@ -49,11 +60,6 @@ jQuery(function($){
 		$('input[name=formatted_address]').val(datum.formatted_address);
 		$('input[name=latitude]').val(datum.latitude);
 		$('input[name=longitude]').val(datum.longitude);
-		$('input[name=address]').val(datum.address);
-		$('input[name=city]').val(datum.city);
-		$('input[name=state]').val(datum.state);
-		$('input[name=postal_code]').val(datum.postal_code);
-		$('input[name=country]').val(datum.country);
 		$('select[name=region] option[value=' + datum.region + ']').prop('selected', true);
 		$('textarea[name=location_notes]').val(datum.notes);
 		setMap(datum.latitude, datum.longitude);
@@ -119,11 +125,6 @@ jQuery(function($){
 	$('input#formatted_address').blur(function(){
 
 		//setting new form
-		$('input#address').val('');
-		$('input#city').val('');
-		$('input#state').val('');
-		$('input#zip').val('');
-		$('input#country').val('');
 		$('input#latitude').val('');
 		$('input#longitude').val('');
 
@@ -143,13 +144,11 @@ jQuery(function($){
 			var google_overrides = jQuery.parseJSON(myAjax.google_overrides);
 			
 			//check if there is an override, because the Google Geocoding API is not always right
-			if (typeof google_overrides[data.results[0].formatted_address] == 'undefined') {
-				var address = parseAddressComponents(data.results[0].address_components);
-				address.latitude = data.results[0].geometry.location.lat;
-				address.longitude = data.results[0].geometry.location.lng;
-			} else {
-				var address = google_overrides[data.results[0].formatted_address];
-			}
+			var address = (typeof google_overrides[data.results[0].formatted_address] == 'undefined') ? {
+				formatted_address: data.results[0].formatted_address,
+				latitude: data.results[0].geometry.location.lat,
+				longitude: data.results[0].geometry.location.lng
+			} : address = google_overrides[data.results[0].formatted_address];
 			
 			//set lat + lng
 			$('input#latitude').val(address.latitude);
@@ -158,32 +157,30 @@ jQuery(function($){
 
 			//guess region if not set
 			var region_id = false;
-			if (!$('select#region option[selected]').size()) {
-				val = address.formatted_address;
+			if (!$('select#region option[selected]').length) {
+				console.log($('select#region option[selected]').length);
 				$('select#region option').each(function(){
 					var region_name = $(this).text().replace('&nbsp;', '').trim();
-					if (val.indexOf(region_name) != -1) region_id = $(this).attr('value');
+					if (address.formatted_address.indexOf(region_name) != -1) region_id = $(this).attr('value');
 				});
 			}
 			
 			//save address
-			$('input#address').val(address.address);
-			$('input#city').val(address.city);
-			$('input#state').val(address.state);
-			$('input#postal_code').val(address.postal_code);
-			$('input#country').val(address.country);
 			$('input#formatted_address').val(address.formatted_address);
 			
 			//check if location with same address is already in the system, populate form
 			jQuery.getJSON(myAjax.ajaxurl + '?action=address', { formatted_address: address.formatted_address }, function(data){
 				if (data) {
 					$('input[name=location]').val(data.location);
-					$('select[name=region] option').prop('selected', false);
-					$('select[name=region] option[value=' + data.region + ']').prop('selected', true);
+					if (data.region != $('select[name=region]').val()) {
+						$('select[name=region] option').prop('selected', false);
+						$('select[name=region] option[value=' + data.region + ']').prop('selected', true);
+					}
 					$('textarea[name=location_notes]').val(data.location_notes);
-				} else if (region_id) {
+				}
+				
+				if ((!data || !data.region) && !$('select#region option[selected]').length && region_id) {
 					//set to guessed region earlier
-					$('select[name=region] option').prop('selected', false);
 					$('select[name=region] option[value=' + region_id + ']').prop('selected', true);
 				}
 			});
@@ -210,68 +207,4 @@ jQuery(function($){
 		var marker = new google.maps.Marker({ position: myLatlng, map: map });
 	}
 	
-	//parse a google address components response into an array of useful values
-	function parseAddressComponents(components) {
-		var point_of_interest, neighborhood, address, city, state, postal_code, country;
-		var formatted = [];
-
-		//get address, city and state
-		for (var i = 0; i < components.length; i++) {
-			var c = components[i];
-			if (!c.types.length || c.types[0] == 'point_of_interest') {
-				//in case address is empty
-				point_of_interest = c.short_name;
-			} else if (c.types.indexOf('neighborhood') !== -1) {
-				neighborhood = c.short_name;
-			} else if (c.types.indexOf('street_number') !== -1) {
-				address = c.long_name;
-			} else if (c.types.indexOf('route') !== -1) {
-				//append street name
-				address = (address) ? address + ' ' + c.long_name : c.long_name;
-			} else if (c.types.indexOf('locality') !== -1) {
-				city = c.long_name;
-			} else if (c.types.indexOf('sublocality') !== -1) {
-				if (!city) city = c.long_name;
-			} else if (c.types.indexOf('administrative_area_level_3') !== -1) {
-				if (!city) city = c.long_name;
-			} else if (c.types.indexOf('administrative_area_level_1') !== -1) {
-				state = c.short_name;
-			} else if (c.types.indexOf('postal_code') !== -1) {
-				postal_code = c.short_name;
-			} else if (c.types.indexOf('country') !== -1) {
-				country = c.short_name;
-			}
-		}
-
-		if (!address && point_of_interest) address = point_of_interest;
-		
-		if (!address && neighborhood) address = neighborhood;
-		
-		if (address) formatted[formatted.length] = address;
-		
-		if (city) formatted[formatted.length] = city;
-		
-		//state and postal code should be part of the same unit if possible
-		if (state) {
-			if (address && postal_code) {
-				formatted[formatted.length] = state + ' ' + postal_code;
-			} else {
-				formatted[formatted.length] = state;
-			}
-		} else if (postal_code) {
-			formatted[formatted.length] = postal_code;
-		}
-		
-		if (country) formatted[formatted.length] = country;
-
-		return {
-			address: address,
-			city: city,
-			state: state,
-			postal_code: postal_code,
-			country: country,
-			formatted_address: formatted.join(', ')
-		}
-	
-	}
 });
