@@ -180,13 +180,16 @@ and then drop some or all of these tags in your PHP:
 
 = 2.5.3 =
 * Change to the way addresses are handled and formatted (you may need to update your custom templates)
-* Removing all six hidden fields (address, city, state, postal_code, country from locations, region from meetings)
+* Removing seven hidden fields (address, city, state, postal_code, country and region from locations, region from meetings)
+* Now using WordPress's built-in taxonomy system for regions
 * Refactored search should now be faster and require less memory
 * Addresses are now geocoded in your language
 * Fixing region bug noticed by Central Texas
 * Hyphens no longer interfering with search per Oakland
-* End time auto-suggested with editing a start time
+* End time auto-suggested when editing a start time
 * Improved location name autocomplete on edit screen
+* Fixes for twentyten theme per West Hawaii
+* Counts are now correct on Regions admin page (but they are of locations, rather than meetings)
 
 = 2.5.2 =
 * More notification information courtesy of SEPIA

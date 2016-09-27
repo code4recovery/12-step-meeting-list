@@ -1229,6 +1229,25 @@ function tsml_import_post_modified($data, $postarr) {
 	return $data;
 }
 
+//function: turn "string" into string
+//used:		tsml_import() inside array_map
+function tsml_import_sanitize_field($value) {
+	//preserve <br>s as line breaks if present, otherwise clean up
+	$value = preg_replace('/\<br(\s*)?\/?\>/i', PHP_EOL, $value);
+	$value = stripslashes($value);
+
+	//turn "string" into string
+	//$value = str_replace('""', '"', $value);
+	$value = trim(trim($value, '"'));
+	
+	//fix newlines
+	//$value = preg_split('/$\R?^/m', $value);
+	//$value = array_map('trim', $value);
+	//$value = trim(implode(PHP_EOL, $value));
+	
+	return $value;
+}
+
 //function: return an html link with current query string appended
 //used:		archive-meetings.php, single-locations.php, single-meetings.php
 function tsml_link($url, $string, $exclude='') {
@@ -1370,6 +1389,9 @@ function tsml_upgrades() {
 		$wpdb->query('UPDATE ' . $wpdb->posts . ' SET post_type = "tsml_location" WHERE post_type = "locations"');		
 		$wpdb->query('UPDATE ' . $wpdb->term_taxonomy . ' SET taxonomy = "tsml_region" WHERE taxonomy = "region"');
 		
+		//make ", US" results back in to ", USA" results
+		$wpdb->query('UPDATE ' . $wpdb->postmeta . ' SET meta_value = CONCAT(meta_value, "A") WHERE meta_key = "formatted_address" AND meta_value LIKE "%, US"');
+
 		//clear out any taxonomy that's in there currently
 		$wpdb->query('DELETE FROM ' . $wpdb->term_relationships . ' WHERE object_id IN (
 			SELECT ID FROM ' . $wpdb->posts . ' WHERE post_type IN ("tsml_meeting", "tsml_location")
@@ -1381,16 +1403,12 @@ function tsml_upgrades() {
 			wp_set_object_terms($location->post_id, intval($location->meta_value), 'tsml_region');
 		}
 
-		//make ", US" results back in to ", USA" results
-		$wpdb->get_results('UPDATE ' . $wpdb->postmeta . ' SET meta_value = CONCAT(meta_value, "A") WHERE meta_key = "formatted_address" AND meta_value LIKE "%, US"');
-
 		//clear out old fields we're not using from meetings and locations
 		$wpdb->query('DELETE FROM ' . $wpdb->postmeta . ' WHERE meta_key IN (
 			"address", "city", "state", "postal_code", "country", "region"
 		) AND post_id IN (
 			SELECT ID FROM ' . $wpdb->posts . ' WHERE post_type IN ("tsml_meeting", "tsml_location")
 		)');
-
 	}
 
 	flush_rewrite_rules();
