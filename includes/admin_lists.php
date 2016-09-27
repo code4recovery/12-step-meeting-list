@@ -1,7 +1,7 @@
 <?php
 
 # Custom columns for meetings
-add_filter('manage_edit-meetings_columns', 'tmsl_admin_meetings_columns');
+add_filter('manage_edit-tsml_meeting_columns', 'tmsl_admin_meetings_columns');
 function tmsl_admin_meetings_columns($defaults) {
     return array(
     	'cb'		=>'<input type="checkbox" />',
@@ -21,7 +21,7 @@ function tsml_delete_post($post_id) {
 }
 
 # Custom list values for meetings
-add_action('manage_meetings_posts_custom_column', 'tmsl_admin_meetings_custom_column', 10, 2);
+add_action('manage_tsml_meeting_posts_custom_column', 'tmsl_admin_meetings_custom_column', 10, 2);
 function tmsl_admin_meetings_custom_column($column_name, $post_ID) {
 	global $tsml_days;
 	if ($column_name == 'day') {
@@ -33,7 +33,7 @@ function tmsl_admin_meetings_custom_column($column_name, $post_ID) {
 }
 
 # Set custom meetings columns to be sortable
-add_filter('manage_edit-meetings_sortable_columns', 'tsml_admin_meetings_sortable_columns');
+add_filter('manage_edit-tsml_meeting_sortable_columns', 'tsml_admin_meetings_sortable_columns');
 function tsml_admin_meetings_sortable_columns($columns) {
 	$columns['day']		= 'day';
 	$columns['time']	= 'time';
