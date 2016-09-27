@@ -50,7 +50,7 @@ jQuery(function($){
 		//prepare data for ajax
 		var data = { 
 			action: 'meetings',
-			search: $('#search input[name=query]').val().replace(/[";:,.\/?\\-]/g, '').trim(),
+			search: $('#search input[name=query]').val().replace(/[";:,.\/?\\-]/g, ' ').trim(),
 			day: 	$('#day li.active a').attr('data-id'),
 			time:   $('#time li.active a').attr('data-id'),
 			region: $('#region li.active a').attr('data-id'),

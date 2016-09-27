@@ -548,7 +548,6 @@ function tsml_get_meetings($arguments=array()) {
 	# If searching, a few more queries
 	if (!empty($arguments['search'])) {
 		$search = sanitize_text_field($arguments['search']);
-		$search = str_replace('-', ' ', $search);
 		
 		//first search actual meetings
 		$post_ids = array_merge($post_ids, get_posts(array(

@@ -3,7 +3,7 @@ Contributors: meetingguide, aasanjose
 Tags: meetings, aa, al-anon, na, 12-step, locations, groups
 Requires at least: 3.2
 Tested up to: 4.6
-Stable tag: 2.5.3
+Stable tag: 2.5.4
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -44,6 +44,7 @@ It was originally designed to maintain a list of AA meetings in Santa Clara Coun
 * [Tri Valley, CA](http://trivalleyaa.org/meetings/)
 * [Virginia Beach, VA](http://www.tidewaterintergroup.org/meetings/)
 * [Walnut Creek, CA](http://contracostaaa.org/meetings)
+* [West Hawaii, HI](http://www.westhawaiiaa.org/meetings/)
 * [Western Slope, CA](http://westernsloped22.org/meetings/)
 * [Western Kentucky](http://wkintergroup.org/meetings/)
 
@@ -177,6 +178,10 @@ and then drop some or all of these tags in your PHP:
 1. Edit location
 
 == Changelog ==
+
+= 2.5.4 =
+* Javascript fix for East Bay
+* CSS tweaks for East Bay and other sites
 
 = 2.5.3 =
 * Change to the way addresses are handled and formatted (you may need to update your custom templates)
