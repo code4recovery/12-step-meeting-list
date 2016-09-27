@@ -122,21 +122,21 @@ function tsml_admin_menu() {
 								<h3><?php _e('Import Data')?></h3>
 								<p>You can import a CSV of meeting info using the form below. <a href="<?php echo plugin_dir_url(__FILE__) . '../template.csv'?>">Here is a spreadsheet</a> you can use as a template. Save it as a comma-delimited CSV before uploading it. The header row must kept in place.</p>
 								<ul class="ul-disc">
-									<li><strong><?php _e('Time')?></strong>, if present, should be in a standard date format such as 6:00 AM or 06:00. Non-standard or empty dates will be imported as 'by appointment.'</li>
-									<li><strong><?php _e('End Time')?></strong>, if present, should be in a standard date format such as 6:00 AM or 06:00.</li>
-									<li><strong><?php _e('Day')?></strong>, if present, should either Sunday, Monday, Tuesday, Wednesday, Thursday, Friday, or Saturday. Meetings that occur on multiple days should be listed separately. 'Daily' or 'Mondays' will not work. Non-standard days will be imported as 'by appointment.'</li>
-									<li><strong><?php _e('Name')?></strong> is the name of the meeting, and is optional, although it's valuable information for the user. If it's missing, a name will be created by combining the location, day, and time.</li>
-									<li><strong><?php _e('Location')?></strong> is the name of the location, and is optional. Generally it's the group or building name. If it's missing, the address will be used. In the event that there are multiple location names for the same address, the first location name will be used.</li>
- 									<li><strong><?php _e('Address')?></strong> is strongly encouraged and will be corrected by Google, so it may look different afterward. Ideally, every address for the same location should be exactly identical, and not contain extra information about the address, such as the building name or descriptors like 'around back.'</li>
+									<li><strong>Time</strong>, if present, should be in a standard date format such as 6:00 AM or 06:00. Non-standard or empty dates will be imported as 'by appointment.'</li>
+									<li><strong>End Time</strong>, if present, should be in a standard date format such as 6:00 AM or 06:00.</li>
+									<li><strong>Day</strong>, if present, should either Sunday, Monday, Tuesday, Wednesday, Thursday, Friday, or Saturday. Meetings that occur on multiple days should be listed separately. 'Daily' or 'Mondays' will not work. Non-standard days will be imported as 'by appointment.'</li>
+									<li><strong>Name</strong> is the name of the meeting, and is optional, although it's valuable information for the user. If it's missing, a name will be created by combining the location, day, and time.</li>
+									<li><strong>Location</strong> is the name of the location, and is optional. Generally it's the group or building name. If it's missing, the address will be used. In the event that there are multiple location names for the same address, the first location name will be used.</li>
+ 									<li><strong>Address</strong> is strongly encouraged and will be corrected by Google, so it may look different afterward. Ideally, every address for the same location should be exactly identical, and not contain extra information about the address, such as the building name or descriptors like 'around back.'</li>
 									<li>If Address is specified, then <strong>City</strong>, <strong>State</strong>, and <strong>Country</strong> are optional, but they might be useful if your addresses sound ambiguous to Google. If address is not specified, then these fields are required.</li>
-									<li><strong><?php _e('Notes')?></strong> are freeform notes that are specific to the meeting. For example, "last Saturday is birthday night."</li>
-									<li><strong><?php _e('Region')?></strong> is user-defined and can be anything. Often this is a small municipality or neighborhood. Since these go in a dropdown, ideally you would have 10 to 20 regions, although it's ok to be over or under.</li>
-									<li><strong><?php _e('Sub Region')?></strong> makes the Region hierarchical; in San Jose we have sub regions for East San Jose, West San Jose, etc. New York City might have Manhattan be a Region, and Greenwich Village be a Sub Region.</li>
-									<li><strong><?php _e('Location Notes')?></strong> are freeform notes that will show up on every meeting that this location. For example, "Enter from the side."</li>
-									<li><strong><?php _e('Group')?></strong> is a way of grouping contacts. Meetings with the name Group name will be grouped together and share contact information.</li>
-									<li><strong><?php _e('Group Notes')?></strong> is for stuff like a short group history, or when the business meeting meets.</li>
-									<li><strong><?php _e('Contact 1/2/3 Name/Email/Phone')?></strong> (nine fields in total) are all optional, but will not be saved if there is not also a Group name specified. By default, contact information is only visible inside the WordPress dashboard.</li>
-									<li><strong><?php _e('Types')?></strong> should be a comma-separated list of the following options. This list is determined by which program is selected at right.
+									<li><strong>Notes</strong> are freeform notes that are specific to the meeting. For example, "last Saturday is birthday night."</li>
+									<li><strong>Region</strong> is user-defined and can be anything. Often this is a small municipality or neighborhood. Since these go in a dropdown, ideally you would have 10 to 20 regions, although it's ok to be over or under.</li>
+									<li><strong>Sub Region</strong> makes the Region hierarchical; in San Jose we have sub regions for East San Jose, West San Jose, etc. New York City might have Manhattan be a Region, and Greenwich Village be a Sub Region.</li>
+									<li><strong>Location Notes</strong> are freeform notes that will show up on every meeting that this location. For example, "Enter from the side."</li>
+									<li><strong>Group</strong> is a way of grouping contacts. Meetings with the name Group name will be grouped together and share contact information.</li>
+									<li><strong>Group Notes</strong> is for stuff like a short group history, or when the business meeting meets.</li>
+									<li><strong>Contact 1/2/3 Name/Email/Phone</strong> (nine fields in total) are all optional, but will not be saved if there is not also a Group name specified. By default, contact information is only visible inside the WordPress dashboard.</li>
+									<li><strong>Types</strong> should be a comma-separated list of the following options. This list is determined by which program is selected at right.
 										<ul class="types">
 										<?php foreach ($tsml_types[$tsml_program] as $value) {?>
 											<li><?php echo $value?></li>

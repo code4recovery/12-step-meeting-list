@@ -75,37 +75,37 @@ function tsml_meetings_csv() {
 	//get data source
 	$meetings = tsml_get_meetings();
 
-	//define columns to output
+	//define columns to output, always in English for portability (per Poland NA)
 	$columns = array(
-		'time' =>				__('Time'),
-		'end_time' =>			__('End Time'),
-		'day' =>				__('Day'),
-		'name' =>				__('Name'),
-		'location' =>			__('Location'),
-		'formatted_address' =>	__('Address'),
-		'region' =>				__('Region'),
-		'sub_region' =>			__('Sub Region'),
-		'types' =>				__('Types'),
-		'notes' =>				__('Notes'),
-		'location_notes' =>		__('Location Notes'),
-		'group' => 				__('Group'),
-		'group_notes' => 		__('Group Notes'),
-		'updated' =>			__('Updated'),
+		'time' =>				'Time',
+		'end_time' =>			'End Time',
+		'day' =>				'Day',
+		'name' =>				'Name',
+		'location' =>			'Location',
+		'formatted_address' =>	'Address',
+		'region' =>				'Region',
+		'sub_region' =>			'Sub Region',
+		'types' =>				'Types',
+		'notes' =>				'Notes',
+		'location_notes' =>		'Location Notes',
+		'group' => 				'Group',
+		'group_notes' => 		'Group Notes',
+		'updated' =>			'Updated',
 	);
 	
 	//append contact info if user has permission
 	if (current_user_can('edit_posts')) {
 		$columns = array_merge($columns, array(
-			'contact_1_name' =>		__('Contact 1 Name'),
-			'contact_1_email' =>	__('Contact 1 Email'),
-			'contact_1_phone' =>	__('Contact 1 Phone'),
-			'contact_2_name' =>		__('Contact 2 Name'),
-			'contact_2_email' =>	__('Contact 2 Email'),
-			'contact_2_phone' =>	__('Contact 2 Phone'),
-			'contact_3_name' =>		__('Contact 3 Name'),
-			'contact_3_email' =>	__('Contact 3 Email'),
-			'contact_3_phone' =>	__('Contact 3 Phone'),
-			'last_contact' => 		__('Last Contact'),
+			'contact_1_name' =>		'Contact 1 Name',
+			'contact_1_email' =>	'Contact 1 Email',
+			'contact_1_phone' =>	'Contact 1 Phone',
+			'contact_2_name' =>		'Contact 2 Name',
+			'contact_2_email' =>	'Contact 2 Email',
+			'contact_2_phone' =>	'Contact 2 Phone',
+			'contact_3_name' =>		'Contact 3 Name',
+			'contact_3_email' =>	'Contact 3 Email',
+			'contact_3_phone' =>	'Contact 3 Phone',
+			'last_contact' => 		'Last Contact',
 		));
 	}
 
