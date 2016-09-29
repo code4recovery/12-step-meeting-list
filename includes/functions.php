@@ -710,11 +710,11 @@ function tsml_get_meta($type, $id=null) {
 	if ($type == 'tsml_location') {
 		$regions = $wpdb->get_results('SELECT 
 				r.`object_id` location_id,
-				r.`term_taxonomy_id` region_id,
+				t.`term_id` region_id,
 				t.`name` region
 			FROM ' . $wpdb->term_relationships . ' r
-			JOIN ' . $wpdb->terms . ' t ON t.term_id = r.term_taxonomy_id
-			JOIN ' . $wpdb->term_taxonomy . ' x ON t.term_id = x.term_id
+			JOIN ' . $wpdb->term_taxonomy . ' x ON r.term_taxonomy_id = x.term_taxonomy_id
+			JOIN ' . $wpdb->terms . ' t ON x.term_id = t.term_id
 			WHERE x.taxonomy = "tsml_region"');
 		foreach ($regions as $region) {
 			$meta[$region->location_id]['region'] = $region->region;
@@ -841,7 +841,7 @@ function tsml_import($meetings, $delete=false) {
 		}
 	} else {
 		$all_locations = tsml_get_locations();
-		foreach ($all_locations as $location) $existing_addresses[$location['formatted_address']] = $location['id'];
+		foreach ($all_locations as $location) $existing_addresses[$location['formatted_address']] = $location['location_id'];
 
 		//get all the existing groups
 		$all_groups = tsml_get_all_groups();
