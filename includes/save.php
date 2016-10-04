@@ -52,7 +52,7 @@ function tsml_save_post(){
 			update_post_meta($post->ID, 'day', intval($_POST['day']));
 		}
 
-		$_POST['time'] = sanitize_text_field($_POST['time']);
+		$_POST['time'] = tsml_sanitize_time($_POST['time']);
 		if (strcmp($old_meeting->time, $_POST['time']) !== 0) {
 			$changes[] = 'time';
 			if (empty($_POST['time'])) {
@@ -64,7 +64,7 @@ function tsml_save_post(){
 			}
 		}
 
-		$_POST['end_time'] = sanitize_text_field($_POST['end_time']);
+		$_POST['end_time'] = tsml_sanitize_time($_POST['end_time']);
 		if ($old_meeting->end_time != $_POST['end_time']) {
 			$changes[] = 'end_time';
 			if (empty($_POST['end_time'])) {

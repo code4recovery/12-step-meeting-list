@@ -1295,6 +1295,14 @@ function tsml_report_memory() {
 	die(round($size / pow(1024, ($i = floor(log($size, 1024)))), 2) . $units[$i]);
 }
 
+//function:	sanitize a time field
+//used:		save.php
+function tsml_sanitize_time($string) {
+	$string = sanitize_text_field($string);
+	if ($time = strtotime($string)) return date('H:i', $time);
+	return null;
+}
+
 //function:	run any outstanding database upgrades
 //used: 	init.php (depends on constant set in 12-step-meeting-list.php)
 function tsml_upgrades() {
