@@ -2,9 +2,15 @@ var elixir = require('laravel-elixir');
 
 elixir(function(mix) {
 	mix
-	.sass('../../../assets/src/admin.scss', 'assets/css/admin.min.css')
-	.sass('../../../assets/src/public.scss', 'assets/css/public.min.css')
+	.sass([
+		'../../../node_modules/timepicker/jquery.timepicker.min.css',
+		'../../../assets/src/admin.scss',
+	], 'assets/css/admin.min.css')
+	.sass([
+		'../../../assets/src/public.scss'
+	], 'assets/css/public.min.css')
 	.scripts([
+		'../../../node_modules/timepicker/jquery.timepicker.min.js',
 		'../../../node_modules/typeahead.js/dist/typeahead.bundle.js',
 		'../../../assets/src/admin.js',
 	], 'assets/js/admin.min.js')

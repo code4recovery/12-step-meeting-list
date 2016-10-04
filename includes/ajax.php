@@ -155,7 +155,7 @@ function tsml_meetings_csv() {
 add_action('wp_ajax_contacts', 'tsml_regions_contacts');
 function tsml_regions_contacts() {
 	global $wpdb;
-	$group_ids = $wpdb->get_col('SELECT id FROM ' . $wpdb->posts . ' WHERE post_type = "' . 'tsml_group' . '"');
+	$group_ids = $wpdb->get_col('SELECT id FROM ' . $wpdb->posts . ' WHERE post_type = "tsml_group"');
 	$emails = $wpdb->get_col('SELECT meta_value FROM ' . $wpdb->postmeta . ' WHERE meta_key IN ("contact_1_email", "contact_2_email", "contact_3_email") AND post_id IN (' . implode(',', $group_ids) . ')');
 	$emails = array_unique(array_filter($emails));
 	sort($emails);

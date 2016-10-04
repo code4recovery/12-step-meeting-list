@@ -16,9 +16,13 @@ jQuery(function($){
 		}
 	});
 	
+	//timepicker
+	$('input.time').timepicker();
+	
 	//auto-suggest end time
 	$('input#time').change(function(){
 		var parts = $(this).val().split(':');
+		if (parts.length !== 2) return;
 		var hours = parts[0] - 0;
 		hours = (hours == 23) ? 0 : hours + 1;
 		hours += '';

@@ -3,6 +3,7 @@
   "devDependencies": {
     "gulp": "^3.9.1",
     "laravel-elixir": "^6.0.0-9",
-    "mark.js": "github:julmot/mark.js"
+    "mark.js": "github:julmot/mark.js",
+    "timepicker": "^1.11.5"
   }
 }

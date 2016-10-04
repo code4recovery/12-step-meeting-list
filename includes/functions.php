@@ -251,19 +251,19 @@ function tsml_format_utf8(&$item, $key) {
 //function: get all locations in the system
 //used:		tsml_group_count()
 function tsml_get_all_groups($status='any') {
-	return get_posts('post_type=' . 'tsml_group' . '&post_status=' . $status . '&numberposts=-1&orderby=name&order=asc');
+	return get_posts('post_type=tsml_group&post_status=' . $status . '&numberposts=-1&orderby=name&order=asc');
 }
 
 //function: get all locations in the system
 //used:		tsml_location_count(), tsml_import(), tsml_delete_orphaned_locations(), and admin_import.php
 function tsml_get_all_locations($status='any') {
-	return get_posts('post_type=' . 'tsml_location' . '&post_status=' . $status . '&numberposts=-1&orderby=name&order=asc');
+	return get_posts('post_type=tsml_location&post_status=' . $status . '&numberposts=-1&orderby=name&order=asc');
 }
 
 //function: get all meetings in the system
 //used:		tsml_meeting_count(), tsml_import(), tsml_delete_orphaned_locations(), and admin_import.php
 function tsml_get_all_meetings($status='any') {
-	return get_posts('post_type=' . 'tsml_meeting' . '&post_status=' . $status . '&numberposts=-1&orderby=name&order=asc');
+	return get_posts('post_type=tsml_meeting&post_status=' . $status . '&numberposts=-1&orderby=name&order=asc');
 }
 
 //function: get all regions in the system
@@ -830,7 +830,7 @@ function tsml_import($meetings, $delete=false) {
 	//all the data is set, now delete everything
 	if ($delete) {
 		//must be done with SQL statements becase there could be thousands of records to delete
-		if ($post_ids = implode(',', $wpdb->get_col('SELECT id FROM ' . $wpdb->posts . ' WHERE post_type IN ("' . 'tsml_meeting' . '", "' . 'tsml_location' . '", "' . 'tsml_group' . '")'))) {
+		if ($post_ids = implode(',', $wpdb->get_col('SELECT id FROM ' . $wpdb->posts . ' WHERE post_type IN ("tsml_meeting", "tsml_location", "tsml_group")'))) {
 			$wpdb->query('DELETE FROM ' . $wpdb->posts . ' WHERE id IN (' . $post_ids . ')');
 			$wpdb->query('DELETE FROM ' . $wpdb->postmeta . ' WHERE post_id IN (' . $post_ids . ')');
 			$wpdb->query('DELETE FROM ' . $wpdb->term_relationships . ' WHERE object_id IN (' . $post_ids . ')');
@@ -1269,7 +1269,7 @@ function tsml_update_types_in_use() {
 			m.meta_value 
 		FROM ' . $wpdb->postmeta . ' m
 		JOIN ' . $wpdb->posts . ' p ON m.post_id = p.id
-		WHERE p.post_type = "' . 'tsml_meeting' . '" AND m.meta_key = "types" AND p.post_status = "publish"');
+		WHERE p.post_type = "tsml_meeting" AND m.meta_key = "types" AND p.post_status = "publish"');
 		
 	//master array
 	$all_types = array();

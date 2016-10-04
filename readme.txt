@@ -3,7 +3,7 @@ Contributors: meetingguide, aasanjose
 Tags: meetings, aa, al-anon, na, 12-step, locations, groups
 Requires at least: 3.2
 Tested up to: 4.6
-Stable tag: 2.5.6
+Stable tag: 2.5.7
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -23,6 +23,7 @@ It was originally designed to maintain a list of AA meetings in Santa Clara Coun
 * [Bowling Green, KY](http://bowlinggreenaa.org/?post_type=meetings)
 * [Corpus Christi, TX](http://www.cbiaa.org/meetings/)
 * [Davis, CA](http://aadavis.org/meetings/)
+* [DuPage County, IL](http://dist41.aa-nia.org/meetings/)
 * [East Bay, CA](http://eastbayaa.org/meetings)
 * [Elk Grove Village, IL](http://d15aa.org/d15aa.org/?post_type=meetings)
 * [Europe](http://alcoholics-anonymous.eu/index.php/meetings/)
@@ -69,7 +70,6 @@ It was originally designed to maintain a list of AA meetings in Santa Clara Coun
 
 = Notes =
 
-* in the admin screen, it's best to use Chrome, because then the time field will be nicest
 * The Notes field is for any non-standardized meeting info, such as Basement, or Building C
 * Location should be a simple place-name, eg Queen of the Valley Hospital
 * Address should only be address, no "Upstairs" or "Building C" or "Near 2nd Ave"
@@ -178,6 +178,9 @@ and then drop some or all of these tags in your PHP:
 1. Edit location
 
 == Changelog ==
+
+= 2.5.7 =
+* Adding timepicker to make admin screen better for non-Chrome browsers
 
 = 2.5.6 =
 * Fixing an issue that caused the wrong region to display on the meeting list and in the CSV
