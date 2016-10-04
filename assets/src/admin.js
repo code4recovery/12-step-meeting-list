@@ -95,34 +95,8 @@ jQuery(function($){
 		$('textarea[name=group_notes]').val(datum.notes);
 	});
 
-	/*timepicker
-	$('input[type=time]').timepicker({
-		timeFormat: 'hh:mm tt',
-		stepMinute: 15
-	});*/
-	
 	$('input#group').change(function(){
 		$('div#group .apply_group_to_location').removeClass('hidden');
-	});
-
-	$('form#post').submit(function(){
-		if (!$('select#day').val()) {
-			$('input#time').val(''); //double check is empty
-			return true; //by appointment, don't check time
-		}
-		var timeVal = $('input#time').val();
-		var errors = false;
-		if (timeVal.length != 5) errors = true;
-		if (timeVal.indexOf(':') != 2) errors = true;
-		var hours = timeVal.substr(0, 2);
-		var minutes = timeVal.substr(3, 2);
-		if (isNaN(hours) || hours < 0 || hours > 23) errors = true;
-		if (isNaN(minutes) || minutes < 0 || minutes > 59) errors = true;
-		if (errors) {
-			alert('Time should be 24-hour format HH:MM.');
-			return false;
-		}
-		return true;
 	});
 
 	//address / map
