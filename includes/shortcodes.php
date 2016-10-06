@@ -26,9 +26,7 @@ add_shortcode('tsml_region_count', 'tsml_count_regions');
 
 //function for shortcode: get a table of the next $count meetings
 function tsml_next_meetings($arguments) {
-	$arguments = shortcode_atts(array(
-		'count' => 5,
-	), $arguments, 'tsml_next_meetings');
+	$arguments = shortcode_atts(array('count' => 5), $arguments, 'tsml_next_meetings');
 	$meetings = tsml_get_meetings();
 	usort($meetings, 'tsml_next_meetings_sort');
 	$meetings = array_slice($meetings, 0, $arguments['count']);

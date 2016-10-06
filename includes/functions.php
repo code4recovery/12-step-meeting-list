@@ -635,7 +635,7 @@ function tsml_get_meetings($arguments=array()) {
 			'time'				=> @$meeting_meta[$post->ID]['time'],
 			'end_time'			=> @$meeting_meta[$post->ID]['end_time'],
 			'time_formatted'	=> tsml_format_time(@$meeting_meta[$post->ID]['time']),
-			'day'				=> @$meeting_meta[$post->ID]['time'],
+			'day'				=> @$meeting_meta[$post->ID]['day'],
 			'types'				=> empty(@$meeting_meta[$post->ID]['types']) ? array() : unserialize(@$meeting_meta[$post->ID]['types']),
 		), $locations[$post->post_parent]);
 		
