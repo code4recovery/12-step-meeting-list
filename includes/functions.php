@@ -243,6 +243,7 @@ function tsml_format_time_reverse($string) {
 //function:	convert a string to utf8 if it needs it
 //used:		by tsml_import()
 function tsml_format_utf8(&$item, $key) {
+	if (!function_exists('mb_detect_encoding')) return;
 	if (!mb_detect_encoding($item, 'utf-8', true)) {
 		$item = utf8_encode($item);
 	}
@@ -282,7 +283,7 @@ function tsml_get_groups() {
 	$posts = tsml_get_all_groups('publish');
 	
 	# Much faster than doing get_post_meta() over and over
-	$meta = tsml_get_meta('tsml_group');
+	$group_meta = tsml_get_meta('tsml_group');
 
 	# Make an array of all locations
 	foreach ($posts as $post) {
@@ -291,16 +292,16 @@ function tsml_get_groups() {
 			'group_id'			=> $post->ID, //so as not to conflict with another id when combined
 			'group'				=> $post->post_title,
 			'group_notes'		=> $post->post_content,
-			'contact_1_name'	=> @$meta[$post->ID]['contact_1_name'],
-			'contact_1_email'	=> @$meta[$post->ID]['contact_1_email'],
-			'contact_1_phone'	=> @$meta[$post->ID]['contact_1_phone'],
-			'contact_2_name'	=> @$meta[$post->ID]['contact_2_name'],
-			'contact_2_email'	=> @$meta[$post->ID]['contact_2_email'],
-			'contact_2_phone'	=> @$meta[$post->ID]['contact_2_phone'],
-			'contact_3_name'	=> @$meta[$post->ID]['contact_3_name'],
-			'contact_3_email'	=> @$meta[$post->ID]['contact_3_email'],
-			'contact_3_phone'	=> @$meta[$post->ID]['contact_3_phone'],
-			'last_contact'		=> @$meta[$post->ID]['last_contact'],
+			'contact_1_name'	=> @$group_meta[$post->ID]['contact_1_name'],
+			'contact_1_email'	=> @$group_meta[$post->ID]['contact_1_email'],
+			'contact_1_phone'	=> @$group_meta[$post->ID]['contact_1_phone'],
+			'contact_2_name'	=> @$group_meta[$post->ID]['contact_2_name'],
+			'contact_2_email'	=> @$group_meta[$post->ID]['contact_2_email'],
+			'contact_2_phone'	=> @$group_meta[$post->ID]['contact_2_phone'],
+			'contact_3_name'	=> @$group_meta[$post->ID]['contact_3_name'],
+			'contact_3_email'	=> @$group_meta[$post->ID]['contact_3_email'],
+			'contact_3_phone'	=> @$group_meta[$post->ID]['contact_3_phone'],
+			'last_contact'		=> @$group_meta[$post->ID]['last_contact'],
 		);
 	}
 			
@@ -341,11 +342,11 @@ function tsml_get_locations() {
 	$posts = tsml_get_all_locations('publish');
 	
 	# Much faster than doing get_post_meta() over and over
-	$meta = tsml_get_meta('tsml_location');
+	$location_meta = tsml_get_meta('tsml_location');
 
 	# Make an array of all locations
 	foreach ($posts as $post) {
-		$region_id = !empty($meta[$post->ID]['region_id']) ? $meta[$post->ID]['region_id'] : null;
+		$region_id = !empty($location_meta[$post->ID]['region_id']) ? $location_meta[$post->ID]['region_id'] : null;
 		if (array_key_exists($region_id, $regions_with_parents)) {
 			$region = $regions[$regions_with_parents[$region_id]];
 			$sub_region = $regions[$region_id];
@@ -359,9 +360,9 @@ function tsml_get_locations() {
 			'location'			=> $post->post_title,
 			'location_notes'	=> $post->post_content,
 			'location_url'		=> get_permalink($post->ID),
-			'formatted_address' => @$meta[$post->ID]['formatted_address'],
-			'latitude'			=> @$meta[$post->ID]['latitude'],
-			'longitude'			=> @$meta[$post->ID]['longitude'],
+			'formatted_address' => @$location_meta[$post->ID]['formatted_address'],
+			'latitude'			=> @$location_meta[$post->ID]['latitude'],
+			'longitude'			=> @$location_meta[$post->ID]['longitude'],
 			'region_id'			=> $region_id,
 			'region'			=> $region,
 			'sub_region'		=> $sub_region,
@@ -479,36 +480,6 @@ function tsml_get_meetings($arguments=array()) {
 
 	//region should be an integer region id
 	if (!empty($arguments['region'])) {
-		/*
-		$region = intval($arguments['region']);
-		$children = get_term_children($region, 'tsml_region');
-		if (empty($children)) {
-			$parents = get_posts(array(
-				'post_type'			=> 'tsml_location',
-				'numberposts'		=> -1,
-				'fields'			=> 'ids',
-				'meta_query'		=> array(
-					array(
-						'key'		=> 'region',
-						'value'		=> $region,
-					),
-				),
-			));
-		} else {
-			$children[] = $region;
-			$parents = get_posts(array(
-				'post_type'			=> 'tsml_location',
-				'numberposts'		=> -1,
-				'fields'			=> 'ids',
-				'meta_query'		=> array(
-					array(
-						'key'	=> 'region',
-						'compare' => 'IN',
-						'value'	=> $children,
-					),
-				),
-			));
-		}*/
 		$parents = get_posts(array(
 			'post_type'			=> 'tsml_location',
 			'numberposts'		=> -1,
@@ -545,7 +516,7 @@ function tsml_get_meetings($arguments=array()) {
 		);
 	}
 	
-	# If searching, a few more queries
+	//if searching, a few more queries
 	if (!empty($arguments['search'])) {
 		$search = sanitize_text_field($arguments['search']);
 		
@@ -634,7 +605,7 @@ function tsml_get_meetings($arguments=array()) {
 		if (empty($post_ids)) return array();
 	}
 	
-	# Search meetings
+	//search meetings
 	$posts = get_posts(array(
 		'post_type'			=> 'tsml_meeting',
 		'numberposts'		=> -1,
@@ -643,19 +614,15 @@ function tsml_get_meetings($arguments=array()) {
 		'post_parent__in'	=> $arguments['location_id'],
 	));
 
-	//dd($meta_query);
-	//die('count was ' . count($posts));
-	//dd($post_ids);
-
 	//need this later, need to supply default values to groupless meetings
 	$null_group_info = (current_user_can('edit_posts')) ? array('group' => null, 'group_notes' => null, 'contact_1_name' => null, 'contact_1_email' => null, 'contact_1_phone' => null, 'contact_2_name' => null, 'contact_2_email' => null, 'contact_2_phone' => null, 'contact_3_name' => null, 'contact_3_email' => null, 'contact_3_phone' => null, ) : array('group' => null, 'group_notes' => null);
 
-	# Make an array of the meetings
+	$meeting_meta = tsml_get_meta('tsml_meeting');
+
+	//make an array of the meetings
 	foreach ($posts as $post) {
 		//shouldn't ever happen, but just in case
 		if (empty($locations[$post->post_parent])) continue;
-
-		$tsml_custom = get_post_meta($post->ID);
 
 		$array = array_merge(array(
 			'id'				=> $post->ID,
@@ -665,16 +632,16 @@ function tsml_get_meetings($arguments=array()) {
 			'updated'			=> $post->post_modified_gmt,
 			'location_id'		=> $post->post_parent,
 			'url'				=> get_permalink($post->ID),
-			'time'				=> @$tsml_custom['time'][0],
-			'end_time'			=> @$tsml_custom['end_time'][0],
-			'time_formatted'	=> tsml_format_time(@$tsml_custom['time'][0]),
-			'day'				=> @$tsml_custom['day'][0],
-			'types'				=> empty($tsml_custom['types'][0]) ? array() : unserialize($tsml_custom['types'][0]),
+			'time'				=> @$meeting_meta[$post->ID]['time'],
+			'end_time'			=> @$meeting_meta[$post->ID]['end_time'],
+			'time_formatted'	=> tsml_format_time(@$meeting_meta[$post->ID]['time']),
+			'day'				=> @$meeting_meta[$post->ID]['time'],
+			'types'				=> empty(@$meeting_meta[$post->ID]['types']) ? array() : unserialize(@$meeting_meta[$post->ID]['types']),
 		), $locations[$post->post_parent]);
 		
-		# Append group info to meeting
-		if (!empty($tsml_custom['group_id'][0]) && array_key_exists($tsml_custom['group_id'][0], $groups)) {
-			$array = array_merge($array, $groups[$tsml_custom['group_id'][0]]);
+		//append group info to meeting
+		if (!empty(@$meeting_meta[$post->ID]['group_id']) && array_key_exists($meeting_meta[$post->ID]['group_id'], $groups)) {
+			$array = array_merge($array, $groups[$meeting_meta[$post->ID]['group_id']]);
 		} else {
 			$array = array_merge($array, $null_group_info);
 		}
@@ -693,8 +660,8 @@ function tsml_get_meta($type, $id=null) {
 	global $wpdb;
 	$keys = array(
 		'tsml_group' => '"contact_1_name", "contact_1_email", "contact_1_phone", "contact_2_name", "contact_2_email", "contact_2_phone", "contact_3_name", "contact_3_email", "contact_3_phone", "last_contact"',
-		'tsml_meeting' => '"day", "time", "end_time", "types"',
 		'tsml_location' => '"formatted_address", "latitude", "longitude"',
+		'tsml_meeting' => '"day", "time", "end_time", "types", "group_id"',
 	);
 	if (!array_key_exists($type, $keys)) return trigger_error('tsml_get_meta for unexpected type ' . $type);
 	$meta = array();

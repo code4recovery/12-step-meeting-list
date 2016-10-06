@@ -59,6 +59,11 @@ add_action('wp_ajax_meetings', 'tsml_meetings_api');
 add_action('wp_ajax_nopriv_meetings', 'tsml_meetings_api');
 function tsml_meetings_api() {
 	if (!headers_sent()) header('Access-Control-Allow-Origin: *');
+	
+	//for new orleans
+	error_reporting(E_ALL);
+	ini_set('display_errors', 'On');
+
 	if (empty($_POST)) wp_send_json(tsml_get_meetings($_GET));
 	wp_send_json(tsml_get_meetings($_POST));
 };
