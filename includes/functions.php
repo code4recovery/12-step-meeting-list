@@ -640,7 +640,7 @@ function tsml_get_meetings($arguments=array()) {
 		), $locations[$post->post_parent]);
 		
 		//append group info to meeting
-		if (!empty(@$meeting_meta[$post->ID]['group_id']) && array_key_exists($meeting_meta[$post->ID]['group_id'], $groups)) {
+		if (!empty($meeting_meta[$post->ID]['group_id']) && array_key_exists($meeting_meta[$post->ID]['group_id'], $groups)) {
 			$array = array_merge($array, $groups[$meeting_meta[$post->ID]['group_id']]);
 		} else {
 			$array = array_merge($array, $null_group_info);
