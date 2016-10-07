@@ -5,11 +5,11 @@ add_filter('manage_edit-tsml_meeting_columns', 'tmsl_admin_meetings_columns');
 function tmsl_admin_meetings_columns($defaults) {
     return array(
     	'cb'		=>'<input type="checkbox" />',
-    	'title'		=>__('Meeting'),
-    	'day'		=>__('Day'),
-    	'time'		=>__('Time'),
+    	'title'		=>__('Meeting', '12-step-meeting-list'),
+    	'day'		=>__('Day', '12-step-meeting-list'),
+    	'time'		=>__('Time', '12-step-meeting-list'),
     	//'region'	=>__('Region'),
-    	'date'		=>__('Date'),
+    	'date'		=>__('Date', '12-step-meeting-list'),
     );	
 }
 
@@ -26,7 +26,7 @@ function tmsl_admin_meetings_custom_column($column_name, $post_ID) {
 	global $tsml_days;
 	if ($column_name == 'day') {
 		$day = get_post_meta($post_ID, 'day', true);
-		echo (empty($day) && $day !== '0') ? __('Appointment') : $tsml_days[$day];
+		echo (empty($day) && $day !== '0') ? __('Appointment', '12-step-meeting-list') : $tsml_days[$day];
 	} elseif ($column_name == 'time') {
 		echo tsml_format_time(get_post_meta($post_ID, 'time', true));
 	}

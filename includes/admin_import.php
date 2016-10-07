@@ -12,13 +12,13 @@ function tsml_admin_menu() {
 		$extension = explode('.', strtolower($_FILES['tsml_import']['name']));
 		$extension = end($extension);
 		if ($_FILES['tsml_import']['error'] > 0) {
-			tsml_alert(__('File upload error #' . $_FILES['tsml_import']['error']), 'error');
+			tsml_alert(__('File upload error #' . $_FILES['tsml_import']['error'], '12-step-meeting-list'), 'error');
 		} elseif (empty($extension)) {
-			tsml_alert(__('Uploaded file did not have a file extension. Please add .csv to the end of the file name.'), 'error');
+			tsml_alert(__('Uploaded file did not have a file extension. Please add .csv to the end of the file name.', '12-step-meeting-list'), 'error');
 		} elseif ($extension != 'csv') {
-			tsml_alert(__('Please upload a csv file. Your file ended in .' . $extension . '.'), 'error');
+			tsml_alert(__('Please upload a csv file. Your file ended in .' . $extension . '.', '12-step-meeting-list'), 'error');
 		} elseif (!$handle = fopen($_FILES['tsml_import']['tmp_name'], 'r')) {
-			tsml_alert(__('Error opening CSV file'), 'error');
+			tsml_alert(__('Error opening CSV file', '12-step-meeting-list'), 'error');
 		} else {
 			$meetings = array();
 			while (($data = fgetcsv($handle, 1000, ',')) !== FALSE) {
@@ -90,8 +90,8 @@ function tsml_admin_menu() {
 	}*/
 	
 	//add menu items			
-	add_submenu_page('edit.php?post_type=tsml_meeting', __('Regions'), __('Regions'), 'edit_posts', 'edit-tags.php?taxonomy=tsml_region&post_type=tsml_location');
-	add_submenu_page('edit.php?post_type=tsml_meeting', __('Import & Settings'),  __('Import & Settings'), 'manage_options', 'import', 'tmsl_import_page');
+	add_submenu_page('edit.php?post_type=tsml_meeting', __('Regions', '12-step-meeting-list'), __('Regions', '12-step-meeting-list'), 'edit_posts', 'edit-tags.php?taxonomy=tsml_region&post_type=tsml_location');
+	add_submenu_page('edit.php?post_type=tsml_meeting', __('Import & Settings', '12-step-meeting-list'),  __('Import & Settings', '12-step-meeting-list'), 'manage_options', 'import', 'tmsl_import_page');
 
 	//fix the highlighted state of the regions page
 	function tsml_fix_highlight($parent_file){
@@ -112,14 +112,14 @@ function tsml_admin_menu() {
 
 	    ?>
 		<div class="wrap">
-		    <h2><?php _e('Import & Settings')?></h2>
+		    <h2><?php _e('Import & Settings', '12-step-meeting-list')?></h2>
 		    
 		    <div id="poststuff">
 			    <div id="post-body" class="columns-2">
 				    <div id="post-body-content">
 					    <div class="postbox">
 						    <div class="inside">
-								<h3><?php _e('Import Data')?></h3>
+								<h3><?php _e('Import Data', '12-step-meeting-list')?></h3>
 								<p>You can import a CSV of meeting info using the form below. <a href="<?php echo plugin_dir_url(__FILE__) . '../template.csv'?>">Here is a spreadsheet</a> you can use as a template. Save it as a comma-delimited CSV before uploading it. The header row must kept in place.</p>
 								<ul class="ul-disc">
 									<li><strong>Time</strong>, if present, should be in a standard date format such as 6:00 AM or 06:00. Non-standard or empty dates will be imported as 'by appointment.'</li>
@@ -157,7 +157,7 @@ function tsml_admin_menu() {
 				    <div id="postbox-container-1" class="postbox-container">
 						<div class="postbox">
 							<div class="inside">
-								<h3><?php _e('Choose Your Program')?></h3>
+								<h3><?php _e('Choose Your Program', '12-step-meeting-list')?></h3>
 								<form method="post" action="edit.php?post_type=tsml_meeting&page=import">
 								<?php wp_nonce_field($tsml_nonce, 'tsml_nonce', false)?>
 								<p>This determines which meeting types are available. If your program is 
@@ -175,7 +175,7 @@ function tsml_admin_menu() {
 						</div>
 						<div class="postbox" id="wheres_my_info">
 							<div class="inside">
-								<h3><?php _e('Where\'s My Info?')?></h3>
+								<h3><?php _e('Where\'s My Info?', '12-step-meeting-list')?></h3>
 								<p>Your meeting list page is <a href="<?php echo get_post_type_archive_link('tsml_meeting'); ?>">right here</a>. 
 								Link that page from your site's nav menu to make it visible to the public.</p>
 								<p>You can also download your meetings in <a href="<?php echo admin_url('admin-ajax.php')?>?action=csv">CSV format</a>.</p>
@@ -279,7 +279,7 @@ function tsml_admin_menu() {
 						if ($tsml_program == 'aa') {?>
 						<div class="postbox" id="try_the_apps">
 							<div class="inside">
-								<h3><?php _e('Try the Apps!')?></h3>
+								<h3><?php _e('Try the Apps!', '12-step-meeting-list')?></h3>
 								<p>Want to have your meetings listed in a simple, free mobile app? <a href="https://meetingguide.org/" target="_blank">Many areas are currently participating</a>,
 									but we always want more! No extra effort is required; simply continue to update your meetings in Wordpress and the updates will flow down to app users.
 								<p class="buttons">
@@ -296,7 +296,7 @@ function tsml_admin_menu() {
 						<?php }?>
 						<div class="postbox">
 							<div class="inside">
-								<h3><?php _e('About this Plugin')?></h3>
+								<h3><?php _e('About this Plugin', '12-step-meeting-list')?></h3>
 								<p>This plugin was developed by AA volunteers in <a href="http://aasanjose.org/technology">Santa 
 									Clara County</a> to help provide accessible, accurate information about meetings to 
 									those who need it.</p>

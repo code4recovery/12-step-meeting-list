@@ -3,7 +3,7 @@ Contributors: meetingguide, aasanjose
 Tags: meetings, aa, al-anon, na, 12-step, locations, groups
 Requires at least: 3.2
 Tested up to: 4.6
-Stable tag: 2.6.4
+Stable tag: 2.6.5
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -180,6 +180,9 @@ and then drop some or all of these tags in your PHP:
 
 == Changelog ==
 
+= 2.6.5 =
+* Translation fixes for NA Poland
+
 = 2.6.4 =
 * Another possible bug fix for PHP 5.3
 
@@ -237,70 +240,3 @@ and then drop some or all of these tags in your PHP:
 
 = 2.5 =
 * PHP < 5.3 compatibility per Oahu
-
-= 2.4.9 =
-* Fixing import bug when a sub-region has the name name as a parent region
-* Fixing address bug when the address has double quotes in it
-* Fixing edge-case meeting-saving bug affecting Sunday meetings
-
-= 2.4.8 =
-* Fixing directions button links, there was an issue on Google if the location name wasn't recognized
-
-= 2.4.7 =
-* New expandable regions menu (if you don't like it, see FAQ for how to remove)
-* Stripping punctuation from search, eg. St. James should now match St James
-* Address-saving bug fix
-
-= 2.4.6 =
-* Saving posts is now more efficient: fewer writes to the database, fewer custom fields
-
-= 2.4.5 =
-* Important bug fix for admin edit screen javascript
-
-= 2.4.4 =
-* New system for overriding Google's address lookups due to very infrequent issues in NYC and Maine
-* New language-related meeting types for Toronto
-
-= 2.4.3 =
-* Adding meeting end time per NYC
-
-= 2.4.2 =
-* Search highlighter bug
-
-= 2.4.1 =
-* Fixing search highlighter per NYC
-
-= 2.4 =
-* Converting imported text to UTF-8 per Maine
-
-= 2.3.9 =
-* Fixing JavaScript sort bug
-
-= 2.3.8 =
-* XX other meetings at this location
-
-= 2.3.7 =
-* Possible now to show meeting types as column in list with CSS per Arkansas
-* Group notes line breaks not getting removed by import per NYC
-
-= 2.3.6 =
-* Group name and address spacing per NYC
-
-= 2.3.5 =
-* Last contact date field for NYC
-
-= 2.3.4 =
-* Linking directions to geo coordinates for Apple Maps issue
-* Updating contact email addresses
-
-= 2.3.3 =
-* Print view columns per Maine
-
-= 2.3.2 =
-* Adding logic to prevent a meeting from being both open and closed
-
-= 2.3.1 =
-* Removing shortened ternary operator; doesn't work with PHP < 5.3
-
-= 2.3 =
-* New shortcode for Next Meetings mini-table

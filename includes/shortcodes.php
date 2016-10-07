@@ -33,9 +33,9 @@ function tsml_next_meetings($arguments) {
 	$rows = '';
 	foreach ($meetings as $meeting) {
 		if (in_array('M', $meeting['types'])) {
-			$meeting['name'] .= '<small>' . __('Men') . '</small>';
+			$meeting['name'] .= '<small>' . __('Men', '12-step-meeting-list') . '</small>';
 		} elseif (in_array('W', $meeting['types'])) {
-			$meeting['name'] .= '<small>' . __('Women') . '</small>';
+			$meeting['name'] .= '<small>' . __('Women', '12-step-meeting-list') . '</small>';
 		}
 		$rows .= '<tr>
 			<td class="time">' . tsml_format_time($meeting['time']) . '</td>
@@ -47,10 +47,10 @@ function tsml_next_meetings($arguments) {
 	return '<table class="tsml_next_meetings table table-striped">
 		<thead>
 			<tr>
-				<th class="time">' . __('Time') . '</td>
-				<th class="name">' . __('Meeting') . '</td>
-				<th class="location">' . __('Location') . '</td>
-				<th class="region">' . __('Region') . '</td>
+				<th class="time">' . __('Time', '12-step-meeting-list') . '</td>
+				<th class="name">' . __('Meeting', '12-step-meeting-list') . '</td>
+				<th class="location">' . __('Location', '12-step-meeting-list') . '</td>
+				<th class="region">' . __('Region', '12-step-meeting-list') . '</td>
 			</tr>
 		</thead>
 		<tbody>' . $rows . '</tbody>
