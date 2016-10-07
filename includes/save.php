@@ -157,7 +157,7 @@ function tsml_save_post(){
 	tsml_delete_orphaned_locations();
 	
 	//save group information (set this value or get caught in a loop)
-	$_POST['post_type'] = TSML_TYPE_GROUPS;
+	$_POST['post_type'] = 'tsml_group';
 	$_POST['group'] = sanitize_text_field($_POST['group']);
 	$_POST['group_notes'] = sanitize_text_area($_POST['group_notes']);
 
@@ -170,7 +170,7 @@ function tsml_save_post(){
 			}
 		}
 	} else {
-		if ($groups = $wpdb->get_results($wpdb->prepare('SELECT ID, post_title, post_content FROM ' . $wpdb->posts . ' WHERE post_type = "%s" AND post_title = "%s" ORDER BY id', TSML_TYPE_GROUPS, stripslashes($_POST['group'])))) {
+		if ($groups = $wpdb->get_results($wpdb->prepare('SELECT ID, post_title, post_content FROM ' . $wpdb->posts . ' WHERE post_type = "tsml_group" AND post_title = "%s" ORDER BY id', stripslashes($_POST['group'])))) {
 			$group_id = $groups[0]->ID;
 			if ($groups[0]->post_title != $_POST['group'] || $groups[0]->post_content != $_POST['group_notes']) {
 				$changes[] = 'updating group';
@@ -183,7 +183,7 @@ function tsml_save_post(){
 		} else {
 			$changes[] = 'creating group';
 			$group_id = wp_insert_post(array(
-			  	'post_type'		=> TSML_TYPE_GROUPS,
+			  	'post_type'		=> 'tsml_group',
 			  	'post_status'	=> 'publish',
 				'post_title'	=> $_POST['group'],
 				'post_content'  => $_POST['group_notes'],
@@ -230,7 +230,7 @@ function tsml_save_post(){
 
 	//delete orphaned groups
 	if ($groups_in_use = $wpdb->get_col('SELECT meta_value FROM ' . $wpdb->postmeta . ' WHERE meta_key = "group_id"')) {
-		$orphans = get_posts('post_type=' . TSML_TYPE_GROUPS . '&numberposts=-1&exclude=' . implode(',', $groups_in_use));
+		$orphans = get_posts('post_type=tsml_group&numberposts=-1&exclude=' . implode(',', $groups_in_use));
 		foreach ($orphans as $orphan) wp_delete_post($orphan->ID);
 	}
 	

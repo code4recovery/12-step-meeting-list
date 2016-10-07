@@ -3,7 +3,7 @@ Contributors: meetingguide, aasanjose
 Tags: meetings, aa, al-anon, na, 12-step, locations, groups
 Requires at least: 3.2
 Tested up to: 4.6
-Stable tag: 2.6.1
+Stable tag: 2.6.2
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -180,8 +180,11 @@ and then drop some or all of these tags in your PHP:
 
 == Changelog ==
 
+= 2.6.2 =
+* Bug fix on group-saving
+
 = 2.6.1 =
-* Bug fix
+* Bug fix on tsml_get_meetings() refactor
 
 = 2.6 =
 * Fixing undefined issue for New Orleans
