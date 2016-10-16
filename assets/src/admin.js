@@ -47,7 +47,7 @@ jQuery(function($){
 	}
 	
 	//delete email contact
-	$('table.admin_contacts span').click(function(){
+	$('.admin_contacts table span').click(function(){
 		$(this).parent().submit();
 	});
 
