@@ -3,7 +3,7 @@ Contributors: meetingguide, aasanjose
 Tags: meetings, aa, al-anon, na, 12-step, locations, groups
 Requires at least: 3.2
 Tested up to: 4.6
-Stable tag: 2.6.5
+Stable tag: 2.6.6
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -179,6 +179,14 @@ and then drop some or all of these tags in your PHP:
 1. Edit location
 
 == Changelog ==
+
+= 2.6.6 =
+* Revamped importer doesn't time out and allows you to selectively overwrite regions
+* Meeting change notification system for Tidewater VA
+* More translation strings
+* Database bug fix (some groups were getting saved with the wrong post type)
+* IE Edge compatibility on meeting admin screen per Indiana SAA
+* Warning for sites running PHP 5.3 or below
 
 = 2.6.5 =
 * Translation fixes for NA Poland

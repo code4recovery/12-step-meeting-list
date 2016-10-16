@@ -4,60 +4,115 @@
 //Import & Settings page
 body.tsml_meeting_page_import {
 	
+	ol.notice-error {
+		padding: 10px 10px 8px 45px;
+		li { margin: 0 0 2px; }
+	}
+	
+	.progress {
+		height: 20px;
+		background-color: white;
+		-webkit-box-shadow: 0 1px 1px 0 rgba(0,0,0,.1);
+		box-shadow: 0 1px 1px 0 rgba(0,0,0,.1);
+		overflow: hidden;
+		margin: 5px 0 15px;
+		
+		.progress-bar {
+			background-color: #bbb;
+			color: white;
+			text-align: center;
+			overflow: hidden;
+			width: 0;
+			height: 100%;
+			float: left;
+			line-height: 20px;
+			font-size: 12px;
+			-webkit-transition: width .6s ease;
+			-o-transition: width .6s ease;
+			transition: width .6s ease;
+		}
+	}
+	
 	//meeting types legend
-	#post-body-content {
+	.postbox {
 		ul.types {
 			margin-top: 10px; overflow: auto;
 			-webkit-columns: 3 auto; -moz-columns: 3 auto; columns: 3 auto;
 			li { margin-bottom: 0; }
 		}
 		p:last-child { margin-bottom: 0; }
-	}
-	
-	//where's my info list margins
-	#wheres_my_info.postbox {
-		ul {
-			margin-top: -10px;
-			li { margin: 0 0 2px; }
-		}
-	}
-	
-	//get feedback 
-	#get_feedback.postbox {
-		table {
-			margin: 0 0 15px; width: 100%; border: 0; border-spacing: 0; border-collapse: collapse;
-			tr {
-				td {
-					margin: 0;
-					padding: 4px;
-					border: 0;
-					border-bottom: 1px solid #ccc;
-					&:last-child {
-						text-align: right;
-						span { cursor: pointer; }
+		
+		//get feedback & get notified
+		&.admin_contacts {
+			table {
+				margin: 0 0 15px; width: 100%; border: 0; border-spacing: 0; border-collapse: collapse;
+				tr {
+					td {
+						margin: 0;
+						padding: 4px;
+						border: 0;
+						border-bottom: 1px solid #ccc;
+						&:first-child {
+							font-family: Consolas,Monaco,monospace;
+						}
+						&:last-child {
+							text-align: right;
+							span { cursor: pointer; }
+						}
+					}
+					&:first-child td {
+						padding-top: 0;
+					}
+					&:last-child td {
+						padding-bottom: 0;
+						border-bottom: 0;
 					}
 				}
-				&:first-child td {
-					padding-top: 0;
-				}
-				&:last-child td {
-					padding-bottom: 0;
-					border-bottom: 0;
+			}
+			
+			//add email forms
+			form {
+				overflow: auto;
+				input {
+					box-shadow: none;
+					width: 60px;
+					float: left;
+					&[type=email] {
+						border-radius: 3px;
+						border: 1px solid #ccc;
+						font-size: 13px;
+						line-height: 26px;
+						margin: 0;
+						height: 28px;
+						width: 180px;
+						margin-right: 10px;
+						font-family: Consolas,Monaco,monospace;
+					}
 				}
 			}
 		}
+		
+		//where's my info list margins
+		&#wheres_my_info {
+			ul {
+				margin-top: -10px;
+				li { margin: 0 0 2px; }
+			}
+		}
+		
+		//try the apps app store buttons
+		&#try_the_apps {
+			p.buttons {
+				margin-left: -5px; margin-right: -5px; overflow: auto;
+				a {
+					padding: 0 5px; width: 50%; float: left; display: block; box-sizing: border-box;
+					img { width: 100%; height: auto; }
+				}
+			}
+		}
+
 	}
 	
-	//try the apps app store buttons
-	#try_the_apps.postbox {
-		p.buttons {
-			margin-left: -5px; margin-right: -5px; overflow: auto;
-			a {
-				padding: 0 5px; width: 50%; float: left; display: block; box-sizing: border-box;
-				img { width: 100%; height: auto; }
-			}
-		}
-	}
 }
 
 //Meeting Add / Edit page

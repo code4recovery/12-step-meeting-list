@@ -4,9 +4,6 @@ don't make changes! it'll make staying updated much harder.
 for updates / questions, please contact wordpress@meetingguide.org
 */
 
-//configuration constants
-if (!defined('GROUP_CONTACT_COUNT')) define('GROUP_CONTACT_COUNT', 3); //number of contacts per group
-
 $tsml_alerts = array();
 
 $tsml_days	= array(

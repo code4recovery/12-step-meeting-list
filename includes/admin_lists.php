@@ -17,7 +17,7 @@ function tmsl_admin_meetings_columns($defaults) {
 add_action('delete_post', 'tsml_delete_post');
 function tsml_delete_post($post_id) {
 	$post = get_post($post_id);
-	if ($post->post_type == 'tsml_meeting') tsml_delete_orphaned_locations();
+	if ($post->post_type == 'tsml_meeting') tsml_delete_orphans();
 }
 
 # Custom list values for meetings

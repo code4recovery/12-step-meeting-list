@@ -1,27 +1,8 @@
 <?php
 
-//function for shortcode
-function tsml_count_groups() {
-	return number_format(count(tsml_count_groups()));
-}
 add_shortcode('tsml_group_count', 'tsml_group_count');
-
-//function for shortcode
-function tsml_count_locations() {
-	return number_format(count(tsml_get_all_locations('publish')));
-}
 add_shortcode('tsml_location_count', 'tsml_count_locations');
-
-//function for shortcode
-function tsml_count_meetings() {
-	return number_format(count(tsml_get_all_meetings('publish')));
-}
 add_shortcode('tsml_meeting_count', 'tsml_count_meetings');
-
-//function for shortcode
-function tsml_count_regions() {
-	return number_format(count(tsml_get_all_regions()));
-}
 add_shortcode('tsml_region_count', 'tsml_count_regions');
 
 //function for shortcode: get a table of the next $count meetings

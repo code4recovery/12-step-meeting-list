@@ -1,5 +1,56 @@
 jQuery(function($){
 
+	//recursively run import
+	function runImport() {
+
+		$.getJSON(myAjax.ajaxurl + '?action=tsml_import', function(data){
+
+			//update progress bar
+			var $progress = $('body.tsml_meeting_page_import div#tsml_import_progress');
+			var total = $progress.attr('data-total');
+			var percentage = (Math.floor(((total - data.remaining) / total) * 95) + 5) + '%';
+			$progress.find('.progress-bar').css({width:percentage}).text(percentage);
+			
+			
+			//update the counts on the right
+			var $counts = $('#tsml_counts');
+			var types = ['meetings', 'locations', 'groups', 'regions'];
+			for (var i = 0; i < types.length; i++) {
+				var type = types[i];
+				if (data.counts[type] > 0) {
+					if ($counts.hasClass('hidden')) $counts.removeClass('hidden');
+					$li = $counts.find('li.' + type);
+					if ($li.hasClass('hidden')) $li.removeClass('hidden');
+					if ($li.text(data.descriptions[type]));
+				}
+			}
+			
+			//if there are errors, display message and append them to it
+			if (data.errors.length) {
+				$errors = $('#tsml_import_errors');
+				if ($errors.hasClass('hidden')) $errors.removeClass('hidden');
+				for (var i = 0; i < data.errors.length; i++) $errors.append(data.errors[i]);
+			}
+			
+			//console.log('geocoded ' + data.geocoded)
+			
+			//if there are more to import, go again
+			if (data.remaining) runImport();
+		});
+	}
+
+	//import & settings page
+	if ($('div#tsml_import_progress').length) {
+		$('div#tsml_import_progress div.progress-bar').css({width:'5%'});
+		$('#tsml_import_errors').addClass('hidden');
+		runImport();
+	}
+	
+	//delete email contact
+	$('table.admin_contacts span').click(function(){
+		$(this).parent().submit();
+	});
+
 	//day picker
 	$('select#day').change(function(){
 		var val = $(this).val();
@@ -16,7 +67,7 @@ jQuery(function($){
 		}
 	});
 	
-	//timepicker
+	//time picker
 	$('input.time').timepicker();
 	
 	//auto-suggest end time
@@ -27,7 +78,7 @@ jQuery(function($){
 		hours = (hours == 23) ? 0 : hours + 1;
 		hours += '';
 		if (hours.length == 1) hours = '0' + hours;
-		$('input#end_time').val(hours + ':' + parts[1]);
+		$('input#end_time').val(hours + ':' + parts[1]).timepicker();
 	});
 	
 	//types checkboxes: ensure not both open and closed
@@ -42,11 +93,6 @@ jQuery(function($){
 		}
 	});
 	
-	//delete email contact
-	$('#get_feedback table span').click(function(){
-		$(this).parent().submit();
-	});
-
 	//location typeahead
 	var locations = new Bloodhound({
 		datumTokenizer: Bloodhound.tokenizers.obj.whitespace('value'),
@@ -114,12 +160,12 @@ jQuery(function($){
 			return;
 		}
 
-		jQuery.getJSON('https://maps.googleapis.com/maps/api/geocode/json', { address: val, key: myAjax.google_api_key }, function(data){
+		$.getJSON('https://maps.googleapis.com/maps/api/geocode/json', { address: val, key: myAjax.google_api_key }, function(data){
 
 			//check status first, eg REQUEST_DENIED, ZERO_RESULTS
 			if (data.status != 'OK') return;
 						
-			var google_overrides = jQuery.parseJSON(myAjax.google_overrides);
+			var google_overrides = $.parseJSON(myAjax.google_overrides);
 			
 			//check if there is an override, because the Google Geocoding API is not always right
 			var address = (typeof google_overrides[data.results[0].formatted_address] == 'undefined') ? {
@@ -136,7 +182,6 @@ jQuery(function($){
 			//guess region if not set
 			var region_id = false;
 			if (!$('select#region option[selected]').length) {
-				console.log($('select#region option[selected]').length);
 				$('select#region option').each(function(){
 					var region_name = $(this).text().replace('&nbsp;', '').trim();
 					if (address.formatted_address.indexOf(region_name) != -1) region_id = $(this).attr('value');
@@ -147,7 +192,7 @@ jQuery(function($){
 			$('input#formatted_address').val(address.formatted_address);
 			
 			//check if location with same address is already in the system, populate form
-			jQuery.getJSON(myAjax.ajaxurl + '?action=address', { formatted_address: address.formatted_address }, function(data){
+			$.getJSON(myAjax.ajaxurl + '?action=address', { formatted_address: address.formatted_address }, function(data){
 				if (data) {
 					$('input[name=location]').val(data.location);
 					if (data.region != $('select[name=region]').val()) {
