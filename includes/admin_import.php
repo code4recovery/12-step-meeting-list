@@ -23,7 +23,10 @@ function tmsl_import_page() {
 			
 			//extract meetings from CSV
 			while (($data = fgetcsv($handle, 1000, ',')) !== false) {
-				$meetings[] = $data;
+				//skip empty rows
+				if (strlen(trim(implode($data)))) {
+					$meetings[] = $data;
+				}
 			}
 
 			//allow theme-defined function to reformat CSV ahead of import (for New Hampshire)
@@ -63,12 +66,6 @@ function tmsl_import_page() {
 						//sanitize fields
 						$meeting = array_map('tsml_import_sanitize_field', $meeting);
 						
-						//skip empty rows
-						if (!strlen(implode($meeting))) {
-							//$error = 'Row #' . $row_counter . ' is empty and will be skipped.';
-							continue;
-						}
-				
 						//check length
 						if ($header_count > count($meeting)) {
 							$meeting = array_pad($meeting, $header_count, null);
