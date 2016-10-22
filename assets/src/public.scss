@@ -217,7 +217,6 @@ input:focus, button:focus {
 		#map {
 			height: $height;
 			display: none;
-			margin: 0 0 $margin;
 		}
 	}
 
@@ -443,7 +442,6 @@ body {
 		#page::before { display: none; }
 		#meetings { 
 			width: 100%; 
-			padding-top: 20px;
 			&[data-type=list] { padding-bottom: 0; }
 			table { 
 				border: 0; 
