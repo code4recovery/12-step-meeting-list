@@ -484,7 +484,7 @@ function tsml_get_meetings($arguments=array()) {
 		);
 	}
 
-	//time should be a string 'morning', 'midday', 'evening' or 'night'
+	//time should be a string 'morning', 'midday', 'evening', 'night', or 'upcoming'
 	if (!empty($arguments['time'])) {
 		if ($arguments['time'] == 'morning') {
 			$meta_query[] = array(
@@ -507,6 +507,10 @@ function tsml_get_meetings($arguments=array()) {
 				'relation' => 'OR',
 				array('key' => 'time', 'value' => '04:59', 'compare' => '<='),
 				array('key' => 'time', 'value' => '20:00', 'compare' => '>='),
+			);
+		} elseif ($arguments['time'] == 'upcoming') {
+			$meta_query[] = array(
+				array('key' => 'time', 'value' => current_time('H:i'), 'compare' => '>='),
 			);
 		}
 	}

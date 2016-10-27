@@ -99,7 +99,7 @@ function tmsl_import_page() {
 							//if meeting name missing, use location, day, and time
 							if (empty($meeting['name'])) {
 								$meeting['name'] = $meeting['location'];
-								if (in_array($meeting['day'], $tsml_days)) $meeting['name'] .= ' ' . $tsml_days[$meeting['day']] . 's';
+								if (in_array($meeting['day'], $tsml_days)) $meeting['name'] .= ' ' . $meeting['day'] . 's';
 								$meeting['name'] .= ' at ' . tsml_format_time($meeting['time']);
 							}
 						}

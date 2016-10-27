@@ -28,16 +28,22 @@ if (!isset($_GET['d'])) {
 	$day = intval($_GET['d']);
 }
 
+//time can only be upcoming if it's today
+if (($time == 'upcoming') && ($day != intval(current_time('w')))) $time = null;
+
 //labels
 $day_default = __('Any Day', '12-step-meeting-list');
 $day_label = ($day === false) ? $day_default : $tsml_days[$day];
 $time_default = __('Any Time', '12-step-meeting-list');
-$time_label = $time ? $times[$time] : $time_default;
+if ($time == 'upcoming') {
+	$time_label = __('Upcoming', '12-step-meeting-list');
+} else {
+	$time_label = $time ? $times[$time] : $time_default;
+}
 $region_default = $region_label = __('Everywhere', '12-step-meeting-list');
 if ($region) {
 	$term = get_term($region, 'tsml_region');
 	$region_label = $term->name;
-} else {
 }
 $type_default = __('Any Type', '12-step-meeting-list');
 $type_label = ($type && array_key_exists($type, $tsml_types[$tsml_program])) ? $tsml_types[$tsml_program][$type] : $type_default;
@@ -99,6 +105,8 @@ class Walker_Regions_Dropdown extends Walker_Category {
 				</a>
 				<ul class="dropdown-menu" role="menu">
 					<li<?php if (empty($time)) echo ' class="active"'?>><a href="#"><?php echo $time_default?></a></li>
+					<li class="divider upcoming"></li>
+					<li<?php if ($time == 'upcoming') echo ' class="active"'?> class="upcoming"><a href="#" data-id="upcoming"><?php echo __('Upcoming', '12-step-meeting-list')?></a></li>
 					<li class="divider"></li>
 					<?php foreach ($times as $key=>$value) {?>
 					<li<?php if ($key === $time) echo ' class="active"'?>><a href="#" data-id="<?php echo $key?>"><?php echo $value?></a></li>
@@ -123,7 +131,7 @@ class Walker_Regions_Dropdown extends Walker_Category {
 						'hide_empty' => false,
 						'walker' => new Walker_Regions_Dropdown,
 						'value' => $region,
-					)); ?>
+					))?>
 				</ul>
 			</div>
 		</div>
@@ -213,7 +221,7 @@ class Walker_Regions_Dropdown extends Walker_Category {
 							$sort_time = $meeting['day'] . '-' . ($meeting['time'] == '00:00' ? '23:59' : $meeting['time']);
 							?>
 						<tr>
-							<td class="time" data-sort="<?php echo $sort_time?>"><span><?php 
+							<td class="time" data-sort="<?php echo $sort_time . '-' . sanitize_title($meeting['location'])?>"><span><?php 
 								if (($day === false) && !empty($meeting['time'])) {
 									echo tsml_format_day_and_time($meeting['day'], $meeting['time'], '</span><span>');
 								} else {

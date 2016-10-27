@@ -13,7 +13,7 @@ jQuery(function($){
 	
 	$('#meeting #feedback form').validate({
 		onfocusout:false,
-    	onkeyup: function(element) { },
+		onkeyup: function(element) { },
 		highlight: function(element, errorClass, validClass) {
 			$(element).closest('div.form-group').addClass('has-error');
 		},
@@ -43,6 +43,9 @@ jQuery(function($){
 	if ((location.protocol === 'https:') && navigator.geolocation) {
 		$('li.geolocator').removeClass('hidden');
 	}
+	
+	//show/hide upcoming
+	toggleUpcoming();
 
 	//run search (triggered by dropdown toggle or form submit)
 	function doSearch() {
@@ -51,10 +54,10 @@ jQuery(function($){
 		var data = { 
 			action: 'meetings',
 			search: $('#search input[name=query]').val().replace(/[";:,.\/?\\-]/g, ' ').trim(),
-			day: 	$('#day li.active a').attr('data-id'),
-			time:   $('#time li.active a').attr('data-id'),
+			day: $('#day li.active a').attr('data-id'),
+			time: $('#time li.active a').attr('data-id'),
 			region: $('#region li.active a').attr('data-id'),
-			type:   $('#type li.active a').attr('data-id'),
+			type: $('#type li.active a').attr('data-id'),
 		}
 		
 		//get current query string for history and appending to links
@@ -66,7 +69,6 @@ jQuery(function($){
 		if (data.type) querystring.t = data.type;
 		querystring.v = $('#meetings .toggle-view.active').attr('data-id');
 		querystring = jQuery.param(querystring);
-		//console.log('querystring is ' + querystring)
 		
 		//save the query in the query string, if the browser is up to it
 		if (history.pushState) {
@@ -78,10 +80,6 @@ jQuery(function($){
 			window.history.pushState({path:url}, '', url);
 		}
 		
-		//debugging
-		//console.log(myAjax.ajaxurl)
-		//console.log(data);
-
 		//request new meetings result
 		jQuery.post(myAjax.ajaxurl, data, function(response){
 			if (!response.length) {
@@ -152,12 +150,12 @@ jQuery(function($){
 					
 					//add new table row
 					tbody.append('<tr>' + 
-						'<td class="time" data-sort="' + sort_time + '"><span>' + (data.day || !obj.day ? obj.time_formatted : days[obj.day] + '</span><span>' + obj.time_formatted) + '</span></td>' + 
-						'<td class="name" data-sort="' + obj.name + '-' + sort_time + '">' + formatLink(obj.url, obj.name, 'post_type') + '</td>' + 
-						'<td class="location" data-sort="' + obj.location + '-' + sort_time + '">' + obj.location + '</td>' + 
-						'<td class="address" data-sort="' + obj.formatted_address + '-' + sort_time + '">' + formatAddress(obj.formatted_address, true) + '</td>' + 
-						'<td class="region" data-sort="' + (obj.sub_region || obj.region || '') + '-' + sort_time + '">' + (obj.sub_region || obj.region || '') + '</td>' + 
-						'<td class="types" data-sort="' + decodeMeetingTypes(obj.types) + '-' + sort_time + '">' + decodeMeetingTypes(obj.types) + '</td>' + 
+						'<td class="time" data-sort="' + sort_time + '-' + sanitize_title(obj.location) + '"><span>' + (data.day || !obj.day ? obj.time_formatted : days[obj.day] + '</span><span>' + obj.time_formatted) + '</span></td>' + 
+						'<td class="name" data-sort="' + sanitize_title(obj.name) + '-' + sort_time + '">' + formatLink(obj.url, obj.name, 'post_type') + '</td>' + 
+						'<td class="location" data-sort="' + sanitize_title(obj.location) + '-' + sort_time + '">' + obj.location + '</td>' + 
+						'<td class="address" data-sort="' + sanitize_title(obj.formatted_address) + '-' + sort_time + '">' + formatAddress(obj.formatted_address, true) + '</td>' + 
+						'<td class="region" data-sort="' + sanitize_title((obj.sub_region || obj.region || '')) + '-' + sort_time + '">' + (obj.sub_region || obj.region || '') + '</td>' + 
+						'<td class="types" data-sort="' + sanitize_title(decodeMeetingTypes(obj.types)) + '-' + sort_time + '">' + decodeMeetingTypes(obj.types) + '</td>' + 
 					'</tr>')
 				});
 				
@@ -263,6 +261,7 @@ jQuery(function($){
 
 		$(this).parent().toggleClass('active');
 
+		toggleUpcoming();
 		updateTitle();
 		doSearch();
 	});
@@ -298,10 +297,10 @@ jQuery(function($){
 		if (action == 'map' && action != previous) {
 			google.maps.event.trigger(map, 'resize');
 			map.fitBounds(bounds);
-	   		if ((markers.length == 1) && $('#map').is(':visible')) {
-	   			map.setZoom(14);
-	   			google.maps.event.trigger(markers[0],'click');
-	   		}
+	 		if ((markers.length == 1) && $('#map').is(':visible')) {
+	 			map.setZoom(14);
+	 			google.maps.event.trigger(markers[0],'click');
+	 		}
 		}
 	});
 
@@ -323,9 +322,9 @@ jQuery(function($){
 				map.setCenter(pos);
 				map.setZoom(13);
 			}, function(err) {
-  				console.log('ERROR(' + err.code + '): ' + err.message);
-  				$(this).removeClass('active')
-  			});
+				//console.log('ERROR(' + err.code + '): ' + err.message);
+				$(this).removeClass('active')
+			});
 		} else if (userMarker !== undefined) {
 			userMarker.setMap(null);
 		}
@@ -360,6 +359,23 @@ jQuery(function($){
 			$('#map').css('height', 550);
 		}
 	}
+
+	//if day is today, show 'upcoming' time option, otherwise hide it
+	function toggleUpcoming() {
+		var current_day = new Date().getDay();
+		var selected_day = $('#day li.active a').first().attr('data-id');
+		var selected_time = $('#time li.active a').first().attr('data-id');
+		if (current_day != selected_day) {
+			$('#time li.upcoming').addClass('hidden');
+			if (selected_time == 'upcoming') {
+				$('#time li.active').removeClass('active');
+				$('#time li').first().addClass('active');
+				$('#time span.selected').html($('#time li a').first().text());
+			}
+		} else {
+			$('#time li.upcoming').removeClass('hidden');
+		}
+	}	
 	
 	//save a string of the current state to the title bar, so that it prints nicely
 	function updateTitle() {
@@ -425,8 +441,6 @@ function loadMap(locations) {
 
 	for (var location_id in locations) {
 		if (locations.hasOwnProperty(location_id)) {
-			//console.log(locations[location_id]);
-			
 			var location = locations[location_id];
 			
 			//set new marker
@@ -530,4 +544,24 @@ function updateQueryString(key, value, url) {
 			return url;
 		}
 	}
+}
+
+//like wordpress
+function sanitize_title(str) {
+	str = str.replace(/^\s+|\s+$/g, ''); // trim
+	str = str.toLowerCase();
+	
+	// remove accents, swap ñ for n, etc
+	var from = "àáäâèéëêìíïîòóöôùúüûñç·/_,:;";
+	var to = "aaaaeeeeiiiioooouuuunc------";
+	
+	for (var i=0, l=from.length ; i<l ; i++) {
+		str = str.replace(new RegExp(from.charAt(i), 'g'), to.charAt(i));
+	}
+	
+	str = str.replace(/[^a-z0-9 -]/g, '') // remove invalid chars
+		.replace(/\s+/g, '-') // collapse whitespace and replace by -
+		.replace(/-+/g, '-'); // collapse dashes
+	
+	return str;
 }
