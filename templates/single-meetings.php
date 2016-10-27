@@ -65,10 +65,7 @@ $meeting = tsml_get_meeting();
 						
 						<?php if (!empty($tsml_feedback_addresses)) {?>
 						<div id="feedback">
-							<dt><?php _e('Feedback', '12-step-meeting-list')?></dt>
-							<dd>
-								<?php _e('See something wrong?', '12-step-meeting-list')?> <a href="#report">Report an issue</a> with this listing.
-							</dd>
+							<a href="#feedback" class="btn btn-default"><?php _e('Request a Change', '12-step-meeting-list')?></a>
 							
 							<form>
 								<input type="hidden" name="action" value="tsml_feedback">
@@ -87,7 +84,8 @@ $meeting = tsml_get_meeting();
 									<label for="tsml_message"><?php _e('Message', '12-step-meeting-list')?></label>
 									<textarea id="tsml_message" name="tsml_message" placeholder="Please be specific." class="form-control required"></textarea>
 								</div>
-								<input type="submit" class="btn btn-default" value="<?php _e('Submit', '12-step-meeting-list')?>"> <?php _e('or', '12-step-meeting-list')?> <a href="#cancel"><?php _e('Cancel', '12-step-meeting-list')?></a>
+								<input type="submit" class="btn btn-primary" value="<?php _e('Submit', '12-step-meeting-list')?>">
+								<a href="#cancel" class="btn btn-default"><?php _e('Cancel', '12-step-meeting-list')?></a>
 							</form>
 							
 							<div class="alert alert-warning"></div>

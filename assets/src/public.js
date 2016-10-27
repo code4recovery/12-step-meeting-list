@@ -1,14 +1,14 @@
 jQuery(function($){
 	
 	//single meeting page feedback form
-	$('#meeting #feedback a[href="#report"]').click(function(e){
+	$('#meeting #feedback a[href="#feedback"]').click(function(e){
 		e.preventDefault();
-		$(this).closest('#feedback').attr('class', 'form');
+		$(this).closest('#feedback').toggleClass('form');
 	});
 	
 	$('#meeting #feedback a[href="#cancel"]').click(function(e){
 		e.preventDefault();
-		$(this).closest('#feedback').attr('class', '');
+		$(this).closest('#feedback').toggleClass('form');
 	});
 	
 	$('#meeting #feedback form').validate({

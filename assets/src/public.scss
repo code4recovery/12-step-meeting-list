@@ -262,11 +262,11 @@ input:focus, button:focus {
 	form { margin-bottom: $margin; }
 	&.form {
 		form { display: block; }
-		dt, dd { display: none; }
+		a[href="#feedback"] { display: none; }
 	}
 	&.confirm {
 		.alert { display: block; }
-		dt, dd { display: none; }
+		a[href="#feedback"] { display: none; }
 	}
 }
 

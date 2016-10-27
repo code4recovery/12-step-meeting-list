@@ -28,12 +28,12 @@ class TSML_Widget_Upcoming extends WP_Widget {
 		$count = !empty($instance['count']) ? $instance['count'] : 5;
 		?>
 		<p>
-			<label for="<?php echo esc_attr($this->get_field_id('title'))?>"><?php _e(esc_attr('Title:'))?></label> 
+			<label for="<?php echo esc_attr($this->get_field_id('title'))?>"><?php _e('Title:', '12-step-meeting-list')?></label> 
 			<input class="widefat" id="<?php echo esc_attr($this->get_field_id('title'))?>" name="<?php echo esc_attr($this->get_field_name('title'))?>" type="text" value="<?php echo esc_attr($title)?>">
 		</p>
 		<p>
-			<label for="<?php echo esc_attr($this->get_field_id('count'))?>"><?php _e(esc_attr('Count:'))?></label> 
-			<select id="<?php echo esc_attr($this->get_field_id('title'))?>" name="<?php echo esc_attr($this->get_field_name('count'))?>">
+			<label for="<?php echo esc_attr($this->get_field_id('count'))?>"><?php _e('Show:', '12-step-meeting-list')?></label> 
+			<select class="widefat" id="<?php echo esc_attr($this->get_field_id('title'))?>" name="<?php echo esc_attr($this->get_field_name('count'))?>">
 				<?php for ($i = 1; $i < 11; $i++) {?>
 					<option value="<?php echo $i?>"<?php selected($i, esc_attr($count))?>><?php echo $i?></option>
 				<?php }?>
