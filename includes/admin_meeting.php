@@ -1,8 +1,8 @@
 <?php
+//customizations for the add/edit meeting administration screens
 
 //ajax for the location typeahead
 add_action('wp_ajax_location_autocomplete', 'tsml_admin_ajax_locations');
-
 function tsml_admin_ajax_locations() {
 	$locations = tsml_get_locations();
 	$results = array();
@@ -38,7 +38,6 @@ function tsml_string_tokens($string) {
 
 //ajax for the group typeahead
 add_action('wp_ajax_tsml_group', 'tsml_admin_ajax_groups');
-
 function tsml_admin_ajax_groups() {
 	$groups = get_posts('post_type=tsml_group&numberposts=-1');
 	$results = array();
@@ -84,6 +83,7 @@ function tsml_admin_ajax_address() {
 }
 
 //custom title
+add_filter('enter_title_here', 'tsml_change_default_title');
 function tsml_change_default_title($title){
 	$screen = get_current_screen();
 	if ($screen->post_type == 'tsml_meeting') {
@@ -91,11 +91,9 @@ function tsml_change_default_title($title){
     }
     return $title;
 }
-add_filter('enter_title_here', 'tsml_change_default_title');
 
 //edit page
 add_action('admin_init', 'tsml_admin_init');
-
 function tsml_admin_init() {
 
 	tsml_assets();
