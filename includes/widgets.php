@@ -13,12 +13,16 @@ class TSML_Widget_Upcoming extends WP_Widget {
 
 	//front-end display of widget
 	public function widget($args, $instance) {
+		$table = tsml_next_meetings($instance);
+		if (empty($table)) return false;
 		echo $args['before_widget'];
 		if (!empty($instance['title'])) {
 			echo $args['before_title'] . apply_filters('widget_title', $instance['title']) . $args['after_title'];
 		}
-		echo tsml_next_meetings($instance);
-		echo '<p><a href="' . get_post_type_archive_link('tsml_meeting') . '">' . __('View All Meetings', '12-step-meeting-list') . '</a></p>';
+		echo $table;
+		$link = get_post_type_archive_link('tsml_meeting');
+		$link .= (strpos($link, '?') === false) ? '?i=upcoming' : '&i=upcoming';
+		echo '<p><a href="' . $link . '">' . __('View All Meetings', '12-step-meeting-list') . '</a></p>';
 		echo $args['after_widget'];
 	}
 

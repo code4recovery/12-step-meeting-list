@@ -8,8 +8,9 @@ add_shortcode('tsml_region_count', 'tsml_count_regions');
 //function for shortcode: get a table of the next $count meetings
 function tsml_next_meetings($arguments) {
 	$arguments = shortcode_atts(array('count' => 5), $arguments, 'tsml_next_meetings');
-	$meetings = tsml_get_meetings();
-	usort($meetings, 'tsml_next_meetings_sort');
+	$meetings = tsml_get_meetings(array('day' => intval(current_time('w')), 'time' => 'upcoming'));
+	if (!count($meetings)) return false;
+	//usort($meetings, 'tsml_next_meetings_sort');
 	$meetings = array_slice($meetings, 0, $arguments['count']);
 	$rows = '';
 	foreach ($meetings as $meeting) {
@@ -39,7 +40,7 @@ function tsml_next_meetings($arguments) {
 }
 add_shortcode('tsml_next_meetings', 'tsml_next_meetings');
 
-//function:	usort for next meetings
+/*function:	usort for next meetings
 //used:		tsml_next_meetings()
 function tsml_next_meetings_sort($a, $b) {
 	$today = current_time('w');
@@ -51,4 +52,4 @@ function tsml_next_meetings_sort($a, $b) {
 	
 	//return standard compare	
 	return tsml_sort_meetings($a, $b);
-}
+}*/
