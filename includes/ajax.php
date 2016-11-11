@@ -1,10 +1,115 @@
 <?php
 //ajax functions
 
+//ajax for the search typeahead and the location typeahead on the meeting edit page
+add_action('wp_ajax_tsml_locations', 'tsml_ajax_locations');
+add_action('wp_ajax_nopriv_tsml_locations', 'tsml_ajax_locations');
+function tsml_ajax_locations() {
+	$locations = tsml_get_locations();
+	$results = array();
+    foreach ($locations as $location) {
+        $results[] = array(
+            'value'				=> html_entity_decode($location['location']),
+            'formatted_address'	=> $location['formatted_address'],
+            'latitude'			=> $location['latitude'],
+            'longitude'			=> $location['longitude'],
+            'region'			=> $location['region_id'],
+            'notes'				=> html_entity_decode($location['location_notes']),
+            'tokens'			=> tsml_string_tokens($location['location']),
+            'type'				=> 'location',
+            'url'				=> $location['location_url'],
+        );
+	}
+	wp_send_json($results);
+}
+
+//ajax for the search typeahead and the meeting edit group typeahead
+add_action('wp_ajax_tsml_groups', 'tsml_ajax_groups');
+add_action('wp_ajax_nopriv_tsml_groups', 'tsml_ajax_groups');
+function tsml_ajax_groups() {
+	$groups = get_posts('post_type=tsml_group&numberposts=-1');
+	$results = array();
+    foreach ($groups as $group) {
+        $title  = get_the_title($group->ID);
+        $group_custom = get_post_meta($group->ID);
+        $results[] = array(
+            'value'				=> html_entity_decode($title),
+            'contact_1_name'	=> @$group_custom['contact_1_name'][0],
+            'contact_1_email'	=> @$group_custom['contact_1_email'][0],
+            'contact_1_phone'	=> @$group_custom['contact_1_phone'][0],
+            'contact_2_name'	=> @$group_custom['contact_2_name'][0],
+            'contact_2_email'	=> @$group_custom['contact_2_email'][0],
+            'contact_2_phone'	=> @$group_custom['contact_2_phone'][0],
+            'contact_3_name'	=> @$group_custom['contact_3_name'][0],
+            'contact_3_email'	=> @$group_custom['contact_3_email'][0],
+            'contact_3_phone'	=> @$group_custom['contact_3_phone'][0],
+            'notes'				=> html_entity_decode($group->post_content),
+            'tokens'			=> tsml_string_tokens($title),
+            'type'				=> 'group',
+        );
+	}
+	wp_send_json($results);
+}
+
+//ajax for the search typeahead
+add_action('wp_ajax_tsml_regions', 'tsml_ajax_regions');
+add_action('wp_ajax_nopriv_tsml_regions', 'tsml_ajax_regions');
+function tsml_ajax_regions() {
+	$regions = get_terms('tsml_region');
+	$results = array();
+    foreach ($regions as $region) {
+        $results[] = array(
+	        'id'				=> $region->term_id,
+            'value'				=> html_entity_decode($region->name),
+            'type'				=> 'region',
+            'tokens'			=> tsml_string_tokens($region->name),
+        );
+	}
+	wp_send_json($results);
+}
+
+/*ajax for the search typeahead (without all the burden of the notes and fields of the main meetings ajax)
+add_action('wp_ajax_tsml_meetings', 'tsml_ajax_meetings2');
+add_action('wp_ajax_nopriv_tsml_meetings', 'tsml_ajax_meetings2');
+function tsml_ajax_meetings2() {
+	$meetings = get_posts('post_type=tsml_meeting&numberposts=-1');
+	$results = array();
+    foreach ($meetings as $meeting) {
+		$title  = get_the_title($meeting->ID);
+        $results[] = array(
+	        'id'				=> $meeting->ID,
+            'value'				=> html_entity_decode($title),
+            'type'				=> 'meeting',
+            'tokens'			=> tsml_string_tokens($title),
+        );
+	}
+	wp_send_json($results);
+}*/
+
+//ajax for address checking
+add_action('wp_ajax_address', 'tsml_admin_ajax_address');
+function tsml_admin_ajax_address() {
+	if (!$posts = get_posts(array(
+		'post_type'		=> 'tsml_location',
+		'numberposts'	=> 1,
+		'meta_key'		=> 'formatted_address',
+		'meta_value'	=> sanitize_text_field($_GET['formatted_address']),
+	))) return array();
+
+	$region = get_the_terms($posts[0]->ID, 'tsml_region');
+
+	//return info to user
+	wp_send_json(array(
+		'location' => $posts[0]->post_title,
+		'location_notes' => $posts[0]->post_content,
+		'region' => $region[0]->term_id,
+	));
+}
+
 //function:	clear google address cache, only necessary if parsing logic changes
 //used:		utility function, run manually
-add_action('wp_ajax_tsml_cache', 'tsml_ajax_cache');
-function tsml_ajax_cache() {
+add_action('wp_ajax_tsml_cache', 'tsml_ajax_cache_clear');
+function tsml_ajax_cache_clear() {
 	delete_option('tsml_addresses');
 	die('address cache cleared!');	
 }

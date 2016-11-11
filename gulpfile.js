@@ -17,6 +17,7 @@ elixir(function(mix) {
 	], './assets/js/admin.min.js')
 	.scripts([
 		'./node_modules/mark.js/dist/jquery.mark.js',
+		'./node_modules/typeahead.js/dist/typeahead.bundle.js',
 		'./assets/src/public.js'
 	], './assets/js/public.min.js');
 });

@@ -181,6 +181,10 @@ and then drop some or all of these tags in your PHP:
 
 == Changelog ==
 
+= 2.7.5 =
+* Search typeahead (regions, groups and locations)
+* Adding Dual Diagnosis for East Bay
+
 = 2.7.4 =
 * Fixed plugin include paths for people running in a subfolder
 

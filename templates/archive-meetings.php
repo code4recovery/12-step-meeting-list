@@ -75,7 +75,7 @@ class Walker_Regions_Dropdown extends Walker_Category {
 		<div class="col-md-2 col-sm-6">
 			<form id="search" role="search">
 				<div class="input-group">
-					<input type="text" name="query" class="form-control" value="<?php echo $search?>" placeholder="<?php _e('Search', '12-step-meeting-list')?>" aria-label="Search">
+					<input type="text" name="query" class="form-control" value="<?php echo $search?>" placeholder="<?php _e('Search', '12-step-meeting-list')?>" aria-label="Search" autofocus>
 					<span class="input-group-btn">
 						<button class="btn btn-default" type="submit"><i class="glyphicon glyphicon-search"></i></button>
 					</span>

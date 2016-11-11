@@ -44,8 +44,88 @@ jQuery(function($){
 		$('li.geolocator').removeClass('hidden');
 	}
 	
-	//show/hide upcoming
+	//show/hide upcoming menu option
 	toggleUpcoming();
+	
+	//search typeahead
+	var tsml_regions = new Bloodhound({
+		datumTokenizer: Bloodhound.tokenizers.obj.whitespace('value'),
+		queryTokenizer: Bloodhound.tokenizers.whitespace,
+		prefetch: {
+			url: myAjax.ajaxurl + '?action=tsml_regions',
+			cache: false
+		}
+	});
+	var tsml_groups = new Bloodhound({
+		datumTokenizer: Bloodhound.tokenizers.obj.whitespace('value'),
+		queryTokenizer: Bloodhound.tokenizers.whitespace,
+		prefetch: {
+			url: myAjax.ajaxurl + '?action=tsml_groups',
+			cache: false
+		}
+	});
+	var tsml_locations = new Bloodhound({
+		datumTokenizer: Bloodhound.tokenizers.obj.whitespace('value'),
+		queryTokenizer: Bloodhound.tokenizers.whitespace,
+		prefetch: {
+			url: myAjax.ajaxurl + '?action=tsml_locations',
+			cache: false
+		}
+	});
+	var tsml_meetings = new Bloodhound({
+		datumTokenizer: Bloodhound.tokenizers.obj.whitespace('value'),
+		queryTokenizer: Bloodhound.tokenizers.whitespace,
+		prefetch: {
+			url: myAjax.ajaxurl + '?action=tsml_meetings',
+			cache: false
+		}
+	});
+
+	$('#meetings #search input[name="query"]').typeahead({
+		highlight: true
+	}, {
+		name: 'tsml_regions',
+		display: 'value',
+		source: tsml_regions,
+		templates: {
+			header: '<h3>' + myAjax.strings.regions + '</h3>',
+		}
+	}, {
+		name: 'tsml_groups',
+		display: 'value',
+		source: tsml_groups,
+		templates: {
+			header: '<h3>' + myAjax.strings.groups + '</h3>',
+		}
+	}, {
+		name: 'tsml_locations',
+		display: 'value',
+		source: tsml_locations,
+		templates: {
+			header: '<h3>' + myAjax.strings.locations + '</h3>',
+		}
+	/*}, {
+		name: 'tsml_meetings',
+		display: 'value',
+		source: tsml_meetings,
+		templates: {
+			header: '<h3>' + myAjax.strings.meetings + '</h3>',
+		}*/
+	}).on('typeahead:selected', function($e, item){
+		if (item.type == 'region') {
+			$('#region li').removeClass('active');
+			var active = $('#region li a[data-id="' + item.id + '"]');
+			active.parent().addClass('active');
+			$('#region span.selected').html(active.html());
+			$('#search input[name="query"]').val('').typeahead('val', '');
+			doSearch();
+		} else if (item.type == 'location') {
+			location.href = item.url;
+		} else if (item.type == 'group') {
+			doSearch();
+		}
+	});
+	
 
 	//run search (triggered by dropdown toggle or form submit)
 	function doSearch() {

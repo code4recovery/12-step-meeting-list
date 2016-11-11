@@ -62,6 +62,12 @@ function tsml_assets() {
 		wp_localize_script('tsml_public_js', 'myAjax', array(
 			'ajaxurl' => admin_url('admin-ajax.php'),
 			'types' => $tsml_types[$tsml_program],
+			'strings' => array(
+				'groups' => __('Groups', '12-step-meeting-list'),
+				'locations' => __('Locations', '12-step-meeting-list'),
+				'regions' => __('Regions', '12-step-meeting-list'),
+				'meetings' => __('Meetings', '12-step-meeting-list'),
+			),
 		));
 		wp_enqueue_style('tsml_public_css', plugins_url('../assets/css/public.min.css', __FILE__));
 		wp_enqueue_script('validate_js', plugins_url('../assets/js/jquery.validate.min.js', __FILE__), array('jquery'), '', true);
@@ -744,50 +750,6 @@ function tsml_meeting_types($types) {
 	return implode(', ', $return);
 }
 
-//function: sort an array of meetings
-//used: as a callback in tsml_get_meetings()
-//method: sort by 
-//	1) day, following "week starts on" user preference, with appointment meetings last, 
-//	2) followed by time, where the day starts at 5am, 
-//	3) followed by location name, 
-//	4) followed by meeting name
-function tsml_sort_meetings($a, $b) {
-	global $tsml_days_order;
-	$a_day_index = strlen($a['day']) ? array_search($a['day'], $tsml_days_order) : false;
-	$b_day_index = strlen($b['day']) ? array_search($b['day'], $tsml_days_order) : false;
-	if ($a_day_index === false && $b_day_index !== false) {
-		return 1;
-	} elseif ($a_day_index !== false && $b_day_index === false) {
-		return -1;
-	} elseif ($a_day_index != $b_day_index) {
-		return $a_day_index - $b_day_index;
-	} else {
-		//days are the same or both null
-		if ($a['time'] != $b['time']) {
-			/*
-			if (substr_count($a['time'], ':')) { //move meetings earlier than 5am to the end of the list
-				$a_time = explode(':', $a['time'], 2);
-				if (intval($a_time[0]) < 5) $a_time[0] = sprintf("%02d",  $a_time[0] + 24);
-				$a_time = implode(':', $a_time);
-			}
-			if (substr_count($b['time'], ':')) { //move meetings earlier than 5am to the end of the list
-				$b_time = explode(':', $b['time'], 2);
-				if (intval($b_time[0]) < 5) $b_time[0] = sprintf("%02d",  $b_time[0] + 24);
-				$b_time = implode(':', $b_time);
-			}*/
-			$a_time = ($a['time'] == '00:00') ? '23:59' : $a['time'];
-			$b_time = ($b['time'] == '00:00') ? '23:59' : $b['time'];
-			return strcmp($a_time, $b_time);
-		} else {
-			if ($a['location'] != $b['location']) {
-				return strcmp($a['location'], $b['location']);
-			} else {
-				return strcmp($a['name'], $b['name']);
-			}
-		}
-	}
-}
-
 //function:	filter workaround for setting post_modified dates
 //used:		tsml_ajax_import()
 function tsml_import_post_modified($data, $postarr) {
@@ -873,6 +835,67 @@ function tsml_sanitize_time($string) {
 	$string = sanitize_text_field($string);
 	if ($time = strtotime($string)) return date('H:i', $time);
 	return null;
+}
+
+
+//function: sort an array of meetings
+//used: as a callback in tsml_get_meetings()
+//method: sort by 
+//	1) day, following "week starts on" user preference, with appointment meetings last, 
+//	2) followed by time, where the day starts at 5am, 
+//	3) followed by location name, 
+//	4) followed by meeting name
+function tsml_sort_meetings($a, $b) {
+	global $tsml_days_order;
+	$a_day_index = strlen($a['day']) ? array_search($a['day'], $tsml_days_order) : false;
+	$b_day_index = strlen($b['day']) ? array_search($b['day'], $tsml_days_order) : false;
+	if ($a_day_index === false && $b_day_index !== false) {
+		return 1;
+	} elseif ($a_day_index !== false && $b_day_index === false) {
+		return -1;
+	} elseif ($a_day_index != $b_day_index) {
+		return $a_day_index - $b_day_index;
+	} else {
+		//days are the same or both null
+		if ($a['time'] != $b['time']) {
+			/*
+			if (substr_count($a['time'], ':')) { //move meetings earlier than 5am to the end of the list
+				$a_time = explode(':', $a['time'], 2);
+				if (intval($a_time[0]) < 5) $a_time[0] = sprintf("%02d",  $a_time[0] + 24);
+				$a_time = implode(':', $a_time);
+			}
+			if (substr_count($b['time'], ':')) { //move meetings earlier than 5am to the end of the list
+				$b_time = explode(':', $b['time'], 2);
+				if (intval($b_time[0]) < 5) $b_time[0] = sprintf("%02d",  $b_time[0] + 24);
+				$b_time = implode(':', $b_time);
+			}*/
+			$a_time = ($a['time'] == '00:00') ? '23:59' : $a['time'];
+			$b_time = ($b['time'] == '00:00') ? '23:59' : $b['time'];
+			return strcmp($a_time, $b_time);
+		} else {
+			if ($a['location'] != $b['location']) {
+				return strcmp($a['location'], $b['location']);
+			} else {
+				return strcmp($a['name'], $b['name']);
+			}
+		}
+	}
+}
+
+//function:	tokenize string for the typeaheads
+//used:		ajax functions
+function tsml_string_tokens($string) {
+
+	//shorten words that have quotes in them instead of splitting them
+	$string = html_entity_decode($string);
+	$string = str_replace("'", '', $string);
+	$string = str_replace('’', '', $string);
+	
+	//remove everything that's not a letter or a number
+	$string = preg_replace("/[^a-zA-Z 0-9]+/", ' ', $string);
+	
+	//return array
+	return array_values(array_unique(array_filter(explode(' ', $string))));
 }
 
 //function:	run any outstanding database upgrades

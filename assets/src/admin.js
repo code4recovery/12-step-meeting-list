@@ -94,51 +94,52 @@ jQuery(function($){
 	});
 	
 	//location typeahead
-	var locations = new Bloodhound({
+	var tsml_locations = new Bloodhound({
 		datumTokenizer: Bloodhound.tokenizers.obj.whitespace('value'),
 		queryTokenizer: Bloodhound.tokenizers.whitespace,
 		prefetch: {
-			url: myAjax.ajaxurl + '?action=location_autocomplete',
+			url: myAjax.ajaxurl + '?action=tsml_locations',
 			cache: false
 		}
 	});
-	locations.initialize();
+
 	$('input#location').typeahead(null, {
 		displayKey: 'value',
-		source: locations.ttAdapter()
-	}).on('typeahead:autocompleted', function($e, datum){
-		$('input[name=formatted_address]').val(datum.formatted_address);
-		$('input[name=latitude]').val(datum.latitude);
-		$('input[name=longitude]').val(datum.longitude);
-		$('select[name=region] option[value=' + datum.region + ']').prop('selected', true);
-		$('textarea[name=location_notes]').val(datum.notes);
-		setMap(datum.latitude, datum.longitude);
+		source: tsml_locations
+	}).on('typeahead:autocompleted typeahead:selected', function($e, location){
+		$('input[name=formatted_address]').val(location.formatted_address);
+		$('input[name=latitude]').val(location.latitude);
+		$('input[name=longitude]').val(location.longitude);
+		$('select[name=region] option[value=' + location.region + ']').prop('selected', true);
+		$('textarea[name=location_notes]').val(location.notes);
+		setMap(location.latitude, location.longitude);
 	});
 
 	//group typeahead
-	var groups = new Bloodhound({
+	var tsml_groups = new Bloodhound({
 		datumTokenizer: Bloodhound.tokenizers.obj.whitespace('value'),
 		queryTokenizer: Bloodhound.tokenizers.whitespace,
 		prefetch: {
-			url: myAjax.ajaxurl + '?action=tsml_group',
+			url: myAjax.ajaxurl + '?action=tsml_groups',
 			ttl: 10
 		}
 	});
-	groups.initialize();
+
 	$('input#group').typeahead(null, {
 		displayKey: 'value',
-		source: groups.ttAdapter()
-	}).on('typeahead:autocompleted', function($e, datum){
-		$('input[name=contact_1_name]').val(datum.contact_1_name);
-		$('input[name=contact_1_email]').val(datum.contact_1_email);
-		$('input[name=contact_1_phone]').val(datum.contact_1_phone);
-		$('input[name=contact_2_name]').val(datum.contact_2_name);
-		$('input[name=contact_2_email]').val(datum.contact_2_email);
-		$('input[name=contact_2_phone]').val(datum.contact_2_phone);
-		$('input[name=contact_3_name]').val(datum.contact_3_name);
-		$('input[name=contact_3_email]').val(datum.contact_3_email);
-		$('input[name=contact_3_phone]').val(datum.contact_3_phone);
-		$('textarea[name=group_notes]').val(datum.notes);
+		source: tsml_groups
+	}).on('typeahead:autocompleted typeahead:selected', function($e, group){
+		$('input[name=contact_1_name]').val(group.contact_1_name);
+		$('input[name=contact_1_email]').val(group.contact_1_email);
+		$('input[name=contact_1_phone]').val(group.contact_1_phone);
+		$('input[name=contact_2_name]').val(group.contact_2_name);
+		$('input[name=contact_2_email]').val(group.contact_2_email);
+		$('input[name=contact_2_phone]').val(group.contact_2_phone);
+		$('input[name=contact_3_name]').val(group.contact_3_name);
+		$('input[name=contact_3_email]').val(group.contact_3_email);
+		$('input[name=contact_3_phone]').val(group.contact_3_phone);
+		$('input[name=last_contact]').val(group.last_contact);
+		$('textarea[name=group_notes]').val(group.notes);
 	});
 
 	$('input#group').change(function(){
