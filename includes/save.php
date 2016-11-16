@@ -40,7 +40,7 @@ function tsml_save_post($post_id, $post, $update) {
 			$old_meeting->{$key} = html_entity_decode($old_meeting->{$key});
 		}
 	}
-		
+	
 	//track changes to meeting
 	$changes = array();
 		
@@ -171,11 +171,17 @@ function tsml_save_post($post_id, $post, $update) {
 		wp_set_object_terms($location_id, intval($_POST['region']), 'tsml_region');
 	}
 	
-	//set parent on this post (and post status?) without re-triggering the save_posts hook
+	//set parent and post_status on this post (or all meetings at location) without re-triggering the save_posts hook
 	if (($old_meeting->post_parent != $location_id) || ($old_meeting->post_status != $_POST['post_status'])) {
-		$wpdb->get_var($wpdb->prepare('UPDATE ' . $wpdb->posts . ' SET post_parent = %d, post_status = %s WHERE ID = %d', $location_id, $_POST['post_status'], $post->ID));
+		if (empty($_POST['apply_address_to_location'])) {
+			$wpdb->query($wpdb->prepare('UPDATE ' . $wpdb->posts . ' SET post_parent = %d, post_status = %s WHERE ID = %d', $location_id, $_POST['post_status'], $post->ID));
+		} else {
+			foreach ($old_meeting->location_meetings as $meeting) {
+				$wpdb->query($wpdb->prepare('UPDATE ' . $wpdb->posts . ' SET post_parent = %d, post_status = %s WHERE ID = %d', $location_id, $_POST['post_status'], $meeting['id']));
+			}
+		}
 	}
-
+	
 	//save group information (set this value or get caught in a loop)
 	$_POST['post_type'] = 'tsml_group';
 
@@ -185,8 +191,7 @@ function tsml_save_post($post_id, $post, $update) {
 			if (!empty($old_meeting->group_notes)) $changes[] = 'group_notes';
 			delete_post_meta($post->ID, 'group_id');
 			if (!empty($_POST['apply_group_to_location'])) {
-				foreach ($meetings as $meeting) delete_post_meta($meeting['id'], 'group_id');
-				//todo other meetings affected by this change
+				foreach ($old_meeting->location_meetings as $meeting) delete_post_meta($meeting['id'], 'group_id');
 			}
 		}
 	} else {
@@ -217,8 +222,7 @@ function tsml_save_post($post_id, $post, $update) {
 			if (empty($_POST['apply_group_to_location'])) {
 				update_post_meta($post->ID, 'group_id', $group_id);
 			} else {
-				foreach ($meetings as $meeting) update_post_meta($meeting['id'], 'group_id', $group_id); 	
-				//todo other meetings affected by this change
+				foreach ($old_meeting->location_meetings as $meeting) update_post_meta($meeting['id'], 'group_id', $group_id); 	
 			}
 		}
 

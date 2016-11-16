@@ -81,10 +81,15 @@ function tsml_admin_init() {
 		</div>
 		<div class="meta_form_row">
 			<label for="formatted_address"><?php _e('Address', '12-step-meeting-list')?></label>
-			<input type="text" name="formatted_address" id="formatted_address" value="<?php echo @$location->formatted_address?>">
+			<input type="text" name="formatted_address" id="formatted_address" value="<?php echo @$location->formatted_address?>" data-original-value="<?php echo @$location->formatted_address?>">
 			<input type="hidden" name="latitude" id="latitude" value="<?php echo @$location->latitude?>">
 			<input type="hidden" name="longitude" id="longitude" value="<?php echo @$location->longitude?>">
 		</div>
+		<?php if (count($meetings) > 1) {?>
+		<div class="meta_form_row checkbox apply_address_to_location hidden">
+			<label><input type="checkbox" name="apply_address_to_location"> <?php _e('Apply this updated address to all meetings at this location', '12-step-meeting-list')?></label>
+		</div>
+		<?php }?>
 		<div class="meta_form_row">
 			<label for="region"><?php _e('Region', '12-step-meeting-list')?></label>
 			<?php wp_dropdown_categories(array(

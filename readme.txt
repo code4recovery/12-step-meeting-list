@@ -3,7 +3,7 @@ Contributors: meetingguide, aasanjose
 Tags: meetings, aa, al-anon, na, 12-step, locations, groups
 Requires at least: 3.2
 Tested up to: 4.6
-Stable tag: 2.7.6
+Stable tag: 2.7.7
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -28,6 +28,7 @@ It was originally designed to maintain a list of AA meetings in Santa Clara Coun
 * [Elk Grove Village, IL](http://d15aa.org/d15aa.org/?post_type=meetings)
 * [Europe](http://alcoholics-anonymous.eu/index.php/meetings/)
 * [Greensboro, NC](http://nc23.org/meetings/)
+* [Kansas](https://ks-aa.org/meetings/)
 * [Maine and New Brunswick](http://csoaamaine.org/meetings/)
 * [Mesa, AZ](http://aamesaaz.org/meetings/)
 * [Minneapolis, MN](http://aaminneapolis.org/meetings/)
@@ -180,6 +181,9 @@ and then drop some or all of these tags in your PHP:
 1. Edit location
 
 == Changelog ==
+
+= 2.7.7 =
+* Checkbox to apply address changes to all meetings at location
 
 = 2.7.6 =
 * Version bump because I didn't properly tag 2.7.5

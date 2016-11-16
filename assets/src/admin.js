@@ -192,6 +192,16 @@ jQuery(function($){
 			//save address
 			$('input#formatted_address').val(address.formatted_address);
 			
+			//unhide apply address to location?
+			if ($('div.apply_address_to_location').length) {
+				var original_address = $('input#formatted_address').attr('data-original-value');
+				if (original_address.length && (address.formatted_address != original_address)) {
+					$('div.apply_address_to_location').removeClass('hidden');
+				} else {
+					$('div.apply_address_to_location').addClass('hidden');
+				}
+			}
+			
 			//check if location with same address is already in the system, populate form
 			$.getJSON(myAjax.ajaxurl + '?action=address', { formatted_address: address.formatted_address }, function(data){
 				if (data) {
