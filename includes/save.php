@@ -141,6 +141,20 @@ function tsml_save_post($post_id, $post, $update) {
 				'post_content'  => $_POST['location_notes'],
 			));
 		}
+
+		//latitude longitude only if updated
+		foreach (array('latitude', 'longitude') as $field) {
+			if (!$update || $old_meeting->{$field} != $_POST[$field]) {
+				$changes[] = $field;
+				update_post_meta($location_id, $field, floatval($_POST[$field]));
+			}
+		}
+	
+		//update region
+		if (!$update || $old_meeting->region_id != $_POST['region']) {
+			$changes[] = 'region';
+			wp_set_object_terms($location_id, intval($_POST['region']), 'tsml_region');
+		}
 	} else {
 		$changes[] = 'location';
 		$changes[] = 'location_notes';
@@ -150,6 +164,10 @@ function tsml_save_post($post_id, $post, $update) {
 		  	'post_status'	=> 'publish',
 			'post_content'  => $_POST['location_notes'],
 		));
+		
+		//set latitude, longitude and region
+		add_post_meta($location_id, 'latitude', floatval($_POST['latitude']));
+		add_post_meta($location_id, 'longitude', floatval($_POST['longitude']));
 		wp_set_object_terms($location_id, intval($_POST['region']), 'tsml_region');
 	}
 
@@ -159,19 +177,6 @@ function tsml_save_post($post_id, $post, $update) {
 		update_post_meta($location_id, 'formatted_address', $_POST['formatted_address']);
 	}
 
-	foreach (array('latitude', 'longitude') as $field) {
-		if (!$update || $old_meeting->{$field} != $_POST[$field]) {
-			$changes[] = $field;
-			update_post_meta($location_id, $field, floatval($_POST[$field]));
-		}
-	}
-
-	//update region
-	if (!$update || $old_meeting->region_id != $_POST['region']) {
-		$changes[] = 'region';
-		wp_set_object_terms($location_id, intval($_POST['region']), 'tsml_region');
-	}
-	
 	//set parent and post_status on this post (or all meetings at location) without re-triggering the save_posts hook
 	if (($old_meeting->post_parent != $location_id) || ($old_meeting->post_status != $_POST['post_status'])) {
 		if (empty($_POST['apply_address_to_location'])) {
