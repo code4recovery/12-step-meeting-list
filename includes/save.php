@@ -150,6 +150,7 @@ function tsml_save_post($post_id, $post, $update) {
 		  	'post_status'	=> 'publish',
 			'post_content'  => $_POST['location_notes'],
 		));
+		wp_set_object_terms($location_id, intval($_POST['region']), 'tsml_region');
 	}
 
 	//update address & info on location
