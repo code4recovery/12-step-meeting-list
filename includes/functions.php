@@ -287,6 +287,20 @@ function tsml_format_utf8(&$item, $key) {
 	}
 }
 
+//function: display meeting list on home page (must be set to a static page)
+//used:		by themes that want it, such as https://github.com/meeting-guide/one-page-meeting-list
+function tsml_front_page($wp_query){
+	if (is_admin()) return; //don't do this to inside pages
+	if ($wp_query->get('page_id') == get_option('page_on_front')) {
+		$wp_query->set('post_type', 'tsml_meeting');
+		$wp_query->set('page_id', '');
+		$wp_query->is_page = 0;
+		$wp_query->is_singular = 0;
+		$wp_query->is_post_type_archive = 1;
+		$wp_query->is_archive = 1;
+	}
+}
+
 //function: get all locations in the system
 //used:		tsml_group_count()
 function tsml_get_all_groups($status='any') {
