@@ -175,7 +175,7 @@ class Walker_Regions_Dropdown extends Walker_Category {
 	<div class="row results">
 		<div class="col-xs-12">
 			<div id="alert" class="alert alert-warning<?php if (count($meetings)) {?> hidden<?php }?>">
-				<?php _e('No results matched those criteria', '12-step-meeting-list')?>
+				<?php _e('No results matched those criteria.', '12-step-meeting-list')?>
 			</div>
 			
 			<div id="map"></div>

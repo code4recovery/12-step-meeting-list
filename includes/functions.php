@@ -62,11 +62,23 @@ function tsml_assets() {
 		wp_localize_script('tsml_public_js', 'myAjax', array(
 			'ajaxurl' => admin_url('admin-ajax.php'),
 			'types' => $tsml_types[$tsml_program],
+			'days' => array(
+				__('Sunday', '12-step-meeting-list'),
+				__('Monday', '12-step-meeting-list'),
+				__('Tuesday', '12-step-meeting-list'),
+				__('Wednesday', '12-step-meeting-list'),
+				__('Thursday', '12-step-meeting-list'),
+				__('Friday', '12-step-meeting-list'),
+				__('Saturday', '12-step-meeting-list'),
+			),
 			'strings' => array(
 				'groups' => __('Groups', '12-step-meeting-list'),
 				'locations' => __('Locations', '12-step-meeting-list'),
 				'regions' => __('Regions', '12-step-meeting-list'),
 				'meetings' => __('Meetings', '12-step-meeting-list'),
+				'men' => __('Meetings', '12-step-meeting-list'),
+				'women' => __('Women', '12-step-meeting-list'),
+				'email_not_sent' => __('Email was not sent.', '12-step-meeting-list'),
 			),
 		));
 		wp_enqueue_style('tsml_public_css', plugins_url('../assets/css/public.min.css', __FILE__));
@@ -374,6 +386,10 @@ function tsml_get_location($location_id=false) {
 		$location->region_id = $region[0]->term_id;
 		$location->region = $region[0]->name;
 	}
+
+	//directions link
+	$location->directions = 'https://maps.apple.com/?q=' . $location->latitude . ',' . $location->longitude . '&z=16';
+
 	return $location;
 }
 
@@ -446,7 +462,11 @@ function tsml_get_meeting() {
 		$meeting->region = $region[0]->name;
 	}
 	
+	//get other meetings at this location
 	$meeting->location_meetings = tsml_get_meetings(array('location_id' => $location->ID));
+
+	//link for directions
+	$meeting->directions = 'https://maps.apple.com/?q=' . $meeting->latitude . ',' . $meeting->longitude . '&z=16';
 
 	//if meeting is part of a group, include group info
 	if ($meeting->group_id) {
@@ -795,16 +815,19 @@ function tsml_import_sanitize_field($value) {
 	return $value;
 }
 
-//function: return an html link with current query string appended
+//function: return an html link with current query string appended -- this is because query string permalink structure is an enormous pain in the ass
 //used:		archive-meetings.php, single-locations.php, single-meetings.php
-function tsml_link($url, $string, $exclude='') {
+function tsml_link($url, $string, $exclude='', $class=false) {
 	$appends = $_GET;
 	if (array_key_exists($exclude, $appends)) unset($appends[$exclude]);
 	if (!empty($appends)) {
 		$url .= strstr($url, '?') ? '&' : '?';
 		$url .= http_build_query($appends, '', '&amp;');
 	}
-	return '<a href="' . $url . '">' . $string . '</a>';
+	$return = '<a href="' . $url . '"';
+	if ($class) $return .= ' class="' . $class . '"';
+	$return .= '>' . $string . '</a>';
+	return $return;
 }
 
 //function: set an option with the currently-used types

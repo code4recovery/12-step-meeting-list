@@ -11,7 +11,6 @@ jQuery(function($){
 			var percentage = (Math.floor(((total - data.remaining) / total) * 95) + 5) + '%';
 			$progress.find('.progress-bar').css({width:percentage}).text(percentage);
 			
-			
 			//update the counts on the right
 			var $counts = $('#tsml_counts');
 			var types = ['meetings', 'locations', 'groups', 'regions'];

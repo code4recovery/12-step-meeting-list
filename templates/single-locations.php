@@ -13,41 +13,46 @@ $location = tsml_get_location();
 			</div>
 
 			<div class="row location">
-				<div class="col-md-4 meta">
-					<dl>
-						<dt><?php _e('Location', '12-step-meeting-list')?></dt>
-						<dd>
-							<?php echo tsml_format_address($location->formatted_address)?>
-						</dd>
+				<div class="col-md-4">
+					<div class="panel panel-default">
+						<ul class="list-group">
+							<a href="<?php echo $location->directions?>" class="list-group-item">
+								<?php echo tsml_format_address($location->formatted_address)?>
+							</a>
 
-						<?php if ($location->region) {?>
-						<dt><?php _e('Region', '12-step-meeting-list')?></dt>
-						<dd><?php echo $location->region?></dd>
-						<?php }
+							<?php if ($location->region) {?>
+								<li class="list-group-item"><?php echo $location->region?></li>
+							<?php }
+								
+							if (!empty($location->notes)) {?>
+								<li class="list-group-item"><?php echo $location->notes?></li>
+							<?php }
 							
-						if (!empty($location->notes)) {?>
-						<dt><?php _e('Notes', '12-step-meeting-list')?></dt>
-						<dd><?php echo $location->notes?></dd>
-						<?php }
-						
-						$meetings = tsml_get_meetings(array('location_id'=>$location->ID));
-						$location_days = array();
-						foreach ($meetings as $meeting) {
-							if (!isset($location_days[$meeting['day']])) $location_days[$meeting['day']] = array();
-							$location_days[$meeting['day']][] = '<li><span>' . $meeting['time_formatted'] . '</span> ' . tsml_link($meeting['url'], tsml_format_name($meeting['name'], $meeting['types']), 'locations') . '</li>';
-						}
-						ksort($location_days);
-						foreach ($location_days as $day=>$meetings) {?>
-							<dt><?php if (!empty($tsml_days[$day])) echo $tsml_days[$day]?></dt>
-							<dd><ul><?php echo implode($meetings)?></ul></dd>
-						<?php }?>
+							$meetings = tsml_get_meetings(array('location_id'=>$location->ID));
+							$location_days = array();
+							foreach ($meetings as $meeting) {
+								if (!isset($location_days[$meeting['day']])) $location_days[$meeting['day']] = array();
+								$location_days[$meeting['day']][] = '<li><span>' . $meeting['time_formatted'] . '</span> ' . tsml_link($meeting['url'], tsml_format_name($meeting['name'], $meeting['types']), 'locations') . '</li>';
+							}
+							ksort($location_days);
+							if (count($location_days)) {?>
+							<li class="list-group-item">						
+							<?php foreach ($location_days as $day=>$meetings) {?>
+								<h4><?php if (!empty($tsml_days[$day])) echo $tsml_days[$day]?></h4>
+								<ul class="meetings"><?php echo implode($meetings)?></ul>
+							<?php }?>
+							</li>
+							<?php }?>
 
-						<dt><?php _e('Updated', '12-step-meeting-list')?></dt>
-						<dd><?php the_modified_date()?></dd>
-					</dl>
+							<li class="list-group-item">
+								<?php _e('Updated')?>
+								<?php the_modified_date()?>
+							</li>
+						</ul>
+					</div>
 				</div>
 				<div class="col-md-8">
-					<div id="map" style="height:400px;"></div>
+					<div id="map" class="panel panel-default"></div>
 					<script>
 						var map;
 
@@ -64,7 +69,7 @@ $location = tsml_get_location();
 							var contentString = '<div class="infowindow">'+
 								'<h3><?php esc_attr_e($location->post_title)?></h3>'+
 								'<p><?php echo tsml_format_address($location->formatted_address)?></p>'+
-								'<p><a class="btn btn-default" href="http://maps.apple.com/?q=<?php echo $location->latitude . ',' . $location->longitude?>&z=16" target="_blank"><?php _e('Directions', '12-step-meeting-list')?></a></p>' +
+								'<p><a class="btn btn-default" href="<?php echo $location->directions?>" target="_blank"><?php _e('Directions', '12-step-meeting-list')?></a></p>' +
 								'</div>';
 
 							var infowindow = new google.maps.InfoWindow({

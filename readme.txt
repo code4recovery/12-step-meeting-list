@@ -3,7 +3,7 @@ Contributors: meetingguide, aasanjose
 Tags: meetings, aa, al-anon, na, 12-step, locations, groups
 Requires at least: 3.2
 Tested up to: 4.6
-Stable tag: 2.7.10
+Stable tag: 2.8
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -45,11 +45,18 @@ It was originally designed to maintain a list of AA meetings in Santa Clara Coun
 * [Tidewater Area, VA](http://www.tidewaterintergroup.org/meetings/)
 * [Toronto, Canada](http://aatoronto.org/?post_type=meetings)
 * [Tri Valley, CA](http://trivalleyaa.org/meetings/)
+* [Vienna, Austria](https://www.aavienna.com/meetings/)
+* [Virginia](https://aavirginia.org/meetings/)
+* [WAAFT](http://www.waaft.org/meetings/)
 * [Walnut Creek, CA](http://contracostaaa.org/meetings)
 * [West Hawaii, HI](http://www.westhawaiiaa.org/meetings/)
 * [Western Slope, CA](http://westernsloped22.org/meetings/)
 * [Western Kentucky](http://wkintergroup.org/meetings/)
 * [Western Washington](http://area72aa.org/meetings/)
+
+**Adult Children of Alcoholics**
+
+* [Southern California](http://www.socalaca.org/meetings/?d=any)
 
 **Al-Anon**
 
@@ -185,6 +192,13 @@ In that case, try our [One Page Meeting List](https://github.com/meeting-guide/o
 1. Edit location
 
 == Changelog ==
+
+= 2.8 =
+* New look for meeting detail and location pages
+* New description for open and closed meetings, per Area 23
+* Translated javascript strings per Polish AA in UK
+* Styling for nested regions dropdown
+* New white expand/collapse icons for themes with dark dropdown bgcolors
 
 = 2.7.10 =
 * New helper to display full meeting list on the home page if needed

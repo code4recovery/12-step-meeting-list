@@ -31,7 +31,7 @@ jQuery(function($){
 				$alert.removeClass('alert-danger').addClass('alert-warning').html(data);
 				$feedback.attr('class', 'confirm');
 			}).fail(function(response) {
-				$alert.removeClass('alert-warning').addClass('alert-danger').html('Email was not sent.');
+				$alert.removeClass('alert-warning').addClass('alert-danger').html(myAjax.strings.email_not_sent);
 				$feedback.attr('class', 'confirm');
 			});
 			return false;
@@ -181,7 +181,7 @@ jQuery(function($){
 
 				$('#meetings table').addClass('hidden');
 				$('#meetings #map').addClass('hidden');
-				$('#alert').html('No results matched those criteria.').removeClass('hidden');
+				$('#alert').removeClass('hidden');
 			} else {
 				$('#meetings table').removeClass('hidden');
 				if ($('#meetings #map').hasClass('hidden')) {
@@ -200,9 +200,9 @@ jQuery(function($){
 
 					//add gender designation
 					if (jQuery.inArray('M', obj.types) != -1) {
-						obj.name += ' <small>Men</small>';
+						obj.name += ' <small>' + myAjax.strings.men + '</small>';
 					} else if (jQuery.inArray('W', obj.types) != -1) {
-						obj.name += ' <small>Women</small>';
+						obj.name += ' <small>' + myAjax.strings.women + '</small>';
 					}
 
 					//save location info
@@ -230,7 +230,7 @@ jQuery(function($){
 					
 					//add new table row
 					tbody.append('<tr>' + 
-						'<td class="time" data-sort="' + sort_time + '-' + sanitize_title(obj.location) + '"><span>' + (data.day || !obj.day ? obj.time_formatted : days[obj.day] + '</span><span>' + obj.time_formatted) + '</span></td>' + 
+						'<td class="time" data-sort="' + sort_time + '-' + sanitize_title(obj.location) + '"><span>' + (data.day || !obj.day ? obj.time_formatted : myAjax.days[obj.day] + '</span><span>' + obj.time_formatted) + '</span></td>' + 
 						'<td class="name" data-sort="' + sanitize_title(obj.name) + '-' + sort_time + '">' + formatLink(obj.url, obj.name, 'post_type') + '</td>' + 
 						'<td class="location" data-sort="' + sanitize_title(obj.location) + '-' + sort_time + '">' + obj.location + '</td>' + 
 						'<td class="address" data-sort="' + sanitize_title(obj.formatted_address) + '-' + sort_time + '">' + formatAddress(obj.formatted_address, true) + '</td>' + 
@@ -307,7 +307,7 @@ jQuery(function($){
 	$('#meetings .controls').on('click', 'div.expand', function(e){
 		e.preventDefault();
 		e.stopPropagation();
-		$(this).next('ul.children').slideToggle();
+		$(this).next('ul.children').toggleClass('expanded');
 		$(this).toggleClass('expanded');
 	});
 
@@ -512,7 +512,7 @@ var map = new google.maps.Map(document.getElementById('map'), {
 });
 var bounds = new google.maps.LatLngBounds();
 
-var days = [ 'Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+//var days = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
 
 var infowindow = new google.maps.InfoWindow();
 
@@ -540,7 +540,7 @@ function loadMap(locations) {
 				if (current_day != meeting.day) {
 					if (current_day) marker.content += '</dl>';
 					current_day = meeting.day;
-					if (typeof days[current_day] !== 'undefined') marker.content += '<h5>' + days[current_day] + '</h5>';
+					if (typeof myAjax.days[current_day] !== 'undefined') marker.content += '<h5>' + myAjax.days[current_day] + '</h5>';
 					marker.content += '<dl>';
 				}
 				marker.content += '<dt>' + meeting.time + '</dt><dd>' + formatLink(meeting.url, meeting.name, 'post_type') + '</dd>';
