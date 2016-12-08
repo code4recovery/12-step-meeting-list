@@ -122,7 +122,7 @@ have to be careful about tagging every single meeting in order to make the data 
 No problem, just add this CSS to your theme:
 
 	#meetings .controls ul.dropdown-menu div.expand { display: none; }
-	#meetings .controls ul.dropdown-menu ul.children { display: block; }
+	#meetings .controls ul.dropdown-menu ul.children { height: auto; }
 
 = The dropdowns aren't opening! =
 Most likely, this is because bootstrap is being included twice. You should add the following to your theme 
@@ -192,6 +192,13 @@ In that case, try our [One Page Meeting List](https://github.com/meeting-guide/o
 1. Edit location
 
 == Changelog ==
+
+= 2.8.1 =
+* Per Maine, updated FAQ instructions for expanding regions menu
+* Per Maine, importer allows CSVs with uneven cell counts
+* Per Toronto, fixed updated date in importer
+* Per Toronto, problematic address added to overrides
+* Fixed possible margin/padding bug on detail pages
 
 = 2.8 =
 * New look for meeting detail and location pages

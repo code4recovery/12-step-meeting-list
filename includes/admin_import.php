@@ -69,6 +69,8 @@ function tmsl_import_page() {
 						//check length
 						if ($header_count > count($meeting)) {
 							$meeting = array_pad($meeting, $header_count, null);
+						} elseif ($header_count < count($meeting)) {
+							$meeting = array_slice($meeting, 0, $header_count);
 						}
 						
 						//associate, sanitize
@@ -128,9 +130,9 @@ function tmsl_import_page() {
 						if (empty($meeting['group_notes'])) $meeting['group_notes'] = '';
 				
 						//updated
-						$meeting['updated'] = empty($meeting['updated']) ? time() : strtotime($meeting['updated']);
+						if (empty($meeting['updated']) || (!$meeting['updated'] = strtotime($meeting['updated']))) $meeting['updated'] = time();
 						$meeting['post_modified'] = date('Y-m-d H:i:s', $meeting['updated']);
-						$meeting['post_modified_gmt'] = get_gmt_from_date($meeting['updated']);
+						$meeting['post_modified_gmt'] = get_gmt_from_date($meeting['post_modified']);
 						
 						//default region to city if not specified
 						if (empty($meeting['region']) && !empty($meeting['city'])) $meeting['region'] = $meeting['city'];

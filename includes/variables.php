@@ -30,6 +30,7 @@ it's useful to use the Places API to find the correct information. For example, 
 https://maps.googleapis.com/maps/api/geocode/json?key=AIzaSyCC3p6PSf6iQbXi-Itwn9C24_FhkbDUkdg&address=320%20Beach%2094th%20St,%20Rockaway%20Beach,%20NY%2011693
 and then search by location name near the coordinates	
 https://maps.googleapis.com/maps/api/place/nearbysearch/json?key=AIzaSyAtTOBvcG7UrGE2Cz5xYIwI_yHjWvxlN8o&location=40.5854777,-73.81639299999999&name=first+congregational+church
+ooorrrr use this: http://www.gps-coordinates.net/
 */
 $tsml_google_overrides = array(
 	//first congregational church
@@ -49,6 +50,12 @@ $tsml_google_overrides = array(
 		'formatted_address'	=> '1 VA Center, Augusta, ME 04330, US',
 		'latitude'			=> '44.2803692',
 		'longitude'			=> '-69.7042675',
+	),
+	//toronto meeting that is showing up with zero_results
+	'519 Church St, Toronto, ON M4Y 2C9, Canada' => array(
+		'formatted_address'	=> '519 Church St, Toronto, ON M4Y 2C9, Canada',
+		'latitude'			=> '43.666532',
+		'longitude'			=> '-79.38097',
 	),
 );
 

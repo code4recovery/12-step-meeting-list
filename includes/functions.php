@@ -238,7 +238,7 @@ function tsml_email_content_type_html() {
 function tsml_format_address($formatted_address, $street_only=false) {
 	$parts = explode(',', esc_attr($formatted_address));
 	$parts = array_map('trim', $parts);
-	if (end($parts) == 'USA') {
+	if (in_array(end($parts), array('USA', 'US'))) {
 		array_pop($parts);
 		$state_zip = array_pop($parts);
 		$parts[count($parts) - 1] .= ', ' . $state_zip;
