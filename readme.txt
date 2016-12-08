@@ -3,7 +3,7 @@ Contributors: meetingguide, aasanjose
 Tags: meetings, aa, al-anon, na, 12-step, locations, groups
 Requires at least: 3.2
 Tested up to: 4.6
-Stable tag: 2.8
+Stable tag: 2.8.2
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -192,6 +192,9 @@ In that case, try our [One Page Meeting List](https://github.com/meeting-guide/o
 1. Edit location
 
 == Changelog ==
+
+= 2.8.2 =
+* Version bump
 
 = 2.8.1 =
 * Per Maine, updated FAQ instructions for expanding regions menu
