@@ -3,7 +3,7 @@ Contributors: meetingguide, aasanjose
 Tags: meetings, aa, al-anon, na, 12-step, locations, groups
 Requires at least: 3.2
 Tested up to: 4.7
-Stable tag: 2.8.3
+Stable tag: 2.8.4
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -71,6 +71,7 @@ It was originally designed to maintain a list of AA meetings in Santa Clara Coun
 **NA**
 
 * [Chinook, CA](http://chinookna.org/meetings/)
+* [Maine](http://www.namaine.org/meetings/)
 
 **SAA**
 
@@ -192,6 +193,11 @@ In that case, try our [One Page Meeting List](https://github.com/meeting-guide/o
 1. Edit location
 
 == Changelog ==
+
+= 2.8.4 =
+* Per Baton Rouge, directions link fix
+* Cache busting assets
+* Removing 'undefined' from query string on certain map links
 
 = 2.8.3 =
 * Tested with WordPress 4.7

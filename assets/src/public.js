@@ -588,14 +588,16 @@ function formatAddress(address, street_only) {
 
 //format a link to a meeting result page, preserving all but the excluded query string keys
 function formatLink(url, text, exclude) {
-	var query_pairs = location.search.substr(1).split('&');
-	var new_query_pairs = [];
-	for (var i = 0; i < query_pairs.length; i++) {
-		var query_parts = query_pairs[i].split('=');
-		if (query_parts[0] != exclude) new_query_pairs[new_query_pairs.length] = query_parts[0] + '=' + query_parts[1];
-	}
-	if (new_query_pairs.length) {
-		url += ((url.indexOf('?') == -1) ? '?' : '&') + new_query_pairs.join('&');
+	if (location.search) {
+		var query_pairs = location.search.substr(1).split('&');
+		var new_query_pairs = [];
+		for (var i = 0; i < query_pairs.length; i++) {
+			var query_parts = query_pairs[i].split('=');
+			if (query_parts[0] != exclude) new_query_pairs[new_query_pairs.length] = query_parts[0] + '=' + query_parts[1];
+		}
+		if (new_query_pairs.length) {
+			url += ((url.indexOf('?') == -1) ? '?' : '&') + new_query_pairs.join('&');
+		}
 	}
 	return '<a href="' + url + '">' + text + '</a>';
 }

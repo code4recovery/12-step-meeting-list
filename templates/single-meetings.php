@@ -126,7 +126,7 @@ $meeting = tsml_get_meeting();
 							var contentString = '<div class="infowindow">'+
 								'<h3><?php echo tsml_link(get_permalink($meeting->post_parent), $meeting->location, 'meetings')?></h3>'+
 								'<p><?php echo tsml_format_address($meeting->formatted_address)?></p>'+
-								'<p><a class="btn btn-default" href="<?php $meeting->directions?>"><?php _e('Directions', '12-step-meeting-list')?></a></p>' +
+								'<p><a class="btn btn-default" href="<?php echo $meeting->directions?>"><?php _e('Directions', '12-step-meeting-list')?></a></p>' +
 								'</div>';
 
 							var infowindow = new google.maps.InfoWindow({

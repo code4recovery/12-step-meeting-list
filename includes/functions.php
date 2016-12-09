@@ -45,20 +45,19 @@ function tsml_assets() {
 	
 	if (is_admin()) {
 		//dashboard page assets
-		wp_enqueue_style('tsml_admin_css', plugins_url('../assets/css/admin.min.css', __FILE__));
-		wp_enqueue_script('tsml_admin_js', plugins_url('../assets/js/admin.min.js', __FILE__), array('jquery'), '', true);
+		wp_enqueue_style('tsml_admin_css', plugins_url('../assets/css/admin.min.css', __FILE__), array(), TSML_VERSION);
+		wp_enqueue_script('tsml_admin_js', plugins_url('../assets/js/admin.min.js', __FILE__), array('jquery'), TSML_VERSION, true);
 		wp_localize_script('tsml_admin_js', 'myAjax', array(
 			'ajaxurl' => admin_url('admin-ajax.php'),
 			'language' => current(explode('-', get_bloginfo('language'))),
 			'google_api_key' => $tsml_google_api_key,
 			'google_overrides' => json_encode($tsml_google_overrides),
 		));
-		//wp_enqueue_script('typeahead_js', plugins_url('../assets/js/typeahead.bundle.js', __FILE__), array('jquery'), '', true);
 	} else {
 		//public page assets
-		wp_enqueue_style('bootstrap_css', plugins_url('../assets/css/bootstrap.min.css', __FILE__));
-		wp_enqueue_script('bootstrap_js', plugins_url('../assets/js/bootstrap.min.js', __FILE__), array('jquery'), '', true);
-		wp_enqueue_script('tsml_public_js', plugins_url('../assets/js/public.min.js', __FILE__), array('jquery'), '', true);
+		wp_enqueue_style('bootstrap_css', plugins_url('../assets/css/bootstrap.min.css', __FILE__), array(), TSML_VERSION);
+		wp_enqueue_script('bootstrap_js', plugins_url('../assets/js/bootstrap.min.js', __FILE__), array('jquery'), TSML_VERSION, true);
+		wp_enqueue_script('tsml_public_js', plugins_url('../assets/js/public.min.js', __FILE__), array('jquery'), TSML_VERSION, true);
 		wp_localize_script('tsml_public_js', 'myAjax', array(
 			'ajaxurl' => admin_url('admin-ajax.php'),
 			'types' => $tsml_types[$tsml_program],
@@ -81,8 +80,8 @@ function tsml_assets() {
 				'email_not_sent' => __('Email was not sent.', '12-step-meeting-list'),
 			),
 		));
-		wp_enqueue_style('tsml_public_css', plugins_url('../assets/css/public.min.css', __FILE__));
-		wp_enqueue_script('validate_js', plugins_url('../assets/js/jquery.validate.min.js', __FILE__), array('jquery'), '', true);
+		wp_enqueue_style('tsml_public_css', plugins_url('../assets/css/public.min.css', __FILE__), array(), TSML_VERSION);
+		wp_enqueue_script('validate_js', plugins_url('../assets/js/jquery.validate.min.js', __FILE__), array('jquery'), TSML_VERSION, true);
 	}
 }
 
