@@ -3,7 +3,7 @@ Contributors: meetingguide, aasanjose
 Tags: meetings, aa, al-anon, na, 12-step, locations, groups
 Requires at least: 3.2
 Tested up to: 4.7
-Stable tag: 2.8.4
+Stable tag: 2.8.5
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -41,6 +41,7 @@ It was originally designed to maintain a list of AA meetings in Santa Clara Coun
 * [Sacramento, CA](http://aasacramento.org/meetings/)
 * [San Jose, CA](https://aasanjose.org/meetings)
 * [San Mateo, CA](http://aa-san-mateo.org/meetings)
+* [Southern Colorado](http://www.puebloaa.org/meetings/)
 * [State College, PA](http://www.district43.com/meetings/)
 * [Tidewater Area, VA](http://www.tidewaterintergroup.org/meetings/)
 * [Toronto, Canada](http://aatoronto.org/?post_type=meetings)
@@ -193,6 +194,9 @@ In that case, try our [One Page Meeting List](https://github.com/meeting-guide/o
 1. Edit location
 
 == Changelog ==
+
+= 2.8.5 =
+* Fixing "O other meetings at this location"
 
 = 2.8.4 =
 * Per Baton Rouge, directions link fix

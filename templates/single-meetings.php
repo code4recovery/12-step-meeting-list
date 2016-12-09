@@ -29,7 +29,7 @@ $meeting = tsml_get_meeting();
 								<h4><?php echo $meeting->location?></h4>
 								<?php echo tsml_format_address($meeting->formatted_address)?>
 							</a>
-							<?php if ($meeting->location_meetings > 1) {
+							<?php if (count($meeting->location_meetings) > 1) {
 								$other_meetings = count($meeting->location_meetings) - 1;
 								?>
 							<?php echo tsml_link(
