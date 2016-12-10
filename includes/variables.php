@@ -78,6 +78,17 @@ $tsml_programs = array(
 
 $tsml_timestamp = microtime(true);
 
+$tsml_type_descriptions = array(
+	'aa' => array(
+		'C' => __('This meeting is closed; only those who have a desire to stop drinking may attend.', '12-step-meeting-list'),
+		'O' => __('This meeting is open and anyone may attend.', '12-step-meeting-list'),
+	),
+	'al-anon' => array(
+		'C' => __('Closed Meetings are limited to members and prospective members. These are persons who feel their lives have been or are being affected by alcoholism in a family member or friend.', '12-step-meeting-list'),
+		'O' => __('Open to anyone interested in the family disease of alcoholism. Some groups invite members of the professional community to hear how the Al-Anon program aids in recovery.', '12-step-meeting-list'),
+	),
+);
+
 $tsml_types = array(
 	'aa' => array(
 		'A'		=> __('Atheist / Agnostic', '12-step-meeting-list'),

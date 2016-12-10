@@ -442,7 +442,7 @@ function tsml_get_locations() {
 //function: template tag to get meeting and location, attach custom fields to it
 //used: single-meetings.php
 function tsml_get_meeting() {
-	global $tsml_types, $tsml_program;
+	global $tsml_program, $tsml_type_descriptions, $tsml_types;
 	
 	$meeting				= get_post();
 	$location				= get_post($meeting->post_parent);
@@ -459,6 +459,14 @@ function tsml_get_meeting() {
 	if ($region = get_the_terms($location, 'tsml_region')) {
 		$meeting->region_id = $region[0]->term_id;
 		$meeting->region = $region[0]->name;
+	}
+	
+	//type description?
+	foreach (array('C', 'O') as $type) {
+		if (in_array($type, $meeting->types) && !empty($tsml_type_descriptions[$tsml_program][$type])) {
+			$meeting->type_description = $tsml_type_descriptions[$tsml_program][$type];
+			break;
+		}
 	}
 	
 	//get other meetings at this location
@@ -481,9 +489,17 @@ function tsml_get_meeting() {
 		$meeting->group = null;
 	}
 	
-	//sort types alphabetically
-	foreach ($meeting->types as &$type) $type = $tsml_types[$tsml_program][trim($type)];
-	sort($meeting->types);
+	//expand and alphabetize types
+	array_map('trim', $meeting->types);
+	$types = array();
+	foreach ($meeting->types as $type) {
+		if (!empty($tsml_types[$tsml_program][$type])) {
+			$types[] = $tsml_types[$tsml_program][$type];
+		}
+	}
+	sort($types);
+	$meeting->types = $types;
+	
 	return $meeting;
 }
 

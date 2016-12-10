@@ -31,14 +31,13 @@ $meeting = tsml_get_meeting();
 							</a>
 							<?php if (count($meeting->location_meetings) > 1) {
 								$other_meetings = count($meeting->location_meetings) - 1;
-								?>
-							<?php echo tsml_link(
-								get_permalink($meeting->post_parent),
-								sprintf(_n('%d other meeting at this location', '%d other meetings at this location', $other_meetings),
-								$other_meetings), 'meeting', 'list-group-item')?>
-							</a>
-							<?php }?>
-							<?php if (!empty($meeting->group_id)) {?>
+								echo tsml_link(
+									get_permalink($meeting->post_parent),
+										sprintf(_n('%d other meeting at this location', '%d other meetings at this location', $other_meetings),
+										$other_meetings
+									), 'meeting', 'list-group-item');
+							}
+							if (!empty($meeting->group_id)) {?>
 							<li class="list-group-item">
 								<?php echo $meeting->group?>
 							</li>
@@ -47,30 +46,28 @@ $meeting = tsml_get_meeting();
 								<?php echo $meeting->group_notes?>
 							</li>
 							<?php }
-							}?>
-							<?php if (!empty($meeting->region)) {?>
+							}
+							if (!empty($meeting->region)) {?>
 							<li class="list-group-item">
 								<?php echo $meeting->region?>
 							</li>
-							<?php }?>
-							<?php if (count($meeting->types)) {?>
+							<?php }
+							if (count($meeting->types)) {?>
 							<li class="list-group-item">
 								<?php foreach ($meeting->types as $type) {?>
 								<div><i class="glyphicon glyphicon-ok"></i> <?php echo $type?></div>
 								<?php }?>
 							</li>
-							<?php }?>
-							<?php if (in_array(__('Open', '12-step-meeting-list'), $meeting->types)) {
-								echo '<li class="list-group-item">' . __('This meeting is open and anyone may attend.') . '</li>';
-							} elseif (in_array(__('Closed', '12-step-meeting-list'), $meeting->types)) {
-								echo '<li class="list-group-item">' . __('This meeting is closed; only those who have a desire to stop drinking may attend.') . '</li>';
-							}?>
-							<?php if (!empty($meeting->notes)) {?>
+							<?php }
+							if (!empty($meeting->type_description)) {?>
+								<li class="list-group-item"><?php echo $meeting->type_description?></li>
+							<?php }
+							if (!empty($meeting->notes)) {?>
 							<li class="list-group-item">
 								<?php echo $meeting->notes?>
 							</li>
-							<?php }?>
-							<?php if (!empty($meeting->location_notes)) {?>
+							<?php }
+							if (!empty($meeting->location_notes)) {?>
 							<li class="list-group-item">
 								<?php echo $meeting->location_notes?>
 							</li>

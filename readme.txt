@@ -3,7 +3,7 @@ Contributors: meetingguide, aasanjose
 Tags: meetings, aa, al-anon, na, 12-step, locations, groups
 Requires at least: 3.2
 Tested up to: 4.7
-Stable tag: 2.8.5
+Stable tag: 2.8.6
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -46,6 +46,7 @@ It was originally designed to maintain a list of AA meetings in Santa Clara Coun
 * [Tidewater Area, VA](http://www.tidewaterintergroup.org/meetings/)
 * [Toronto, Canada](http://aatoronto.org/?post_type=meetings)
 * [Tri Valley, CA](http://trivalleyaa.org/meetings/)
+* [Vancouver, Canada](http://www.vancouveraa.ca/meetings/)
 * [Vienna, Austria](https://www.aavienna.com/meetings/)
 * [Virginia](https://aavirginia.org/meetings/)
 * [WAAFT](http://www.waaft.org/meetings/)
@@ -78,7 +79,7 @@ It was originally designed to maintain a list of AA meetings in Santa Clara Coun
 
 * [Indiana](http://indiana-saa.org/?post_type=meetings)
 
-[Let us know](mailto:web@aasanjose.org) if you're using this plugin and would like to be listed here.
+[Let us know](mailto:wordpress@meetingguide.org) if you're using this plugin and would like to be listed here.
 
 = Notes =
 
@@ -146,7 +147,7 @@ to override the plugin's translation strings. For example, if you wanted to repl
 you could add the following to your functions.php file.
 
 	function theme_override_tsml_strings($translated_text, $text, $domain) {
-		if ($domain == 'tsml') {
+		if ($domain == '12-step-meeting-list') {
 			switch ($translated_text) {
 				case 'Region':
 					return 'Province';
@@ -194,6 +195,9 @@ In that case, try our [One Page Meeting List](https://github.com/meeting-guide/o
 1. Edit location
 
 == Changelog ==
+
+= 2.8.6 =
+* Open / Closed descriptions for Al-Anon
 
 = 2.8.5 =
 * Fixing "O other meetings at this location"
