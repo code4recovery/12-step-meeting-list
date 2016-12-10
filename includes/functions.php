@@ -75,7 +75,7 @@ function tsml_assets() {
 				'locations' => __('Locations', '12-step-meeting-list'),
 				'regions' => __('Regions', '12-step-meeting-list'),
 				'meetings' => __('Meetings', '12-step-meeting-list'),
-				'men' => __('Meetings', '12-step-meeting-list'),
+				'men' => __('Men', '12-step-meeting-list'),
 				'women' => __('Women', '12-step-meeting-list'),
 				'email_not_sent' => __('Email was not sent.', '12-step-meeting-list'),
 			),
