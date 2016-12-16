@@ -87,7 +87,7 @@ function tsml_admin_init() {
 		</div>
 		<?php if (count($meetings) > 1) {?>
 		<div class="meta_form_row checkbox apply_address_to_location hidden">
-			<label><input type="checkbox" name="apply_address_to_location"> <?php _e('Apply this updated address to all meetings at this location', '12-step-meeting-list')?></label>
+			<label><input type="checkbox" name="apply_address_to_location" checked> <?php _e('Apply this updated address to all meetings at this location', '12-step-meeting-list')?></label>
 		</div>
 		<?php }?>
 		<div class="meta_form_row">

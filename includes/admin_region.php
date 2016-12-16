@@ -9,17 +9,16 @@ function tsml_region_edit_form_fields($term) {
 			<label for="delete_and_reassign"><?php _e('Delete and Reassign', '12-step-meeting-list'); ?></label>
 		</th>
 		<td>
-			<select class="postform" name="delete_and_reassign" id="delete_and_reassign">
-				<option></option>
-				<?php
-				$regions = get_terms(array(
+			<?php wp_dropdown_categories(array(
 					'taxonomy' => 'tsml_region',
+					'hierarchical' => true,
+					'orderby' => name,
 					'exclude' => $term->term_id,
+					'show_option_all' => '&nbsp;',
+					'name' => 'delete_and_reassign',
+					'id' => 'delete_and_reassign',
 				));
-				foreach ($regions as $region) {?>
-					<option value="<?php echo $region->term_id?>"><?php echo $region->name?></option>
-				<?php }?>
-			</select>
+			?>
 			<p class="description">
 				<?php _e('Delete this region and reassign its locations to another region.', '12-step-meeting-list')?>
 			</p>
@@ -35,9 +34,11 @@ function tsml_edited_region($region_id) {
 	foreach ($meetings as $meeting) {
 		wp_update_post(array('ID' => $meeting['id']));
 	}
+	
+	$delete_and_reassign = intval($_POST['delete_and_reassign']);
 
 	//delete this region and reassign its locations to another region
-	if (!empty($_POST['delete_and_reassign'])) {
+	if (!empty($delete_and_reassign)) {
 		$location_ids = get_posts(array(
 			'post_type'			=> 'tsml_location',
 			'numberposts'		=> -1,
@@ -52,7 +53,7 @@ function tsml_edited_region($region_id) {
 		
 		//assign new region to each location
 		foreach ($location_ids as $location_id) {
-			wp_set_object_terms($location_id, intval($_POST['delete_and_reassign']), 'tsml_region');
+			wp_set_object_terms($location_id, $delete_and_reassign, 'tsml_region');
 		}
 		
 		//delete term
