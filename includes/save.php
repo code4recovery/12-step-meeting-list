@@ -249,14 +249,10 @@ function tsml_save_post($post_id, $post, $update) {
 		}
 		
 		//last contact
-		if (!empty($_POST['last_contact'])) $_POST['last_contact'] = date('Y-m-d', strtotime($_POST['last_contact']));
-		if (!$update || $old_meeting->last_contact != $_POST['last_contact']) {
-			$changes[] = 'last_contact';
-			if (!empty($_POST['last_contact'])) {
-				update_post_meta($group_id, 'last_contact', $_POST['last_contact']);
-			} else {
-				delete_post_meta($group_id, 'last_contact');
-			}
+		if (!empty($_POST['last_contact'])) {
+			update_post_meta($group_id, 'last_contact', date('Y-m-d', strtotime($_POST['last_contact'])));
+		} else {
+			delete_post_meta($group_id, 'last_contact');
 		}
 	}
 
