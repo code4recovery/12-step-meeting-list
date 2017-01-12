@@ -99,7 +99,7 @@ input:focus, button:focus {
 }
 
 .infowindow dl dt {
-  color: #aaaaaa;
+  color: #aaa;
   font-weight: normal;
   width: 62px;
   clear: left;
@@ -248,6 +248,18 @@ input:focus, button:focus {
 
 #meetings .controls a {
   overflow: hidden;
+}
+
+#meetings #region {
+  display: none;
+}
+
+#meetings[data-mode="search"] #distance {
+  display: none;
+}
+
+#meetings[data-mode="search"] #region {
+  display: block;
 }
 
 #meetings .results h1 small {
@@ -484,7 +496,7 @@ body.tsml_fullscreen.admin-bar #meetings {
     text-transform: none;
     cursor: pointer;
     position: relative;
-    padding: 8px 8px 8px 15px;
+    padding: 8px 15px;
   }
   #meetings .results table thead th[data-sort="asc"]:after, #meetings .results table thead th[data-sort="desc"]:after {
     content: "";
@@ -492,7 +504,7 @@ body.tsml_fullscreen.admin-bar #meetings {
     width: 0;
     height: 0;
     position: absolute;
-    right: 10px;
+    right: 0px;
     top: 12px;
   }
   #meetings .results table thead th[data-sort="asc"]:after {
@@ -505,6 +517,12 @@ body.tsml_fullscreen.admin-bar #meetings {
   }
   #meetings .results table thead th.address, #meetings .results table thead th.types {
     display: none;
+  }
+  #meetings .results table thead th.distance {
+    text-align: right;
+  }
+  #meetings .results table thead th.region[data-sort="asc"]:after, #meetings .results table thead th.region[data-sort="desc"]:after {
+    right: 15px;
   }
   #meetings .results table tbody tr {
     display: table-row;
@@ -527,6 +545,9 @@ body.tsml_fullscreen.admin-bar #meetings {
   }
   #meetings .results table tbody tr td.time span:last-child:after {
     content: " ";
+  }
+  #meetings .results table tbody tr td.distance {
+    text-align: right;
   }
   #meetings .results table tbody tr td.name {
     width: 35%;

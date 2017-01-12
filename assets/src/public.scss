@@ -1,5 +1,5 @@
-$gray:			#aaaaaa;
-$black:			#333;
+$gray:		#aaa;
+$black:		#333;
 $white: 		#fdfdfc;
 $margin:		15px;
 $height:		550px;
@@ -191,6 +191,13 @@ input:focus, button:focus {
 		}
 		a { overflow: hidden; }
 	}
+	
+	#region { display: none; }
+
+	&[data-mode="search"] {
+		#distance { display: none; }
+		#region { display: block; }
+	}
 
 	.results {
 
@@ -376,14 +383,14 @@ body.tsml_fullscreen {
 					text-transform: none;
 					cursor: pointer;
 					position: relative;
-					padding: 8px 8px 8px 15px;
+					padding: 8px 15px;
 					&[data-sort="asc"]:after, &[data-sort="desc"]:after {
 						content: "";
 						border-style: solid;
 						width: 0;
 						height: 0;
 						position: absolute;
-						right: 10px;
+						right: 0px;
 						top: 12px;
 					}
 					&[data-sort="asc"]:after {
@@ -396,6 +403,12 @@ body.tsml_fullscreen {
 					}
 					&.address, &.types { 
 						display: none;
+					}
+					&.distance {
+						text-align: right;
+					}
+					&.region[data-sort="asc"]:after, &.region[data-sort="desc"]:after {
+						right: 15px;
 					}
 				}
 			}
@@ -415,6 +428,9 @@ body.tsml_fullscreen {
 							&:after { content: ", "; }
 							&:last-child:after { content: " "; }
 						}
+					}
+					&.distance {
+						text-align: right;
 					}
 					&.name {
 						width: 35%;

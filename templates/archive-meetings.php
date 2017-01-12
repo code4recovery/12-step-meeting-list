@@ -5,7 +5,26 @@ tsml_assets();
 
 get_header();
 
-//need later
+//define parameter dropdown options
+$modes = array(
+	'search' => array('title' => __('Search', '12-step-meeting-list'), 'icon' => 'glyphicon glyphicon-search'),
+	'loc' => array('title' => __('Location', '12-step-meeting-list'), 'icon' => 'glyphicon glyphicon-map-marker'),
+);
+
+if (is_ssl()) {
+	//proximity only enabled in secure environments
+	$modes['me'] = array('title' => __('Near Me', '12-step-meeting-list'), 'icon' => 'glyphicon glyphicon-user');
+}
+
+$distances = array();
+foreach (array(1, 5, 10, 25, 50) as $distance) {
+	if ($tsml_distance_units == 'mi') {
+		$distances[$distance] = sprintf(_n('Within %d Mile', 'Within %d Miles', $distance, '12-step-meeting-list'), $distance);
+	} else {
+		$distances[$distance] = sprintf(_n('Within %d Kilometer', 'Within %d Kilometers', $distance, '12-step-meeting-list'), $distance);
+	}
+}
+
 $times  = array(
 	'morning' => __('Morning', '12-step-meeting-list'),
 	'midday' => __('Midday', '12-step-meeting-list'),
@@ -13,33 +32,14 @@ $times  = array(
 	'night' => __('Night', '12-step-meeting-list'),
 );
 
-$modes = array(
-	'search' => __('Search', '12-step-meeting-list'),
-	'loc' => __('Location', '12-step-meeting-list'),
-);
-
-//proximity only enabled in secure environments
-if (is_ssl()) {
-	$modes['me'] = __('Near Me', '12-step-meeting-list');
-}
-
-$mode_icons = array(
-	'search' => 'search',
-	'loc' => 'map-marker',
-	'me' => 'user',
-);
-
-
-
 //parse query string
-$search	= isset($_GET['sq']) ? sanitize_text_field($_GET['sq']) : null;
-$region	= isset($_GET['r']) && term_exists(intval($_GET['r']), 'tsml_region') ? $_GET['r'] : null;
-$type	= isset($_GET['t']) && array_key_exists($_GET['t'], $tsml_types[$tsml_program]) ? $_GET['t'] : null;
-$time	= isset($_GET['i']) ? sanitize_text_field(strtolower($_GET['i'])) : null;
-$view	= (isset($_GET['v']) && $_GET['v'] == 'map') ? 'map' : 'list';
-$radius = isset($_GET['a']) && intval($_GET['a']) ? intval($_GET['a']) : 5;
-
-$mode =  (empty($_GET['m']) || !in_array($_GET['m'], array_keys($modes))) ? current(array_keys($modes)) : $_GET['m'];
+$search		= isset($_GET['sq']) ? sanitize_text_field($_GET['sq']) : null;
+$region		= isset($_GET['r']) && term_exists(intval($_GET['r']), 'tsml_region') ? $_GET['r'] : null;
+$type		= isset($_GET['t']) && array_key_exists($_GET['t'], $tsml_types[$tsml_program]) ? $_GET['t'] : null;
+$time		= isset($_GET['i']) ? sanitize_text_field(strtolower($_GET['i'])) : null;
+$view		= (isset($_GET['v']) && $_GET['v'] == 'map') ? 'map' : 'list';
+$distance	= isset($_GET['a']) && intval($_GET['a']) ? intval($_GET['a']) : 5;
+$mode		= (empty($_GET['m']) || !in_array($_GET['m'], array_keys($modes))) ? current(array_keys($modes)) : $_GET['m'];
 
 if (!isset($_GET['d'])) {
 	$day = intval(current_time('w')); //if not specified, day is current day
@@ -68,22 +68,16 @@ if ($region) {
 }
 $type_default = __('Any Type', '12-step-meeting-list');
 $type_label = ($type && array_key_exists($type, $tsml_types[$tsml_program])) ? $tsml_types[$tsml_program][$type] : $type_default;
-$mode_label = array_key_exists($mode, $modes) ? $modes[$mode] : current(array_values($modes));
-$radius_label = 'Within 5 Miles';
-$radiuses = array(
-	1 => '1 Mile',
-	5 => '5 Miles',
-	10 => '10 Miles',
-	25 => '25 Miles',
-	50 => '50 Miles',
-);
+$mode_label = array_key_exists($mode, $modes) ? $modes[$mode]['title'] : $modes[0]['title'];
+$distance_label = $distances[$distance];
 
 //need this later
-$locations	= array();
+$meetings = $locations = array();
 
 //run query
-$meetings	= tsml_get_meetings(compact('search', 'day', 'time', 'region', 'type'));
-//dd($meetings);
+if (($mode == 'search') || (($mode == 'loc') && empty($search))) {
+	$meetings	= tsml_get_meetings(compact('search', 'day', 'time', 'region', 'type'));	
+}
 
 class Walker_Regions_Dropdown extends Walker_Category {
 	function start_el(&$output, $category, $depth=0, $args=array(), $id=0) {
@@ -107,12 +101,12 @@ class Walker_Regions_Dropdown extends Walker_Category {
 					<input type="text" name="query" class="form-control" value="<?php echo $search?>" placeholder="<?php echo $mode_label?>" aria-label="Search" <?php echo ($mode == 'me') ? 'disabled' : 'autofocus'?>>
 					<div class="input-group-btn" id="mode">
 						<button class="btn btn-default dropdown-toggle" data-toggle="dropdown" type="button">
-							<i class="glyphicon glyphicon-<?php echo $mode_icons[$mode]?>"></i>
+							<i class="<?php echo $modes[$mode]['icon']?>"></i>
 							<span class="caret"></span>
 						</button>
 						<ul class="dropdown-menu dropdown-menu-right">
 							<?php foreach ($modes as $key => $value) {?>
-							<li class="<?php echo $key; if ($mode == $key) echo ' active';?>"><a data-id="<?php echo $key?>"><?php echo $value?></a></li>
+							<li class="<?php echo $key; if ($mode == $key) echo ' active';?>"><a data-id="<?php echo $key?>"><?php echo $value['title']?></a></li>
 							<?php }?>
 						</ul>
 					</div>
@@ -121,7 +115,7 @@ class Walker_Regions_Dropdown extends Walker_Category {
 			</form>
 		</div>
 		<div class="col-md-2 col-sm-6">
-			<div class="dropdown<?php if ($mode != 'search') echo ' hidden'?>" id="region">
+			<div class="dropdown" id="region">
 				<a data-toggle="dropdown" class="btn btn-default btn-block" role="button" aria-haspopup="true" aria-expanded="false">
 					<span class="selected"><?php echo $region_label?></span>
 					<span class="caret"></span>
@@ -140,15 +134,15 @@ class Walker_Regions_Dropdown extends Walker_Category {
 					))?>
 				</ul>
 			</div>
-			<div class="dropdown<?php if ($mode == 'search') echo ' hidden'?>" id="radius">
+			<div class="dropdown" id="distance">
 				<a data-toggle="dropdown" class="btn btn-default btn-block" role="button" aria-haspopup="true" aria-expanded="false">
-					<span class="selected"><?php echo $radius_label?></span>
+					<span class="selected"><?php echo $distance_label?></span>
 					<span class="caret"></span>
 				</a>
 				<ul class="dropdown-menu" role="menu">
 					<?php
-					foreach ($radiuses as $key => $value) {
-						echo '<li' . ($key == $radius ? ' class="active"' : '') . '><a data-id="' . $key . '">' . $value . '</a></li>';
+					foreach ($distances as $key => $value) {
+						echo '<li' . ($key == $distance ? ' class="active"' : '') . '><a data-id="' . $key . '">' . $value . '</a></li>';
 					}?>
 				</ul>
 			</div>

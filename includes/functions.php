@@ -38,7 +38,7 @@ function tsml_alert_messages() {
 //function: enqueue assets for public or admin page
 //used: in templates and on admin_edit.php
 function tsml_assets() {
-	global $tsml_types, $tsml_program, $tsml_google_api_key, $tsml_google_overrides;
+	global $tsml_types, $tsml_program, $tsml_google_api_key, $tsml_google_overrides, $tsml_distance_units;
 		
 	//google maps api needed for maps and address verification, can't be onboarded
 	wp_enqueue_script('google_maps_api', '//maps.googleapis.com/maps/api/js?key=' . $tsml_google_api_key);
@@ -60,7 +60,6 @@ function tsml_assets() {
 		wp_enqueue_script('tsml_public_js', plugins_url('../assets/js/public.min.js', __FILE__), array('jquery'), TSML_VERSION, true);
 		wp_localize_script('tsml_public_js', 'myAjax', array(
 			'ajaxurl' => admin_url('admin-ajax.php'),
-			'types' => $tsml_types[$tsml_program],
 			'days' => array(
 				__('Sunday', '12-step-meeting-list'),
 				__('Monday', '12-step-meeting-list'),
@@ -70,6 +69,7 @@ function tsml_assets() {
 				__('Friday', '12-step-meeting-list'),
 				__('Saturday', '12-step-meeting-list'),
 			),
+			'distance_units' => $tsml_distance_units,
 			'strings' => array(
 				'groups' => __('Groups', '12-step-meeting-list'),
 				'locations' => __('Locations', '12-step-meeting-list'),
@@ -83,6 +83,7 @@ function tsml_assets() {
 				'geo_error_browser' => __('Your browser does not appear to support geolocation.', '12-step-meeting-list'),
 				'no_address' => __('Google could not find that address.', '12-step-meeting-list'),
 			),
+			'types' => $tsml_types[$tsml_program],
 		));
 		wp_enqueue_style('tsml_public_css', plugins_url('../assets/css/public.min.css', __FILE__), array(), TSML_VERSION);
 		wp_enqueue_script('validate_js', plugins_url('../assets/js/jquery.validate.min.js', __FILE__), array('jquery'), TSML_VERSION, true);
@@ -232,13 +233,12 @@ function tsml_delete_orphans() {
 
 //calculate the distance between two points
 //used by tsml_get_meetings()
-function tsml_distance($lat1, $lon1, $lat2, $lon2) {
-	global $tsml_distance_units;
+function tsml_distance($lat1, $lon1, $lat2, $lon2, $units='mi') {
 	$theta = $lon1 - $lon2;
 	$distance = sin(deg2rad($lat1)) * sin(deg2rad($lat2)) +  cos(deg2rad($lat1)) * cos(deg2rad($lat2)) * cos(deg2rad($theta));
 	$distance = rad2deg(acos($distance)) * 69.09;
-	if ($tsml_distance_units == 'km') $distance *= 1.609344;
-	return round($distance, 2);
+	if ($units == 'km') $distance *= 1.609344;
+	return round($distance, 1);
 }
 
 //set content type for emails to html, remember to remove after use
@@ -521,7 +521,7 @@ function tsml_get_meeting() {
 //function: get meetings based on unsanitized $arguments
 //used:		tsml_meetings_api(), single-locations.php, archive-meetings.php 
 function tsml_get_meetings($arguments=array()) {
-	
+
 	//will need these later
 	$post_ids = $meetings = array();
 	$groups = tsml_get_groups();	
@@ -758,16 +758,16 @@ function tsml_get_meetings($arguments=array()) {
 	}
 	
 	//if latitude and longitude are set, then calculate distances
-	if (!empty($arguments['latitude']) && !empty($arguments['longitude'])) {
+	if (!empty($arguments['latitude']) && !empty($arguments['longitude']) && !empty($arguments['distance_units'])) {
 		foreach ($meetings as &$meeting) {
-			$meeting['distance'] = tsml_distance($arguments['latitude'], $arguments['longitude'], $meeting['latitude'], $meeting['longitude']);
+			$meeting['distance'] = tsml_distance($arguments['latitude'], $arguments['longitude'], $meeting['latitude'], $meeting['longitude'], $arguments['distance_units']);
 		}
 
-		//if radius is set, then filter by radius
-		if (!empty($arguments['radius'])) {
+		//if distance is set, then filter by distance
+		if (!empty($arguments['distance'])) {
 			$filtered_meetings = array();
 			foreach ($meetings as $meeting) {
-				if ($meeting['distance'] <= $arguments['radius']) {
+				if ($meeting['distance'] <= $arguments['distance']) {
 					$filtered_meetings[] = $meeting;
 				}
 			}			
