@@ -46,6 +46,7 @@ It was originally designed to maintain a list of AA meetings in Santa Clara Coun
 * [Tidewater Area, VA](http://www.tidewaterintergroup.org/meetings/)
 * [Toronto, Canada](http://aatoronto.org/?post_type=meetings)
 * [Tri Valley, CA](http://trivalleyaa.org/meetings/)
+* [Tulsa, OK](http://district40aa.com/meetings)
 * [Vancouver, Canada](http://www.vancouveraa.ca/meetings/)
 * [Vienna, Austria](https://www.aavienna.com/meetings/)
 * [Virginia](https://aavirginia.org/meetings/)

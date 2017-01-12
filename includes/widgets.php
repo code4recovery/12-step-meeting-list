@@ -15,6 +15,7 @@ class TSML_Widget_Upcoming extends WP_Widget {
 	public function widget($args, $instance) {
 		$table = tsml_next_meetings($instance);
 		if (empty($table)) return false;
+		if (empty($instance['title'])) $instance['title'] = __('Upcoming Meetings', '12-step-meeting-list');
 		echo $args['before_widget'];
 		if (!empty($instance['title'])) {
 			echo $args['before_title'] . apply_filters('widget_title', $instance['title']) . $args['after_title'];

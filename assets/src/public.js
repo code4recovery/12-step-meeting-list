@@ -39,10 +39,7 @@ jQuery(function($){
 	});
 	
 	//meetings list page
-	var userMarker;
-	if ((location.protocol === 'https:') && navigator.geolocation) {
-		$('li.geolocator').removeClass('hidden');
-	}
+	var searchMarker;
 	
 	//show/hide upcoming menu option
 	toggleUpcoming();
@@ -72,14 +69,6 @@ jQuery(function($){
 			cache: false
 		}
 	});
-	var tsml_meetings = new Bloodhound({
-		datumTokenizer: Bloodhound.tokenizers.obj.whitespace('value'),
-		queryTokenizer: Bloodhound.tokenizers.whitespace,
-		prefetch: {
-			url: myAjax.ajaxurl + '?action=tsml_meetings',
-			cache: false
-		}
-	});
 
 	$('#meetings #search input[name="query"]').typeahead({
 		highlight: true
@@ -104,13 +93,6 @@ jQuery(function($){
 		templates: {
 			header: '<h3>' + myAjax.strings.locations + '</h3>',
 		}
-	/*}, {
-		name: 'tsml_meetings',
-		display: 'value',
-		source: tsml_meetings,
-		templates: {
-			header: '<h3>' + myAjax.strings.meetings + '</h3>',
-		}*/
 	}).on('typeahead:selected', function($e, item){
 		if (item.type == 'region') {
 			$('#region li').removeClass('active');
@@ -125,19 +107,32 @@ jQuery(function($){
 			doSearch();
 		}
 	});
-	
+
+	/*	
+	icons[color] = {
+		path: 'M20.5,0.5 c11.046,0,20,8.656,20,19.333c0,10.677-12.059,21.939-20,38.667c-5.619-14.433-20-27.989-20-38.667C0.5,9.156,9.454,0.5,20.5,0.5z',
+		fillColor: icons[color].fill,
+		fillOpacity: 1,
+		anchor: new google.maps.Point(40,50),
+		strokeWeight: 1.4,
+		strokeColor: icons[color].stroke,
+		scale: .6
+	}
+	*/
 
 	//run search (triggered by dropdown toggle or form submit)
 	function doSearch() {
-
+	
 		//prepare data for ajax
 		var data = { 
 			action: 'meetings',
 			search: $('#search input[name=query]').val().replace(/[";:,.\/?\\-]/g, ' ').trim(),
+			mode: $('#search li.active a').attr('data-id'),
+			region: $('#region li.active a').attr('data-id'),
 			day: $('#day li.active a').attr('data-id'),
 			time: $('#time li.active a').attr('data-id'),
-			region: $('#region li.active a').attr('data-id'),
 			type: $('#type li.active a').attr('data-id'),
+			radius: $('#radius li.active a').attr('data-id'),
 		}
 		
 		//get current query string for history and appending to links
@@ -145,10 +140,17 @@ jQuery(function($){
 		if (data.search) querystring.sq = data.search;
 		querystring.d = data.day ? data.day : 'any';
 		if (data.time) querystring.i = data.time;
-		if (data.region) querystring.r = data.region;
 		if (data.type) querystring.t = data.type;
+		if (data.mode != 'search') {
+			querystring.m = data.mode;
+			if (data.radius) {
+				querystring.r = data.radius;
+			}
+		} else if (data.region) {
+			querystring.r = data.region;
+		}
 		querystring.v = $('#meetings .toggle-view.active').attr('data-id');
-		querystring = jQuery.param(querystring);
+		querystring = $.param(querystring);
 		
 		//save the query in the query string, if the browser is up to it
 		if (history.pushState) {
@@ -160,8 +162,68 @@ jQuery(function($){
 			window.history.pushState({path:url}, '', url);
 		}
 		
+		if (data.mode == 'me') {
+			//start spinner
+			$('#search button i').removeClass().addClass('glyphicon glyphicon-refresh spinning');
+			
+			if (navigator.geolocation) {
+				navigator.geolocation.getCurrentPosition(function(pos) {
+					$('#search button i').removeClass().addClass('glyphicon glyphicon-user');
+					data.latitude = pos.coords.latitude;
+					data.longitude = pos.coords.longitude;
+					getMeetings(data);
+				}, function() {
+					//browser supports but can't get geolocation
+					$('#search button i').removeClass().addClass('glyphicon glyphicon-user'); //todo switch to location
+					showAlert('geo_error');
+				});
+			} else {
+				//browser doesn't support geolocation
+				$('#search button i').removeClass().addClass('glyphicon glyphicon-user'); //todo switch to location
+				showAlert('geo_error_browser');
+			}
+			
+		} else if (data.search && data.mode == 'location') {
+			//geocode address?
+			
+			//start spinner
+			$('#search button i').removeClass().addClass('glyphicon glyphicon-refresh spinning');
+			
+			$.getJSON('https://maps.googleapis.com/maps/api/geocode/json', { 
+				address: data.search, 
+				key: myAjax.google_api_key
+			}, function(geocoded_data) {
+				$('#search button i').removeClass().addClass('glyphicon glyphicon-map-marker');
+				if (geocoded_data.status == 'OK') {
+					console.log(geocoded_data.results[0].geometry.location);
+				} else {
+					//show error message
+					showAlert('address_error');
+				}
+			});
+		} else {
+			getMeetings(data);
+		}
+		
+	}
+	
+	function setAlert(message_key) {
+		if (message_key) {
+			$('#alert').html(myAjax.strings[message_key]).removeClass('hidden');
+		} else {
+			$('#alert').html('').addClass('hidden');
+		}
+	}
+
+	function getMeetings(data) {
 		//request new meetings result
-		jQuery.post(myAjax.ajaxurl, data, function(response){
+		console.log(myAjax.ajaxurl + '?' + $.param(data));
+		
+		$.post(myAjax.ajaxurl, data, function(response){
+
+			//set the mode on the parent object
+			$('#meetings').attr('data-mode', data.mode);
+			
 			if (!response.length) {
 
 				//if keyword and no results, clear other parameters and search again
@@ -181,7 +243,7 @@ jQuery(function($){
 
 				$('#meetings table').addClass('hidden');
 				$('#meetings #map').addClass('hidden');
-				$('#alert').removeClass('hidden');
+				showAlert('no_meetings');
 			} else {
 				$('#meetings table').removeClass('hidden');
 				if ($('#meetings #map').hasClass('hidden')) {
@@ -189,19 +251,19 @@ jQuery(function($){
 					google.maps.event.trigger(map, 'resize');
 				}
 				
-				$('#alert').addClass('hidden');
+				setAlert();
 
 				var locations = [];
 
 				var tbody = $('#meetings_tbody').html('');
 
 				//loop through JSON meetings
-				jQuery.each(response, function(index, obj){
+				$.each(response, function(index, obj){
 
 					//add gender designation
-					if (jQuery.inArray('M', obj.types) != -1) {
+					if ($.inArray('M', obj.types) != -1) {
 						obj.name += ' <small>' + myAjax.strings.men + '</small>';
-					} else if (jQuery.inArray('W', obj.types) != -1) {
+					} else if ($.inArray('W', obj.types) != -1) {
 						obj.name += ' <small>' + myAjax.strings.women + '</small>';
 					}
 
@@ -231,6 +293,7 @@ jQuery(function($){
 					//add new table row
 					tbody.append('<tr>' + 
 						'<td class="time" data-sort="' + sort_time + '-' + sanitize_title(obj.location) + '"><span>' + (data.day || !obj.day ? obj.time_formatted : myAjax.days[obj.day] + '</span><span>' + obj.time_formatted) + '</span></td>' + 
+						'<td class="distance" data-sort="' + obj.distance + '">' + obj.distance + '</td>' +
 						'<td class="name" data-sort="' + sanitize_title(obj.name) + '-' + sort_time + '">' + formatLink(obj.url, obj.name, 'post_type') + '</td>' + 
 						'<td class="location" data-sort="' + sanitize_title(obj.location) + '-' + sort_time + '">' + obj.location + '</td>' + 
 						'<td class="address" data-sort="' + sanitize_title(obj.formatted_address) + '-' + sort_time + '">' + formatAddress(obj.formatted_address, true) + '</td>' + 
@@ -293,7 +356,7 @@ jQuery(function($){
 	}
 	
 	//capture submit event
-	$('#meetings #search').submit(function(e){
+	$('#meetings .controls').on('submit', '#search', function(){
 		doSearch();
 		return false;
 	});
@@ -312,29 +375,48 @@ jQuery(function($){
 	});
 
 	//capture dropdown change
-	$('#meetings .controls').on('click', '.dropdown-menu a', function(e){
-		e.preventDefault();
+	$('#meetings .controls').on('click', '.dropdown-menu a', function(){
 		
-		//day only one selected
-		if ($(this).closest('.dropdown').attr('id') == 'day') {
-			$('#day li').removeClass('active');
-			$('#day span.selected').html($(this).html());
-		}
+		var param = $(this).closest('div').attr('id');
+		
+		if (param == 'mode') {
+			
+			//only one search mode
+			$('#mode li').removeClass('active');
+			
+			$('#radius, #region').toggleClass('hidden');
 
-		//times only one
-		if ($(this).closest('.dropdown').attr('id') == 'time') {
-			$('#time li').removeClass('active');
-			$('#time span.selected').html($(this).html());
-		}
-
-		//location only one
-		if ($(this).closest('.dropdown').attr('id') == 'region') {
+			//change icon & enable or disable
+			if ($(this).attr('data-id') == 'search') {
+				$('#search input[name=query]').prop('disabled', false);
+				$('#search button i').removeClass().addClass('glyphicon glyphicon-search');
+			} else if ($(this).attr('data-id') == 'loc') {
+				$('#search input[name=query]').prop('disabled', false);
+				$('#search button i').removeClass().addClass('glyphicon glyphicon-map-marker');
+			} else if ($(this).attr('data-id') == 'me') {
+				$('#search input[name=query]').prop('disabled', true);
+				$('#search button i').removeClass().addClass('glyphicon glyphicon-user');
+			}
+			
+			//change placeholder text
+			$('#search input[name=query]').attr('placeholder', $(this).html());
+			
+			//clear and focus input
+			$('#search input[name=query]').val('').focus();
+		} else if (param == 'region') {
+			//region only one
 			$('#region li').removeClass('active');
 			$('#region span.selected').html($(this).html());
-		}
-
-		//type only one
-		if ($(this).closest('.dropdown').attr('id') == 'type') {
+		} else if (param == 'day') {
+			//day only one selected
+			$('#day li').removeClass('active');
+			$('#day span.selected').html($(this).html());
+		} else if (param == 'time') {
+			//time only one
+			$('#time li').removeClass('active');
+			$('#time span.selected').html($(this).html());
+		} else if (param == 'type') {
+			//type only one
 			$('#type li').removeClass('active');
 			$('#type span.selected').html($(this).html());
 		}
@@ -362,7 +444,7 @@ jQuery(function($){
 		
 		//toggle control, meetings div
 		if (action == 'list') {
-			closeFullscreen();
+			//closeFullscreen();
 			$('#meetings #action .toggle-view[data-id=list]').addClass('active');
 			$('#meetings #action .toggle-view[data-id=map]').removeClass('active');			
 		} else if (action == 'map') {
@@ -384,6 +466,7 @@ jQuery(function($){
 		}
 	});
 
+	/*
 	$('a[href="#geolocator"]').click(function(e){
 		e.preventDefault();
 		$(this).toggleClass('active');
@@ -392,7 +475,7 @@ jQuery(function($){
 			navigator.geolocation.getCurrentPosition(function(position) {
 				var pos = new google.maps.LatLng(position.coords.latitude, position.coords.longitude);
 
-				userMarker = new google.maps.Marker({
+				searchMarker = new google.maps.Marker({
 					icon: 'http://maps.google.com/mapfiles/ms/icons/blue-dot.png',
 					position: pos,
 					map: map,
@@ -405,8 +488,8 @@ jQuery(function($){
 				//console.log('ERROR(' + err.code + '): ' + err.message);
 				$(this).removeClass('active')
 			});
-		} else if (userMarker !== undefined) {
-			userMarker.setMap(null);
+		} else if (searchMarker !== undefined) {
+			searchMarker.setMap(null);
 		}
 	});
 
@@ -439,6 +522,7 @@ jQuery(function($){
 			$('#map').css('height', 550);
 		}
 	}
+	*/
 
 	//if day is today, show 'upcoming' time option, otherwise hide it
 	function toggleUpcoming() {
@@ -504,8 +588,11 @@ jQuery(function($){
 //globals
 var markers = [];
 var map = new google.maps.Map(document.getElementById('map'), {
-	panControl: false,
-	mapTypeControl: false,
+	disableDefaultUI: true,
+	scrollwheel: false,
+	streetViewControl: true,
+	zoomControl: true,
+	fullscreenControl: true,
 	mapTypeControlOptions: {
 		mapTypeIds: [google.maps.MapTypeId.ROADMAP, 'map_style']
 	}
@@ -566,7 +653,7 @@ function loadMap(locations) {
 		map.fitBounds(bounds);
 	} else if (markers.length == 1) {
 		map.setCenter(bounds.getCenter());
-		if (jQuery('#map').is(':visible')) google.maps.event.trigger(markers[0],'click');
+		if ($('#map').is(':visible')) google.maps.event.trigger(markers[0],'click');
 		map.setZoom(14);
 	} else if (markers.length == 0) {
 		//currently holds last position, not sure if that's good

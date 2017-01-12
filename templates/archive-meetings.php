@@ -5,13 +5,6 @@ tsml_assets();
 
 get_header();
 
-//parse query string
-$search	= isset($_GET['sq']) ? sanitize_text_field($_GET['sq']) : null;
-$region	= isset($_GET['r']) && term_exists(intval($_GET['r']), 'tsml_region') ? $_GET['r'] : null;
-$type	= isset($_GET['t']) && array_key_exists($_GET['t'], $tsml_types[$tsml_program]) ? $_GET['t'] : null;
-$time	= isset($_GET['i']) ? sanitize_text_field(strtolower($_GET['i'])) : null;
-$view	= (isset($_GET['v']) && $_GET['v'] == 'map') ? 'map' : 'list';
-
 //need later
 $times  = array(
 	'morning' => __('Morning', '12-step-meeting-list'),
@@ -19,6 +12,34 @@ $times  = array(
 	'evening' => __('Evening', '12-step-meeting-list'),
 	'night' => __('Night', '12-step-meeting-list'),
 );
+
+$modes = array(
+	'search' => __('Search', '12-step-meeting-list'),
+	'loc' => __('Location', '12-step-meeting-list'),
+);
+
+//proximity only enabled in secure environments
+if (is_ssl()) {
+	$modes['me'] = __('Near Me', '12-step-meeting-list');
+}
+
+$mode_icons = array(
+	'search' => 'search',
+	'loc' => 'map-marker',
+	'me' => 'user',
+);
+
+
+
+//parse query string
+$search	= isset($_GET['sq']) ? sanitize_text_field($_GET['sq']) : null;
+$region	= isset($_GET['r']) && term_exists(intval($_GET['r']), 'tsml_region') ? $_GET['r'] : null;
+$type	= isset($_GET['t']) && array_key_exists($_GET['t'], $tsml_types[$tsml_program]) ? $_GET['t'] : null;
+$time	= isset($_GET['i']) ? sanitize_text_field(strtolower($_GET['i'])) : null;
+$view	= (isset($_GET['v']) && $_GET['v'] == 'map') ? 'map' : 'list';
+$radius = isset($_GET['a']) && intval($_GET['a']) ? intval($_GET['a']) : 5;
+
+$mode =  (empty($_GET['m']) || !in_array($_GET['m'], array_keys($modes))) ? current(array_keys($modes)) : $_GET['m'];
 
 if (!isset($_GET['d'])) {
 	$day = intval(current_time('w')); //if not specified, day is current day
@@ -47,6 +68,15 @@ if ($region) {
 }
 $type_default = __('Any Type', '12-step-meeting-list');
 $type_label = ($type && array_key_exists($type, $tsml_types[$tsml_program])) ? $tsml_types[$tsml_program][$type] : $type_default;
+$mode_label = array_key_exists($mode, $modes) ? $modes[$mode] : current(array_values($modes));
+$radius_label = 'Within 5 Miles';
+$radiuses = array(
+	1 => '1 Mile',
+	5 => '5 Miles',
+	10 => '10 Miles',
+	25 => '25 Miles',
+	50 => '50 Miles',
+);
 
 //need this later
 $locations	= array();
@@ -57,11 +87,10 @@ $meetings	= tsml_get_meetings(compact('search', 'day', 'time', 'region', 'type')
 
 class Walker_Regions_Dropdown extends Walker_Category {
 	function start_el(&$output, $category, $depth=0, $args=array(), $id=0) {
-		//dd($args);
 		$classes = array();
 		if ($args['value'] == esc_attr($category->term_id)) $classes[] = 'active';
 		$classes = count($classes) ? ' class="' . implode(' ', $classes) . '"' : '';
-		$output .= '<li' . $classes . '><a href="#" data-id="' . esc_attr($category->term_id) . '">' . esc_attr($category->name) . '</a>';
+		$output .= '<li' . $classes . '><a data-id="' . esc_attr($category->term_id) . '">' . esc_attr($category->name) . '</a>';
 		if ($args['has_children']) $output .= '<div class="expand"></div>';
 	}
 	function end_el(&$output, $item, $depth=0, $args=array()) {
@@ -70,58 +99,35 @@ class Walker_Regions_Dropdown extends Walker_Category {
 }
 
 ?>
-<div id="meetings" data-type="<?php echo $view?>" class="container" role="main">
+<div id="meetings" data-type="<?php echo $view?>" data-mode="<?php echo $mode?>" class="container" role="main">
 	<div class="row controls hidden-print">
 		<div class="col-md-2 col-sm-6">
 			<form id="search" role="search">
 				<div class="input-group">
-					<input type="text" name="query" class="form-control" value="<?php echo $search?>" placeholder="<?php _e('Search', '12-step-meeting-list')?>" aria-label="Search" autofocus>
-					<span class="input-group-btn">
-						<button class="btn btn-default" type="submit"><i class="glyphicon glyphicon-search"></i></button>
-					</span>
+					<input type="text" name="query" class="form-control" value="<?php echo $search?>" placeholder="<?php echo $mode_label?>" aria-label="Search" <?php echo ($mode == 'me') ? 'disabled' : 'autofocus'?>>
+					<div class="input-group-btn" id="mode">
+						<button class="btn btn-default dropdown-toggle" data-toggle="dropdown" type="button">
+							<i class="glyphicon glyphicon-<?php echo $mode_icons[$mode]?>"></i>
+							<span class="caret"></span>
+						</button>
+						<ul class="dropdown-menu dropdown-menu-right">
+							<?php foreach ($modes as $key => $value) {?>
+							<li class="<?php echo $key; if ($mode == $key) echo ' active';?>"><a data-id="<?php echo $key?>"><?php echo $value?></a></li>
+							<?php }?>
+						</ul>
+					</div>
 				</div>
+				<input type="submit" class="hidden">
 			</form>
 		</div>
 		<div class="col-md-2 col-sm-6">
-			<div class="dropdown" id="day">
-				<a data-toggle="dropdown" class="btn btn-default btn-block" role="button" aria-haspopup="true" aria-expanded="false">
-					<span class="selected"><?php echo $day_label?></span>
-					<span class="caret"></span>
-				</a>
-				<ul class="dropdown-menu" role="menu">
-					<li<?php if ($day === false) echo ' class="active"'?>><a href="#"><?php echo $day_default?></a></li>
-					<li class="divider"></li>
-					<?php foreach ($tsml_days as $key=>$value) {?>
-					<li<?php if (intval($key) === $day) echo ' class="active"'?>><a href="#" data-id="<?php echo $key?>"><?php echo $value?></a></li>
-					<?php }?>
-				</ul>
-			</div>
-		</div>
-		<div class="col-md-2 col-sm-6">
-			<div class="dropdown" id="time">
-				<a data-toggle="dropdown" class="btn btn-default btn-block" role="button" aria-haspopup="true" aria-expanded="false">
-					<span class="selected"><?php echo $time_label?></span>
-					<span class="caret"></span>
-				</a>
-				<ul class="dropdown-menu" role="menu">
-					<li<?php if (empty($time)) echo ' class="active"'?>><a href="#"><?php echo $time_default?></a></li>
-					<li class="divider upcoming"></li>
-					<li<?php if ($time == 'upcoming') echo ' class="active"'?> class="upcoming"><a href="#" data-id="upcoming"><?php echo __('Upcoming', '12-step-meeting-list')?></a></li>
-					<li class="divider"></li>
-					<?php foreach ($times as $key=>$value) {?>
-					<li<?php if ($key === $time) echo ' class="active"'?>><a href="#" data-id="<?php echo $key?>"><?php echo $value?></a></li>
-					<?php }?>
-				</ul>
-			</div>
-		</div>
-		<div class="col-md-2 col-sm-6">
-			<div class="dropdown" id="region">
+			<div class="dropdown<?php if ($mode != 'search') echo ' hidden'?>" id="region">
 				<a data-toggle="dropdown" class="btn btn-default btn-block" role="button" aria-haspopup="true" aria-expanded="false">
 					<span class="selected"><?php echo $region_label?></span>
 					<span class="caret"></span>
 				</a>
 				<ul class="dropdown-menu" role="menu">
-					<li<?php if (empty($region)) echo ' class="active"'?>><a href="#"><?php echo $region_default?></a></li>
+					<li<?php if (empty($region)) echo ' class="active"'?>><a><?php echo $region_default?></a></li>
 					<li class="divider"></li>
 					<?php wp_list_categories(array(
 						'taxonomy' => 'tsml_region',
@@ -134,6 +140,50 @@ class Walker_Regions_Dropdown extends Walker_Category {
 					))?>
 				</ul>
 			</div>
+			<div class="dropdown<?php if ($mode == 'search') echo ' hidden'?>" id="radius">
+				<a data-toggle="dropdown" class="btn btn-default btn-block" role="button" aria-haspopup="true" aria-expanded="false">
+					<span class="selected"><?php echo $radius_label?></span>
+					<span class="caret"></span>
+				</a>
+				<ul class="dropdown-menu" role="menu">
+					<?php
+					foreach ($radiuses as $key => $value) {
+						echo '<li' . ($key == $radius ? ' class="active"' : '') . '><a data-id="' . $key . '">' . $value . '</a></li>';
+					}?>
+				</ul>
+			</div>
+		</div>
+		<div class="col-md-2 col-sm-6">
+			<div class="dropdown" id="day">
+				<a data-toggle="dropdown" class="btn btn-default btn-block" role="button" aria-haspopup="true" aria-expanded="false">
+					<span class="selected"><?php echo $day_label?></span>
+					<span class="caret"></span>
+				</a>
+				<ul class="dropdown-menu" role="menu">
+					<li<?php if ($day === false) echo ' class="active"'?>><a><?php echo $day_default?></a></li>
+					<li class="divider"></li>
+					<?php foreach ($tsml_days as $key=>$value) {?>
+					<li<?php if (intval($key) === $day) echo ' class="active"'?>><a data-id="<?php echo $key?>"><?php echo $value?></a></li>
+					<?php }?>
+				</ul>
+			</div>
+		</div>
+		<div class="col-md-2 col-sm-6">
+			<div class="dropdown" id="time">
+				<a data-toggle="dropdown" class="btn btn-default btn-block" role="button" aria-haspopup="true" aria-expanded="false">
+					<span class="selected"><?php echo $time_label?></span>
+					<span class="caret"></span>
+				</a>
+				<ul class="dropdown-menu" role="menu">
+					<li<?php if (empty($time)) echo ' class="active"'?>><a><?php echo $time_default?></a></li>
+					<li class="divider upcoming"></li>
+					<li class="upcoming<?php if ($time == 'upcoming') echo ' active"'?>"><a data-id="upcoming"><?php echo __('Upcoming', '12-step-meeting-list')?></a></li>
+					<li class="divider"></li>
+					<?php foreach ($times as $key=>$value) {?>
+					<li<?php if ($key === $time) echo ' class="active"'?>><a data-id="<?php echo $key?>"><?php echo $value?></a></li>
+					<?php }?>
+				</ul>
+			</div>
 		</div>
 		<div class="col-md-2 col-sm-6">
 			<?php if (count($tsml_types_in_use)) {?>
@@ -143,18 +193,18 @@ class Walker_Regions_Dropdown extends Walker_Category {
 					<span class="caret"></span>
 				</a>
 				<ul class="dropdown-menu" role="menu">
-					<li<?php if (empty($type)) echo ' class="active"'?>><a href="#"><?php echo $type_default?></a></li>
+					<li<?php if (empty($type)) echo ' class="active"'?>><a><?php echo $type_default?></a></li>
 					<li class="divider"></li>
 					<?php 
 					$types_to_list = array_intersect_key($tsml_types[$tsml_program], array_flip($tsml_types_in_use));
 					foreach ($types_to_list as $key=>$thistype) {?>
-					<li<?php if ($key == $type) echo ' class="active"'?>><a href="#" data-id="<?php echo $key?>"><?php echo $thistype?></a></li>
+					<li<?php if ($key == $type) echo ' class="active"'?>><a data-id="<?php echo $key?>"><?php echo $thistype?></a></li>
 					<?php } ?>
 				</ul>
 			</div>
 			<?php }?>
 		</div>
-		<div class="col-md-2 col-sm-12 visible-md visible-lg visible-xl">
+		<div class="col-md-2 col-sm-12">
 			<div class="btn-group btn-group-justified" id="action">
 				<a class="btn btn-default toggle-view<?php if ($view == 'list') {?> active<?php }?>" data-id="list" role="button">
 					<?php _e('List', '12-step-meeting-list')?>
@@ -162,12 +212,7 @@ class Walker_Regions_Dropdown extends Walker_Category {
 				<div class="btn-group">
 					<a class="btn btn-default toggle-view<?php if ($view == 'map') {?> active<?php }?> dropdown-toggle" data-toggle="dropdown" data-id="map" role="button" aria-haspopup="true" aria-expanded="false">
 						<?php _e('Map', '12-step-meeting-list')?>
-						<span class="caret"></span>
 					</a>
-					<ul class="dropdown-menu pull-right" role="menu">
-						<li><a href="#fullscreen"><?php _e('Expand', '12-step-meeting-list')?></a></li>
-						<li class="geolocator hidden"><a href="#geolocator"><?php _e('Find Me', '12-step-meeting-list')?></a></li>
-					</ul>
 				</div>
 			</div>
 		</div>
@@ -175,7 +220,7 @@ class Walker_Regions_Dropdown extends Walker_Category {
 	<div class="row results">
 		<div class="col-xs-12">
 			<div id="alert" class="alert alert-warning<?php if (count($meetings)) {?> hidden<?php }?>">
-				<?php _e('No results matched those criteria.', '12-step-meeting-list')?>
+				<?php if (!count($meetings)) _e('No results matched those criteria.', '12-step-meeting-list')?>
 			</div>
 			
 			<div id="map"></div>
@@ -184,6 +229,7 @@ class Walker_Regions_Dropdown extends Walker_Category {
 				<table class="table table-striped<?php if (!count($meetings)) {?> hidden<?php }?>">
 					<thead class="hidden-print">
 						<th class="time" data-sort="asc"><?php _e('Time', '12-step-meeting-list')?></th>
+						<th class="distance"><?php _e('Distance', '12-step-meeting-list')?></th>
 						<th class="name"><?php _e('Meeting', '12-step-meeting-list')?></th>
 						<th class="location"><?php _e('Location', '12-step-meeting-list')?></th>
 						<th class="address"><?php _e('Address', '12-step-meeting-list')?></th>
@@ -228,6 +274,7 @@ class Walker_Regions_Dropdown extends Walker_Category {
 									echo $meeting['time_formatted'];
 								}
 								?></span></td>
+							<td class="distance" data-sort="<?php echo $meeting['distance']?>"><?php echo $meeting['distance']?></td>
 							<td class="name" data-sort="<?php echo sanitize_title($meeting['name']) . '-' . $sort_time?>">
 								<?php echo $meeting['link']?>
 							</td>

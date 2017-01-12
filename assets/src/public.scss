@@ -16,6 +16,21 @@ input:focus, button:focus {
 	max-width: 100%;
 }
 
+.spinning {
+    -animation: spin .7s infinite linear;
+    -webkit-animation: spin_webkit .7s infinite linear;
+}
+
+@-webkit-keyframes spin_webkit {
+    from { -webkit-transform: rotate(0deg);}
+    to { -webkit-transform: rotate(360deg);}
+}
+
+@keyframes spin {
+    from { transform: scale(1) rotate(0deg);}
+    to { transform: scale(1) rotate(360deg);}
+}
+
 .infowindow {
 	width: 234px;
 	max-height: 250px;
@@ -73,6 +88,11 @@ input:focus, button:focus {
 	}
 }
 
+#meetings, #meeting, #location {
+	text-align: left;
+	a { cursor: pointer; }
+}
+
 /* meetings */
 #meetings {
 	min-height: $height;
@@ -81,7 +101,6 @@ input:focus, button:focus {
 
 	.controls {
 		min-height: 34px;
-		margin-bottom: 5px;
 		form, .dropdown, .btn-group {
 			margin-bottom: $margin;
 			height: 34px;
@@ -133,6 +152,9 @@ input:focus, button:focus {
 						background-image: url(../img/ionicons-minus.svg);
 					}
 				}
+			}
+			&.dropdown-menu-right {
+				max-width: none;
 			}
 			&.children {
 				overflow: hidden;
@@ -231,6 +253,7 @@ input:focus, button:focus {
 		}
 			
 		#map {
+			border-radius: 4px;
 			height: $height;
 			display: none;
 		}
@@ -252,6 +275,10 @@ input:focus, button:focus {
 		#map_options {
 			display: none;
 		}
+	}
+
+	&[data-mode=search] {
+		th.distance, td.distance { display: none !important; }
 	}
 }
 
@@ -375,7 +402,7 @@ body.tsml_fullscreen {
 			tbody tr {
 				display: table-row;
 				td {
-					&.name, &.location, &.time, &.address, &.region, &.types {
+					&.name, &.location, &.time, &.distance, &.address, &.region, &.types {
 						white-space: normal;
 						display: table-cell; 
 						padding: 8px 8px 8px 15px;

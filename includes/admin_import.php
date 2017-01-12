@@ -2,7 +2,7 @@
 	
 //import CSV file and handle settings
 function tmsl_import_page() {
-	global $wpdb, $tsml_types, $tsml_programs, $tsml_program, $tsml_nonce, $tsml_days, $tsml_feedback_addresses, $tsml_notification_addresses;
+	global $wpdb, $tsml_types, $tsml_programs, $tsml_program, $tsml_nonce, $tsml_days, $tsml_feedback_addresses, $tsml_notification_addresses, $tsml_distance_units;
 
 	$error = false;
 	
@@ -15,7 +15,7 @@ function tmsl_import_page() {
 			$error = __('File upload error #' . $_FILES['tsml_import']['error'], '12-step-meeting-list');
 		} elseif (empty($extension)) {
 			$error = __('Uploaded file did not have a file extension. Please add .csv to the end of the file name.', '12-step-meeting-list');
-		} elseif ($extension != 'csv') {
+		} elseif (!in_array($extension, array('csv', 'txt'))) {
 			$error = sprintf(__('Please upload a csv file. Your file ended in .%s.', '12-step-meeting-list'), $extension);
 		} elseif (!$handle = fopen($_FILES['tsml_import']['tmp_name'], 'r')) {
 			$error = __('Error opening CSV file', '12-step-meeting-list');
@@ -229,7 +229,14 @@ function tmsl_import_page() {
 	if (!empty($_POST['tsml_program']) && isset($_POST['tsml_nonce']) && wp_verify_nonce($_POST['tsml_nonce'], $tsml_nonce)) {
 		$tsml_program = sanitize_text_field($_POST['tsml_program']);
 		update_option('tsml_program', $tsml_program);
-		tsml_alert('Program setting updated.');
+		tsml_alert(__('Program setting updated.', '12-step-meeting-list'));
+	}
+		
+	//change distance units
+	if (!empty($_POST['tsml_distance_units']) && isset($_POST['tsml_nonce']) && wp_verify_nonce($_POST['tsml_nonce'], $tsml_nonce)) {
+		$tsml_distance_units = ($_POST['tsml_distance_units'] == 'mi') ? 'mi' : 'km';
+		update_option('tsml_distance_units', $tsml_distance_units);
+		tsml_alert(__('Distance units updated.', '12-step-meeting-list'));
 	}
 		
 	//add a feedback email
@@ -240,7 +247,7 @@ function tmsl_import_page() {
 		$tsml_feedback_addresses = array_unique($tsml_feedback_addresses);
 		sort($tsml_feedback_addresses);
 		update_option('tsml_feedback_addresses', $tsml_feedback_addresses);
-		echo '<div class="notice notice-success"><p>Feedback address added.</p></div>';
+		tsml_alert(__('Feedback address added.', '12-step-meeting-list'));
 	}
 	
 	//remove a feedback email
@@ -256,7 +263,7 @@ function tmsl_import_page() {
 		} else {
 			update_option('tsml_feedback_addresses', $tsml_feedback_addresses);
 		}
-		echo '<div class="notice notice-success"><p>Feedback address removed.</p></div>';
+		tsml_alert(__('Feedback address removed.', '12-step-meeting-list'));
 	}
 			
 	//add a notification email
@@ -267,7 +274,7 @@ function tmsl_import_page() {
 		$tsml_notification_addresses = array_unique($tsml_notification_addresses);
 		sort($tsml_notification_addresses);
 		update_option('tsml_notification_addresses', $tsml_notification_addresses);
-		echo '<div class="notice notice-success"><p>Notification address added.</p></div>';
+		tsml_alert(__('Notification address added.', '12-step-meeting-list'));
 	}
 	
 	//remove a notification email
@@ -283,7 +290,7 @@ function tmsl_import_page() {
 		} else {
 			update_option('tsml_notification_addresses', $tsml_notification_addresses);
 		}
-		echo '<div class="notice notice-success"><p>Notification address removed.</p></div>';
+		tsml_alert(__('Notification address removed.', '12-step-meeting-list'));
 	}
 	?>
 	<div class="wrap">
@@ -363,15 +370,30 @@ function tmsl_import_page() {
 					<div class="postbox">
 						<div class="inside">
 							<h3><?php _e('Choose Your Program', '12-step-meeting-list')?></h3>
+							<p><?php echo sprintf(__('This determines which meeting types are available. If your program is not listed, please <a href="%s">let us know</a> about your program and what types of meetings you have (Open, Closed, Topic Discussion, etc).'), TSML_CONTACT_LINK)?></p>
 							<form method="post" action="edit.php?post_type=tsml_meeting&page=import">
-							<?php wp_nonce_field($tsml_nonce, 'tsml_nonce', false)?>
-							<p><?php echo sprintf(__('This determines which meeting types are available. If your program is not listed, please <a href="%s">let us know</a> about your program and what types of meetings you have (Open, Closed, Topic Discussion, etc).'), TSML_CONTACT_LINK)?>
-							</p>
-							<select name="tsml_program" onchange="this.form.submit()">
-								<?php foreach ($tsml_programs as $key=>$value) {?>
-								<option value="<?php echo $key?>"<?php selected($tsml_program, $key)?>><?php echo $value?></option>
+								<?php wp_nonce_field($tsml_nonce, 'tsml_nonce', false)?>
+								<select name="tsml_program" onchange="this.form.submit()">
+									<?php foreach ($tsml_programs as $key=>$value) {?>
+									<option value="<?php echo $key?>"<?php selected($tsml_program, $key)?>><?php echo $value?></option>
+									<?php }?>
+								</select>
+							</form>
+						</div>
+					</div>
+					<div class="postbox">
+						<div class="inside">
+							<h3><?php _e('Distance Units', '12-step-meeting-list')?></h3>
+							<form method="post" action="edit.php?post_type=tsml_meeting&page=import">
+								<?php wp_nonce_field($tsml_nonce, 'tsml_nonce', false)?>
+								<?php 
+								$distance_units = array(
+									'km' => __('Kilometers', '12-step-meeting-list'),
+									'mi' => __('Miles', '12-step-meeting-list'),	
+								);
+								foreach ($distance_units as $key => $value) {?>
+								<label class="radio"><input type="radio" name="tsml_distance_units" value="<?php echo $key?>" <?php checked($tsml_distance_units, $key)?> onchange="this.form.submit()"><?php echo $key?></label>
 								<?php }?>
-							</select>
 							</form>
 						</div>
 					</div>

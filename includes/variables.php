@@ -20,6 +20,8 @@ $tsml_days = $tsml_days[get_option('start_of_week', 0)];
 
 $tsml_days_order = array_keys($tsml_days); //used by tsml_meetings_sort() over and over
 
+$tsml_distance_units = get_option('tsml_distance_units', 'mi');
+
 $tsml_feedback_addresses = get_option('tsml_feedback_addresses', array());
 
 $tsml_google_api_key = 'AIzaSyCC3p6PSf6iQbXi-Itwn9C24_FhkbDUkdg'; //might have to make this user-specific
@@ -57,6 +59,42 @@ $tsml_google_overrides = array(
 		'latitude'			=> '43.666532',
 		'longitude'			=> '-79.38097',
 	),
+	//nyc locations that for some reason include the premise name
+	'Advent Lutheran Church, 2504 Broadway, New York, NY 10025, USA' => array(
+		'formatted_address'	=> '2504 Broadway, New York, NY 10025, USA',
+		'latitude'			=> '40.7926923',
+		'longitude'			=> '-73.9726924',
+	),
+	'St. Thomas More\'s Church, 65 E 89th St, New York, NY 10128, USA' => array(
+		'formatted_address'	=> '65 E 89th St, New York, NY 10128, USA',
+		'latitude'			=> '40.7827448',
+		'longitude'			=> '-73.9567008',
+	),
+	'St. Catherine of Siena\'s Church, 411 E 68th St, New York, NY 10065, USA' => array(
+		'formatted_address'	=> '411 E 68th St, New York, NY 10065, USA',
+		'latitude'			=> '40.7652978',
+		'longitude'			=> '-73.9570329',
+	),
+	'Our Lady of Good Counsel Church, 230 E 90th St, New York, NY 10128, USA' => array(
+		'formatted_address'	=> '230 E 90th St, New York, NY 10128, USA',
+		'latitude'			=> '40.7806471',
+		'longitude'			=> '-73.9509674',
+	),
+	'Church of Our Lady of Guadalupe, 229 W 14th St, New York, NY 10011, USA' => array(
+		'formatted_address'	=> '229 W 14th St, New York, NY 10011, USA',
+		'latitude'			=> '40.7393643',
+		'longitude'			=> '-74.00081270000001',
+	),
+	'Westlands, 1 Mead Way, Bronxville, NY 10708, USA' => array(
+		'formatted_address'	=> '1 Mead Way, Bronxville, NY 10708, USA',
+		'latitude'			=> '40.935443',
+		'longitude'			=> '-73.8437546',
+	),
+	'St. Andrew\'s Church, 20 Cardinal Hayes Pl, New York, NY 10007, USA' => array(
+		'formatted_address'	=> '519 Church St, Toronto, ON M4Y 2C9, Canada',
+		'latitude'			=> '40.7133468',
+		'longitude'			=> '-74.0025814',
+	),
 );
 
 $tsml_nonce = plugin_basename(__FILE__);
@@ -71,6 +109,7 @@ $tsml_programs = array(
 	'coda'		=> __('Co-Dependents Anonymous', '12-step-meeting-list'),
 	'na'		=> __('Narcotics Anonymous', '12-step-meeting-list'),
 	'oa'		=> __('Overeaters Anonymous', '12-step-meeting-list'),
+	'rca'	=> __('Recovering Couples Anonymous', '12-step-meeting-list'),
 	'sa'		=> __('Sexaholics Anonymous', '12-step-meeting-list'),
 	'saa'		=> __('Sex Addicts Anonymous', '12-step-meeting-list'),
 	'slaa'		=> __('Sex and Love Addicts Anonymous', '12-step-meeting-list'),
@@ -254,6 +293,11 @@ $tsml_types = array(
 		'WORK'  => __('Work Book Study', '12-step-meeting-list'),
 		'WRIT'  => __('Writing', '12-step-meeting-list'),
 	),	
+	'rca' => array(
+		'C'		=> __('Closed', '12-step-meeting-list'),
+		'O'		=> __('Open', '12-step-meeting-list'),
+		'SP'	=> __('Speaker', '12-step-meeting-list'),
+	),
 	'sa' => array(
 		'BE'	=> __('Beginner', '12-step-meeting-list'),
 		'B'		=> __('Book Study', '12-step-meeting-list'),

@@ -41,6 +41,9 @@ body {
 			}
 			p:last-child { margin-bottom: 0; }
 			
+			//radio distance units
+			label.radio { display: block; margin-top: 5px; }
+
 			//get feedback & get notified
 			&.admin_contacts {
 				table {

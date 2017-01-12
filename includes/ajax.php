@@ -96,7 +96,7 @@ function tsml_admin_ajax_address() {
 		'meta_value'	=> sanitize_text_field($_GET['formatted_address']),
 	))) return array();
 
-	$region = get_the_terms($posts[0]->ID, 'tsml_region');
+	$region = array_values(get_the_terms($posts[0]->ID, 'tsml_region'));
 
 	//return info to user
 	wp_send_json(array(
@@ -427,14 +427,14 @@ function tsml_ajax_import() {
 			add_post_meta($location_id, 'longitude',			$longitude);
 			wp_set_object_terms($location_id, $region_id, 'tsml_region');
 		}
-		
+				
 		//save meeting to this location
 		$meeting_id = wp_insert_post(array(
 			'post_title'		=> $meeting['name'],
 			'post_type'			=> 'tsml_meeting',
 			'post_status'		=> 'publish',
 			'post_parent'		=> $location_id,
-			'post_content'		=> $meeting['notes'],
+			'post_content'		=> trim($meeting['notes']), //not sure why recursive trim not catching this
 			'post_modified'		=> $meeting['post_modified'],
 			'post_modified_gmt'	=> $meeting['post_modified_gmt'],
 		));

@@ -78,6 +78,10 @@ function tsml_assets() {
 				'men' => __('Men', '12-step-meeting-list'),
 				'women' => __('Women', '12-step-meeting-list'),
 				'email_not_sent' => __('Email was not sent.', '12-step-meeting-list'),
+				'no_meetings' => __('No results matched those criteria.', '12-step-meeting-list'),
+				'geo_error' => __('There was an error getting your location.', '12-step-meeting-list'),
+				'geo_error_browser' => __('Your browser does not appear to support geolocation.', '12-step-meeting-list'),
+				'no_address' => __('Google could not find that address.', '12-step-meeting-list'),
 			),
 		));
 		wp_enqueue_style('tsml_public_css', plugins_url('../assets/css/public.min.css', __FILE__), array(), TSML_VERSION);
@@ -224,6 +228,17 @@ function tsml_delete_orphans() {
 	$location_ids = $wpdb->get_col('SELECT ID FROM ' . $wpdb->posts . ' l WHERE l.post_type = "tsml_location" AND (SELECT COUNT(*) FROM ' . $wpdb->posts . ' m WHERE m.post_type="tsml_meeting" AND m.post_parent = l.id) = 0');
 	$group_ids = $wpdb->get_col('SELECT ID FROM ' . $wpdb->posts . ' g WHERE g.post_type = "tsml_group" AND (SELECT COUNT(*) FROM ' . $wpdb->postmeta . ' m WHERE m.meta_key="group_id" AND m.meta_value = g.id) = 0');
 	tsml_delete(array_merge($location_ids, $group_ids));
+}
+
+//calculate the distance between two points
+//used by tsml_get_meetings()
+function tsml_distance($lat1, $lon1, $lat2, $lon2) {
+	global $tsml_distance_units;
+	$theta = $lon1 - $lon2;
+	$distance = sin(deg2rad($lat1)) * sin(deg2rad($lat2)) +  cos(deg2rad($lat1)) * cos(deg2rad($lat2)) * cos(deg2rad($theta));
+	$distance = rad2deg(acos($distance)) * 69.09;
+	if ($tsml_distance_units == 'km') $distance *= 1.609344;
+	return round($distance, 2);
 }
 
 //set content type for emails to html, remember to remove after use
@@ -727,6 +742,7 @@ function tsml_get_meetings($arguments=array()) {
 			'time'				=> @$meeting_meta[$post->ID]['time'],
 			'end_time'			=> @$meeting_meta[$post->ID]['end_time'],
 			'time_formatted'	=> tsml_format_time(@$meeting_meta[$post->ID]['time']),
+			'distance'			=> '',
 			'day'				=> @$meeting_meta[$post->ID]['day'],
 			'types'				=> empty($meeting_meta[$post->ID]['types']) ? array() : unserialize($meeting_meta[$post->ID]['types']),
 		), $locations[$post->post_parent]);
@@ -740,7 +756,26 @@ function tsml_get_meetings($arguments=array()) {
 		
 		$meetings[] = $array;
 	}
+	
+	//if latitude and longitude are set, then calculate distances
+	if (!empty($arguments['latitude']) && !empty($arguments['longitude'])) {
+		foreach ($meetings as &$meeting) {
+			$meeting['distance'] = tsml_distance($arguments['latitude'], $arguments['longitude'], $meeting['latitude'], $meeting['longitude']);
+		}
 
+		//if radius is set, then filter by radius
+		if (!empty($arguments['radius'])) {
+			$filtered_meetings = array();
+			foreach ($meetings as $meeting) {
+				if ($meeting['distance'] <= $arguments['radius']) {
+					$filtered_meetings[] = $meeting;
+				}
+			}			
+			$meetings = $filtered_meetings;
+			unset($filtered_meetings);
+		}
+	}
+	
 	usort($meetings, 'tsml_sort_meetings');
 	
 	return $meetings;
