@@ -95,6 +95,11 @@ $tsml_google_overrides = array(
 		'latitude'			=> '40.7133468',
 		'longitude'			=> '-74.0025814',
 	),
+	'150 Church St, Santa Cruz, CA 95060, USA' => array(
+		'formatted_address'	=> '150 Church St, Davenport, CA 95017, USA',
+		'latitude'			=> '37.012471',
+		'longitude'			=> '-122.192971',
+	),
 );
 
 $tsml_nonce = plugin_basename(__FILE__);
@@ -112,6 +117,7 @@ $tsml_programs = array(
 	'rca'	=> __('Recovering Couples Anonymous', '12-step-meeting-list'),
 	'sa'		=> __('Sexaholics Anonymous', '12-step-meeting-list'),
 	'saa'		=> __('Sex Addicts Anonymous', '12-step-meeting-list'),
+	'sca'		=> __('Sexual Compulsives Anonymous', '12-step-meeting-list'),
 	'slaa'		=> __('Sex and Love Addicts Anonymous', '12-step-meeting-list'),
 );
 
@@ -310,6 +316,17 @@ $tsml_types = array(
 		'SP'	=> __('Speaker', '12-step-meeting-list'),
 		'ST'	=> __('Step Study', '12-step-meeting-list'),
 		'W'		=> __('Women', '12-step-meeting-list'),
+	),
+	'sca' => array(
+		'BE'	=> __('Beginner', '12-step-meeting-list'),
+		'H'		=> __('Chip', '12-step-meeting-list'),
+		'C'		=> __('Closed', '12-step-meeting-list'),
+		'COURT'	=> __('Court', '12-step-meeting-list'),
+		'D'     => __('Discussion', '12-step-meeting-list'),
+		'GL'     => __('Graphic Language', '12-step-meeting-list'),
+		'O'		=> __('Open', '12-step-meeting-list'),
+		'SP'	=> __('Speaker', '12-step-meeting-list'),
+		'ST'	=> __('Step', '12-step-meeting-list'),
 	),
 	'saa' => array(
 		'C'		=> __('Closed', '12-step-meeting-list'),

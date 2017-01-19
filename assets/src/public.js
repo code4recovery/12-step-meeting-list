@@ -172,7 +172,35 @@ jQuery(function($){
 			window.history.pushState({path:url}, '', url);
 		}
 		
-		if (data.mode == 'me') {
+		if (data.mode == 'search') {
+			typeaheadEnable();
+			getMeetings(data);
+		} else if (data.mode == 'loc') {
+			typeaheadDisable();
+
+			if (data.search) {
+				//geocode address?
+				
+				//start spinner
+				$('#search button i').removeClass().addClass('glyphicon glyphicon-refresh spinning');
+				
+				$.getJSON('https://maps.googleapis.com/maps/api/geocode/json', { 
+					address: data.search, 
+					key: myAjax.google_api_key
+				}, function(geocoded_data) {
+					$('#search button i').removeClass().addClass('glyphicon glyphicon-map-marker');
+					if (geocoded_data.status == 'OK') {
+						console.log(geocoded_data.results[0].geometry.location);
+					} else {
+						//show error message
+						setAlert('address_error');
+					}
+				});
+			} else {
+				setAlert('enter_address');
+			}
+		} else if (data.mode == 'me') {
+
 			//start spinner
 			$('#search button i').removeClass().addClass('glyphicon glyphicon-refresh spinning');
 			
@@ -185,40 +213,17 @@ jQuery(function($){
 				}, function() {
 					//browser supports but can't get geolocation
 					$('#search button i').removeClass().addClass('glyphicon glyphicon-user'); //todo switch to location
-					showAlert('geo_error');
+					setAlert('geo_error');
+				}, {
+					enableHighAccuracy: true,
+					timeout: 10000, //10 seconds
+					maximumAge: 600000, //10 minutes
 				});
 			} else {
 				//browser doesn't support geolocation
 				$('#search button i').removeClass().addClass('glyphicon glyphicon-user'); //todo switch to location
-				showAlert('geo_error_browser');
+				setAlert('geo_error_browser');
 			}
-			
-		} else if (data.search && data.mode == 'loc') {
-			//geocode address?
-			
-			//start spinner
-			$('#search button i').removeClass().addClass('glyphicon glyphicon-refresh spinning');
-			
-			$.getJSON('https://maps.googleapis.com/maps/api/geocode/json', { 
-				address: data.search, 
-				key: myAjax.google_api_key
-			}, function(geocoded_data) {
-				$('#search button i').removeClass().addClass('glyphicon glyphicon-map-marker');
-				if (geocoded_data.status == 'OK') {
-					console.log(geocoded_data.results[0].geometry.location);
-				} else {
-					//show error message
-					showAlert('address_error');
-				}
-			});
-		} else {
-			getMeetings(data);
-		}
-		
-		if (data.mode == 'search') {
-			typeaheadEnable();
-		} else {
-			typeaheadDisable();
 		}
 		
 	}
@@ -261,7 +266,7 @@ jQuery(function($){
 
 				$('#meetings table').addClass('hidden');
 				$('#meetings #map').addClass('hidden');
-				showAlert('no_meetings');
+				setAlert('no_meetings');
 			} else {
 				$('#meetings table').removeClass('hidden');
 				if ($('#meetings #map').hasClass('hidden')) {
