@@ -194,11 +194,6 @@ input:focus, button:focus {
 	
 	#region { display: none; }
 
-	&[data-mode="search"] {
-		#distance { display: none; }
-		#region { display: block; }
-	}
-
 	.results {
 
 		h1 small {
@@ -270,8 +265,8 @@ input:focus, button:focus {
 		#map {
 			display: block;
 		}
-		#map_options {
-			display: block;
+		&.empty {
+			#map { display: none; }
 		}
 	}
 
@@ -279,12 +274,14 @@ input:focus, button:focus {
 		table {
 			display: table;
 		}
-		#map_options {
-			display: none;
+		&.empty {
+			table { display: none; }
 		}
 	}
 
-	&[data-mode=search] {
+	&[data-mode="search"] {
+		#distance { display: none; }
+		#region { display: block; }
 		th.distance, td.distance { display: none !important; }
 	}
 }

@@ -93,7 +93,7 @@ class Walker_Regions_Dropdown extends Walker_Category {
 }
 
 ?>
-<div id="meetings" data-type="<?php echo $view?>" data-mode="<?php echo $mode?>" class="container" role="main">
+<div id="meetings" data-type="<?php echo $view?>" data-mode="<?php echo $mode?>" class="container<?php if (!count($meetings)) {?> empty<?php }?>" role="main">
 	<div class="row controls hidden-print">
 		<div class="col-md-2 col-sm-6">
 			<form id="search" role="search">
@@ -214,13 +214,13 @@ class Walker_Regions_Dropdown extends Walker_Category {
 	<div class="row results">
 		<div class="col-xs-12">
 			<div id="alert" class="alert alert-warning<?php if (count($meetings)) {?> hidden<?php }?>">
-				<?php if (!count($meetings)) _e('No results matched those criteria.', '12-step-meeting-list')?>
+				<?php if (!count($meetings)) _e('No results were found matching the selected criteria.', '12-step-meeting-list')?>
 			</div>
 			
 			<div id="map"></div>
 			
 			<div id="table-wrapper">
-				<table class="table table-striped<?php if (!count($meetings)) {?> hidden<?php }?>">
+				<table class="table table-striped">
 					<thead class="hidden-print">
 						<th class="time" data-sort="asc"><?php _e('Time', '12-step-meeting-list')?></th>
 						<th class="distance"><?php _e('Distance', '12-step-meeting-list')?></th>

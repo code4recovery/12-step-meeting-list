@@ -197,6 +197,11 @@ In that case, try our [One Page Meeting List](https://github.com/meeting-guide/o
 
 == Changelog ==
 
+= 2.9 =
+* New proximity search mode, courtesy of Washington Area Intergroup Association
+* Stopped the search autocomplete from loading the meetings JSON an extra time
+* Two new programs: Recovering Couples Anonymous and Sexual Compulsives Anonymous
+
 = 2.8.9 =
 * Per NYC, simplifying group last contact logic
 

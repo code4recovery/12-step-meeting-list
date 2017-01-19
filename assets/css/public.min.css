@@ -254,14 +254,6 @@ input:focus, button:focus {
   display: none;
 }
 
-#meetings[data-mode="search"] #distance {
-  display: none;
-}
-
-#meetings[data-mode="search"] #region {
-  display: block;
-}
-
 #meetings .results h1 small {
   font-size: inherit;
 }
@@ -353,19 +345,27 @@ input:focus, button:focus {
   display: block;
 }
 
-#meetings[data-type=map] #map_options {
-  display: block;
+#meetings[data-type=map].empty #map {
+  display: none;
 }
 
 #meetings[data-type=list] table {
   display: table;
 }
 
-#meetings[data-type=list] #map_options {
+#meetings[data-type=list].empty table {
   display: none;
 }
 
-#meetings[data-mode=search] th.distance, #meetings[data-mode=search] td.distance {
+#meetings[data-mode="search"] #distance {
+  display: none;
+}
+
+#meetings[data-mode="search"] #region {
+  display: block;
+}
+
+#meetings[data-mode="search"] th.distance, #meetings[data-mode="search"] td.distance {
   display: none !important;
 }
 

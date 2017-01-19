@@ -78,11 +78,12 @@ function tsml_assets() {
 				'men' => __('Men', '12-step-meeting-list'),
 				'women' => __('Women', '12-step-meeting-list'),
 				'email_not_sent' => __('Email was not sent.', '12-step-meeting-list'),
-				'no_meetings' => __('No results matched those criteria.', '12-step-meeting-list'),
+				'no_meetings' => __('No results were found matching the selected criteria.', '12-step-meeting-list'),
 				'geo_error' => __('There was an error getting your location.', '12-step-meeting-list'),
 				'geo_error_browser' => __('Your browser does not appear to support geolocation.', '12-step-meeting-list'),
 				'no_address' => __('Google could not find that address.', '12-step-meeting-list'),
 				'enter_address' => __('Enter a location in the field above.', '12-step-meeting-list'),
+				'finding_you' => __('Finding you…', '12-step-meeting-list'),
 			),
 			'types' => $tsml_types[$tsml_program],
 		));

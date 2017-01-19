@@ -326,12 +326,8 @@ function tmsl_import_page() {
 								</p>
 								<p><input type="submit" class="button button-primary" value="Begin"></p>
 							</form>
-						</div>
-					</div>
 
-					<div class="postbox">
-						<div class="inside">
-							<h3><?php _e('CSV Format Specs', '12-step-meeting-list')?></h3>
+							<h4><?php _e('Spreadsheet Specs', '12-step-meeting-list')?></h4>
 							<p><a href="<?php echo plugin_dir_url(__FILE__) . '../template.csv'?>">Here is a sample file</a> you can use as a template. Save it as a comma-delimited CSV before uploading it. The header row should kept in place.</p>
 							<ul class="ul-disc">
 								<li><strong>Time</strong>, if present, should be in a standard date format such as 6:00 AM or 06:00. Non-standard or empty dates will be imported as 'by appointment.'</li>
@@ -369,31 +365,26 @@ function tmsl_import_page() {
 
 					<div class="postbox">
 						<div class="inside">
-							<h3><?php _e('Choose Your Program', '12-step-meeting-list')?></h3>
-							<p><?php echo sprintf(__('This determines which meeting types are available. If your program is not listed, please <a href="%s">let us know</a> about your program and what types of meetings you have (Open, Closed, Topic Discussion, etc).'), TSML_CONTACT_LINK)?></p>
+							<h3><?php _e('Settings', '12-step-meeting-list')?></h3>
+							<p><?php echo sprintf(__('The program determines which meeting types are available. If your program isn\'t not listed, <a href="%s">let us know</a> what types of meetings it has (Open, Closed, Topic Discussion, etc).'), TSML_CONTACT_LINK)?></p>
 							<form method="post" action="edit.php?post_type=tsml_meeting&page=import">
 								<?php wp_nonce_field($tsml_nonce, 'tsml_nonce', false)?>
 								<select name="tsml_program" onchange="this.form.submit()">
-									<?php foreach ($tsml_programs as $key=>$value) {?>
+									<?php foreach ($tsml_programs as $key => $value) {?>
 									<option value="<?php echo $key?>"<?php selected($tsml_program, $key)?>><?php echo $value?></option>
 									<?php }?>
 								</select>
-							</form>
-						</div>
-					</div>
-					<div class="postbox">
-						<div class="inside">
-							<h3><?php _e('Distance Units', '12-step-meeting-list')?></h3>
-							<form method="post" action="edit.php?post_type=tsml_meeting&page=import">
-								<?php wp_nonce_field($tsml_nonce, 'tsml_nonce', false)?>
+								
+								<select name="tsml_distance_units" onchange="this.form.submit()">
 								<?php 
 								$distance_units = array(
 									'km' => __('Kilometers', '12-step-meeting-list'),
 									'mi' => __('Miles', '12-step-meeting-list'),	
 								);
 								foreach ($distance_units as $key => $value) {?>
-								<label class="radio"><input type="radio" name="tsml_distance_units" value="<?php echo $key?>" <?php checked($tsml_distance_units, $key)?> onchange="this.form.submit()"><?php echo $key?></label>
+								<option value="<?php echo $key?>"<?php selected($tsml_distance_units, $key)?>><?php echo $value?></label>
 								<?php }?>
+								</select>
 							</form>
 						</div>
 					</div>
@@ -489,7 +480,7 @@ function tmsl_import_page() {
 					<div class="postbox" id="try_the_apps">
 						<div class="inside">
 							<h3><?php _e('Try the Apps!', '12-step-meeting-list')?></h3>
-							<p><?php echo sprintf(__('Want to have your meetings listed in a simple, free mobile app? <a href="%s" target="_blank">%d areas are currently participating</a>. No extra effort is required; simply continue to update your meetings here and the updates will flow down to app users.'), 'https://meetingguide.org/', 46)?></p>
+							<p><?php echo sprintf(__('Want to have your meetings listed in a simple, free mobile app? <a href="%s" target="_blank">%d areas are currently participating</a>. No extra effort is required; simply continue to update your meetings here and the updates will flow down to app users.'), 'https://meetingguide.org/', 68)?></p>
 							<p class="buttons">
 								<a href="https://itunes.apple.com/us/app/meeting-guide/id1042822181">
 									<img src="<?php echo plugin_dir_url(__FILE__)?>../assets/img/apple.svg">

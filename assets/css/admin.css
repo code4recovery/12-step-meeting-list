@@ -44,6 +44,21 @@ body.tsml_meeting_page_import .postbox p:last-child {
   margin-bottom: 0;
 }
 
+body.tsml_meeting_page_import .postbox h4 {
+  border-bottom: 1px solid #eee;
+  margin: 2.8em 0 0;
+  padding-bottom: 10px;
+}
+
+body.tsml_meeting_page_import .postbox select {
+  width: 100%;
+  margin-bottom: 12px;
+}
+
+body.tsml_meeting_page_import .postbox select:last-child {
+  margin-bottom: 4px;
+}
+
 body.tsml_meeting_page_import .postbox label.radio {
   display: block;
   margin-top: 5px;
