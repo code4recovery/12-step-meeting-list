@@ -199,6 +199,7 @@ In that case, try our [One Page Meeting List](https://github.com/meeting-guide/o
 
 = 2.9 =
 * New proximity search mode, courtesy of Washington Area Intergroup Association
+* Enabled Google map in search results (now that it's more mobile-friendly)
 * Stopped the search autocomplete from loading the meetings JSON an extra time
 * Two new programs: Recovering Couples Anonymous and Sexual Compulsives Anonymous
 

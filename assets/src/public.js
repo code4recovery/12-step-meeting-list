@@ -5,6 +5,8 @@
 		b) procedural logic
 		c) event handlers
 	2) Google Maps stuff
+		a) procedural logic
+		b) functions that must run outside jQuery
 */
 
 jQuery(function($){
@@ -15,7 +17,7 @@ jQuery(function($){
 		//prepare data for ajax
 		var data = { 
 			action: 'meetings',
-			search: $('#search input[name=query]').val().replace(/[";:,.\/?\\-]/g, ' ').trim(),
+			search: $search_field.val().replace(/[";:,.\/?\\-]/g, ' ').trim(),
 			mode: $('#search li.active a').attr('data-id'),
 			region: $('#region li.active a').attr('data-id'),
 			day: $('#day li.active a').attr('data-id'),
@@ -33,7 +35,7 @@ jQuery(function($){
 		if (data.mode != 'search') {
 			query_string.m = data.mode;
 			if (data.distance) {
-				query_string.r = data.distance;
+				query_string.a = data.distance;
 			}
 		} else if (data.region) {
 			query_string.r = data.region;
@@ -53,6 +55,7 @@ jQuery(function($){
 		
 		if (data.mode == 'search') {
 			typeaheadEnable();
+			setSearchMarker();
 			getMeetings(data);
 		} else if (data.mode == 'loc') {
 			typeaheadDisable();
@@ -69,14 +72,20 @@ jQuery(function($){
 				}, function(geocoded_data) {
 					$('#search button i').removeClass().addClass('glyphicon glyphicon-map-marker');
 					if (geocoded_data.status == 'OK') {
-						console.log(geocoded_data.results[0].geometry.location);
+						$search_field.val(geocoded_data.results[0].formatted_address);
+						data.latitude = geocoded_data.results[0].geometry.location.lat;
+						data.longitude = geocoded_data.results[0].geometry.location.lng;
+						data.search = ''; //don't actually keyword search this
+						setSearchMarker(data);
+						getMeetings(data);
 					} else {
 						//show error message
-						setAlert('address_error');
+						setSearchMarker();
+						setAlert('loc_error');
 					}
 				});
 			} else {
-				setAlert('enter_address');
+				setAlert('loc_empty');
 			}
 		} else if (data.mode == 'me') {
 
@@ -88,10 +97,12 @@ jQuery(function($){
 					$('#search button i').removeClass().addClass('glyphicon glyphicon-user');
 					data.latitude = pos.coords.latitude;
 					data.longitude = pos.coords.longitude;
+					setSearchMarker(data);
 					getMeetings(data);
 				}, function() {
 					//browser supports but can't get geolocation
 					$('#search button i').removeClass().addClass('glyphicon glyphicon-user'); //todo switch to location
+					setSearchMarker();
 					setAlert('geo_error');
 				}, {
 					enableHighAccuracy: true,
@@ -101,18 +112,19 @@ jQuery(function($){
 			} else {
 				//browser doesn't support geolocation
 				$('#search button i').removeClass().addClass('glyphicon glyphicon-user'); //todo switch to location
+				setSearchMarker();
 				setAlert('geo_error_browser');
 			}
 		}
 		
 	}
 
-	//actually get the meetings from the JSON resource and output htem on the page
+	//actually get the meetings from the JSON resource and output them
 	function getMeetings(data) {
 		//request new meetings result
 		data.distance_units = myAjax.distance_units;
 		
-		console.log(myAjax.ajaxurl + '?' + $.param(data));
+		//console.log(myAjax.ajaxurl + '?' + $.param(data));
 		
 		$.post(myAjax.ajaxurl, data, function(response){
 
@@ -194,13 +206,13 @@ jQuery(function($){
 					
 					//add new table row
 					tbody.append('<tr>' + 
-						'<td class="time" data-sort="' + sort_time + '-' + sanitize_title(obj.location) + '"><span>' + (data.day || !obj.day ? obj.time_formatted : myAjax.days[obj.day] + '</span><span>' + obj.time_formatted) + '</span></td>' + 
+						'<td class="time" data-sort="' + sort_time + '-' + sanitizeTitle(obj.location) + '"><span>' + (data.day || !obj.day ? obj.time_formatted : myAjax.days[obj.day] + '</span><span>' + obj.time_formatted) + '</span></td>' + 
 						'<td class="distance" data-sort="' + obj.distance + '">' + obj.distance + ' ' + myAjax.distance_units + '</td>' +
-						'<td class="name" data-sort="' + sanitize_title(obj.name) + '-' + sort_time + '">' + formatLink(obj.url, obj.name, 'post_type') + '</td>' + 
-						'<td class="location" data-sort="' + sanitize_title(obj.location) + '-' + sort_time + '">' + obj.location + '</td>' + 
-						'<td class="address" data-sort="' + sanitize_title(obj.formatted_address) + '-' + sort_time + '">' + formatAddress(obj.formatted_address, true) + '</td>' + 
-						'<td class="region" data-sort="' + sanitize_title((obj.sub_region || obj.region || '')) + '-' + sort_time + '">' + (obj.sub_region || obj.region || '') + '</td>' + 
-						'<td class="types" data-sort="' + sanitize_title(obj.types) + '-' + sort_time + '">' + obj.types + '</td>' + 
+						'<td class="name" data-sort="' + sanitizeTitle(obj.name) + '-' + sort_time + '">' + formatLink(obj.url, obj.name, 'post_type') + '</td>' + 
+						'<td class="location" data-sort="' + sanitizeTitle(obj.location) + '-' + sort_time + '">' + obj.location + '</td>' + 
+						'<td class="address" data-sort="' + sanitizeTitle(obj.formatted_address) + '-' + sort_time + '">' + formatAddress(obj.formatted_address, true) + '</td>' + 
+						'<td class="region" data-sort="' + sanitizeTitle((obj.sub_region || obj.region || '')) + '-' + sort_time + '">' + (obj.sub_region || obj.region || '') + '</td>' + 
+						'<td class="types" data-sort="' + sanitizeTitle(obj.types) + '-' + sort_time + '">' + obj.types + '</td>' + 
 					'</tr>')
 				});
 				
@@ -212,20 +224,60 @@ jQuery(function($){
 				for (var i = 0; i < markers.length; i++) markers[i].setMap(null);
 				markers = [];
 				bounds = new google.maps.LatLngBounds;
+				
+				//add user marker if it exists
+				if (typeof searchMarker == 'object') {
+					bounds.extend(searchMarker.position);
+				}
 
 				loadMap(locations);
 			}
 		}, 'json');	
 	}
 
-	function setAlert(message_key) {
-		if (message_key) {
-			$('#alert').html(myAjax.strings[message_key]).removeClass('hidden');
-		} else {
-			$('#alert').html('').addClass('hidden');
+	//slugify a string, like WordPress's sanitize_title()
+	function sanitizeTitle(str) {
+		str = str.replace(/^\s+|\s+$/g, ''); // trim
+		str = str.toLowerCase();
+		
+		// remove accents, swap ñ for n, etc
+		var from = "àáäâèéëêìíïîòóöôùúüûñç·/_,:;";
+		var to = "aaaaeeeeiiiioooouuuunc------";
+		
+		for (var i=0, l=from.length ; i<l ; i++) {
+			str = str.replace(new RegExp(from.charAt(i), 'g'), to.charAt(i));
 		}
+		
+		str = str.replace(/[^a-z0-9 -]/g, '') // remove invalid chars
+			.replace(/\s+/g, '-') // collapse whitespace and replace by -
+			.replace(/-+/g, '-'); // collapse dashes
+		
+		return str;
 	}
 
+	//set or clear the alert message
+	function setAlert(message_key) {
+		if (typeof message_key == 'undefined') {
+			$('#alert').html('').addClass('hidden');
+		} else {
+			$('#alert').html(myAjax.strings[message_key]).removeClass('hidden');
+		}
+	}
+	
+	//set or remove the search marker (user location or search center)
+	function setSearchMarker(data) {
+		if (typeof searchMarker == 'object') {
+			searchMarker.setMap(null);
+			searchMarker = null;
+		}
+		if (typeof data == 'object') {
+			searchMarker = new google.maps.Marker({
+				icon: userIcon,
+				position: new google.maps.LatLng(data.latitude, data.longitude),
+				map: map,
+			});
+		}
+	}
 	
 	function sortMeetings() {
 		var $sorted = $('#meetings table thead th[data-sort]').first();
@@ -333,6 +385,33 @@ jQuery(function($){
 		});
 	}
 	
+	//set a param on the query string
+	function updateQueryString(key, value, url) {
+		if (!url) url = window.location.href;
+		var re = new RegExp("([?&])" + key + "=.*?(&|#|$)(.*)", "gi"), hash;
+	
+		if (re.test(url)) {
+			if (typeof value !== 'undefined' && value !== null) {
+				return url.replace(re, '$1' + key + "=" + value + '$2$3');
+			} else {
+				hash = url.split('#');
+				url = hash[0].replace(re, '$1$3').replace(/(&|\?)$/, '');
+				if (typeof hash[1] !== 'undefined' && hash[1] !== null) url += '#' + hash[1];
+				return url;
+			}
+		} else {
+			if (typeof value !== 'undefined' && value !== null) {
+				var separator = url.indexOf('?') !== -1 ? '&' : '?';
+				hash = url.split('#');
+				url = hash[0] + separator + key + '=' + value;
+				if (typeof hash[1] !== 'undefined' && hash[1] !== null) url += '#' + hash[1];
+				return url;
+			} else {
+				return url;
+			}
+		}
+	}
+
 	//1b) procedural logic
 	
 	//show/hide upcoming menu option
@@ -370,10 +449,14 @@ jQuery(function($){
 		}
 	});
 	
-	if ($('#search li.active a').attr('data-id') == 'search') {
+	var mode = $('#search li.active a').attr('data-id');
+	if (mode == 'search') {
 		typeaheadEnable();
+	} else if ((mode == 'loc') && $search_field.val().length) {
+		doSearch();
+	} else if (mode == 'me') {
+		doSearch();
 	}
-
 
 	//1c) jQuery event handlers
 
@@ -411,18 +494,6 @@ jQuery(function($){
 		}
 	});
 	
-	/*	
-	icons[color] = {
-		path: 'M20.5,0.5 c11.046,0,20,8.656,20,19.333c0,10.677-12.059,21.939-20,38.667c-5.619-14.433-20-27.989-20-38.667C0.5,9.156,9.454,0.5,20.5,0.5z',
-		fillColor: icons[color].fill,
-		fillOpacity: 1,
-		anchor: new google.maps.Point(40,50),
-		strokeWeight: 1.4,
-		strokeColor: icons[color].stroke,
-		scale: .6
-	}
-	*/
-	
 	//table sorting
 	$('#meetings table thead').on('click', 'th', function(){
 		var sort = $(this).attr('class');
@@ -439,42 +510,48 @@ jQuery(function($){
 		sortMeetings();
 	});
 	
-	//capture submit event
+	//controls changes
 	$('#meetings .controls').on('submit', '#search', function(){
+		//capture submit event
 		doSearch();
 		return false;
 	}).on('click', 'div.expand', function(e){
-		//toggle an expand / contract submenu
+		//expand or contract regions submenu
 		e.preventDefault();
 		e.stopPropagation();
 		$(this).next('ul.children').toggleClass('expanded');
 		$(this).toggleClass('expanded');
 	}).on('click', '.dropdown-menu a', function(){
-		
+		//dropdown menu click
 		var param = $(this).closest('div').attr('id');
 		
 		if (param == 'mode') {
 			
 			//only one search mode
 			$('#mode li').removeClass('active');
+
+			//remove meeting results
+			$('#meetings').addClass('empty');
 			
 			//change icon & enable or disable
 			if ($(this).attr('data-id') == 'search') {
-				$('#search input[name=query]').prop('disabled', false);
+				$search_field.prop('disabled', false);
 				$('#search button i').removeClass().addClass('glyphicon glyphicon-search');
 			} else if ($(this).attr('data-id') == 'loc') {
-				$('#search input[name=query]').prop('disabled', false);
+				$search_field.prop('disabled', false);
 				$('#search button i').removeClass().addClass('glyphicon glyphicon-map-marker');
+				setAlert('loc_thinking');
 			} else if ($(this).attr('data-id') == 'me') {
-				$('#search input[name=query]').prop('disabled', true);
+				$search_field.prop('disabled', true);
 				$('#search button i').removeClass().addClass('glyphicon glyphicon-user');
+				setAlert('geo_thinking');
 			}
 			
 			//change placeholder text
-			$('#search input[name=query]').attr('placeholder', $(this).html());
+			$search_field.attr('placeholder', $(this).text());
 			
 			//clear and focus input
-			$('#search input[name=query]').val('').focus();
+			$search_field.val('').focus();
 		} else if (param == 'distance') {
 			//distance only one
 			$('#distance li').removeClass('active');
@@ -514,7 +591,7 @@ jQuery(function($){
 
 		//save the query in the query string, if the browser is up to it
 		if (history.pushState) {
-			var url = updatequery_string('v', action);
+			var url = updateQueryString('v', action);
 			window.history.pushState({path:url}, '', url);
 		}
 		
@@ -574,7 +651,25 @@ var map = new google.maps.Map(document.getElementById('map'), {
 });
 var bounds = new google.maps.LatLngBounds();
 
-//var days = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+var userIcon = {
+	path: 'M20.5,0.5 c11.046,0,20,8.656,20,19.333c0,10.677-12.059,21.939-20,38.667c-5.619-14.433-20-27.989-20-38.667C0.5,9.156,9.454,0.5,20.5,0.5z',
+	fillColor: '#2c78b3',
+	fillOpacity: 1,
+	anchor: new google.maps.Point(40,50),
+	strokeWeight: 2,
+	strokeColor: '#2c52b3',
+	scale: .6
+}
+
+var locationIcon = {
+	path: 'M20.5,0.5 c11.046,0,20,8.656,20,19.333c0,10.677-12.059,21.939-20,38.667c-5.619-14.433-20-27.989-20-38.667C0.5,9.156,9.454,0.5,20.5,0.5z',
+	fillColor: '#f76458',
+	fillOpacity: 1,
+	anchor: new google.maps.Point(40,50),
+	strokeWeight: 2,
+	strokeColor: '#b3382c',
+	scale: .6
+}
 
 var infowindow = new google.maps.InfoWindow();
 
@@ -590,6 +685,7 @@ function loadMap(locations) {
 				position: {lat: location.latitude - 0, lng: location.longitude - 0},
 				map: map,
 				title: location.name,
+				icon: locationIcon,
 			});
 
 			//create infowindow content
@@ -662,50 +758,4 @@ function formatLink(url, text, exclude) {
 		}
 	}
 	return '<a href="' + url + '">' + text + '</a>';
-}
-
-function updatequery_string(key, value, url) {
-	if (!url) url = window.location.href;
-	var re = new RegExp("([?&])" + key + "=.*?(&|#|$)(.*)", "gi"), hash;
-
-	if (re.test(url)) {
-		if (typeof value !== 'undefined' && value !== null) {
-			return url.replace(re, '$1' + key + "=" + value + '$2$3');
-		} else {
-			hash = url.split('#');
-			url = hash[0].replace(re, '$1$3').replace(/(&|\?)$/, '');
-			if (typeof hash[1] !== 'undefined' && hash[1] !== null) url += '#' + hash[1];
-			return url;
-		}
-	} else {
-		if (typeof value !== 'undefined' && value !== null) {
-			var separator = url.indexOf('?') !== -1 ? '&' : '?';
-			hash = url.split('#');
-			url = hash[0] + separator + key + '=' + value;
-			if (typeof hash[1] !== 'undefined' && hash[1] !== null) url += '#' + hash[1];
-			return url;
-		} else {
-			return url;
-		}
-	}
-}
-
-//like wordpress
-function sanitize_title(str) {
-	str = str.replace(/^\s+|\s+$/g, ''); // trim
-	str = str.toLowerCase();
-	
-	// remove accents, swap ñ for n, etc
-	var from = "àáäâèéëêìíïîòóöôùúüûñç·/_,:;";
-	var to = "aaaaeeeeiiiioooouuuunc------";
-	
-	for (var i=0, l=from.length ; i<l ; i++) {
-		str = str.replace(new RegExp(from.charAt(i), 'g'), to.charAt(i));
-	}
-	
-	str = str.replace(/[^a-z0-9 -]/g, '') // remove invalid chars
-		.replace(/\s+/g, '-') // collapse whitespace and replace by -
-		.replace(/-+/g, '-'); // collapse dashes
-	
-	return str;
 }

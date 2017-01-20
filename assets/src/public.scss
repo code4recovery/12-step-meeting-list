@@ -228,6 +228,13 @@ input:focus, button:focus {
 								&:last-child { font-size: inherit; margin-top: 0; }
 							}
 						}
+						&.distance {
+							position: absolute;
+							left: 15px;
+							top: 30px;
+							font-size: 20px;
+							font-weight: bold;
+						}
 						&.name, &.location, &.address, &.region {
 							display: block;
 							text-overflow: ellipsis;
@@ -428,6 +435,8 @@ body.tsml_fullscreen {
 					}
 					&.distance {
 						text-align: right;
+						font-weight: inherit;
+						font-size: inherit;
 					}
 					&.name {
 						width: 35%;

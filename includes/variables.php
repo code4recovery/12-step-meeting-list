@@ -110,15 +110,33 @@ $tsml_program = get_option('tsml_program', 'aa');
 
 $tsml_programs = array(
 	'al-anon'	=> __('Al-Anon', '12-step-meeting-list'),
-	'aa'		=> __('Alcoholics Anonymous', '12-step-meeting-list'),
+	'aa'			=> __('Alcoholics Anonymous', '12-step-meeting-list'),
 	'coda'		=> __('Co-Dependents Anonymous', '12-step-meeting-list'),
-	'na'		=> __('Narcotics Anonymous', '12-step-meeting-list'),
-	'oa'		=> __('Overeaters Anonymous', '12-step-meeting-list'),
-	'rca'	=> __('Recovering Couples Anonymous', '12-step-meeting-list'),
-	'sa'		=> __('Sexaholics Anonymous', '12-step-meeting-list'),
+	'na'			=> __('Narcotics Anonymous', '12-step-meeting-list'),
+	'oa'			=> __('Overeaters Anonymous', '12-step-meeting-list'),
+	'rca'		=> __('Recovering Couples Anonymous', '12-step-meeting-list'),
+	'sa'			=> __('Sexaholics Anonymous', '12-step-meeting-list'),
 	'saa'		=> __('Sex Addicts Anonymous', '12-step-meeting-list'),
 	'sca'		=> __('Sexual Compulsives Anonymous', '12-step-meeting-list'),
 	'slaa'		=> __('Sex and Love Addicts Anonymous', '12-step-meeting-list'),
+);
+
+//strings that must be synced between the javascript and the PHP
+$tsml_strings = array(
+	'email_not_sent'		=> __('Email was not sent.', '12-step-meeting-list'),
+	'loc_empty'			=> __('Enter a location in the field above.', '12-step-meeting-list'),
+	'loc_error'			=> __('Google could not find that location.', '12-step-meeting-list'),
+	'loc_thinking'		=> __('Looking up address…', '12-step-meeting-list'),
+	'geo_error'			=> __('There was an error getting your location.', '12-step-meeting-list'),
+	'geo_error_browser'	=> __('Your browser does not appear to support geolocation.', '12-step-meeting-list'),
+	'geo_thinking'		=> __('Finding you…', '12-step-meeting-list'),
+	'groups'				=> __('Groups', '12-step-meeting-list'),
+	'locations'			=> __('Locations', '12-step-meeting-list'),
+	'meetings'			=> __('Meetings', '12-step-meeting-list'),
+	'men'				=> __('Men', '12-step-meeting-list'),
+	'no_meetings'		=> __('No meetings were found matching the selected criteria.', '12-step-meeting-list'),
+	'regions'			=> __('Regions', '12-step-meeting-list'),
+	'women'				=> __('Women', '12-step-meeting-list'),
 );
 
 $tsml_timestamp = microtime(true);

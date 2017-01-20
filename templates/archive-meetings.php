@@ -11,13 +11,14 @@ $modes = array(
 	'loc' => array('title' => __('Location', '12-step-meeting-list'), 'icon' => 'glyphicon glyphicon-map-marker'),
 );
 
+//proximity only enabled in secure environments
 if (is_ssl()) {
-	//proximity only enabled in secure environments
 	$modes['me'] = array('title' => __('Near Me', '12-step-meeting-list'), 'icon' => 'glyphicon glyphicon-user');
 }
 
+//define distance dropdown
 $distances = array();
-foreach (array(1, 5, 10, 25, 50) as $distance) {
+foreach (array(1, 2, 5, 10, 25, 50) as $distance) {
 	if ($tsml_distance_units == 'mi') {
 		$distances[$distance] = sprintf(_n('Within %d Mile', 'Within %d Miles', $distance, '12-step-meeting-list'), $distance);
 	} else {
@@ -25,6 +26,7 @@ foreach (array(1, 5, 10, 25, 50) as $distance) {
 	}
 }
 
+//define times dropdown
 $times  = array(
 	'morning' => __('Morning', '12-step-meeting-list'),
 	'midday' => __('Midday', '12-step-meeting-list'),
@@ -41,6 +43,7 @@ $view		= (isset($_GET['v']) && $_GET['v'] == 'map') ? 'map' : 'list';
 $distance	= isset($_GET['a']) && intval($_GET['a']) ? intval($_GET['a']) : 5;
 $mode		= (empty($_GET['m']) || !in_array($_GET['m'], array_keys($modes))) ? current(array_keys($modes)) : $_GET['m'];
 
+//day default
 if (!isset($_GET['d'])) {
 	$day = intval(current_time('w')); //if not specified, day is current day
 } elseif ($_GET['d'] == 'any') {
@@ -71,12 +74,18 @@ $type_label = ($type && array_key_exists($type, $tsml_types[$tsml_program])) ? $
 $mode_label = array_key_exists($mode, $modes) ? $modes[$mode]['title'] : $modes[0]['title'];
 $distance_label = $distances[$distance];
 
-//need this later
+//need these later
 $meetings = $locations = array();
+$message = '';
 
 //run query
-if (($mode == 'search') || (($mode == 'loc') && empty($search))) {
+if ($mode == 'search') {
 	$meetings	= tsml_get_meetings(compact('search', 'day', 'time', 'region', 'type'));	
+	if (!count($meetings)) $message = $tsml_strings['no_meetings'];
+} elseif ($mode == 'loc') {
+	$message = empty($_GET['sq']) ? $tsml_strings['loc_empty'] : $tsml_strings['loc_thinking'];
+} elseif ($mode == 'me') {
+	$message = $tsml_strings['geo_thinking'];
 }
 
 class Walker_Regions_Dropdown extends Walker_Category {
@@ -213,8 +222,8 @@ class Walker_Regions_Dropdown extends Walker_Category {
 	</div>
 	<div class="row results">
 		<div class="col-xs-12">
-			<div id="alert" class="alert alert-warning<?php if (count($meetings)) {?> hidden<?php }?>">
-				<?php if (!count($meetings)) _e('No results were found matching the selected criteria.', '12-step-meeting-list')?>
+			<div id="alert" class="alert alert-warning<?php if (empty($message)) {?> hidden<?php }?>">
+				<?php echo $message?>
 			</div>
 			
 			<div id="map"></div>

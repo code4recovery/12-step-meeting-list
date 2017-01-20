@@ -38,7 +38,7 @@ function tsml_alert_messages() {
 //function: enqueue assets for public or admin page
 //used: in templates and on admin_edit.php
 function tsml_assets() {
-	global $tsml_types, $tsml_program, $tsml_google_api_key, $tsml_google_overrides, $tsml_distance_units;
+	global $tsml_types, $tsml_strings, $tsml_program, $tsml_google_api_key, $tsml_google_overrides, $tsml_distance_units;
 		
 	//google maps api needed for maps and address verification, can't be onboarded
 	wp_enqueue_script('google_maps_api', '//maps.googleapis.com/maps/api/js?key=' . $tsml_google_api_key);
@@ -70,21 +70,7 @@ function tsml_assets() {
 				__('Saturday', '12-step-meeting-list'),
 			),
 			'distance_units' => $tsml_distance_units,
-			'strings' => array(
-				'groups' => __('Groups', '12-step-meeting-list'),
-				'locations' => __('Locations', '12-step-meeting-list'),
-				'regions' => __('Regions', '12-step-meeting-list'),
-				'meetings' => __('Meetings', '12-step-meeting-list'),
-				'men' => __('Men', '12-step-meeting-list'),
-				'women' => __('Women', '12-step-meeting-list'),
-				'email_not_sent' => __('Email was not sent.', '12-step-meeting-list'),
-				'no_meetings' => __('No results were found matching the selected criteria.', '12-step-meeting-list'),
-				'geo_error' => __('There was an error getting your location.', '12-step-meeting-list'),
-				'geo_error_browser' => __('Your browser does not appear to support geolocation.', '12-step-meeting-list'),
-				'no_address' => __('Google could not find that address.', '12-step-meeting-list'),
-				'enter_address' => __('Enter a location in the field above.', '12-step-meeting-list'),
-				'finding_you' => __('Finding you…', '12-step-meeting-list'),
-			),
+			'strings' => $tsml_strings,
 			'types' => $tsml_types[$tsml_program],
 		));
 		wp_enqueue_style('tsml_public_css', plugins_url('../assets/css/public.min.css', __FILE__), array(), TSML_VERSION);
