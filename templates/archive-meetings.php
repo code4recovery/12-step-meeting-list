@@ -5,16 +5,13 @@ tsml_assets();
 
 get_header();
 
-//define parameter dropdown options
+//define search dropdown options
 $modes = array(
 	'search' => array('title' => __('Search', '12-step-meeting-list'), 'icon' => 'glyphicon glyphicon-search'),
-	'loc' => array('title' => __('Location', '12-step-meeting-list'), 'icon' => 'glyphicon glyphicon-map-marker'),
+	'location' => array('title' => __('Location', '12-step-meeting-list'), 'icon' => 'glyphicon glyphicon-map-marker'),
 );
-
-//proximity only enabled in secure environments
-if (is_ssl()) {
-	$modes['me'] = array('title' => __('Near Me', '12-step-meeting-list'), 'icon' => 'glyphicon glyphicon-user');
-}
+//proximity only enabled over SSL
+if (is_ssl()) $modes['me'] = array('title' => __('Near Me', '12-step-meeting-list'), 'icon' => 'glyphicon glyphicon-user');
 
 //define distance dropdown
 $distances = array();
@@ -34,22 +31,28 @@ $times  = array(
 	'night' => __('Night', '12-step-meeting-list'),
 );
 
+//legacy query string stuff, we don't want to break everyone's links (just yet)
+if (isset($_GET['d'])) $_GET['tsml-day'] = $_GET['d'];
+if (isset($_GET['r'])) $_GET['tsml-region'] = $_GET['r'];
+if (isset($_GET['t'])) $_GET['tsml-type'] = $_GET['t'];
+if (isset($_GET['i'])) $_GET['tsml-time'] = $_GET['i'];
+if (isset($_GET['v'])) $_GET['tsml-view'] = $_GET['v'];
+if (isset($_GET['sq'])) $_GET['tsml-query'] = $_GET['sq'];
+
+extract($tsml_defaults);
+
 //parse query string
-$search		= isset($_GET['sq']) ? sanitize_text_field($_GET['sq']) : null;
-$region		= isset($_GET['r']) && term_exists(intval($_GET['r']), 'tsml_region') ? $_GET['r'] : null;
-$type		= isset($_GET['t']) && array_key_exists($_GET['t'], $tsml_types[$tsml_program]) ? $_GET['t'] : null;
-$time		= isset($_GET['i']) ? sanitize_text_field(strtolower($_GET['i'])) : null;
-$view		= (isset($_GET['v']) && $_GET['v'] == 'map') ? 'map' : 'list';
-$distance	= isset($_GET['a']) && intval($_GET['a']) ? intval($_GET['a']) : 5;
-$mode		= (empty($_GET['m']) || !in_array($_GET['m'], array_keys($modes))) ? current(array_keys($modes)) : $_GET['m'];
+if (isset($_GET['tsml-query'])) $query = sanitize_text_field($_GET['tsml-query']);
+if (isset($_GET['tsml-region']) && term_exists(intval($_GET['tsml-region']), 'tsml_region')) $region = $_GET['tsml-region'];
+if (isset($_GET['tsml-type']) && array_key_exists($_GET['tsml-type'], $tsml_types[$tsml_program])) $type = $_GET['tsml-type'];
+if (isset($_GET['tsml-time']) && array_key_exists($_GET['tsml-time'], $times)) $time = $_GET['tsml-time'];
+if (isset($_GET['tsml-view']) && in_array($_GET['tsml-view'], array('list', 'map'))) $view = $_GET['tsml-view'];
+if (isset($_GET['tsml-distance']) && intval($_GET['tsml-distance'])) $distance = $_GET['tsml-distance'];
+if (isset($_GET['tsml-mode']) && array_key_exists($_GET['tsml-mode'], $modes)) $mode = $_GET['tsml-mode'];
 
 //day default
-if (!isset($_GET['d'])) {
-	$day = intval(current_time('w')); //if not specified, day is current day
-} elseif ($_GET['d'] == 'any') {
-	$day = false;
-} else {
-	$day = intval($_GET['d']);
+if (isset($_GET['tsml-day'])) {
+	$day = ($_GET['tsml-day'] == 'any') ? null : intval($_GET['tsml-day']);
 }
 
 //time can only be upcoming if it's today
@@ -57,7 +60,7 @@ if (($time == 'upcoming') && ($day != intval(current_time('w')))) $time = null;
 
 //labels
 $day_default = __('Any Day', '12-step-meeting-list');
-$day_label = ($day === false) ? $day_default : $tsml_days[$day];
+$day_label = ($day === null) ? $day_default : $tsml_days[$day];
 $time_default = __('Any Time', '12-step-meeting-list');
 if ($time == 'upcoming') {
 	$time_label = __('Upcoming', '12-step-meeting-list');
@@ -80,10 +83,10 @@ $message = '';
 
 //run query
 if ($mode == 'search') {
-	$meetings	= tsml_get_meetings(compact('search', 'day', 'time', 'region', 'type'));	
+	$meetings	= tsml_get_meetings(compact('mode', 'day', 'time', 'region', 'type'));	
 	if (!count($meetings)) $message = $tsml_strings['no_meetings'];
-} elseif ($mode == 'loc') {
-	$message = empty($_GET['sq']) ? $tsml_strings['loc_empty'] : $tsml_strings['loc_thinking'];
+} elseif ($mode == 'location') {
+	$message = empty($_GET['query']) ? $tsml_strings['loc_empty'] : $tsml_strings['loc_thinking'];
 } elseif ($mode == 'me') {
 	$message = $tsml_strings['geo_thinking'];
 }
@@ -102,12 +105,12 @@ class Walker_Regions_Dropdown extends Walker_Category {
 }
 
 ?>
-<div id="meetings" data-type="<?php echo $view?>" data-mode="<?php echo $mode?>" class="container<?php if (!count($meetings)) {?> empty<?php }?>" role="main">
+<div id="meetings" data-view="<?php echo $view?>" data-mode="<?php echo $mode?>" class="container<?php if (!count($meetings)) {?> empty<?php }?>" role="main">
 	<div class="row controls hidden-print">
 		<div class="col-md-2 col-sm-6">
 			<form id="search" role="search">
 				<div class="input-group">
-					<input type="text" name="query" class="form-control" value="<?php echo $search?>" placeholder="<?php echo $mode_label?>" aria-label="Search" <?php echo ($mode == 'me') ? 'disabled' : 'autofocus'?>>
+					<input type="text" name="query" class="form-control" value="<?php echo $query?>" placeholder="<?php echo $mode_label?>" aria-label="Search" <?php echo ($mode == 'me') ? 'disabled' : 'autofocus'?>>
 					<div class="input-group-btn" id="mode">
 						<button class="btn btn-default dropdown-toggle" data-toggle="dropdown" type="button">
 							<i class="<?php echo $modes[$mode]['icon']?>"></i>
@@ -163,7 +166,7 @@ class Walker_Regions_Dropdown extends Walker_Category {
 					<span class="caret"></span>
 				</a>
 				<ul class="dropdown-menu" role="menu">
-					<li<?php if ($day === false) echo ' class="active"'?>><a><?php echo $day_default?></a></li>
+					<li<?php if ($day === null) echo ' class="active"'?>><a><?php echo $day_default?></a></li>
 					<li class="divider"></li>
 					<?php foreach ($tsml_days as $key=>$value) {?>
 					<li<?php if (intval($key) === $day) echo ' class="active"'?>><a data-id="<?php echo $key?>"><?php echo $value?></a></li>

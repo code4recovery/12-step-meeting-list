@@ -17,30 +17,30 @@ jQuery(function($){
 		//prepare data for ajax
 		var data = { 
 			action: 'meetings',
-			search: $search_field.val().replace(/[";:,.\/?\\-]/g, ' ').trim(),
+			query: $search_field.val().trim(),
 			mode: $('#search li.active a').attr('data-id'),
 			region: $('#region li.active a').attr('data-id'),
 			day: $('#day li.active a').attr('data-id'),
 			time: $('#time li.active a').attr('data-id'),
 			type: $('#type li.active a').attr('data-id'),
 			distance: $('#distance li.active a').attr('data-id'),
+			view: $('#meetings .toggle-view.active').attr('data-id'),
 		}
 		
 		//get current query string for history and appending to links
 		var query_string = {};
-		if (data.search) query_string.sq = data.search;
-		query_string.d = data.day ? data.day : 'any';
-		if (data.time) query_string.i = data.time;
-		if (data.type) query_string.t = data.type;
-		if (data.mode != 'search') {
-			query_string.m = data.mode;
-			if (data.distance) {
-				query_string.a = data.distance;
-			}
-		} else if (data.region) {
-			query_string.r = data.region;
+		query_string['tsml-day'] = data.day ? data.day : 'any';
+		if ((data.mode != 'search') && (data.distance != myAjax.defaults.distance)) {
+			query_string['tsml-distance'] = data.distance;
 		}
-		query_string.v = $('#meetings .toggle-view.active').attr('data-id');
+		if (data.mode && (data.mode != myAjax.defaults.mode)) query_string['tsml-mode'] = data.mode;
+		if (data.query && (data.query != myAjax.defaults.query)) query_string['tsml-query'] = data.query;
+		if ((data.mode == 'search') && (data.region != myAjax.defaults.region)) {
+			query_string['tsml-region'] = data.region;
+		}
+		if (data.time && (data.time != myAjax.defaults.time)) query_string['tsml-time'] = data.time;
+		if (data.type && (data.type != myAjax.defaults.type)) query_string['tsml-type'] = data.type;
+		if (data.view != myAjax.defaults.view) query_string['tsml-view'] = data.view;
 		query_string = $.param(query_string);
 		
 		//save the query in the query string, if the browser is up to it
@@ -52,22 +52,26 @@ jQuery(function($){
 			}
 			window.history.pushState({path:url}, '', url);
 		}
+
+		//set the mode on the parent object
+		$('#meetings').attr('data-mode', data.mode);
+		
 		
 		if (data.mode == 'search') {
 			typeaheadEnable();
 			setSearchMarker();
 			getMeetings(data);
-		} else if (data.mode == 'loc') {
+		} else if (data.mode == 'location') {
 			typeaheadDisable();
 
-			if (data.search) {
-			
+			if (data.query) {
+				
 				//start spinner
 				$('#search button i').removeClass().addClass('glyphicon glyphicon-refresh spinning');
 
 				//geocode the address				
 				$.getJSON('https://maps.googleapis.com/maps/api/geocode/json', { 
-					address: data.search, 
+					address: data.query, 
 					key: myAjax.google_api_key
 				}, function(geocoded_data) {
 					$('#search button i').removeClass().addClass('glyphicon glyphicon-map-marker');
@@ -75,7 +79,7 @@ jQuery(function($){
 						$search_field.val(geocoded_data.results[0].formatted_address);
 						data.latitude = geocoded_data.results[0].geometry.location.lat;
 						data.longitude = geocoded_data.results[0].geometry.location.lng;
-						data.search = ''; //don't actually keyword search this
+						data.query = ''; //don't actually keyword search this
 						setSearchMarker(data);
 						getMeetings(data);
 					} else {
@@ -123,18 +127,13 @@ jQuery(function($){
 	function getMeetings(data) {
 		//request new meetings result
 		data.distance_units = myAjax.distance_units;
-		
-		//console.log(myAjax.ajaxurl + '?' + $.param(data));
-		
+				
 		$.post(myAjax.ajaxurl, data, function(response){
 
-			//set the mode on the parent object
-			$('#meetings').attr('data-mode', data.mode);
-			
 			if (!response.length) {
 
 				//if keyword and no results, clear other parameters and search again
-				if (data.search && (typeof data.day !== 'undefined' || typeof data.region !== 'undefined' || typeof data.time !== 'undefined' || typeof data.type !== 'undefined')) {
+				if (data.mode && (typeof data.day !== 'undefined' || typeof data.region !== 'undefined' || typeof data.time !== 'undefined' || typeof data.type !== 'undefined')) {
 					$('#day li').removeClass('active').first().addClass('active');
 					$('#time li').removeClass('active').first().addClass('active');
 					$('#region li').removeClass('active').first().addClass('active');
@@ -154,7 +153,7 @@ jQuery(function($){
 				$('#meetings').removeClass('empty');
 
 				//refresh map if visible
-				if ($('#meetings').attr('data-type') == 'map') {
+				if ($('#meetings').attr('data-view') == 'map') {
 					google.maps.event.trigger(map, 'resize');
 				}
 				
@@ -218,7 +217,7 @@ jQuery(function($){
 				
 				sortMeetings();
 				
-				if (data.search) $('#meetings .results tbody').mark(data.search);
+				if (data.mode) $('#meetings .results tbody').mark(data.mode);
 
 				//remove old markers and reset bounds
 				for (var i = 0; i < markers.length; i++) markers[i].setMap(null);
@@ -226,7 +225,7 @@ jQuery(function($){
 				bounds = new google.maps.LatLngBounds;
 				
 				//add user marker if it exists
-				if (typeof searchMarker == 'object') {
+				if ((typeof searchMarker == 'object') && searchMarker) {
 					bounds.extend(searchMarker.position);
 				}
 
@@ -266,7 +265,7 @@ jQuery(function($){
 	
 	//set or remove the search marker (user location or search center)
 	function setSearchMarker(data) {
-		if (typeof searchMarker == 'object') {
+		if ((typeof searchMarker == 'object') && searchMarker) {
 			searchMarker.setMap(null);
 			searchMarker = null;
 		}
@@ -452,7 +451,7 @@ jQuery(function($){
 	var mode = $('#search li.active a').attr('data-id');
 	if (mode == 'search') {
 		typeaheadEnable();
-	} else if ((mode == 'loc') && $search_field.val().length) {
+	} else if ((mode == 'location') && $search_field.val().length) {
 		doSearch();
 	} else if (mode == 'me') {
 		doSearch();
@@ -537,7 +536,7 @@ jQuery(function($){
 			if ($(this).attr('data-id') == 'search') {
 				$search_field.prop('disabled', false);
 				$('#search button i').removeClass().addClass('glyphicon glyphicon-search');
-			} else if ($(this).attr('data-id') == 'loc') {
+			} else if ($(this).attr('data-id') == 'location') {
 				$search_field.prop('disabled', false);
 				$('#search button i').removeClass().addClass('glyphicon glyphicon-map-marker');
 				setAlert('loc_thinking');
@@ -587,11 +586,15 @@ jQuery(function($){
 		
 		//what's going on
 		var action = $(this).attr('data-id');
-		var previous = $('#meetings').attr('data-type');
+		var previous = $('#meetings').attr('data-view');
 
 		//save the query in the query string, if the browser is up to it
 		if (history.pushState) {
-			var url = updateQueryString('v', action);
+			if (action == myAjax.defaults.view) {
+				var url = updateQueryString('tsml-view');
+			} else {
+				var url = updateQueryString('tsml-view', action);
+			}
 			window.history.pushState({path:url}, '', url);
 		}
 		
@@ -606,7 +609,7 @@ jQuery(function($){
 		}
 
 		//set meetings div
-		$('#meetings').attr('data-type', action);
+		$('#meetings').attr('data-view', action);
 		
 		//wake up the map if needed
 		if (action == 'map' && action != previous) {
@@ -724,7 +727,7 @@ function loadMap(locations) {
 		map.fitBounds(bounds);
 	} else if (markers.length == 1) {
 		map.setCenter(bounds.getCenter());
-		if ($('#map').is(':visible')) google.maps.event.trigger(markers[0],'click');
+		if (jQuery('#map').is(':visible')) google.maps.event.trigger(markers[0],'click');
 		map.setZoom(14);
 	} else if (markers.length == 0) {
 		//currently holds last position, not sure if that's good

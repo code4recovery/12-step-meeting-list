@@ -38,7 +38,7 @@ function tsml_alert_messages() {
 //function: enqueue assets for public or admin page
 //used: in templates and on admin_edit.php
 function tsml_assets() {
-	global $tsml_types, $tsml_strings, $tsml_program, $tsml_google_api_key, $tsml_google_overrides, $tsml_distance_units;
+	global $tsml_types, $tsml_strings, $tsml_program, $tsml_google_api_key, $tsml_google_overrides, $tsml_distance_units, $tsml_defaults;
 		
 	//google maps api needed for maps and address verification, can't be onboarded
 	wp_enqueue_script('google_maps_api', '//maps.googleapis.com/maps/api/js?key=' . $tsml_google_api_key);
@@ -69,6 +69,7 @@ function tsml_assets() {
 				__('Friday', '12-step-meeting-list'),
 				__('Saturday', '12-step-meeting-list'),
 			),
+			'defaults' => $tsml_defaults,
 			'distance_units' => $tsml_distance_units,
 			'strings' => $tsml_strings,
 			'types' => $tsml_types[$tsml_program],
@@ -612,15 +613,15 @@ function tsml_get_meetings($arguments=array()) {
 	}
 	
 	//if searching, a few more queries
-	if (!empty($arguments['search'])) {
-		$search = sanitize_text_field($arguments['search']);
+	if (!empty($arguments['query'])) {
+		$query = sanitize_text_field($arguments['query']);
 		
 		//first search actual meetings
 		$post_ids = array_merge($post_ids, get_posts(array(
 			'post_type'			=> 'tsml_meeting',
 			'numberposts'		=> -1,
 			'fields'			=> 'ids',
-			's'					=> $search,
+			's'					=> $query,
 		)));
 		
 		//then add groups
@@ -628,7 +629,7 @@ function tsml_get_meetings($arguments=array()) {
 				'post_type'			=> 'tsml_group',
 				'numberposts'		=> -1,
 				'fields'			=> 'ids',
-				's'					=> $search,
+				's'					=> $query,
 			))) {
 			$post_ids = array_merge($post_ids, get_posts(array(
 				'post_type'			=> 'tsml_meeting',
@@ -651,7 +652,7 @@ function tsml_get_meetings($arguments=array()) {
 				'post_type'			=> 'tsml_location',
 				'numberposts'		=> -1,
 				'fields'			=> 'ids',
-				's'					=> $search,
+				's'					=> $query,
 			)),
 			//searching address
 			get_posts(array(
@@ -661,7 +662,7 @@ function tsml_get_meetings($arguments=array()) {
 				'meta_query'		=> array(
 					array(
 						'key'		=> 'formatted_address',
-						'value'		=> $search,
+						'value'		=> $query,
 						'compare'	=> 'LIKE',
 					),
 				),
@@ -670,7 +671,7 @@ function tsml_get_meetings($arguments=array()) {
 		
 		//... and also regions
 		if ($regions = get_terms('tsml_region', array(
-				'search' => $search, 
+				'search' => $query, 
 				'fields' => 'ids', 
 				'hide_empty' => false
 			))) {
@@ -704,7 +705,7 @@ function tsml_get_meetings($arguments=array()) {
 	$posts = get_posts(array(
 		'post_type'			=> 'tsml_meeting',
 		'numberposts'		=> -1,
-		'meta_query'		=> $meta_query,
+		'meta_query'			=> $meta_query,
 		'post__in'			=> array_unique($post_ids),
 		'post_parent__in'	=> $arguments['location_id'],
 	));

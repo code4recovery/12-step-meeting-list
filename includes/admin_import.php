@@ -361,6 +361,12 @@ function tmsl_import_page() {
 					<div class="notice notice-warning inline">
 						<p><?php echo sprintf(__('You are running PHP <strong>%s</strong>, while <a href="%s" target="_blank">WordPress recommends</a> PHP %s or above. This can cause unexpected errors. Please contact your host and upgrade!'), PHP_VERSION, 'https://wordpress.org/about/requirements/', '5.6')?></p>
 					</div>
+					<?php }
+					
+					if (!is_ssl()) {?>
+					<div class="notice notice-warning inline">
+						<p><?php _e('If you enable SSL, your users will be able to search for meetings relative to their location.')?></p>
+					</div>
 					<?php }?>
 
 					<div class="postbox">

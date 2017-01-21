@@ -93,11 +93,10 @@ Napa, CA 94558, US."
 
 == Installation ==
 
-1. Upload files to your plugin folder.
-1. Activate plugin.
-1. Enter meetings.
-1. The meetings archive should now be displaying data, visit the settings page to locate it. 
-1. You may also use the tsml_meetings_get() function inside your template.
+Basically you can just install it and you should be good to go. For a quick walkthrough of the process, check out this 
+screencast video:
+
+[youtube https://www.youtube.com/watch?v=Qqg1RPX-FTQ]
 
 == Frequently Asked Questions ==
 
@@ -115,9 +114,9 @@ example to your purposes:
 Please note a few things about custom types:
 
 1. Be careful with the codes ("ASBI" in the above example) as this gives you the ability to replace existing types. 
-1. Note that custom meeting types will not be imported into the mobile app.
+1. Note that custom meeting types are not imported into the Meeting Guide app.
 1. They are for searching. If you can't imagine yourself searching for a meeting this way, then
-it's probably not a type you need. Have you ever searched for a 90-minute-meeting? If not, then it's
+it's probably not a type you need. Have you ever searched for a 90-minute meeting? If not, then it's
 probably information that better belongs in the meeting notes.
 1. Don't add a type for the default, eg 'Hour Long Meeting' or 'Non-Smoking.' If you do that, then you
 have to be careful about tagging every single meeting in order to make the data complete.
@@ -128,9 +127,14 @@ No problem, just add this CSS to your theme:
 	#meetings .controls ul.dropdown-menu div.expand { display: none; }
 	#meetings .controls ul.dropdown-menu ul.children { height: auto; }
 
+= How do I change the default search radius for location searches? =
+Add this to your functions.php. The value should be an existing value, ie 1, 5, 10, 25 or 50.
+
+	$tsml_defaults['distance'] = 25;
+
 = The dropdowns aren't opening! =
-Most likely, this is because bootstrap is being included twice. You should add the following to your theme 
-so that the TSML's version is removed.
+Most likely, this is your theme also uses Bootstrap, so it is being included twice. Add the following to your theme 
+so that the plugin's version is removed.
 
 	add_action('wp_enqueue_scripts', function(){
 		wp_dequeue_style('bootstrap_css');
@@ -169,10 +173,12 @@ detail, and single-locations.php controls the location detail.
 Yes, you can use `[tsml_meeting_count]`, `[tsml_location_count]`, `[tsml_group_count]`, and `[tsml_region_count]` to 
 display human-formatted counts of your entities. "For example, our area currently comprises 
 [tsml_meeting_count] meetings." Also `[tsml_next_meetings count="5"]` displays a small table with the next 
-several meetings in it. Use the `count` parameter to adjust how many are diplayed.
+several meetings in it. Use the `count` parameter to adjust how many are displayed. This will be unstyled if you're not
+using bootstrap in your theme.
 
 = Are there translations to other languages? =
-Currently no, but if someone will volunteer to help with the translating, we will add it.
+It is translated into Polish. If you would like to volunteer to help translate another language, we would be pleased to work
+with you.
 
 = I entered contact information into the meeting edit page but don't see it displayed on the site. =
 That's right, we don't display that information by default for the sake of anonymity. To display it in your 
@@ -184,8 +190,11 @@ and then drop some or all of these tags in your PHP:
 	<?php echo $meeting->contact_1_phone?>
 
 = Can I run this as my main website homepage? =
-This is common in situations where you don't want to install WordPress on your whole site; you just need it for this plugin.
-In that case, try our [One Page Meeting List](https://github.com/meeting-guide/one-page-meeting-list) theme.
+Sure. Try this code:
+
+	add_action('pre_get_posts', 'tsml_front_page');
+	
+Also check out our [One Page Meeting List](https://github.com/meeting-guide/one-page-meeting-list) theme.
 	
 == Screenshots ==
 

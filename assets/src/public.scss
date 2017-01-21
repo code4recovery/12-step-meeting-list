@@ -268,7 +268,7 @@ input:focus, button:focus {
 		}
 	}
 
-	&[data-type=map] {
+	&[data-view=map] {
 		#map {
 			display: block;
 		}
@@ -277,7 +277,7 @@ input:focus, button:focus {
 		}
 	}
 
-	&[data-type=list] {
+	&[data-view=list] {
 		table {
 			display: table;
 		}
@@ -523,7 +523,7 @@ body {
 		#page::before { display: none; }
 		#meetings { 
 			width: 100%; 
-			&[data-type=list] { padding-bottom: 0; }
+			&[data-view=list] { padding-bottom: 0; }
 			table { 
 				border: 0; 
 				td, th { border-right: 0; }

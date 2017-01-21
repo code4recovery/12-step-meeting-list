@@ -20,6 +20,18 @@ $tsml_days = $tsml_days[get_option('start_of_week', 0)];
 
 $tsml_days_order = array_keys($tsml_days); //used by tsml_meetings_sort() over and over
 
+//meeting search defaults
+$tsml_defaults = array(
+	'distance' => 2,
+	'time' => null,
+	'region' => null,
+	'day' => intval(current_time('w')),
+	'type' => null,
+	'mode' => 'search',
+	'query' => null,
+	'view' => 'list',
+);
+
 $tsml_distance_units = get_option('tsml_distance_units', 'mi');
 
 $tsml_feedback_addresses = get_option('tsml_feedback_addresses', array());
