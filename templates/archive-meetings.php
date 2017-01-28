@@ -45,7 +45,7 @@ extract($tsml_defaults);
 if (isset($_GET['tsml-query'])) $query = sanitize_text_field($_GET['tsml-query']);
 if (isset($_GET['tsml-region']) && term_exists(intval($_GET['tsml-region']), 'tsml_region')) $region = $_GET['tsml-region'];
 if (isset($_GET['tsml-type']) && array_key_exists($_GET['tsml-type'], $tsml_types[$tsml_program])) $type = $_GET['tsml-type'];
-if (isset($_GET['tsml-time']) && array_key_exists($_GET['tsml-time'], $times)) $time = $_GET['tsml-time'];
+if (isset($_GET['tsml-time']) && (($_GET['tsml-time'] == 'upcoming') || array_key_exists($_GET['tsml-time'], $times))) $time = $_GET['tsml-time'];
 if (isset($_GET['tsml-view']) && in_array($_GET['tsml-view'], array('list', 'map'))) $view = $_GET['tsml-view'];
 if (isset($_GET['tsml-distance']) && intval($_GET['tsml-distance'])) $distance = $_GET['tsml-distance'];
 if (isset($_GET['tsml-mode']) && array_key_exists($_GET['tsml-mode'], $modes)) $mode = $_GET['tsml-mode'];
