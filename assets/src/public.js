@@ -718,6 +718,9 @@ jQuery(function($){
 		var action = $(this).attr('data-id');
 		var previous = $('#meetings').attr('data-view');
 
+		//don't do anything
+		if (action == previous) return;
+
 		//toggle control, set meetings div
 		$('#meetings #action .toggle-view').toggleClass('active');
 		$('#meetings').attr('data-view', action);

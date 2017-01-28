@@ -3,7 +3,7 @@ Contributors: meetingguide, aasanjose
 Tags: meetings, aa, al-anon, na, 12-step, locations, groups
 Requires at least: 3.2
 Tested up to: 4.7
-Stable tag: 2.9
+Stable tag: 2.9.1
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -20,7 +20,7 @@ It was originally designed to maintain a list of AA meetings in Santa Clara Coun
 * [Arkansas](http://arkansascentraloffice.org/meetings/)
 * [Austin, TX](http://austinaa.org/meetings/)
 * [Baton Rouge, LA](http://aabatonrouge.org/meetings/)
-* [Bowling Green, KY](http://bowlinggreenaa.org/?post_type=meetings)
+* [Bowling Green, KY](http://bowlinggreenaa.org/meetings/)
 * [Corpus Christi, TX](http://www.cbiaa.org/meetings/)
 * [Davis, CA](http://aadavis.org/meetings/)
 * [DuPage County, IL](http://dist41.aa-nia.org/meetings/)
@@ -44,7 +44,7 @@ It was originally designed to maintain a list of AA meetings in Santa Clara Coun
 * [Southern Colorado](http://www.puebloaa.org/meetings/)
 * [State College, PA](http://www.district43.com/meetings/)
 * [Tidewater Area, VA](http://www.tidewaterintergroup.org/meetings/)
-* [Toronto, Canada](http://aatoronto.org/?post_type=meetings)
+* [Toronto, Canada](https://aatoronto.org/meetings/)
 * [Tri Valley, CA](http://trivalleyaa.org/meetings/)
 * [Tulsa, OK](http://district40aa.com/meetings)
 * [Vancouver, Canada](http://www.vancouveraa.ca/meetings/)
@@ -78,7 +78,7 @@ It was originally designed to maintain a list of AA meetings in Santa Clara Coun
 
 **SAA**
 
-* [Indiana](http://indiana-saa.org/?post_type=meetings)
+* [Indiana](http://indiana-saa.org/meetings/)
 
 [Let us know](mailto:wordpress@meetingguide.org) if you're using this plugin and would like to be listed here.
 
@@ -205,6 +205,11 @@ Also check out our [One Page Meeting List](https://github.com/meeting-guide/one-
 1. Edit location
 
 == Changelog ==
+
+= 2.9.1 =
+* New program: Adult Children of Alcoholics
+* Bug fix on Any Day view per AA Vienna
+* CSS layout tweaks
 
 = 2.9 =
 * New proximity search mode, courtesy of Washington Area Intergroup Association (WAIA)

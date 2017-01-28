@@ -223,17 +223,15 @@ input:focus, button:focus {
 						&.time {
 							position: absolute;
 							left: 15px;
-							span {
-								display: block; font-size: 12px; margin-top: 2px;
-								&:last-child { font-size: inherit; margin-top: 0; }
-							}
+							span { display: block; }
 						}
 						&.distance {
 							position: absolute;
 							left: 15px;
-							top: 30px;
-							font-size: 20px;
+							bottom: 10px;
+							font-size: 22px;
 							font-weight: bold;
+							line-height: 1.2;
 						}
 						&.name, &.location, &.address, &.region {
 							display: block;
@@ -437,6 +435,7 @@ body.tsml_fullscreen {
 						text-align: right;
 						font-weight: inherit;
 						font-size: inherit;
+						line-height: inherit;
 					}
 					&.name {
 						width: 35%;
@@ -455,6 +454,9 @@ body.tsml_fullscreen {
 			}
 		}
 	}
+	
+	/* little bit of padding on larger screens */
+	#meeting .main, #location .main { padding-bottom: 40px; }
 }
 
 
