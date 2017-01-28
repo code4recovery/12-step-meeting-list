@@ -123,6 +123,34 @@ jQuery(function($){
 		
 	}
 
+	//format an address: replace commas with breaks
+	function formatAddress(address, street_only) {
+		address = address.split(', ');
+		if (street_only) return address[0];
+		if (address[address.length-1] == 'USA') {
+			address.pop(); //don't show USA
+			var state_and_zip = address.pop();
+			address[address.length-1] += ', ' + state_and_zip;
+		}
+		return address.join('<br>');
+	}
+	
+	//format a link to a meeting result page, preserving all but the excluded query string keys
+	function formatLink(url, text, exclude) {
+		if (location.search) {
+			var query_pairs = location.search.substr(1).split('&');
+			var new_query_pairs = [];
+			for (var i = 0; i < query_pairs.length; i++) {
+				var query_parts = query_pairs[i].split('=');
+				if (query_parts[0] != exclude) new_query_pairs[new_query_pairs.length] = query_parts[0] + '=' + query_parts[1];
+			}
+			if (new_query_pairs.length) {
+				url += ((url.indexOf('?') == -1) ? '?' : '&') + new_query_pairs.join('&');
+			}
+		}
+		return '<a href="' + url + '">' + text + '</a>';
+	}
+	
 	//actually get the meetings from the JSON resource and output them
 	function getMeetings(data) {
 		//request new meetings result
@@ -159,7 +187,7 @@ jQuery(function($){
 				
 				setAlert();
 
-				var locations = [];
+				locations = [];
 
 				var tbody = $('#meetings_tbody').html('');
 
@@ -217,7 +245,7 @@ jQuery(function($){
 				
 				sortMeetings();
 				
-				if (data.mode) $('#meetings .results tbody').mark(data.mode);
+				if ((data.mode == 'search') && data.query) $('#meetings .results tbody').mark(data.mode);
 
 				//remove old markers and reset bounds
 				for (var i = 0; i < markers.length; i++) markers[i].setMap(null);
@@ -229,7 +257,8 @@ jQuery(function($){
 					bounds.extend(searchMarker.position);
 				}
 
-				loadMap(locations);
+				setMapMarkers();
+				setMapBounds();
 			}
 		}, 'json');	
 	}
@@ -260,6 +289,66 @@ jQuery(function($){
 			$('#alert').html('').addClass('hidden');
 		} else {
 			$('#alert').html(myAjax.strings[message_key]).removeClass('hidden');
+		}
+	}
+
+	//set / initialize map
+	function setMapBounds() {
+		if (markers.length > 1) {
+			map.fitBounds(bounds);
+		} else if (markers.length == 1) {
+			map.setCenter(bounds.getCenter());
+			if (mode == 'map') google.maps.event.trigger(markers[0],'click');
+			map.setZoom(14);
+		} else if (markers.length == 0) {
+			//currently holds last position, not sure if that's good
+		}
+	}
+	
+	//load map, called from archive-meetings.php
+	function setMapMarkers() {
+		for (var location_id in locations) {
+			if (locations.hasOwnProperty(location_id)) {
+				var location = locations[location_id];
+				
+				//set new marker
+				var marker = new google.maps.Marker({
+					position: {lat: location.latitude - 0, lng: location.longitude - 0},
+					map: map,
+					title: location.name,
+					icon: locationIcon,
+				});
+	
+				//create infowindow content
+				marker.content = '<div class="infowindow"><h3>' + formatLink(location.url, location.name, 'post_type') + '</h3>' +
+					'<address>' + formatAddress(location.formatted_address) + '</address>';
+					
+				var current_day = null;
+				for (var i = 0; i < location.meetings.length; i++) {
+					var meeting = location.meetings[i];
+					if (current_day != meeting.day) {
+						if (current_day) marker.content += '</dl>';
+						current_day = meeting.day;
+						if (typeof myAjax.days[current_day] !== 'undefined') marker.content += '<h5>' + myAjax.days[current_day] + '</h5>';
+						marker.content += '<dl>';
+					}
+					marker.content += '<dt>' + meeting.time + '</dt><dd>' + formatLink(meeting.url, meeting.name, 'post_type') + '</dd>';
+				}
+				marker.content += '</dl></div>';
+				
+				//add infowindow event
+				google.maps.event.addListener(marker, 'click', (function(marker) {
+					return function() {
+						infowindow.setContent(marker.content);
+						infowindow.open(map, marker);
+					}
+				})(marker));
+		
+				//add to map bounds
+				bounds.extend(marker.position);
+				
+				markers[markers.length] = marker;
+			}
 		}
 	}
 	
@@ -416,6 +505,46 @@ jQuery(function($){
 	//show/hide upcoming menu option
 	toggleUpcoming();
 	
+	//globals
+	var searchMarker;
+
+	var infowindow = new google.maps.InfoWindow();
+		
+	var markers = [];
+
+	var map = new google.maps.Map(document.getElementById('map'), {
+		disableDefaultUI: true,
+		scrollwheel: false,
+		streetViewControl: true,
+		zoomControl: true,
+		fullscreenControl: true,
+		mapTypeControlOptions: {
+			mapTypeIds: [google.maps.MapTypeId.ROADMAP, 'map_style']
+		}
+	});
+
+	var bounds = new google.maps.LatLngBounds();
+	
+	var userIcon = {
+		path: 'M20.5,0.5 c11.046,0,20,8.656,20,19.333c0,10.677-12.059,21.939-20,38.667c-5.619-14.433-20-27.989-20-38.667C0.5,9.156,9.454,0.5,20.5,0.5z',
+		fillColor: '#2c78b3',
+		fillOpacity: 1,
+		anchor: new google.maps.Point(40,50),
+		strokeWeight: 2,
+		strokeColor: '#2c52b3',
+		scale: .6
+	}
+	
+	var locationIcon = {
+		path: 'M20.5,0.5 c11.046,0,20,8.656,20,19.333c0,10.677-12.059,21.939-20,38.667c-5.619-14.433-20-27.989-20-38.667C0.5,9.156,9.454,0.5,20.5,0.5z',
+		fillColor: '#f76458',
+		fillOpacity: 1,
+		anchor: new google.maps.Point(40,50),
+		strokeWeight: 2,
+		strokeColor: '#b3382c',
+		scale: .6
+	}
+	
 	//if already searching, mark results
 	var $search_field = $('#meetings #search input[name=query]');
 	if ($search_field.size() && $search_field.val().length) {
@@ -451,6 +580,8 @@ jQuery(function($){
 	var mode = $('#search li.active a').attr('data-id');
 	if (mode == 'search') {
 		typeaheadEnable();
+		setMapMarkers();
+		setMapBounds();
 	} else if ((mode == 'location') && $search_field.val().length) {
 		doSearch();
 	} else if (mode == 'me') {
@@ -581,13 +712,16 @@ jQuery(function($){
 	});
 
 	//toggle between list and map
-	$('#meetings #action .toggle-view').click(function(e){
-		e.preventDefault();
+	$('#meetings #action .toggle-view').click(function(){
 		
 		//what's going on
 		var action = $(this).attr('data-id');
 		var previous = $('#meetings').attr('data-view');
 
+		//toggle control, set meetings div
+		$('#meetings #action .toggle-view').toggleClass('active');
+		$('#meetings').attr('data-view', action);
+		
 		//save the query in the query string, if the browser is up to it
 		if (history.pushState) {
 			if (action == myAjax.defaults.view) {
@@ -598,28 +732,17 @@ jQuery(function($){
 			window.history.pushState({path:url}, '', url);
 		}
 		
-		//toggle control, meetings div
-		if (action == 'list') {
-			//closeFullscreen();
-			$('#meetings #action .toggle-view[data-id=list]').addClass('active');
-			$('#meetings #action .toggle-view[data-id=map]').removeClass('active');			
-		} else if (action == 'map') {
-			$('#meetings #action .toggle-view[data-id=map]').addClass('active');
-			$('#meetings #action .toggle-view[data-id=list]').removeClass('active');			
-		}
-
-		//set meetings div
-		$('#meetings').attr('data-view', action);
-		
 		//wake up the map if needed
-		if (action == 'map' && action != previous) {
+		if (action == 'map' && previous == 'list') {
 			google.maps.event.trigger(map, 'resize');
-			map.fitBounds(bounds);
-	 		if ((markers.length == 1) && $('#map').is(':visible')) {
-	 			map.setZoom(14);
-	 			google.maps.event.trigger(markers[0],'click');
-	 		}
+	 		setMapBounds();
+	 		
+	 		//this is a little crazy, but is needed on iOS, don't know why
+	 		setTimeout(function(){
+		 		$('body').click();
+		 	}, 100);
 		}
+		
 	});
 
 	//resize fullscreen on resize
@@ -637,128 +760,3 @@ jQuery(function($){
 });
 
 
-//meetings list page
-var searchMarker;
-	
-//globals
-var markers = [];
-var map = new google.maps.Map(document.getElementById('map'), {
-	disableDefaultUI: true,
-	scrollwheel: false,
-	streetViewControl: true,
-	zoomControl: true,
-	fullscreenControl: true,
-	mapTypeControlOptions: {
-		mapTypeIds: [google.maps.MapTypeId.ROADMAP, 'map_style']
-	}
-});
-var bounds = new google.maps.LatLngBounds();
-
-var userIcon = {
-	path: 'M20.5,0.5 c11.046,0,20,8.656,20,19.333c0,10.677-12.059,21.939-20,38.667c-5.619-14.433-20-27.989-20-38.667C0.5,9.156,9.454,0.5,20.5,0.5z',
-	fillColor: '#2c78b3',
-	fillOpacity: 1,
-	anchor: new google.maps.Point(40,50),
-	strokeWeight: 2,
-	strokeColor: '#2c52b3',
-	scale: .6
-}
-
-var locationIcon = {
-	path: 'M20.5,0.5 c11.046,0,20,8.656,20,19.333c0,10.677-12.059,21.939-20,38.667c-5.619-14.433-20-27.989-20-38.667C0.5,9.156,9.454,0.5,20.5,0.5z',
-	fillColor: '#f76458',
-	fillOpacity: 1,
-	anchor: new google.maps.Point(40,50),
-	strokeWeight: 2,
-	strokeColor: '#b3382c',
-	scale: .6
-}
-
-var infowindow = new google.maps.InfoWindow();
-
-//load map, called from archive-meetings.php
-function loadMap(locations) {
-
-	for (var location_id in locations) {
-		if (locations.hasOwnProperty(location_id)) {
-			var location = locations[location_id];
-			
-			//set new marker
-			var marker = new google.maps.Marker({
-				position: {lat: location.latitude - 0, lng: location.longitude - 0},
-				map: map,
-				title: location.name,
-				icon: locationIcon,
-			});
-
-			//create infowindow content
-			marker.content = '<div class="infowindow"><h3>' + formatLink(location.url, location.name, 'post_type') + '</h3>' +
-				'<address>' + formatAddress(location.formatted_address) + '</address>';
-				
-			var current_day = null;
-			for (var i = 0; i < location.meetings.length; i++) {
-				var meeting = location.meetings[i];
-				if (current_day != meeting.day) {
-					if (current_day) marker.content += '</dl>';
-					current_day = meeting.day;
-					if (typeof myAjax.days[current_day] !== 'undefined') marker.content += '<h5>' + myAjax.days[current_day] + '</h5>';
-					marker.content += '<dl>';
-				}
-				marker.content += '<dt>' + meeting.time + '</dt><dd>' + formatLink(meeting.url, meeting.name, 'post_type') + '</dd>';
-			}
-			marker.content += '</dl></div>';
-			
-			//add infowindow event
-			google.maps.event.addListener(marker, 'click', (function(marker) {
-				return function() {
-					infowindow.setContent(marker.content);
-					infowindow.open(map, marker);
-				}
-			})(marker));
-	
-			//add to map bounds
-			bounds.extend(marker.position);
-			
-			markers[markers.length] = marker;
-		}
-	}
-
-	if (markers.length > 1) {
-		map.fitBounds(bounds);
-	} else if (markers.length == 1) {
-		map.setCenter(bounds.getCenter());
-		if (jQuery('#map').is(':visible')) google.maps.event.trigger(markers[0],'click');
-		map.setZoom(14);
-	} else if (markers.length == 0) {
-		//currently holds last position, not sure if that's good
-	}
-	
-}
-
-//format an address: replace commas with breaks
-function formatAddress(address, street_only) {
-	address = address.split(', ');
-	if (street_only) return address[0];
-	if (address[address.length-1] == 'USA') {
-		address.pop(); //don't show USA
-		var state_and_zip = address.pop();
-		address[address.length-1] += ', ' + state_and_zip;
-	}
-	return address.join('<br>');
-}
-
-//format a link to a meeting result page, preserving all but the excluded query string keys
-function formatLink(url, text, exclude) {
-	if (location.search) {
-		var query_pairs = location.search.substr(1).split('&');
-		var new_query_pairs = [];
-		for (var i = 0; i < query_pairs.length; i++) {
-			var query_parts = query_pairs[i].split('=');
-			if (query_parts[0] != exclude) new_query_pairs[new_query_pairs.length] = query_parts[0] + '=' + query_parts[1];
-		}
-		if (new_query_pairs.length) {
-			url += ((url.indexOf('?') == -1) ? '?' : '&') + new_query_pairs.join('&');
-		}
-	}
-	return '<a href="' + url + '">' + text + '</a>';
-}

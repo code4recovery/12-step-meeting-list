@@ -300,10 +300,7 @@ class Walker_Regions_Dropdown extends Walker_Category {
 </div>
 
 <script>
-jQuery(document).ready(function($) {
 	var locations = <?php echo json_encode($locations)?>;
-	loadMap(locations);
-});
 </script>
 
 <?php

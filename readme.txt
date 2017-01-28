@@ -101,7 +101,7 @@ screencast video:
 == Frequently Asked Questions ==
 
 = My meeting type isn't listed! =
-If it's a broadly-applicable meeting type, please [contact us](mailto:web@aasanjose.org) so we can include it for you. 
+If it's a broadly-applicable meeting type, please [contact us](mailto:wordpress@meetingguide.org) so we can include it for you. 
 We want to maintain consistency for the [mobile apps](https://meetingguide.org/), so not all proposals are included.
 
 If you have access to your functions.php, you may add additional meeting types for your area. Simply adapt the following
@@ -207,9 +207,8 @@ Also check out our [One Page Meeting List](https://github.com/meeting-guide/one-
 == Changelog ==
 
 = 2.9 =
-* New proximity search mode, courtesy of Washington Area Intergroup Association
-* Enabled Google map in search results (now that it's more mobile-friendly)
-* Stopped the search autocomplete from loading the meetings JSON an extra time
+* New proximity search mode, courtesy of Washington Area Intergroup Association (WAIA)
+* Enabled Google maps in search results
 * Two new programs: Recovering Couples Anonymous and Sexual Compulsives Anonymous
 
 = 2.8.9 =
@@ -252,37 +251,3 @@ Also check out our [One Page Meeting List](https://github.com/meeting-guide/one-
 * Translated javascript strings per Polish AA in UK
 * Styling for nested regions dropdown
 * New white expand/collapse icons for themes with dark dropdown bgcolors
-
-= 2.7.10 =
-* New helper to display full meeting list on the home page if needed
-
-= 2.7.9 =
-* Also latitude and longitude weren't getting set when address was changed
-
-= 2.7.8 =
-* Regions weren't getting set when the address was updated
-
-= 2.7.7 =
-* Checkbox to apply address changes to all meetings at location
-
-= 2.7.6 =
-* Version bump because I didn't properly tag 2.7.5
-
-= 2.7.5 =
-* Search typeahead (regions, groups and locations)
-* Adding Dual Diagnosis for East Bay
-
-= 2.7.4 =
-* Fixed plugin include paths for people running in a subfolder
-
-= 2.7.3 =
-* Next meetings widget limited to today only
-
-= 2.7.2 =
-* Delete and reassign regions per NYC
-
-= 2.7.1 =
-* Tweaks to feedback form per DC
-
-= 2.7 =
-* New 'upcoming' time filter option per DC
