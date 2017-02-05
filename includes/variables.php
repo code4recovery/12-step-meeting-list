@@ -4,6 +4,8 @@ don't make changes! it'll make staying updated much harder.
 for updates / questions, please contact wordpress@meetingguide.org
 */
 
+$tsml_street_only = true;
+
 $tsml_alerts = array();
 
 $tsml_days	= array(
