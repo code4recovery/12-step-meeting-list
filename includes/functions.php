@@ -243,8 +243,10 @@ function tsml_format_address($formatted_address, $street_only=false) {
 	$parts = array_map('trim', $parts);
 	if (in_array(end($parts), array('USA', 'US'))) {
 		array_pop($parts);
-		$state_zip = array_pop($parts);
-		$parts[count($parts) - 1] .= ', ' . $state_zip;
+		if (count($parts) > 1) {
+			$state_zip = array_pop($parts);
+			$parts[count($parts) - 1] .= ', ' . $state_zip;
+		}
 	}
 	if ($street_only) return array_shift($parts);
 	return implode('<br>', $parts);
