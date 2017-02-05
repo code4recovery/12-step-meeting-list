@@ -131,11 +131,9 @@ class Walker_Regions_Dropdown extends Walker_Category {
 				<a class="btn btn-default toggle-view<?php if ($view == 'list') {?> active<?php }?>" data-id="list" role="button">
 					<?php _e('List', '12-step-meeting-list')?>
 				</a>
-				<div class="btn-group">
-					<a class="btn btn-default toggle-view<?php if ($view == 'map') {?> active<?php }?> dropdown-toggle" data-toggle="dropdown" data-id="map" role="button" aria-haspopup="true" aria-expanded="false">
-						<?php _e('Map', '12-step-meeting-list')?>
-					</a>
-				</div>
+				<a class="btn btn-default toggle-view<?php if ($view == 'map') {?> active<?php }?>" data-id="map" role="button">
+					<?php _e('Map', '12-step-meeting-list')?>
+				</a>
 			</div>
 		</div>
 		<div class="col-sm-6 col-md-2 col-md-pull-2">

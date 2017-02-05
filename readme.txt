@@ -3,7 +3,7 @@ Contributors: meetingguide, aasanjose
 Tags: meetings, aa, al-anon, na, 12-step, locations, groups
 Requires at least: 3.2
 Tested up to: 4.7
-Stable tag: 2.9.2
+Stable tag: 2.9.3
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -15,7 +15,7 @@ This plugin is the easiest way to have your area's meetings listed in the [Meeti
 
 It was originally designed to maintain a list of AA meetings in Santa Clara County, CA. It's now in use in the following areas:
 
-**AA**
+**Alcoholics Anonymous**
 
 * [Arkansas](http://arkansascentraloffice.org/meetings/)
 * [Austin, TX](http://austinaa.org/meetings/)
@@ -28,10 +28,14 @@ It was originally designed to maintain a list of AA meetings in Santa Clara Coun
 * [Elk Grove Village, IL](http://d15aa.org/d15aa.org/?post_type=meetings)
 * [Europe](http://alcoholics-anonymous.eu/index.php/meetings/)
 * [Greensboro, NC](http://nc23.org/meetings/)
+* [Joliet, IL](http://aadistrict51.org/meetings/)
 * [Kansas](https://ks-aa.org/meetings/)
 * [Maine and New Brunswick](http://csoaamaine.org/meetings/)
 * [Mesa, AZ](http://aamesaaz.org/meetings/)
+* [Miami, FL](http://aamiamidade.org/meetings)
 * [Minneapolis, MN](http://aaminneapolis.org/meetings/)
+* [Modesto, CA](http://wp.cviaa.org/meetings/)
+* [Naples, FL](http://aanaples.org/meetings/)
 * [New Orleans, LA](http://www.aaneworleans.org/meetings/)
 * [New York, NY](http://meetings.nyintergroup.org/)
 * [Oahu, HI](http://oahucentraloffice.com/meetings/)
@@ -41,6 +45,7 @@ It was originally designed to maintain a list of AA meetings in Santa Clara Coun
 * [Sacramento, CA](http://aasacramento.org/meetings/)
 * [San Jose, CA](https://aasanjose.org/meetings)
 * [San Mateo, CA](http://aa-san-mateo.org/meetings)
+* [Secular AA](https://www.secularaa.org/meetings/)
 * [Southern Colorado](http://www.puebloaa.org/meetings/)
 * [State College, PA](http://www.district43.com/meetings/)
 * [Tidewater Area, VA](http://www.tidewaterintergroup.org/meetings/)
@@ -52,6 +57,8 @@ It was originally designed to maintain a list of AA meetings in Santa Clara Coun
 * [Virginia](https://aavirginia.org/meetings/)
 * [WAAFT](http://www.waaft.org/meetings/)
 * [Walnut Creek, CA](http://contracostaaa.org/meetings)
+* [Warsaw, IN](http://www.aadistrict4143.com/meetings/)
+* [Washington, DC](https://aa-dc.org/meetings)
 * [West Hawaii, HI](http://www.westhawaiiaa.org/meetings/)
 * [Western Slope, CA](http://westernsloped22.org/meetings/)
 * [Western Kentucky](http://wkintergroup.org/meetings/)
@@ -67,16 +74,16 @@ It was originally designed to maintain a list of AA meetings in Santa Clara Coun
 * [Orange County, CA](http://ocalanon-d60.org/meetings?d=any)
 * [Pennsylvania](http://pa-al-anon.org/meetings/)
 
-**CoDA**
+**Codependents Anonymous**
 
 * [Los Angeles](http://www.lacoda.org/)
 
-**NA**
+**Narcotics Anonymous**
 
 * [Chinook, CA](http://chinookna.org/meetings/)
 * [Maine](http://www.namaine.org/meetings/)
 
-**SAA**
+**Sex Addicts Anonymous**
 
 * [Indiana](http://indiana-saa.org/meetings/)
 
@@ -205,6 +212,9 @@ Also check out our [One Page Meeting List](https://github.com/meeting-guide/one-
 1. Edit location
 
 == Changelog ==
+
+= 2.9.3 =
+* Removing vestige of dropdown on map button
 
 = 2.9.2 =
 * 'Upcoming' time bugfix
