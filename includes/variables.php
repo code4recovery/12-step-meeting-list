@@ -4,8 +4,6 @@ don't make changes! it'll make staying updated much harder.
 for updates / questions, please contact wordpress@meetingguide.org
 */
 
-$tsml_street_only = true;
-
 $tsml_alerts = array();
 
 $tsml_days	= array(
@@ -135,6 +133,9 @@ $tsml_programs = array(
 	'sca'		=> __('Sexual Compulsives Anonymous', '12-step-meeting-list'),
 	'slaa'		=> __('Sex and Love Addicts Anonymous', '12-step-meeting-list'),
 );
+
+//only show the street address (not the full address) in the main meeting list
+$tsml_street_only = true;
 
 //strings that must be synced between the javascript and the PHP
 $tsml_strings = array(

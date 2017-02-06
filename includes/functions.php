@@ -72,6 +72,7 @@ function tsml_assets() {
 			'defaults' => $tsml_defaults,
 			'distance_units' => $tsml_distance_units,
 			'strings' => $tsml_strings,
+			'street_only' => $tsml_street_only,
 			'types' => $tsml_types[$tsml_program],
 		));
 		wp_enqueue_style('tsml_public_css', plugins_url('../assets/css/public.min.css', __FILE__), array(), TSML_VERSION);

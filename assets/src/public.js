@@ -237,7 +237,7 @@ jQuery(function($){
 						'<td class="distance" data-sort="' + obj.distance + '">' + obj.distance + ' ' + myAjax.distance_units + '</td>' +
 						'<td class="name" data-sort="' + sanitizeTitle(obj.name) + '-' + sort_time + '">' + formatLink(obj.url, obj.name, 'post_type') + '</td>' + 
 						'<td class="location" data-sort="' + sanitizeTitle(obj.location) + '-' + sort_time + '">' + obj.location + '</td>' + 
-						'<td class="address" data-sort="' + sanitizeTitle(obj.formatted_address) + '-' + sort_time + '">' + formatAddress(obj.formatted_address, true) + '</td>' + 
+						'<td class="address" data-sort="' + sanitizeTitle(obj.formatted_address) + '-' + sort_time + '">' + formatAddress(obj.formatted_address, myAjax.street_only) + '</td>' + 
 						'<td class="region" data-sort="' + sanitizeTitle((obj.sub_region || obj.region || '')) + '-' + sort_time + '">' + (obj.sub_region || obj.region || '') + '</td>' + 
 						'<td class="types" data-sort="' + sanitizeTitle(obj.types) + '-' + sort_time + '">' + obj.types + '</td>' + 
 					'</tr>')
