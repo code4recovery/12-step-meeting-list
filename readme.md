@@ -48,11 +48,10 @@ git push origin my-new-feature
 ```
 
 * Last, issue a pull request (PR) to the root repository to be merged.
-    * In your browser, go to: https://github.com/meeting-guide/12-step-meeting-list
+    * In your browser, go to: https://github.com/YourGitHubUsername/12-step-meeting-list
     * Click the "New pull request" button
-    * Click "Compare across forks"
-    * Under the drop down, make the "Head fork" your copy of the repository, and under the "compare" drop down, select "my-new-feature"
-    * Check the diff provided and make sure everything looks good, then open the Pull Request.
+    * Check the diff provided and make sure everything looks good
+    * Click the "Create pull request" button
 
 If you're new to git, I would recommend going through the git book tutorial:
 
