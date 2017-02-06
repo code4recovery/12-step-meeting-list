@@ -38,7 +38,7 @@ function tsml_alert_messages() {
 //function: enqueue assets for public or admin page
 //used: in templates and on admin_edit.php
 function tsml_assets() {
-	global $tsml_types, $tsml_strings, $tsml_program, $tsml_google_api_key, $tsml_google_overrides, $tsml_distance_units, $tsml_defaults;
+	global $tsml_street_only, $tsml_types, $tsml_strings, $tsml_program, $tsml_google_api_key, $tsml_google_overrides, $tsml_distance_units, $tsml_defaults;
 		
 	//google maps api needed for maps and address verification, can't be onboarded
 	wp_enqueue_script('google_maps_api', '//maps.googleapis.com/maps/api/js?key=' . $tsml_google_api_key);
@@ -243,8 +243,10 @@ function tsml_format_address($formatted_address, $street_only=false) {
 	$parts = array_map('trim', $parts);
 	if (in_array(end($parts), array('USA', 'US'))) {
 		array_pop($parts);
-		$state_zip = array_pop($parts);
-		$parts[count($parts) - 1] .= ', ' . $state_zip;
+		if (count($parts) > 1) {
+			$state_zip = array_pop($parts);
+			$parts[count($parts) - 1] .= ', ' . $state_zip;
+		}
 	}
 	if ($street_only) return array_shift($parts);
 	return implode('<br>', $parts);
