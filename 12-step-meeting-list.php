@@ -6,7 +6,8 @@ Description: CMS for maintaining database of 12-step meetings and locations
 Version: 2.9.4
 Author: Meeting Guide
 Author URI: https://meetingguide.org
-License: none
+License: GPLv2 or later
+License URI: http://www.gnu.org/licenses/gpl-2.0.html
 Text Domain: 12-step-meeting-list
 */
 

@@ -12,7 +12,7 @@ function tsml_region_edit_form_fields($term) {
 			<?php wp_dropdown_categories(array(
 					'taxonomy' => 'tsml_region',
 					'hierarchical' => true,
-					'orderby' => name,
+					'orderby' => 'name',
 					'exclude' => $term->term_id,
 					'show_option_all' => '&nbsp;',
 					'name' => 'delete_and_reassign',
