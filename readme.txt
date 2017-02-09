@@ -94,39 +94,33 @@ It was originally designed to maintain a list of AA meetings in Santa Clara Coun
 * The Notes field is for any non-standardized meeting info, such as Basement, or Building C
 * Location should be a simple place-name, eg Queen of the Valley Hospital
 * Address should only be address, no "Upstairs" or "Building C" or "Near 2nd Ave"
-* You can fill in a very basic address and then when you tab away from that field you will see it try to 
-standardize the address for you. If you write "1000 trancas, napa" it will return with "1000 Trancas Street, 
-Napa, CA 94558, US."
+* You can fill in a very basic address and then when you tab away from that field you will see it try to standardize the address for you. If you write "1000 trancas, napa" it will return with "1000 Trancas Street, Napa, CA 94558, US."
 
 == Installation ==
 
-Basically you can just install it and you should be good to go. For a quick walkthrough of the process, check out this 
-screencast video:
+Basically you can just install it and you should be good to go. For a quick walkthrough of the process, check out this screencast video:
 
 [youtube https://www.youtube.com/watch?v=Qqg1RPX-FTQ]
 
 == Frequently Asked Questions ==
 
 = My meeting type isn't listed! =
-If it's a broadly-applicable meeting type, please [contact us](mailto:wordpress@meetingguide.org) so we can include it for you. 
-We want to maintain consistency for the [mobile apps](https://meetingguide.org/), so not all proposals are included.
+If it's a broadly-applicable meeting type, please [contact us](mailto:wordpress@meetingguide.org) so we can include it for you. We want to maintain consistency for the [mobile apps](https://meetingguide.org/), so not all proposals are included.
 
-If you have access to your functions.php, you may add additional meeting types for your area. Simply adapt the following
-example to your purposes:
+If you have access to your theme's functions.php, you may add additional meeting types for your area. Simply adapt the followingexample to your purposes:
 
-	tsml_custom_types(array(
-		'ABSI' => 'As Bill Sees It',
-	));
+	if(function_exists('tsml_custom_types')) {
+		tsml_custom_types(array(
+			'ABSI' => 'As Bill Sees It',
+		));
+	}
 	
 Please note a few things about custom types:
 
 1. Be careful with the codes ("ASBI" in the above example) as this gives you the ability to replace existing types. 
-1. Note that custom meeting types are not imported into the Meeting Guide app.
-1. They are for searching. If you can't imagine yourself searching for a meeting this way, then
-it's probably not a type you need. Have you ever searched for a 90-minute meeting? If not, then it's
-probably information that better belongs in the meeting notes.
-1. Don't add a type for the default, eg 'Hour Long Meeting' or 'Non-Smoking.' If you do that, then you
-have to be careful about tagging every single meeting in order to make the data complete.
+2. Note that custom meeting types are not imported into the Meeting Guide app.
+3. They are for searching. If you can't imagine yourself searching for a meeting this way, then it's probably not a type you need. Have you ever searched for a 90-minute meeting? If not, then it's probably information that better belongs in the meeting notes.
+4. Don't add a type for the default, eg 'Hour Long Meeting' or 'Non-Smoking.' If you do that, then you have to be careful about tagging every single meeting in order to make the data complete.
 
 = I don't like the new expandable regions dropdown menu! How do I remove it? =
 No problem, just add this CSS to your theme:
@@ -139,9 +133,13 @@ Add this to your functions.php. The value should be an existing value, ie 1, 5, 
 
 	$tsml_defaults['distance'] = 25;
 
+= How can I get the meeting list to display the full address, including city? =
+Add this to your functions.php.
+
+	$tsml_street_only = false;
+
 = The dropdowns aren't opening! =
-Most likely, this is your theme also uses Bootstrap, so it is being included twice. Add the following to your theme 
-so that the plugin's version is removed.
+Most likely, this is your theme also uses Bootstrap, so it is being included twice. Add the following to your theme so that the plugin's version is removed.
 
 	add_action('wp_enqueue_scripts', function(){
 		wp_dequeue_style('bootstrap_css');
@@ -149,15 +147,10 @@ so that the plugin's version is removed.
 	});
 
 = Where are my meetings listed? =
-Your meetings will be listed on their special WordPress Archive page. Where that is depends on your 
-Permalinks setup. The easiest way to find the link is to go to the **Meetings > Import & Settings** page 
-and look for the link under "Where's My Info?"
+Your meetings will be listed on their special WordPress Archive page. Where that is depends on your Permalinks setup. The easiest way to find the link is to go to the **Meetings > Import & Settings** page and look for the link under "Where's My Info?"
 
 = How can I change some of the text on the template pages? =
-You can make use of the [gettext filter](https://codex.wordpress.org/Plugin_API/Filter_Reference/gettext) 
-to override the plugin's translation strings. For example, if you wanted to replace 'Region' with 'Province,'
-you could add the following to your functions.php file.
-
+You can make use of the [gettext filter](https://codex.wordpress.org/Plugin_API/Filter_Reference/gettext) to override the plugin's translation strings. For example, if you wanted to replace 'Region' with 'Province,' you could add the following to your functions.php file.
 	function theme_override_tsml_strings($translated_text, $text, $domain) {
 		if ($domain == '12-step-meeting-list') {
 			switch ($translated_text) {
@@ -170,27 +163,16 @@ you could add the following to your functions.php file.
 	add_filter('gettext', 'theme_override_tsml_strings', 20, 3);
 
 = How can I override the meeting list or detail pages? =
-Copy the files from the plugin's templates directory into your theme's root directory. If you're using a 
-theme from the Theme Directory, you may be better off creating a 
-[Child Theme](https://codex.wordpress.org/Child_Themes). Now, you may override those pages. The 
-archive-meetings.php file controls the meeting list page, single-meetings.php controls the meetings 
-detail, and single-locations.php controls the location detail.
+Copy the files from the plugin's templates directory into your theme's root directory. If you're using a theme from the Theme Directory, you may be better off creating a [Child Theme](https://codex.wordpress.org/Child_Themes). Now, you may override those pages. The archive-meetings.php file controls the meeting list page, single-meetings.php controls the meetings detail, and single-locations.php controls the location detail.
 
 = Are there any shortcodes? =
-Yes, you can use `[tsml_meeting_count]`, `[tsml_location_count]`, `[tsml_group_count]`, and `[tsml_region_count]` to 
-display human-formatted counts of your entities. "For example, our area currently comprises 
-[tsml_meeting_count] meetings." Also `[tsml_next_meetings count="5"]` displays a small table with the next 
-several meetings in it. Use the `count` parameter to adjust how many are displayed. This will be unstyled if you're not
-using bootstrap in your theme.
+Yes, you can use `[tsml_meeting_count]`, `[tsml_location_count]`, `[tsml_group_count]`, and `[tsml_region_count]` to display human-formatted counts of your entities. For example, "Our area currently comprises [tsml_meeting_count] meetings." Also `[tsml_next_meetings count="5"]` displays a small table with the next several meetings in it. Use the `count` parameter to adjust how many are displayed. This will be unstyled if you're not using bootstrap in your theme.
 
 = Are there translations to other languages? =
-It is translated into Polish. If you would like to volunteer to help translate another language, we would be pleased to work
-with you.
+It is translated into Polish. If you would like to volunteer to help translate another language, we would be pleased to work with you.
 
 = I entered contact information into the meeting edit page but don't see it displayed on the site. =
-That's right, we don't display that information by default for the sake of anonymity. To display it in your 
-theme, you should follow the instructions above for overriding the meeting detail and location detail pages 
-and then drop some or all of these tags in your PHP:
+That's right, we don't display that information by default for the sake of anonymity. To display it in your theme, you should follow the instructions above for overriding the meeting detail and location detail pages and then drop some or all of these tags in your PHP:
 
 	<?php echo $meeting->contact_1_name?>
 	<?php echo $meeting->contact_1_email?>
@@ -206,15 +188,15 @@ Also check out our [One Page Meeting List](https://github.com/meeting-guide/one-
 == Screenshots ==
 
 1. Meeting list page
-1. Meeting map
-1. Meeting detail page
-1. Edit meeting
-1. Edit location
+2. Meeting map
+3. Meeting detail page
+4. Edit meeting
+5. Edit location
 
 == Changelog ==
 
 = 2.9.4 =
-* Adding setting to show the full address in the meeting list, per SCA
+* Adding setting to show the full address in the meeting list
 
 = 2.9.3 =
 * Removing vestige of dropdown on map button

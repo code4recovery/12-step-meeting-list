@@ -45,7 +45,7 @@ $location = tsml_get_location();
 							<?php }?>
 
 							<li class="list-group-item">
-								<?php _e('Updated')?>
+								<?php _e('Updated', '12-step-meeting-list')?>
 								<?php the_modified_date()?>
 							</li>
 						</ul>
@@ -67,7 +67,7 @@ $location = tsml_get_location();
 							});
 
 							var contentString = '<div class="infowindow">'+
-								'<h3><?php esc_attr_e($location->post_title)?></h3>'+
+								'<h3><?php esc_attr_e($location->post_title, '12-step-meeting-list')?></h3>'+
 								'<p><?php echo tsml_format_address($location->formatted_address)?></p>'+
 								'<p><a class="btn btn-default" href="<?php echo $location->directions?>" target="_blank"><?php _e('Directions', '12-step-meeting-list')?></a></p>' +
 								'</div>';
