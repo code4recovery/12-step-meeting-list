@@ -3,7 +3,7 @@ Contributors: meetingguide, aasanjose
 Tags: meetings, aa, al-anon, na, 12-step, locations, groups
 Requires at least: 3.2
 Tested up to: 4.7
-Stable tag: 2.9.4
+Stable tag: 2.9.5
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -107,9 +107,9 @@ Basically you can just install it and you should be good to go. For a quick walk
 = My meeting type isn't listed! =
 If it's a broadly-applicable meeting type, please [contact us](mailto:wordpress@meetingguide.org) so we can include it for you. We want to maintain consistency for the [mobile apps](https://meetingguide.org/), so not all proposals are included.
 
-If you have access to your theme's functions.php, you may add additional meeting types for your area. Simply adapt the followingexample to your purposes:
+If you have access to your theme's functions.php, you may add additional meeting types for your area. Simply adapt the following example to your purposes:
 
-	if(function_exists('tsml_custom_types')) {
+	if (function_exists('tsml_custom_types')) {
 		tsml_custom_types(array(
 			'ABSI' => 'As Bill Sees It',
 		));
@@ -118,9 +118,9 @@ If you have access to your theme's functions.php, you may add additional meeting
 Please note a few things about custom types:
 
 1. Be careful with the codes ("ASBI" in the above example) as this gives you the ability to replace existing types. 
-2. Note that custom meeting types are not imported into the Meeting Guide app.
-3. They are for searching. If you can't imagine yourself searching for a meeting this way, then it's probably not a type you need. Have you ever searched for a 90-minute meeting? If not, then it's probably information that better belongs in the meeting notes.
-4. Don't add a type for the default, eg 'Hour Long Meeting' or 'Non-Smoking.' If you do that, then you have to be careful about tagging every single meeting in order to make the data complete.
+1. Note that custom meeting types are not imported into the Meeting Guide app.
+1. They are for searching. If you can't imagine yourself searching for a meeting this way, then it's probably not a type you need. Have you ever searched for a 90-minute meeting? If not, then it's probably information that better belongs in the meeting notes.
+1. Don't add a type for the default, eg 'Hour Long Meeting' or 'Non-Smoking.' If you do that, then you have to be careful about tagging every single meeting in order to make the data complete.
 
 = I don't like the new expandable regions dropdown menu! How do I remove it? =
 No problem, just add this CSS to your theme:
@@ -133,7 +133,7 @@ Add this to your functions.php. The value should be an existing value, ie 1, 5, 
 
 	$tsml_defaults['distance'] = 25;
 
-= How can I get the meeting list to display the full address, including city? =
+= How can I get the meeting list to display the full address, including city, state and country? =
 Add this to your functions.php.
 
 	$tsml_street_only = false;
@@ -188,12 +188,15 @@ Also check out our [One Page Meeting List](https://github.com/meeting-guide/one-
 == Screenshots ==
 
 1. Meeting list page
-2. Meeting map
-3. Meeting detail page
-4. Edit meeting
-5. Edit location
+1. Meeting map
+1. Meeting detail page
+1. Edit meeting
+1. Edit location
 
 == Changelog ==
+
+= 2.9.5 =
+* Copy changes and bug fixes
 
 = 2.9.4 =
 * Adding setting to show the full address in the meeting list
@@ -202,7 +205,7 @@ Also check out our [One Page Meeting List](https://github.com/meeting-guide/one-
 * Removing vestige of dropdown on map button
 
 = 2.9.2 =
-* 'Upcoming' time bugfix
+* 'Upcoming' time bug fix
 
 = 2.9.1 =
 * New program: Adult Children of Alcoholics
@@ -253,4 +256,4 @@ Also check out our [One Page Meeting List](https://github.com/meeting-guide/one-
 * New description for open and closed meetings, per Area 23
 * Translated javascript strings per Polish AA in UK
 * Styling for nested regions dropdown
-* New white expand/collapse icons for themes with dark dropdown bgcolors
+* New white expand/collapse icons for themes with dark dropdown background colors

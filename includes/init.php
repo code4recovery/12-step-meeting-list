@@ -3,12 +3,6 @@
 //for all users
 add_action('init', 'tsml_init');
 
-//load internationalization
-add_action('init', 'tsml_load_i18n');
-function tsml_load_i18n() {
-	load_plugin_textdomain('12-step-meeting-list', false, '12-step-meeting-list/languages');
-}
-
 function tsml_init() {
 
 	//register post types and taxonomies
@@ -16,6 +10,9 @@ function tsml_init() {
 
 	//run any necessary upgrades
 	tsml_upgrades();
+	
+	//load internationalization
+	load_plugin_textdomain('12-step-meeting-list', false, '12-step-meeting-list/languages');
 	
 	//meeting list page
 	add_filter('archive_template', 'tsml_archive_template');
