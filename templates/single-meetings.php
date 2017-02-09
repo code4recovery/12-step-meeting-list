@@ -73,7 +73,7 @@ $meeting = tsml_get_meeting();
 							</li>
 							<?php }?>
 							<li class="list-group-item">
-								<?php _e('Updated')?>
+								<?php _e('Updated', '12-step-meeting-list')?>
 								<?php the_modified_date()?>
 							</li>
 						</ul>

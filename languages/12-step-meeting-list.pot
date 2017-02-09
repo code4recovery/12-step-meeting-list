@@ -5,7 +5,7 @@ msgstr ""
 "Project-Id-Version: 12 Step Meeting List 2.9.4\n"
 "Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/12-step-meeting-"
 "list\n"
-"POT-Creation-Date: 2017-02-06 18:51:31+00:00\n"
+"POT-Creation-Date: 2017-02-09 01:21:50+00:00\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
@@ -93,8 +93,124 @@ msgstr ""
 msgid "Delete all meetings, locations, groups, and regions prior to import"
 msgstr ""
 
+#: includes/admin_import.php:327
+msgid "Begin"
+msgstr ""
+
 #: includes/admin_import.php:330
 msgid "Spreadsheet Specs"
+msgstr ""
+
+#: includes/admin_import.php:331
+msgid ""
+"Here is a sample file</a> you can use as a template. Save it as a comma-"
+"delimited CSV before uploading it. The header row should kept in place."
+msgstr ""
+
+#: includes/admin_import.php:333
+msgid ""
+"<li><strong>Time</strong>, if present, should be in a standard date format "
+"such as 6:00 AM or 06:00. Non-standard or empty dates will be imported as "
+"'by appointment.'</li>"
+msgstr ""
+
+#: includes/admin_import.php:334
+msgid ""
+"<li><strong>End Time</strong>, if present, should be in a standard date "
+"format such as 6:00 AM or 06:00.</li>"
+msgstr ""
+
+#: includes/admin_import.php:335
+msgid ""
+"<li><strong>Day</strong> if present, should either Sunday, Monday, Tuesday, "
+"Wednesday, Thursday, Friday, or Saturday. Meetings that occur on multiple "
+"days should be listed separately. 'Daily' or 'Mondays' will not work. Non-"
+"standard days will be imported as 'by appointment.'</li>"
+msgstr ""
+
+#: includes/admin_import.php:336
+msgid ""
+"<li><strong>Name</strong> is the name of the meeting, and is optional, "
+"although it's valuable information for the user. If it's missing, a name "
+"will be created by combining the location, day, and time.</li>"
+msgstr ""
+
+#: includes/admin_import.php:337
+msgid ""
+"<li><strong>Location</strong> is the name of the location, and is optional. "
+"Generally it's the group or building name. If it's missing, the address will "
+"be used. In the event that there are multiple location names for the same "
+"address, the first location name will be used.</li>"
+msgstr ""
+
+#: includes/admin_import.php:338
+msgid ""
+"<li><strong>Address</strong> is strongly encouraged and will be corrected by "
+"Google, so it may look different afterward. Ideally, every address for the "
+"same location should be exactly identical, and not contain extra information "
+"about the address, such as the building name or descriptors like 'around "
+"back.'</li>"
+msgstr ""
+
+#: includes/admin_import.php:339
+msgid ""
+"<li>If <strong>Address</strong> is specified, then <strong>City</strong>, "
+"<strong>State</strong>, and <strong>Country</strong> are optional, but they "
+"might be useful if your addresses sound ambiguous to Google. If address is "
+"not specified, then these fields are required.</li>"
+msgstr ""
+
+#: includes/admin_import.php:340
+msgid ""
+"<li><strong>Notes</strong> are freeform notes that are specific to the "
+"meeting. For example, \"last Saturday is birthday night.\"</li>"
+msgstr ""
+
+#: includes/admin_import.php:341
+msgid ""
+"<li><strong>Region</strong> is user-defined and can be anything. Often this "
+"is a small municipality or neighborhood. Since these go in a dropdown, "
+"ideally you would have 10 to 20 regions, although it's ok to be over or "
+"under.</li>"
+msgstr ""
+
+#: includes/admin_import.php:342
+msgid ""
+"<li><strong>Sub Region</strong> makes the Region hierarchical; in San Jose "
+"we have sub regions for East San Jose, West San Jose, etc. New York City "
+"might have Manhattan be a Region, and Greenwich Village be a Sub Region.</li>"
+msgstr ""
+
+#: includes/admin_import.php:343
+msgid ""
+"<li><strong>Location Notes</strong> are freeform notes that will show up on "
+"every meeting that this location. For example, \"Enter from the side.\"</li>"
+msgstr ""
+
+#: includes/admin_import.php:344
+msgid ""
+"<li><strong>Group</strong> is a way of grouping contacts. Meetings with the "
+"same Group name will be grouped together and share contact information.</li>"
+msgstr ""
+
+#: includes/admin_import.php:345
+msgid ""
+"<li><strong>Group Notes</strong> is for stuff like a short group history, or "
+"when the business meeting meets.</li>"
+msgstr ""
+
+#: includes/admin_import.php:346
+msgid ""
+"<li><strong>Contact 1/2/3 Name/Email/Phone</strong> (nine fields in total) "
+"are all optional, but will not be saved if there is not also a Group name "
+"specified. By default, contact information is only visible inside the "
+"WordPress dashboard.</li>"
+msgstr ""
+
+#: includes/admin_import.php:347
+msgid ""
+"<li><strong>Types</strong> should be a comma-separated list of the following "
+"options. This list is determined by which program is selected at right.</li>"
 msgstr ""
 
 #: includes/admin_import.php:362
