@@ -6,7 +6,7 @@ if (!function_exists('dd')) {
 	function dd($array) {
 		echo '<pre>';
 		print_r($array);
-		exit;	
+		exit;
 	}
 }
 
@@ -257,6 +257,7 @@ function tsml_format_address($formatted_address, $street_only=false) {
 //used:		admin_edit.php, archive-meetings.php, single-meetings.php
 function tsml_format_day_and_time($day, $time, $separator=', ', $short=false) {
 	global $tsml_days;
+	/* translators: Appt is abbreviation for Appointment */
 	if (empty($tsml_days[$day]) || empty($time)) return $short ? __('Appt', '12-step-meeting-list') : __('Appointment', '12-step-meeting-list');
 	return ($short ? substr($tsml_days[$day], 0, 3) : $tsml_days[$day]) . $separator . '<time>' . tsml_format_time($time) . '</time>';
 }

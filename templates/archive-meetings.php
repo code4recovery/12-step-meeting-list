@@ -7,8 +7,8 @@ get_header();
 
 //define search dropdown options
 $modes = array(
-	'search' => array('title' => __('Search', '12-step-meeting-list'), 'icon' => 'glyphicon glyphicon-search'),
-	'location' => array('title' => __('Near Location', '12-step-meeting-list'), 'icon' => 'glyphicon glyphicon-map-marker'),
+	'search' => array('title' => __('By Keyword', '12-step-meeting-list'), 'icon' => 'glyphicon glyphicon-search'),
+	'location' => array('title' => __('By Distance', '12-step-meeting-list'), 'icon' => 'glyphicon glyphicon-map-marker'),
 );
 //proximity only enabled over SSL
 if (is_ssl()) $modes['me'] = array('title' => __('Near Me', '12-step-meeting-list'), 'icon' => 'glyphicon glyphicon-user');
@@ -193,7 +193,7 @@ class Walker_Regions_Dropdown extends Walker_Category {
 				<ul class="dropdown-menu" role="menu">
 					<li<?php if (empty($time)) echo ' class="active"'?>><a><?php echo $time_default?></a></li>
 					<li class="divider upcoming"></li>
-					<li class="upcoming<?php if ($time == 'upcoming') echo ' active"'?>"><a data-id="upcoming"><?php echo __('Upcoming', '12-step-meeting-list')?></a></li>
+					<li class="upcoming<?php if ($time == 'upcoming') echo ' active"'?>"><a data-id="upcoming"><?php esc_html_e('Upcoming', '12-step-meeting-list')?></a></li>
 					<li class="divider"></li>
 					<?php foreach ($times as $key=>$value) {?>
 					<li<?php if ($key === $time) echo ' class="active"'?>><a data-id="<?php echo $key?>"><?php echo $value?></a></li>
