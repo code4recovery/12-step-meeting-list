@@ -83,7 +83,7 @@ $message = '';
 
 //run query
 if ($mode == 'search') {
-	$meetings	= tsml_get_meetings(compact('mode', 'day', 'time', 'region', 'type'));	
+	$meetings	= tsml_get_meetings(compact('mode', 'day', 'time', 'region', 'type', 'query'));	
 	if (!count($meetings)) $message = $tsml_strings['no_meetings'];
 } elseif ($mode == 'location') {
 	$message = empty($_GET['query']) ? $tsml_strings['loc_empty'] : $tsml_strings['loc_thinking'];
@@ -108,9 +108,9 @@ class Walker_Regions_Dropdown extends Walker_Category {
 <div id="meetings" data-view="<?php echo $view?>" data-mode="<?php echo $mode?>" class="container<?php if (!count($meetings)) {?> empty<?php }?>" role="main">
 	<div class="row controls hidden-print">
 		<div class="col-sm-6 col-md-2">
-			<form id="search" role="search">
+			<form id="search" role="search" action=".">
 				<div class="input-group">
-					<input type="text" name="query" class="form-control" value="<?php echo $query?>" placeholder="<?php echo $mode_label?>" aria-label="Search" <?php echo ($mode == 'me') ? 'disabled' : 'autofocus'?>>
+					<input type="search" name="query" class="form-control" value="<?php echo $query?>" placeholder="<?php echo $mode_label?>" aria-label="Search" <?php echo ($mode == 'me') ? 'disabled' : 'autofocus'?>>
 					<div class="input-group-btn" id="mode">
 						<button class="btn btn-default dropdown-toggle" data-toggle="dropdown" type="button">
 							<i class="<?php echo $modes[$mode]['icon']?>"></i>
@@ -123,7 +123,7 @@ class Walker_Regions_Dropdown extends Walker_Category {
 						</ul>
 					</div>
 				</div>
-				<input type="submit" class="hidden">
+				<input type="submit">
 			</form>
 		</div>
 		<div class="col-sm-6 col-md-2 col-md-push-8">

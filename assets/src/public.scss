@@ -108,6 +108,12 @@ input:focus, button:focus {
 		input[name=query] {
 			margin: 0;
 		}
+		/* need to have this button, and display: none will not work */
+		input[type=submit] {
+			visibility:hidden;
+			position:absolute;
+			left: -1000px;
+		}
 		input, .btn {
 			height: 34px;
 			padding: 6px 12px;

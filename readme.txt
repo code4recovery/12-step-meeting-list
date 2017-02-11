@@ -3,7 +3,7 @@ Contributors: meetingguide, aasanjose
 Tags: meetings, aa, al-anon, na, 12-step, locations, groups
 Requires at least: 3.2
 Tested up to: 4.7
-Stable tag: 2.9.5
+Stable tag: 2.9.6
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -194,6 +194,12 @@ Also check out our [One Page Meeting List](https://github.com/meeting-guide/one-
 1. Edit location
 
 == Changelog ==
+
+= 2.9.6 =
+* Mobile Safari now shows 'Search' button when searching
+* Mobile Safari search now can submit
+* Back to meetings links now working with plain permalink structure
+* Proper highlighting in search results
 
 = 2.9.5 =
 * Copy changes and bug fixes

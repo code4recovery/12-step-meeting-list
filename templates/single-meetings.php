@@ -14,7 +14,7 @@ $meeting = tsml_get_meeting();
 		
 			<div class="page-header">
 				<h1><?php echo tsml_format_name($meeting->post_title, $meeting->types)?></h1>
-				<?php echo tsml_link(get_post_type_archive_link('tsml_meeting'), '<i class="glyphicon glyphicon-chevron-right"></i> ' . __('Back to Meetings', '12-step-meeting-list'), 'meetings')?>
+				<?php echo tsml_link(get_post_type_archive_link('tsml_meeting'), '<i class="glyphicon glyphicon-chevron-right"></i> ' . __('Back to Meetings', '12-step-meeting-list'), 'tsml_meeting')?>
 			</div>
 
 			<div class="row">
@@ -35,7 +35,7 @@ $meeting = tsml_get_meeting();
 									get_permalink($meeting->post_parent),
 										sprintf(_n('%d other meeting at this location', '%d other meetings at this location', $other_meetings),
 										$other_meetings
-									), 'meeting', 'list-group-item');
+									), 'tsml_meeting', 'list-group-item');
 							}
 							if (!empty($meeting->group_id)) {?>
 							<li class="list-group-item">
@@ -121,7 +121,7 @@ $meeting = tsml_get_meeting();
 							});
 
 							var contentString = '<div class="infowindow">'+
-								'<h3><?php echo tsml_link(get_permalink($meeting->post_parent), $meeting->location, 'meetings')?></h3>'+
+								'<h3><?php echo tsml_link(get_permalink($meeting->post_parent), $meeting->location, 'tsml_meeting')?></h3>'+
 								'<p><?php echo tsml_format_address($meeting->formatted_address)?></p>'+
 								'<p><a class="btn btn-default" href="<?php echo $meeting->directions?>"><?php _e('Directions', '12-step-meeting-list')?></a></p>' +
 								'</div>';

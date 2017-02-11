@@ -9,7 +9,7 @@ $location = tsml_get_location();
 		
 			<div class="page-header">
 				<h1><?php echo $location->post_title?></h1>
-				<?php echo tsml_link(get_post_type_archive_link('tsml_meeting'), '<i class="glyphicon glyphicon-chevron-right"></i> ' . __('Back to Meetings', '12-step-meeting-list'), 'locations')?>
+				<?php echo tsml_link(get_post_type_archive_link('tsml_meeting'), '<i class="glyphicon glyphicon-chevron-right"></i> ' . __('Back to Meetings', '12-step-meeting-list'), 'tsml_location')?>
 			</div>
 
 			<div class="row location">
@@ -32,7 +32,7 @@ $location = tsml_get_location();
 							$location_days = array();
 							foreach ($meetings as $meeting) {
 								if (!isset($location_days[$meeting['day']])) $location_days[$meeting['day']] = array();
-								$location_days[$meeting['day']][] = '<li><span>' . $meeting['time_formatted'] . '</span> ' . tsml_link($meeting['url'], tsml_format_name($meeting['name'], $meeting['types']), 'locations') . '</li>';
+								$location_days[$meeting['day']][] = '<li><span>' . $meeting['time_formatted'] . '</span> ' . tsml_link($meeting['url'], tsml_format_name($meeting['name'], $meeting['types']), 'tsml_location') . '</li>';
 							}
 							ksort($location_days);
 							if (count($location_days)) {?>

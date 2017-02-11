@@ -47,8 +47,8 @@ jQuery(function($){
 		if (history.pushState) {
 			var url = window.location.protocol + '//' + window.location.host + window.location.pathname;
 			if (query_string.length) url = url + '?' + query_string;
-			if (location.search.indexOf('post_type=meetings') > -1) {
-				url = url + ((url.indexOf('?') > -1) ? '&' : '?') + 'post_type=meetings';
+			if (location.search.indexOf('post_type=tsml_meeting') > -1) {
+				url = url + ((url.indexOf('?') > -1) ? '&' : '?') + 'post_type=tsml_meeting';
 			}
 			window.history.pushState({path:url}, '', url);
 		}
@@ -245,7 +245,7 @@ jQuery(function($){
 				
 				sortMeetings();
 				
-				if ((data.mode == 'search') && data.query) $('#meetings .results tbody').mark(data.mode);
+				if ((data.mode == 'search') && data.query) $('#meetings .results tbody').mark(data.query);
 
 				//remove old markers and reset bounds
 				for (var i = 0; i < markers.length; i++) markers[i].setMap(null);
