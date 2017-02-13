@@ -242,12 +242,16 @@ function tmsl_import_page() {
 	//add a feedback email
 	if (!empty($_POST['tsml_add_feedback_address']) && isset($_POST['tsml_nonce']) && wp_verify_nonce($_POST['tsml_nonce'], $tsml_nonce)) {
 		$email = sanitize_text_field($_POST['tsml_add_feedback_address']);
-		if (!is_email($email)) printf(esc_html__('<div class="notice notice-error"><p><code>%s</code> is not a valid email address. Please try again.</p></div>', '12-step-meeting-list'), $email);
-		$tsml_feedback_addresses[] = $email;
-		$tsml_feedback_addresses = array_unique($tsml_feedback_addresses);
-		sort($tsml_feedback_addresses);
-		update_option('tsml_feedback_addresses', $tsml_feedback_addresses);
-		tsml_alert(__('Feedback address added.', '12-step-meeting-list'));
+		if (!is_email($email)) {
+			//theoretically should never get here, because WordPress checks entry first
+			tsml_alert(sprintf(esc_html__('<div class="notice notice-error"><p><code>%s</code> is not a valid email address. Please try again.</p></div>', '12-step-meeting-list'), $email),'notice notice-error');
+		} else {
+			$tsml_feedback_addresses[] = $email;
+			$tsml_feedback_addresses = array_unique($tsml_feedback_addresses);
+			sort($tsml_feedback_addresses);
+			update_option('tsml_feedback_addresses', $tsml_feedback_addresses);
+			tsml_alert(__('Feedback address added.', '12-step-meeting-list'));
+		}
 	}
 	
 	//remove a feedback email
@@ -255,26 +259,31 @@ function tmsl_import_page() {
 		$email = sanitize_text_field($_POST['tsml_remove_feedback_address']);
 		if (($key = array_search($email, $tsml_feedback_addresses)) !== false) {
 			unset($tsml_feedback_addresses[$key]);
+			if (empty($tsml_feedback_addresses)) {
+				delete_option('tsml_feedback_addresses');
+			} else {
+				update_option('tsml_feedback_addresses', $tsml_feedback_addresses);
+			}
+			tsml_alert(__('Feedback address removed.', '12-step-meeting-list'));
 		} else {
-			printf(esc_html__('<div class="notice notice-error"><p><code>%s</code> was not found in the list of addresses. Please try again.</p></div>', '12-step-meeting-list'), $email);
+			//theoretically should never get here, because user is choosing from a list
+			tsml_alert(sprintf(esc_html__('<p><code>%s</code> was not found in the list of addresses. Please try again.</p>', '12-step-meeting-list'), $email), 'notice notice-error');
 		}
-		if (empty($tsml_feedback_addresses)) {
-			delete_option('tsml_feedback_addresses');
-		} else {
-			update_option('tsml_feedback_addresses', $tsml_feedback_addresses);
-		}
-		tsml_alert(__('Feedback address removed.', '12-step-meeting-list'));
 	}
 			
 	//add a notification email
 	if (!empty($_POST['tsml_add_notification_address']) && isset($_POST['tsml_nonce']) && wp_verify_nonce($_POST['tsml_nonce'], $tsml_nonce)) {
 		$email = sanitize_text_field($_POST['tsml_add_notification_address']);
-		if (!is_email($email)) printf(esc_html__('<div class="notice notice-error"><p><code>%s</code> is not a valid email address. Please try again.</p></div>', '12-step-meeting-list'), $email);
-		$tsml_notification_addresses[] = $email;
-		$tsml_notification_addresses = array_unique($tsml_notification_addresses);
-		sort($tsml_notification_addresses);
-		update_option('tsml_notification_addresses', $tsml_notification_addresses);
-		tsml_alert(__('Notification address added.', '12-step-meeting-list'));
+		if (!is_email($email)) {
+			//theoretically should never get here, because WordPress checks entry first
+			tsml_alert(sprintf(esc_html__('<p><code>%s</code> is not a valid email address. Please try again.</p>', '12-step-meeting-list'), $email), 'notice notice-error');
+		} else {
+			$tsml_notification_addresses[] = $email;
+			$tsml_notification_addresses = array_unique($tsml_notification_addresses);
+			sort($tsml_notification_addresses);
+			update_option('tsml_notification_addresses', $tsml_notification_addresses);
+			tsml_alert(__('Notification address added.', '12-step-meeting-list'));
+		}
 	}
 	
 	//remove a notification email
@@ -282,17 +291,32 @@ function tmsl_import_page() {
 		$email = sanitize_text_field($_POST['tsml_remove_notification_address']);
 		if (($key = array_search($email, $tsml_notification_addresses)) !== false) {
 			unset($tsml_notification_addresses[$key]);
+			if (empty($tsml_notification_addresses)) {
+				delete_option('tsml_notification_addresses');
+			} else {
+				update_option('tsml_notification_addresses', $tsml_notification_addresses);
+			}
+			tsml_alert(__('Notification address removed.', '12-step-meeting-list'));
 		} else {
-			printf(esc_html__('<div class="notice notice-error"><p><code>%s</code> was not found in the list of addresses. Please try again.</p></div>', '12-step-meeting-list'), $email);
+			//theoretically should never get here, because user is choosing from a list
+			tsml_alert(sprintf(esc_html__('<p><code>%s</code> was not found in the list of addresses. Please try again.</p>', '12-step-meeting-list'), $email), 'notice notice-error');
 		}
-		if (empty($tsml_notification_addresses)) {
-			delete_option('tsml_notification_addresses');
-		} else {
-			update_option('tsml_notification_addresses', $tsml_notification_addresses);
-		}
-		tsml_alert(__('Notification address removed.', '12-step-meeting-list'));
 	}
 	?>
+<style type="text/css">
+#want-user-feedback .inside {
+	padding-bottom: 0;
+}
+#want-user-feedback.postbox.admin_contacts {
+	margin-bottom: 0;
+}
+#get-notified .inside {
+	padding-bottom: 0;
+}
+#get-notified.postbox.admin_contacts {
+	margin-bottom: 0;
+}
+</style>
 	<div class="wrap">
 		<h2><?php _e('Import & Settings', '12-step-meeting-list')?></h2>
 		
@@ -369,7 +393,7 @@ function tmsl_import_page() {
 					</div>
 					<?php }?>
 
-					<div class="postbox">
+					<div class="postbox" id="settings">
 						<div class="inside">
 							<h3><?php _e('Settings', '12-step-meeting-list')?></h3>
 							<p><?php printf(__('The program determines which meeting types are available. If your program isn\'t not listed, <a href="%s">let us know</a> what types of meetings it has (Open, Closed, Topic Discussion, etc).', '12-step-meeting-list'), TSML_CONTACT_LINK)?></p>
@@ -380,7 +404,9 @@ function tmsl_import_page() {
 									<option value="<?php echo $key?>"<?php selected($tsml_program, $key)?>><?php echo $value?></option>
 									<?php }?>
 								</select>
-								
+							</form>
+							<form method="post" action="edit.php?post_type=tsml_meeting&page=import">
+								<?php wp_nonce_field($tsml_nonce, 'tsml_nonce', false)?>
 								<select name="tsml_distance_units" onchange="this.form.submit()">
 								<?php 
 								$distance_units = array(
@@ -427,12 +453,12 @@ function tmsl_import_page() {
 							<?php }?>
 						</div>
 					</div>
-					<div class="postbox admin_contacts">
+					<div class="postbox admin_contacts" id="want-user-feedback">
 						<div class="inside">
 							<h3><?php _e('Want User Feedback?', '12-step-meeting-list')?></h3>
 							<p><?php _e('Enable a meeting info feedback form by adding email addresses below.', '12-step-meeting-list')?></p>
 							<?php if (!empty($tsml_feedback_addresses)) {?>
-							<table>
+							<table class="tsml_address_list">
 								<?php foreach ($tsml_feedback_addresses as $address) {?>
 								<tr>
 									<td><?php echo $address?></td>
@@ -447,6 +473,10 @@ function tmsl_import_page() {
 								<?php }?>
 							</table>
 							<?php }?>
+						</div>
+					</div>
+					<div class="postbox" id="add-feedback-address">
+						<div class="inside">
 							<form method="post" action="edit.php?post_type=tsml_meeting&page=import">
 								<?php wp_nonce_field($tsml_nonce, 'tsml_nonce', false)?>
 								<input type="email" name="tsml_add_feedback_address" placeholder="email@example.org">
@@ -454,12 +484,12 @@ function tmsl_import_page() {
 							</form>
 						</div>
 					</div>
-					<div class="postbox admin_contacts">
+					<div class="postbox admin_contacts" id="get-notified">
 						<div class="inside">
 							<h3><?php _e('Get Notified', '12-step-meeting-list')?></h3>
 							<p><?php _e('Receive notifications of meeting changes at the email addresses below.', '12-step-meeting-list')?></p>
 							<?php if (!empty($tsml_notification_addresses)) {?>
-							<table>
+							<table class="tsml_address_list">
 								<?php foreach ($tsml_notification_addresses as $address) {?>
 								<tr>
 									<td><?php echo $address?></td>
@@ -474,6 +504,10 @@ function tmsl_import_page() {
 								<?php }?>
 							</table>
 							<?php }?>
+						</div>
+					</div>
+					<div class="postbox" id="add-notification-address">
+						<div class="inside">
 							<form method="post" action="edit.php?post_type=tsml_meeting&page=import">
 								<?php wp_nonce_field($tsml_nonce, 'tsml_nonce', false)?>
 								<input type="email" name="tsml_add_notification_address" placeholder="email@example.org">
