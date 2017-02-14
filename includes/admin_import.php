@@ -242,7 +242,7 @@ function tmsl_import_page() {
 	//add a feedback email
 	if (!empty($_POST['tsml_add_feedback_address']) && isset($_POST['tsml_nonce']) && wp_verify_nonce($_POST['tsml_nonce'], $tsml_nonce)) {
 		$email = sanitize_text_field($_POST['tsml_add_feedback_address']);
-		if (!is_email($email)) echo '<div class="notice notice-error"><p><code>' . $email . '</code> is not a valid email address. Please try again.</p></div>';
+		if (!is_email($email)) printf(esc_html__('<div class="notice notice-error"><p><code>%s</code> is not a valid email address. Please try again.</p></div>', '12-step-meeting-list'), $email);
 		$tsml_feedback_addresses[] = $email;
 		$tsml_feedback_addresses = array_unique($tsml_feedback_addresses);
 		sort($tsml_feedback_addresses);
@@ -256,7 +256,7 @@ function tmsl_import_page() {
 		if (($key = array_search($email, $tsml_feedback_addresses)) !== false) {
 			unset($tsml_feedback_addresses[$key]);
 		} else {
-			echo '<div class="notice notice-error"><p><code>' . $email . '</code> was not found in the list of addresses. Please try again.</p></div>';
+			printf(esc_html__('<div class="notice notice-error"><p><code>%s</code> was not found in the list of addresses. Please try again.</p></div>', '12-step-meeting-list'), $email);
 		}
 		if (empty($tsml_feedback_addresses)) {
 			delete_option('tsml_feedback_addresses');
@@ -269,7 +269,7 @@ function tmsl_import_page() {
 	//add a notification email
 	if (!empty($_POST['tsml_add_notification_address']) && isset($_POST['tsml_nonce']) && wp_verify_nonce($_POST['tsml_nonce'], $tsml_nonce)) {
 		$email = sanitize_text_field($_POST['tsml_add_notification_address']);
-		if (!is_email($email)) echo '<div class="notice notice-error"><p><code>' . $email . '</code> is not a valid email address. Please try again.</p></div>';
+		if (!is_email($email)) printf(esc_html__('<div class="notice notice-error"><p><code>%s</code> is not a valid email address. Please try again.</p></div>', '12-step-meeting-list'), $email);
 		$tsml_notification_addresses[] = $email;
 		$tsml_notification_addresses = array_unique($tsml_notification_addresses);
 		sort($tsml_notification_addresses);
@@ -283,7 +283,7 @@ function tmsl_import_page() {
 		if (($key = array_search($email, $tsml_notification_addresses)) !== false) {
 			unset($tsml_notification_addresses[$key]);
 		} else {
-			echo '<div class="notice notice-error"><p><code>' . $email . '</code> was not found in the list of addresses. Please try again.</p></div>';
+			printf(esc_html__('<div class="notice notice-error"><p><code>%s</code> was not found in the list of addresses. Please try again.</p></div>', '12-step-meeting-list'), $email);
 		}
 		if (empty($tsml_notification_addresses)) {
 			delete_option('tsml_notification_addresses');
@@ -359,7 +359,7 @@ function tmsl_import_page() {
 
 					<?php if (version_compare(PHP_VERSION, '5.4') < 0) {?>
 					<div class="notice notice-warning inline">
-						<p><?php echo sprintf(__('You are running PHP <strong>%s</strong>, while <a href="%s" target="_blank">WordPress recommends</a> PHP %s or above. This can cause unexpected errors. Please contact your host and upgrade!', '12-step-meeting-list'), PHP_VERSION, 'https://wordpress.org/about/requirements/', '5.6')?></p>
+						<p><?php printf(__('You are running PHP <strong>%s</strong>, while <a href="%s" target="_blank">WordPress recommends</a> PHP %s or above. This can cause unexpected errors. Please contact your host and upgrade!', '12-step-meeting-list'), PHP_VERSION, 'https://wordpress.org/about/requirements/', '5.6')?></p>
 					</div>
 					<?php }
 					
@@ -372,7 +372,7 @@ function tmsl_import_page() {
 					<div class="postbox">
 						<div class="inside">
 							<h3><?php _e('Settings', '12-step-meeting-list')?></h3>
-							<p><?php echo sprintf(__('The program determines which meeting types are available. If your program isn\'t not listed, <a href="%s">let us know</a> what types of meetings it has (Open, Closed, Topic Discussion, etc).', '12-step-meeting-list'), TSML_CONTACT_LINK)?></p>
+							<p><?php printf(__('The program determines which meeting types are available. If your program isn\'t not listed, <a href="%s">let us know</a> what types of meetings it has (Open, Closed, Topic Discussion, etc).', '12-step-meeting-list'), TSML_CONTACT_LINK)?></p>
 							<form method="post" action="edit.php?post_type=tsml_meeting&page=import">
 								<?php wp_nonce_field($tsml_nonce, 'tsml_nonce', false)?>
 								<select name="tsml_program" onchange="this.form.submit()">
@@ -486,7 +486,7 @@ function tmsl_import_page() {
 					<div class="postbox" id="try_the_apps">
 						<div class="inside">
 							<h3><?php _e('Try the Apps!', '12-step-meeting-list')?></h3>
-							<p><?php echo sprintf(__('Want to have your meetings listed in a simple, free mobile app? <a href="%s" target="_blank">%d areas are currently participating</a>. No extra effort is required; simply continue to update your meetings here and the updates will flow down to app users.', '12-step-meeting-list'), 'https://meetingguide.org/', 68)?></p>
+							<p><?php printf(__('Want to have your meetings listed in a simple, free mobile app? <a href="%s" target="_blank">%d areas are currently participating</a>. No extra effort is required; simply continue to update your meetings here and the updates will flow down to app users.', '12-step-meeting-list'), 'https://meetingguide.org/', 68)?></p>
 							<p class="buttons">
 								<a href="https://itunes.apple.com/us/app/meeting-guide/id1042822181">
 									<img src="<?php echo plugin_dir_url(__FILE__)?>../assets/img/apple.svg">
@@ -495,15 +495,15 @@ function tmsl_import_page() {
 									<img src="<?php echo plugin_dir_url(__FILE__)?>../assets/img/google.svg">
 								</a>
 							</p>
-							<p><?php echo sprintf(__('To get involved, please <a href="%s">get in touch</a>.', '12-step-meeting-list'), TSML_CONTACT_LINK)?></p>
+							<p><?php printf(__('To get involved, please <a href="%s">get in touch</a>.', '12-step-meeting-list'), TSML_CONTACT_LINK)?></p>
 						</div>
 					</div>
 					<?php } else {?>
 					<div class="postbox">
 						<div class="inside">
 							<h3><?php _e('About this Plugin', '12-step-meeting-list')?></h3>
-							<p><?php echo sprintf(__('This plugin was developed by AA volunteers in <a href="%s" target="_blank">Santa Clara County</a> to help provide accessible, accurate information about meetings to those who need it.', '12-step-meeting-list'), 'https://aasanjose.org/central-office/technology')?></p>
-							<p><?php echo sprintf(__('If you would like to help out with development, <a href="%s" target="_blank">visit us on GitHub</a>.', '12-step-meeting-list'), 'https://github.com/meeting-guide/12-step-meeting-list')?>
+							<p><?php printf(__('This plugin was developed by AA volunteers in <a href="%s" target="_blank">Santa Clara County</a> to help provide accessible, accurate information about meetings to those who need it.', '12-step-meeting-list'), 'https://aasanjose.org/central-office/technology')?></p>
+							<p><?php printf(__('If you would like to help out with development, <a href="%s" target="_blank">visit us on GitHub</a>.', '12-step-meeting-list'), 'https://github.com/meeting-guide/12-step-meeting-list')?>
 						</div>
 					</div>
 					<?php }?>

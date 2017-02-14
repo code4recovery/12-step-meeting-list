@@ -236,20 +236,20 @@ function tsml_ajax_feedback() {
 	$headers  = 'From: ' . $name . ' <' . $email . '>' . "\r\n";
 
 	if (!isset($_POST['tsml_nonce']) || !wp_verify_nonce($_POST['tsml_nonce'], $tsml_nonce)) {
-		echo 'Error: nonce value not set correctly. Email was not sent.';
+		_e('Error: nonce value not set correctly. Email was not sent.', '12-step-meeting-list');
 	} elseif (empty($tsml_feedback_addresses) || empty($name) || !is_email($email) || empty($message)) {
-		echo 'Error: required form value missing. Email was not sent.';
+		_e('Error: required form value missing. Email was not sent.', '12-step-meeting-list');
 	} else {
 		//send HTML email
 		add_filter('wp_mail_content_type', 'tsml_email_content_type_html');
 		if (wp_mail($tsml_feedback_addresses, $subject, $message, $headers)) {
-			echo 'Thank you for your feedback.';
+			_e('Thank you for your feedback.', '12-step-meeting-list');
 		} else {
 			global $phpmailer;
 			if (!empty($phpmailer->ErrorInfo)) {
-				echo 'Error: ' . $phpmailer->ErrorInfo;
+				printf(__('Error: %s', '12-step-meeting-list'), $phpmailer->ErrorInfo);
 			} else {
-				echo 'An error occurred while sending email!';
+				_e('An error occurred while sending email!', '12-step-meeting-list');
 			}
 		}
 		remove_filter('wp_mail_content_type', 'tsml_email_content_type_html');
@@ -474,10 +474,10 @@ function tsml_ajax_import() {
 		'counts'		=> compact('meetings', 'locations', 'regions', 'groups'),
 		'geocoded'		=> $geocoded,
 		'descriptions'	=> array(
-			'meetings'		=> sprintf(_n('%s meeting', '%s meetings', $meetings), number_format_i18n($meetings)),
-			'locations'		=> sprintf(_n('%s location', '%s locations', $locations), number_format_i18n($locations)),
-			'groups'		=> sprintf(_n('%s group', '%s groups', $groups), number_format_i18n($groups)),
-			'regions'		=> sprintf(_n('%s region', '%s regions', $regions), number_format_i18n($regions)),
+			'meetings'		=> sprintf(_n('%s meeting', '%s meetings', $meetings, '12-step-meeting-list'), number_format_i18n($meetings)),
+			'locations'		=> sprintf(_n('%s location', '%s locations', $locations, '12-step-meeting-list'), number_format_i18n($locations)),
+			'groups'		=> sprintf(_n('%s group', '%s groups', $groups, '12-step-meeting-list'), number_format_i18n($groups)),
+			'regions'		=> sprintf(_n('%s region', '%s regions', $regions, '12-step-meeting-list'), number_format_i18n($regions)),
 		),
 	));
 }

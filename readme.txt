@@ -138,6 +138,18 @@ Add this to your functions.php.
 
 	$tsml_street_only = false;
 
+= How can I have the plugin reformat the meeting list on the fly while importing it? =
+To uppercase the location of each meeting, for example, add this to your functions.php.
+	if (! function_exists('tsml_import_reformat')) {
+		function tsml_import_reformat ($meetings) {
+			// element 4 of each CSV row is the meeting location (count starting with 0)
+			foreach ($meetings as &$meeting) {
+				$meeting[4] = strtoupper($meeting[4]);
+			}
+			return $meetings;
+		}
+	}
+
 = The dropdowns aren't opening! =
 Most likely, this is your theme also uses Bootstrap, so it is being included twice. Add the following to your theme so that the plugin's version is removed.
 

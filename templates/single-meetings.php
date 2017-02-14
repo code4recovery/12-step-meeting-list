@@ -23,7 +23,8 @@ $meeting = tsml_get_meeting();
 						<ul class="list-group">
 							<li class="list-group-item">
 								<?php echo tsml_format_day_and_time($meeting->day, $meeting->time)?>
-								<?php if (!empty($meeting->end_time)) echo _e(' to ', '12-step-meeting-list') . tsml_format_time($meeting->end_time)?>
+								/* translators: until */
+								<?php if (!empty($meeting->end_time)) echo __(' to ', '12-step-meeting-list'), tsml_format_time($meeting->end_time)?>
 							</li>
 							<a href="<?php echo $meeting->directions?>" class="list-group-item">
 								<h4><?php echo $meeting->location?></h4>
@@ -33,7 +34,7 @@ $meeting = tsml_get_meeting();
 								$other_meetings = count($meeting->location_meetings) - 1;
 								echo tsml_link(
 									get_permalink($meeting->post_parent),
-										sprintf(_n('%d other meeting at this location', '%d other meetings at this location', $other_meetings),
+										sprintf(_n('%d other meeting at this location', '%d other meetings at this location', $other_meetings, '12-step-meeting-list'),
 										$other_meetings
 									), 'tsml_meeting', 'list-group-item');
 							}
