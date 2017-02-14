@@ -16,6 +16,7 @@ elixir(function(mix) {
 	.scripts([
 		'./node_modules/mark.js/dist/jquery.mark.js',
 		'./node_modules/typeahead.js/dist/typeahead.bundle.js',
+		'./node_modules/bootstrap-sass/assets/javascripts/bootstrap/dropdown.js',
 		'./assets/src/public.js'
 	], './assets/js/public.min.js');
 });

@@ -1,6 +1,7 @@
 {
   "private": true,
   "devDependencies": {
+    "bootstrap-sass": "^3.3.7",
     "gulp": "^3.9.1",
     "laravel-elixir": "^6.0.0-9",
     "mark.js": "github:julmot/mark.js",

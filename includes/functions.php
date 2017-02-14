@@ -45,9 +45,9 @@ function tsml_assets() {
 	
 	if (is_admin()) {
 		//dashboard page assets
-		wp_enqueue_style('tsml_admin_css', plugins_url('../assets/css/admin.min.css', __FILE__), array(), TSML_VERSION);
-		wp_enqueue_script('tsml_admin_js', plugins_url('../assets/js/admin.min.js', __FILE__), array('jquery'), TSML_VERSION, true);
-		wp_localize_script('tsml_admin_js', 'myAjax', array(
+		wp_enqueue_style('tsml_admin', plugins_url('../assets/css/admin.min.css', __FILE__), array(), TSML_VERSION);
+		wp_enqueue_script('tsml_admin', plugins_url('../assets/js/admin.min.js', __FILE__), array('jquery'), TSML_VERSION, true);
+		wp_localize_script('tsml_admin', 'myAjax', array(
 			'ajaxurl' => admin_url('admin-ajax.php'),
 			'language' => current(explode('-', get_bloginfo('language'))),
 			'google_api_key' => $tsml_google_api_key,
@@ -55,10 +55,10 @@ function tsml_assets() {
 		));
 	} else {
 		//public page assets
-		wp_enqueue_style('bootstrap_css', plugins_url('../assets/css/bootstrap.min.css', __FILE__), array(), TSML_VERSION);
-		wp_enqueue_script('bootstrap_js', plugins_url('../assets/js/bootstrap.min.js', __FILE__), array('jquery'), TSML_VERSION, true);
-		wp_enqueue_script('tsml_public_js', plugins_url('../assets/js/public.min.js', __FILE__), array('jquery'), TSML_VERSION, true);
-		wp_localize_script('tsml_public_js', 'myAjax', array(
+		wp_enqueue_style('tsml_public', plugins_url('../assets/css/public.min.css', __FILE__), array(), TSML_VERSION);
+		wp_enqueue_script('validate_js', plugins_url('../assets/js/jquery.validate.min.js', __FILE__), array('jquery'), TSML_VERSION, true);
+		wp_enqueue_script('tsml_public', plugins_url('../assets/js/public.min.js', __FILE__), array('jquery'), TSML_VERSION, true);
+		wp_localize_script('tsml_public', 'myAjax', array(
 			'ajaxurl' => admin_url('admin-ajax.php'),
 			'days' => array(
 				__('Sunday', '12-step-meeting-list'),
@@ -75,8 +75,6 @@ function tsml_assets() {
 			'street_only' => $tsml_street_only,
 			'types' => $tsml_types[$tsml_program],
 		));
-		wp_enqueue_style('tsml_public_css', plugins_url('../assets/css/public.min.css', __FILE__), array(), TSML_VERSION);
-		wp_enqueue_script('validate_js', plugins_url('../assets/js/jquery.validate.min.js', __FILE__), array('jquery'), TSML_VERSION, true);
 	}
 }
 

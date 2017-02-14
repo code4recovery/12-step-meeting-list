@@ -1,15 +1,13 @@
 /*
 	Javascript for Meetings Archive, Single Meeting, and Single Location pages
-	1) jQuery stuff
-		a) functions
-		b) procedural logic
-		c) event handlers
-	2) Google Maps stuff
-		a) procedural logic
-		b) functions that must run outside jQuery
+	a) functions
+	b) procedural logic
+	c) event handlers
 */
 
 jQuery(function($){
+	
+	//a) functions
 	
 	//run search (triggered by dropdown toggle or form submit)
 	function doSearch() {
@@ -500,10 +498,13 @@ jQuery(function($){
 		}
 	}
 
-	//1b) procedural logic
+	//b) procedural logic
 	
 	//show/hide upcoming menu option
 	toggleUpcoming();
+
+	//dropdownify dropdowns (manually, to avoid conflicts)
+	$('.tsml-dropdown-toggle').dropdown();
 	
 	//globals
 	var searchMarker;
@@ -588,8 +589,8 @@ jQuery(function($){
 		doSearch();
 	}
 
-	//1c) jQuery event handlers
-
+	//c) jQuery event handlers
+	
 	//single meeting page feedback form
 	$('#meeting #feedback').on('click', 'a[href="#feedback"]', function(e){
 		e.preventDefault();

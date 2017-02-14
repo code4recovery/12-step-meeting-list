@@ -7,8 +7,8 @@ get_header();
 
 //define search dropdown options
 $modes = array(
-	'search' => array('title' => __('By Keyword', '12-step-meeting-list'), 'icon' => 'glyphicon glyphicon-search'),
-	'location' => array('title' => __('By Distance', '12-step-meeting-list'), 'icon' => 'glyphicon glyphicon-map-marker'),
+	'search' => array('title' => __('Search', '12-step-meeting-list'), 'icon' => 'glyphicon glyphicon-search'),
+	'location' => array('title' => __('Near Location', '12-step-meeting-list'), 'icon' => 'glyphicon glyphicon-map-marker'),
 );
 //proximity only enabled over SSL
 if (is_ssl()) $modes['me'] = array('title' => __('Near Me', '12-step-meeting-list'), 'icon' => 'glyphicon glyphicon-user');
@@ -105,193 +105,195 @@ class Walker_Regions_Dropdown extends Walker_Category {
 }
 
 ?>
-<div id="meetings" data-view="<?php echo $view?>" data-mode="<?php echo $mode?>" class="container<?php if (!count($meetings)) {?> empty<?php }?>" role="main">
-	<div class="row controls hidden-print">
-		<div class="col-sm-6 col-md-2">
-			<form id="search" role="search" action=".">
-				<div class="input-group">
-					<input type="search" name="query" class="form-control" value="<?php echo $query?>" placeholder="<?php echo $mode_label?>" aria-label="Search" <?php echo ($mode == 'me') ? 'disabled' : 'autofocus'?>>
-					<div class="input-group-btn" id="mode">
-						<button class="btn btn-default dropdown-toggle" data-toggle="dropdown" type="button">
-							<i class="<?php echo $modes[$mode]['icon']?>"></i>
-							<span class="caret"></span>
-						</button>
-						<ul class="dropdown-menu dropdown-menu-right">
-							<?php foreach ($modes as $key => $value) {?>
-							<li class="<?php echo $key; if ($mode == $key) echo ' active';?>"><a data-id="<?php echo $key?>"><?php echo $value['title']?></a></li>
-							<?php }?>
-						</ul>
+<div id="tsml">
+	<div id="meetings" data-view="<?php echo $view?>" data-mode="<?php echo $mode?>" class="container<?php if (!count($meetings)) {?> empty<?php }?>" role="main">
+		<div class="row controls hidden-print">
+			<div class="col-sm-6 col-md-2">
+				<form id="search" role="search" action=".">
+					<div class="input-group">
+						<input type="search" name="query" class="form-control" value="<?php echo $query?>" placeholder="<?php echo $mode_label?>" aria-label="Search" <?php echo ($mode == 'me') ? 'disabled' : 'autofocus'?>>
+						<div class="input-group-btn" id="mode">
+							<button class="btn btn-default tsml-dropdown-toggle" data-toggle="dropdown" type="button">
+								<i class="<?php echo $modes[$mode]['icon']?>"></i>
+								<span class="caret"></span>
+							</button>
+							<ul class="dropdown-menu dropdown-menu-right">
+								<?php foreach ($modes as $key => $value) {?>
+								<li class="<?php echo $key; if ($mode == $key) echo ' active';?>"><a data-id="<?php echo $key?>"><?php echo $value['title']?></a></li>
+								<?php }?>
+							</ul>
+						</div>
 					</div>
+					<input type="submit">
+				</form>
+			</div>
+			<div class="col-sm-6 col-md-2 col-md-push-8">
+				<div class="btn-group btn-group-justified" id="action">
+					<a class="btn btn-default toggle-view<?php if ($view == 'list') {?> active<?php }?>" data-id="list" role="button">
+						<?php _e('List', '12-step-meeting-list')?>
+					</a>
+					<a class="btn btn-default toggle-view<?php if ($view == 'map') {?> active<?php }?>" data-id="map" role="button">
+						<?php _e('Map', '12-step-meeting-list')?>
+					</a>
 				</div>
-				<input type="submit">
-			</form>
-		</div>
-		<div class="col-sm-6 col-md-2 col-md-push-8">
-			<div class="btn-group btn-group-justified" id="action">
-				<a class="btn btn-default toggle-view<?php if ($view == 'list') {?> active<?php }?>" data-id="list" role="button">
-					<?php _e('List', '12-step-meeting-list')?>
-				</a>
-				<a class="btn btn-default toggle-view<?php if ($view == 'map') {?> active<?php }?>" data-id="map" role="button">
-					<?php _e('Map', '12-step-meeting-list')?>
-				</a>
 			</div>
-		</div>
-		<div class="col-sm-6 col-md-2 col-md-pull-2">
-			<div class="dropdown" id="region">
-				<a data-toggle="dropdown" class="btn btn-default btn-block" role="button" aria-haspopup="true" aria-expanded="false">
-					<span class="selected"><?php echo $region_label?></span>
-					<span class="caret"></span>
-				</a>
-				<ul class="dropdown-menu" role="menu">
-					<li<?php if (empty($region)) echo ' class="active"'?>><a><?php echo $region_default?></a></li>
-					<li class="divider"></li>
-					<?php wp_list_categories(array(
-						'taxonomy' => 'tsml_region',
-						'hierarchical' => true,
-						'orderby' => 'name',
-						'title_li' => null,
-						'hide_empty' => false,
-						'walker' => new Walker_Regions_Dropdown,
-						'value' => $region,
-					))?>
-				</ul>
-			</div>
-			<div class="dropdown" id="distance">
-				<a data-toggle="dropdown" class="btn btn-default btn-block" role="button" aria-haspopup="true" aria-expanded="false">
-					<span class="selected"><?php echo $distance_label?></span>
-					<span class="caret"></span>
-				</a>
-				<ul class="dropdown-menu" role="menu">
-					<?php
-					foreach ($distances as $key => $value) {
-						echo '<li' . ($key == $distance ? ' class="active"' : '') . '><a data-id="' . $key . '">' . $value . '</a></li>';
-					}?>
-				</ul>
-			</div>
-		</div>
-		<div class="col-sm-6 col-md-2 col-md-pull-2">
-			<div class="dropdown" id="day">
-				<a data-toggle="dropdown" class="btn btn-default btn-block" role="button" aria-haspopup="true" aria-expanded="false">
-					<span class="selected"><?php echo $day_label?></span>
-					<span class="caret"></span>
-				</a>
-				<ul class="dropdown-menu" role="menu">
-					<li<?php if ($day === null) echo ' class="active"'?>><a><?php echo $day_default?></a></li>
-					<li class="divider"></li>
-					<?php foreach ($tsml_days as $key=>$value) {?>
-					<li<?php if (intval($key) === $day) echo ' class="active"'?>><a data-id="<?php echo $key?>"><?php echo $value?></a></li>
-					<?php }?>
-				</ul>
-			</div>
-		</div>
-		<div class="col-sm-6 col-md-2 col-md-pull-2">
-			<div class="dropdown" id="time">
-				<a data-toggle="dropdown" class="btn btn-default btn-block" role="button" aria-haspopup="true" aria-expanded="false">
-					<span class="selected"><?php echo $time_label?></span>
-					<span class="caret"></span>
-				</a>
-				<ul class="dropdown-menu" role="menu">
-					<li<?php if (empty($time)) echo ' class="active"'?>><a><?php echo $time_default?></a></li>
-					<li class="divider upcoming"></li>
-					<li class="upcoming<?php if ($time == 'upcoming') echo ' active"'?>"><a data-id="upcoming"><?php esc_html_e('Upcoming', '12-step-meeting-list')?></a></li>
-					<li class="divider"></li>
-					<?php foreach ($times as $key=>$value) {?>
-					<li<?php if ($key === $time) echo ' class="active"'?>><a data-id="<?php echo $key?>"><?php echo $value?></a></li>
-					<?php }?>
-				</ul>
-			</div>
-		</div>
-		<div class="col-sm-6 col-md-2 col-md-pull-2">
-			<?php if (count($tsml_types_in_use)) {?>
-			<div class="dropdown" id="type">
-				<a data-toggle="dropdown" class="btn btn-default btn-block" role="button" aria-haspopup="true" aria-expanded="false">
-					<span class="selected"><?php echo $type_label?></span>
-					<span class="caret"></span>
-				</a>
-				<ul class="dropdown-menu" role="menu">
-					<li<?php if (empty($type)) echo ' class="active"'?>><a><?php echo $type_default?></a></li>
-					<li class="divider"></li>
-					<?php 
-					$types_to_list = array_intersect_key($tsml_types[$tsml_program], array_flip($tsml_types_in_use));
-					foreach ($types_to_list as $key=>$thistype) {?>
-					<li<?php if ($key == $type) echo ' class="active"'?>><a data-id="<?php echo $key?>"><?php echo $thistype?></a></li>
-					<?php } ?>
-				</ul>
-			</div>
-			<?php }?>
-		</div>
-	</div>
-	<div class="row results">
-		<div class="col-xs-12">
-			<div id="alert" class="alert alert-warning<?php if (empty($message)) {?> hidden<?php }?>">
-				<?php echo $message?>
-			</div>
-			
-			<div id="map"></div>
-			
-			<div id="table-wrapper">
-				<table class="table table-striped">
-					<thead class="hidden-print">
-						<th class="time" data-sort="asc"><?php _e('Time', '12-step-meeting-list')?></th>
-						<th class="distance"><?php _e('Distance', '12-step-meeting-list')?></th>
-						<th class="name"><?php _e('Meeting', '12-step-meeting-list')?></th>
-						<th class="location"><?php _e('Location', '12-step-meeting-list')?></th>
-						<th class="address"><?php _e('Address', '12-step-meeting-list')?></th>
-						<th class="region"><?php _e('Region', '12-step-meeting-list')?></th>
-						<th class="types"><?php _e('Types', '12-step-meeting-list')?></th>
-					</thead>
-					<tbody id="meetings_tbody">
+			<div class="col-sm-6 col-md-2 col-md-pull-2">
+				<div class="dropdown" id="region">
+					<a class="btn btn-default btn-block tsml-dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
+						<span class="selected"><?php echo $region_label?></span>
+						<span class="caret"></span>
+					</a>
+					<ul class="dropdown-menu" role="menu">
+						<li<?php if (empty($region)) echo ' class="active"'?>><a><?php echo $region_default?></a></li>
+						<li class="divider"></li>
+						<?php wp_list_categories(array(
+							'taxonomy' => 'tsml_region',
+							'hierarchical' => true,
+							'orderby' => 'name',
+							'title_li' => null,
+							'hide_empty' => false,
+							'walker' => new Walker_Regions_Dropdown,
+							'value' => $region,
+						))?>
+					</ul>
+				</div>
+				<div class="dropdown" id="distance">
+					<a class="btn btn-default btn-block tsml-dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
+						<span class="selected"><?php echo $distance_label?></span>
+						<span class="caret"></span>
+					</a>
+					<ul class="dropdown-menu" role="menu">
 						<?php
-						foreach ($meetings as $meeting) {
-							$meeting['name'] = htmlentities($meeting['name'], ENT_QUOTES);
-							$meeting['location'] = htmlentities($meeting['location'], ENT_QUOTES);
-							$meeting['formatted_address'] = htmlentities($meeting['formatted_address'], ENT_QUOTES);
-							$meeting['region'] = (!empty($meeting['sub_region'])) ? htmlentities($meeting['sub_region'], ENT_QUOTES) : htmlentities($meeting['region'], ENT_QUOTES);
-							$meeting['link'] = tsml_link($meeting['url'], tsml_format_name($meeting['name'], $meeting['types']), 'post_type');
-							
-							if (!isset($locations[$meeting['location_id']])) {
-								$locations[$meeting['location_id']] = array(
-									'name' => $meeting['location'],
-									'latitude' => $meeting['latitude'] - 0,
-									'longitude' => $meeting['longitude'] - 0,
-									'url' => $meeting['location_url'], //can't use link here, unfortunately
-									'formatted_address' => $meeting['formatted_address'],
-									'meetings' => array(),
-								);
-							}
-									
-							$locations[$meeting['location_id']]['meetings'][] = array(
-								'time'=>$meeting['time_formatted'],
-								'day'=>$meeting['day'],
-								'name'=>$meeting['name'],
-								'url'=>$meeting['url'], //can't use link here, unfortunately
-								'types'=>$meeting['types'],
-							);
-							
-							$sort_time = $meeting['day'] . '-' . ($meeting['time'] == '00:00' ? '23:59' : $meeting['time']);
-							?>
-						<tr>
-							<td class="time" data-sort="<?php echo $sort_time . '-' . sanitize_title($meeting['location'])?>"><span><?php 
-								if (($day === null) && !empty($meeting['time'])) {
-									echo tsml_format_day_and_time($meeting['day'], $meeting['time'], '</span><span>');
-								} else {
-									echo $meeting['time_formatted'];
-								}
-								?></span></td>
-							<td class="distance" data-sort="<?php echo $meeting['distance']?>"><?php echo $meeting['distance']?></td>
-							<td class="name" data-sort="<?php echo sanitize_title($meeting['name']) . '-' . $sort_time?>">
-								<?php echo $meeting['link']?>
-							</td>
-							<td class="location" data-sort="<?php echo sanitize_title($meeting['location']) . '-' . $sort_time?>">
-								<?php echo $meeting['location']?>
-							</td>
-							<td class="address" data-sort="<?php echo sanitize_title($meeting['formatted_address']) . '-' . $sort_time?>"><?php echo tsml_format_address($meeting['formatted_address'], $tsml_street_only)?></td>
-							<td class="region" data-sort="<?php echo sanitize_title($meeting['region']) . '-' . $sort_time?>"><?php echo $meeting['region']?></td>
-							<td class="types" data-sort="<?php echo sanitize_title(tsml_meeting_types($meeting['types'])) . '-' . $sort_time?>"><?php echo tsml_meeting_types($meeting['types'])?></td>
-						</tr>
+						foreach ($distances as $key => $value) {
+							echo '<li' . ($key == $distance ? ' class="active"' : '') . '><a data-id="' . $key . '">' . $value . '</a></li>';
+						}?>
+					</ul>
+				</div>
+			</div>
+			<div class="col-sm-6 col-md-2 col-md-pull-2">
+				<div class="dropdown" id="day">
+					<a class="btn btn-default btn-block tsml-dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
+						<span class="selected"><?php echo $day_label?></span>
+						<span class="caret"></span>
+					</a>
+					<ul class="dropdown-menu" role="menu">
+						<li<?php if ($day === null) echo ' class="active"'?>><a><?php echo $day_default?></a></li>
+						<li class="divider"></li>
+						<?php foreach ($tsml_days as $key=>$value) {?>
+						<li<?php if (intval($key) === $day) echo ' class="active"'?>><a data-id="<?php echo $key?>"><?php echo $value?></a></li>
 						<?php }?>
-					</tbody>
-				</table>
+					</ul>
+				</div>
+			</div>
+			<div class="col-sm-6 col-md-2 col-md-pull-2">
+				<div class="dropdown" id="time">
+					<a class="btn btn-default btn-block tsml-dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
+						<span class="selected"><?php echo $time_label?></span>
+						<span class="caret"></span>
+					</a>
+					<ul class="dropdown-menu" role="menu">
+						<li<?php if (empty($time)) echo ' class="active"'?>><a><?php echo $time_default?></a></li>
+						<li class="divider upcoming"></li>
+						<li class="upcoming<?php if ($time == 'upcoming') echo ' active"'?>"><a data-id="upcoming"><?php esc_html_e('Upcoming', '12-step-meeting-list')?></a></li>
+						<li class="divider"></li>
+						<?php foreach ($times as $key=>$value) {?>
+						<li<?php if ($key === $time) echo ' class="active"'?>><a data-id="<?php echo $key?>"><?php echo $value?></a></li>
+						<?php }?>
+					</ul>
+				</div>
+			</div>
+			<div class="col-sm-6 col-md-2 col-md-pull-2">
+				<?php if (count($tsml_types_in_use)) {?>
+				<div class="dropdown" id="type">
+					<a class="btn btn-default btn-block tsml-dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
+						<span class="selected"><?php echo $type_label?></span>
+						<span class="caret"></span>
+					</a>
+					<ul class="dropdown-menu" role="menu">
+						<li<?php if (empty($type)) echo ' class="active"'?>><a><?php echo $type_default?></a></li>
+						<li class="divider"></li>
+						<?php 
+						$types_to_list = array_intersect_key($tsml_types[$tsml_program], array_flip($tsml_types_in_use));
+						foreach ($types_to_list as $key=>$thistype) {?>
+						<li<?php if ($key == $type) echo ' class="active"'?>><a data-id="<?php echo $key?>"><?php echo $thistype?></a></li>
+						<?php } ?>
+					</ul>
+				</div>
+				<?php }?>
+			</div>
+		</div>
+		<div class="row results">
+			<div class="col-xs-12">
+				<div id="alert" class="alert alert-warning<?php if (empty($message)) {?> hidden<?php }?>">
+					<?php echo $message?>
+				</div>
+				
+				<div id="map"></div>
+				
+				<div id="table-wrapper">
+					<table class="table table-striped">
+						<thead class="hidden-print">
+							<th class="time" data-sort="asc"><?php _e('Time', '12-step-meeting-list')?></th>
+							<th class="distance"><?php _e('Distance', '12-step-meeting-list')?></th>
+							<th class="name"><?php _e('Meeting', '12-step-meeting-list')?></th>
+							<th class="location"><?php _e('Location', '12-step-meeting-list')?></th>
+							<th class="address"><?php _e('Address', '12-step-meeting-list')?></th>
+							<th class="region"><?php _e('Region', '12-step-meeting-list')?></th>
+							<th class="types"><?php _e('Types', '12-step-meeting-list')?></th>
+						</thead>
+						<tbody id="meetings_tbody">
+							<?php
+							foreach ($meetings as $meeting) {
+								$meeting['name'] = htmlentities($meeting['name'], ENT_QUOTES);
+								$meeting['location'] = htmlentities($meeting['location'], ENT_QUOTES);
+								$meeting['formatted_address'] = htmlentities($meeting['formatted_address'], ENT_QUOTES);
+								$meeting['region'] = (!empty($meeting['sub_region'])) ? htmlentities($meeting['sub_region'], ENT_QUOTES) : htmlentities($meeting['region'], ENT_QUOTES);
+								$meeting['link'] = tsml_link($meeting['url'], tsml_format_name($meeting['name'], $meeting['types']), 'post_type');
+								
+								if (!isset($locations[$meeting['location_id']])) {
+									$locations[$meeting['location_id']] = array(
+										'name' => $meeting['location'],
+										'latitude' => $meeting['latitude'] - 0,
+										'longitude' => $meeting['longitude'] - 0,
+										'url' => $meeting['location_url'], //can't use link here, unfortunately
+										'formatted_address' => $meeting['formatted_address'],
+										'meetings' => array(),
+									);
+								}
+										
+								$locations[$meeting['location_id']]['meetings'][] = array(
+									'time'=>$meeting['time_formatted'],
+									'day'=>$meeting['day'],
+									'name'=>$meeting['name'],
+									'url'=>$meeting['url'], //can't use link here, unfortunately
+									'types'=>$meeting['types'],
+								);
+								
+								$sort_time = $meeting['day'] . '-' . ($meeting['time'] == '00:00' ? '23:59' : $meeting['time']);
+								?>
+							<tr>
+								<td class="time" data-sort="<?php echo $sort_time . '-' . sanitize_title($meeting['location'])?>"><span><?php 
+									if (($day === null) && !empty($meeting['time'])) {
+										echo tsml_format_day_and_time($meeting['day'], $meeting['time'], '</span><span>');
+									} else {
+										echo $meeting['time_formatted'];
+									}
+									?></span></td>
+								<td class="distance" data-sort="<?php echo $meeting['distance']?>"><?php echo $meeting['distance']?></td>
+								<td class="name" data-sort="<?php echo sanitize_title($meeting['name']) . '-' . $sort_time?>">
+									<?php echo $meeting['link']?>
+								</td>
+								<td class="location" data-sort="<?php echo sanitize_title($meeting['location']) . '-' . $sort_time?>">
+									<?php echo $meeting['location']?>
+								</td>
+								<td class="address" data-sort="<?php echo sanitize_title($meeting['formatted_address']) . '-' . $sort_time?>"><?php echo tsml_format_address($meeting['formatted_address'], $tsml_street_only)?></td>
+								<td class="region" data-sort="<?php echo sanitize_title($meeting['region']) . '-' . $sort_time?>"><?php echo $meeting['region']?></td>
+								<td class="types" data-sort="<?php echo sanitize_title(tsml_meeting_types($meeting['types'])) . '-' . $sort_time?>"><?php echo tsml_meeting_types($meeting['types'])?></td>
+							</tr>
+							<?php }?>
+						</tbody>
+					</table>
+				</div>
 			</div>
 		</div>
 	</div>

@@ -3,7 +3,7 @@ Contributors: meetingguide, aasanjose
 Tags: meetings, aa, al-anon, na, 12-step, locations, groups
 Requires at least: 3.2
 Tested up to: 4.7
-Stable tag: 2.9.6
+Stable tag: 2.10
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -30,9 +30,10 @@ It was originally designed to maintain a list of AA meetings in Santa Clara Coun
 * [Greensboro, NC](http://nc23.org/meetings/)
 * [Joliet, IL](http://aadistrict51.org/meetings/)
 * [Kansas](https://ks-aa.org/meetings/)
+* [Long Beach, CA](https://hacoaa.org/meetings/)
 * [Maine and New Brunswick](http://csoaamaine.org/meetings/)
 * [Mesa, AZ](http://aamesaaz.org/meetings/)
-* [Miami, FL](http://aamiamidade.org/meetings)
+* [Miami, FL](https://aamiamidade.org/meetings)
 * [Minneapolis, MN](http://aaminneapolis.org/meetings/)
 * [Modesto, CA](http://wp.cviaa.org/meetings/)
 * [Naples, FL](http://aanaples.org/meetings/)
@@ -51,6 +52,7 @@ It was originally designed to maintain a list of AA meetings in Santa Clara Coun
 * [Tidewater Area, VA](http://www.tidewaterintergroup.org/meetings/)
 * [Toronto, Canada](https://aatoronto.org/meetings/)
 * [Tri Valley, CA](http://trivalleyaa.org/meetings/)
+* [Topeka, KS](http://aatopeka.org/meetings/)
 * [Tulsa, OK](http://district40aa.com/meetings)
 * [Vancouver, Canada](http://www.vancouveraa.ca/meetings/)
 * [Vienna, Austria](https://www.aavienna.com/meetings/)
@@ -150,14 +152,6 @@ To uppercase the location of each meeting, for example, add this to your functio
 		}
 	}
 
-= The dropdowns aren't opening! =
-Most likely, this is your theme also uses Bootstrap, so it is being included twice. Add the following to your theme so that the plugin's version is removed.
-
-	add_action('wp_enqueue_scripts', function(){
-		wp_dequeue_style('bootstrap_css');
-		wp_dequeue_script('bootstrap_js');
-	});
-
 = Where are my meetings listed? =
 Your meetings will be listed on their special WordPress Archive page. Where that is depends on your Permalinks setup. The easiest way to find the link is to go to the **Meetings > Import & Settings** page and look for the link under "Where's My Info?"
 
@@ -206,6 +200,10 @@ Also check out our [One Page Meeting List](https://github.com/meeting-guide/one-
 1. Edit location
 
 == Changelog ==
+
+= 2.10 =
+* Refactoring CSS and Javascript to reduce theme conflicts
+* More internationalization
 
 = 2.9.6 =
 * Mobile Safari now shows 'Search' button when searching
