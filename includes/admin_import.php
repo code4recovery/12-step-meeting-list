@@ -2,7 +2,7 @@
 	
 //import CSV file and handle settings
 function tmsl_import_page() {
-	global $wpdb, $tsml_types, $tsml_programs, $tsml_program, $tsml_nonce, $tsml_days, $tsml_feedback_addresses, $tsml_notification_addresses, $tsml_distance_units;
+	global $wpdb, $tsml_types, $tsml_programs, $tsml_program, $tsml_nonce, $tsml_days, $tsml_feedback_addresses, $tsml_notification_addresses, $tsml_distance_units, $tsml_archive_header;
 
 	$error = false;
 	
@@ -231,7 +231,14 @@ function tmsl_import_page() {
 		update_option('tsml_program', $tsml_program);
 		tsml_alert(__('Program setting updated.', '12-step-meeting-list'));
 	}
-		
+	
+	// set archives page header
+		if (!empty($_POST['tsml_archive_header_submit']) && isset($_POST['tsml_nonce']) && wp_verify_nonce($_POST['tsml_nonce'], $tsml_nonce)) {
+		$tsml_archive_header = ($_POST['tsml_archive_header']);
+		update_option('tsml_archive_header', $tsml_archive_header);
+		tsml_alert(__('Header content updated.', '12-step-meeting-list'));
+	}
+	
 	//change distance units
 	if (!empty($_POST['tsml_distance_units']) && isset($_POST['tsml_nonce']) && wp_verify_nonce($_POST['tsml_nonce'], $tsml_nonce)) {
 		$tsml_distance_units = ($_POST['tsml_distance_units'] == 'mi') ? 'mi' : 'km';
@@ -313,10 +320,27 @@ function tmsl_import_page() {
 					
 					<div class="postbox">
 						<div class="inside">
+							<h3><?php _e('Create Meeting List Page Header', '12-step-meeting-list')?></h3>
+							<p>Below, you may enter any text you would like to appear above the meeting list. HTML codes are accepted.</p>
+							<form method="post" action="edit.php?post_type=tsml_meeting&page=import">
+								<?php wp_nonce_field($tsml_nonce, 'tsml_nonce', false)?>
+								<div class="meta_form_row">
+									<label for="content">Header Content</label>
+									<textarea name="tsml_archive_header" id="content" placeholder="Example: Click &lt;a href=&quot;explain&quot;&gt;here&lt;/a&gt; for an explanation of the types of meetings."><?php 
+										$tsml_archive_header = get_option('tsml_archive_header', '');
+										echo (esc_html($tsml_archive_header));
+									?></textarea>
+								</div>
+								<p class="submit"><input type="submit" name="tsml_archive_header_submit" id="submit" class="button button-primary" value="Update Header Content"  /></p>
+							</form>
+						</div>
+					</div>
+					<div class="postbox">
+						<div class="inside">
 							<h3><?php _e('Import CSV', '12-step-meeting-list')?></h3>
 							<form method="post" action="edit.php?post_type=tsml_meeting&page=import" enctype="multipart/form-data">
 								<?php wp_nonce_field($tsml_nonce, 'tsml_nonce', false)?>
-								<input type="file" name="tsml_import"></textarea>
+								<input type="file" name="tsml_import">
 								<p>
 									<?php _e('When importing...', '12-step-meeting-list')?><br>
 									<?php if (empty($_POST['delete'])) $_POST['delete'] = 'nothing'?>
