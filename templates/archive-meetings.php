@@ -106,6 +106,9 @@ class Walker_Regions_Dropdown extends Walker_Category {
 
 ?>
 <div id="tsml">
+	<div id="tsml_archive_header" class="tsml_archive_header">
+		<?php echo ($tsml_archive_header); ?>
+	</div>
 	<div id="meetings" data-view="<?php echo $view?>" data-mode="<?php echo $mode?>" class="container<?php if (!count($meetings)) {?> empty<?php }?>" role="main">
 		<div class="row controls hidden-print">
 			<div class="col-sm-6 col-md-2">

@@ -34,6 +34,8 @@ $tsml_defaults = array(
 
 $tsml_distance_units = get_option('tsml_distance_units', 'mi');
 
+$tsml_archive_header = get_option('tsml_archive_header', '');
+
 $tsml_feedback_addresses = get_option('tsml_feedback_addresses', array());
 
 $tsml_google_api_key = 'AIzaSyCC3p6PSf6iQbXi-Itwn9C24_FhkbDUkdg'; //might have to make this user-specific

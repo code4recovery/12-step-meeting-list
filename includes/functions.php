@@ -38,7 +38,7 @@ function tsml_alert_messages() {
 //function: enqueue assets for public or admin page
 //used: in templates and on admin_edit.php
 function tsml_assets() {
-	global $tsml_street_only, $tsml_types, $tsml_strings, $tsml_program, $tsml_google_api_key, $tsml_google_overrides, $tsml_distance_units, $tsml_defaults;
+	global $tsml_street_only, $tsml_types, $tsml_strings, $tsml_program, $tsml_google_api_key, $tsml_google_overrides, $tsml_distance_units, $tsml_defaults, $tsml_archive_header;
 		
 	//google maps api needed for maps and address verification, can't be onboarded
 	wp_enqueue_script('google_maps_api', '//maps.googleapis.com/maps/api/js?key=' . $tsml_google_api_key);
@@ -74,6 +74,7 @@ function tsml_assets() {
 			'strings' => $tsml_strings,
 			'street_only' => $tsml_street_only,
 			'types' => $tsml_types[$tsml_program],
+			'archive_header' => $tsml_archive_header,
 		));
 	}
 }
