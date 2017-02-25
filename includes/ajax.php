@@ -262,7 +262,7 @@ function tsml_ajax_feedback() {
 //used by admin_import.php
 add_action('wp_ajax_tsml_import', 'tsml_ajax_import');
 function tsml_ajax_import() {
-	global $tsml_google_api_key, $tsml_google_overrides, $tsml_days;
+	global $tsml_google_api_key, $tsml_google_overrides, $tsml_days, $tsml_language;
 	
 	$meetings	= get_option('tsml_import_buffer', array());
 	$addresses	= get_option('tsml_addresses', array());
@@ -319,7 +319,12 @@ function tsml_ajax_import() {
 		} else {
 			
 			//request from google
-			curl_setopt($ch, CURLOPT_URL, 'https://maps.googleapis.com/maps/api/geocode/json?key=' . $tsml_google_api_key . '&address=' . urlencode($meeting['formatted_address']));
+			curl_setopt($ch, CURLOPT_URL, 'https://maps.googleapis.com/maps/api/geocode/json?' . http_build_query(array(
+				'key' => $tsml_google_api_key,
+				'address' => $meeting['formatted_address'],
+				'language' => $tsml_language,
+			)));
+
 			$result = curl_exec($ch);
 
 			$geocoded++;

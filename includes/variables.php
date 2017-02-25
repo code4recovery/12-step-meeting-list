@@ -4,8 +4,6 @@ don't make changes! it'll make staying updated much harder.
 for updates / questions, please contact wordpress@meetingguide.org
 */
 
-$tsml_alerts = array();
-
 $tsml_days	= array(
 	0 => array(0=>__('Sunday', '12-step-meeting-list'), 1=>__('Monday', '12-step-meeting-list'), 2=>__('Tuesday', '12-step-meeting-list'), 3=>__('Wednesday', '12-step-meeting-list'), 4=>__('Thursday', '12-step-meeting-list'), 5=>__('Friday', '12-step-meeting-list'), 6=>__('Saturday', '12-step-meeting-list')),
 	1 => array(1=>__('Monday', '12-step-meeting-list'), 2=>__('Tuesday', '12-step-meeting-list'), 3=>__('Wednesday', '12-step-meeting-list'), 4=>__('Thursday', '12-step-meeting-list'), 5=>__('Friday', '12-step-meeting-list'), 6=>__('Saturday', '12-step-meeting-list'), 0=>__('Sunday', '12-step-meeting-list')),
@@ -113,6 +111,8 @@ $tsml_google_overrides = array(
 		'longitude'			=> '-122.192971',
 	),
 );
+
+$tsml_language = substr(get_bloginfo('language'), 0, 2);
 
 $tsml_nonce = plugin_basename(__FILE__);
 

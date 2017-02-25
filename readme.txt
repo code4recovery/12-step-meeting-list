@@ -201,6 +201,11 @@ Also check out our [One Page Meeting List](https://github.com/meeting-guide/one-
 
 == Changelog ==
 
+= 2.10.1 =
+* Fixing admin notices and email entry buttons on import page
+* Fixing search by region
+* Sending site language to Geocoding API
+
 = 2.10 =
 * Refactoring CSS and Javascript to reduce theme conflicts
 * More internationalization

@@ -303,20 +303,6 @@ function tmsl_import_page() {
 		}
 	}
 	?>
-<style type="text/css">
-#want-user-feedback .inside {
-	padding-bottom: 0;
-}
-#want-user-feedback.postbox.admin_contacts {
-	margin-bottom: 0;
-}
-#get-notified .inside {
-	padding-bottom: 0;
-}
-#get-notified.postbox.admin_contacts {
-	margin-bottom: 0;
-}
-</style>
 	<div class="wrap">
 		<h2><?php _e('Import & Settings', '12-step-meeting-list')?></h2>
 		
@@ -352,7 +338,7 @@ function tmsl_import_page() {
 							</form>
 
 							<h4><?php _e('Spreadsheet Specs', '12-step-meeting-list')?></h4>
-							<p><a href="<?php echo plugin_dir_url(__FILE__) . '../template.csv'?>"><?php _e('Here is a sample file</a> you can use as a template. Save it as a comma-delimited CSV before uploading it. The header row should kept in place.', '12-step-meeting-list')?></p>
+							<p><a href="<?php echo plugin_dir_url(__FILE__) . '../template.csv'?>" class="button button-large"><span class="dashicons dashicons-media-spreadsheet"></span><?php _e('Sample import template', '12-step-meeting-list')?></a></p>
 							<ul class="ul-disc">
 								<?php _e('<li><strong>Time</strong>, if present, should be in a standard date format such as 6:00 AM or 06:00. Non-standard or empty dates will be imported as \'by appointment.\'</li>', '12-step-meeting-list') ?>
 								<?php _e('<li><strong>End Time</strong>, if present, should be in a standard date format such as 6:00 AM or 06:00.</li>', '12-step-meeting-list') ?>
@@ -473,10 +459,6 @@ function tmsl_import_page() {
 								<?php }?>
 							</table>
 							<?php }?>
-						</div>
-					</div>
-					<div class="postbox" id="add-feedback-address">
-						<div class="inside">
 							<form method="post" action="edit.php?post_type=tsml_meeting&page=import">
 								<?php wp_nonce_field($tsml_nonce, 'tsml_nonce', false)?>
 								<input type="email" name="tsml_add_feedback_address" placeholder="email@example.org">
@@ -504,10 +486,6 @@ function tmsl_import_page() {
 								<?php }?>
 							</table>
 							<?php }?>
-						</div>
-					</div>
-					<div class="postbox" id="add-notification-address">
-						<div class="inside">
 							<form method="post" action="edit.php?post_type=tsml_meeting&page=import">
 								<?php wp_nonce_field($tsml_nonce, 'tsml_nonce', false)?>
 								<input type="email" name="tsml_add_notification_address" placeholder="email@example.org">

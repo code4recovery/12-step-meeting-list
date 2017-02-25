@@ -28,17 +28,17 @@ jQuery(function($){
 		//get current query string for history and appending to links
 		var query_string = {};
 		query_string['tsml-day'] = data.day ? data.day : 'any';
-		if ((data.mode != 'search') && (data.distance != myAjax.defaults.distance)) {
+		if ((data.mode != 'search') && (data.distance != tsml.defaults.distance)) {
 			query_string['tsml-distance'] = data.distance;
 		}
-		if (data.mode && (data.mode != myAjax.defaults.mode)) query_string['tsml-mode'] = data.mode;
-		if (data.query && (data.query != myAjax.defaults.query)) query_string['tsml-query'] = data.query;
-		if ((data.mode == 'search') && (data.region != myAjax.defaults.region)) {
+		if (data.mode && (data.mode != tsml.defaults.mode)) query_string['tsml-mode'] = data.mode;
+		if (data.query && (data.query != tsml.defaults.query)) query_string['tsml-query'] = data.query;
+		if ((data.mode == 'search') && (data.region != tsml.defaults.region)) {
 			query_string['tsml-region'] = data.region;
 		}
-		if (data.time && (data.time != myAjax.defaults.time)) query_string['tsml-time'] = data.time;
-		if (data.type && (data.type != myAjax.defaults.type)) query_string['tsml-type'] = data.type;
-		if (data.view != myAjax.defaults.view) query_string['tsml-view'] = data.view;
+		if (data.time && (data.time != tsml.defaults.time)) query_string['tsml-time'] = data.time;
+		if (data.type && (data.type != tsml.defaults.type)) query_string['tsml-type'] = data.type;
+		if (data.view != tsml.defaults.view) query_string['tsml-view'] = data.view;
 		query_string = $.param(query_string);
 		
 		//save the query in the query string, if the browser is up to it
@@ -67,10 +67,11 @@ jQuery(function($){
 				//start spinner
 				$('#search button i').removeClass().addClass('glyphicon glyphicon-refresh spinning');
 
-				//geocode the address				
+				//geocode the address
 				$.getJSON('https://maps.googleapis.com/maps/api/geocode/json', { 
 					address: data.query, 
-					key: myAjax.google_api_key
+					key: tsml.google_api_key,
+					language: tsml.language,
 				}, function(geocoded_data) {
 					$('#search button i').removeClass().addClass('glyphicon glyphicon-map-marker');
 					if (geocoded_data.status == 'OK') {
@@ -152,9 +153,9 @@ jQuery(function($){
 	//actually get the meetings from the JSON resource and output them
 	function getMeetings(data) {
 		//request new meetings result
-		data.distance_units = myAjax.distance_units;
+		data.distance_units = tsml.distance_units;
 				
-		$.post(myAjax.ajaxurl, data, function(response){
+		$.post(tsml.ajaxurl, data, function(response){
 
 			if (!response.length) {
 
@@ -194,9 +195,9 @@ jQuery(function($){
 
 					//add gender designation
 					if ($.inArray('M', obj.types) != -1) {
-						obj.name += ' <small>' + myAjax.strings.men + '</small>';
+						obj.name += ' <small>' + tsml.strings.men + '</small>';
 					} else if ($.inArray('W', obj.types) != -1) {
-						obj.name += ' <small>' + myAjax.strings.women + '</small>';
+						obj.name += ' <small>' + tsml.strings.women + '</small>';
 					}
 
 					//save location info
@@ -224,18 +225,18 @@ jQuery(function($){
 
 					//decode types (for hidden type column)
 					for (var i = 0; i < obj.types.length; i++) {
-						obj.types[i] = myAjax.types[obj.types[i]];
+						obj.types[i] = tsml.types[obj.types[i]];
 					}
 					obj.types.sort();
 					obj.types = obj.types.join(', ');
 					
 					//add new table row
 					tbody.append('<tr>' + 
-						'<td class="time" data-sort="' + sort_time + '-' + sanitizeTitle(obj.location) + '"><span>' + (data.day || !obj.day ? obj.time_formatted : myAjax.days[obj.day] + '</span><span>' + obj.time_formatted) + '</span></td>' + 
-						'<td class="distance" data-sort="' + obj.distance + '">' + obj.distance + ' ' + myAjax.distance_units + '</td>' +
+						'<td class="time" data-sort="' + sort_time + '-' + sanitizeTitle(obj.location) + '"><span>' + (data.day || !obj.day ? obj.time_formatted : tsml.days[obj.day] + '</span><span>' + obj.time_formatted) + '</span></td>' + 
+						'<td class="distance" data-sort="' + obj.distance + '">' + obj.distance + ' ' + tsml.distance_units + '</td>' +
 						'<td class="name" data-sort="' + sanitizeTitle(obj.name) + '-' + sort_time + '">' + formatLink(obj.url, obj.name, 'post_type') + '</td>' + 
 						'<td class="location" data-sort="' + sanitizeTitle(obj.location) + '-' + sort_time + '">' + obj.location + '</td>' + 
-						'<td class="address" data-sort="' + sanitizeTitle(obj.formatted_address) + '-' + sort_time + '">' + formatAddress(obj.formatted_address, myAjax.street_only) + '</td>' + 
+						'<td class="address" data-sort="' + sanitizeTitle(obj.formatted_address) + '-' + sort_time + '">' + formatAddress(obj.formatted_address, tsml.street_only) + '</td>' + 
 						'<td class="region" data-sort="' + sanitizeTitle((obj.sub_region || obj.region || '')) + '-' + sort_time + '">' + (obj.sub_region || obj.region || '') + '</td>' + 
 						'<td class="types" data-sort="' + sanitizeTitle(obj.types) + '-' + sort_time + '">' + obj.types + '</td>' + 
 					'</tr>')
@@ -286,7 +287,7 @@ jQuery(function($){
 		if (typeof message_key == 'undefined') {
 			$('#alert').html('').addClass('hidden');
 		} else {
-			$('#alert').html(myAjax.strings[message_key]).removeClass('hidden');
+			$('#alert').html(tsml.strings[message_key]).removeClass('hidden');
 		}
 	}
 
@@ -327,7 +328,7 @@ jQuery(function($){
 					if (current_day != meeting.day) {
 						if (current_day) marker.content += '</dl>';
 						current_day = meeting.day;
-						if (typeof myAjax.days[current_day] !== 'undefined') marker.content += '<h5>' + myAjax.days[current_day] + '</h5>';
+						if (typeof tsml.days[current_day] !== 'undefined') marker.content += '<h5>' + tsml.days[current_day] + '</h5>';
 						marker.content += '<dl>';
 					}
 					marker.content += '<dt>' + meeting.time + '</dt><dd>' + formatLink(meeting.url, meeting.name, 'post_type') + '</dd>';
@@ -439,21 +440,21 @@ jQuery(function($){
 			display: 'value',
 			source: tsml_regions,
 			templates: {
-				header: '<h3>' + myAjax.strings.regions + '</h3>',
+				header: '<h3>' + tsml.strings.regions + '</h3>',
 			}
 		}, {
 			name: 'tsml_groups',
 			display: 'value',
 			source: tsml_groups,
 			templates: {
-				header: '<h3>' + myAjax.strings.groups + '</h3>',
+				header: '<h3>' + tsml.strings.groups + '</h3>',
 			}
 		}, {
 			name: 'tsml_locations',
 			display: 'value',
 			source: tsml_locations,
 			templates: {
-				header: '<h3>' + myAjax.strings.locations + '</h3>',
+				header: '<h3>' + tsml.strings.locations + '</h3>',
 			}
 		}).on('typeahead:selected', function($e, item){
 			if (item.type == 'region') {
@@ -557,7 +558,7 @@ jQuery(function($){
 		datumTokenizer: Bloodhound.tokenizers.obj.whitespace('value'),
 		queryTokenizer: Bloodhound.tokenizers.whitespace,
 		prefetch: {
-			url: myAjax.ajaxurl + '?action=tsml_regions',
+			url: tsml.ajaxurl + '?action=tsml_regions',
 			cache: false
 		}
 	});
@@ -565,7 +566,7 @@ jQuery(function($){
 		datumTokenizer: Bloodhound.tokenizers.obj.whitespace('value'),
 		queryTokenizer: Bloodhound.tokenizers.whitespace,
 		prefetch: {
-			url: myAjax.ajaxurl + '?action=tsml_groups',
+			url: tsml.ajaxurl + '?action=tsml_groups',
 			cache: false
 		}
 	});
@@ -573,7 +574,7 @@ jQuery(function($){
 		datumTokenizer: Bloodhound.tokenizers.obj.whitespace('value'),
 		queryTokenizer: Bloodhound.tokenizers.whitespace,
 		prefetch: {
-			url: myAjax.ajaxurl + '?action=tsml_locations',
+			url: tsml.ajaxurl + '?action=tsml_locations',
 			cache: false
 		}
 	});
@@ -614,11 +615,11 @@ jQuery(function($){
 			var $form = $(form),
 				$feedback = $form.closest('#feedback'), 
 				$alert = $feedback.find('.alert').first();
-			$.post(myAjax.ajaxurl, $form.serialize(), function(data) {
+			$.post(tsml.ajaxurl, $form.serialize(), function(data) {
 				$alert.removeClass('alert-danger').addClass('alert-warning').html(data);
 				$feedback.attr('class', 'confirm');
 			}).fail(function(response) {
-				$alert.removeClass('alert-warning').addClass('alert-danger').html(myAjax.strings.email_not_sent);
+				$alert.removeClass('alert-warning').addClass('alert-danger').html(tsml.strings.email_not_sent);
 				$feedback.attr('class', 'confirm');
 			});
 			return false;
@@ -728,7 +729,7 @@ jQuery(function($){
 		
 		//save the query in the query string, if the browser is up to it
 		if (history.pushState) {
-			if (action == myAjax.defaults.view) {
+			if (action == tsml.defaults.view) {
 				var url = updateQueryString('tsml-view');
 			} else {
 				var url = updateQueryString('tsml-view', action);

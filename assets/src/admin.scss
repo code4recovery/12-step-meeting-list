@@ -34,6 +34,13 @@ body {
 		
 		//meeting types legend
 		.postbox {
+			
+			a.button-large {
+				padding-top: 4px;
+				line-height: 1.6;
+				span { margin-right: 1px; }
+			}
+			
 			ul.types {
 				margin-top: 10px; overflow: auto;
 				-webkit-columns: 3 auto; -moz-columns: 3 auto; columns: 3 auto;

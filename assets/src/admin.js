@@ -3,7 +3,7 @@ jQuery(function($){
 	//recursively run import
 	function runImport() {
 
-		$.getJSON(myAjax.ajaxurl + '?action=tsml_import', function(data){
+		$.getJSON(tsml.ajaxurl + '?action=tsml_import', function(data){
 
 			//update progress bar
 			var $progress = $('body.tsml_meeting_page_import div#tsml_import_progress');
@@ -97,7 +97,7 @@ jQuery(function($){
 		datumTokenizer: Bloodhound.tokenizers.obj.whitespace('value'),
 		queryTokenizer: Bloodhound.tokenizers.whitespace,
 		prefetch: {
-			url: myAjax.ajaxurl + '?action=tsml_locations',
+			url: tsml.ajaxurl + '?action=tsml_locations',
 			cache: false
 		}
 	});
@@ -119,7 +119,7 @@ jQuery(function($){
 		datumTokenizer: Bloodhound.tokenizers.obj.whitespace('value'),
 		queryTokenizer: Bloodhound.tokenizers.whitespace,
 		prefetch: {
-			url: myAjax.ajaxurl + '?action=tsml_groups',
+			url: tsml.ajaxurl + '?action=tsml_groups',
 			ttl: 10
 		}
 	});
@@ -160,12 +160,16 @@ jQuery(function($){
 			return;
 		}
 
-		$.getJSON('https://maps.googleapis.com/maps/api/geocode/json', { address: val, key: myAjax.google_api_key }, function(data){
+		$.getJSON('https://maps.googleapis.com/maps/api/geocode/json', { 
+				address: val, 
+				key: tsml.google_api_key,
+				language: tsml.language
+			}, function(data){
 
 			//check status first, eg REQUEST_DENIED, ZERO_RESULTS
 			if (data.status != 'OK') return;
 						
-			var google_overrides = $.parseJSON(myAjax.google_overrides);
+			var google_overrides = $.parseJSON(tsml.google_overrides);
 			
 			//check if there is an override, because the Google Geocoding API is not always right
 			var address = (typeof google_overrides[data.results[0].formatted_address] == 'undefined') ? {
@@ -202,7 +206,7 @@ jQuery(function($){
 			}
 			
 			//check if location with same address is already in the system, populate form
-			$.getJSON(myAjax.ajaxurl + '?action=address', { formatted_address: address.formatted_address }, function(data){
+			$.getJSON(tsml.ajaxurl + '?action=address', { formatted_address: address.formatted_address }, function(data){
 				if (data) {
 					$('input[name=location]').val(data.location);
 					if (data.region != $('select[name=region]').val()) {

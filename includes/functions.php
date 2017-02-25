@@ -21,31 +21,13 @@ if (!function_exists('sanitize_text_area')) {
 //function:	add an admin screen update message
 //used:		tsml_import() and admin_types.php
 function tsml_alert($message, $type='notice notice-success') {
-	global $tsml_alerts;
-	echo '<div class="', $type, ' is-dismissible"><p>', $message, '</p></div>';
-	$tsml_alerts[] = compact('message', 'type');
+	echo '<div class="' . $type . ' is-dismissible"><p>' . $message . '</p></div>';
 }
-
-/*
- * disabling for now, because admin_notices fires before page loads, and tsml_alert fires after
-
-//function:	run through alert stack and output them all
-//used:		tsml_alert()
-function tsml_alert_messages() {
-	global $tsml_alerts;
-	foreach ($tsml_alerts as $alert) {
-		echo '<div class="' . $alert['type'] . '"><p>' . $alert['message'] . '</p></div>';
-	}
-}
-add_action('admin_notices', 'tsml_alert_messages');
-
- *
- */
 
 //function: enqueue assets for public or admin page
 //used: in templates and on admin_edit.php
 function tsml_assets() {
-	global $tsml_street_only, $tsml_types, $tsml_strings, $tsml_program, $tsml_google_api_key, $tsml_google_overrides, $tsml_distance_units, $tsml_defaults;
+	global $tsml_street_only, $tsml_types, $tsml_strings, $tsml_program, $tsml_google_api_key, $tsml_google_overrides, $tsml_distance_units, $tsml_defaults, $tsml_language;
 		
 	//google maps api needed for maps and address verification, can't be onboarded
 	wp_enqueue_script('google_maps_api', '//maps.googleapis.com/maps/api/js?key=' . $tsml_google_api_key);
@@ -54,9 +36,9 @@ function tsml_assets() {
 		//dashboard page assets
 		wp_enqueue_style('tsml_admin', plugins_url('../assets/css/admin.min.css', __FILE__), array(), TSML_VERSION);
 		wp_enqueue_script('tsml_admin', plugins_url('../assets/js/admin.min.js', __FILE__), array('jquery'), TSML_VERSION, true);
-		wp_localize_script('tsml_admin', 'myAjax', array(
+		wp_localize_script('tsml_admin', 'tsml', array(
 			'ajaxurl' => admin_url('admin-ajax.php'),
-			'language' => current(explode('-', get_bloginfo('language'))),
+			'language' => $tsml_language,
 			'google_api_key' => $tsml_google_api_key,
 			'google_overrides' => json_encode($tsml_google_overrides),
 		));
@@ -65,7 +47,7 @@ function tsml_assets() {
 		wp_enqueue_style('tsml_public', plugins_url('../assets/css/public.min.css', __FILE__), array(), TSML_VERSION);
 		wp_enqueue_script('validate_js', plugins_url('../assets/js/jquery.validate.min.js', __FILE__), array('jquery'), TSML_VERSION, true);
 		wp_enqueue_script('tsml_public', plugins_url('../assets/js/public.min.js', __FILE__), array('jquery'), TSML_VERSION, true);
-		wp_localize_script('tsml_public', 'myAjax', array(
+		wp_localize_script('tsml_public', 'tsml', array(
 			'ajaxurl' => admin_url('admin-ajax.php'),
 			'days' => array(
 				__('Sunday', '12-step-meeting-list'),
@@ -78,6 +60,7 @@ function tsml_assets() {
 			),
 			'defaults' => $tsml_defaults,
 			'distance_units' => $tsml_distance_units,
+			'language' => $tsml_language,
 			'strings' => $tsml_strings,
 			'street_only' => $tsml_street_only,
 			'types' => $tsml_types[$tsml_program],
@@ -627,24 +610,24 @@ function tsml_get_meetings($arguments=array()) {
 		
 		//first search actual meetings
 		$post_ids = array_merge($post_ids, get_posts(array(
-			'post_type'			=> 'tsml_meeting',
-			'numberposts'		=> -1,
-			'fields'			=> 'ids',
-			's'					=> $query,
+			'post_type'				=> 'tsml_meeting',
+			'numberposts'			=> -1,
+			'fields'					=> 'ids',
+			's'						=> $query,
 		)));
 		
 		//then add groups
 		if ($groups = get_posts(array(
 				'post_type'			=> 'tsml_group',
 				'numberposts'		=> -1,
-				'fields'			=> 'ids',
+				'fields'				=> 'ids',
 				's'					=> $query,
 			))) {
 			$post_ids = array_merge($post_ids, get_posts(array(
 				'post_type'			=> 'tsml_meeting',
 				'numberposts'		=> -1,
-				'fields'			=> 'ids',
-				'meta_query'		=> array(
+				'fields'				=> 'ids',
+				'meta_query'			=> array(
 					array(
 						'key'		=> 'group_id',
 						'compare'	=> 'IN',
@@ -660,43 +643,36 @@ function tsml_get_meetings($arguments=array()) {
 			get_posts(array(
 				'post_type'			=> 'tsml_location',
 				'numberposts'		=> -1,
-				'fields'			=> 'ids',
+				'fields'				=> 'ids',
 				's'					=> $query,
 			)),
 			//searching address
 			get_posts(array(
 				'post_type'			=> 'tsml_location',
 				'numberposts'		=> -1,
-				'fields'			=> 'ids',
-				'meta_query'		=> array(
+				'fields'				=> 'ids',
+				'meta_query'			=> array(
 					array(
 						'key'		=> 'formatted_address',
 						'value'		=> $query,
 						'compare'	=> 'LIKE',
 					),
 				),
-			))
-		);
-		
-		//... and also regions
-		if ($regions = get_terms('tsml_region', array(
-				'search' => $query, 
-				'fields' => 'ids', 
-				'hide_empty' => false
-			))) {
-			$parents = array_merge($parents, get_posts(array(
+			)),
+			//searching region
+			get_posts(array(
 				'post_type'			=> 'tsml_location',
 				'numberposts'		=> -1,
-				'fields'			=> 'ids',
-				'meta_query'		=> array(
+				'fields'				=> 'ids',
+				'tax_query'			=> array(
 					array(
-						'key'	=> 'region',
-						'compare' => 'IN',
-						'value'	=> $regions,
+						'taxonomy'	=> 'tsml_region',
+						'field'		=> 'name',
+						'terms'		=> $query,
 					),
 				),
-			)));
-		}
+			))
+		);
 		
 		if (count($parents)) {
 			$post_ids = array_merge($post_ids, get_posts(array(
