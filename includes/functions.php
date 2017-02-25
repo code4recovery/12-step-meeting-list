@@ -20,11 +20,14 @@ if (!function_exists('sanitize_text_area')) {
 
 //function:	add an admin screen update message
 //used:		tsml_import() and admin_types.php
-function tsml_alert($message, $type='updated') {
+function tsml_alert($message, $type='notice notice-success') {
 	global $tsml_alerts;
+	echo '<div class="', $type, ' is-dismissible"><p>', $message, '</p></div>';
 	$tsml_alerts[] = compact('message', 'type');
-	add_action('admin_notices', 'tsml_alert_messages');
 }
+
+/*
+ * disabling for now, because admin_notices fires before page loads, and tsml_alert fires after
 
 //function:	run through alert stack and output them all
 //used:		tsml_alert()
@@ -34,6 +37,10 @@ function tsml_alert_messages() {
 		echo '<div class="' . $alert['type'] . '"><p>' . $alert['message'] . '</p></div>';
 	}
 }
+add_action('admin_notices', 'tsml_alert_messages');
+
+ *
+ */
 
 //function: enqueue assets for public or admin page
 //used: in templates and on admin_edit.php
