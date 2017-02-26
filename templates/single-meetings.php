@@ -22,7 +22,7 @@ $meeting = tsml_get_meeting();
 					<div class="col-md-4">
 						<div class="panel panel-default">
 							<ul class="list-group">
-								<li class="list-group-item">
+								<li class="list-group-item list-group-item-time">
 									<?php 
 									echo tsml_format_day_and_time($meeting->day, $meeting->time);
 									if (!empty($meeting->end_time)) {
@@ -31,7 +31,7 @@ $meeting = tsml_get_meeting();
 									}
 									?>
 								</li>
-								<a href="<?php echo $meeting->directions?>" class="list-group-item">
+								<a href="<?php echo $meeting->directions?>" class="list-group-item list-group-item-location">
 									<h4><?php echo $meeting->location?></h4>
 									<?php echo tsml_format_address($meeting->formatted_address)?>
 								</a>
@@ -44,22 +44,22 @@ $meeting = tsml_get_meeting();
 										), 'tsml_meeting', 'list-group-item');
 								}
 								if (!empty($meeting->group_id)) {?>
-								<li class="list-group-item">
+								<li class="list-group-item list-group-item-group">
 									<?php echo $meeting->group?>
 								</li>
 								<?php if (!empty($meeting->group_notes)) {?>
-								<li class="list-group-item">
+								<li class="list-group-item list-group-item-group-notes">
 									<?php echo $meeting->group_notes?>
 								</li>
 								<?php }
 								}
 								if (!empty($meeting->region)) {?>
-								<li class="list-group-item">
+								<li class="list-group-item list-group-item-region">
 									<?php echo $meeting->region?>
 								</li>
 								<?php }
 								if (count($meeting->types)) {?>
-								<li class="list-group-item">
+								<li class="list-group-item list-group-item-types">
 									<?php foreach ($meeting->types as $type) {?>
 									<div><i class="glyphicon glyphicon-ok"></i> <?php echo $type?></div>
 									<?php }?>
@@ -69,16 +69,16 @@ $meeting = tsml_get_meeting();
 									<li class="list-group-item"><?php echo $meeting->type_description?></li>
 								<?php }
 								if (!empty($meeting->notes)) {?>
-								<li class="list-group-item">
+								<li class="list-group-item list-group-item-notes">
 									<?php echo $meeting->notes?>
 								</li>
 								<?php }
 								if (!empty($meeting->location_notes)) {?>
-								<li class="list-group-item">
+								<li class="list-group-item list-group-item-location-notes">
 									<?php echo $meeting->location_notes?>
 								</li>
 								<?php }?>
-								<li class="list-group-item">
+								<li class="list-group-item list-group-item-modified-date">
 									<?php _e('Updated', '12-step-meeting-list')?>
 									<?php the_modified_date()?>
 								</li>
