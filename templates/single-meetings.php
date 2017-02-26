@@ -31,7 +31,7 @@ $meeting = tsml_get_meeting();
 									}
 									?>
 								</li>
-								<a href="<?php echo $meeting->directions?>" class="list-group-item list-group-item-location">
+								<a href="<?php echo $meeting->directions?>" class="list-group-item list-group-item-address">
 									<h4><?php echo $meeting->location?></h4>
 									<?php echo tsml_format_address($meeting->formatted_address)?>
 								</a>
@@ -41,7 +41,7 @@ $meeting = tsml_get_meeting();
 										get_permalink($meeting->post_parent),
 											sprintf(_n('%d other meeting at this location', '%d other meetings at this location', $other_meetings, '12-step-meeting-list'),
 											$other_meetings
-										), 'tsml_meeting', 'list-group-item');
+										), 'tsml_meeting', 'list-group-item list-group-item-location');
 								}
 								if (!empty($meeting->group_id)) {?>
 								<li class="list-group-item list-group-item-group">
@@ -78,7 +78,7 @@ $meeting = tsml_get_meeting();
 									<?php echo $meeting->location_notes?>
 								</li>
 								<?php }?>
-								<li class="list-group-item list-group-item-modified-date">
+								<li class="list-group-item list-group-item-updated">
 									<?php _e('Updated', '12-step-meeting-list')?>
 									<?php the_modified_date()?>
 								</li>

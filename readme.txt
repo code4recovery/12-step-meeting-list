@@ -3,7 +3,7 @@ Contributors: meetingguide, aasanjose
 Tags: meetings, aa, al-anon, na, 12-step, locations, groups
 Requires at least: 3.2
 Tested up to: 4.7
-Stable tag: 2.10.2
+Stable tag: 2.10.3
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -142,11 +142,12 @@ Add this to your functions.php.
 
 = How can I have the plugin reformat the meeting list on the fly while importing it? =
 To uppercase the location of each meeting, for example, add this to your functions.php.
-	if (! function_exists('tsml_import_reformat')) {
-		function tsml_import_reformat ($meetings) {
-			// element 4 of each CSV row is the meeting location (count starting with 0)
+
+	if (!function_exists('tsml_import_reformat')) {
+		function tsml_import_reformat($meetings) {
+			//element 4 of each CSV row might be the meeting location (count starting with 0)
 			foreach ($meetings as &$meeting) {
-				$meeting[4] = strtoupper($meeting[4]);
+				$meeting[4] = mb_strtoupper($meeting[4]);
 			}
 			return $meetings;
 		}
@@ -157,6 +158,7 @@ Your meetings will be listed on their special WordPress Archive page. Where that
 
 = How can I change some of the text on the template pages? =
 You can make use of the [gettext filter](https://codex.wordpress.org/Plugin_API/Filter_Reference/gettext) to override the plugin's translation strings. For example, if you wanted to replace 'Region' with 'Province,' you could add the following to your functions.php file.
+
 	function theme_override_tsml_strings($translated_text, $text, $domain) {
 		if ($domain == '12-step-meeting-list') {
 			switch ($translated_text) {
@@ -200,6 +202,11 @@ Also check out our [One Page Meeting List](https://github.com/meeting-guide/one-
 1. Edit location
 
 == Changelog ==
+
+= 2.10.3 =
+* Widgets can now be added to the meetings page
+* Adding classes to list group items on meeting and location detail pages
+* Fixing FAQ code formatting
 
 = 2.10.2 =
 * Version bump

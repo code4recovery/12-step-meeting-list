@@ -17,16 +17,16 @@ $location = tsml_get_location();
 					<div class="col-md-4">
 						<div class="panel panel-default">
 							<ul class="list-group">
-								<a href="<?php echo $location->directions?>" class="list-group-item">
+								<a href="<?php echo $location->directions?>" class="list-group-item list-group-item-address">
 									<?php echo tsml_format_address($location->formatted_address)?>
 								</a>
 	
 								<?php if ($location->region) {?>
-									<li class="list-group-item"><?php echo $location->region?></li>
+									<li class="list-group-item list-group-item-region"><?php echo $location->region?></li>
 								<?php }
 									
 								if (!empty($location->notes)) {?>
-									<li class="list-group-item"><?php echo $location->notes?></li>
+									<li class="list-group-item list-group-item-location-notes"><?php echo $location->notes?></li>
 								<?php }
 								
 								$meetings = tsml_get_meetings(array('location_id'=>$location->ID));
@@ -37,7 +37,7 @@ $location = tsml_get_location();
 								}
 								ksort($location_days);
 								if (count($location_days)) {?>
-								<li class="list-group-item">						
+								<li class="list-group-item list-group-item-meetings">						
 								<?php foreach ($location_days as $day=>$meetings) {?>
 									<h4><?php if (!empty($tsml_days[$day])) echo $tsml_days[$day]?></h4>
 									<ul class="meetings"><?php echo implode($meetings)?></ul>
@@ -45,7 +45,7 @@ $location = tsml_get_location();
 								</li>
 								<?php }?>
 	
-								<li class="list-group-item">
+								<li class="list-group-item list-group-item-updated">
 									<?php _e('Updated', '12-step-meeting-list')?>
 									<?php the_modified_date()?>
 								</li>

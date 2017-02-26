@@ -106,7 +106,15 @@ class Walker_Regions_Dropdown extends Walker_Category {
 
 ?>
 <div id="tsml">
+	
 	<div id="meetings" data-view="<?php echo $view?>" data-mode="<?php echo $mode?>" class="container<?php if (!count($meetings)) {?> empty<?php }?>" role="main">
+
+		<?php if (is_active_sidebar('tsml_meetings_top')) {?>
+			<div class="widgets meetings-widgets meetings-widgets-top" role="complementary">
+				<?php dynamic_sidebar('tsml_meetings_top')?>
+			</div>
+		<?php }?>
+	
 		<div class="row controls hidden-print">
 			<div class="col-sm-6 col-md-2">
 				<form id="search" role="search" action=".">
@@ -296,7 +304,15 @@ class Walker_Regions_Dropdown extends Walker_Category {
 				</div>
 			</div>
 		</div>
+
+		<?php if (is_active_sidebar('tsml_meetings_bottom')) {?>
+			<div class="widgets meetings-widgets meetings-widgets-bottom" role="complementary">
+				<?php dynamic_sidebar('tsml_meetings_bottom')?>
+			</div>
+		<?php }?>
+
 	</div>
+
 </div>
 
 <script>
