@@ -55,6 +55,7 @@ function tsml_ajax_groups() {
 add_action('wp_ajax_tsml_pdf', 'tsml_ajax_pdf');
 add_action('wp_ajax_nopriv_tsml_pdf', 'tsml_ajax_pdf');
 function tsml_ajax_pdf() {
+	/*
 	include TSML_PATH . 'vendor/autoload.php';
 
 	//invoke dompdf
@@ -79,6 +80,7 @@ function tsml_ajax_pdf() {
 	$dompdf->render();
 	$dompdf->stream('printed-guide.pdf', array('Attachment'=>false));
 	wp_die();
+	*/
 }
 
 //ajax for the search typeahead
