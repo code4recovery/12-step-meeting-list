@@ -3,7 +3,7 @@ Contributors: meetingguide, aasanjose
 Tags: meetings, aa, al-anon, na, 12-step, locations, groups
 Requires at least: 3.2
 Tested up to: 4.7
-Stable tag: 2.10.3
+Stable tag: 2.10.4
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -17,77 +17,82 @@ It was originally designed to maintain a list of AA meetings in Santa Clara Coun
 
 **Alcoholics Anonymous**
 
-* [Arkansas](http://arkansascentraloffice.org/meetings/)
-* [Austin, TX](http://austinaa.org/meetings/)
-* [Baton Rouge, LA](http://aabatonrouge.org/meetings/)
-* [Bowling Green, KY](http://bowlinggreenaa.org/meetings/)
-* [Corpus Christi, TX](http://www.cbiaa.org/meetings/)
-* [Davis, CA](http://aadavis.org/meetings/)
-* [DuPage County, IL](http://dist41.aa-nia.org/meetings/)
-* [East Bay, CA](http://eastbayaa.org/meetings)
-* [Elk Grove Village, IL](http://d15aa.org/d15aa.org/?post_type=meetings)
-* [Europe](http://alcoholics-anonymous.eu/index.php/meetings/)
-* [Greensboro, NC](http://nc23.org/meetings/)
-* [Joliet, IL](http://aadistrict51.org/meetings/)
-* [Kansas](https://ks-aa.org/meetings/)
-* [Long Beach, CA](https://hacoaa.org/meetings/)
-* [Maine and New Brunswick](http://csoaamaine.org/meetings/)
-* [Mesa, AZ](http://aamesaaz.org/meetings/)
-* [Miami, FL](https://aamiamidade.org/meetings)
-* [Minneapolis, MN](http://aaminneapolis.org/meetings/)
-* [Modesto, CA](http://wp.cviaa.org/meetings/)
-* [Naples, FL](http://aanaples.org/meetings/)
-* [New Orleans, LA](http://www.aaneworleans.org/meetings/)
-* [New York, NY](http://meetings.nyintergroup.org/)
-* [Oahu, HI](http://oahucentraloffice.com/meetings/)
-* [Orlando, FL](http://cflintergroup.org/meetings/)
-* [Philadelphia, PA](http://www.aasepia.org/meetings/)
-* [Portland, OR](http://home.pdxaa.org/meetings/)
-* [Sacramento, CA](http://aasacramento.org/meetings/)
-* [San Jose, CA](https://aasanjose.org/meetings)
-* [San Mateo, CA](http://aa-san-mateo.org/meetings)
-* [Secular AA](https://www.secularaa.org/meetings/)
-* [Southern Colorado](http://www.puebloaa.org/meetings/)
-* [State College, PA](http://www.district43.com/meetings/)
-* [Tidewater Area, VA](http://www.tidewaterintergroup.org/meetings/)
-* [Toronto, Canada](https://aatoronto.org/meetings/)
-* [Tri Valley, CA](http://trivalleyaa.org/meetings/)
-* [Topeka, KS](http://aatopeka.org/meetings/)
-* [Tulsa, OK](http://district40aa.com/meetings)
-* [Vancouver, Canada](http://www.vancouveraa.ca/meetings/)
-* [Vienna, Austria](https://www.aavienna.com/meetings/)
-* [Virginia](https://aavirginia.org/meetings/)
-* [WAAFT](http://www.waaft.org/meetings/)
-* [Walnut Creek, CA](http://contracostaaa.org/meetings)
-* [Warsaw, IN](http://www.aadistrict4143.com/meetings/)
-* [Washington, DC](https://aa-dc.org/meetings)
-* [West Hawaii, HI](http://www.westhawaiiaa.org/meetings/)
-* [Western Slope, CA](http://westernsloped22.org/meetings/)
-* [Western Kentucky](http://wkintergroup.org/meetings/)
-* [Western Washington](http://area72aa.org/meetings/)
+1. [Arkansas](http://arkansascentraloffice.org/meetings/)
+1. [Austin, TX](http://austinaa.org/meetings/)
+1. [Baton Rouge, LA](http://aabatonrouge.org/meetings/)
+1. [Bowling Green, KY](http://bowlinggreenaa.org/meetings/)
+1. [Continental Europe](http://alcoholics-anonymous.eu/meetings/)
+1. [Corpus Christi, TX](http://www.cbiaa.org/meetings/)
+1. [Davis, CA](http://aadavis.org/meetings/)
+1. [DuPage County, IL](http://dist41.aa-nia.org/meetings/)
+1. [East Bay, CA](http://eastbayaa.org/meetings)
+1. [Elk Grove Village, IL](http://d15aa.org/d15aa.org/?post_type=meetings)
+1. [Greensboro, NC](http://nc23.org/meetings/)
+1. [Joliet, IL](http://aadistrict51.org/meetings/)
+1. [Midlands, UK (Polish)](http://intergrupamidlands.co.uk/meetings/)
+1. [Kansas](https://ks-aa.org/meetings/)
+1. [Lewis County, WA](http://lewiscountyaa.org/meetings/)
+1. [Long Beach, CA](https://hacoaa.org/meetings/)
+1. [Maine and New Brunswick](http://csoaamaine.org/meetings/)
+1. [Mesa, AZ](http://aamesaaz.org/meetings/)
+1. [Miami, FL](https://aamiamidade.org/meetings)
+1. [Minneapolis, MN](http://aaminneapolis.org/meetings/)
+1. [Modesto, CA](http://wp.cviaa.org/meetings/)
+1. [Naples, FL](http://aanaples.org/meetings/)
+1. [New Orleans, LA](http://www.aaneworleans.org/meetings/)
+1. [New York, NY](http://meetings.nyintergroup.org/)
+1. [Oahu, HI](http://oahucentraloffice.com/meetings/)
+1. [Orlando, FL](http://cflintergroup.org/meetings/)
+1. [Philadelphia, PA](http://www.aasepia.org/meetings/)
+1. [Portland, OR](http://home.pdxaa.org/meetings/)
+1. [Rochester, MN](http://aadistrict1.org/blog/meetings/)
+1. [Sacramento, CA](http://aasacramento.org/meetings/)
+1. [San Jose, CA](https://aasanjose.org/meetings)
+1. [San Mateo, CA](http://aa-san-mateo.org/meetings)
+1. [Santa Fe, NM](http://santafeaa.org/meetings/)
+1. [Secular AA](https://www.secularaa.org/meetings/)
+1. [Southern Colorado](http://www.puebloaa.org/meetings/)
+1. [State College, PA](http://www.district43.com/meetings/)
+1. [Tidewater Area, VA](http://www.tidewaterintergroup.org/meetings/)
+1. [Toronto, Canada](https://aatoronto.org/meetings/)
+1. [Tri Valley, CA](http://trivalleyaa.org/meetings/)
+1. [Topeka, KS](http://aatopeka.org/meetings/)
+1. [Tulsa, OK](http://district40aa.com/meetings)
+1. [Vancouver, Canada](http://www.vancouveraa.ca/meetings/)
+1. [Vienna, Austria](https://www.aavienna.com/meetings/)
+1. [Virginia](https://aavirginia.org/meetings/)
+1. [WAAFT](http://www.waaft.org/meetings/)
+1. [Walnut Creek, CA](http://contracostaaa.org/meetings)
+1. [Warsaw, IN](http://www.aadistrict4143.com/meetings/)
+1. [Washington, DC](https://aa-dc.org/meetings)
+1. [West Hawaii, HI](http://www.westhawaiiaa.org/meetings/)
+1. [Western Slope, CA](http://westernsloped22.org/meetings/)
+1. [Western Kentucky](http://wkintergroup.org/meetings/)
+1. [Western Washington](http://area72aa.org/meetings/)
 
 **Adult Children of Alcoholics**
 
-* [Southern California](http://www.socalaca.org/meetings/?d=any)
+1. [Southern California](http://www.socalaca.org/meetings/?d=any)
 
 **Al-Anon**
 
-* [Lancaster, PA](http://lanclebalanon.org/meetings/?d=any)
-* [Orange County, CA](http://ocalanon-d60.org/meetings?d=any)
-* [Pennsylvania](http://pa-al-anon.org/meetings/)
+1. [Lancaster, PA](http://lanclebalanon.org/meetings/?d=any)
+1. [Orange County, CA](http://ocalanon-d60.org/meetings?d=any)
+1. [Pennsylvania](http://pa-al-anon.org/meetings/)
 
 **Codependents Anonymous**
 
-* [Los Angeles](http://www.lacoda.org/)
+1. [Los Angeles](http://www.lacoda.org/)
 
 **Narcotics Anonymous**
 
-* [Chinook, CA](http://chinookna.org/meetings/)
-* [Maine](http://www.namaine.org/meetings/)
+1. [Chinook, CA](http://chinookna.org/meetings/)
+1. [Maine](http://www.namaine.org/meetings/)
+1. [Poland](http://anonimowinarkomani.org/meetings/)
 
 **Sex Addicts Anonymous**
 
-* [Indiana](http://indiana-saa.org/meetings/)
+1. [Indiana](http://indiana-saa.org/meetings/)
 
 [Let us know](mailto:wordpress@meetingguide.org) if you're using this plugin and would like to be listed here.
 
@@ -202,6 +207,11 @@ Also check out our [One Page Meeting List](https://github.com/meeting-guide/one-
 1. Edit location
 
 == Changelog ==
+
+= 2.10.4 =
+* New plugin websites for readme
+* Re-hiding contacts in JSON feed
+* Basic framework for an autogenerated PDF
 
 = 2.10.3 =
 * Widgets can now be added to the meetings page

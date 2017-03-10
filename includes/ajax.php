@@ -34,21 +34,51 @@ function tsml_ajax_groups() {
         $group_custom = get_post_meta($group->ID);
         $results[] = array(
             'value'				=> html_entity_decode($title),
-            'contact_1_name'	=> @$group_custom['contact_1_name'][0],
+            'contact_1_name'		=> @$group_custom['contact_1_name'][0],
             'contact_1_email'	=> @$group_custom['contact_1_email'][0],
             'contact_1_phone'	=> @$group_custom['contact_1_phone'][0],
-            'contact_2_name'	=> @$group_custom['contact_2_name'][0],
+            'contact_2_name'		=> @$group_custom['contact_2_name'][0],
             'contact_2_email'	=> @$group_custom['contact_2_email'][0],
             'contact_2_phone'	=> @$group_custom['contact_2_phone'][0],
-            'contact_3_name'	=> @$group_custom['contact_3_name'][0],
+            'contact_3_name'		=> @$group_custom['contact_3_name'][0],
             'contact_3_email'	=> @$group_custom['contact_3_email'][0],
             'contact_3_phone'	=> @$group_custom['contact_3_phone'][0],
             'notes'				=> html_entity_decode($group->post_content),
-            'tokens'			=> tsml_string_tokens($title),
+            'tokens'				=> tsml_string_tokens($title),
             'type'				=> 'group',
         );
 	}
 	wp_send_json($results);
+}
+
+//generate PDF
+add_action('wp_ajax_tsml_pdf', 'tsml_ajax_pdf');
+add_action('wp_ajax_nopriv_tsml_pdf', 'tsml_ajax_pdf');
+function tsml_ajax_pdf() {
+	include TSML_PATH . 'vendor/autoload.php';
+
+	//invoke dompdf
+	$dompdf = new \Dompdf\Dompdf();
+	
+	//invoke tcpdf
+	$tcpdf = new TCPDF();
+	
+	//get meetings
+	$meetings = tsml_get_meetings();
+
+	//check for user theme file
+	$user_theme_file = get_stylesheet_directory() . '/tsml-pdf.php';
+	if (file_exists($user_theme_file)) {
+		include $user_theme_file;
+		wp_die();
+	}
+		
+	// instantiate and use the dompdf class
+	$dompdf->loadHtml('hello world');
+	//$dompdf->setPaper(array(0, 0, 279.36, 648)); //aa brochure size (3.88 x 9")
+	$dompdf->render();
+	$dompdf->stream('printed-guide.pdf', array('Attachment'=>false));
+	wp_die();
 }
 
 //ajax for the search typeahead
@@ -493,6 +523,6 @@ add_action('wp_ajax_meetings', 'tsml_ajax_meetings');
 add_action('wp_ajax_nopriv_meetings', 'tsml_ajax_meetings');
 function tsml_ajax_meetings() {
 	if (!headers_sent()) header('Access-Control-Allow-Origin: *');
-	if (empty($_POST)) wp_send_json(tsml_get_meetings($_GET));
-	wp_send_json(tsml_get_meetings($_POST));
+	$meetings = empty($_POST) ? tsml_get_meetings($_GET) : tsml_get_meetings($_POST);
+	wp_send_json($meetings);
 }
