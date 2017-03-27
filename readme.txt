@@ -3,7 +3,7 @@ Contributors: meetingguide, aasanjose
 Tags: meetings, aa, al-anon, na, 12-step, locations, groups
 Requires at least: 3.2
 Tested up to: 4.7
-Stable tag: 2.10.5
+Stable tag: 2.10.6
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -21,12 +21,14 @@ It was originally designed to maintain a list of AA meetings in Santa Clara Coun
 1. [Austin, TX](http://austinaa.org/meetings/)
 1. [Baton Rouge, LA](http://aabatonrouge.org/meetings/)
 1. [Bowling Green, KY](http://bowlinggreenaa.org/meetings/)
+1. [Charleston, WV](http://aawvdist1.org/wordpress/?post_type=tsml_meeting)
 1. [Continental Europe](http://alcoholics-anonymous.eu/meetings/)
 1. [Corpus Christi, TX](http://www.cbiaa.org/meetings/)
 1. [Davis, CA](http://aadavis.org/meetings/)
 1. [DuPage County, IL](http://dist41.aa-nia.org/meetings/)
 1. [East Bay, CA](http://eastbayaa.org/meetings)
 1. [Elk Grove Village, IL](http://d15aa.org/d15aa.org/?post_type=meetings)
+1. [Ft. Worth, TX](http://fortworthaa.org/?post_type=tsml_meeting)
 1. [Greensboro, NC](http://nc23.org/meetings/)
 1. [Joliet, IL](http://aadistrict51.org/meetings/)
 1. [Midlands, UK (Polish)](http://intergrupamidlands.co.uk/meetings/)
@@ -34,6 +36,7 @@ It was originally designed to maintain a list of AA meetings in Santa Clara Coun
 1. [Lewis County, WA](http://lewiscountyaa.org/meetings/)
 1. [Long Beach, CA](https://hacoaa.org/meetings/)
 1. [Maine and New Brunswick](http://csoaamaine.org/meetings/)
+1. [Maui, HI](http://aamaui.org/meetings)
 1. [Mesa, AZ](http://aamesaaz.org/meetings/)
 1. [Miami, FL](https://aamiamidade.org/meetings)
 1. [Minneapolis, MN](http://aaminneapolis.org/meetings/)
@@ -69,6 +72,7 @@ It was originally designed to maintain a list of AA meetings in Santa Clara Coun
 1. [Western Slope, CA](http://westernsloped22.org/meetings/)
 1. [Western Kentucky](http://wkintergroup.org/meetings/)
 1. [Western Washington](http://area72aa.org/meetings/)
+1. [Woodstock, IL](http://aa-nia-dist11.org/meetings/)
 
 **Adult Children of Alcoholics**
 
@@ -207,6 +211,9 @@ Also check out our [One Page Meeting List](https://github.com/meeting-guide/one-
 1. Edit location
 
 == Changelog ==
+
+= 2.10.6 =
+* Adding four new sites
 
 = 2.10.5 =
 * Removing Dompdf and TCPDF, can't seem to commit them to WordPress
