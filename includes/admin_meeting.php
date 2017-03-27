@@ -22,13 +22,13 @@ function tsml_admin_init() {
 	add_meta_box('info', __('Meeting Information', '12-step-meeting-list'), 'tsml_meeting_box', 'tsml_meeting', 'normal', 'low');
 
 	function tsml_meeting_box() {
-		global $post, $tsml_days, $tsml_types, $tsml_program, $tsml_nonce;
+		global $post, $tsml_days, $tsml_types, $tsml_program, $tsml_nonce, $tsml_types_in_use;
 
 		//get post metadata
 		$meeting_custom 	= get_post_custom($post->ID);
 		$meeting_custom['types'] = empty($meeting_custom['types']) ? array() : unserialize($meeting_custom['types'][0]);
 		if (!is_array($meeting_custom['types'])) $meeting_custom['types'] = array();
-		
+				
 		//nonce field
 		wp_nonce_field($tsml_nonce, 'tsml_nonce', false);
 		?>
@@ -49,13 +49,22 @@ function tsml_admin_init() {
 		</div>
 		<div class="meta_form_row">
 			<label for="tags"><?php _e('Types', '12-step-meeting-list')?></label>
-			<div class="checkboxes">
-			<?php foreach ($tsml_types[$tsml_program] as $key=>$type) {?>
-				<label>
+			<div class="checkboxes<?php if (!empty($tsml_types_in_use) && count($tsml_types_in_use) !== count($tsml_types[$tsml_program])) {?> has_more<?php }?>">
+			<?php 
+			foreach ($tsml_types[$tsml_program] as $key => $type) {?>
+				<label <?php if (!empty($tsml_types_in_use) && !in_array($key, $tsml_types_in_use)) { echo ' class="not_in_use"'; }?>>
 					<input type="checkbox" name="types[]" value="<?php echo $key?>" <?php if (in_array($key, $meeting_custom['types'])) {?> checked="checked"<?php }?>>
 					<?php echo $type?>
 				</label>
 			<?php }?>
+				<div class="toggle_more">
+					<div class="more">
+						<span class="dashicons dashicons-arrow-down-alt2"></span> <a href="#more-types"><?php _e('More', '12-step-meeting-list')?></a>
+					</div>
+					<div class="less">
+						<span class="dashicons dashicons-arrow-up-alt2"></span> <a href="#more-types"><?php _e('Less', '12-step-meeting-list')?></a>
+					</div>
+				</div>
 			</div>
 		</div>
 		<div class="meta_form_row">
@@ -99,6 +108,7 @@ function tsml_admin_init() {
 				'hide_empty' => false,
 				'orderby' => 'name',
 				'selected' => @$location->region_id,
+				//'show_option_none' => __('Select geographical region', '12-step-meeting-list'),
 			))?>
 		</div>
 		<div class="meta_form_row">
@@ -130,6 +140,7 @@ function tsml_admin_init() {
 		global $post;
 		$meeting_custom = get_post_custom($post->ID);
 		$meetings = array();
+		$district = 0;
 		if (!empty($meeting_custom['group_id'][0])) {
 			$group = get_post($meeting_custom['group_id'][0]);
 			$group_custom = get_post_meta($group->ID);
@@ -175,6 +186,20 @@ function tsml_admin_init() {
 			<label><?php _e('Last Contact', '12-step-meeting-list')?></label>
 			<input type="date" name="last_contact" value="<?php echo @$group_custom['last_contact'][0]?>">
 		</div>
+		<!--
+		<div class="meta_form_row">
+			<label for="district"><?php _e('District', '12-step-meeting-list')?></label>
+			<?php wp_dropdown_categories(array(
+				'name' => 'district',
+				'taxonomy' => 'tsml_district',
+				'hierarchical' => true,
+				'hide_empty' => false,
+				'orderby' => 'name',
+				'selected' => $district,
+				'show_option_none' => __('Select service district', '12-step-meeting-list'),
+			))?>
+		</div>
+		-->
 		<?php
 	}	
 }

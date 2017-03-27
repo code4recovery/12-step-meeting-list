@@ -50,6 +50,12 @@ jQuery(function($){
 		$(this).parent().submit();
 	});
 
+	//show more types
+	$('.toggle_more').on('click', 'a', function(e){
+		e.preventDefault();
+		$(this).closest('.checkboxes').toggleClass('showing_more');
+	})
+
 	//day picker
 	$('select#day').change(function(){
 		var val = $(this).val();

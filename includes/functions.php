@@ -122,6 +122,28 @@ function tsml_custom_post_types() {
 		'hierarchical' => true,
 	));
 
+	/*
+	register_taxonomy('tsml_district', 'tsml_group', array(
+		'labels' => array(
+			'name' => __('District', '12-step-meeting-list'),
+			'singular_name' => __('District', '12-step-meeting-list'),
+			'menu_name'  => __('District', '12-step-meeting-list'),
+			'all_items'  => __('All Districts', '12-step-meeting-list'),
+			'edit_item'  => __('Edit District', '12-step-meeting-list'),
+			'view_item'  => __('View District', '12-step-meeting-list'),
+			'update_item'  => __('Update District', '12-step-meeting-list'),
+			'add_new_item'  => __('Add New District', '12-step-meeting-list'),
+			'new_item_name'  => __('New District', '12-step-meeting-list'),
+			'parent_item'  => __('Parent Area', '12-step-meeting-list'),
+			'parent_item_colon'  => __('Parent Area:', '12-step-meeting-list'),
+			'search_items'  => __('Search Districts', '12-step-meeting-list'),
+			'popular_items'  => __('Popular Districts', '12-step-meeting-list'),
+			'not_found'  => __('No districts found.', '12-step-meeting-list'),
+		),
+		'hierarchical' => true,
+	));
+	*/
+
 	register_post_type('tsml_meeting',
 		array(
 			'labels'		=> array(
