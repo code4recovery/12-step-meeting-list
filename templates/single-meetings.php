@@ -103,8 +103,14 @@ $meeting = tsml_get_meeting();
 								<div class="form-group">
 									<textarea id="tsml_message" name="tsml_message" placeholder="<?php _e('Message', '12-step-meeting-list')?>" class="form-control required"></textarea>
 								</div>
-								<input type="submit" class="btn btn-primary" value="<?php _e('Submit', '12-step-meeting-list')?>">
-								<a href="#cancel" class="btn btn-default"><?php _e('Cancel', '12-step-meeting-list')?></a>
+								<div class="row">
+									<div class="col-xs-8 form-group">
+										<input type="submit" class="btn btn-primary btn-block" value="<?php _e('Submit', '12-step-meeting-list')?>">
+									</div>
+									<div class="col-xs-4 form-group">
+										<a href="#cancel" class="btn btn-default btn-block"><?php _e('Cancel', '12-step-meeting-list')?></a>
+									</div>
+								</div>
 							</form>
 							
 							<div class="alert alert-warning"></div>
