@@ -326,7 +326,7 @@ function tmsl_import_page() {
 							<h3><?php _e('Import CSV', '12-step-meeting-list')?></h3>
 							<form method="post" action="edit.php?post_type=tsml_meeting&page=import" enctype="multipart/form-data">
 								<?php wp_nonce_field($tsml_nonce, 'tsml_nonce', false)?>
-								<input type="file" name="tsml_import"></textarea>
+								<input type="file" name="tsml_import">
 								<p>
 									<?php _e('When importing...', '12-step-meeting-list')?><br>
 									<?php if (empty($_POST['delete'])) $_POST['delete'] = 'nothing'?>
@@ -340,21 +340,21 @@ function tmsl_import_page() {
 							<h4><?php _e('Spreadsheet Specs', '12-step-meeting-list')?></h4>
 							<p><a href="<?php echo plugin_dir_url(__FILE__) . '../template.csv'?>" class="button button-large"><span class="dashicons dashicons-media-spreadsheet"></span><?php _e('Sample import template', '12-step-meeting-list')?></a></p>
 							<ul class="ul-disc">
-								<?php _e('<li><strong>Time</strong>, if present, should be in a standard date format such as 6:00 AM or 06:00. Non-standard or empty dates will be imported as \'by appointment.\'</li>', '12-step-meeting-list') ?>
-								<?php _e('<li><strong>End Time</strong>, if present, should be in a standard date format such as 6:00 AM or 06:00.</li>', '12-step-meeting-list') ?>
-								<?php _e('<li><strong>Day</strong> if present, should either Sunday, Monday, Tuesday, Wednesday, Thursday, Friday, or Saturday. Meetings that occur on multiple days should be listed separately. \'Daily\' or \'Mondays\' will not work. Non-standard days will be imported as \'by appointment.\'</li>', '12-step-meeting-list') ?>
-								<?php _e('<li><strong>Name</strong> is the name of the meeting, and is optional, although it\'s valuable information for the user. If it\'s missing, a name will be created by combining the location, day, and time.</li>', '12-step-meeting-list') ?>
-								<?php _e('<li><strong>Location</strong> is the name of the location, and is optional. Generally it\'s the group or building name. If it\'s missing, the address will be used. In the event that there are multiple location names for the same address, the first location name will be used.</li>', '12-step-meeting-list') ?>
-								<?php _e('<li><strong>Address</strong> is strongly encouraged and will be corrected by Google, so it may look different afterward. Ideally, every address for the same location should be exactly identical, and not contain extra information about the address, such as the building name or descriptors like \'around back.\'</li>', '12-step-meeting-list') ?>
-								<?php _e('<li>If <strong>Address</strong> is specified, then <strong>City</strong>, <strong>State</strong>, and <strong>Country</strong> are optional, but they might be useful if your addresses sound ambiguous to Google. If address is not specified, then these fields are required.</li>', '12-step-meeting-list') ?>
-								<?php _e('<li><strong>Notes</strong> are freeform notes that are specific to the meeting. For example, "last Saturday is birthday night."</li>', '12-step-meeting-list') ?>
-								<?php _e('<li><strong>Region</strong> is user-defined and can be anything. Often this is a small municipality or neighborhood. Since these go in a dropdown, ideally you would have 10 to 20 regions, although it\'s ok to be over or under.</li>', '12-step-meeting-list') ?>
-								<?php _e('<li><strong>Sub Region</strong> makes the Region hierarchical; in San Jose we have sub regions for East San Jose, West San Jose, etc. New York City might have Manhattan be a Region, and Greenwich Village be a Sub Region.</li>', '12-step-meeting-list') ?>
-								<?php _e('<li><strong>Location Notes</strong> are freeform notes that will show up on every meeting that this location. For example, "Enter from the side."</li>', '12-step-meeting-list') ?>
-								<?php _e('<li><strong>Group</strong> is a way of grouping contacts. Meetings with the same Group name will be grouped together and share contact information.</li>', '12-step-meeting-list') ?>
-								<?php _e('<li><strong>Group Notes</strong> is for stuff like a short group history, or when the business meeting meets.</li>', '12-step-meeting-list') ?>
-								<?php _e('<li><strong>Contact 1/2/3 Name/Email/Phone</strong> (nine fields in total) are all optional, but will not be saved if there is not also a Group name specified. By default, contact information is only visible inside the WordPress dashboard.</li>', '12-step-meeting-list') ?>
-								<?php _e('<li><strong>Types</strong> should be a comma-separated list of the following options. This list is determined by which program is selected at right.</li>', '12-step-meeting-list') ?>
+								<li><?php _e('<strong>Time</strong>, if present, should be in a standard date format such as 6:00 AM or 06:00. Non-standard or empty dates will be imported as "by appointment."', '12-step-meeting-list') ?>
+								<li><?php _e('<strong>End Time</strong>, if present, should be in a standard date format such as 6:00 AM or 06:00.', '12-step-meeting-list') ?>
+								<li><?php _e('<strong>Day</strong> if present, should either Sunday, Monday, Tuesday, Wednesday, Thursday, Friday, or Saturday. Meetings that occur on multiple days should be listed separately. \'Daily\' or \'Mondays\' will not work. Non-standard days will be imported as "by appointment."', '12-step-meeting-list') ?>
+								<li><?php _e('<strong>Name</strong> is the name of the meeting, and is optional, although it\'s valuable information for the user. If it\'s missing, a name will be created by combining the location, day, and time.', '12-step-meeting-list') ?>
+								<li><?php _e('<strong>Location</strong> is the name of the location, and is optional. Generally it\'s the group or building name. If it\'s missing, the address will be used. In the event that there are multiple location names for the same address, the first location name will be used.', '12-step-meeting-list') ?>
+								<li><?php _e('<strong>Address</strong> is strongly encouraged and will be corrected by Google, so it may look different afterward. Ideally, every address for the same location should be exactly identical, and not contain extra information about the address, such as the building name or descriptors like "around back."', '12-step-meeting-list') ?>
+								<li><?php _e('If <strong>Address</strong> is specified, then <strong>City</strong>, <strong>State</strong>, and <strong>Country</strong> are optional, but they might be useful if your addresses sound ambiguous to Google. If address is not specified, then these fields are required.', '12-step-meeting-list') ?>
+								<li><?php _e('<strong>Notes</strong> are freeform notes that are specific to the meeting. For example, "last Saturday is birthday night."', '12-step-meeting-list') ?>
+								<li><?php _e('<strong>Region</strong> is user-defined and can be anything. Often this is a small municipality or neighborhood. Since these go in a dropdown, ideally you would have 10 to 20 regions, although it\'s ok to be over or under.', '12-step-meeting-list') ?>
+								<li><?php _e('<strong>Sub Region</strong> makes the Region hierarchical; in San Jose we have sub regions for East San Jose, West San Jose, etc. New York City might have Manhattan be a Region, and Greenwich Village be a Sub Region.', '12-step-meeting-list') ?>
+								<li><?php _e('<strong>Location Notes</strong> are freeform notes that will show up on every meeting that this location. For example, "Enter from the side."', '12-step-meeting-list') ?>
+								<li><?php _e('<strong>Group</strong> is a way of grouping contacts. Meetings with the same Group name will be grouped together and share contact information.', '12-step-meeting-list') ?>
+								<li><?php _e('<strong>Group Notes</strong> is for stuff like a short group history, or when the business meeting meets.', '12-step-meeting-list') ?>
+								<li><?php _e('<strong>Contact 1/2/3 Name/Email/Phone</strong> (nine fields in total) are all optional, but will not be saved if there is not also a Group name specified. By default, contact information is only visible inside the WordPress dashboard.', '12-step-meeting-list') ?>
+								<li><?php _e('<strong>Types</strong> should be a comma-separated list of the following options. This list is determined by which program is selected at right.', '12-step-meeting-list') ?>
 									<ul class="types">
 									<?php foreach ($tsml_types[$tsml_program] as $value) {?>
 										<li><?php echo $value?></li>
@@ -400,7 +400,7 @@ function tmsl_import_page() {
 									'mi' => __('Miles', '12-step-meeting-list'),	
 								);
 								foreach ($distance_units as $key => $value) {?>
-								<option value="<?php echo $key?>"<?php selected($tsml_distance_units, $key)?>><?php echo $value?></label>
+								<option value="<?php echo $key?>"<?php selected($tsml_distance_units, $key)?>><?php echo $value?></option>
 								<?php }?>
 								</select>
 							</form>
@@ -461,8 +461,12 @@ function tmsl_import_page() {
 							<?php }?>
 							<form method="post" action="edit.php?post_type=tsml_meeting&page=import">
 								<?php wp_nonce_field($tsml_nonce, 'tsml_nonce', false)?>
-								<input type="email" name="tsml_add_feedback_address" placeholder="email@example.org">
-								<input type="submit" class="button" value="<?php _e('Add', '12-step-meeting-list')?>">
+								<div class="email">
+									<input type="email" name="tsml_add_feedback_address" placeholder="email@example.org">
+								</div>
+								<div class="btn">
+									<input type="submit" class="button" value="<?php _e('Add', '12-step-meeting-list')?>">
+								</div>
 							</form>
 						</div>
 					</div>
@@ -488,8 +492,12 @@ function tmsl_import_page() {
 							<?php }?>
 							<form method="post" action="edit.php?post_type=tsml_meeting&page=import">
 								<?php wp_nonce_field($tsml_nonce, 'tsml_nonce', false)?>
-								<input type="email" name="tsml_add_notification_address" placeholder="email@example.org">
-								<input type="submit" class="button" value="<?php _e('Add', '12-step-meeting-list')?>">
+								<div class="email">
+									<input type="email" name="tsml_add_notification_address" placeholder="email@example.org">
+								</div>
+								<div class="btn">
+									<input type="submit" class="button" value="<?php _e('Add', '12-step-meeting-list')?>">
+								</div>
 							</form>
 						</div>
 					</div>
@@ -501,10 +509,10 @@ function tmsl_import_page() {
 							<p><?php printf(__('Want to have your meetings listed in a simple, free mobile app? <a href="%s" target="_blank">%d areas are currently participating</a>. No extra effort is required; simply continue to update your meetings here and the updates will flow down to app users.', '12-step-meeting-list'), 'https://meetingguide.org/', 68)?></p>
 							<p class="buttons">
 								<a href="https://itunes.apple.com/us/app/meeting-guide/id1042822181">
-									<img src="<?php echo plugin_dir_url(__FILE__)?>../assets/img/apple.svg">
+									<img src="<?php echo plugin_dir_url(__FILE__)?>../assets/img/apple.svg" alt="<?php _e('Download on the iOS App Store')?>">
 								</a>
 								<a href="https://play.google.com/store/apps/details?id=org.meetingguide.app">
-									<img src="<?php echo plugin_dir_url(__FILE__)?>../assets/img/google.svg">
+									<img src="<?php echo plugin_dir_url(__FILE__)?>../assets/img/google.svg" alt="<?php _e('Download on the Google Play Store')?>">
 								</a>
 							</p>
 							<p><?php printf(__('To get involved, please <a href="%s">get in touch</a>.', '12-step-meeting-list'), TSML_CONTACT_LINK)?></p>
@@ -515,13 +523,13 @@ function tmsl_import_page() {
 						<div class="inside">
 							<h3><?php _e('About this Plugin', '12-step-meeting-list')?></h3>
 							<p><?php printf(__('This plugin was developed by AA volunteers in <a href="%s" target="_blank">Santa Clara County</a> to help provide accessible, accurate information about meetings to those who need it.', '12-step-meeting-list'), 'https://aasanjose.org/central-office/technology')?></p>
-							<p><?php printf(__('If you would like to help out with development, <a href="%s" target="_blank">visit us on GitHub</a>.', '12-step-meeting-list'), 'https://github.com/meeting-guide/12-step-meeting-list')?>
+							<p><?php printf(__('If you would like to help out with development, <a href="%s" target="_blank">visit us on GitHub</a>.', '12-step-meeting-list'), 'https://github.com/meeting-guide/12-step-meeting-list')?></p>
 						</div>
 					</div>
 					<?php }?>
 				</div>
 			</div>
 		</div>
-		
+	</div>	
 	<?php
 }

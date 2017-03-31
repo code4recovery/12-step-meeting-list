@@ -9,8 +9,8 @@ jQuery(function($){
 	
 	//a) functions
 	
-	//run search (triggered by dropdown toggle or form submit)
-	function doSearch() {
+	//run search (triggered by dropdown toggle or form submit) ('keyword_searching' means the current intent is keyword search)
+	function doSearch(keyword_searching) {
 	
 		//prepare data for ajax
 		var data = { 
@@ -58,7 +58,7 @@ jQuery(function($){
 		if (data.mode == 'search') {
 			typeaheadEnable();
 			setSearchMarker();
-			getMeetings(data);
+			getMeetings(data, keyword_searching);
 		} else if (data.mode == 'location') {
 			typeaheadDisable();
 
@@ -80,7 +80,7 @@ jQuery(function($){
 						data.longitude = geocoded_data.results[0].geometry.location.lng;
 						data.query = ''; //don't actually keyword search this
 						setSearchMarker(data);
-						getMeetings(data);
+						getMeetings(data, keyword_searching);
 					} else {
 						//show error message
 						setSearchMarker();
@@ -101,7 +101,7 @@ jQuery(function($){
 					data.latitude = pos.coords.latitude;
 					data.longitude = pos.coords.longitude;
 					setSearchMarker(data);
-					getMeetings(data);
+					getMeetings(data, keyword_searching);
 				}, function() {
 					//browser supports but can't get geolocation
 					$('#search button i').removeClass().addClass('glyphicon glyphicon-user'); //todo switch to location
@@ -151,7 +151,7 @@ jQuery(function($){
 	}
 	
 	//actually get the meetings from the JSON resource and output them
-	function getMeetings(data) {
+	function getMeetings(data, keyword_searching) {
 		//request new meetings result
 		data.distance_units = tsml.distance_units;
 				
@@ -160,7 +160,7 @@ jQuery(function($){
 			if (!response.length) {
 
 				//if keyword and no results, clear other parameters and search again
-				if (data.mode && (typeof data.day !== 'undefined' || typeof data.region !== 'undefined' || typeof data.time !== 'undefined' || typeof data.type !== 'undefined')) {
+				if (keyword_searching && (typeof data.day !== 'undefined' || typeof data.region !== 'undefined' || typeof data.time !== 'undefined' || typeof data.type !== 'undefined')) {
 					$('#day li').removeClass('active').first().addClass('active');
 					$('#time li').removeClass('active').first().addClass('active');
 					$('#region li').removeClass('active').first().addClass('active');
@@ -171,7 +171,7 @@ jQuery(function($){
 					$('#time span.selected').html($('#time li:first-child a').html());
 					$('#region span.selected').html($('#region li:first-child a').html());
 					$('#type span.selected').html($('#type li:first-child a').html());
-					return doSearch();
+					return doSearch(true);
 				}
 
 				$('#meetings').addClass('empty');
@@ -463,11 +463,11 @@ jQuery(function($){
 				active.parent().addClass('active');
 				$('#region span.selected').html(active.html());
 				$('#search input[name="query"]').val('').typeahead('val', '');
-				doSearch();
+				doSearch(false);
 			} else if (item.type == 'location') {
 				location.href = item.url;
 			} else if (item.type == 'group') {
-				doSearch();
+				doSearch(true);
 			}
 		});
 	}
@@ -585,9 +585,9 @@ jQuery(function($){
 		setMapMarkers();
 		setMapBounds();
 	} else if ((mode == 'location') && $search_field.val().length) {
-		doSearch();
+		doSearch(false);
 	} else if (mode == 'me') {
-		doSearch();
+		doSearch(false);
 	}
 
 	//c) jQuery event handlers
@@ -645,7 +645,7 @@ jQuery(function($){
 	//controls changes
 	$('#meetings .controls').on('submit', '#search', function(){
 		//capture submit event
-		doSearch();
+		doSearch(true);
 		return false;
 	}).on('click', 'div.expand', function(e){
 		//expand or contract regions submenu
@@ -710,7 +710,7 @@ jQuery(function($){
 
 		toggleUpcoming();
 		updateTitle();
-		doSearch();
+		doSearch(false);
 	});
 
 	//toggle between list and map

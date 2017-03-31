@@ -94,21 +94,32 @@ body {
 				//add email forms
 				form {
 					overflow: auto;
-					input {
-						box-shadow: none;
-						width: 60px;
+					margin: 0 -5px;
+					box-sizing: border-box;
+					.email, .btn { 
+						box-sizing: border-box;
+						padding: 0 5px; 
+						display: inline-block;
 						float: left;
-						&[type=email] {
-							border-radius: 3px;
-							border: 1px solid #ccc;
-							font-size: 13px;
-							line-height: 26px;
-							margin: 0;
-							height: 28px;
-							width: 180px;
-							margin-right: 10px;
-							font-family: Consolas,Monaco,monospace;
+						input {
+							box-shadow: none;
+							width: 100%;
+							&[type=email] {
+								border-radius: 3px;
+								border: 1px solid #ccc;
+								font-size: 13px;
+								line-height: 26px;
+								margin: 0;
+								height: 28px;
+								font-family: Consolas,Monaco,monospace;
+							}
 						}
+					}
+					.email {
+						width: 70%;
+					}
+					.btn {
+						width: 30%;
 					}
 				}
 			}

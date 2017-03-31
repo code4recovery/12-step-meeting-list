@@ -3,7 +3,7 @@ Contributors: meetingguide, aasanjose
 Tags: meetings, aa, al-anon, na, 12-step, locations, groups
 Requires at least: 3.2
 Tested up to: 4.7
-Stable tag: 2.11.1
+Stable tag: 2.11.2
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -72,6 +72,7 @@ It was originally designed to maintain a list of AA meetings in Santa Clara Coun
 1. [Western Slope, CA](http://westernsloped22.org/meetings/)
 1. [Western Kentucky](http://wkintergroup.org/meetings/)
 1. [Western Washington](http://area72aa.org/meetings/)
+1. [Wilmington, DE](http://ndiaa.org/meetings/)
 1. [Woodstock, IL](http://aa-nia-dist11.org/meetings/)
 
 **Adult Children of Alcoholics**
@@ -211,6 +212,10 @@ Also check out our [One Page Meeting List](https://github.com/meeting-guide/one-
 1. Edit location
 
 == Changelog ==
+
+= 2.11.2 =
+* Fixed bug causing filters to reset when no results
+* Fixed bug preventing settings forms from submitting on Chrome for PC
 
 = 2.11.1 =
 * Tweaking the button spacing on meeting feedback form
