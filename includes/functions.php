@@ -526,22 +526,40 @@ function tsml_get_meeting() {
 function tsml_get_meetings($arguments=array()) {
 
 	//will need these later
-	$post_ids = $meetings = array();
+	$search_results = $meetings = array();
 	$groups = tsml_get_groups();	
 	$locations = tsml_get_locations();
 	
 	//start building meta_query for meetings
 	$meta_query = array('relation' => 'AND');
 
-	//location_id can be an array
+	//build array of location_ids
 	if (empty($arguments['location_id'])) {
-		$arguments['location_id'] = null;
+		$location_ids = null;
 	} elseif (is_array($arguments['location_id'])) {
-		$arguments['location_id'] = array_map('intval', $arguments['location_id']);
+		$location_ids = array_map('intval', $arguments['location_id']);
 	} else {
-		$arguments['location_id'] = array(intval($arguments['location_id']));
+		$location_ids = array(intval($arguments['location_id']));
 	}
 
+	//filter by region
+	if (!empty($arguments['region'])) {
+		$parents = get_posts(array(
+			'post_type'			=> 'tsml_location',
+			'numberposts'		=> -1,
+			'fields'				=> 'ids',
+			'tax_query'			=> array(
+				array(
+					'taxonomy'	=> 'tsml_region',
+					'terms'		=> intval($arguments['region']),
+				),
+			),
+		));
+		
+		//if location_ids is already set, reduce it
+		$location_ids = ($location_ids === null) ? $parents : array_intersect($location_ids, $parents);
+	}
+	
 	//day should be in integer 0-6 
 	if (isset($arguments['day']) && ($arguments['day'] !== false)) {
 		$meta_query[] = array(
@@ -588,27 +606,6 @@ function tsml_get_meetings($arguments=array()) {
 		}
 	}
 
-	//region should be an integer region id
-	if (!empty($arguments['region'])) {
-		$parents = get_posts(array(
-			'post_type'			=> 'tsml_location',
-			'numberposts'		=> -1,
-			'fields'			=> 'ids',
-			'tax_query'			=> array(
-				array(
-					'taxonomy'	=> 'tsml_region',
-					'terms'		=> intval($arguments['region']),
-				),
-			),
-		));
-		$post_ids = array_merge($post_ids, get_posts(array(
-			'post_type'			=> 'tsml_meeting',
-			'numberposts'		=> -1,
-			'fields'			=> 'ids',
-			'post_parent__in'	=> $parents,
-		)));
-	}
-
 	//todo convert this into a custom taxonomy
 	if (!empty($arguments['type'])) {
 		$meta_query[] = array(
@@ -630,22 +627,21 @@ function tsml_get_meetings($arguments=array()) {
 	if (!empty($arguments['query'])) {
 		$query = sanitize_text_field($arguments['query']);
 		
-		//first search actual meetings
-		$post_ids = array_merge($post_ids, get_posts(array(
-			'post_type'				=> 'tsml_meeting',
-			'numberposts'			=> -1,
-			'fields'					=> 'ids',
-			's'						=> $query,
-		)));
+		$search_results = get_posts(array(
+			'post_type'			=> 'tsml_meeting',
+			'numberposts'		=> -1,
+			'fields'				=> 'ids',
+			's'					=> $query,
+		));
 		
-		//then add groups
+		//add groups
 		if ($groups = get_posts(array(
 				'post_type'			=> 'tsml_group',
 				'numberposts'		=> -1,
 				'fields'				=> 'ids',
 				's'					=> $query,
 			))) {
-			$post_ids = array_merge($post_ids, get_posts(array(
+			$search_results = array_merge($search_results, get_posts(array(
 				'post_type'			=> 'tsml_meeting',
 				'numberposts'		=> -1,
 				'fields'				=> 'ids',
@@ -697,24 +693,24 @@ function tsml_get_meetings($arguments=array()) {
 		);
 		
 		if (count($parents)) {
-			$post_ids = array_merge($post_ids, get_posts(array(
+			$search_results = array_merge($search_results, get_posts(array(
 				'post_type'			=> 'tsml_meeting',
 				'numberposts'		=> -1,
-				'fields'			=> 'ids',
+				'fields'				=> 'ids',
 				'post_parent__in'	=> $parents,
 			)));
 		}
 		
-		if (empty($post_ids)) return array();
+		if (empty($search_results)) return array();
 	}
-	
+		
 	//search meetings
 	$posts = get_posts(array(
 		'post_type'			=> 'tsml_meeting',
 		'numberposts'		=> -1,
 		'meta_query'			=> $meta_query,
-		'post__in'			=> array_unique($post_ids),
-		'post_parent__in'	=> $arguments['location_id'],
+		'post__in'			=> array_unique($search_results),
+		'post_parent__in'	=> $location_ids,
 	));
 
 	//need this later, need to supply default values to groupless meetings

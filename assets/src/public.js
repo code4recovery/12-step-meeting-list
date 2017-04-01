@@ -244,7 +244,7 @@ jQuery(function($){
 				
 				sortMeetings();
 				
-				if ((data.mode == 'search') && data.query) $('#meetings .results tbody').mark(data.query);
+				if ((data.mode == 'search') && data.query) $('#tsml td').not('.time').mark(data.query);
 
 				//remove old markers and reset bounds
 				for (var i = 0; i < markers.length; i++) markers[i].setMap(null);
@@ -550,7 +550,7 @@ jQuery(function($){
 	//if already searching, mark results
 	var $search_field = $('#meetings #search input[name=query]');
 	if ($search_field.size() && $search_field.val().length) {
-		$('#meetings .results tbody').mark($search_field.val());
+		$('#tsml td').not('.time').mark($search_field.val());
 	}
 	
 	//search typeahead
