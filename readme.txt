@@ -3,7 +3,7 @@ Contributors: meetingguide, aasanjose
 Tags: meetings, aa, al-anon, na, 12-step, locations, groups
 Requires at least: 3.2
 Tested up to: 4.7
-Stable tag: 2.11.4
+Stable tag: 2.11.5
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -137,8 +137,8 @@ Please note a few things about custom types:
 = I don't like the new expandable regions dropdown menu! How do I remove it? =
 No problem, just add this CSS to your theme:
 
-	#meetings .controls ul.dropdown-menu div.expand { display: none; }
-	#meetings .controls ul.dropdown-menu ul.children { height: auto; }
+	\#meetings .controls ul.dropdown-menu div.expand { display: none; }
+	\#meetings .controls ul.dropdown-menu ul.children { height: auto; }
 
 = How do I change the default search radius for location searches? =
 Add this to your functions.php. The value should be an existing value, ie 1, 5, 10, 25 or 50.
@@ -213,6 +213,13 @@ Also check out our [One Page Meeting List](https://github.com/meeting-guide/one-
 
 == Changelog ==
 
+= 2.11.5 =
+* Removing code that was causing problem in IE
+* Fixing NYC types issue in another way
+* Giving more room to day column so that the word 'Wednesday' doesn't overlap on mobile
+* Better securing group contact information
+* Hopefully fixing readme formatting issue
+
 = 2.11.4 =
 * Fix per NYC: overriding situations where the types come out as an object, rather than an array
 * Removing autofocus on Search, makes the input borderless in some browsers
@@ -261,72 +268,3 @@ Also check out our [One Page Meeting List](https://github.com/meeting-guide/one-
 = 2.10 =
 * Refactoring CSS and Javascript to reduce theme conflicts
 * More internationalization
-
-= 2.9.6 =
-* Mobile Safari now shows 'Search' button when searching
-* Mobile Safari search now can submit
-* Back to meetings links now working with plain permalink structure
-* Proper highlighting in search results
-
-= 2.9.5 =
-* Copy changes and bug fixes
-
-= 2.9.4 =
-* Adding setting to show the full address in the meeting list
-
-= 2.9.3 =
-* Removing vestige of dropdown on map button
-
-= 2.9.2 =
-* 'Upcoming' time bug fix
-
-= 2.9.1 =
-* New program: Adult Children of Alcoholics
-* Bug fix on Any Day view per AA Vienna
-* CSS layout tweaks
-
-= 2.9 =
-* New proximity search mode, courtesy of Washington Area Intergroup Association (WAIA)
-* Enabled Google maps in search results
-* Two new programs: Recovering Couples Anonymous and Sexual Compulsives Anonymous
-
-= 2.8.9 =
-* Per NYC, simplifying group last contact logic
-
-= 2.8.8 =
-* Region 'delete and reassign' dropdown now hierarchical
-* Apply address change to other meetings at this location now checked by default
-
-= 2.8.7 =
-* Fixing incorrect Men javascript string
-
-= 2.8.6 =
-* Open / Closed descriptions for Al-Anon
-
-= 2.8.5 =
-* Fixing "O other meetings at this location"
-
-= 2.8.4 =
-* Per Baton Rouge, directions link fix
-* Cache busting assets
-* Removing 'undefined' from query string on certain map links
-
-= 2.8.3 =
-* Tested with WordPress 4.7
-
-= 2.8.2 =
-* Version bump
-
-= 2.8.1 =
-* Per Maine, updated FAQ instructions for expanding regions menu
-* Per Maine, importer allows CSVs with uneven cell counts
-* Per Toronto, fixed updated date in importer
-* Per Toronto, problematic address added to overrides
-* Fixed possible margin/padding bug on detail pages
-
-= 2.8 =
-* New look for meeting detail and location pages
-* New description for open and closed meetings, per Area 23
-* Translated javascript strings per Polish AA in UK
-* Styling for nested regions dropdown
-* New white expand/collapse icons for themes with dark dropdown background colors

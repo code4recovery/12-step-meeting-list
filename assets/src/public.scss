@@ -236,7 +236,7 @@ $height:				550px;
 				tbody {
 					tr {
 						display: block;
-						padding: 10px 15px 10px 90px;
+						padding: 10px 15px 10px 110px;
 						border-top: 1px solid #ddd;
 						position: relative;
 						td { 
@@ -248,6 +248,8 @@ $height:				550px;
 							&.time {
 								position: absolute;
 								left: 15px;
+								width: 90px;
+								overflow: hidden;
 								span { display: block; }
 							}
 							&.distance {

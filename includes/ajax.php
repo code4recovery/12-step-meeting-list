@@ -51,38 +51,6 @@ function tsml_ajax_groups() {
 	wp_send_json($results);
 }
 
-//generate PDF
-add_action('wp_ajax_tsml_pdf', 'tsml_ajax_pdf');
-add_action('wp_ajax_nopriv_tsml_pdf', 'tsml_ajax_pdf');
-function tsml_ajax_pdf() {
-	/*
-	include TSML_PATH . 'vendor/autoload.php';
-
-	//invoke dompdf
-	$dompdf = new \Dompdf\Dompdf();
-	
-	//invoke tcpdf
-	$tcpdf = new TCPDF();
-	
-	//get meetings
-	$meetings = tsml_get_meetings();
-
-	//check for user theme file
-	$user_theme_file = get_stylesheet_directory() . '/tsml-pdf.php';
-	if (file_exists($user_theme_file)) {
-		include $user_theme_file;
-		wp_die();
-	}
-		
-	// instantiate and use the dompdf class
-	$dompdf->loadHtml('hello world');
-	//$dompdf->setPaper(array(0, 0, 279.36, 648)); //aa brochure size (3.88 x 9")
-	$dompdf->render();
-	$dompdf->stream('printed-guide.pdf', array('Attachment'=>false));
-	wp_die();
-	*/
-}
-
 //ajax for the search typeahead
 add_action('wp_ajax_tsml_regions', 'tsml_ajax_regions');
 add_action('wp_ajax_nopriv_tsml_regions', 'tsml_ajax_regions');
@@ -99,24 +67,6 @@ function tsml_ajax_regions() {
 	}
 	wp_send_json($results);
 }
-
-/*ajax for the search typeahead (without all the burden of the notes and fields of the main meetings ajax)
-add_action('wp_ajax_tsml_meetings', 'tsml_ajax_meetings2');
-add_action('wp_ajax_nopriv_tsml_meetings', 'tsml_ajax_meetings2');
-function tsml_ajax_meetings2() {
-	$meetings = get_posts('post_type=tsml_meeting&numberposts=-1');
-	$results = array();
-    foreach ($meetings as $meeting) {
-		$title  = get_the_title($meeting->ID);
-        $results[] = array(
-	        'id'				=> $meeting->ID,
-            'value'				=> html_entity_decode($title),
-            'type'				=> 'meeting',
-            'tokens'			=> tsml_string_tokens($title),
-        );
-	}
-	wp_send_json($results);
-}*/
 
 //ajax for address checking
 add_action('wp_ajax_address', 'tsml_admin_ajax_address');

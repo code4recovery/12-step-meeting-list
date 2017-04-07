@@ -373,17 +373,22 @@ function tsml_get_groups() {
 			'group_id'			=> $post->ID, //so as not to conflict with another id when combined
 			'group'				=> $post->post_title,
 			'group_notes'		=> $post->post_content,
-			'contact_1_name'		=> @$group_meta[$post->ID]['contact_1_name'],
-			'contact_1_email'	=> @$group_meta[$post->ID]['contact_1_email'],
-			'contact_1_phone'	=> @$group_meta[$post->ID]['contact_1_phone'],
-			'contact_2_name'		=> @$group_meta[$post->ID]['contact_2_name'],
-			'contact_2_email'	=> @$group_meta[$post->ID]['contact_2_email'],
-			'contact_2_phone'	=> @$group_meta[$post->ID]['contact_2_phone'],
-			'contact_3_name'		=> @$group_meta[$post->ID]['contact_3_name'],
-			'contact_3_email'	=> @$group_meta[$post->ID]['contact_3_email'],
-			'contact_3_phone'	=> @$group_meta[$post->ID]['contact_3_phone'],
 			'last_contact'		=> @$group_meta[$post->ID]['last_contact'],
 		);
+		
+		if (current_user_can('edit_posts')) {
+			$groups[$post->ID] = array_merge($groups[$post->ID], array(
+				'contact_1_name'		=> @$group_meta[$post->ID]['contact_1_name'],
+				'contact_1_email'	=> @$group_meta[$post->ID]['contact_1_email'],
+				'contact_1_phone'	=> @$group_meta[$post->ID]['contact_1_phone'],
+				'contact_2_name'		=> @$group_meta[$post->ID]['contact_2_name'],
+				'contact_2_email'	=> @$group_meta[$post->ID]['contact_2_email'],
+				'contact_2_phone'	=> @$group_meta[$post->ID]['contact_2_phone'],
+				'contact_3_name'		=> @$group_meta[$post->ID]['contact_3_name'],
+				'contact_3_email'	=> @$group_meta[$post->ID]['contact_3_email'],
+				'contact_3_phone'	=> @$group_meta[$post->ID]['contact_3_phone'],
+			));
+		}
 	}
 			
 	return $groups;
@@ -715,7 +720,19 @@ function tsml_get_meetings($arguments=array()) {
 
 	//need this later, need to supply default values to groupless meetings
 	$null_group_info = array('group' => null, 'group_notes' => null, 'last_contact' => null);
-	if (current_user_can('edit_posts')) $null_group_info = array_merge($null_group_info, array('contact_1_name' => null, 'contact_1_email' => null, 'contact_1_phone' => null, 'contact_2_name' => null, 'contact_2_email' => null, 'contact_2_phone' => null, 'contact_3_name' => null, 'contact_3_email' => null, 'contact_3_phone' => null));
+	if (current_user_can('edit_posts')) {
+		$null_group_info = array_merge($null_group_info, array(
+			'contact_1_name' => null, 
+			'contact_1_email' => null, 
+			'contact_1_phone' => null, 
+			'contact_2_name' => null, 
+			'contact_2_email' => null, 
+			'contact_2_phone' => null, 
+			'contact_3_name' => null, 
+			'contact_3_email' => null, 
+			'contact_3_phone' => null,
+		));
+	}
 
 	$meeting_meta = tsml_get_meta('tsml_meeting');
 
@@ -737,7 +754,7 @@ function tsml_get_meetings($arguments=array()) {
 			'time_formatted'		=> tsml_format_time(@$meeting_meta[$post->ID]['time']),
 			'distance'			=> '',
 			'day'				=> @$meeting_meta[$post->ID]['day'],
-			'types'				=> empty($meeting_meta[$post->ID]['types']) ? array() : unserialize($meeting_meta[$post->ID]['types']),
+			'types'				=> empty($meeting_meta[$post->ID]['types']) ? array() : array_values(unserialize($meeting_meta[$post->ID]['types'])),
 		), $locations[$post->post_parent]);
 		
 		//append group info to meeting

@@ -193,11 +193,6 @@ jQuery(function($){
 				//loop through JSON meetings
 				$.each(response, function(index, obj){
 
-					//for some reason, some nyc meetings are 0=>M, 2=>O, 3=>ST (missing the 1, therefore an object)
-					if (typeof obj.types !== 'array') {
-						obj.types = Object.values(obj.types);
-					}
-
 					//add gender designation
 					if ($.inArray('M', obj.types) != -1) {
 						obj.name += ' <small>' + tsml.strings.men + '</small>';
