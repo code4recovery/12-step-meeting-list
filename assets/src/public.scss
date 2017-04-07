@@ -114,6 +114,7 @@ $height:				550px;
 			input[name=query] {
 				margin: 0;
 				border-radius: 4px 0 0 4px;
+				font-size: 16px; //this might seem big, but it prevents zooming on focus
 			}
 			/* need to have this button, and display: none will not work */
 			input[type=submit] {

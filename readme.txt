@@ -3,7 +3,7 @@ Contributors: meetingguide, aasanjose
 Tags: meetings, aa, al-anon, na, 12-step, locations, groups
 Requires at least: 3.2
 Tested up to: 4.7
-Stable tag: 2.11.3
+Stable tag: 2.11.4
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -212,6 +212,12 @@ Also check out our [One Page Meeting List](https://github.com/meeting-guide/one-
 1. Edit location
 
 == Changelog ==
+
+= 2.11.4 =
+* Fix per NYC: overriding situations where the types come out as an object, rather than an array
+* Removing autofocus on Search, makes the input borderless in some browsers
+* Increasing search field font size to prevent zooming when focusing
+* Overriding address issue in Pennsylvania
 
 = 2.11.3 =
 * Search logic fixes per Oakland

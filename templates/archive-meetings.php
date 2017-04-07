@@ -119,7 +119,7 @@ class Walker_Regions_Dropdown extends Walker_Category {
 			<div class="col-sm-6 col-md-2">
 				<form id="search" role="search" action=".">
 					<div class="input-group">
-						<input type="search" name="query" class="form-control" value="<?php echo $query?>" placeholder="<?php echo $mode_label?>" aria-label="Search" <?php echo ($mode == 'me') ? 'disabled' : 'autofocus'?>>
+						<input type="search" name="query" class="form-control" value="<?php echo $query?>" placeholder="<?php echo $mode_label?>" aria-label="Search" <?php echo ($mode == 'me') ? 'disabled' : ''?>>
 						<div class="input-group-btn" id="mode">
 							<button class="btn btn-default tsml-dropdown-toggle" data-toggle="dropdown" type="button">
 								<i class="<?php echo $modes[$mode]['icon']?>"></i>
