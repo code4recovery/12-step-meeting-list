@@ -3,8 +3,6 @@
 //get assets for page
 tsml_assets();
 
-get_header();
-
 //define search dropdown options
 $modes = array(
 	'search' => array('title' => __('Search', '12-step-meeting-list'), 'icon' => 'glyphicon glyphicon-search'),
@@ -77,6 +75,23 @@ $type_label = ($type && array_key_exists($type, $tsml_types[$tsml_program])) ? $
 $mode_label = array_key_exists($mode, $modes) ? $modes[$mode]['title'] : $modes[0]['title'];
 $distance_label = $distances[$distance];
 
+//create page title
+$tsml_page_title = array();
+if ($day !== null) $tsml_page_title[] = $tsml_days[$day];
+if ($time) $tsml_page_title[] = $time_label;
+if ($type) $tsml_page_title[] = $type_label;
+$tsml_page_title[] = __('Meetings', '12-step-meeting-list');
+if ($region) $tsml_page_title[] = __('in', '12-step-meeting-list') . ' ' . $region_label;
+$tsml_page_title = implode(' ', $tsml_page_title);
+
+//set page title
+
+function tsml_alter_archive_title($title) {
+	global $tsml_page_title;
+	return $tsml_page_title;
+};
+add_filter('wp_title', 'tsml_alter_archive_title');
+
 //need these later
 $meetings = $locations = array();
 $message = '';
@@ -96,7 +111,7 @@ class Walker_Regions_Dropdown extends Walker_Category {
 		$classes = array();
 		if ($args['value'] == esc_attr($category->term_id)) $classes[] = 'active';
 		$classes = count($classes) ? ' class="' . implode(' ', $classes) . '"' : '';
-		$output .= '<li' . $classes . '><a data-id="' . esc_attr($category->term_id) . '">' . esc_attr($category->name) . '</a>';
+		$output .= '<li' . $classes . '><a href="' . tmsl_meetings_url(array('tsml-region'=>$category->term_id)) . '" data-id="' . $category->term_id . '">' . $category->name . '</a>';
 		if ($args['has_children']) $output .= '<div class="expand"></div>';
 	}
 	function end_el(&$output, $item, $depth=0, $args=array()) {
@@ -104,10 +119,22 @@ class Walker_Regions_Dropdown extends Walker_Category {
 	}
 }
 
+//do this after everything is loaded
+get_header();
+
+
 ?>
 <div id="tsml">
 	
 	<div id="meetings" data-view="<?php echo $view?>" data-mode="<?php echo $mode?>" class="container<?php if (!count($meetings)) {?> empty<?php }?>" role="main">
+
+		<div class="row title">
+			<div class="col-xs-12">
+				<div class="page-header">
+					<h1><?php echo $tsml_page_title?></h1>
+				</div>
+			</div>
+		</div>
 
 		<?php if (is_active_sidebar('tsml_meetings_top')) {?>
 			<div class="widgets meetings-widgets meetings-widgets-top" role="complementary">
@@ -137,10 +164,10 @@ class Walker_Regions_Dropdown extends Walker_Category {
 			</div>
 			<div class="col-sm-6 col-md-2 col-md-push-8">
 				<div class="btn-group btn-group-justified" id="action">
-					<a class="btn btn-default toggle-view<?php if ($view == 'list') {?> active<?php }?>" data-id="list" role="button">
+					<a class="btn btn-default toggle-view<?php if ($view == 'list') {?> active<?php }?>" href="<?php echo tmsl_meetings_url(array('tsml-view'=>'list'))?>" data-id="list" role="button">
 						<?php _e('List', '12-step-meeting-list')?>
 					</a>
-					<a class="btn btn-default toggle-view<?php if ($view == 'map') {?> active<?php }?>" data-id="map" role="button">
+					<a class="btn btn-default toggle-view<?php if ($view == 'map') {?> active<?php }?>" href="<?php echo tmsl_meetings_url(array('tsml-view'=>'map'))?>" data-id="map" role="button">
 						<?php _e('Map', '12-step-meeting-list')?>
 					</a>
 				</div>
@@ -173,7 +200,7 @@ class Walker_Regions_Dropdown extends Walker_Category {
 					<ul class="dropdown-menu" role="menu">
 						<?php
 						foreach ($distances as $key => $value) {
-							echo '<li' . ($key == $distance ? ' class="active"' : '') . '><a data-id="' . $key . '">' . $value . '</a></li>';
+							echo '<li' . ($key == $distance ? ' class="active"' : '') . '><a href="' . tmsl_meetings_url(array('tsml-distance'=>$key)) . '" data-id="' . $key . '">' . $value . '</a></li>';
 						}?>
 					</ul>
 				</div>
@@ -188,7 +215,7 @@ class Walker_Regions_Dropdown extends Walker_Category {
 						<li<?php if ($day === null) echo ' class="active"'?>><a><?php echo $day_default?></a></li>
 						<li class="divider"></li>
 						<?php foreach ($tsml_days as $key=>$value) {?>
-						<li<?php if (intval($key) === $day) echo ' class="active"'?>><a data-id="<?php echo $key?>"><?php echo $value?></a></li>
+						<li<?php if (intval($key) === $day) echo ' class="active"'?>><a href="<?php echo tmsl_meetings_url(array('tsml-day'=>$key))?>" data-id="<?php echo $key?>"><?php echo $value?></a></li>
 						<?php }?>
 					</ul>
 				</div>
@@ -202,10 +229,10 @@ class Walker_Regions_Dropdown extends Walker_Category {
 					<ul class="dropdown-menu" role="menu">
 						<li<?php if (empty($time)) echo ' class="active"'?>><a><?php echo $time_default?></a></li>
 						<li class="divider upcoming"></li>
-						<li class="upcoming<?php if ($time == 'upcoming') echo ' active"'?>"><a data-id="upcoming"><?php esc_html_e('Upcoming', '12-step-meeting-list')?></a></li>
+						<li class="upcoming<?php if ($time == 'upcoming') echo ' active"'?>"><a href="<?php echo tmsl_meetings_url(array('tsml-time'=>'upcoming'))?>" data-id="upcoming"><?php esc_html_e('Upcoming', '12-step-meeting-list')?></a></li>
 						<li class="divider"></li>
 						<?php foreach ($times as $key=>$value) {?>
-						<li<?php if ($key === $time) echo ' class="active"'?>><a data-id="<?php echo $key?>"><?php echo $value?></a></li>
+						<li<?php if ($key === $time) echo ' class="active"'?>><a href="<?php echo tmsl_meetings_url(array('tsml-time'=>$key))?>" data-id="<?php echo $key?>"><?php echo $value?></a></li>
 						<?php }?>
 					</ul>
 				</div>
@@ -223,7 +250,7 @@ class Walker_Regions_Dropdown extends Walker_Category {
 						<?php 
 						$types_to_list = array_intersect_key($tsml_types[$tsml_program], array_flip($tsml_types_in_use));
 						foreach ($types_to_list as $key=>$thistype) {?>
-						<li<?php if ($key == $type) echo ' class="active"'?>><a data-id="<?php echo $key?>"><?php echo $thistype?></a></li>
+						<li<?php if ($key == $type) echo ' class="active"'?>><a href="<?php echo tmsl_meetings_url(array('tsml-type'=>$key))?>" data-id="<?php echo $key?>"><?php echo $thistype?></a></li>
 						<?php } ?>
 					</ul>
 				</div>

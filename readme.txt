@@ -3,7 +3,7 @@ Contributors: meetingguide, aasanjose
 Tags: meetings, aa, al-anon, na, 12-step, locations, groups
 Requires at least: 3.2
 Tested up to: 4.7
-Stable tag: 2.11.5
+Stable tag: 2.11.6
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -137,8 +137,8 @@ Please note a few things about custom types:
 = I don't like the new expandable regions dropdown menu! How do I remove it? =
 No problem, just add this CSS to your theme:
 
-	\#meetings .controls ul.dropdown-menu div.expand { display: none; }
-	\#meetings .controls ul.dropdown-menu ul.children { height: auto; }
+	div#meetings .controls ul.dropdown-menu div.expand { display: none; }
+	div#meetings .controls ul.dropdown-menu ul.children { height: auto; }
 
 = How do I change the default search radius for location searches? =
 Add this to your functions.php. The value should be an existing value, ie 1, 5, 10, 25 or 50.
@@ -212,6 +212,10 @@ Also check out our [One Page Meeting List](https://github.com/meeting-guide/one-
 1. Edit location
 
 == Changelog ==
+
+= 2.11.6 =
+* SEO improvements for meeting list page
+* Readme code fix
 
 = 2.11.5 =
 * Removing code that was causing problem in IE

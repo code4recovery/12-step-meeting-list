@@ -892,6 +892,15 @@ function tsml_link($url, $string, $exclude='', $class=false) {
 	return $return;
 }
 
+//function: link to meetings page with parameters (added to link dropdown menus for SEO)
+//used:		archive-meetings.php
+function tmsl_meetings_url($parameters) {
+	$url = get_post_type_archive_link('tsml_meeting');
+	$url .= (strpos($url, '?') === false) ? '?' : '&';
+	$url .= http_build_query($parameters);
+	return $url;
+}
+
 //function: set an option with the currently-used types
 //used: 	tsml_import() and save.php
 function tsml_update_types_in_use() {

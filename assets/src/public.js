@@ -423,6 +423,7 @@ jQuery(function($){
 			string += ' in ' + $('#meetings #region span.selected').text();
 		}
 		document.title = string;
+		$('#tsml #meetings .title h1').text(string);
 	}
 	if ($('body').hasClass('post-type-archive-meetings')) updateTitle();
 	
@@ -653,7 +654,11 @@ jQuery(function($){
 		e.stopPropagation();
 		$(this).next('ul.children').toggleClass('expanded');
 		$(this).toggleClass('expanded');
-	}).on('click', '.dropdown-menu a', function(){
+	}).on('click', '.dropdown-menu a', function(e){
+		
+		//these are live hrefs now
+		e.preventDefault();
+		
 		//dropdown menu click
 		var param = $(this).closest('div').attr('id');
 		
@@ -714,7 +719,10 @@ jQuery(function($){
 	});
 
 	//toggle between list and map
-	$('#meetings #action .toggle-view').click(function(){
+	$('#meetings #action .toggle-view').click(function(e){
+		
+		//these are live hrefs now
+		e.preventDefault();
 		
 		//what's going on
 		var action = $(this).attr('data-id');

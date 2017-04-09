@@ -104,6 +104,10 @@ $height:				550px;
 		min-height: $height;
 		padding: $margin;
 		clear: both;
+		
+		.row.title {
+			display: none; 
+		}
 	
 		.controls {
 			min-height: 34px;
@@ -759,6 +763,7 @@ body {
 			width: 100%; 
 			&[data-view=list] { padding-bottom: 0; }
 		}
+		#meetings .page-header { max-width: none; }
 	}
 	&.twentyten {
 		#main { padding-top: 5px; font-size: 14px; }
