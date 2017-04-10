@@ -291,6 +291,7 @@ $height:				550px;
 			}
 				
 			#map {
+				border: 1px solid #ddd;
 				border-radius: 4px;
 				height: $height;
 				display: none;
@@ -521,8 +522,13 @@ $height:				550px;
 	
 	/* Large devices (large desktops, 1200px and up) */
 	@media (min-width: 1200px) {
-		#meetings .results table .address {
-			display: table-cell;
+		#meetings .results {
+			table .address {
+				display: table-cell;
+			}
+			#map {
+				height: 740px;
+			}
 		}
 	}
 	

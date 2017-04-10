@@ -1,13 +1,13 @@
 === 12 Step Meeting List ===
 Contributors: meetingguide, aasanjose
-Tags: meetings, aa, al-anon, na, 12-step, locations, groups
+Tags: 12-step, aa, al-anon, coda, meetings, na, oa, saa, slaa
 Requires at least: 3.2
 Tested up to: 4.7
-Stable tag: 2.11.6
+Stable tag: 2.11.7
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
-This plugin is designed to help 12 step programs list their meetings and locations. It standardizes addresses, and displays in a list or map.
+This plugin helps 12 step programs list their meetings. It standardizes addresses, and displays results in a searchable list and map.
 
 == Description ==
 
@@ -30,6 +30,7 @@ It was originally designed to maintain a list of AA meetings in Santa Clara Coun
 1. [Elk Grove Village, IL](http://d15aa.org/d15aa.org/?post_type=meetings)
 1. [Ft. Worth, TX](http://fortworthaa.org/?post_type=tsml_meeting)
 1. [Greensboro, NC](http://nc23.org/meetings/)
+1. [Harrisburg, PA](http://www.aaharrisburg.org/meetings/)
 1. [Joliet, IL](http://aadistrict51.org/meetings/)
 1. [Midlands, UK (Polish)](http://intergrupamidlands.co.uk/meetings/)
 1. [Kansas](https://ks-aa.org/meetings/)
@@ -53,8 +54,10 @@ It was originally designed to maintain a list of AA meetings in Santa Clara Coun
 1. [San Jose, CA](https://aasanjose.org/meetings)
 1. [San Mateo, CA](http://aa-san-mateo.org/meetings)
 1. [Santa Fe, NM](http://santafeaa.org/meetings/)
+1. [Savannah, GA](http://savannahaa.com/meetings-list/)
 1. [Secular AA](https://www.secularaa.org/meetings/)
 1. [Southern Colorado](http://www.puebloaa.org/meetings/)
+1. [Sonoma County, CA](http://www.sonomacountyaa.org/meetings/)
 1. [State College, PA](http://www.district43.com/meetings/)
 1. [Tidewater Area, VA](http://www.tidewaterintergroup.org/meetings/)
 1. [Toronto, Canada](https://aatoronto.org/meetings/)
@@ -99,14 +102,14 @@ It was originally designed to maintain a list of AA meetings in Santa Clara Coun
 
 1. [Indiana](http://indiana-saa.org/meetings/)
 
-[Let us know](mailto:wordpress@meetingguide.org) if you're using this plugin and would like to be listed here.
+[Let us know](mailto:info@meetingguide.org) if you're using this plugin and would like to be listed here.
 
 = Notes =
 
-* The Notes field is for any non-standardized meeting info, such as Basement, or Building C
+* The Meeting Notes field is for any non-standardized meeting info, such as Basement, or Building C
 * Location should be a simple place-name, eg Queen of the Valley Hospital
-* Address should only be address, no "Upstairs" or "Building C" or "Near 2nd Ave"
-* You can fill in a very basic address and then when you tab away from that field you will see it try to standardize the address for you. If you write "1000 trancas, napa" it will return with "1000 Trancas Street, Napa, CA 94558, US."
+* Address should only be the address; no "Upstairs" or "Building C" or "Near 2nd Ave"
+* You can fill in a very basic address and then when you tab away from that field you will see it try to standardize the address for you. If you write "1000 trancas, napa" it will replace it with "1000 Trancas St, Napa, CA 94558, USA."
 
 == Installation ==
 
@@ -212,6 +215,10 @@ Also check out our [One Page Meeting List](https://github.com/meeting-guide/one-
 1. Edit location
 
 == Changelog ==
+
+= 2.11.7 =
+* Improved page title for meeting list page
+* New plugin screenshots
 
 = 2.11.6 =
 * SEO improvements for meeting list page

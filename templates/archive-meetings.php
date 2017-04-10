@@ -84,13 +84,18 @@ $tsml_page_title[] = __('Meetings', '12-step-meeting-list');
 if ($region) $tsml_page_title[] = __('in', '12-step-meeting-list') . ' ' . $region_label;
 $tsml_page_title = implode(' ', $tsml_page_title);
 
-//set page title
-
-function tsml_alter_archive_title($title) {
+//set page title for SEO (only applies to this page)
+function tsml_set_title($title, $separator) {
 	global $tsml_page_title;
-	return $tsml_page_title;
+	$title_parts = array_map('trim', explode($separator, $title));
+	for ($i = 0; $i < count($title_parts); $i++) {
+		if (strcmp($title_parts[$i], __('Meetings', '12-step-meeting-list')) == 0) {
+			$title_parts[$i] = $tsml_page_title;
+		}
+	}
+	return implode(' ' . $separator . ' ', $title_parts);
 };
-add_filter('wp_title', 'tsml_alter_archive_title');
+add_filter('wp_title', 'tsml_set_title', 10, 2);
 
 //need these later
 $meetings = $locations = array();
