@@ -85,8 +85,9 @@ if ($region) $tsml_page_title[] = __('in', '12-step-meeting-list') . ' ' . $regi
 $tsml_page_title = implode(' ', $tsml_page_title);
 
 //set page title for SEO (only applies to this page)
-function tsml_set_title($title, $separator) {
+function tsml_set_title($title, $separator=null) {
 	global $tsml_page_title;
+	if (empty($separator)) return $tsml_page_title;
 	$title_parts = array_map('trim', explode($separator, $title));
 	for ($i = 0; $i < count($title_parts); $i++) {
 		if (strcmp($title_parts[$i], __('Meetings', '12-step-meeting-list')) == 0) {
