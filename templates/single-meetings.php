@@ -44,14 +44,29 @@ $meeting = tsml_get_meeting();
 										), 'tsml_meeting', 'list-group-item list-group-item-location');
 								}
 								if (!empty($meeting->group_id)) {?>
-								<li class="list-group-item list-group-item-group">
-									<?php echo $meeting->group?>
-								</li>
-								<?php if (!empty($meeting->group_notes)) {?>
-								<li class="list-group-item list-group-item-group-notes">
-									<?php echo $meeting->group_notes?>
-								</li>
-								<?php }
+									<li class="list-group-item list-group-item-group">
+										<?php echo $meeting->group?>
+									</li>
+									<?php if (!empty($meeting->website)) {?>
+									<a href="<?php echo $meeting->website?>" target="_blank" class="list-group-item list-group-item-group-website">
+										<?php echo $meeting->website?>
+									</a>
+									<?php }
+									if (!empty($meeting->email)) {?>
+									<a href="mailto:<?php echo $meeting->email?>" class="list-group-item list-group-item-group-email">
+										<?php echo $meeting->email?>
+									</a>
+									<?php }
+									if (!empty($meeting->phone)) {?>
+									<a href="tel:<?php echo $meeting->phone?>" class="list-group-item list-group-item-group-phone">
+										<?php echo $meeting->phone?>
+									</a>
+									<?php }
+									if (!empty($meeting->group_notes)) {?>
+									<li class="list-group-item list-group-item-group-notes">
+										<?php echo $meeting->group_notes?>
+									</li>
+									<?php }
 								}
 								if (!empty($meeting->region)) {?>
 								<li class="list-group-item list-group-item-region">

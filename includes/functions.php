@@ -373,6 +373,9 @@ function tsml_get_groups() {
 			'group_id'			=> $post->ID, //so as not to conflict with another id when combined
 			'group'				=> $post->post_title,
 			'group_notes'		=> $post->post_content,
+			'website'			=> @$group_meta[$post->ID]['website'],
+			'email'				=> @$group_meta[$post->ID]['email'],
+			'phone'				=> @$group_meta[$post->ID]['phone'],
 			'last_contact'		=> @$group_meta[$post->ID]['last_contact'],
 		);
 		
@@ -640,7 +643,7 @@ function tsml_get_meetings($arguments=array()) {
 		));
 		
 		//add groups
-		if ($groups = get_posts(array(
+		if ($group_ids = get_posts(array(
 				'post_type'			=> 'tsml_group',
 				'numberposts'		=> -1,
 				'fields'				=> 'ids',
@@ -654,7 +657,7 @@ function tsml_get_meetings($arguments=array()) {
 					array(
 						'key'		=> 'group_id',
 						'compare'	=> 'IN',
-						'value'		=> $groups,
+						'value'		=> $group_ids,
 					),
 				),
 			)));
@@ -719,7 +722,14 @@ function tsml_get_meetings($arguments=array()) {
 	));
 
 	//need this later, need to supply default values to groupless meetings
-	$null_group_info = array('group' => null, 'group_notes' => null, 'last_contact' => null);
+	$null_group_info = array(
+		'group' => null, 
+		'group_notes' => null, 
+		'website' => null, 
+		'email' => null, 
+		'phone' => null, 
+		'last_contact' => null,
+	);
 	if (current_user_can('edit_posts')) {
 		$null_group_info = array_merge($null_group_info, array(
 			'contact_1_name' => null, 
@@ -798,7 +808,7 @@ function tsml_get_meta($type, $id=null) {
 	//don't show contact information if user is not logged in
 	//contact info still available on an individual meeting basis via tsml_get_meeting()
 	$keys = array(
-		'tsml_group' => (current_user_can('edit_posts') ? '"contact_1_name", "contact_1_email", "contact_1_phone", "contact_2_name", "contact_2_email", "contact_2_phone", "contact_3_name", "contact_3_email", "contact_3_phone", "last_contact"' : '"last_contact"'),
+		'tsml_group' => '"website", "email", "phone", "last_contact"' . (current_user_can('edit_posts') ? ', "contact_1_email", "contact_1_phone", "contact_2_name", "contact_2_email", "contact_2_phone", "contact_3_name", "contact_3_email", "contact_3_phone"' : ''),
 		'tsml_location' => '"formatted_address", "latitude", "longitude"',
 		'tsml_meeting' => '"day", "time", "end_time", "types", "group_id"',
 	);

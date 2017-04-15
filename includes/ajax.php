@@ -124,7 +124,7 @@ function tsml_ajax_csv() {
 	$columns = array(
 		'time' =>				'Time',
 		'end_time' =>			'End Time',
-		'day' =>				'Day',
+		'day' =>					'Day',
 		'name' =>				'Name',
 		'location' =>			'Location',
 		'formatted_address' =>	'Address',
@@ -134,22 +134,25 @@ function tsml_ajax_csv() {
 		'notes' =>				'Notes',
 		'location_notes' =>		'Location Notes',
 		'group' => 				'Group',
+		'website' => 			'Website',
+		'email' => 				'Email',
+		'phone' => 				'Phone',
 		'group_notes' => 		'Group Notes',
-		'updated' =>			'Updated',
+		'updated' =>				'Updated',
 	);
 	
 	//append contact info if user has permission
 	if (current_user_can('edit_posts')) {
 		$columns = array_merge($columns, array(
 			'contact_1_name' =>		'Contact 1 Name',
-			'contact_1_email' =>	'Contact 1 Email',
-			'contact_1_phone' =>	'Contact 1 Phone',
+			'contact_1_email' =>		'Contact 1 Email',
+			'contact_1_phone' =>		'Contact 1 Phone',
 			'contact_2_name' =>		'Contact 2 Name',
-			'contact_2_email' =>	'Contact 2 Email',
-			'contact_2_phone' =>	'Contact 2 Phone',
+			'contact_2_email' =>		'Contact 2 Email',
+			'contact_2_phone' =>		'Contact 2 Phone',
 			'contact_3_name' =>		'Contact 3 Name',
-			'contact_3_email' =>	'Contact 3 Email',
-			'contact_3_phone' =>	'Contact 3 Phone',
+			'contact_3_email' =>		'Contact 3 Email',
+			'contact_3_phone' =>		'Contact 3 Phone',
 			'last_contact' => 		'Last Contact',
 		));
 	}
@@ -390,6 +393,18 @@ function tsml_ajax_import() {
 					}					
 				}
 
+				if (!empty($meeting['website'])) {
+					update_post_meta($group_id, 'website', esc_url_raw($meeting['website'], array('http', 'https')));
+				}
+				
+				if (!empty($meeting['email'])) {
+					update_post_meta($group_id, 'email', $meeting['email']);
+				}
+				
+				if (!empty($meeting['phone'])) {
+					update_post_meta($group_id, 'phone', $meeting['phone']);
+				}
+				
 				if (!empty($meeting['last_contact']) && ($last_contact = strtotime($meeting['last_contact']))) {
 					update_post_meta($group_id, 'last_contact', date('Y-m-d', $last_contact));
 				}

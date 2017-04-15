@@ -17,8 +17,6 @@ function tsml_admin_init() {
 
 	tsml_assets();
 	
-	remove_meta_box('wii_post-box1', 'tsml_meeting', 'normal'); //removes weaver ii from east bay site
-
 	add_meta_box('info', __('Meeting Information', '12-step-meeting-list'), 'tsml_meeting_box', 'tsml_meeting', 'normal', 'low');
 
 	function tsml_meeting_box() {
@@ -170,6 +168,18 @@ function tsml_admin_init() {
 			<label><?php _e('Notes', '12-step-meeting-list')?></label>
 			<textarea name="group_notes" placeholder="<?php _e('eg. Group history, when the business meeting is, etc.', '12-step-meeting-list')?>"><?php echo @$group->post_content?></textarea>
 		</div>
+		<div class="meta_form_row">
+			<label><?php _e('Website', '12-step-meeting-list')?></label>
+			<input type="text" name="website" id="website" value="<?php echo @$group_custom['website'][0]?>" placeholder="https://">
+		</div>
+		<div class="meta_form_row">
+			<label><?php _e('Email', '12-step-meeting-list')?></label>
+			<input type="text" name="email" id="email" value="<?php echo @$group_custom['email'][0]?>" placeholder="group@website.com">
+		</div>
+		<div class="meta_form_row">
+			<label><?php _e('Phone', '12-step-meeting-list')?></label>
+			<input type="text" name="phone" id="phone" value="<?php echo @$group_custom['phone'][0]?>" placeholder="(800) 555-1212">
+		</div>
 		<div class="meta_form_row" style="clear:left;">
 			<label><?php _e('Contacts', '12-step-meeting-list')?></label>
 			<div class="container">
@@ -189,7 +199,7 @@ function tsml_admin_init() {
 		<!--
 		<div class="meta_form_row">
 			<label for="district"><?php _e('District', '12-step-meeting-list')?></label>
-			<?php wp_dropdown_categories(array(
+			<?php /*wp_dropdown_categories(array(
 				'name' => 'district',
 				'taxonomy' => 'tsml_district',
 				'hierarchical' => true,
@@ -197,7 +207,7 @@ function tsml_admin_init() {
 				'orderby' => 'name',
 				'selected' => $district,
 				'show_option_none' => __('Select service district', '12-step-meeting-list'),
-			))?>
+			))*/?>
 		</div>
 		-->
 		<?php

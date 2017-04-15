@@ -231,7 +231,28 @@ function tsml_save_post($post_id, $post, $update) {
 				foreach ($old_meeting->location_meetings as $meeting) update_post_meta($meeting['id'], 'group_id', $group_id); 	
 			}
 		}
-
+		
+		//group website
+		if (!empty($_POST['website'])) {
+			update_post_meta($group_id, 'website', esc_url_raw($_POST['website'], array('http', 'https')));
+		} else {
+			delete_post_meta($group_id, 'website');
+		}
+		
+		//group email
+		if (!empty($_POST['email'])) {
+			update_post_meta($group_id, 'email', sanitize_text_field($_POST['email']));
+		} else {
+			delete_post_meta($group_id, 'email');
+		}
+		
+		//group phone
+		if (!empty($_POST['phone'])) {
+			update_post_meta($group_id, 'phone', sanitize_text_field($_POST['phone']));
+		} else {
+			delete_post_meta($group_id, 'phone');
+		}
+		
 		//contact info
 		for ($i = 1; $i <= GROUP_CONTACT_COUNT; $i++) {
 			foreach (array('name', 'email', 'phone') as $field) {
