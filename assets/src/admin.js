@@ -45,8 +45,8 @@ jQuery(function($){
 		runImport();
 	}
 	
-	//delete email contact
-	$('.admin_contacts table span').click(function(){
+	//delete data source or email contact
+	$('table form span').click(function(){
 		$(this).parent().submit();
 	});
 

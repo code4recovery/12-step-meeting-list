@@ -225,6 +225,32 @@ function tmsl_import_page() {
 		$meetings = get_option('tsml_import_buffer', array());
 	}
 		
+	//add data source
+	$tsml_data_sources = get_option('tsml_data_sources', array());
+	if (!empty($_POST['tsml_add_data_source']) && isset($_POST['tsml_nonce']) && wp_verify_nonce($_POST['tsml_nonce'], $tsml_nonce)) {
+		$response = wp_remote_get($_POST['tsml_add_data_source']);
+		if (is_array($response) && !empty($response['body']) && ($body = json_decode($response['body']))) {
+			$tsml_data_sources[esc_url_raw($_POST['tsml_add_data_source'], array('http', 'https'))] = array(
+				'status' => 'OK',
+				'last_import' => null,
+			);
+			dd($body);
+			update_option('tsml_data_sources', $tsml_data_sources);
+			tsml_alert(__('Data source added.', '12-step-meeting-list'));
+		} else {
+			tsml_alert(__('Data source not valid!', '12-step-meeting-list'), 'notice notice-error');
+		}
+	}
+	
+	//remove data source
+	if (!empty($_POST['tsml_remove_data_source'])) {
+		if (array_key_exists($_POST['tsml_remove_data_source'], $tsml_data_sources)) {
+			unset($tsml_data_sources[$_POST['tsml_remove_data_source']]);
+			update_option('tsml_data_sources', $tsml_data_sources);
+			tsml_alert(__('Data source removed.', '12-step-meeting-list'));
+		}
+	}
+	
 	//change program
 	if (!empty($_POST['tsml_program']) && isset($_POST['tsml_nonce']) && wp_verify_nonce($_POST['tsml_nonce'], $tsml_nonce)) {
 		$tsml_program = sanitize_text_field($_POST['tsml_program']);
@@ -244,7 +270,7 @@ function tmsl_import_page() {
 		$email = sanitize_text_field($_POST['tsml_add_feedback_address']);
 		if (!is_email($email)) {
 			//theoretically should never get here, because WordPress checks entry first
-			tsml_alert(sprintf(esc_html__('<div class="notice notice-error"><p><code>%s</code> is not a valid email address. Please try again.</p></div>', '12-step-meeting-list'), $email),'notice notice-error');
+			tsml_alert(sprintf(esc_html__('<code>%s</code> is not a valid email address. Please try again.', '12-step-meeting-list'), $email), 'notice notice-error');
 		} else {
 			$tsml_feedback_addresses[] = $email;
 			$tsml_feedback_addresses = array_unique($tsml_feedback_addresses);
@@ -324,7 +350,7 @@ function tmsl_import_page() {
 					<div class="postbox">
 						<div class="inside">
 							<h3><?php _e('Import CSV', '12-step-meeting-list')?></h3>
-							<form method="post" action="edit.php?post_type=tsml_meeting&page=import" enctype="multipart/form-data">
+							<form method="post" action="<?php echo $_SERVER['REQUEST_URI']?>" enctype="multipart/form-data">
 								<?php wp_nonce_field($tsml_nonce, 'tsml_nonce', false)?>
 								<input type="file" name="tsml_import">
 								<p>
@@ -336,36 +362,83 @@ function tmsl_import_page() {
 								</p>
 								<p><input type="submit" class="button button-primary" value="<?php _e('Begin', '12-step-meeting-list')?>"></p>
 							</form>
-
-							<h4><?php _e('Spreadsheet Specs', '12-step-meeting-list')?></h4>
-							<p><a href="<?php echo plugin_dir_url(__FILE__) . '../template.csv'?>" class="button button-large"><span class="dashicons dashicons-media-spreadsheet"></span><?php _e('Sample import template', '12-step-meeting-list')?></a></p>
-							<ul class="ul-disc">
-								<li><?php _e('<strong>Time</strong>, if present, should be in a standard date format such as 6:00 AM or 06:00. Non-standard or empty dates will be imported as "by appointment."', '12-step-meeting-list') ?>
-								<li><?php _e('<strong>End Time</strong>, if present, should be in a standard date format such as 6:00 AM or 06:00.', '12-step-meeting-list') ?>
-								<li><?php _e('<strong>Day</strong> if present, should either Sunday, Monday, Tuesday, Wednesday, Thursday, Friday, or Saturday. Meetings that occur on multiple days should be listed separately. \'Daily\' or \'Mondays\' will not work. Non-standard days will be imported as "by appointment."', '12-step-meeting-list') ?>
-								<li><?php _e('<strong>Name</strong> is the name of the meeting, and is optional, although it\'s valuable information for the user. If it\'s missing, a name will be created by combining the location, day, and time.', '12-step-meeting-list') ?>
-								<li><?php _e('<strong>Location</strong> is the name of the location, and is optional. Generally it\'s the group or building name. If it\'s missing, the address will be used. In the event that there are multiple location names for the same address, the first location name will be used.', '12-step-meeting-list') ?>
-								<li><?php _e('<strong>Address</strong> is strongly encouraged and will be corrected by Google, so it may look different afterward. Ideally, every address for the same location should be exactly identical, and not contain extra information about the address, such as the building name or descriptors like "around back."', '12-step-meeting-list') ?>
-								<li><?php _e('If <strong>Address</strong> is specified, then <strong>City</strong>, <strong>State</strong>, and <strong>Country</strong> are optional, but they might be useful if your addresses sound ambiguous to Google. If address is not specified, then these fields are required.', '12-step-meeting-list') ?>
-								<li><?php _e('<strong>Notes</strong> are freeform notes that are specific to the meeting. For example, "last Saturday is birthday night."', '12-step-meeting-list') ?>
-								<li><?php _e('<strong>Region</strong> is user-defined and can be anything. Often this is a small municipality or neighborhood. Since these go in a dropdown, ideally you would have 10 to 20 regions, although it\'s ok to be over or under.', '12-step-meeting-list') ?>
-								<li><?php _e('<strong>Sub Region</strong> makes the Region hierarchical; in San Jose we have sub regions for East San Jose, West San Jose, etc. New York City might have Manhattan be a Region, and Greenwich Village be a Sub Region.', '12-step-meeting-list') ?>
-								<li><?php _e('<strong>Location Notes</strong> are freeform notes that will show up on every meeting that this location. For example, "Enter from the side."', '12-step-meeting-list') ?>
-								<li><?php _e('<strong>Group</strong> is a way of grouping contacts. Meetings with the same Group name will be grouped together and share contact information.', '12-step-meeting-list') ?>
-								<li><?php _e('<strong>Website</strong> is optional, but a group name must also be specified.', '12-step-meeting-list') ?>
-								<li><?php _e('<strong>Email</strong> is optional, but a group name must also be specified. This is a public email address.', '12-step-meeting-list') ?>
-								<li><?php _e('<strong>Phone</strong> is optional, but a group name must also be specified. This is a public phone number.', '12-step-meeting-list') ?>
-								<li><?php _e('<strong>Group Notes</strong> is for stuff like a short group history, or when the business meeting meets.', '12-step-meeting-list') ?>
-								<li><?php _e('<strong>Contact 1/2/3 Name/Email/Phone</strong> (nine fields in total) are all optional, but will not be saved if there is not also a Group name specified. By default, contact information is only visible inside the WordPress dashboard.', '12-step-meeting-list') ?>
-								<li><?php _e('<strong>Last Contact</strong> is an optional date. A group name must be specified for it to be saved.', '12-step-meeting-list') ?>
-								<li><?php _e('<strong>Types</strong> should be a comma-separated list of the following options. This list is determined by which program is selected at right.', '12-step-meeting-list') ?>
-									<ul class="types">
-									<?php foreach ($tsml_types[$tsml_program] as $value) {?>
-										<li><?php echo $value?></li>
-									<?php }?>
+							<details>
+								<summary><strong><?php _e('Spreadsheet Specs', '12-step-meeting-list')?></strong></summary>
+								<section>
+									<p><a href="<?php echo plugin_dir_url(__FILE__) . '../template.csv'?>" class="button button-large"><span class="dashicons dashicons-media-spreadsheet"></span><?php _e('Sample import template', '12-step-meeting-list')?></a></p>
+									<ul class="ul-disc">
+										<li><?php _e('<strong>Time</strong>, if present, should be in a standard date format such as 6:00 AM or 06:00. Non-standard or empty dates will be imported as "by appointment."', '12-step-meeting-list') ?>
+										<li><?php _e('<strong>End Time</strong>, if present, should be in a standard date format such as 6:00 AM or 06:00.', '12-step-meeting-list') ?>
+										<li><?php _e('<strong>Day</strong> if present, should either Sunday, Monday, Tuesday, Wednesday, Thursday, Friday, or Saturday. Meetings that occur on multiple days should be listed separately. \'Daily\' or \'Mondays\' will not work. Non-standard days will be imported as "by appointment."', '12-step-meeting-list') ?>
+										<li><?php _e('<strong>Name</strong> is the name of the meeting, and is optional, although it\'s valuable information for the user. If it\'s missing, a name will be created by combining the location, day, and time.', '12-step-meeting-list') ?>
+										<li><?php _e('<strong>Location</strong> is the name of the location, and is optional. Generally it\'s the group or building name. If it\'s missing, the address will be used. In the event that there are multiple location names for the same address, the first location name will be used.', '12-step-meeting-list') ?>
+										<li><?php _e('<strong>Address</strong> is strongly encouraged and will be corrected by Google, so it may look different afterward. Ideally, every address for the same location should be exactly identical, and not contain extra information about the address, such as the building name or descriptors like "around back."', '12-step-meeting-list') ?>
+										<li><?php _e('If <strong>Address</strong> is specified, then <strong>City</strong>, <strong>State</strong>, and <strong>Country</strong> are optional, but they might be useful if your addresses sound ambiguous to Google. If address is not specified, then these fields are required.', '12-step-meeting-list') ?>
+										<li><?php _e('<strong>Notes</strong> are freeform notes that are specific to the meeting. For example, "last Saturday is birthday night."', '12-step-meeting-list') ?>
+										<li><?php _e('<strong>Region</strong> is user-defined and can be anything. Often this is a small municipality or neighborhood. Since these go in a dropdown, ideally you would have 10 to 20 regions, although it\'s ok to be over or under.', '12-step-meeting-list') ?>
+										<li><?php _e('<strong>Sub Region</strong> makes the Region hierarchical; in San Jose we have sub regions for East San Jose, West San Jose, etc. New York City might have Manhattan be a Region, and Greenwich Village be a Sub Region.', '12-step-meeting-list') ?>
+										<li><?php _e('<strong>Location Notes</strong> are freeform notes that will show up on every meeting that this location. For example, "Enter from the side."', '12-step-meeting-list') ?>
+										<li><?php _e('<strong>Group</strong> is a way of grouping contacts. Meetings with the same Group name will be grouped together and share contact information.', '12-step-meeting-list') ?>
+										<li><?php _e('<strong>Website</strong> is optional, but a group name must also be specified.', '12-step-meeting-list') ?>
+										<li><?php _e('<strong>Email</strong> is optional, but a group name must also be specified. This is a public email address.', '12-step-meeting-list') ?>
+										<li><?php _e('<strong>Phone</strong> is optional, but a group name must also be specified. This is a public phone number.', '12-step-meeting-list') ?>
+										<li><?php _e('<strong>Group Notes</strong> is for stuff like a short group history, or when the business meeting meets.', '12-step-meeting-list') ?>
+										<li><?php _e('<strong>Contact 1/2/3 Name/Email/Phone</strong> (nine fields in total) are all optional, but will not be saved if there is not also a Group name specified. By default, contact information is only visible inside the WordPress dashboard.', '12-step-meeting-list') ?>
+										<li><?php _e('<strong>Last Contact</strong> is an optional date. A group name must be specified for it to be saved.', '12-step-meeting-list') ?>
+										<li><?php _e('<strong>Types</strong> should be a comma-separated list of the following options. This list is determined by which program is selected at right.', '12-step-meeting-list') ?>
+											<ul class="types">
+											<?php foreach ($tsml_types[$tsml_program] as $value) {?>
+												<li><?php echo $value?></li>
+											<?php }?>
+											</ul>
+										</li>
 									</ul>
-								</li>
-							</ul>
+								</section>
+							</details>
+						</div>
+					</div>
+					<div class="postbox">
+						<div class="inside">
+							<h3><?php _e('Data Sources', '12-step-meeting-list')?></h3>
+							<p><?php printf(__('Data sources are JSON feeds that contain a website\'s public meeting data. They can be used to aggregate meetings from different sites into a single master list. 
+								The data source for this website is <a href="%s" target="_blank">right here</a>. More information is available at the <a href="%s" target="_blank">Meeting Guide API Specification</a>.', '12-step-meeting-list'), admin_url('admin-ajax.php') . '?action=meetings', 'https://github.com/meeting-guide/api')?></p>
+							<?php if (count($tsml_data_sources)) {?>
+							<table>
+								<thead>
+									<tr>
+										<th>URL</th>
+										<th>Status</th>
+										<th>Last Import</th>
+										<th></th>
+									</tr>
+								</thead>
+								<tbody>
+									<?php foreach ($tsml_data_sources as $feed => $properties) {?>
+									<tr>
+										<td><a href="<?php echo $feed?>" target="_blank"><?php echo $feed?></a></td>
+										<td><?php echo $properties['status']?></td>
+										<td><?php echo $properties['last_import']?></td>
+										<td>
+											<form method="post" action="<?php echo $_SERVER['REQUEST_URI']?>">
+												<?php wp_nonce_field($tsml_nonce, 'tsml_nonce', false)?>
+												<input type="hidden" name="tsml_remove_data_source" value="<?php echo $feed?>">
+												<span class="dashicons dashicons-no-alt"></span>
+											</form>
+										</td>
+									</tr>
+									<?php }?>
+								</tbody>
+							</table>
+							<?php }?>
+							<form class="columns" method="post" action="<?php echo $_SERVER['REQUEST_URI']?>">
+								<?php wp_nonce_field($tsml_nonce, 'tsml_nonce', false)?>
+								<div class="input">
+									<input type="text" name="tsml_add_data_source" placeholder="https://" value="http://santafeaa.org/wp-admin/admin-ajax.php?action=meetings">
+								</div>
+								<div class="btn">
+									<input type="submit" class="button" value="<?php _e('Add a New Data Source', '12-step-meeting-list')?>">
+								</div>
+							</form>
 						</div>
 					</div>
 				</div>
@@ -387,7 +460,7 @@ function tmsl_import_page() {
 						<div class="inside">
 							<h3><?php _e('Settings', '12-step-meeting-list')?></h3>
 							<p><?php printf(__('The program determines which meeting types are available. If your program isn\'t not listed, <a href="%s">let us know</a> what types of meetings it has (Open, Closed, Topic Discussion, etc).', '12-step-meeting-list'), TSML_CONTACT_LINK)?></p>
-							<form method="post" action="edit.php?post_type=tsml_meeting&page=import">
+							<form method="post" action="<?php echo $_SERVER['REQUEST_URI']?>">
 								<?php wp_nonce_field($tsml_nonce, 'tsml_nonce', false)?>
 								<select name="tsml_program" onchange="this.form.submit()">
 									<?php foreach ($tsml_programs as $key => $value) {?>
@@ -395,7 +468,7 @@ function tmsl_import_page() {
 									<?php }?>
 								</select>
 							</form>
-							<form method="post" action="edit.php?post_type=tsml_meeting&page=import">
+							<form method="post" action="<?php echo $_SERVER['REQUEST_URI']?>">
 								<?php wp_nonce_field($tsml_nonce, 'tsml_nonce', false)?>
 								<select name="tsml_distance_units" onchange="this.form.submit()">
 								<?php 
@@ -443,7 +516,7 @@ function tmsl_import_page() {
 							<?php }?>
 						</div>
 					</div>
-					<div class="postbox admin_contacts" id="want-user-feedback">
+					<div class="postbox" id="want-user-feedback">
 						<div class="inside">
 							<h3><?php _e('Want User Feedback?', '12-step-meeting-list')?></h3>
 							<p><?php _e('Enable a meeting info feedback form by adding email addresses below.', '12-step-meeting-list')?></p>
@@ -453,7 +526,7 @@ function tmsl_import_page() {
 								<tr>
 									<td><?php echo $address?></td>
 									<td>
-										<form method="post" action="edit.php?post_type=tsml_meeting&page=import">
+										<form method="post" action="<?php echo $_SERVER['REQUEST_URI']?>">
 											<?php wp_nonce_field($tsml_nonce, 'tsml_nonce', false)?>
 											<input type="hidden" name="tsml_remove_feedback_address" value="<?php echo $address?>">
 											<span class="dashicons dashicons-no-alt"></span>
@@ -463,9 +536,9 @@ function tmsl_import_page() {
 								<?php }?>
 							</table>
 							<?php }?>
-							<form method="post" action="edit.php?post_type=tsml_meeting&page=import">
+							<form class="columns" method="post" action="<?php echo $_SERVER['REQUEST_URI']?>">
 								<?php wp_nonce_field($tsml_nonce, 'tsml_nonce', false)?>
-								<div class="email">
+								<div class="input">
 									<input type="email" name="tsml_add_feedback_address" placeholder="email@example.org">
 								</div>
 								<div class="btn">
@@ -474,7 +547,7 @@ function tmsl_import_page() {
 							</form>
 						</div>
 					</div>
-					<div class="postbox admin_contacts" id="get-notified">
+					<div class="postbox" id="get-notified">
 						<div class="inside">
 							<h3><?php _e('Get Notified', '12-step-meeting-list')?></h3>
 							<p><?php _e('Receive notifications of meeting changes at the email addresses below.', '12-step-meeting-list')?></p>
@@ -484,7 +557,7 @@ function tmsl_import_page() {
 								<tr>
 									<td><?php echo $address?></td>
 									<td>
-										<form method="post" action="edit.php?post_type=tsml_meeting&page=import">
+										<form method="post" action="<?php echo $_SERVER['REQUEST_URI']?>">
 											<?php wp_nonce_field($tsml_nonce, 'tsml_nonce', false)?>
 											<input type="hidden" name="tsml_remove_notification_address" value="<?php echo $address?>">
 											<span class="dashicons dashicons-no-alt"></span>
@@ -494,9 +567,9 @@ function tmsl_import_page() {
 								<?php }?>
 							</table>
 							<?php }?>
-							<form method="post" action="edit.php?post_type=tsml_meeting&page=import">
+							<form class="columns" method="post" action="<?php echo $_SERVER['REQUEST_URI']?>">
 								<?php wp_nonce_field($tsml_nonce, 'tsml_nonce', false)?>
-								<div class="email">
+								<div class="input">
 									<input type="email" name="tsml_add_notification_address" placeholder="email@example.org">
 								</div>
 								<div class="btn">
@@ -510,7 +583,7 @@ function tmsl_import_page() {
 					<div class="postbox" id="try_the_apps">
 						<div class="inside">
 							<h3><?php _e('Try the Apps!', '12-step-meeting-list')?></h3>
-							<p><?php printf(__('Want to have your meetings listed in a simple, free mobile app? <a href="%s" target="_blank">%d areas are currently participating</a>. No extra effort is required; simply continue to update your meetings here and the updates will flow down to app users.', '12-step-meeting-list'), 'https://meetingguide.org/', 68)?></p>
+							<p><?php printf(__('Want to have your meetings listed in a simple, free mobile app? <a href="%s" target="_blank">%d areas are currently participating</a>. No extra effort is required; simply continue to update your meetings here and the updates will flow down to app users.', '12-step-meeting-list'), 'https://meetingguide.org/', 85)?></p>
 							<p class="buttons">
 								<a href="https://itunes.apple.com/us/app/meeting-guide/id1042822181">
 									<img src="<?php echo plugin_dir_url(__FILE__)?>../assets/img/apple.svg" alt="<?php _e('Download on the iOS App Store')?>">
