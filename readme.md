@@ -1,17 +1,17 @@
 12 Step Meeting List
 ====================
 
-This plugin is designed to help 12 step programs list their meetings and locations. It standardizes addresses, and displays in a list or map.
+This plugin is designed to help 12 step programs (AA, NA, Al-Anon, etc) list their meetings. It standardizes addresses, and displays in a list or map.
 
 The best way to install this plugin is via [its home page](https://wordpress.org/plugins/12-step-meeting-list/) in the WordPress Plugin Directory.
 
 ## Helping With Development
 
-Are you looking to get involved with helping develop the plugin? We welcome pull requests! To get started:
+Do you want to help develop the plugin? We welcome pull requests! To get started:
 
 * Start by forking this repository to your GitHub space
-* Create a development copy of your WordPress site; please, do NOT develop against your production site or data!
-* Delete the plugin from your development WordPress site.
+* Create a development copy of your WordPress site
+* Delete the plugin from your development WordPress site
 * Clone the repository into your `wp-content/plugins` folder with the following commands (substituting your local path):
 
 ```
@@ -53,6 +53,4 @@ git push origin my-new-feature
     * Check the diff provided and make sure everything looks good
     * Click the "Create pull request" button
 
-If you're new to git, I would recommend going through the git book tutorial:
-
-https://git-scm.com/book/en/v2
+If you're new to git, you might benefit from [this git tutorial](https://git-scm.com/book/en/v2).

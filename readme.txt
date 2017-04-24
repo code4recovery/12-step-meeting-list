@@ -22,12 +22,14 @@ It was originally designed to maintain a list of AA meetings in Santa Clara Coun
 1. [Baton Rouge, LA](http://aabatonrouge.org/meetings/)
 1. [Bowling Green, KY](http://bowlinggreenaa.org/meetings/)
 1. [Charleston, WV](http://aawvdist1.org/wordpress/?post_type=tsml_meeting)
+1. [Charlotte, NC](http://charlotteaa.org/meetings/)
 1. [Continental Europe](http://alcoholics-anonymous.eu/meetings/)
 1. [Corpus Christi, TX](http://www.cbiaa.org/meetings/)
 1. [Davis, CA](http://aadavis.org/meetings/)
 1. [DuPage County, IL](http://dist41.aa-nia.org/meetings/)
 1. [East Bay, CA](http://eastbayaa.org/meetings)
 1. [Elk Grove Village, IL](http://d15aa.org/d15aa.org/?post_type=meetings)
+1. [Fargo, ND](http://www.fmmeetinglist.org/meetings/)
 1. [Ft. Worth, TX](http://fortworthaa.org/?post_type=tsml_meeting)
 1. [Greensboro, NC](http://nc23.org/meetings/)
 1. [Harrisburg, PA](http://www.aaharrisburg.org/meetings/)
@@ -90,7 +92,7 @@ It was originally designed to maintain a list of AA meetings in Santa Clara Coun
 
 **Codependents Anonymous**
 
-1. [Los Angeles](http://www.lacoda.org/)
+1. [Los Angeles, CA](http://www.lacoda.org/)
 
 **Narcotics Anonymous**
 
@@ -103,6 +105,9 @@ It was originally designed to maintain a list of AA meetings in Santa Clara Coun
 1. [Indiana](http://indiana-saa.org/meetings/)
 
 [Let us know](mailto:info@meetingguide.org) if you're using this plugin and would like to be listed here.
+
+**Sexaholics Anonymous**
+1. [St. Louis, MO](http://www.sastl.net/meetings/?tsml-day=any)
 
 = Notes =
 
@@ -217,7 +222,8 @@ Also check out our [One Page Meeting List](https://github.com/meeting-guide/one-
 == Changelog ==
 
 = 2.12 =
-* Importing JSON data feeds
+* Importing from JSON data sources
+* Tweak to feedback form per Philadelphia
 
 = 2.11.9 =
 * Group website, email, and phone fields

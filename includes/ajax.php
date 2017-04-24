@@ -168,7 +168,7 @@ function tsml_ajax_csv() {
 	foreach ($meetings as $meeting) {
 		$line = array();
 		foreach ($columns as $column=>$value) {
-			if ($column == 'time') {
+			if (in_array($column, array('time', 'end_time'))) {
 				$line[] = tsml_format_time($meeting[$column]);
 			} elseif ($column == 'day') {
 				$line[] = $tsml_days[$meeting[$column]];
@@ -247,13 +247,12 @@ function tsml_ajax_feedback() {
 //used by admin_import.php
 add_action('wp_ajax_tsml_import', 'tsml_ajax_import');
 function tsml_ajax_import() {
-	global $tsml_google_api_key, $tsml_google_overrides, $tsml_days, $tsml_language;
+	global $tsml_google_api_key, $tsml_google_overrides, $tsml_language;
 	
 	$meetings	= get_option('tsml_import_buffer', array());
 	$addresses	= get_option('tsml_addresses', array());
 	$errors		= array();
 	$limit		= 25;
-	$upper_days = array_map('strtoupper', $tsml_days);
 	$geocoded	= 0;
 	
 	if (count($meetings) > $limit) {
@@ -442,15 +441,17 @@ function tsml_ajax_import() {
 		));
 		
 		//add day and time(s) if not appointment meeting
-		if (!empty($meeting['time']) && in_array(strtoupper($meeting['day']), $upper_days)) {
-			add_post_meta($meeting_id, 'day',  array_search(strtoupper($meeting['day']), $upper_days));
+		if (!empty($meeting['time']) && (!empty($meeting['day']) || $meeting['day'] === '0')) {
+			add_post_meta($meeting_id, 'day',  $meeting['day']);
 			add_post_meta($meeting_id, 'time', $meeting['time']);
 			if (!empty($meeting['end_time'])) add_post_meta($meeting_id, 'end_time', $meeting['end_time']);
 		}
 		
-		//add types and group if ready
-		if (!empty($meeting['types'])) add_post_meta($meeting_id, 'types',    $meeting['types']);
+		//add types, group, and data_source if available
+		if (!empty($meeting['types'])) add_post_meta($meeting_id, 'types', $meeting['types']);
 		if (!empty($meeting['group'])) add_post_meta($meeting_id, 'group_id', $groups[$meeting['group']]);
+		if (!empty($meeting['data_source'])) add_post_meta($meeting_id, 'data_source', $meeting['data_source']);
+
 	}
 
 	//close curl handle

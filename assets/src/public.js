@@ -594,10 +594,7 @@ jQuery(function($){
 	//c) jQuery event handlers
 	
 	//single meeting page feedback form
-	$('#meeting #feedback').on('click', 'a[href="#feedback"]', function(e){
-		e.preventDefault();
-		$(this).closest('#feedback').toggleClass('form');
-	}).on('click', 'a[href="#cancel"]', function(e){
+	$('#meeting #feedback').on('click', 'button', function(e){
 		e.preventDefault();
 		$(this).closest('#feedback').toggleClass('form');
 	}).find('form').validate({

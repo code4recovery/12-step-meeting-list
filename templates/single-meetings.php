@@ -102,7 +102,7 @@ $meeting = tsml_get_meeting();
 	
 						<?php if (!empty($tsml_feedback_addresses)) {?>
 						<div id="feedback">
-							<a href="#feedback" class="btn btn-default btn-block"><?php _e('Request a Change', '12-step-meeting-list')?></a>
+							<button class="btn btn-default btn-block"><?php _e('Request a Change', '12-step-meeting-list')?></button>
 							
 							<form>
 								<input type="hidden" name="action" value="tsml_feedback">
@@ -123,7 +123,7 @@ $meeting = tsml_get_meeting();
 										<input type="submit" class="btn btn-primary btn-block" value="<?php _e('Submit', '12-step-meeting-list')?>">
 									</div>
 									<div class="col-xs-4 form-group">
-										<a href="#cancel" class="btn btn-default btn-block"><?php _e('Cancel', '12-step-meeting-list')?></a>
+										<button class="btn btn-default btn-block"><?php _e('Cancel', '12-step-meeting-list')?></button>
 									</div>
 								</div>
 							</form>

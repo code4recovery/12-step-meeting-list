@@ -12,7 +12,23 @@ function tmsl_import_page() {
 		$extension = explode('.', strtolower($_FILES['tsml_import']['name']));
 		$extension = end($extension);
 		if ($_FILES['tsml_import']['error'] > 0) {
-			$error = __('File upload error #' . $_FILES['tsml_import']['error'], '12-step-meeting-list');
+			if ($_FILES['tsml_import']['error'] == 1) {
+				$error = __('The uploaded file exceeds the <code>upload_max_filesize</code> directive in php.ini.', '12-step-meeting-list');
+			} elseif ($_FILES['tsml_import']['error'] == 2) {
+				$error = __('The uploaded file exceeds the <code>MAX_FILE_SIZE</code> directive that was specified in the HTML form.', '12-step-meeting-list');
+			} elseif ($_FILES['tsml_import']['error'] == 3) {
+				$error = __('The uploaded file was only partially uploaded.', '12-step-meeting-list');
+			} elseif ($_FILES['tsml_import']['error'] == 4) {
+				$error = __('No file was uploaded.', '12-step-meeting-list');
+			} elseif ($_FILES['tsml_import']['error'] == 6) {
+				$error = __('Missing a temporary folder.', '12-step-meeting-list');
+			} elseif ($_FILES['tsml_import']['error'] == 7) {
+				$error = __('Failed to write file to disk.', '12-step-meeting-list');
+			} elseif ($_FILES['tsml_import']['error'] == 8) {
+				$error = __('A PHP extension stopped the file upload.', '12-step-meeting-list');
+			} else {
+				$error = sprintf(__('File upload error #%d', '12-step-meeting-list'), $_FILES['tsml_import']['error']);
+			}
 		} elseif (empty($extension)) {
 			$error = __('Uploaded file did not have a file extension. Please add .csv to the end of the file name.', '12-step-meeting-list');
 		} elseif (!in_array($extension, array('csv', 'txt'))) {
@@ -29,16 +45,10 @@ function tmsl_import_page() {
 				}
 			}
 
-			//allow theme-defined function to reformat CSV ahead of import (for New Hampshire)
+			//allow theme-defined function to reformat CSV prior to import (for New Hampshire)
 			if (function_exists('tsml_import_reformat')) {
 				$meetings = tsml_import_reformat($meetings);
 			}
-			
-			//convert the array to UTF-8
-			array_walk_recursive($meetings, 'tsml_format_utf8');
-
-			//trim everything
-			array_walk_recursive($meetings, 'trim');
 			
 			//crash if no data
 			if (count($meetings) < 2) {
@@ -49,23 +59,14 @@ function tmsl_import_page() {
 				$header = array_map('sanitize_title_with_dashes', $header);
 				$header = str_replace('-', '_', $header);
 				$header_count = count($header);
-				$row_counter = 1;
 				
 				//check header for required fields
 				if (!in_array('address', $header) && !in_array('city', $header)) {
 					$error = __('Either Address or City is required.', '12-step-meeting-list');
 				} else {
 					
-					//uppercasing for value matching later
-					$upper_types = array_map('strtoupper', $tsml_types[$tsml_program]);
-						
-					//loop through data and sanitize
+					//loop through data and convert to array
 					foreach ($meetings as &$meeting) {
-						$row_counter++;
-				
-						//sanitize fields
-						$meeting = array_map('tsml_import_sanitize_field', $meeting);
-						
 						//check length
 						if ($header_count > count($meeting)) {
 							$meeting = array_pad($meeting, $header_count, null);
@@ -73,104 +74,14 @@ function tmsl_import_page() {
 							$meeting = array_slice($meeting, 0, $header_count);
 						}
 						
-						//associate, sanitize
+						//associate
 						$meeting = array_combine($header, $meeting);
-						foreach ($meeting as $key => $value) {
-							if (in_array($key, array('notes', 'location_notes', 'group_notes'))) {
-								$meeting[$key] = sanitize_text_area($value);
-							} else {
-								$meeting[$key] = sanitize_text_field($value);
-							}
-						}
-
-						//if location (name) is missing, use address
-						if (empty($meeting['location'])) {
-							$meeting['location'] = empty($meeting['address']) ? __('Meeting Location', '12-step-meeting-list') : $meeting['address'];
-						}
-					
-						//sanitize time & day
-						if (empty($meeting['time']) || empty($meeting['day'])) {
-							$meeting['time'] = $meeting['end_time'] = $meeting['day'] = ''; //by appointment
-				
-							//if meeting name missing, use location
-							if (empty($meeting['name'])) $meeting['name'] = $meeting['location'] . __(' by Appointment', '12-step-meeting-list');
-						} else {
-							$meeting['time'] = tsml_format_time_reverse($meeting['time']);
-							if (!empty($meeting['end_time'])) $meeting['end_time'] = tsml_format_time_reverse($meeting['end_time']);
-							
-							//if meeting name missing, use location, day, and time
-							if (empty($meeting['name'])) {
-								$meeting['name'] = $meeting['location'];
-								if (in_array($meeting['day'], $tsml_days)) $meeting['name'] .= ' ' . $meeting['day'] . 's';
-								$meeting['name'] .= ' at ' . tsml_format_time($meeting['time']);
-							}
-						}
-				
-						//sanitize address, remove everything starting with @ (consider other strings as well?)
-						if (!empty($meeting['address']) && $pos = strpos($meeting['address'], '@')) $meeting['address'] = trim(substr($meeting['address'], 0, $pos));
-						
-						//google prefers USA for geocoding
-						if (!empty($meeting['country']) && $meeting['country'] == 'US') $meeting['country'] = 'USA'; 
-						
-						//build address
-						$address = array();
-						if (!empty($meeting['address'])) $address[] = $meeting['address'];
-						if (!empty($meeting['city'])) $address[] = $meeting['city'];
-						if (!empty($meeting['state'])) $address[] = $meeting['state'];
-						if (!empty($meeting['postal_code'])) {
-							if ((strlen($meeting['postal_code']) < 5) && ($meeting['country'] == 'USA')) $meeting['postal_code'] = str_pad($meeting['postal_code'], 5, '0', STR_PAD_LEFT);
-							$address[] = $meeting['postal_code'];	
-						}
-						if (!empty($meeting['country'])) $address[] = $meeting['country'];
-						$meeting['formatted_address'] = implode(', ', $address);
-
-						//notes
-						if (empty($meeting['notes'])) $meeting['notes'] = '';
-						if (empty($meeting['location_notes'])) $meeting['location_notes'] = '';
-						if (empty($meeting['group_notes'])) $meeting['group_notes'] = '';
-				
-						//updated
-						if (empty($meeting['updated']) || (!$meeting['updated'] = strtotime($meeting['updated']))) $meeting['updated'] = time();
-						$meeting['post_modified'] = date('Y-m-d H:i:s', $meeting['updated']);
-						$meeting['post_modified_gmt'] = get_gmt_from_date($meeting['post_modified']);
-						
-						//default region to city if not specified
-						if (empty($meeting['region']) && !empty($meeting['city'])) $meeting['region'] = $meeting['city'];
-
-						//sanitize types
-						$types = explode(',', $meeting['types']);
-						$meeting['types'] = $unused_types = array();
-						foreach ($types as $type) {
-							if (in_array(trim(strtoupper($type)), array_values($upper_types))) {
-								$meeting['types'][] = array_search(trim(strtoupper($type)), $upper_types);
-							} else {
-								$unused_types[] = $type;
-							}
-						}
-						
-						//don't let a meeting be both open and closed
-						if (in_array('C', $meeting['types']) && in_array('O', $meeting['types'])) {
-							$meeting['types'] = array_diff($meeting['types'], array('C'));
-						}
-						
-						//append unused types to notes
-						if (count($unused_types)) {
-							if (!empty($meeting['notes'])) $meeting['notes'] .= str_repeat(PHP_EOL, 2);
-							$meeting['notes'] .= implode(', ', $unused_types);
-						}
-
-						//clean up
-						foreach(array('address', 'city', 'state', 'postal_code', 'country', 'updated') as $key) {
-							if (isset($meeting[$key])) unset($meeting[$key]);
-						}
-						
-						//preserve row number for errors later
-						$meeting['row'] = $row_counter;
-						
 					}
+
+					//dd($meetings);
 					
-					//prepare import buffer in wp_options
-					update_option('tsml_import_buffer', $meetings, false);
+					//import into buffer, also done this way in data source import
+					tsml_import_buffer_set($meetings);
 					
 					//run deletes
 					if ($_POST['delete'] == 'regions') {
@@ -220,33 +131,94 @@ function tmsl_import_page() {
 				}
 			}
 		}
-	} else {
-		//not uploading CSV, check for existing import buffer
-		$meetings = get_option('tsml_import_buffer', array());
 	}
 		
 	//add data source
 	$tsml_data_sources = get_option('tsml_data_sources', array());
 	if (!empty($_POST['tsml_add_data_source']) && isset($_POST['tsml_nonce']) && wp_verify_nonce($_POST['tsml_nonce'], $tsml_nonce)) {
+		
+		//sanitize URL
+		$_POST['tsml_add_data_source'] = esc_url_raw($_POST['tsml_add_data_source'], array('http', 'https'));
+		
+		//if already set, hard refresh
+		if (array_key_exists($_POST['tsml_add_data_source'], $tsml_data_sources)) {
+			tsml_delete(get_posts(array(
+				'post_type'		=> 'tsml_meeting',
+				'numberposts'	=> -1,
+				'fields'			=> 'ids',
+				'meta_query'		=> array(
+					array(
+						'key' => 'data_source',
+						'value' => $_POST['tsml_remove_data_source'],
+						'compare' => '=',
+					),
+				),
+			)));
+			tsml_delete_orphans();
+		}
+		
+		//try fetching	
 		$response = wp_remote_get($_POST['tsml_add_data_source']);
-		if (is_array($response) && !empty($response['body']) && ($body = json_decode($response['body']))) {
-			$tsml_data_sources[esc_url_raw($_POST['tsml_add_data_source'], array('http', 'https'))] = array(
+		if (is_array($response) && !empty($response['body']) && ($body = json_decode($response['body'], true))) {
+			$tsml_data_sources[$_POST['tsml_add_data_source']] = array(
 				'status' => 'OK',
-				'last_import' => null,
+				'last_import' => current_time('timestamp'),
 			);
-			dd($body);
+			
+			//import feed
+			tsml_import_buffer_set($body, $_POST['tsml_add_data_source']);
+			
+			//save data source configuration
 			update_option('tsml_data_sources', $tsml_data_sources);
-			tsml_alert(__('Data source added.', '12-step-meeting-list'));
+			
+			//schedule cron
+			if (!wp_next_scheduled('tsml_import_data_sources')) {
+				wp_schedule_event(time(), 'twicedaily', 'tsml_import_data_sources');
+			}
+			
 		} else {
-			tsml_alert(__('Data source not valid!', '12-step-meeting-list'), 'notice notice-error');
+			echo 'invalid reponse';
+			tsml_alert(__('Data source not valid!', '12-step-meeting-list'), 'error');
 		}
 	}
 	
+	//check for existing import buffer
+	$meetings = get_option('tsml_import_buffer', array());
+	
 	//remove data source
 	if (!empty($_POST['tsml_remove_data_source'])) {
+
+		//sanitize URL
+		$_POST['tsml_add_data_source'] = esc_url_raw($_POST['tsml_add_data_source'], array('http', 'https'));
+
 		if (array_key_exists($_POST['tsml_remove_data_source'], $tsml_data_sources)) {
+			
+			//remove all meetings for this data source
+			tsml_delete(get_posts(array(
+				'post_type'		=> 'tsml_meeting',
+				'numberposts'	=> -1,
+				'fields'			=> 'ids',
+				'meta_query'		=> array(
+					array(
+						'key' => 'data_source',
+						'value' => $_POST['tsml_remove_data_source'],
+						'compare' => '=',
+					),
+				),
+			)));
+			
+			//clean up orphaned locations & groups
+			tsml_delete_orphans();
+			
+			//remove data source
 			unset($tsml_data_sources[$_POST['tsml_remove_data_source']]);
 			update_option('tsml_data_sources', $tsml_data_sources);
+			
+			//unschedule cron?
+			if (empty($tsml_data_sources) && wp_next_scheduled('tsml_import_data_sources')) {
+				wp_clear_scheduled_hook('tsml_import_data_sources');
+			}
+			
 			tsml_alert(__('Data source removed.', '12-step-meeting-list'));
 		}
 	}
@@ -270,7 +242,7 @@ function tmsl_import_page() {
 		$email = sanitize_text_field($_POST['tsml_add_feedback_address']);
 		if (!is_email($email)) {
 			//theoretically should never get here, because WordPress checks entry first
-			tsml_alert(sprintf(esc_html__('<code>%s</code> is not a valid email address. Please try again.', '12-step-meeting-list'), $email), 'notice notice-error');
+			tsml_alert(sprintf(esc_html__('<code>%s</code> is not a valid email address. Please try again.', '12-step-meeting-list'), $email), 'error');
 		} else {
 			$tsml_feedback_addresses[] = $email;
 			$tsml_feedback_addresses = array_unique($tsml_feedback_addresses);
@@ -293,7 +265,7 @@ function tmsl_import_page() {
 			tsml_alert(__('Feedback address removed.', '12-step-meeting-list'));
 		} else {
 			//theoretically should never get here, because user is choosing from a list
-			tsml_alert(sprintf(esc_html__('<p><code>%s</code> was not found in the list of addresses. Please try again.</p>', '12-step-meeting-list'), $email), 'notice notice-error');
+			tsml_alert(sprintf(esc_html__('<p><code>%s</code> was not found in the list of addresses. Please try again.</p>', '12-step-meeting-list'), $email), 'error');
 		}
 	}
 			
@@ -302,7 +274,7 @@ function tmsl_import_page() {
 		$email = sanitize_text_field($_POST['tsml_add_notification_address']);
 		if (!is_email($email)) {
 			//theoretically should never get here, because WordPress checks entry first
-			tsml_alert(sprintf(esc_html__('<p><code>%s</code> is not a valid email address. Please try again.</p>', '12-step-meeting-list'), $email), 'notice notice-error');
+			tsml_alert(sprintf(esc_html__('<p><code>%s</code> is not a valid email address. Please try again.</p>', '12-step-meeting-list'), $email), 'error');
 		} else {
 			$tsml_notification_addresses[] = $email;
 			$tsml_notification_addresses = array_unique($tsml_notification_addresses);
@@ -325,7 +297,7 @@ function tmsl_import_page() {
 			tsml_alert(__('Notification address removed.', '12-step-meeting-list'));
 		} else {
 			//theoretically should never get here, because user is choosing from a list
-			tsml_alert(sprintf(esc_html__('<p><code>%s</code> was not found in the list of addresses. Please try again.</p>', '12-step-meeting-list'), $email), 'notice notice-error');
+			tsml_alert(sprintf(esc_html__('<p><code>%s</code> was not found in the list of addresses. Please try again.</p>', '12-step-meeting-list'), $email), 'error');
 		}
 	}
 	?>
@@ -337,14 +309,14 @@ function tmsl_import_page() {
 				<div id="post-body-content">
 					
 					<?php if ($error) {?>
-					<div class="notice notice-error inline">
+					<div class="error inline">
 						<p><?php echo $error?></p>
 					</div>
 					<?php } elseif ($total = count($meetings)) {?>
 					<div id="tsml_import_progress" class="progress" data-total="<?php echo $total?>">
 						<div class="progress-bar"></div>
 					</div>
-					<ol id="tsml_import_errors" class="notice notice-error inline hidden"></ol>
+					<ol id="tsml_import_errors" class="error inline hidden"></ol>
 					<?php }?>
 					
 					<div class="postbox">
@@ -363,29 +335,29 @@ function tmsl_import_page() {
 								<p><input type="submit" class="button button-primary" value="<?php _e('Begin', '12-step-meeting-list')?>"></p>
 							</form>
 							<details>
-								<summary><strong><?php _e('Spreadsheet Specs', '12-step-meeting-list')?></strong></summary>
+								<summary><strong><?php _e('Spreadsheet Example & Specs', '12-step-meeting-list')?></strong></summary>
 								<section>
-									<p><a href="<?php echo plugin_dir_url(__FILE__) . '../template.csv'?>" class="button button-large"><span class="dashicons dashicons-media-spreadsheet"></span><?php _e('Sample import template', '12-step-meeting-list')?></a></p>
+									<p><a href="<?php echo plugin_dir_url(__FILE__) . '../template.csv'?>" class="button button-large"><span class="dashicons dashicons-media-spreadsheet"></span><?php _e('Example spreadsheet', '12-step-meeting-list')?></a></p>
 									<ul class="ul-disc">
-										<li><?php _e('<strong>Time</strong>, if present, should be in a standard date format such as 6:00 AM or 06:00. Non-standard or empty dates will be imported as "by appointment."', '12-step-meeting-list') ?>
-										<li><?php _e('<strong>End Time</strong>, if present, should be in a standard date format such as 6:00 AM or 06:00.', '12-step-meeting-list') ?>
-										<li><?php _e('<strong>Day</strong> if present, should either Sunday, Monday, Tuesday, Wednesday, Thursday, Friday, or Saturday. Meetings that occur on multiple days should be listed separately. \'Daily\' or \'Mondays\' will not work. Non-standard days will be imported as "by appointment."', '12-step-meeting-list') ?>
-										<li><?php _e('<strong>Name</strong> is the name of the meeting, and is optional, although it\'s valuable information for the user. If it\'s missing, a name will be created by combining the location, day, and time.', '12-step-meeting-list') ?>
-										<li><?php _e('<strong>Location</strong> is the name of the location, and is optional. Generally it\'s the group or building name. If it\'s missing, the address will be used. In the event that there are multiple location names for the same address, the first location name will be used.', '12-step-meeting-list') ?>
-										<li><?php _e('<strong>Address</strong> is strongly encouraged and will be corrected by Google, so it may look different afterward. Ideally, every address for the same location should be exactly identical, and not contain extra information about the address, such as the building name or descriptors like "around back."', '12-step-meeting-list') ?>
-										<li><?php _e('If <strong>Address</strong> is specified, then <strong>City</strong>, <strong>State</strong>, and <strong>Country</strong> are optional, but they might be useful if your addresses sound ambiguous to Google. If address is not specified, then these fields are required.', '12-step-meeting-list') ?>
-										<li><?php _e('<strong>Notes</strong> are freeform notes that are specific to the meeting. For example, "last Saturday is birthday night."', '12-step-meeting-list') ?>
-										<li><?php _e('<strong>Region</strong> is user-defined and can be anything. Often this is a small municipality or neighborhood. Since these go in a dropdown, ideally you would have 10 to 20 regions, although it\'s ok to be over or under.', '12-step-meeting-list') ?>
-										<li><?php _e('<strong>Sub Region</strong> makes the Region hierarchical; in San Jose we have sub regions for East San Jose, West San Jose, etc. New York City might have Manhattan be a Region, and Greenwich Village be a Sub Region.', '12-step-meeting-list') ?>
-										<li><?php _e('<strong>Location Notes</strong> are freeform notes that will show up on every meeting that this location. For example, "Enter from the side."', '12-step-meeting-list') ?>
-										<li><?php _e('<strong>Group</strong> is a way of grouping contacts. Meetings with the same Group name will be grouped together and share contact information.', '12-step-meeting-list') ?>
-										<li><?php _e('<strong>Website</strong> is optional, but a group name must also be specified.', '12-step-meeting-list') ?>
-										<li><?php _e('<strong>Email</strong> is optional, but a group name must also be specified. This is a public email address.', '12-step-meeting-list') ?>
-										<li><?php _e('<strong>Phone</strong> is optional, but a group name must also be specified. This is a public phone number.', '12-step-meeting-list') ?>
-										<li><?php _e('<strong>Group Notes</strong> is for stuff like a short group history, or when the business meeting meets.', '12-step-meeting-list') ?>
-										<li><?php _e('<strong>Contact 1/2/3 Name/Email/Phone</strong> (nine fields in total) are all optional, but will not be saved if there is not also a Group name specified. By default, contact information is only visible inside the WordPress dashboard.', '12-step-meeting-list') ?>
-										<li><?php _e('<strong>Last Contact</strong> is an optional date. A group name must be specified for it to be saved.', '12-step-meeting-list') ?>
-										<li><?php _e('<strong>Types</strong> should be a comma-separated list of the following options. This list is determined by which program is selected at right.', '12-step-meeting-list') ?>
+										<li><?php _e('<strong>Time</strong>, if present, should be in a standard date format such as 6:00 AM or 06:00. Non-standard or empty dates will be imported as "by appointment."', '12-step-meeting-list')?></li>
+										<li><?php _e('<strong>End Time</strong>, if present, should be in a standard date format such as 6:00 AM or 06:00.', '12-step-meeting-list')?></li>
+										<li><?php _e('<strong>Day</strong> if present, should either Sunday, Monday, Tuesday, Wednesday, Thursday, Friday, or Saturday. Meetings that occur on multiple days should be listed separately. \'Daily\' or \'Mondays\' will not work. Non-standard days will be imported as "by appointment."', '12-step-meeting-list')?></li>
+										<li><?php _e('<strong>Name</strong> is the name of the meeting, and is optional, although it\'s valuable information for the user. If it\'s missing, a name will be created by combining the location, day, and time.', '12-step-meeting-list')?></li>
+										<li><?php _e('<strong>Location</strong> is the name of the location, and is optional. Generally it\'s the group or building name. If it\'s missing, the address will be used. In the event that there are multiple location names for the same address, the first location name will be used.', '12-step-meeting-list')?></li>
+										<li><?php _e('<strong>Address</strong> is strongly encouraged and will be corrected by Google, so it may look different afterward. Ideally, every address for the same location should be exactly identical, and not contain extra information about the address, such as the building name or descriptors like "around back."', '12-step-meeting-list')?></li>
+										<li><?php _e('If <strong>Address</strong> is specified, then <strong>City</strong>, <strong>State</strong>, and <strong>Country</strong> are optional, but they might be useful if your addresses sound ambiguous to Google. If address is not specified, then these fields are required.', '12-step-meeting-list')?></li>
+										<li><?php _e('<strong>Notes</strong> are freeform notes that are specific to the meeting. For example, "last Saturday is birthday night."', '12-step-meeting-list')?></li>
+										<li><?php _e('<strong>Region</strong> is user-defined and can be anything. Often this is a small municipality or neighborhood. Since these go in a dropdown, ideally you would have 10 to 20 regions, although it\'s ok to be over or under.', '12-step-meeting-list')?></li>
+										<li><?php _e('<strong>Sub Region</strong> makes the Region hierarchical; in San Jose we have sub regions for East San Jose, West San Jose, etc. New York City might have Manhattan be a Region, and Greenwich Village be a Sub Region.', '12-step-meeting-list')?></li>
+										<li><?php _e('<strong>Location Notes</strong> are freeform notes that will show up on every meeting that this location. For example, "Enter from the side."', '12-step-meeting-list')?></li>
+										<li><?php _e('<strong>Group</strong> is a way of grouping contacts. Meetings with the same Group name will be grouped together and share contact information.', '12-step-meeting-list')?></li>
+										<li><?php _e('<strong>Website</strong> is optional, but a group name must also be specified.', '12-step-meeting-list')?></li>
+										<li><?php _e('<strong>Email</strong> is optional, but a group name must also be specified. This is a public email address.', '12-step-meeting-list')?></li>
+										<li><?php _e('<strong>Phone</strong> is optional, but a group name must also be specified. This is a public phone number.', '12-step-meeting-list')?></li>
+										<li><?php _e('<strong>Group Notes</strong> is for stuff like a short group history, or when the business meeting meets.', '12-step-meeting-list')?></li>
+										<li><?php _e('<strong>Contact 1/2/3 Name/Email/Phone</strong> (nine fields in total) are all optional, but will not be saved if there is not also a Group name specified. By default, contact information is only visible inside the WordPress dashboard.', '12-step-meeting-list')?></li>
+										<li><?php _e('<strong>Last Contact</strong> is an optional date. A group name must be specified for it to be saved.', '12-step-meeting-list')?></li>
+										<li><?php _e('<strong>Types</strong> should be a comma-separated list of the following options. This list is determined by which program is selected at right.', '12-step-meeting-list')?>
 											<ul class="types">
 											<?php foreach ($tsml_types[$tsml_program] as $value) {?>
 												<li><?php echo $value?></li>
@@ -399,16 +371,17 @@ function tmsl_import_page() {
 					</div>
 					<div class="postbox">
 						<div class="inside">
-							<h3><?php _e('Data Sources', '12-step-meeting-list')?></h3>
+							<h3><?php _e('Data Sources <small>Beta</small>', '12-step-meeting-list')?></h3>
 							<p><?php printf(__('Data sources are JSON feeds that contain a website\'s public meeting data. They can be used to aggregate meetings from different sites into a single master list. 
 								The data source for this website is <a href="%s" target="_blank">right here</a>. More information is available at the <a href="%s" target="_blank">Meeting Guide API Specification</a>.', '12-step-meeting-list'), admin_url('admin-ajax.php') . '?action=meetings', 'https://github.com/meeting-guide/api')?></p>
+							<p><?php _e('Data sources added here will be checked periodically for updates.', '12-step-meeting-list')?>
 							<?php if (count($tsml_data_sources)) {?>
 							<table>
 								<thead>
 									<tr>
-										<th>URL</th>
-										<th>Status</th>
-										<th>Last Import</th>
+										<th><?php _e('URL', '12-step-meeting-list')?></th>
+										<th><?php _e('Last Update', '12-step-meeting-list')?></th>
+										<th><?php _e('Status', '12-step-meeting-list')?></th>
 										<th></th>
 									</tr>
 								</thead>
@@ -416,8 +389,8 @@ function tmsl_import_page() {
 									<?php foreach ($tsml_data_sources as $feed => $properties) {?>
 									<tr>
 										<td><a href="<?php echo $feed?>" target="_blank"><?php echo $feed?></a></td>
+										<td><?php echo date(get_option('date_format') . ' ' . get_option('time_format'), $properties['last_import'])?></td>
 										<td><?php echo $properties['status']?></td>
-										<td><?php echo $properties['last_import']?></td>
 										<td>
 											<form method="post" action="<?php echo $_SERVER['REQUEST_URI']?>">
 												<?php wp_nonce_field($tsml_nonce, 'tsml_nonce', false)?>
@@ -433,7 +406,7 @@ function tmsl_import_page() {
 							<form class="columns" method="post" action="<?php echo $_SERVER['REQUEST_URI']?>">
 								<?php wp_nonce_field($tsml_nonce, 'tsml_nonce', false)?>
 								<div class="input">
-									<input type="text" name="tsml_add_data_source" placeholder="https://" value="http://santafeaa.org/wp-admin/admin-ajax.php?action=meetings">
+									<input type="text" name="tsml_add_data_source" placeholder="https://">
 								</div>
 								<div class="btn">
 									<input type="submit" class="button" value="<?php _e('Add a New Data Source', '12-step-meeting-list')?>">
@@ -445,13 +418,13 @@ function tmsl_import_page() {
 				<div id="postbox-container-1" class="postbox-container">
 
 					<?php if (version_compare(PHP_VERSION, '5.4') < 0) {?>
-					<div class="notice notice-warning inline">
+					<div class="warning inline">
 						<p><?php printf(__('You are running PHP <strong>%s</strong>, while <a href="%s" target="_blank">WordPress recommends</a> PHP %s or above. This can cause unexpected errors. Please contact your host and upgrade!', '12-step-meeting-list'), PHP_VERSION, 'https://wordpress.org/about/requirements/', '5.6')?></p>
 					</div>
 					<?php }
 					
 					if (!is_ssl()) {?>
-					<div class="notice notice-warning inline">
+					<div class="warning inline">
 						<p><?php _e('If you enable SSL, your users will be able to search for meetings relative to their location.', '12-step-meeting-list')?></p>
 					</div>
 					<?php }?>

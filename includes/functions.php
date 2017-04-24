@@ -20,8 +20,9 @@ if (!function_exists('sanitize_text_area')) {
 
 //function:	add an admin screen update message
 //used:		tsml_import() and admin_types.php
-function tsml_alert($message, $type='notice notice-success') {
-	echo '<div class="' . $type . ' is-dismissible"><p>' . $message . '</p></div>';
+//$type:		can be success, warning or error
+function tsml_alert($message, $type='success') {
+	echo '<div class="notice notice-' . $type . ' is-dismissible"><p>' . $message . '</p></div>';
 }
 
 //function: enqueue assets for public or admin page
@@ -200,7 +201,7 @@ function tsml_custom_types($types) {
 function tsml_debug($string) {
 	global $tsml_timestamp;
 	if (!WP_DEBUG) return;
-	tsml_alert($string . ' in ' . round(microtime(true) - $tsml_timestamp, 2) . 's', 'notice notice-warning');
+	tsml_alert($string . ' in ' . round(microtime(true) - $tsml_timestamp, 2) . 's', 'warning');
 	$tsml_timestamp = microtime(true);
 }
 
@@ -856,6 +857,155 @@ function tsml_meeting_types($types) {
 	return implode(', ', $return);
 }
 
+//sanitize and import an array of meetings to an 'import buffer' (an wp_option that's iterated on progressively)
+//called from admin_import.php (both CSV and JSON)
+function tsml_import_buffer_set($meetings, $data_source=null) {
+	global $tsml_types, $tsml_program, $tsml_days;
+	
+	//uppercasing for value matching later
+	$upper_types = array_map('strtoupper', $tsml_types[$tsml_program]);
+	$upper_days = array_map('strtoupper', $tsml_days);
+
+	$row_counter = 1;
+
+	//convert the array to UTF-8
+	array_walk_recursive($meetings, 'tsml_format_utf8');
+
+	//trim everything
+	array_walk_recursive($meetings, 'tsml_import_sanitize_field');
+	
+	//prepare array for import buffer
+	foreach ($meetings as &$meeting) {
+		$row_counter++;
+		
+		$meeting['data_source'] = $data_source;
+
+		//do wordpress sanitization
+		foreach ($meeting as $key => $value) {
+			
+			//have to compress types down real quick (only happens with json)
+			if (is_array($value)) $value = implode(',', $value);
+			
+			if (in_array($key, array('notes', 'location_notes', 'group_notes'))) {
+				$meeting[$key] = sanitize_text_area($value);
+			} else {
+				$meeting[$key] = sanitize_text_field($value);
+			}
+		}
+
+		//if '@' is in address, remove it and everything after
+		if (!empty($meeting['address']) && $pos = strpos($meeting['address'], '@')) $meeting['address'] = trim(substr($meeting['address'], 0, $pos));
+		
+		//if location name is missing, use address
+		if (empty($meeting['location'])) {
+			$meeting['location'] = empty($meeting['address']) ? __('Meeting Location', '12-step-meeting-list') : $meeting['address'];
+		}
+	
+		//day can either be 0, 1, 2, 3 or Sunday, Monday, or empty
+		if (!array_key_exists($meeting['day'], $upper_days)) {
+			$meeting['day'] = array_search(strtoupper($meeting['day']), $upper_days);
+		}
+	
+		//sanitize time & day
+		if (empty($meeting['time']) || ($meeting['day'] === false)) {
+			$meeting['time'] = $meeting['end_time'] = $meeting['day'] = false; //by appointment
+
+			//if meeting name missing, use location
+			if (empty($meeting['name'])) $meeting['name'] = sprintf(__('%s by Appointment', '12-step-meeting-list'), $meeting['location']);
+		} else {
+			//if meeting name missing, use location, day, and time
+			if (empty($meeting['name'])) {
+				$meeting['name'] = sprintf(__('%s %ss at %s', '12-step-meeting-list'), $meeting['location'], $tsml_days[$meeting['day']], $meeting['time']);
+			}
+
+			$meeting['time'] = tsml_format_time_reverse($meeting['time']);
+			if (!empty($meeting['end_time'])) $meeting['end_time'] = tsml_format_time_reverse($meeting['end_time']);
+		}
+
+		//google prefers USA for geocoding
+		if (!empty($meeting['country']) && $meeting['country'] == 'US') $meeting['country'] = 'USA'; 
+		
+		//build address
+		if (empty($meeting['formatted_address'])) {
+			$address = array();
+			if (!empty($meeting['address'])) $address[] = $meeting['address'];
+			if (!empty($meeting['city'])) $address[] = $meeting['city'];
+			if (!empty($meeting['state'])) $address[] = $meeting['state'];
+			if (!empty($meeting['postal_code'])) {
+				if ((strlen($meeting['postal_code']) < 5) && ($meeting['country'] == 'USA')) $meeting['postal_code'] = str_pad($meeting['postal_code'], 5, '0', STR_PAD_LEFT);
+				$address[] = $meeting['postal_code'];	
+			}
+			if (!empty($meeting['country'])) $address[] = $meeting['country'];
+			$meeting['formatted_address'] = implode(', ', $address);
+		}
+
+		//notes
+		if (empty($meeting['notes'])) $meeting['notes'] = '';
+		if (empty($meeting['location_notes'])) $meeting['location_notes'] = '';
+		if (empty($meeting['group_notes'])) $meeting['group_notes'] = '';
+
+		//updated
+		if (empty($meeting['updated']) || (!$meeting['updated'] = strtotime($meeting['updated']))) $meeting['updated'] = time();
+		$meeting['post_modified'] = date('Y-m-d H:i:s', $meeting['updated']);
+		$meeting['post_modified_gmt'] = get_gmt_from_date($meeting['post_modified']);
+		
+		//default region to city if not specified
+		if (empty($meeting['region']) && !empty($meeting['city'])) $meeting['region'] = $meeting['city'];
+
+		//sanitize types (they can be Closed or C)
+		$types = explode(',', $meeting['types']);
+		$meeting['types'] = $unused_types = array();
+		foreach ($types as $type) {
+			$upper_type = trim(strtoupper($type));
+			if (array_key_exists($upper_type, $upper_types)) {
+				$meeting['types'][] = $type;
+			} elseif (in_array($upper_type, array_values($upper_types))) {
+				$meeting['types'][] = array_search($upper_type, $upper_types);
+			} else {
+				$unused_types[] = $type;
+			}
+		}
+		
+		//if a meeting is both open and closed, make it closed
+		if (in_array('C', $meeting['types']) && in_array('O', $meeting['types'])) {
+			$meeting['types'] = array_diff($meeting['types'], array('O'));
+		}
+		
+		//append unused types to notes
+		if (count($unused_types)) {
+			if (!empty($meeting['notes'])) $meeting['notes'] .= str_repeat(PHP_EOL, 2);
+			$meeting['notes'] .= implode(', ', $unused_types);
+		}
+
+		//clean up
+		foreach(array('address', 'city', 'state', 'postal_code', 'country', 'updated') as $key) {
+			if (isset($meeting[$key])) unset($meeting[$key]);
+		}
+		
+		//preserve row number for errors later
+		$meeting['row'] = $row_counter;
+		
+	}
+	
+	//dd($meetings);
+	
+	//prepare import buffer in wp_options
+	update_option('tsml_import_buffer', $meetings, false);
+}
+
+//function: check data sources on a cron, make any necessary updates
+//used:		cron set by admin_import.php
+function tsml_import_data_sources() {
+	global $tsml_data_sources;
+	foreach (array_keys($tsml_data_sources) as $url) {
+		
+		//todo fetch data, check for updates
+		
+		$tsml_data_sources[$url]['last_update'] = current_time('timestamp');
+	}
+	update_option('tsml_data_sources', $tsml_data_sources);
+}
+
 //function:	filter workaround for setting post_modified dates
 //used:		tsml_ajax_import()
 function tsml_import_post_modified($data, $postarr) {
@@ -874,15 +1024,12 @@ function tsml_import_sanitize_field($value) {
 	//preserve <br>s as line breaks if present, otherwise clean up
 	$value = preg_replace('/\<br(\s*)?\/?\>/i', PHP_EOL, $value);
 	$value = stripslashes($value);
+	$value = trim($value);
 
 	//turn "string" into string
-	//$value = str_replace('""', '"', $value);
-	$value = trim(trim($value, '"'));
-	
-	//fix newlines
-	//$value = preg_split('/$\R?^/m', $value);
-	//$value = array_map('trim', $value);
-	//$value = trim(implode(PHP_EOL, $value));
+	if ((substr($value, 0, 1) == '"') && (substr($value, -1) == '"')) {
+		$value = trim(trim($value, '"'));
+	}
 	
 	return $value;
 }

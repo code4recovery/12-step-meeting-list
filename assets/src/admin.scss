@@ -1,5 +1,13 @@
 body {
 	
+	//Group Information (optional) gray
+	h2 small, h3 small { 
+		color: #aaa;
+		font-size: inherit;
+		&:before { content: " ("; }
+		&:after { content: ")"; }
+	}
+		
 	//import & settings
 	&.tsml_meeting_page_import {
 	
@@ -7,7 +15,7 @@ body {
 			padding: 10px 10px 8px 45px;
 			li { margin: 0 0 2px; }
 		}
-		
+				
 		.progress {
 			height: 20px;
 			background-color: white;
@@ -151,9 +159,6 @@ body {
 	//meeting add/edit
 	&.post-type-tsml_meeting {
 
-		//Group Information (optional) gray
-		#group.postbox h2.ui-sortable-handle span span { color: #ccc; }
-		
 		.meta_form_row { 
 			padding: 10px 0 0; overflow: auto; clear: left;
 			label, input, div.checkboxes, #map { float: left; line-height: 100%; } 

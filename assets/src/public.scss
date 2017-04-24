@@ -370,15 +370,16 @@ $height:				550px;
 	#meeting #feedback {
 		margin-bottom: $margin;
 		form, .alert { display: none; }
+		input { text-transform: none; }
 		textarea { height: 250px; }
 		form { margin-bottom: $margin; }
 		&.form {
 			form { display: block; }
-			a[href="#feedback"] { display: none; }
+			& > button { display: none; }
 		}
 		&.confirm {
 			.alert { display: block; }
-			a[href="#feedback"] { display: none; }
+			& > button { display: none; }
 		}
 	}
 	

@@ -37,3 +37,6 @@ include(TSML_PATH . '/includes/widgets_init.php');
 //these hooks need to be in this file
 register_activation_hook(  __FILE__, 'tsml_change_activation_state');
 register_deactivation_hook(__FILE__, 'tsml_change_activation_state');
+
+//add cron hook
+add_action('tsml_import_data_sources', 'tsml_import_data_sources');

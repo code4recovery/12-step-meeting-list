@@ -132,7 +132,7 @@ function tsml_admin_init() {
 		<?php
 	}
 	
-	add_meta_box('group', __('Group Information', '12-step-meeting-list') . ' <span>(' . __('Optional', '12-step-meeting-list') . ')</span>', 'tsml_group_box', 'tsml_meeting', 'normal', 'low');
+	add_meta_box('group', __('Group Information <small>Optional</small>', '12-step-meeting-list'), 'tsml_group_box', 'tsml_meeting', 'normal', 'low');
 	
 	function tsml_group_box() {
 		global $post;
