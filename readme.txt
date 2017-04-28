@@ -46,6 +46,7 @@ It was originally designed to maintain a list of AA meetings in Santa Clara Coun
 1. [Modesto, CA](http://wp.cviaa.org/meetings/)
 1. [Naples, FL](http://aanaples.org/meetings/)
 1. [New Orleans, LA](http://www.aaneworleans.org/meetings/)
+1. [New Mexico](https://nm-aa.org/meetings/)
 1. [New York, NY](http://meetings.nyintergroup.org/)
 1. [Oahu, HI](http://oahucentraloffice.com/meetings/)
 1. [Orlando, FL](http://cflintergroup.org/meetings/)
