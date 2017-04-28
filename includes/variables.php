@@ -4,6 +4,8 @@ don't make changes! it'll make staying updated much harder.
 for updates / questions, please contact wordpress@meetingguide.org
 */
 
+$tsml_data_sources = get_option('tsml_data_sources', array());
+
 $tsml_days	= array(
 	0 => array(0=>__('Sunday', '12-step-meeting-list'), 1=>__('Monday', '12-step-meeting-list'), 2=>__('Tuesday', '12-step-meeting-list'), 3=>__('Wednesday', '12-step-meeting-list'), 4=>__('Thursday', '12-step-meeting-list'), 5=>__('Friday', '12-step-meeting-list'), 6=>__('Saturday', '12-step-meeting-list')),
 	1 => array(1=>__('Monday', '12-step-meeting-list'), 2=>__('Tuesday', '12-step-meeting-list'), 3=>__('Wednesday', '12-step-meeting-list'), 4=>__('Thursday', '12-step-meeting-list'), 5=>__('Friday', '12-step-meeting-list'), 6=>__('Saturday', '12-step-meeting-list'), 0=>__('Sunday', '12-step-meeting-list')),

@@ -2,7 +2,7 @@
 	
 //import CSV file and handle settings
 function tmsl_import_page() {
-	global $wpdb, $tsml_types, $tsml_programs, $tsml_program, $tsml_nonce, $tsml_days, $tsml_feedback_addresses, $tsml_notification_addresses, $tsml_distance_units;
+	global $wpdb, $tsml_types, $tsml_data_sources, $tsml_programs, $tsml_program, $tsml_nonce, $tsml_days, $tsml_feedback_addresses, $tsml_notification_addresses, $tsml_distance_units;
 
 	$error = false;
 	
@@ -117,16 +117,28 @@ function tmsl_import_page() {
 						tsml_delete($meeting_ids);
 						
 						tsml_delete_orphans();
-		
+					
+					} elseif ($_POST['delete'] == 'no_data_source') {
+						
+						tsml_delete(get_posts(array(
+							'post_type'		=> 'tsml_meeting',
+							'numberposts'	=> -1,
+							'fields'			=> 'ids',
+							'meta_query'		=> array(
+								array(
+									'key' => 'data_source',
+									'compare' => 'NOT EXISTS',
+									'value' => '',
+								),
+							),
+						)));
+
+						tsml_delete_orphans();
+						
 					} elseif ($_POST['delete'] == 'all') {
-						//must be done with SQL statements becase there could be thousands of records to delete
-						if ($post_ids = $wpdb->get_col('SELECT id FROM ' . $wpdb->posts . ' WHERE post_type IN ("tsml_meeting", "tsml_location", "tsml_group")')) {
-							tsml_delete($post_ids);
-						}
-						if ($term_ids = implode(',', $wpdb->get_col('SELECT term_id FROM ' . $wpdb->term_taxonomy . ' WHERE taxonomy = "tsml_region"'))) {
-							$wpdb->query('DELETE FROM ' . $wpdb->terms . ' WHERE term_id IN (' . $term_ids . ')');
-							$wpdb->query('DELETE FROM ' . $wpdb->term_taxonomy . ' WHERE term_id IN (' . $term_ids . ')');
-						}
+						
+						tsml_delete('everything');
+						
 					}
 				}
 			}
@@ -134,7 +146,6 @@ function tmsl_import_page() {
 	}
 		
 	//add data source
-	$tsml_data_sources = get_option('tsml_data_sources', array());
 	if (!empty($_POST['tsml_add_data_source']) && isset($_POST['tsml_nonce']) && wp_verify_nonce($_POST['tsml_nonce'], $tsml_nonce)) {
 		
 		//sanitize URL
@@ -149,7 +160,7 @@ function tmsl_import_page() {
 				'meta_query'		=> array(
 					array(
 						'key' => 'data_source',
-						'value' => $_POST['tsml_remove_data_source'],
+						'value' => $_POST['tsml_add_data_source'],
 						'compare' => '=',
 					),
 				),
@@ -158,12 +169,27 @@ function tmsl_import_page() {
 		}
 		
 		//try fetching	
-		$response = wp_remote_get($_POST['tsml_add_data_source']);
+		$response = wp_remote_get($_POST['tsml_add_data_source'], array(
+			'timeout' => 10,
+			'sslverify' => false,
+		));
 		if (is_array($response) && !empty($response['body']) && ($body = json_decode($response['body'], true))) {
 			$tsml_data_sources[$_POST['tsml_add_data_source']] = array(
 				'status' => 'OK',
 				'last_import' => current_time('timestamp'),
+				'count_meetings' => 0,
 			);
+			
+			//temporary fix for area 46 (hopefully doesn't make it to release)
+			for ($i = 0; $i < count($body); $i++) {
+				if (!empty($body[$i]['address'])) {
+					if ($body[$i]['address'] == 'Call DCM') {
+						$body[$i]['address'] = 'Albuquerque, New Mexico';
+					} elseif ($body[$i]['address'] == 'San Felipe Pueblo, Uninc Sandoval County, New Mexico') {
+						$body[$i]['address'] = 'San Felipe Pueblo, New Mexico';
+					}
+				}
+			}
 			
 			//import feed
 			tsml_import_buffer_set($body, $_POST['tsml_add_data_source']);
@@ -171,14 +197,45 @@ function tmsl_import_page() {
 			//save data source configuration
 			update_option('tsml_data_sources', $tsml_data_sources);
 			
-			//schedule cron
+			/*schedule cron
 			if (!wp_next_scheduled('tsml_import_data_sources')) {
-				wp_schedule_event(time(), 'twicedaily', 'tsml_import_data_sources');
+				wp_schedule_event(time(), 'hourly', 'tsml_import_data_sources');
+			}*/
+			
+		} elseif (!is_array($response)) {
+			
+			tsml_alert(__('Invalid response, <pre>' . print_r($response, true) . '</pre>.', '12-step-meeting-list'), 'error');
+
+		} elseif (empty($response['body'])) {
+			
+			tsml_alert(__('Data source gave an empty response, you might need to try again.', '12-step-meeting-list'), 'error');
+
+		} else {
+
+			switch (json_last_error()) {
+				case JSON_ERROR_NONE:
+					tsml_alert(__('JSON: no errors.', '12-step-meeting-list'), 'error');
+					break;
+				case JSON_ERROR_DEPTH:
+					tsml_alert(__('JSON: Maximum stack depth exceeded.', '12-step-meeting-list'), 'error');
+					break;
+				case JSON_ERROR_STATE_MISMATCH:
+					tsml_alert(__('JSON: Underflow or the modes mismatch.', '12-step-meeting-list'), 'error');
+					break;
+				case JSON_ERROR_CTRL_CHAR:
+					tsml_alert(__('JSON: Unexpected control character found.', '12-step-meeting-list'), 'error');
+					break;
+				case JSON_ERROR_SYNTAX:
+					tsml_alert(__('JSON: Syntax error, malformed JSON.', '12-step-meeting-list'), 'error');
+					break;
+				case JSON_ERROR_UTF8:
+					tsml_alert(__('JSON: Malformed UTF-8 characters, possibly incorrectly encoded.', '12-step-meeting-list'), 'error');
+					break;
+				default:
+					tsml_alert(__('JSON: Unknown error.', '12-step-meeting-list'), 'error');
+					break;
 			}
 			
-		} else {
-			echo 'invalid reponse';
-			tsml_alert(__('Data source not valid!', '12-step-meeting-list'), 'error');
 		}
 	}
 	
@@ -189,7 +246,7 @@ function tmsl_import_page() {
 	if (!empty($_POST['tsml_remove_data_source'])) {
 
 		//sanitize URL
-		$_POST['tsml_add_data_source'] = esc_url_raw($_POST['tsml_add_data_source'], array('http', 'https'));
+		$_POST['tsml_remove_data_source'] = esc_url_raw($_POST['tsml_remove_data_source'], array('http', 'https'));
 
 		if (array_key_exists($_POST['tsml_remove_data_source'], $tsml_data_sources)) {
 			
@@ -327,10 +384,19 @@ function tmsl_import_page() {
 								<input type="file" name="tsml_import">
 								<p>
 									<?php _e('When importing...', '12-step-meeting-list')?><br>
-									<?php if (empty($_POST['delete'])) $_POST['delete'] = 'nothing'?>
-									<label><input type="radio" name="delete" value="nothing" <?php if ($_POST['delete'] == 'nothing') {?> checked<?php }?>> <?php _e('Don\'t delete anything', '12-step-meeting-list')?></label><br>
-									<label><input type="radio" name="delete" value="regions" <?php if ($_POST['delete'] == 'regions') {?> checked<?php }?>> <?php _e('Delete only the meetings, locations and groups for the regions present in this CSV', '12-step-meeting-list')?></label><br>
-									<label><input type="radio" name="delete" value="all" <?php if ($_POST['delete'] == 'all') {?> checked<?php }?>> <?php _e('Delete all meetings, locations, groups, and regions prior to import', '12-step-meeting-list')?></label>
+									<?php 
+									$delete_options = array(
+										'nothing'	=> __('don\'t delete anything', '12-step-meeting-list'),
+										'regions'	=> __('delete only the meetings, locations, and groups for the regions present in this CSV', '12-step-meeting-list'),
+										'all' 		=> __('delete all meetings, locations, groups, and regions', '12-step-meeting-list'),
+									);
+									if (!empty($tsml_data_sources)) {
+										$delete_options['no_data_source'] = __('delete all meetings, locations, and groups not from a data source', '12-step-meeting-list');
+									}
+									$delete_selected = (empty($_POST['delete']) || !array_key_exists($_POST['delete'], $delete_options)) ? 'nothing' : $_POST['delete'];
+									foreach ($delete_options as $key => $value) {?>
+										<label><input type="radio" name="delete" value="<?php echo $key?>" <?php checked($key, $delete_selected)?>> <?php echo $value?></label><br>
+									<?php }?>
 								</p>
 								<p><input type="submit" class="button button-primary" value="<?php _e('Begin', '12-step-meeting-list')?>"></p>
 							</form>
@@ -375,22 +441,34 @@ function tmsl_import_page() {
 							<p><?php printf(__('Data sources are JSON feeds that contain a website\'s public meeting data. They can be used to aggregate meetings from different sites into a single master list. 
 								The data source for this website is <a href="%s" target="_blank">right here</a>. More information is available at the <a href="%s" target="_blank">Meeting Guide API Specification</a>.', '12-step-meeting-list'), admin_url('admin-ajax.php') . '?action=meetings', 'https://github.com/meeting-guide/api')?></p>
 							<p><?php _e('Data sources added here will be checked periodically for updates.', '12-step-meeting-list')?>
-							<?php if (count($tsml_data_sources)) {?>
+							<?php if (!empty($tsml_data_sources)) {?>
 							<table>
 								<thead>
 									<tr>
 										<th><?php _e('URL', '12-step-meeting-list')?></th>
 										<th><?php _e('Last Update', '12-step-meeting-list')?></th>
-										<th><?php _e('Status', '12-step-meeting-list')?></th>
+										<th></th>
+										<th><?php _e('Meetings', '12-step-meeting-list')?></th>
+										<!--<th><?php _e('Status', '12-step-meeting-list')?></th>-->
 										<th></th>
 									</tr>
 								</thead>
 								<tbody>
 									<?php foreach ($tsml_data_sources as $feed => $properties) {?>
-									<tr>
+									<tr data-source="<?php echo $feed?>">
 										<td><a href="<?php echo $feed?>" target="_blank"><?php echo $feed?></a></td>
-										<td><?php echo date(get_option('date_format') . ' ' . get_option('time_format'), $properties['last_import'])?></td>
-										<td><?php echo $properties['status']?></td>
+										<td>
+											<?php echo date(get_option('date_format') . ' ' . get_option('time_format'), $properties['last_import'])?>
+										</td>
+										<td>
+											<form method="post" action="<?php echo $_SERVER['REQUEST_URI']?>">
+												<?php wp_nonce_field($tsml_nonce, 'tsml_nonce', false)?>
+												<input type="hidden" name="tsml_add_data_source" value="<?php echo $feed?>">
+												<input type="submit" value="Refresh" class="button button-small">
+											</form>
+										</td>
+										<td class="count_meetings"><?php echo number_format($properties['count_meetings'])?></td>
+										<!--<td><?php echo $properties['status']?></td>-->
 										<td>
 											<form method="post" action="<?php echo $_SERVER['REQUEST_URI']?>">
 												<?php wp_nonce_field($tsml_nonce, 'tsml_nonce', false)?>

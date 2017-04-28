@@ -247,7 +247,7 @@ function tsml_ajax_feedback() {
 //used by admin_import.php
 add_action('wp_ajax_tsml_import', 'tsml_ajax_import');
 function tsml_ajax_import() {
-	global $tsml_google_api_key, $tsml_google_overrides, $tsml_language;
+	global $tsml_google_api_key, $tsml_google_overrides, $tsml_language, $tsml_data_sources;
 	
 	$meetings	= get_option('tsml_import_buffer', array());
 	$addresses	= get_option('tsml_addresses', array());
@@ -341,7 +341,6 @@ function tsml_ajax_import() {
 				continue;
 			}
 			
-			//dd($data->results[0]->address_components);
 			$formatted_address = $data->results[0]->formatted_address;
 			$latitude = $data->results[0]->geometry->location->lat;
 			$longitude = $data->results[0]->geometry->location->lng;
@@ -450,7 +449,13 @@ function tsml_ajax_import() {
 		//add types, group, and data_source if available
 		if (!empty($meeting['types'])) add_post_meta($meeting_id, 'types', $meeting['types']);
 		if (!empty($meeting['group'])) add_post_meta($meeting_id, 'group_id', $groups[$meeting['group']]);
-		if (!empty($meeting['data_source'])) add_post_meta($meeting_id, 'data_source', $meeting['data_source']);
+		if (!empty($meeting['data_source'])) {
+			add_post_meta($meeting_id, 'data_source', $meeting['data_source']);
+			if (array_key_exists($meeting['data_source'], $tsml_data_sources)) {
+				if (empty($tsml_data_sources[$meeting['data_source']]['count_meetings'])) $tsml_data_sources[$meeting['data_source']]['count_meetings'] = 0;
+				$tsml_data_sources[$meeting['data_source']]['count_meetings']++;
+			}
+		}
 
 	}
 
@@ -460,11 +465,19 @@ function tsml_ajax_import() {
 	//save updated geocoding cache
 	update_option('tsml_addresses', $addresses);
 
+	//save updated geocoding cache
+	update_option('tsml_data_sources', $tsml_data_sources);
+
 	//have to update the cache of types in use
 	tsml_update_types_in_use();
 
 	//remove post_modified thing added earlier
 	remove_filter('wp_insert_post_data', 'tsml_import_post_modified', 99);
+	
+	//number format the data sources
+	foreach ($tsml_data_sources as $url => $props) {
+		$tsml_data_sources[$url]['count_meetings'] = number_format($tsml_data_sources[$url]['count_meetings']);
+	}
 	
 	//send json result to browser
 	$meetings  = tsml_count_meetings();
@@ -472,15 +485,16 @@ function tsml_ajax_import() {
 	$regions   = tsml_count_regions();
 	$groups    = tsml_count_groups();
 	wp_send_json(array(
-		'errors'		=> $errors,
+		'errors'			=> $errors,
 		'remaining'		=> count($remaining),
-		'counts'		=> compact('meetings', 'locations', 'regions', 'groups'),
+		'counts'			=> compact('meetings', 'locations', 'regions', 'groups'),
+		'data_sources' 	=> $tsml_data_sources,
 		'geocoded'		=> $geocoded,
 		'descriptions'	=> array(
-			'meetings'		=> sprintf(_n('%s meeting', '%s meetings', $meetings, '12-step-meeting-list'), number_format_i18n($meetings)),
-			'locations'		=> sprintf(_n('%s location', '%s locations', $locations, '12-step-meeting-list'), number_format_i18n($locations)),
+			'meetings'	=> sprintf(_n('%s meeting', '%s meetings', $meetings, '12-step-meeting-list'), number_format_i18n($meetings)),
+			'locations'	=> sprintf(_n('%s location', '%s locations', $locations, '12-step-meeting-list'), number_format_i18n($locations)),
 			'groups'		=> sprintf(_n('%s group', '%s groups', $groups, '12-step-meeting-list'), number_format_i18n($groups)),
-			'regions'		=> sprintf(_n('%s region', '%s regions', $regions, '12-step-meeting-list'), number_format_i18n($regions)),
+			'regions'	=> sprintf(_n('%s region', '%s regions', $regions, '12-step-meeting-list'), number_format_i18n($regions)),
 		),
 	));
 }

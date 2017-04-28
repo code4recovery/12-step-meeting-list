@@ -24,6 +24,13 @@ jQuery(function($){
 				}
 			}
 			
+			//update the counts in the data sources
+			if (data.data_sources) {
+				$.each(data.data_sources, function(url, props) {
+					$('tr[data-source="' + url + '"] td.count_meetings').html(props.count_meetings);
+				});
+			}
+			
 			//if there are errors, display message and append them to it
 			if (data.errors.length) {
 				$errors = $('#tsml_import_errors');

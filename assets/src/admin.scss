@@ -94,6 +94,12 @@ body {
 						border-bottom: 0;
 					}
 				}
+				form {
+					.button.button-small {
+						height: 18px;
+						line-height: 16px;
+					}
+				}
 			}
 			
 			//add email forms

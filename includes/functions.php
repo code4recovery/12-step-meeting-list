@@ -210,6 +210,23 @@ function tsml_debug($string) {
 function tsml_delete($post_ids) {
 	global $wpdb;
 
+	//special case	
+	if ($post_ids == 'everything') {
+		
+		$post_ids = get_posts(array(
+			'post_type' => array('tsml_meeting', 'tsml_location', 'tsml_group'),
+			'post_status' => 'any',
+			'fields' => 'ids',
+			'numberposts' => -1,
+		));
+		
+		//when we're deleting *everything*, also delete regions
+		if ($term_ids = implode(',', $wpdb->get_col('SELECT term_id FROM ' . $wpdb->term_taxonomy . ' WHERE taxonomy IN ("tsml_region")'))) {
+			$wpdb->query('DELETE FROM ' . $wpdb->terms . ' WHERE term_id IN (' . $term_ids . ')');
+			$wpdb->query('DELETE FROM ' . $wpdb->term_taxonomy . ' WHERE term_id IN (' . $term_ids . ')');
+		}
+	} 
+	
 	if (empty($post_ids) || !is_array($post_ids)) return;
 	
 	//sanitize
@@ -993,7 +1010,7 @@ function tsml_import_buffer_set($meetings, $data_source=null) {
 	update_option('tsml_import_buffer', $meetings, false);
 }
 
-//function: check data sources on a cron, make any necessary updates
+/*function: check data sources on a cron, make any necessary updates
 //used:		cron set by admin_import.php
 function tsml_import_data_sources() {
 	global $tsml_data_sources;
@@ -1004,7 +1021,7 @@ function tsml_import_data_sources() {
 		$tsml_data_sources[$url]['last_update'] = current_time('timestamp');
 	}
 	update_option('tsml_data_sources', $tsml_data_sources);
-}
+}*/
 
 //function:	filter workaround for setting post_modified dates
 //used:		tsml_ajax_import()
