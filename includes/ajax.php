@@ -169,7 +169,7 @@ function tsml_ajax_csv() {
 		$line = array();
 		foreach ($columns as $column=>$value) {
 			if (in_array($column, array('time', 'end_time'))) {
-				$line[] = tsml_format_time($meeting[$column]);
+				$line[] = $meeting[$column];
 			} elseif ($column == 'day') {
 				$line[] = $tsml_days[$meeting[$column]];
 			} elseif ($column == 'types') {
@@ -186,6 +186,8 @@ function tsml_ajax_csv() {
 		$return .= implode($delimiter, $line) . PHP_EOL;
 	}
 
+	//dd($return);
+	
 	//headers to trigger file download
 	header('Cache-Control: maxage=1');
 	header('Pragma: public');
@@ -440,7 +442,7 @@ function tsml_ajax_import() {
 		));
 		
 		//add day and time(s) if not appointment meeting
-		if (!empty($meeting['time']) && (!empty($meeting['day']) || $meeting['day'] === '0')) {
+		if (!empty($meeting['time']) && (!empty($meeting['day']) || (string) $meeting['day'] === '0')) {
 			add_post_meta($meeting_id, 'day',  $meeting['day']);
 			add_post_meta($meeting_id, 'time', $meeting['time']);
 			if (!empty($meeting['end_time'])) add_post_meta($meeting_id, 'end_time', $meeting['end_time']);

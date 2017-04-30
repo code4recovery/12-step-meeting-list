@@ -1,8 +1,21 @@
 <?php 
 tsml_assets();
-get_header(); 
+
 $location = tsml_get_location();
+
+//define some vars for the map
+wp_localize_script('tsml_public', 'tsml_map', array(
+	'latitude' => $location->latitude,
+	'longitude' => $location->longitude,
+	'location' => get_the_title(),
+	'address' => $location->formatted_address,
+	'directions_url' => $location->directions,
+	'directions' => __('Directions', '12-step-meeting-list'),
+));
+
+get_header(); 
 ?>
+
 <div id="tsml">
 	<div id="location" class="container">
 		<div class="row">
@@ -54,42 +67,6 @@ $location = tsml_get_location();
 					</div>
 					<div class="col-md-8">
 						<div id="map" class="panel panel-default"></div>
-						<script>
-							var map;
-	
-							google.maps.event.addDomListener(window, 'load', function() {
-								map = new google.maps.Map(document.getElementById('map'), {
-									zoom: 15,
-									panControl: false,
-									mapTypeControl: false,
-									zoomControlOptions: { style: google.maps.ZoomControlStyle.SMALL },
-									center: new google.maps.LatLng(<?php echo $location->latitude + .0025 . ',' . $location->longitude?>),
-									mapTypeId: google.maps.MapTypeId.ROADMAP
-								});
-	
-								var contentString = '<div class="infowindow">'+
-									'<h3><?php esc_attr_e($location->post_title, '12-step-meeting-list')?></h3>'+
-									'<p><?php echo tsml_format_address($location->formatted_address)?></p>'+
-									'<p><a class="btn btn-default" href="<?php echo $location->directions?>" target="_blank"><?php _e('Directions', '12-step-meeting-list')?></a></p>' +
-									'</div>';
-	
-								var infowindow = new google.maps.InfoWindow({
-									content: contentString
-								});
-	
-								var marker = new google.maps.Marker({
-									position: new google.maps.LatLng(<?php echo $location->latitude . ',' . $location->longitude?>),
-									map: map,
-									title: '<?php the_title(); ?>'
-								});
-	
-								infowindow.open(map,marker);
-	
-								google.maps.event.addListener(marker, 'click', function() {
-									infowindow.open(map,marker);
-								});
-							});
-						</script>
 					</div>
 				</div>
 			

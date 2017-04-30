@@ -1,11 +1,20 @@
 <?php 
-
 tsml_assets();
-
-get_header();
 
 $meeting = tsml_get_meeting();
 
+//define some vars for the map
+wp_localize_script('tsml_public', 'tsml_map', array(
+	'latitude' => $meeting->latitude,
+	'longitude' => $meeting->longitude,
+	'location' => get_the_title($meeting->post_parent),
+	'address' => $meeting->formatted_address,
+	'location_url' => get_permalink($meeting->post_parent),
+	'directions_url' => $meeting->directions,
+	'directions' => __('Directions', '12-step-meeting-list'),
+));
+
+get_header();
 ?>
 
 <div id="tsml">
@@ -31,18 +40,18 @@ $meeting = tsml_get_meeting();
 									}
 									?>
 								</li>
+								<?php
+								$other_meetings = count($meeting->location_meetings) - 1;
+								echo tsml_link(
+									get_permalink($meeting->post_parent),
+										'<h4>' . $meeting->location . '</h4>' . 
+										($other_meetings ? sprintf(_n('%d other meeting at this location', '%d other meetings at this location', $other_meetings, '12-step-meeting-list'), $other_meetings) : '')
+									, 'tsml_meeting', 'list-group-item list-group-item-location');
+								?>
 								<a href="<?php echo $meeting->directions?>" class="list-group-item list-group-item-address">
-									<h4><?php echo $meeting->location?></h4>
 									<?php echo tsml_format_address($meeting->formatted_address)?>
 								</a>
-								<?php if (count($meeting->location_meetings) > 1) {
-									$other_meetings = count($meeting->location_meetings) - 1;
-									echo tsml_link(
-										get_permalink($meeting->post_parent),
-											sprintf(_n('%d other meeting at this location', '%d other meetings at this location', $other_meetings, '12-step-meeting-list'),
-											$other_meetings
-										), 'tsml_meeting', 'list-group-item list-group-item-location');
-								}
+								<?php 
 								if (!empty($meeting->group_id)) {?>
 									<li class="list-group-item list-group-item-group">
 										<?php echo $meeting->group?>
@@ -134,42 +143,6 @@ $meeting = tsml_get_meeting();
 					</div>
 					<div class="col-md-8">
 						<div id="map" class="panel panel-default"></div>
-						<script>
-							var map;
-	
-							google.maps.event.addDomListener(window, 'load', function() {
-								map_desktop = new google.maps.Map(document.getElementById('map'), {
-									zoom: 15,
-									panControl: false,
-									mapTypeControl: false,
-									zoomControlOptions: { style: google.maps.ZoomControlStyle.SMALL },
-									center: new google.maps.LatLng(<?php echo $meeting->latitude + .0025 . ',' . $meeting->longitude?>),
-									mapTypeId: google.maps.MapTypeId.ROADMAP
-								});
-	
-								var contentString = '<div class="infowindow">'+
-									'<h3><?php echo tsml_link(get_permalink($meeting->post_parent), $meeting->location, 'tsml_meeting')?></h3>'+
-									'<p><?php echo tsml_format_address($meeting->formatted_address)?></p>'+
-									'<p><a class="btn btn-default" href="<?php echo $meeting->directions?>"><?php _e('Directions', '12-step-meeting-list')?></a></p>' +
-									'</div>';
-	
-								var infowindow = new google.maps.InfoWindow({
-									content: contentString
-								});
-	
-								var marker = new google.maps.Marker({
-									position: new google.maps.LatLng(<?php echo $meeting->latitude?>,<?php echo $meeting->longitude?>),
-									map: map_desktop,
-									title: '<?php the_title(); ?>'
-								});
-	
-								infowindow.open(map_desktop, marker);
-	
-								google.maps.event.addListener(marker, 'click', function() {
-									infowindow.open(map_desktop, marker);
-								});
-							});
-						</script>
 					</div>
 				</div>
 			</div>

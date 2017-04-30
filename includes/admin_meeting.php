@@ -26,7 +26,9 @@ function tsml_admin_init() {
 		$meeting_custom 	= get_post_custom($post->ID);
 		$meeting_custom['types'] = empty($meeting_custom['types']) ? array() : unserialize($meeting_custom['types'][0]);
 		if (!is_array($meeting_custom['types'])) $meeting_custom['types'] = array();
-				
+		
+		if (!empty($meeting_custom['data_source'])) tsml_alert(__('This meeting was imported from an external data source. Any changes you make here will be overwritten when you refresh the data.', '12-step-meeting-list'), 'warning');
+		
 		//nonce field
 		wp_nonce_field($tsml_nonce, 'tsml_nonce', false);
 		?>

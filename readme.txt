@@ -3,7 +3,7 @@ Contributors: meetingguide, aasanjose
 Tags: 12-step, aa, al-anon, coda, meetings, na, oa, saa, slaa
 Requires at least: 3.2
 Tested up to: 4.7
-Stable tag: 2.12
+Stable tag: 2.12.1
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -221,6 +221,17 @@ Also check out our [One Page Meeting List](https://github.com/meeting-guide/one-
 1. Edit location
 
 == Changelog ==
+
+= 2.12.1 =
+* Importer fix (Sunday meetings were importing as 'by appointment')
+* Location notes were also getting imported as meeting notes
+* Main map now scrollable with mouse wheel, per Austin
+* Detail page map now no longer scrollable with mouse wheel
+* Meeting admin page warning if meeting is from an external data source
+* CSV meeting times now in 24 hour format
+* Refactoring javascript on detail pages to lighten server load
+* Meeting detail page location name moved to location link (rather than address link)
+* Fixing sidebar notice formatting on import page
 
 = 2.12 =
 * Importing from JSON data sources

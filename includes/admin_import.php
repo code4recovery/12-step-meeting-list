@@ -151,45 +151,35 @@ function tmsl_import_page() {
 		//sanitize URL
 		$_POST['tsml_add_data_source'] = esc_url_raw($_POST['tsml_add_data_source'], array('http', 'https'));
 		
-		//if already set, hard refresh
-		if (array_key_exists($_POST['tsml_add_data_source'], $tsml_data_sources)) {
-			tsml_delete(get_posts(array(
-				'post_type'		=> 'tsml_meeting',
-				'numberposts'	=> -1,
-				'fields'			=> 'ids',
-				'meta_query'		=> array(
-					array(
-						'key' => 'data_source',
-						'value' => $_POST['tsml_add_data_source'],
-						'compare' => '=',
-					),
-				),
-			)));
-			tsml_delete_orphans();
-		}
-		
 		//try fetching	
 		$response = wp_remote_get($_POST['tsml_add_data_source'], array(
 			'timeout' => 10,
 			'sslverify' => false,
 		));
 		if (is_array($response) && !empty($response['body']) && ($body = json_decode($response['body'], true))) {
+
+			//if already set, hard refresh
+			if (array_key_exists($_POST['tsml_add_data_source'], $tsml_data_sources)) {
+				tsml_delete(get_posts(array(
+					'post_type'		=> 'tsml_meeting',
+					'numberposts'	=> -1,
+					'fields'			=> 'ids',
+					'meta_query'		=> array(
+						array(
+							'key' => 'data_source',
+							'value' => $_POST['tsml_add_data_source'],
+							'compare' => '=',
+						),
+					),
+				)));
+				tsml_delete_orphans();
+			}
+			
 			$tsml_data_sources[$_POST['tsml_add_data_source']] = array(
 				'status' => 'OK',
 				'last_import' => current_time('timestamp'),
 				'count_meetings' => 0,
 			);
-			
-			//temporary fix for area 46 (hopefully doesn't make it to release)
-			for ($i = 0; $i < count($body); $i++) {
-				if (!empty($body[$i]['address'])) {
-					if ($body[$i]['address'] == 'Call DCM') {
-						$body[$i]['address'] = 'Albuquerque, New Mexico';
-					} elseif ($body[$i]['address'] == 'San Felipe Pueblo, Uninc Sandoval County, New Mexico') {
-						$body[$i]['address'] = 'San Felipe Pueblo, New Mexico';
-					}
-				}
-			}
 			
 			//import feed
 			tsml_import_buffer_set($body, $_POST['tsml_add_data_source']);
@@ -440,7 +430,6 @@ function tmsl_import_page() {
 							<h3><?php _e('Data Sources <small>Beta</small>', '12-step-meeting-list')?></h3>
 							<p><?php printf(__('Data sources are JSON feeds that contain a website\'s public meeting data. They can be used to aggregate meetings from different sites into a single master list. 
 								The data source for this website is <a href="%s" target="_blank">right here</a>. More information is available at the <a href="%s" target="_blank">Meeting Guide API Specification</a>.', '12-step-meeting-list'), admin_url('admin-ajax.php') . '?action=meetings', 'https://github.com/meeting-guide/api')?></p>
-							<p><?php _e('Data sources added here will be checked periodically for updates.', '12-step-meeting-list')?>
 							<?php if (!empty($tsml_data_sources)) {?>
 							<table>
 								<thead>
@@ -496,13 +485,13 @@ function tmsl_import_page() {
 				<div id="postbox-container-1" class="postbox-container">
 
 					<?php if (version_compare(PHP_VERSION, '5.4') < 0) {?>
-					<div class="warning inline">
+					<div class="notice notice-warning inline">
 						<p><?php printf(__('You are running PHP <strong>%s</strong>, while <a href="%s" target="_blank">WordPress recommends</a> PHP %s or above. This can cause unexpected errors. Please contact your host and upgrade!', '12-step-meeting-list'), PHP_VERSION, 'https://wordpress.org/about/requirements/', '5.6')?></p>
 					</div>
 					<?php }
 					
 					if (!is_ssl()) {?>
-					<div class="warning inline">
+					<div class="notice notice-warning inline">
 						<p><?php _e('If you enable SSL, your users will be able to search for meetings relative to their location.', '12-step-meeting-list')?></p>
 					</div>
 					<?php }?>

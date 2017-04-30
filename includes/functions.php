@@ -36,7 +36,7 @@ function tsml_assets() {
 	if (is_admin()) {
 		//dashboard page assets
 		wp_enqueue_style('tsml_admin', plugins_url('../assets/css/admin.min.css', __FILE__), array(), TSML_VERSION);
-		wp_enqueue_script('tsml_admin', plugins_url('../assets/js/admin.min.js', __FILE__), array('jquery'), TSML_VERSION, true);
+		wp_enqueue_script('tsml_admin', plugins_url('../assets/js/admin.min.js', __FILE__), array('jquery', 'google_maps_api'), TSML_VERSION, true);
 		wp_localize_script('tsml_admin', 'tsml', array(
 			'ajaxurl' => admin_url('admin-ajax.php'),
 			'language' => $tsml_language,
@@ -47,7 +47,7 @@ function tsml_assets() {
 		//public page assets
 		wp_enqueue_style('tsml_public', plugins_url('../assets/css/public.min.css', __FILE__), array(), TSML_VERSION);
 		wp_enqueue_script('validate_js', plugins_url('../assets/js/jquery.validate.min.js', __FILE__), array('jquery'), TSML_VERSION, true);
-		wp_enqueue_script('tsml_public', plugins_url('../assets/js/public.min.js', __FILE__), array('jquery'), TSML_VERSION, true);
+		wp_enqueue_script('tsml_public', plugins_url('../assets/js/public.min.js', __FILE__), array('jquery', 'google_maps_api'), TSML_VERSION, true);
 		wp_localize_script('tsml_public', 'tsml', array(
 			'ajaxurl' => admin_url('admin-ajax.php'),
 			'days' => array(
@@ -917,7 +917,7 @@ function tsml_import_buffer_set($meetings, $data_source=null) {
 		if (empty($meeting['location'])) {
 			$meeting['location'] = empty($meeting['address']) ? __('Meeting Location', '12-step-meeting-list') : $meeting['address'];
 		}
-	
+		
 		//day can either be 0, 1, 2, 3 or Sunday, Monday, or empty
 		if (!array_key_exists($meeting['day'], $upper_days)) {
 			$meeting['day'] = array_search(strtoupper($meeting['day']), $upper_days);
