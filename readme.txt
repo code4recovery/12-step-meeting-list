@@ -3,7 +3,7 @@ Contributors: meetingguide, aasanjose
 Tags: 12-step, aa, al-anon, coda, meetings, na, oa, saa, slaa
 Requires at least: 3.2
 Tested up to: 4.7
-Stable tag: 2.12.1
+Stable tag: 2.12.2
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -47,7 +47,7 @@ It was originally designed to maintain a list of AA meetings in Santa Clara Coun
 1. [Naples, FL](http://aanaples.org/meetings/)
 1. [New Orleans, LA](http://www.aaneworleans.org/meetings/)
 1. [New Mexico](https://nm-aa.org/meetings/)
-1. [New York, NY](http://meetings.nyintergroup.org/)
+1. [New York, NY](https://www.nyintergroup.org/meetings/)
 1. [Oahu, HI](http://oahucentraloffice.com/meetings/)
 1. [Orlando, FL](http://cflintergroup.org/meetings/)
 1. [Philadelphia, PA](http://www.aasepia.org/meetings/)
@@ -75,6 +75,7 @@ It was originally designed to maintain a list of AA meetings in Santa Clara Coun
 1. [Warsaw, IN](http://www.aadistrict4143.com/meetings/)
 1. [Washington, DC](https://aa-dc.org/meetings)
 1. [West Hawaii, HI](http://www.westhawaiiaa.org/meetings/)
+1. [West-Central Wisconsin](http://www.district05.org/meetings/)
 1. [Western Slope, CA](http://westernsloped22.org/meetings/)
 1. [Western Kentucky](http://wkintergroup.org/meetings/)
 1. [Western Washington](http://area72aa.org/meetings/)
@@ -221,6 +222,10 @@ Also check out our [One Page Meeting List](https://github.com/meeting-guide/one-
 1. Edit location
 
 == Changelog ==
+
+= 2.12.2 =
+* New App Store widget for Meeting Guide (per NIA District 11)
+* CSS option for upcoming meetings widget
 
 = 2.12.1 =
 * Importer fix (Sunday meetings were importing as 'by appointment')

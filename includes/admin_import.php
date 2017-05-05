@@ -626,10 +626,10 @@ function tmsl_import_page() {
 							<p><?php printf(__('Want to have your meetings listed in a simple, free mobile app? <a href="%s" target="_blank">%d areas are currently participating</a>. No extra effort is required; simply continue to update your meetings here and the updates will flow down to app users.', '12-step-meeting-list'), 'https://meetingguide.org/', 85)?></p>
 							<p class="buttons">
 								<a href="https://itunes.apple.com/us/app/meeting-guide/id1042822181">
-									<img src="<?php echo plugin_dir_url(__FILE__)?>../assets/img/apple.svg" alt="<?php _e('Download on the iOS App Store')?>">
+									<img src="<?php echo plugins_url('assets/img/apple.svg', __DIR__)?>" alt="<?php _e('Download on the iOS App Store')?>">
 								</a>
 								<a href="https://play.google.com/store/apps/details?id=org.meetingguide.app">
-									<img src="<?php echo plugin_dir_url(__FILE__)?>../assets/img/google.svg" alt="<?php _e('Download on the Google Play Store')?>">
+									<img src="<?php echo plugins_url('assets/img/google.svg', __DIR__)?>" alt="<?php _e('Download on the Google Play Store')?>">
 								</a>
 							</p>
 							<p><?php printf(__('To get involved, please <a href="%s">get in touch</a>.', '12-step-meeting-list'), TSML_CONTACT_LINK)?></p>

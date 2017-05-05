@@ -13,7 +13,7 @@ if (is_ssl()) $modes['me'] = array('title' => __('Near Me', '12-step-meeting-lis
 
 //define distance dropdown
 $distances = array();
-foreach (array(1, 2, 5, 10, 25, 50) as $distance) {
+foreach (array(1, 2, 5, 10, 25, 50, 100) as $distance) {
 	if ($tsml_distance_units == 'mi') {
 		$distances[$distance] = sprintf(_n('Within %d Mile', 'Within %d Miles', $distance, '12-step-meeting-list'), $distance);
 	} else {
