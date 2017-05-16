@@ -308,6 +308,7 @@ $height:				550px;
 		}
 	
 		&[data-view=list] {
+			padding-bottom: 0;
 			table {
 				display: table;
 			}
@@ -774,5 +775,17 @@ body {
 	}
 	&.twentyten {
 		#main { padding-top: 5px; font-size: 14px; }
+	}
+	&.catch-box {
+		&.post-type-archive-tsml_meeting, &.single-tsml_meeting, &.single-tsml_location {
+			#primary {
+				width: 100%;
+				#tsml {
+					background-color: white;
+					border-radius: 5px;
+					.page-header { margin-top: 0; }
+				}
+			}
+		}
 	}
 }

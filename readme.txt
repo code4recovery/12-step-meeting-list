@@ -3,7 +3,7 @@ Contributors: meetingguide, aasanjose
 Tags: 12-step, aa, al-anon, coda, meetings, na, oa, saa, slaa
 Requires at least: 3.2
 Tested up to: 4.7
-Stable tag: 2.12.2
+Stable tag: 2.12.3
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -85,6 +85,7 @@ It was originally designed to maintain a list of AA meetings in Santa Clara Coun
 **Adult Children of Alcoholics**
 
 1. [Southern California](http://www.socalaca.org/meetings/?d=any)
+1. [Texas](http://lonestaraca.org/meetings/)
 
 **Al-Anon**
 
@@ -222,6 +223,9 @@ Also check out our [One Page Meeting List](https://github.com/meeting-guide/one-
 1. Edit location
 
 == Changelog ==
+
+= 2.12.3 =
+* Appearance improvements for the Catch Box WP theme
 
 = 2.12.2 =
 * New App Store widget for Meeting Guide (per NIA District 11)
