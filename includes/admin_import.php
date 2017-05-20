@@ -38,15 +38,19 @@ function tmsl_import_page() {
 		} else {
 			
 			//extract meetings from CSV
-			while (($data = fgetcsv($handle, 1000, ',')) !== false) {
+			while (($data = fgetcsv($handle, 3000, ',')) !== false) {
 				//skip empty rows
 				if (strlen(trim(implode($data)))) {
 					$meetings[] = $data;
 				}
 			}
 
-			//allow theme-defined function to reformat CSV prior to import (for New Hampshire)
-			if (function_exists('tsml_import_reformat')) {
+			//do import reformatting
+			if (count($meetings) && is_array($meetings[0]) && (count($meetings[0]) == 162) && ($meetings[0][0] == 'ServiceNumber'))  {
+				//this is FNV data, reformat it automatically
+				$meetings = tsml_import_reformat_fnv($meetings);
+			} elseif (function_exists('tsml_import_reformat')) {
+				//allow theme-defined function to reformat CSV prior to import (for New Hampshire)
 				$meetings = tsml_import_reformat($meetings);
 			}
 			
@@ -421,6 +425,9 @@ function tmsl_import_page() {
 											</ul>
 										</li>
 									</ul>
+									<?php if ($tsml_program == 'aa') {?>
+									<p><?php _e('Additionally, you may import spreadsheets that are in the General Service Office\'s FNV database "Group Search Results" format. This format has 162 columns, the first column is <code>ServiceNumber</code>.', '12-step-meeting-list')?></p>
+									<?php }?>
 								</section>
 							</details>
 						</div>
@@ -623,7 +630,6 @@ function tmsl_import_page() {
 					<div class="postbox" id="try_the_apps">
 						<div class="inside">
 							<h3><?php _e('Try the Apps!', '12-step-meeting-list')?></h3>
-							<p><?php printf(__('Want to have your meetings listed in a simple, free mobile app? <a href="%s" target="_blank">%d areas are currently participating</a>. No extra effort is required; simply continue to update your meetings here and the updates will flow down to app users.', '12-step-meeting-list'), 'https://meetingguide.org/', 85)?></p>
 							<p class="buttons">
 								<a href="https://itunes.apple.com/us/app/meeting-guide/id1042822181">
 									<img src="<?php echo plugins_url('assets/img/apple.svg', __DIR__)?>" alt="<?php _e('Download on the iOS App Store')?>">
@@ -632,6 +638,7 @@ function tmsl_import_page() {
 									<img src="<?php echo plugins_url('assets/img/google.svg', __DIR__)?>" alt="<?php _e('Download on the Google Play Store')?>">
 								</a>
 							</p>
+							<p><?php printf(__('Want to have your meetings listed in a simple, free mobile app? <a href="%s" target="_blank">%d areas are currently participating</a>. No extra effort is required; simply continue to update your meetings in WordPress and the updates will flow down to app users.', '12-step-meeting-list'), 'https://meetingguide.org/', 90)?></p>
 							<p><?php printf(__('To get involved, please <a href="%s">get in touch</a>.', '12-step-meeting-list'), TSML_CONTACT_LINK)?></p>
 						</div>
 					</div>

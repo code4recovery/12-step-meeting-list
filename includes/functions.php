@@ -1035,6 +1035,106 @@ function tsml_import_post_modified($data, $postarr) {
 	return $data;
 }
 
+//function: handle FNV (GSO) imports
+//used:		tsml_import()
+function tsml_import_reformat_fnv($rows) {
+
+	$meetings = array();
+	
+	$header = array_shift($rows);
+
+	//dd($header);
+	
+	$days = array('Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday');
+	$all_types = array();
+	
+	foreach ($rows as $row) {
+	
+		$row = array_combine($header, $row);
+		
+		if ($row['Type'] !== 'Regular') continue;
+		
+		for ($number = 1; $number < 5; $number++) {
+			foreach (array('SUN', 'MON', 'TUE', 'WED', 'THU', 'FRI', 'SAT') as $index => $day) {
+				$key = 'Meeting' . $number . $day . 'Times';
+				if (!empty($row[$key])) {
+					$times = explode('  ', strtolower($row[$key]));
+					foreach ($times as $time) {
+						$time_parts = explode('(', str_replace(')', '', $time));
+						$time = array_shift($time_parts);
+						$types = array();
+						foreach ($time_parts as $part) {
+							if (($part == 'c') || strstr($part, 'closed')) {
+								$types[] = 'Closed';
+							} elseif (($part == 'o') || strstr($part, 'open')) {
+								$types[] = 'Open';
+							}
+							if (strstr($part, 'women') || strstr($part, 'lady')) {
+								$types[] = 'Women';
+							} elseif (strstr($part, 'men')) {
+								$types[] = 'Men';
+							}
+							if (strstr($part, 'bb') || strstr($part, 'big book')) $types[] = 'Big Book';
+							if (strstr($part, '12') || strstr($part, 'step')) $types[] = 'Step Study';
+							if (strstr($part, 'candlelight')) $types[] = 'Candlelight';
+							if (strstr($part, 'speaker')) $types[] = 'Speaker';
+							if (strstr($part, 'disc')) $types[] = 'Discussion';
+							if (strstr($part, 'newcomer') || strstr($part, 'new comer')) $types[] = 'Newcomer';
+							if (strstr($part, 'grapevine')) $types[] = 'Grapevine';
+							if (strstr($part, 'spanish')) $types[] = 'Spanish';
+						}
+						$all_types = array_merge($all_types, $types);
+						
+						//don't like this, make blog language
+						if ($row['Language'] != 'English') $types[] = $row['Language'];
+						
+						if ($pos = strpos($row['Meeting' . $number . 'Addr1'], '(')) {
+							$row['Meeting' . $number . 'Addr1'] = substr($row['Meeting' . $number . 'Addr1'], 0, $pos);
+							$row['Meeting' . $number . 'Comments'] .= PHP_EOL . substr($row['Meeting' . $number . 'Addr1'], $pos);
+						}
+						
+						$meetings[] = array(
+							'Name' => $row['GroupName'],
+							'Day' => $days[$index],
+							'Time' => $time,
+							'Address' => $row['Meeting' . $number . 'Addr1'],
+							'City' => $row['Meeting' . $number . 'City'],
+							'State' => $row['Meeting' . $number . 'StateCode'],
+							'Postal Code' => $row['Meeting' . $number . 'Zip'],
+							'Country' => $row['CountryCode'],
+							'Types' => implode(', ', $types),
+							'Region' => $row['City'],
+							'Group' => $row['GroupName'] . ' #' . $row['ServiceNumber'],
+							'Website' => $row['Website'],
+							'Updated' => $row['DateChanged'],
+							'Notes' => $row['Meeting' . $number . 'Comments'],
+							'Contact 1 Name' => $row['PrimaryFirstName'] . ' ' . $row['PrimaryLastName'],
+							'Contact 1 Phone' => preg_replace('~\D~', '', $row['PrimaryPrimaryPhone']),
+							'Contact 1 Email' => substr($row['PrimaryPrimaryEmail'], strpos($row['PrimaryPrimaryEmail'], ' ') + 1),
+							'Contact 2 Name' => $row['SecondaryFirstName'] . ' ' . $row['SecondaryLastName'],
+							'Contact 2 Phone' => preg_replace('~\D~', '', $row['SecondaryPrimaryPhone']),
+							'Contact 2 Email' => substr($row['SecondaryPrimaryEmail'], strpos($row['SecondaryPrimaryEmail'], ' ') + 1),
+						);
+					}
+				}
+			}
+		}
+	}
+	
+	//dd($meetings);
+
+	//debugging types
+	$all_types = array_unique($all_types);
+	sort($all_types);
+	//dd($all_types);
+	
+	$return = array(array_keys($meetings[0]));
+	foreach ($meetings as $meeting) {
+		$return[] = array_values($meeting);
+	}
+	return $return;
+}
+
 //function: turn "string" into string
 //used:		tsml_ajax_import() inside array_map
 function tsml_import_sanitize_field($value) {
