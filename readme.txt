@@ -3,7 +3,7 @@ Contributors: meetingguide, aasanjose
 Tags: 12-step, aa, al-anon, coda, meetings, na, oa, saa, slaa
 Requires at least: 3.2
 Tested up to: 4.7
-Stable tag: 2.12.5
+Stable tag: 2.12.6
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -71,7 +71,6 @@ It was originally designed to maintain a list of AA meetings in Santa Clara Coun
 1. [Vancouver, Canada](http://www.vancouveraa.ca/meetings/)
 1. [Vienna, Austria](https://www.aavienna.com/meetings/)
 1. [Virginia](https://aavirginia.org/meetings/)
-1. [WAAFT](http://www.waaft.org/meetings/)
 1. [Walnut Creek, CA](http://contracostaaa.org/meetings)
 1. [Warsaw, IN](http://www.aadistrict4143.com/meetings/)
 1. [Washington, DC](https://aa-dc.org/meetings)
@@ -229,6 +228,9 @@ Also check out our [One Page Meeting List](https://github.com/meeting-guide/one-
 1. Edit location
 
 == Changelog ==
+
+= 2.12.6 =
+* Fixing default sort
 
 = 2.12.5 =
 * Now able to set sort order on meetings page
