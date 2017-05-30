@@ -136,6 +136,7 @@ $tsml_programs = array(
 	'slaa'		=> __('Sex and Love Addicts Anonymous', '12-step-meeting-list'),
 );
 
+//the default meetings sort order
 $tsml_sort_by = 'time';
 
 //only show the street address (not the full address) in the main meeting list
