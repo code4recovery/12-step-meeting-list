@@ -136,6 +136,8 @@ $tsml_programs = array(
 	'slaa'		=> __('Sex and Love Addicts Anonymous', '12-step-meeting-list'),
 );
 
+$tsml_sort_by = 'region';
+
 //only show the street address (not the full address) in the main meeting list
 $tsml_street_only = true;
 

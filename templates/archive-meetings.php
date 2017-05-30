@@ -274,13 +274,10 @@ get_header();
 				<div id="table-wrapper">
 					<table class="table table-striped">
 						<thead class="hidden-print">
-							<th class="time" data-sort="asc"><?php _e('Time', '12-step-meeting-list')?></th>
-							<th class="distance"><?php _e('Distance', '12-step-meeting-list')?></th>
-							<th class="name"><?php _e('Meeting', '12-step-meeting-list')?></th>
-							<th class="location"><?php _e('Location', '12-step-meeting-list')?></th>
-							<th class="address"><?php _e('Address', '12-step-meeting-list')?></th>
-							<th class="region"><?php _e('Region', '12-step-meeting-list')?></th>
-							<th class="types"><?php _e('Types', '12-step-meeting-list')?></th>
+							<?php foreach (array('Time', 'Distance', 'Name', 'Location', 'Address', 'Region', 'Types') as $column) {
+								$key = strtolower($column);
+								echo '<th class="' . $key . '"' . ($tsml_sort_by == $key ? ' data-sort="asc"' : '') . '>' . __($column, '12-step-meeting-list') . '</th>';
+							}?>
 						</thead>
 						<tbody id="meetings_tbody">
 							<?php

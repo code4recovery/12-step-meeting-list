@@ -1228,7 +1228,20 @@ function tsml_sanitize_time($string) {
 //	3) followed by location name, 
 //	4) followed by meeting name
 function tsml_sort_meetings($a, $b) {
-	global $tsml_days_order;
+	global $tsml_days_order, $tsml_sort_by;
+
+	//sub_regions are regions in this scenario
+	if (!empty($a['sub_region'])) $a['region'] = $a['sub_region'];
+	if (!empty($b['sub_region'])) $b['region'] = $b['sub_region'];
+
+	//custom sort order?
+	if ($tsml_sort_by !== 'time') {
+		if ($a[$tsml_sort_by] != $b[$tsml_sort_by]) {
+			return strcmp($a[$tsml_sort_by], $b[$tsml_sort_by]);
+		}
+	}
+
+	//get the user-settable order of days
 	$a_day_index = strlen($a['day']) ? array_search($a['day'], $tsml_days_order) : false;
 	$b_day_index = strlen($b['day']) ? array_search($b['day'], $tsml_days_order) : false;
 	if ($a_day_index === false && $b_day_index !== false) {
@@ -1240,17 +1253,6 @@ function tsml_sort_meetings($a, $b) {
 	} else {
 		//days are the same or both null
 		if ($a['time'] != $b['time']) {
-			/*
-			if (substr_count($a['time'], ':')) { //move meetings earlier than 5am to the end of the list
-				$a_time = explode(':', $a['time'], 2);
-				if (intval($a_time[0]) < 5) $a_time[0] = sprintf("%02d",  $a_time[0] + 24);
-				$a_time = implode(':', $a_time);
-			}
-			if (substr_count($b['time'], ':')) { //move meetings earlier than 5am to the end of the list
-				$b_time = explode(':', $b['time'], 2);
-				if (intval($b_time[0]) < 5) $b_time[0] = sprintf("%02d",  $b_time[0] + 24);
-				$b_time = implode(':', $b_time);
-			}*/
 			$a_time = ($a['time'] == '00:00') ? '23:59' : $a['time'];
 			$b_time = ($b['time'] == '00:00') ? '23:59' : $b['time'];
 			return strcmp($a_time, $b_time);

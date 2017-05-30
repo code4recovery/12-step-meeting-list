@@ -3,7 +3,7 @@ Contributors: meetingguide, aasanjose
 Tags: 12-step, aa, al-anon, coda, meetings, na, oa, saa, slaa
 Requires at least: 3.2
 Tested up to: 4.7
-Stable tag: 2.12.4
+Stable tag: 2.12.5
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -61,6 +61,7 @@ It was originally designed to maintain a list of AA meetings in Santa Clara Coun
 1. [Secular AA](https://www.secularaa.org/meetings/)
 1. [Southern Colorado](http://www.puebloaa.org/meetings/)
 1. [Sonoma County, CA](http://www.sonomacountyaa.org/meetings/)
+1. [St. Louis, MO](https://aastl.org/meetings/)
 1. [State College, PA](http://www.district43.com/meetings/)
 1. [Tidewater Area, VA](http://www.tidewaterintergroup.org/meetings/)
 1. [Toronto, Canada](https://aatoronto.org/meetings/)
@@ -191,6 +192,11 @@ You can make use of the [gettext filter](https://codex.wordpress.org/Plugin_API/
 	}
 	add_filter('gettext', 'theme_override_tsml_strings', 20, 3);
 
+= How can I change the default sort order on the meeting list page? =
+By default, the plugin sorts by day, then time, then location name. To set your own sort index, add this to your functions.php:
+
+	$tsml_sort_order = 'region'; //options are name, location, address, time, or region
+
 = How can I override the meeting list or detail pages? =
 Copy the files from the plugin's templates directory into your theme's root directory. If you're using a theme from the Theme Directory, you may be better off creating a [Child Theme](https://codex.wordpress.org/Child_Themes). Now, you may override those pages. The archive-meetings.php file controls the meeting list page, single-meetings.php controls the meetings detail, and single-locations.php controls the location detail.
 
@@ -223,6 +229,9 @@ Also check out our [One Page Meeting List](https://github.com/meeting-guide/one-
 1. Edit location
 
 == Changelog ==
+
+= 2.12.5 =
+* Now able to set sort order on meetings page
 
 = 2.12.4 =
 * Now able to import FNV format meeting data
