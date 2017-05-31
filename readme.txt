@@ -3,7 +3,7 @@ Contributors: meetingguide, aasanjose
 Tags: 12-step, aa, al-anon, coda, meetings, na, oa, saa, slaa
 Requires at least: 3.2
 Tested up to: 4.7
-Stable tag: 2.12.7
+Stable tag: 2.12.8
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -229,8 +229,12 @@ Also check out our [One Page Meeting List](https://github.com/meeting-guide/one-
 
 == Changelog ==
 
+= 2.12.8 =
+* Now able to set the order of the columns
+* Adding meeting type for English per Quebec
+
 = 2.12.7 =
-* Fixing default sort
+* Version bump
 
 = 2.12.6 =
 * Fixing default sort

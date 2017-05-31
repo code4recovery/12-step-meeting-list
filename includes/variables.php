@@ -4,6 +4,8 @@ don't make changes! it'll make staying updated much harder.
 for updates / questions, please contact wordpress@meetingguide.org
 */
 
+$tsml_columns = array('Time', 'Distance', 'Name', 'Location', 'Address', 'Region', 'Types');
+
 $tsml_data_sources = get_option('tsml_data_sources', array());
 
 $tsml_days	= array(
@@ -196,6 +198,7 @@ $tsml_types = array(
 		'DR'		=> __('Daily Reflections', '12-step-meeting-list'),
 		'D'		=> __('Discussion', '12-step-meeting-list'),
 		'DD'		=> __('Dual Diagnosis', '12-step-meeting-list'),
+		'EN'		=> __('English', '12-step-meeting-list'),
 		'FF'		=> __('Fragrance Free', '12-step-meeting-list'),
 		'FR'		=> __('French', '12-step-meeting-list'),
 		'G'		=> __('Gay', '12-step-meeting-list'),

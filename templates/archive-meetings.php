@@ -274,7 +274,7 @@ get_header();
 				<div id="table-wrapper">
 					<table class="table table-striped">
 						<thead class="hidden-print">
-							<?php foreach (array('Time', 'Distance', 'Name', 'Location', 'Address', 'Region', 'Types') as $column) {
+							<?php foreach ($tsml_columns as $column) {
 								$key = strtolower($column);
 								echo '<th class="' . $key . '"' . ($tsml_sort_by == $key ? ' data-sort="asc"' : '') . '>' . __($column, '12-step-meeting-list') . '</th>';
 							}?>
@@ -310,23 +310,55 @@ get_header();
 								$sort_time = $meeting['day'] . '-' . ($meeting['time'] == '00:00' ? '23:59' : $meeting['time']);
 								?>
 							<tr>
-								<td class="time" data-sort="<?php echo $sort_time . '-' . sanitize_title($meeting['location'])?>"><span><?php 
-									if (($day === null) && !empty($meeting['time'])) {
-										echo tsml_format_day_and_time($meeting['day'], $meeting['time'], '</span><span>');
-									} else {
-										echo $meeting['time_formatted'];
-									}
+								<?php foreach ($tsml_columns as $column) {
+									switch ($column) {
+										case 'Time':?>
+									<td class="time" data-sort="<?php echo $sort_time . '-' . sanitize_title($meeting['location'])?>"><span><?php 
+										if (($day === null) && !empty($meeting['time'])) {
+											echo tsml_format_day_and_time($meeting['day'], $meeting['time'], '</span><span>');
+										} else {
+											echo $meeting['time_formatted'];
+										}
 									?></span></td>
-								<td class="distance" data-sort="<?php echo $meeting['distance']?>"><?php echo $meeting['distance']?></td>
-								<td class="name" data-sort="<?php echo sanitize_title($meeting['name']) . '-' . $sort_time?>">
-									<?php echo $meeting['link']?>
-								</td>
-								<td class="location" data-sort="<?php echo sanitize_title($meeting['location']) . '-' . $sort_time?>">
-									<?php echo $meeting['location']?>
-								</td>
-								<td class="address" data-sort="<?php echo sanitize_title($meeting['formatted_address']) . '-' . $sort_time?>"><?php echo tsml_format_address($meeting['formatted_address'], $tsml_street_only)?></td>
-								<td class="region" data-sort="<?php echo sanitize_title($meeting['region']) . '-' . $sort_time?>"><?php echo $meeting['region']?></td>
-								<td class="types" data-sort="<?php echo sanitize_title(tsml_meeting_types($meeting['types'])) . '-' . $sort_time?>"><?php echo tsml_meeting_types($meeting['types'])?></td>
+									<?php
+										break;
+
+										case 'Distance':?>
+									<td class="distance" data-sort="<?php echo $meeting['distance']?>"><?php echo $meeting['distance']?></td>
+									<?php
+										break;
+
+										case 'Name':?>
+									<td class="name" data-sort="<?php echo sanitize_title($meeting['name']) . '-' . $sort_time?>">
+										<?php echo $meeting['link']?>
+									</td>
+									<?php
+										break;
+
+										case 'Location':?>
+									<td class="location" data-sort="<?php echo sanitize_title($meeting['location']) . '-' . $sort_time?>">
+										<?php echo $meeting['location']?>
+									</td>
+									<?php
+										break;
+
+										case 'Address':?>
+									<td class="address" data-sort="<?php echo sanitize_title($meeting['formatted_address']) . '-' . $sort_time?>"><?php echo tsml_format_address($meeting['formatted_address'], $tsml_street_only)?></td>
+									<?php
+										break;
+
+										case 'Region':?>
+									<td class="region" data-sort="<?php echo sanitize_title($meeting['region']) . '-' . $sort_time?>"><?php echo $meeting['region']?></td>
+									<?php
+										break;
+
+										case 'Types':?>
+									<td class="types" data-sort="<?php echo sanitize_title(tsml_meeting_types($meeting['types'])) . '-' . $sort_time?>"><?php echo tsml_meeting_types($meeting['types'])?></td>
+									<?php
+										break;
+									}
+								}
+								?>
 							</tr>
 							<?php }?>
 						</tbody>

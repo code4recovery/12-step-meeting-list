@@ -28,7 +28,7 @@ function tsml_alert($message, $type='success') {
 //function: enqueue assets for public or admin page
 //used: in templates and on admin_edit.php
 function tsml_assets() {
-	global $tsml_street_only, $tsml_types, $tsml_strings, $tsml_program, $tsml_google_api_key, $tsml_google_overrides, $tsml_distance_units, $tsml_defaults, $tsml_language;
+	global $tsml_street_only, $tsml_types, $tsml_strings, $tsml_program, $tsml_google_api_key, $tsml_google_overrides, $tsml_distance_units, $tsml_defaults, $tsml_language, $tsml_columns;
 		
 	//google maps api needed for maps and address verification, can't be onboarded
 	wp_enqueue_script('google_maps_api', '//maps.googleapis.com/maps/api/js?key=' . $tsml_google_api_key);
@@ -50,6 +50,7 @@ function tsml_assets() {
 		wp_enqueue_script('tsml_public', plugins_url('../assets/js/public.min.js', __FILE__), array('jquery', 'google_maps_api'), TSML_VERSION, true);
 		wp_localize_script('tsml_public', 'tsml', array(
 			'ajaxurl' => admin_url('admin-ajax.php'),
+			'columns' => array_map('strtolower', $tsml_columns),
 			'days' => array(
 				__('Sunday', '12-step-meeting-list'),
 				__('Monday', '12-step-meeting-list'),
