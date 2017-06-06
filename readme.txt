@@ -2,8 +2,8 @@
 Contributors: meetingguide, aasanjose
 Tags: 12-step, aa, al-anon, coda, meetings, na, oa, saa, slaa
 Requires at least: 3.2
-Tested up to: 4.7
-Stable tag: 2.12.9
+Tested up to: 4.8
+Stable tag: 2.12.10
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -43,8 +43,10 @@ It was originally designed to maintain a list of AA meetings in Santa Clara Coun
 1. [Mesa, AZ](http://aamesaaz.org/meetings/)
 1. [Miami, FL](https://aamiamidade.org/meetings)
 1. [Minneapolis, MN](http://aaminneapolis.org/meetings/)
+1. [Mississippi](http://www.aa-mississippi.org/meetings/)
 1. [Modesto, CA](http://wp.cviaa.org/meetings/)
 1. [Naples, FL](http://aanaples.org/meetings/)
+1. [New Hampshire](http://nhaa.net/meetings/)
 1. [New Orleans, LA](http://www.aaneworleans.org/meetings/)
 1. [New Mexico](https://nm-aa.org/meetings/)
 1. [New York, NY](https://www.nyintergroup.org/meetings/)
@@ -228,6 +230,9 @@ Also check out our [One Page Meeting List](https://github.com/meeting-guide/one-
 1. Edit location
 
 == Changelog ==
+
+= 2.12.10 =
+* FNV import not as dependent on the number of columns
 
 = 2.12.9 =
 * CSS fix for mobile devices if columns have been reordered

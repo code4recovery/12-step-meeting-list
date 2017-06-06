@@ -46,7 +46,8 @@ function tmsl_import_page() {
 			}
 
 			//do import reformatting
-			if (count($meetings) && is_array($meetings[0]) && (count($meetings[0]) == 162) && ($meetings[0][0] == 'ServiceNumber'))  {
+			$required_fnv_columns = array('ServiceNumber', 'GroupName', 'CountryCode', 'City', 'Website', 'DateChanged', 'PrimaryFirstName', 'SecondaryPrimaryEmail', 'Meeting1Addr1', 'Meeting1SUNTimes');
+			if (count($meetings) && is_array($meetings[0]) && empty(array_diff($required_fnv_columns, $meetings[0])))  {
 				//this is FNV data, reformat it automatically
 				$meetings = tsml_import_reformat_fnv($meetings);
 			} elseif (function_exists('tsml_import_reformat')) {

@@ -920,7 +920,7 @@ function tsml_import_buffer_set($meetings, $data_source=null) {
 		}
 		
 		//day can either be 0, 1, 2, 3 or Sunday, Monday, or empty
-		if (!array_key_exists($meeting['day'], $upper_days)) {
+		if (isset($meeting['day']) && !array_key_exists($meeting['day'], $upper_days)) {
 			$meeting['day'] = array_search(strtoupper($meeting['day']), $upper_days);
 		}
 	
@@ -971,6 +971,7 @@ function tsml_import_buffer_set($meetings, $data_source=null) {
 		if (empty($meeting['region']) && !empty($meeting['city'])) $meeting['region'] = $meeting['city'];
 
 		//sanitize types (they can be Closed or C)
+		if (empty($meeting['types'])) $meeting['types'] = '';
 		$types = explode(',', $meeting['types']);
 		$meeting['types'] = $unused_types = array();
 		foreach ($types as $type) {
@@ -1046,6 +1047,7 @@ function tsml_import_reformat_fnv($rows) {
 
 	//dd($header);
 	
+	$short_days = array('SUN', 'MON', 'TUE', 'WED', 'THU', 'FRI', 'SAT');
 	$days = array('Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday');
 	$all_types = array();
 	
@@ -1056,7 +1058,7 @@ function tsml_import_reformat_fnv($rows) {
 		if ($row['Type'] !== 'Regular') continue;
 		
 		for ($number = 1; $number < 5; $number++) {
-			foreach (array('SUN', 'MON', 'TUE', 'WED', 'THU', 'FRI', 'SAT') as $index => $day) {
+			foreach ($short_days as $index => $day) {
 				$key = 'Meeting' . $number . $day . 'Times';
 				if (!empty($row[$key])) {
 					$times = explode('  ', strtolower($row[$key]));
@@ -1086,14 +1088,14 @@ function tsml_import_reformat_fnv($rows) {
 						}
 						$all_types = array_merge($all_types, $types);
 						
-						//don't like this, make blog language
-						if ($row['Language'] != 'English') $types[] = $row['Language'];
+						//add language as type
+						$types[] = $row['Language'];
 						
 						if ($pos = strpos($row['Meeting' . $number . 'Addr1'], '(')) {
 							$row['Meeting' . $number . 'Addr1'] = substr($row['Meeting' . $number . 'Addr1'], 0, $pos);
 							$row['Meeting' . $number . 'Comments'] .= PHP_EOL . substr($row['Meeting' . $number . 'Addr1'], $pos);
 						}
-						
+
 						$meetings[] = array(
 							'Name' => $row['GroupName'],
 							'Day' => $days[$index],
@@ -1108,6 +1110,7 @@ function tsml_import_reformat_fnv($rows) {
 							'Group' => $row['GroupName'] . ' #' . $row['ServiceNumber'],
 							'Website' => $row['Website'],
 							'Updated' => $row['DateChanged'],
+							'Last Contact' => $row['DateChanged'],
 							'Notes' => $row['Meeting' . $number . 'Comments'],
 							'Contact 1 Name' => $row['PrimaryFirstName'] . ' ' . $row['PrimaryLastName'],
 							'Contact 1 Phone' => preg_replace('~\D~', '', $row['PrimaryPrimaryPhone']),

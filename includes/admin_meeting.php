@@ -62,7 +62,7 @@ function tsml_admin_init() {
 						<span class="dashicons dashicons-arrow-down-alt2"></span> <a href="#more-types"><?php _e('More', '12-step-meeting-list')?></a>
 					</div>
 					<div class="less">
-						<span class="dashicons dashicons-arrow-up-alt2"></span> <a href="#more-types"><?php _e('Less', '12-step-meeting-list')?></a>
+						<span class="dashicons dashicons-arrow-up-alt2"></span> <a href="#more-types"><?php _e('Fewer', '12-step-meeting-list')?></a>
 					</div>
 				</div>
 			</div>
