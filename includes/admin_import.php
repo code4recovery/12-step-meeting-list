@@ -412,12 +412,14 @@ function tmsl_import_page() {
 										<li><?php _e('<strong>Region</strong> is user-defined and can be anything. Often this is a small municipality or neighborhood. Since these go in a dropdown, ideally you would have 10 to 20 regions, although it\'s ok to be over or under.', '12-step-meeting-list')?></li>
 										<li><?php _e('<strong>Sub Region</strong> makes the Region hierarchical; in San Jose we have sub regions for East San Jose, West San Jose, etc. New York City might have Manhattan be a Region, and Greenwich Village be a Sub Region.', '12-step-meeting-list')?></li>
 										<li><?php _e('<strong>Location Notes</strong> are freeform notes that will show up on every meeting that this location. For example, "Enter from the side."', '12-step-meeting-list')?></li>
-										<li><?php _e('<strong>Group</strong> is a way of grouping contacts. Meetings with the same Group name will be grouped together and share contact information.', '12-step-meeting-list')?></li>
+										<li><?php _e('<strong>Group</strong> is a way of grouping contacts. Meetings with the same group name will be linked and share contact information.', '12-step-meeting-list')?></li>
+										<li><?php _e('<strong>District</strong> is user-defined and can be anything, but should be a string rather than an integer, e.g. \'District 01\' rather than \'1.\' A group name must also be specified.', '12-step-meeting-list')?></li>
+										<li><?php _e('<strong>Sub District</strong> makes the District hierachical.', '12-step-meeting-list')?></li>
 										<li><?php _e('<strong>Website</strong> is optional, but a group name must also be specified.', '12-step-meeting-list')?></li>
 										<li><?php _e('<strong>Email</strong> is optional, but a group name must also be specified. This is a public email address.', '12-step-meeting-list')?></li>
 										<li><?php _e('<strong>Phone</strong> is optional, but a group name must also be specified. This is a public phone number.', '12-step-meeting-list')?></li>
 										<li><?php _e('<strong>Group Notes</strong> is for stuff like a short group history, or when the business meeting meets.', '12-step-meeting-list')?></li>
-										<li><?php _e('<strong>Contact 1/2/3 Name/Email/Phone</strong> (nine fields in total) are all optional, but will not be saved if there is not also a Group name specified. By default, contact information is only visible inside the WordPress dashboard.', '12-step-meeting-list')?></li>
+										<li><?php _e('<strong>Contact 1/2/3 Name/Email/Phone</strong> (nine fields in total) are all optional, but will not be saved if there is not also a group name specified. By default, contact information is only visible inside the WordPress dashboard.', '12-step-meeting-list')?></li>
 										<li><?php _e('<strong>Last Contact</strong> is an optional date. A group name must be specified for it to be saved.', '12-step-meeting-list')?></li>
 										<li><?php _e('<strong>Types</strong> should be a comma-separated list of the following options. This list is determined by which program is selected at right.', '12-step-meeting-list')?>
 											<ul class="types">

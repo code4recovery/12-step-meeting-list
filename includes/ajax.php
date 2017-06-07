@@ -134,6 +134,8 @@ function tsml_ajax_csv() {
 		'notes' =>				'Notes',
 		'location_notes' =>		'Location Notes',
 		'group' => 				'Group',
+		'district' => 			'District',
+		'sub_district' => 		'Sub District',
 		'website' => 			'Website',
 		'email' => 				'Email',
 		'phone' => 				'Phone',

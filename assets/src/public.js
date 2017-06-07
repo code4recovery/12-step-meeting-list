@@ -199,7 +199,7 @@ jQuery(function($){
 		
 		//these are live hrefs now
 		e.preventDefault();
-		
+
 		//dropdown menu click
 		var param = $(this).closest('div').attr('id');
 		
@@ -235,6 +235,16 @@ jQuery(function($){
 			$('#distance li').removeClass('active');
 			$('#distance span.selected').html($(this).html());
 		} else if (param == 'region') {
+			
+			//switch between region and district mode
+			if ($(this).hasClass('switch')) {
+				var mode = $(this).parent().hasClass('region') ? 'district' : 'region';
+				console.log(mode);
+				$(this).closest('div.dropdown').attr('data-mode', mode);
+				e.stopPropagation();
+				return;
+			}
+			
 			//region only one
 			$('#region li').removeClass('active');
 			$('#region span.selected').html($(this).html());
@@ -321,7 +331,8 @@ jQuery(function($){
 			action: 'meetings',
 			query: $('#meetings #search input[name=query]').val().trim(),
 			mode: $('#search li.active a').attr('data-id'),
-			region: $('#region li.active a').attr('data-id'),
+			region: $('#region li.region.active a').attr('data-id'),
+			district: $('#region li.district.active a').attr('data-id'),
 			day: $('#day li.active a').attr('data-id'),
 			time: $('#time li.active a').attr('data-id'),
 			type: $('#type li.active a').attr('data-id'),
@@ -337,8 +348,12 @@ jQuery(function($){
 		}
 		if (data.mode && (data.mode != tsml.defaults.mode)) query_string['tsml-mode'] = data.mode;
 		if (data.query && (data.query != tsml.defaults.query)) query_string['tsml-query'] = data.query;
-		if ((data.mode == 'search') && (data.region != tsml.defaults.region)) {
-			query_string['tsml-region'] = data.region;
+		if (data.mode == 'search') {
+			if (data.region != tsml.defaults.region) {
+				query_string['tsml-region'] = data.region;
+			} else if (data.district != tsml.defaults.district) {
+				query_string['tsml-district'] = data.district;
+			}
 		}
 		if (data.time && (data.time != tsml.defaults.time)) query_string['tsml-time'] = data.time;
 		if (data.type && (data.type != tsml.defaults.type)) query_string['tsml-type'] = data.type;
@@ -559,6 +574,10 @@ jQuery(function($){
 							
 							case 'region':
 							string += '<td class="region" data-sort="' + sanitizeTitle((obj.sub_region || obj.region || '')) + '-' + sort_time + '">' + (obj.sub_region || obj.region || '') + '</td>';
+							break;
+							
+							case 'district':
+							string += '<td class="district" data-sort="' + sanitizeTitle((obj.sub_district || obj.district || '')) + '-' + sort_time + '">' + (obj.sub_district || obj.district || '') + '</td>';
 							break;
 							
 							case 'types':

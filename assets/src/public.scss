@@ -265,7 +265,7 @@ $height:				550px;
 								font-weight: bold;
 								line-height: 1.2;
 							}
-							&.name, &.location, &.address, &.region {
+							&.name, &.location, &.address, &.region, &.district {
 								display: block;
 								text-overflow: ellipsis;
 								white-space: nowrap;
@@ -280,7 +280,7 @@ $height:				550px;
 									top: 13px;
 								}
 							}
-							&.location, &.address, &.region {
+							&.location, &.address, &.region, &.district {
 								width: 220px;
 							}
 							&.types {
@@ -320,7 +320,14 @@ $height:				550px;
 	
 		&[data-mode="search"] {
 			#distance { display: none; }
-			#region { display: block; }
+			#region { 
+				display: block; 
+				li.district { display: none; }
+				&[data-mode="district"] {
+					li.district { display: block; }
+					li.region { display: none; }
+				}
+			}
 			th.distance, td.distance { display: none !important; }
 		}
 	}
@@ -460,12 +467,15 @@ $height:				550px;
 						&.region[data-sort="asc"]:after, &.region[data-sort="desc"]:after {
 							right: 15px;
 						}
+						&.district[data-sort="asc"]:after, &.district[data-sort="desc"]:after {
+							right: 15px;
+						}
 					}
 				}
 				tbody tr {
 					display: table-row;
 					td {
-						&.name, &.location, &.time, &.distance, &.address, &.region, &.types {
+						&.name, &.location, &.time, &.distance, &.address, &.region, &.district, &.types {
 							white-space: normal;
 							display: table-cell; 
 							padding: 8px 8px 8px 15px;
@@ -530,7 +540,7 @@ $height:				550px;
 				display: table-cell;
 			}
 			#map {
-				height: 740px;
+				height: 650px;
 			}
 		}
 	}
@@ -547,7 +557,7 @@ $height:				550px;
 				min-height: 170px;
 			}
 			td {
-				&.name, &.location, &.address, &.region, &.types {
+				&.name, &.location, &.address, &.region, &.district, &.types {
 					width: auto !important;
 					white-space: normal;
 				}

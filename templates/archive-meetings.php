@@ -39,9 +39,15 @@ if (isset($_GET['sq'])) $_GET['tsml-query'] = $_GET['sq'];
 
 extract($tsml_defaults);
 
+$region = $district = null;
+
 //parse query string
 if (isset($_GET['tsml-query'])) $query = sanitize_text_field($_GET['tsml-query']);
-if (isset($_GET['tsml-region']) && term_exists(intval($_GET['tsml-region']), 'tsml_region')) $region = $_GET['tsml-region'];
+if (isset($_GET['tsml-region']) && term_exists(intval($_GET['tsml-region']), 'tsml_region')) {
+	$region = $_GET['tsml-region'];
+} elseif (isset($_GET['tsml-district']) && term_exists(intval($_GET['tsml-district']), 'tsml_district')) {
+	$district = $_GET['tsml-district'];
+}
 if (isset($_GET['tsml-type']) && array_key_exists($_GET['tsml-type'], $tsml_types[$tsml_program])) $type = $_GET['tsml-type'];
 if (isset($_GET['tsml-time']) && (($_GET['tsml-time'] == 'upcoming') || array_key_exists($_GET['tsml-time'], $times))) $time = $_GET['tsml-time'];
 if (isset($_GET['tsml-view']) && in_array($_GET['tsml-view'], array('list', 'map'))) $view = $_GET['tsml-view'];
@@ -68,6 +74,9 @@ if ($time == 'upcoming') {
 $region_default = $region_label = __('Everywhere', '12-step-meeting-list');
 if ($region) {
 	$term = get_term($region, 'tsml_region');
+	$region_label = $term->name;
+} elseif ($district) {
+	$term = get_term($district, 'tsml_district');
 	$region_label = $term->name;
 }
 $type_default = __('Any Type', '12-step-meeting-list');
@@ -104,7 +113,7 @@ $message = '';
 
 //run query
 if ($mode == 'search') {
-	$meetings	= tsml_get_meetings(compact('mode', 'day', 'time', 'region', 'type', 'query'));	
+	$meetings	= tsml_get_meetings(compact('mode', 'day', 'time', 'region', 'district', 'type', 'query'));	
 	if (!count($meetings)) $message = $tsml_strings['no_meetings'];
 } elseif ($mode == 'location') {
 	$message = empty($_GET['query']) ? $tsml_strings['loc_empty'] : $tsml_strings['loc_thinking'];
@@ -114,7 +123,7 @@ if ($mode == 'search') {
 
 class Walker_Regions_Dropdown extends Walker_Category {
 	function start_el(&$output, $category, $depth=0, $args=array(), $id=0) {
-		$classes = array();
+		$classes = array('region');
 		if ($args['value'] == esc_attr($category->term_id)) $classes[] = 'active';
 		$classes = count($classes) ? ' class="' . implode(' ', $classes) . '"' : '';
 		$output .= '<li' . $classes . '><a href="' . tmsl_meetings_url(array('tsml-region'=>$category->term_id)) . '" data-id="' . $category->term_id . '">' . $category->name . '</a>';
@@ -125,9 +134,45 @@ class Walker_Regions_Dropdown extends Walker_Category {
 	}
 }
 
+$regions_dropdown = wp_list_categories(array(
+	'taxonomy' => 'tsml_region',
+	'hierarchical' => true,
+	'orderby' => 'name',
+	'title_li' => null,
+	'hide_empty' => false,
+	'walker' => new Walker_Regions_Dropdown,
+	'value' => $region,
+	'show_option_none' => null,
+	'echo' => false,
+));
+
+class Walker_Districts_Dropdown extends Walker_Category {
+	function start_el(&$output, $category, $depth=0, $args=array(), $id=0) {
+		$classes = array('district');
+		if ($args['value'] == esc_attr($category->term_id)) $classes[] = 'active';
+		$classes = count($classes) ? ' class="' . implode(' ', $classes) . '"' : '';
+		$output .= '<li' . $classes . '><a href="' . tmsl_meetings_url(array('tsml-district'=>$category->term_id)) . '" data-id="' . $category->term_id . '">' . $category->name . '</a>';
+		if ($args['has_children']) $output .= '<div class="expand"></div>';
+	}
+	function end_el(&$output, $item, $depth=0, $args=array()) {
+		$output .= '</li>';
+	}
+}
+
+$districts_dropdown = wp_list_categories(array(
+	'taxonomy' => 'tsml_district',
+	'hierarchical' => true,
+	'orderby' => 'name',
+	'title_li' => null,
+	'hide_empty' => false,
+	'walker' => new Walker_Districts_Dropdown,
+	'value' => $district,
+	'show_option_none' => null,
+	'echo' => false,
+));
+
 //do this after everything is loaded
 get_header();
-
 
 ?>
 <div id="tsml">
@@ -179,25 +224,25 @@ get_header();
 				</div>
 			</div>
 			<div class="col-sm-6 col-md-2 col-md-pull-2">
-				<div class="dropdown" id="region">
+				<?php if ($regions_dropdown || $districts_dropdown) {?>
+				<div class="dropdown" id="region" data-mode="<?php echo ($district ? 'district' : 'region')?>">
 					<a class="btn btn-default btn-block tsml-dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
 						<span class="selected"><?php echo $region_label?></span>
 						<span class="caret"></span>
 					</a>
 					<ul class="dropdown-menu" role="menu">
-						<li<?php if (empty($region)) echo ' class="active"'?>><a><?php echo $region_default?></a></li>
+						<li<?php if (empty($region) && empty($district)) echo ' class="active"'?>><a><?php echo $region_default?></a></li>
 						<li class="divider"></li>
-						<?php wp_list_categories(array(
-							'taxonomy' => 'tsml_region',
-							'hierarchical' => true,
-							'orderby' => 'name',
-							'title_li' => null,
-							'hide_empty' => false,
-							'walker' => new Walker_Regions_Dropdown,
-							'value' => $region,
-						))?>
+						<?php if ($regions_dropdown && $districts_dropdown) {?>
+						<li class="region"><a class="switch"><?php _e('Switch to Districts', '12-step-meeting-list')?></a></li>
+						<li class="district"><a class="switch"><?php _e('Switch to Regions', '12-step-meeting-list')?></a></li>
+						<li class="divider"></li>
+						<?php }?>
+						<?php echo $regions_dropdown?>
+						<?php echo $districts_dropdown?>
 					</ul>
 				</div>
+				<?php }?>
 				<div class="dropdown" id="distance">
 					<a class="btn btn-default btn-block tsml-dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
 						<span class="selected"><?php echo $distance_label?></span>
@@ -286,6 +331,7 @@ get_header();
 								$meeting['location'] = htmlentities($meeting['location'], ENT_QUOTES);
 								$meeting['formatted_address'] = htmlentities($meeting['formatted_address'], ENT_QUOTES);
 								$meeting['region'] = (!empty($meeting['sub_region'])) ? htmlentities($meeting['sub_region'], ENT_QUOTES) : htmlentities($meeting['region'], ENT_QUOTES);
+								$meeting['district'] = (!empty($meeting['sub_district'])) ? htmlentities($meeting['sub_district'], ENT_QUOTES) : htmlentities($meeting['district'], ENT_QUOTES);
 								$meeting['link'] = tsml_link($meeting['url'], tsml_format_name($meeting['name'], $meeting['types']), 'post_type');
 								
 								if (!isset($locations[$meeting['location_id']])) {
@@ -349,6 +395,11 @@ get_header();
 
 										case 'Region':?>
 									<td class="region" data-sort="<?php echo sanitize_title($meeting['region']) . '-' . $sort_time?>"><?php echo $meeting['region']?></td>
+									<?php
+										break;
+
+										case 'District':?>
+									<td class="district" data-sort="<?php echo sanitize_title($meeting['district']) . '-' . $sort_time?>"><?php echo $meeting['district']?></td>
 									<?php
 										break;
 

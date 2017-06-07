@@ -27,6 +27,7 @@ $tsml_defaults = array(
 	'distance' => 2,
 	'time' => null,
 	'region' => null,
+	'district' => null,
 	'day' => intval(current_time('w')),
 	'type' => null,
 	'mode' => 'search',

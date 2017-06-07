@@ -377,18 +377,37 @@ function tsml_get_groups() {
 
 	$groups = array();
 	
+	# Get all districts with parents, need for sub_district below
+	$districts = $districts_with_parents = array();
+	$terms = get_categories(array('taxonomy' => 'tsml_district'));
+	foreach ($terms as $term) {
+		$districts[$term->term_id] = $term->name;
+		if ($term->parent) $districts_with_parents[$term->term_id] = $term->parent;
+	}
+	
 	# Get all locations
 	$posts = tsml_get_all_groups('publish');
 	
 	# Much faster than doing get_post_meta() over and over
 	$group_meta = tsml_get_meta('tsml_group');
 
-	# Make an array of all locations
+	# Make an array of all groups
 	foreach ($posts as $post) {
+
+		$district_id = !empty($group_meta[$post->ID]['district_id']) ? $group_meta[$post->ID]['district_id'] : null;
+		if (array_key_exists($district_id, $districts_with_parents)) {
+			$district = $districts[$districts_with_parents[$district_id]];
+			$sub_district = $districts[$district_id];
+		} else {
+			$district = !empty($districts[$district_id]) ? $districts[$district_id] : '';
+			$sub_district = null;
+		}
 
 		$groups[$post->ID] = array(
 			'group_id'			=> $post->ID, //so as not to conflict with another id when combined
 			'group'				=> $post->post_title,
+			'district'			=> $district,
+			'sub_district'		=> $sub_district,
 			'group_notes'		=> $post->post_content,
 			'website'			=> @$group_meta[$post->ID]['website'],
 			'email'				=> @$group_meta[$post->ID]['email'],
@@ -585,6 +604,33 @@ function tsml_get_meetings($arguments=array()) {
 		$location_ids = ($location_ids === null) ? $parents : array_intersect($location_ids, $parents);
 	}
 	
+	//build array of group_ids
+	if (empty($arguments['group_id'])) {
+		$group_ids = null;
+	} elseif (is_array($arguments['group_id'])) {
+		$group_ids = array_map('intval', $arguments['group_id']);
+	} else {
+		$group_ids = array(intval($arguments['group_id']));
+	}
+
+	//filter by district
+	if (!empty($arguments['district'])) {
+		$parents = get_posts(array(
+			'post_type'			=> 'tsml_group',
+			'numberposts'		=> -1,
+			'fields'				=> 'ids',
+			'tax_query'			=> array(
+				array(
+					'taxonomy'	=> 'tsml_district',
+					'terms'		=> intval($arguments['district']),
+				),
+			),
+		));
+		
+		//if location_ids is already set, reduce it
+		$group_ids = ($group_ids === null) ? $parents : array_intersect($group_ids, $parents);
+	}
+	
 	//day should be in integer 0-6 
 	if (isset($arguments['day']) && ($arguments['day'] !== false)) {
 		$meta_query[] = array(
@@ -641,10 +687,11 @@ function tsml_get_meetings($arguments=array()) {
 	}
 	
 	//group id must be an integer
-	if (!empty($arguments['group_id'])) {
+	if (!empty($group_ids)) {
 		$meta_query[] = array(
-			'key'	=> 'group_id',
-			'value'	=> intval($arguments['group_id']),
+			'key'		=> 'group_id',
+			'compare'	=> 'IN',
+			'value'		=> $group_ids,
 		);
 	}
 	
@@ -852,6 +899,19 @@ function tsml_get_meta($type, $id=null) {
 		foreach ($regions as $region) {
 			$meta[$region->location_id]['region'] = $region->region;
 			$meta[$region->location_id]['region_id'] = $region->region_id;
+		}
+	} elseif ($type == 'tsml_group') {
+		$districts = $wpdb->get_results('SELECT 
+				r.`object_id` group_id,
+				t.`term_id` district_id,
+				t.`name` district
+			FROM ' . $wpdb->term_relationships . ' r
+			JOIN ' . $wpdb->term_taxonomy . ' x ON r.term_taxonomy_id = x.term_taxonomy_id
+			JOIN ' . $wpdb->terms . ' t ON x.term_id = t.term_id
+			WHERE x.taxonomy = "tsml_district"');
+		foreach ($districts as $district) {
+			$meta[$district->group_id]['district'] = $district->district;
+			$meta[$district->group_id]['district_id'] = $district->district_id;
 		}
 	}
 	

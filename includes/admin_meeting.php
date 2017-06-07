@@ -108,7 +108,7 @@ function tsml_admin_init() {
 				'hide_empty' => false,
 				'orderby' => 'name',
 				'selected' => @$location->region_id,
-				//'show_option_none' => __('Select geographical region', '12-step-meeting-list'),
+				'show_option_none' => __('Region', '12-step-meeting-list'),
 			))?>
 		</div>
 		<div class="meta_form_row">
@@ -209,7 +209,7 @@ function tsml_admin_init() {
 				'hide_empty' => false,
 				'orderby' => 'name',
 				'selected' => $district,
-				'show_option_none' => __('Select service district', '12-step-meeting-list'),
+				'show_option_none' => __('District:', '12-step-meeting-list'),
 			))?>
 		</div>
 		<?php

@@ -3,7 +3,7 @@ Contributors: meetingguide, aasanjose
 Tags: 12-step, aa, al-anon, coda, meetings, na, oa, saa, slaa
 Requires at least: 3.2
 Tested up to: 4.8
-Stable tag: 2.12.12
+Stable tag: 2.13
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -236,6 +236,9 @@ Also check out our [One Page Meeting List](https://github.com/meeting-guide/one-
 
 == Changelog ==
 
+= 2.13 =
+* New districts taxonomy for Areas 24 and 46
+
 = 2.12.12 =
 * Fixing error in last update affecting PHP < 5.5
 * Starting new districts taxonomy for Areas 24 and 46
@@ -287,45 +290,3 @@ Also check out our [One Page Meeting List](https://github.com/meeting-guide/one-
 = 2.12 =
 * Importing from JSON data sources
 * Tweak to feedback form per Philadelphia
-
-= 2.11.9 =
-* Group website, email, and phone fields
-
-= 2.11.8 =
-* Fix for title tag issue reported by Toronto
-
-= 2.11.7 =
-* Improved page title for meeting list page
-* New plugin screenshots
-
-= 2.11.6 =
-* SEO improvements for meeting list page
-* Readme code fix
-
-= 2.11.5 =
-* Removing code that was causing problem in IE
-* Fixing NYC types issue in another way
-* Giving more room to day column so that the word 'Wednesday' doesn't overlap on mobile
-* Better securing group contact information
-* Hopefully fixing readme formatting issue
-
-= 2.11.4 =
-* Fix per NYC: overriding situations where the types come out as an object, rather than an array
-* Removing autofocus on Search, makes the input borderless in some browsers
-* Increasing search field font size to prevent zooming when focusing
-* Overriding address issue in Pennsylvania
-
-= 2.11.3 =
-* Search logic fixes per Oakland
-
-= 2.11.2 =
-* Fixed bug causing filters to reset when no results
-* Fixed bug preventing settings forms from submitting on Chrome for PC
-
-= 2.11.1 =
-* Tweaking the button spacing on meeting feedback form
-
-= 2.11 =
-* Tweaking meeting types (Beginner -> Newcomer, Chips -> Birthday, Topic Discussion -> Discussion, removing Daily, adding often-requested literature types)
-* Expandable types list on meeting edit screen
-* Fallback for javascript errors on meeting edit screen
