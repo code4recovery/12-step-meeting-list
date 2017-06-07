@@ -124,7 +124,6 @@ function tsml_custom_post_types() {
 		'hierarchical' => true,
 	));
 
-	/*
 	register_taxonomy('tsml_district', 'tsml_group', array(
 		'labels' => array(
 			'name' => __('District', '12-step-meeting-list'),
@@ -144,7 +143,6 @@ function tsml_custom_post_types() {
 		),
 		'hierarchical' => true,
 	));
-	*/
 
 	register_post_type('tsml_meeting',
 		array(
@@ -1110,6 +1108,7 @@ function tsml_import_reformat_fnv($rows) {
 							'Group' => $row['GroupName'] . ' #' . $row['ServiceNumber'],
 							'Website' => $row['Website'],
 							'Updated' => $row['DateChanged'],
+							'District' => $row['District'] ? sprintf(__('District %s', '12-step-meeting-list'), $row['District']) : null,
 							'Last Contact' => $row['DateChanged'],
 							'Notes' => $row['Meeting' . $number . 'Comments'],
 							'Contact 1 Name' => $row['PrimaryFirstName'] . ' ' . $row['PrimaryLastName'],

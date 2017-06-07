@@ -212,15 +212,21 @@ function tsml_save_post($post_id, $post, $update) {
 					'post_content'  => $_POST['group_notes'],
 				));
 			}
+			//update region
+			if (!$update || $old_meeting->district != $_POST['district']) {
+				$changes[] = 'district';
+				wp_set_object_terms($group_id, intval($_POST['district']), 'tsml_district');
+			}
 		} else {
 			$changes[] = 'group';
-			$changes[] = 'group_notes';
+			if (!empty($_POST['group_notes'])) $changes[] = 'group_notes';
 			$group_id = wp_insert_post(array(
 			  	'post_type'		=> 'tsml_group',
 			  	'post_status'	=> 'publish',
 				'post_title'	=> $_POST['group'],
 				'post_content'  => $_POST['group_notes'],
 			));
+			wp_set_object_terms($group_id, intval($_POST['district']), 'tsml_district');
 		}
 	
 		//save to meetings(s)

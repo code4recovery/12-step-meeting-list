@@ -145,6 +145,8 @@ function tsml_admin_init() {
 			$group = get_post($meeting_custom['group_id'][0]);
 			$group_custom = get_post_meta($group->ID);
 			$meetings = tsml_get_meetings(array('group_id'=>$group->ID));
+			$district = wp_get_post_terms($group->ID, 'tsml_district', array('fields'=>'ids'));
+			if (is_array($district)) $district = $district[0];
 		}
 		?>
 		<div class="meta_form_row typeahead">
@@ -198,10 +200,9 @@ function tsml_admin_init() {
 			<label><?php _e('Last Contact', '12-step-meeting-list')?></label>
 			<input type="date" name="last_contact" value="<?php echo @$group_custom['last_contact'][0]?>">
 		</div>
-		<!--
 		<div class="meta_form_row">
 			<label for="district"><?php _e('District', '12-step-meeting-list')?></label>
-			<?php /*wp_dropdown_categories(array(
+			<?php wp_dropdown_categories(array(
 				'name' => 'district',
 				'taxonomy' => 'tsml_district',
 				'hierarchical' => true,
@@ -209,9 +210,8 @@ function tsml_admin_init() {
 				'orderby' => 'name',
 				'selected' => $district,
 				'show_option_none' => __('Select service district', '12-step-meeting-list'),
-			))*/?>
+			))?>
 		</div>
-		-->
 		<?php
 	}	
 }

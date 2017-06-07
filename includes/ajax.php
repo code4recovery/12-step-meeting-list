@@ -408,6 +408,24 @@ function tsml_ajax_import() {
 				if (!empty($meeting['last_contact']) && ($last_contact = strtotime($meeting['last_contact']))) {
 					update_post_meta($group_id, 'last_contact', date('Y-m-d', $last_contact));
 				}
+
+				//add district to taxonomy if it doesn't exist yet
+				if (!empty($meeting['district'])) {
+					if (!$term = term_exists($meeting['district'], 'tsml_district', 0)) {
+						$term = wp_insert_term($meeting['district'], 'tsml_district', 0);
+					}
+					$district_id = intval($term['term_id']);
+		
+					//can only have a subregion if you already have a region
+					if (!empty($meeting['sub_district'])) {
+						if (!$term = term_exists($meeting['sub_district'], 'tsml_district', $district_id)) {
+							$term = wp_insert_term($meeting['sub_district'], 'tsml_district', array('parent'=>$district_id));
+						}
+						$district_id = intval($term['term_id']);
+					}
+				}
+				
+				wp_set_object_terms($group_id, $district_id, 'tsml_district');
 				
 				$groups[$meeting['group']] = $group_id;
 			}
