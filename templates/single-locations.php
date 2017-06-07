@@ -72,6 +72,13 @@ get_header();
 			
 			</div>
 		</div>
+		
+		<?php if (is_active_sidebar('tsml_location_bottom')) {?>
+			<div class="widgets location-widgets location-widgets-bottom" role="complementary">
+				<?php dynamic_sidebar('tsml_location_bottom')?>
+			</div>
+		<?php }?>
+		
 	</div>
 </div>
 <?php

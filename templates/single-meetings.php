@@ -147,6 +147,13 @@ get_header();
 				</div>
 			</div>
 		</div>
+		
+		<?php if (is_active_sidebar('tsml_meeting_bottom')) {?>
+			<div class="widgets meeting-widgets meeting-widgets-bottom" role="complementary">
+				<?php dynamic_sidebar('tsml_meeting_bottom')?>
+			</div>
+		<?php }?>
+		
 	</div>
 </div>
 <?php 

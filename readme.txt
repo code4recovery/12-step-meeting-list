@@ -3,7 +3,7 @@ Contributors: meetingguide, aasanjose
 Tags: 12-step, aa, al-anon, coda, meetings, na, oa, saa, slaa
 Requires at least: 3.2
 Tested up to: 4.8
-Stable tag: 2.12.10
+Stable tag: 2.12.11
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -136,50 +136,63 @@ If you have access to your theme's functions.php, you may add additional meeting
 
 	if (function_exists('tsml_custom_types')) {
 		tsml_custom_types(array(
-			'ABSI' => 'As Bill Sees It',
+			'XYZ' => 'My Custom Type',
 		));
 	}
 	
 Please note a few things about custom types:
 
-1. Be careful with the codes ("ASBI" in the above example) as this gives you the ability to replace existing types. 
+1. Once you've added the type, you will see it under 'More' on the Meeting edit screen. It will show up in the dropdown once you use it on a meeting.
+1. Be careful with the codes ("XYZ" in the above example) as this gives you the ability to replace existing types. 
 1. Note that custom meeting types are not imported into the Meeting Guide app.
 1. They are for searching. If you can't imagine yourself searching for a meeting this way, then it's probably not a type you need. Have you ever searched for a 90-minute meeting? If not, then it's probably information that better belongs in the meeting notes.
 1. Don't add a type for the default, eg 'Hour Long Meeting' or 'Non-Smoking.' If you do that, then you have to be careful about tagging every single meeting in order to make the data complete.
 
-= I don't like the new expandable regions dropdown menu! How do I remove it? =
+= Where are my meetings listed? =
+It depends on your Permalinks setup. The easiest way to find the link is to go to the **Dashboard > Meetings > Import & Settings** page and look for it under "Where's My Info?"
+
+= How can I make the Region dropdown not be collapsible? =
 No problem, just add this CSS to your theme:
 
 	div#meetings .controls ul.dropdown-menu div.expand { display: none; }
 	div#meetings .controls ul.dropdown-menu ul.children { height: auto; }
 
 = How do I change the default search radius for location searches? =
-Add this to your functions.php. The value should be an existing value, ie 1, 5, 10, 25 or 50.
+Add this to your theme's functions.php. The value should be an existing value, ie 1, 5, 10, 25 or 50.
 
 	$tsml_defaults['distance'] = 25;
 
-= How can I get the meeting list to display the full address, including city, state and country? =
-Add this to your functions.php.
+= Can I get the meeting list to display the full address, including city, state and country? =
+Add this to your theme's functions.php.
 
 	$tsml_street_only = false;
 
-= How can I have the plugin reformat the meeting list on the fly while importing it? =
-To uppercase the location of each meeting, for example, add this to your functions.php.
+= Can I change the order of the columns on the meeting list page, eg put the Region first? =
+Add this to your theme's functions.php.
+
+	$tsml_columns = array('Region', 'Time', 'Distance', 'Name', 'Location', 'Address', 'Types');
+
+= Can I change the default sort order on the meeting list page? =
+By default, the plugin sorts by day, then time, then location name. To set your own sort index, add this to your functions.php:
+
+	$tsml_sort_order = 'region'; //options are name, location, address, time, or region
+
+= How can I override the meeting list or detail pages? =
+Copy the files from the plugin's templates directory into your theme's root directory. If you're using a theme from the Theme Directory, you may be better off creating a [Child Theme](https://codex.wordpress.org/Child_Themes). Now, you may override those pages. The archive-meetings.php file controls the meeting list page, single-meetings.php controls the meetings detail, and single-locations.php controls the location detail.
+
+
+= Can I import a custom spreadsheet format? =
+It will take some work on your end, but it's possible. Create a function called tsml_import_reformat, and use it to 
+reformat your CSV data to the standard format
 
 	if (!function_exists('tsml_import_reformat')) {
 		function tsml_import_reformat($meetings) {
-			//element 4 of each CSV row might be the meeting location (count starting with 0)
-			foreach ($meetings as &$meeting) {
-				$meeting[4] = mb_strtoupper($meeting[4]);
-			}
+			//your code goes here
 			return $meetings;
 		}
 	}
 
-= Where are my meetings listed? =
-Your meetings will be listed on their special WordPress Archive page. Where that is depends on your Permalinks setup. The easiest way to find the link is to go to the **Meetings > Import & Settings** page and look for the link under "Where's My Info?"
-
-= How can I change some of the text on the template pages? =
+= How can I change some of the text on the template pages, eg the column headings? =
 You can make use of the [gettext filter](https://codex.wordpress.org/Plugin_API/Filter_Reference/gettext) to override the plugin's translation strings. For example, if you wanted to replace 'Region' with 'Province,' you could add the following to your functions.php file.
 
 	function theme_override_tsml_strings($translated_text, $text, $domain) {
@@ -192,14 +205,6 @@ You can make use of the [gettext filter](https://codex.wordpress.org/Plugin_API/
 		return $translated_text;
 	}
 	add_filter('gettext', 'theme_override_tsml_strings', 20, 3);
-
-= How can I change the default sort order on the meeting list page? =
-By default, the plugin sorts by day, then time, then location name. To set your own sort index, add this to your functions.php:
-
-	$tsml_sort_order = 'region'; //options are name, location, address, time, or region
-
-= How can I override the meeting list or detail pages? =
-Copy the files from the plugin's templates directory into your theme's root directory. If you're using a theme from the Theme Directory, you may be better off creating a [Child Theme](https://codex.wordpress.org/Child_Themes). Now, you may override those pages. The archive-meetings.php file controls the meeting list page, single-meetings.php controls the meetings detail, and single-locations.php controls the location detail.
 
 = Are there any shortcodes? =
 Yes, you can use `[tsml_meeting_count]`, `[tsml_location_count]`, `[tsml_group_count]`, and `[tsml_region_count]` to display human-formatted counts of your entities. For example, "Our area currently comprises [tsml_meeting_count] meetings." Also `[tsml_next_meetings count="5"]` displays a small table with the next several meetings in it. Use the `count` parameter to adjust how many are displayed. This will be unstyled if you're not using bootstrap in your theme.
@@ -230,6 +235,10 @@ Also check out our [One Page Meeting List](https://github.com/meeting-guide/one-
 1. Edit location
 
 == Changelog ==
+
+= 2.12.11 =
+* New widget areas on meeting and location detail pages
+* Readme tweaks
 
 = 2.12.10 =
 * FNV import not as dependent on the number of columns
