@@ -56,6 +56,7 @@ It was originally designed to maintain a list of AA meetings in Santa Clara Coun
 1. [Portland, OR](http://home.pdxaa.org/meetings/)
 1. [Rochester, MN](http://aadistrict1.org/blog/meetings/)
 1. [Sacramento, CA](http://aasacramento.org/meetings/)
+1. [San Francisco, CA](https://www.aasf.org/meetings)
 1. [San Jose, CA](https://aasanjose.org/meetings)
 1. [San Mateo, CA](http://aa-san-mateo.org/meetings)
 1. [Santa Fe, NM](http://santafeaa.org/meetings/)
@@ -104,6 +105,7 @@ It was originally designed to maintain a list of AA meetings in Santa Clara Coun
 1. [Chinook, CA](http://chinookna.org/meetings/)
 1. [Maine](http://www.namaine.org/meetings/)
 1. [Poland](http://anonimowinarkomani.org/meetings/)
+1. [Vienna](https://www.navienna.com/meetings/?d=any)
 
 **Sex Addicts Anonymous**
 

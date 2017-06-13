@@ -239,7 +239,6 @@ jQuery(function($){
 			//switch between region and district mode
 			if ($(this).hasClass('switch')) {
 				var mode = $(this).parent().hasClass('region') ? 'district' : 'region';
-				console.log(mode);
 				$(this).closest('div.dropdown').attr('data-mode', mode);
 				e.stopPropagation();
 				return;
