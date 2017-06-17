@@ -4,8 +4,8 @@ Tags: 12-step, aa, al-anon, coda, meetings, na, oa, saa, slaa
 Requires at least: 3.2
 Tested up to: 4.8
 Stable tag: 2.13
-License: GPLv2 or later
-License URI: http://www.gnu.org/licenses/gpl-2.0.html
+License: BSD 3-Clause
+License URI: https://opensource.org/licenses/BSD-3-Clause
 
 This plugin helps 12 step programs list their meetings. It standardizes addresses, and displays results in a searchable list and map.
 
