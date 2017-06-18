@@ -84,11 +84,12 @@ $type_label = ($type && array_key_exists($type, $tsml_types[$tsml_program])) ? $
 $mode_label = array_key_exists($mode, $modes) ? $modes[$mode]['title'] : $modes[0]['title'];
 $distance_label = $distances[$distance];
 
-//create page title
+//create page title (todo redo with sprintf)
 $tsml_page_title = array();
 if ($day !== null) $tsml_page_title[] = $tsml_days[$day];
 if ($time) $tsml_page_title[] = $time_label;
 if ($type) $tsml_page_title[] = $type_label;
+$tsml_page_title[] = $tsml_strings['program_short_name'];
 $tsml_page_title[] = __('Meetings', '12-step-meeting-list');
 if ($region) $tsml_page_title[] = __('in', '12-step-meeting-list') . ' ' . $region_label;
 $tsml_page_title = implode(' ', $tsml_page_title);

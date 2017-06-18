@@ -775,7 +775,7 @@ jQuery(function($){
 		if ($('#meetings #type li.active').index()) {
 			string += ' ' + $('#meetings #type span.selected').text();
 		}
-		string += ' Meetings';
+		string += ' ' + tsml.strings.program_short_name + ' Meetings';
 		if ($('#meetings #region li.active').index()) {
 			string += ' in ' + $('#meetings #region span.selected').text();
 		}

@@ -4,8 +4,10 @@ don't make changes! it'll make staying updated much harder.
 for updates / questions, please contact wordpress@meetingguide.org
 */
 
+//load the set of columns that should be present in the list
 $tsml_columns = array('Time', 'Distance', 'Name', 'Location', 'Address', 'Region', 'Types');
 
+//load the array of URLs that we're using
 $tsml_data_sources = get_option('tsml_data_sources', array());
 
 //meeting search defaults
@@ -21,11 +23,14 @@ $tsml_defaults = array(
 	'view' => 'list',
 );
 
+//load the distance units that we're using (ie miles or kms)
 $tsml_distance_units = get_option('tsml_distance_units', 'mi');
 
+//load email addresses to send user feedback about meetings
 $tsml_feedback_addresses = get_option('tsml_feedback_addresses', array());
 
-$tsml_google_api_key = 'AIzaSyCC3p6PSf6iQbXi-Itwn9C24_FhkbDUkdg'; //might have to make this user-specific
+//most plugins would require you to specify your own
+$tsml_google_api_key = 'AIzaSyCC3p6PSf6iQbXi-Itwn9C24_FhkbDUkdg';
 
 /*
 unfortunately the google geocoding API is not perfect. used by tsml_import() and admin.js
@@ -103,12 +108,16 @@ $tsml_google_overrides = array(
 	),
 );
 
+//get the blog's language (used as a parameter when geocoding)
 $tsml_language = substr(get_bloginfo('language'), 0, 2);
 
+//used to secure forms
 $tsml_nonce = plugin_basename(__FILE__);
 
+//load email addresses to send emails when there is a meeting change
 $tsml_notification_addresses = get_option('tsml_notification_addresses', array());
 
+//load the program setting (NA, AA, etc)
 $tsml_program = get_option('tsml_program', 'aa');
 
 //the default meetings sort order
@@ -117,29 +126,37 @@ $tsml_sort_by = 'time';
 //only show the street address (not the full address) in the main meeting list
 $tsml_street_only = true;
 
+//for timing
 $tsml_timestamp = microtime(true);
 
-$tsml_days = $tsml_days_order = $tsml_programs = $tsml_strings = $tsml_type_descriptions = $tsml_types = 
-$tsml_types_in_use = null;
+//these are empty now because polylang might change the language. gets set in the plugins_loaded hook
+$tsml_days = $tsml_days_order = $tsml_programs = $tsml_type_descriptions = $tsml_types = 
+$tsml_types_in_use = $tsml_strings = null;
 
 add_action('plugins_loaded', 'tsml_define_strings');
 
 function tsml_define_strings() {
 	global $tsml_days, $tsml_days_order, $tsml_programs, $tsml_program, $tsml_strings, $tsml_type_descriptions, $tsml_types, $tsml_types_in_use;
-	
+
+	//days of the week
 	$tsml_days	= array(
-		0 => array(0=>__('Sunday', '12-step-meeting-list'), 1=>__('Monday', '12-step-meeting-list'), 2=>__('Tuesday', '12-step-meeting-list'), 3=>__('Wednesday', '12-step-meeting-list'), 4=>__('Thursday', '12-step-meeting-list'), 5=>__('Friday', '12-step-meeting-list'), 6=>__('Saturday', '12-step-meeting-list')),
-		1 => array(1=>__('Monday', '12-step-meeting-list'), 2=>__('Tuesday', '12-step-meeting-list'), 3=>__('Wednesday', '12-step-meeting-list'), 4=>__('Thursday', '12-step-meeting-list'), 5=>__('Friday', '12-step-meeting-list'), 6=>__('Saturday', '12-step-meeting-list'), 0=>__('Sunday', '12-step-meeting-list')),
-		2 => array(2=>__('Tuesday', '12-step-meeting-list'), 3=>__('Wednesday', '12-step-meeting-list'), 4=>__('Thursday', '12-step-meeting-list'), 5=>__('Friday', '12-step-meeting-list'), 6=>__('Saturday', '12-step-meeting-list'), 0=>__('Sunday', '12-step-meeting-list'), 1=>__('Monday', '12-step-meeting-list')),
-		3 => array(3=>__('Wednesday', '12-step-meeting-list'), 4=>__('Thursday', '12-step-meeting-list'), 5=>__('Friday', '12-step-meeting-list'), 6=>__('Saturday', '12-step-meeting-list'), 0=>__('Sunday', '12-step-meeting-list'), 1=>__('Monday', '12-step-meeting-list'), 2=>__('Tuesday', '12-step-meeting-list')),
-		4 => array(4=>__('Thursday', '12-step-meeting-list'), 5=>__('Friday', '12-step-meeting-list'), 6=>__('Saturday', '12-step-meeting-list'), 0=>__('Sunday', '12-step-meeting-list'), 1=>__('Monday', '12-step-meeting-list'), 2=>__('Tuesday', '12-step-meeting-list'), 3=>__('Wednesday', '12-step-meeting-list')),
-		5 => array(5=>__('Friday', '12-step-meeting-list'), 6=>__('Saturday', '12-step-meeting-list'), 0=>__('Sunday', '12-step-meeting-list'), 1=>__('Monday', '12-step-meeting-list'), 2=>__('Tuesday', '12-step-meeting-list'), 3=>__('Wednesday', '12-step-meeting-list'), 4=>__('Thursday', '12-step-meeting-list')),
-		6 => array(6=>__('Saturday', '12-step-meeting-list'), 0=>__('Sunday', '12-step-meeting-list'), 1=>__('Monday', '12-step-meeting-list'), 2=>__('Tuesday', '12-step-meeting-list'), 3=>__('Wednesday', '12-step-meeting-list'), 4=>__('Thursday', '12-step-meeting-list'), 5=>__('Friday', '12-step-meeting-list')),
+		__('Sunday', '12-step-meeting-list'),
+		__('Monday', '12-step-meeting-list'),
+		__('Tuesday', '12-step-meeting-list'),
+		__('Wednesday', '12-step-meeting-list'),
+		__('Thursday', '12-step-meeting-list'), 
+		__('Friday', '12-step-meeting-list'), 
+		__('Saturday', '12-step-meeting-list'),
 	);
-	
-	$tsml_days = $tsml_days[get_option('start_of_week', 0)];
-	
-	$tsml_days_order = array_keys($tsml_days); //used by tsml_meetings_sort() over and over
+
+	//adjust if the user has set the week to start on a different day
+	if ($start_of_week = get_option('start_of_week', 0)) {
+		$remainder = array_slice($tsml_days, $start_of_week, null, true);
+		$tsml_days = $remainder + $tsml_days;
+	}
+
+	//used by tsml_meetings_sort() over and over
+	$tsml_days_order = array_keys($tsml_days);
 	
 	$tsml_programs = array(
 		'aca'		=> __('Adult Children of Alcoholics', '12-step-meeting-list'),
@@ -155,22 +172,38 @@ function tsml_define_strings() {
 		'slaa'		=> __('Sex and Love Addicts Anonymous', '12-step-meeting-list'),
 	);
 	
+	//only used in $tsml_strings
+	$tsml_program_short_names = array(
+		'aca'		=> __('ACA', '12-step-meeting-list'),
+		'al-anon'	=> __('Al-Anon', '12-step-meeting-list'),
+		'aa'			=> __('AA', '12-step-meeting-list'),
+		'coda'		=> __('CoDA', '12-step-meeting-list'),
+		'na'			=> __('NA', '12-step-meeting-list'),
+		'oa'			=> __('OA', '12-step-meeting-list'),
+		'rca'		=> __('RCA', '12-step-meeting-list'),
+		'sa'			=> __('SA', '12-step-meeting-list'),
+		'saa'		=> __('SAA', '12-step-meeting-list'),
+		'sca'		=> __('SCA', '12-step-meeting-list'),
+		'slaa'		=> __('SLAA', '12-step-meeting-list'),
+	);
+	
 	//strings that must be synced between the javascript and the PHP
 	$tsml_strings = array(
-		'email_not_sent'		=> __('Email was not sent.', '12-step-meeting-list'),
-		'loc_empty'			=> __('Enter a location in the field above.', '12-step-meeting-list'),
-		'loc_error'			=> __('Google could not find that location.', '12-step-meeting-list'),
-		'loc_thinking'		=> __('Looking up address…', '12-step-meeting-list'),
-		'geo_error'			=> __('There was an error getting your location.', '12-step-meeting-list'),
-		'geo_error_browser'	=> __('Your browser does not appear to support geolocation.', '12-step-meeting-list'),
-		'geo_thinking'		=> __('Finding you…', '12-step-meeting-list'),
-		'groups'				=> __('Groups', '12-step-meeting-list'),
-		'locations'			=> __('Locations', '12-step-meeting-list'),
-		'meetings'			=> __('Meetings', '12-step-meeting-list'),
-		'men'				=> __('Men', '12-step-meeting-list'),
-		'no_meetings'		=> __('No meetings were found matching the selected criteria.', '12-step-meeting-list'),
-		'regions'			=> __('Regions', '12-step-meeting-list'),
-		'women'				=> __('Women', '12-step-meeting-list'),
+		'email_not_sent'		 => __('Email was not sent.', '12-step-meeting-list'),
+		'loc_empty'			 => __('Enter a location in the field above.', '12-step-meeting-list'),
+		'loc_error'			 => __('Google could not find that location.', '12-step-meeting-list'),
+		'loc_thinking'		 => __('Looking up address…', '12-step-meeting-list'),
+		'geo_error'			 => __('There was an error getting your location.', '12-step-meeting-list'),
+		'geo_error_browser'	 => __('Your browser does not appear to support geolocation.', '12-step-meeting-list'),
+		'geo_thinking'		 => __('Finding you…', '12-step-meeting-list'),
+		'groups'				 => __('Groups', '12-step-meeting-list'),
+		'locations'			 => __('Locations', '12-step-meeting-list'),
+		'meetings'			 => __('Meetings', '12-step-meeting-list'),
+		'men'				 => __('Men', '12-step-meeting-list'),
+		'no_meetings'		 => __('No meetings were found matching the selected criteria.', '12-step-meeting-list'),
+		'program_short_name' => $tsml_program_short_names[$tsml_program],
+		'regions'			 => __('Regions', '12-step-meeting-list'),
+		'women'				 => __('Women', '12-step-meeting-list'),
 	);
 	
 	$tsml_type_descriptions = array(

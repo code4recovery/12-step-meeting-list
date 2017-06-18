@@ -3,7 +3,7 @@ Contributors: meetingguide, aasanjose
 Tags: 12-step, aa, al-anon, coda, meetings, na, oa, saa, slaa
 Requires at least: 3.2
 Tested up to: 4.8
-Stable tag: 2.13
+Stable tag: 2.13.1
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -237,6 +237,10 @@ Also check out our [One Page Meeting List](https://github.com/meeting-guide/one-
 1. Edit location
 
 == Changelog ==
+
+= 2.13.1 =
+* Adding abbreviated program name to page title for SEO (requested by Area 37)
+* Waiting to set strings until the `plugins_loaded` hook for Polylang plugin (requested by NA Poland)
 
 = 2.13 =
 * New districts taxonomy for Areas 24 and 46
