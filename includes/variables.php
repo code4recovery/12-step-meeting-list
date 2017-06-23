@@ -33,12 +33,8 @@ $tsml_feedback_addresses = get_option('tsml_feedback_addresses', array());
 $tsml_google_api_key = 'AIzaSyCC3p6PSf6iQbXi-Itwn9C24_FhkbDUkdg';
 
 /*
-unfortunately the google geocoding API is not perfect. used by tsml_import() and admin.js
-it's useful to use the Places API to find the correct information. For example, start with the Google API
-https://maps.googleapis.com/maps/api/geocode/json?key=AIzaSyCC3p6PSf6iQbXi-Itwn9C24_FhkbDUkdg&address=320%20Beach%2094th%20St,%20Rockaway%20Beach,%20NY%2011693
-and then search by location name near the coordinates	
-https://maps.googleapis.com/maps/api/place/nearbysearch/json?key=AIzaSyAtTOBvcG7UrGE2Cz5xYIwI_yHjWvxlN8o&location=40.5854777,-73.81639299999999&name=first+congregational+church
-ooorrrr use this: http://www.gps-coordinates.net/
+unfortunately the google geocoding API is not always perfect. used by tsml_import() and admin.js
+find correct coordinates with http://nominatim.openstreetmap.org/
 */
 $tsml_google_overrides = array(
 	//first congregational church
@@ -105,6 +101,12 @@ $tsml_google_overrides = array(
 		'formatted_address'	=> '150 Church St, Davenport, CA 95017, USA',
 		'latitude'			=> '37.012471',
 		'longitude'			=> '-122.192971',
+	),
+	//lgbt center
+	'208 E 13th St, New York, NY 10003, USA' => array(
+		'formatted_address' => '208 W 13th St, New York, NY 10011, USA',
+		'latitude'			=> '40.73800835',
+		'longitude'			=> '-74.0010489174602',
 	),
 );
 

@@ -3,7 +3,7 @@ Contributors: meetingguide, aasanjose
 Tags: 12-step, aa, al-anon, coda, meetings, na, oa, saa, slaa
 Requires at least: 3.2
 Tested up to: 4.8
-Stable tag: 2.13.1
+Stable tag: 2.13.2
 License: BSD 3-Clause
 License URI: https://opensource.org/licenses/BSD-3-Clause
 
@@ -24,6 +24,7 @@ It was originally designed to maintain a list of AA meetings in Santa Clara Coun
 1. [Charleston, WV](http://aawvdist1.org/wordpress/?post_type=tsml_meeting)
 1. [Charlotte, NC](http://charlotteaa.org/meetings/)
 1. [Continental Europe](http://alcoholics-anonymous.eu/meetings/)
+1. [Colorado Springs, CO](http://www.coloradospringsaa.org/meetings/)
 1. [Corpus Christi, TX](http://www.cbiaa.org/meetings/)
 1. [Davis, CA](http://aadavis.org/meetings/)
 1. [DuPage County, IL](http://dist41.aa-nia.org/meetings/)
@@ -93,6 +94,7 @@ It was originally designed to maintain a list of AA meetings in Santa Clara Coun
 **Al-Anon**
 
 1. [Lancaster, PA](http://lanclebalanon.org/meetings/?d=any)
+1. [Naples, FL](https://naplesafg.org/meetings)
 1. [Orange County, CA](http://ocalanon-d60.org/meetings?d=any)
 1. [Pennsylvania](http://pa-al-anon.org/meetings/)
 
@@ -111,10 +113,11 @@ It was originally designed to maintain a list of AA meetings in Santa Clara Coun
 
 1. [Indiana](http://indiana-saa.org/meetings/)
 
-[Let us know](mailto:info@meetingguide.org) if you're using this plugin and would like to be listed here.
-
 **Sexaholics Anonymous**
+
 1. [St. Louis, MO](http://www.sastl.net/meetings/?tsml-day=any)
+
+[Let us know](mailto:info@meetingguide.org) if you're using this plugin and would like to be listed here.
 
 = Notes =
 
@@ -237,6 +240,9 @@ Also check out our [One Page Meeting List](https://github.com/meeting-guide/one-
 1. Edit location
 
 == Changelog ==
+
+= 2.13.2 =
+* Fixing address for meeting location in New York City
 
 = 2.13.1 =
 * Adding abbreviated program name to page title for SEO (requested by Area 37)
