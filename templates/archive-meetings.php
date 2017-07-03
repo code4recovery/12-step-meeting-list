@@ -332,7 +332,9 @@ get_header();
 								$meeting['location'] = htmlentities($meeting['location'], ENT_QUOTES);
 								$meeting['formatted_address'] = htmlentities($meeting['formatted_address'], ENT_QUOTES);
 								$meeting['region'] = (!empty($meeting['sub_region'])) ? htmlentities($meeting['sub_region'], ENT_QUOTES) : htmlentities($meeting['region'], ENT_QUOTES);
-								$meeting['district'] = (!empty($meeting['sub_district'])) ? htmlentities($meeting['sub_district'], ENT_QUOTES) : htmlentities($meeting['district'], ENT_QUOTES);
+								if (!empty($meeting['district'])) {
+									$meeting['district'] = (!empty($meeting['sub_district'])) ? htmlentities($meeting['sub_district'], ENT_QUOTES) : htmlentities($meeting['district'], ENT_QUOTES);
+								}
 								$meeting['link'] = tsml_link($meeting['url'], tsml_format_name($meeting['name'], $meeting['types']), 'post_type');
 								
 								if (!isset($locations[$meeting['location_id']])) {

@@ -98,7 +98,8 @@ function tsml_admin_init() {
 		<div class="meta_form_row checkbox apply_address_to_location hidden">
 			<label><input type="checkbox" name="apply_address_to_location" checked> <?php _e('Apply this updated address to all meetings at this location', '12-step-meeting-list')?></label>
 		</div>
-		<?php }?>
+		<?php }
+		if (wp_count_terms('tsml_region')) {?>
 		<div class="meta_form_row">
 			<label for="region"><?php _e('Region', '12-step-meeting-list')?></label>
 			<?php wp_dropdown_categories(array(
@@ -111,6 +112,7 @@ function tsml_admin_init() {
 				'show_option_none' => __('Region', '12-step-meeting-list'),
 			))?>
 		</div>
+		<?php }?>
 		<div class="meta_form_row">
 			<label><?php _e('Map', '12-step-meeting-list')?></label>
 			<div id="map"></div>
@@ -146,7 +148,7 @@ function tsml_admin_init() {
 			$group_custom = get_post_meta($group->ID);
 			$meetings = tsml_get_meetings(array('group_id'=>$group->ID));
 			$district = wp_get_post_terms($group->ID, 'tsml_district', array('fields'=>'ids'));
-			if (is_array($district)) $district = $district[0];
+			if (is_array($district) && !empty($district)) $district = $district[0];
 		}
 		?>
 		<div class="meta_form_row typeahead">
@@ -184,7 +186,7 @@ function tsml_admin_init() {
 			<label><?php _e('Phone', '12-step-meeting-list')?></label>
 			<input type="text" name="phone" id="phone" value="<?php echo @$group_custom['phone'][0]?>" placeholder="(800) 555-1212">
 		</div>
-		<div class="meta_form_row" style="clear:left;">
+		<div class="meta_form_row">
 			<label><?php _e('Contacts', '12-step-meeting-list')?></label>
 			<div class="container">
 				<?php for ($i = 1; $i <= GROUP_CONTACT_COUNT; $i++) {?>
@@ -196,10 +198,11 @@ function tsml_admin_init() {
 				<?php }?>
 			</div>
 		</div>
-		<div class="meta_form_row" style="clear:left;">
+		<div class="meta_form_row">
 			<label><?php _e('Last Contact', '12-step-meeting-list')?></label>
 			<input type="date" name="last_contact" value="<?php echo @$group_custom['last_contact'][0]?>">
 		</div>
+		<?php if (wp_count_terms('tsml_district')) {?>
 		<div class="meta_form_row">
 			<label for="district"><?php _e('District', '12-step-meeting-list')?></label>
 			<?php wp_dropdown_categories(array(
@@ -212,6 +215,13 @@ function tsml_admin_init() {
 				'show_option_none' => __('District:', '12-step-meeting-list'),
 			))?>
 		</div>
+		<?php }
+		if (stristr($_SERVER['HTTP_HOST'], 'aasanjose') !== false) {?>
+		<div class="meta_form_row">
+			<label><?php _e('Stripe API Key', '12-step-meeting-list')?></label>
+			<input type="text" name="contributions_api_key" id="contributions_api_key" value="<?php echo @$group_custom['contributions_api_key']?>" placeholder="<?php _e('Stripe API Key')?>">
+		</div>
 		<?php
+		}
 	}	
 }

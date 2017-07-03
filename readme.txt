@@ -3,7 +3,7 @@ Contributors: meetingguide, aasanjose
 Tags: 12-step, aa, al-anon, coda, meetings, na, oa, saa, slaa
 Requires at least: 3.2
 Tested up to: 4.8
-Stable tag: 2.13.2
+Stable tag: 2.13.3
 License: BSD 3-Clause
 License URI: https://opensource.org/licenses/BSD-3-Clause
 
@@ -101,6 +101,10 @@ It was originally designed to maintain a list of AA meetings in Santa Clara Coun
 **Codependents Anonymous**
 
 1. [Los Angeles, CA](http://www.lacoda.org/)
+
+**Heroin Anonymous**
+
+1. [Arizona](https://meetings.haazarea.org/meetings/)
 
 **Narcotics Anonymous**
 
@@ -240,6 +244,10 @@ Also check out our [One Page Meeting List](https://github.com/meeting-guide/one-
 1. Edit location
 
 == Changelog ==
+
+= 2.13.3 =
+* Cleaning up some PHP notices
+* Listing for Heroin Anonymous
 
 = 2.13.2 =
 * Fixing address for meeting location in New York City
