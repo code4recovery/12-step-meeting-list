@@ -175,12 +175,13 @@ function tsml_define_strings() {
 		'slaa'		=> __('Sex and Love Addicts Anonymous', '12-step-meeting-list'),
 	);
 	
-	//only used in $tsml_strings
+	//only used in $tsml_strings (todo combine with types, type descriptions and programs)
 	$tsml_program_short_names = array(
 		'aca'		=> __('ACA', '12-step-meeting-list'),
 		'al-anon'	=> __('Al-Anon', '12-step-meeting-list'),
 		'aa'			=> __('AA', '12-step-meeting-list'),
 		'coda'		=> __('CoDA', '12-step-meeting-list'),
+		'ha'			=> __('HA', '12-step-meeting-list'),
 		'na'			=> __('NA', '12-step-meeting-list'),
 		'oa'			=> __('OA', '12-step-meeting-list'),
 		'rca'		=> __('RCA', '12-step-meeting-list'),
