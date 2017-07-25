@@ -213,8 +213,10 @@ jQuery(function($){
 				var original_address = $('input#formatted_address').attr('data-original-value');
 				if (original_address.length && (address.formatted_address != original_address)) {
 					$('div.apply_address_to_location').removeClass('hidden');
+					$('input[name="apply_address_to_location"]').prop('checked', true);
 				} else {
 					$('div.apply_address_to_location').addClass('hidden');
+					$('input[name="apply_address_to_location"]').prop('checked', false);
 				}
 			}
 			

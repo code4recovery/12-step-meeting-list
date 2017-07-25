@@ -3,9 +3,7 @@ Contributors: meetingguide, aasanjose
 Tags: 12-step, aa, al-anon, coda, meetings, na, oa, saa, slaa
 Requires at least: 3.2
 Tested up to: 4.8
-Stable tag: 2.13.5
-License: BSD 3-Clause
-License URI: https://opensource.org/licenses/BSD-3-Clause
+Stable tag: 2.13.6
 
 This plugin helps 12 step programs list their meetings. It standardizes addresses, and displays results in a searchable list and map.
 
@@ -67,6 +65,7 @@ It was originally designed to maintain a list of AA meetings in Santa Clara Coun
 1. [Sonoma County, CA](http://www.sonomacountyaa.org/meetings/)
 1. [St. Louis, MO](https://aastl.org/meetings/)
 1. [State College, PA](http://www.district43.com/meetings/)
+1. [Streamwood, IL](http://dist23.aa-nia.org/meetings)
 1. [Tidewater Area, VA](http://www.tidewaterintergroup.org/meetings/)
 1. [Toronto, Canada](https://aatoronto.org/meetings/)
 1. [Tri Valley, CA](http://trivalleyaa.org/meetings/)
@@ -110,6 +109,7 @@ It was originally designed to maintain a list of AA meetings in Santa Clara Coun
 
 1. [Chinook, CA](http://chinookna.org/meetings/)
 1. [Maine](http://www.namaine.org/meetings/)
+1. [Martha's Vineyard](http://www.mvana.org/meetings/?tsml-day=any)
 1. [Poland](http://anonimowinarkomani.org/meetings/)
 1. [Vienna](https://www.navienna.com/meetings/?d=any)
 
@@ -244,6 +244,9 @@ Also check out our [One Page Meeting List](https://github.com/meeting-guide/one-
 1. Edit location
 
 == Changelog ==
+
+= 2.13.6 =
+* Fixing bug wherein if you save a meeting as a draft, all the other meetings at that location are saved as draft
 
 = 2.13.5 =
 * Forgot short name for HA
