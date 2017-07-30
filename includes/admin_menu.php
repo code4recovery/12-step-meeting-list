@@ -17,6 +17,11 @@ function tsml_admin_menu() {
 				$submenu_file = 'edit-tags.php?taxonomy=tsml_region&post_type=tsml_location';
 			}
 			$parent_file = 'edit.php?post_type=tsml_meeting';
+		} elseif ($current_screen->post_type == 'tsml_group') {
+			if ($pagenow == 'edit-tags.php') {
+				$submenu_file = 'edit-tags.php?taxonomy=tsml_district&post_type=tsml_group';
+			}
+			$parent_file = 'edit.php?post_type=tsml_meeting';
 		}
 		return $parent_file;
 	}

@@ -1,11 +1,19 @@
 <?php
 
-//catch meetings without locations and save them as a draft
+//catch meetings without locations and save them as a draft, also format text
 add_filter('wp_insert_post_data', 'tsml_insert_post_check', '99', 2);
 function tsml_insert_post_check($post) {
+	
+	//location-less meetings are saved as drafts
 	if (($post['post_type'] == 'tsml_meeting') && empty($post['post_parent']) && ($post['post_status'] == 'publish')) {
 		$post['post_status'] = 'draft';
 	}
+	
+	//sanitize text (remove html, trim)
+	if ($post['post_type'] == 'tsml_meeting') {
+		$post['post_content'] = sanitize_text_area($post['post_content']);
+	}
+	
 	return $post;
 }
 
@@ -48,7 +56,7 @@ function tsml_save_post($post_id, $post, $update) {
 		$changes[] = 'name';
 	}
 	
-	if (!$update || strcmp($old_meeting->post_content, $_POST['post_content']) !== 0) {
+	if (!$update || strcmp(tsml_paragraphs($old_meeting->post_content), tsml_paragraphs($_POST['post_content'])) !== 0) {
 		$changes[] = 'notes';
 	}
 
@@ -213,9 +221,11 @@ function tsml_save_post($post_id, $post, $update) {
 				));
 			}
 			//update region
-			if (!$update || $old_meeting->district != $_POST['district']) {
-				$changes[] = 'district';
-				wp_set_object_terms($group_id, intval($_POST['district']), 'tsml_district');
+			if (!empty($_POST['district'])) {
+				if (!$update || $old_meeting->district != $_POST['district']) {
+					$changes[] = 'district';
+					wp_set_object_terms($group_id, intval($_POST['district']), 'tsml_district');
+				}
 			}
 		} else {
 			$changes[] = 'group';
@@ -281,6 +291,15 @@ function tsml_save_post($post_id, $post, $update) {
 		} else {
 			delete_post_meta($group_id, 'last_contact');
 		}
+		
+		//stripe API key
+		if (tsml_accepts_payments() && !empty($_POST['contributions_api_key'])) {
+			echo $_POST['contributions_api_key'];
+			update_post_meta($group_id, 'contributions_api_key', sanitize_text_field($_POST['contributions_api_key']));
+		} else {
+			delete_post_meta($group_id, 'contributions_api_key');
+		}
+		
 	}
 
 	//deleted orphaned locations and groups
@@ -298,6 +317,8 @@ function tsml_save_post($post_id, $post, $update) {
 	
 	//don't notify for lat / lon changes
 	$changes = array_diff($changes, array('latitude', 'longitude'));
+
+	//dd($changes);
 
 	if (count($tsml_notification_addresses) && count($changes)) {
 		$email =' <p style="font:14px arial;margin:15px 0;">';

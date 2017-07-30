@@ -30,18 +30,17 @@ get_header();
 					<div class="col-md-4">
 						<div class="panel panel-default">
 							<ul class="list-group">
-								<a href="<?php echo $location->directions?>" class="list-group-item list-group-item-address">
-									<?php echo tsml_format_address($location->formatted_address)?>
-								</a>
-	
-								<?php if ($location->region) {?>
-									<li class="list-group-item list-group-item-region"><?php echo $location->region?></li>
-								<?php }
-									
-								if (!empty($location->notes)) {?>
-									<li class="list-group-item list-group-item-location-notes"><?php echo $location->notes?></li>
-								<?php }
+								<li class="list-group-item list-group-item-address">
+									<p><?php echo tsml_format_address($location->formatted_address)?></p>
+									<?php if ($location->region) {?>
+									<p><?php echo $location->region?></p>
+									<?php }
+									if ($location->notes) {?>
+									<p><?php echo $location->notes?></p>
+									<?php }	?>
+								</li>
 								
+								<?php 
 								$meetings = tsml_get_meetings(array('location_id'=>$location->ID));
 								$location_days = array();
 								foreach ($meetings as $meeting) {
@@ -53,7 +52,7 @@ get_header();
 								<li class="list-group-item list-group-item-meetings">						
 								<?php foreach ($location_days as $day=>$meetings) {?>
 									<h4><?php if (!empty($tsml_days[$day])) echo $tsml_days[$day]?></h4>
-									<ul class="meetings"><?php echo implode($meetings)?></ul>
+									<ul><?php echo implode($meetings)?></ul>
 								<?php }?>
 								</li>
 								<?php }?>

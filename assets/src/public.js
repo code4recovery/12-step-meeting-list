@@ -132,38 +132,63 @@ jQuery(function($){
 		var marker = setMapMarker(tsml_map.location, tsml_map.latitude, tsml_map.longitude, content);
 		
 		google.maps.event.trigger(marker, 'click');
+		
+		//stripe payments
+		if (tsml_map.contributions_api_key) {
+			var stripe = Stripe(tsml_map.contributions_api_key);
+			
+			Stripe.applePay.checkAvailability(function(available) {
+				if (available) {
+					$('#payment').addClass('apple-pay');
+				} else {
+					var elements = stripe.elements();
+					var card = elements.create('card', { 
+						style: {
+							base: {
+								fontSize: '16px',
+								lineHeight: '24px'
+							}
+						}
+					});
+					card.mount('#card-element');
+				}
+			});
+		}
 
 	}
 		
 	//b) jQuery event handlers
 	
+	$('.panel-expandable').on('click', '.panel-heading', function(e){
+		$(this).closest('.panel-expandable').toggleClass('expanded');
+		console.log('click');
+	})
+	
 	//single meeting page feedback form
-	$('#meeting #feedback').on('click', 'button', function(e){
-		e.preventDefault();
-		$(this).closest('#feedback').toggleClass('form');
-	}).find('form').validate({
+	$('#meeting #feedback').validate({
 		onfocusout:false,
 		onkeyup: function(element) { },
 		highlight: function(element, errorClass, validClass) {
-			$(element).closest('div.form-group').addClass('has-error');
+			$(element).parent().addClass('has-error');
 		},
 		unhighlight: function(element, errorClass, validClass) {
-			$(element).closest('div.form-group').removeClass('has-error');
+			$(element).parent().removeClass('has-error');
 		},
 		errorPlacement: function(error, element) {
 			return; //don't show message on page, simply highlight
 		}, 
 		submitHandler: function(form){
 			var $form = $(form),
-				$feedback = $form.closest('#feedback'), 
-				$alert = $feedback.find('.alert').first();
+				$feedback = $form.closest('#feedback');
+			if (!$form.hasClass('running'));
 			$.post(tsml.ajaxurl, $form.serialize(), function(data) {
-				$alert.removeClass('alert-danger').addClass('alert-warning').html(data);
-				$feedback.attr('class', 'confirm');
+				$form.removeClass('running');
+				$feedback.find('.list-group').html('<li class="list-group-item has-info">' + data + '</li>');
 			}).fail(function(response) {
-				$alert.removeClass('alert-warning').addClass('alert-danger').html(tsml.strings.email_not_sent);
-				$feedback.attr('class', 'confirm');
+				$form.removeClass('running');
+				$feedback.find('.list-group').html('<li class="list-group-item has-error">' + tsml.strings.email_not_sent + '</li>');
 			});
+			$form.addClass('running');
 			return false;
 		}
 	});

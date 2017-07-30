@@ -3,7 +3,7 @@ Contributors: meetingguide, aasanjose
 Tags: 12-step, aa, al-anon, coda, meetings, na, oa, saa, slaa
 Requires at least: 3.2
 Tested up to: 4.8
-Stable tag: 2.13.6
+Stable tag: 2.14
 
 This plugin helps 12 step programs list their meetings. It standardizes addresses, and displays results in a searchable list and map.
 
@@ -35,6 +35,7 @@ It was originally designed to maintain a list of AA meetings in Santa Clara Coun
 1. [Joliet, IL](http://aadistrict51.org/meetings/)
 1. [Midlands, UK (Polish)](http://intergrupamidlands.co.uk/meetings/)
 1. [Kansas](https://ks-aa.org/meetings/)
+1. [Kentucky](http://www.area26.net/wp/?post_type=tsml_meeting)
 1. [Lewis County, WA](http://lewiscountyaa.org/meetings/)
 1. [Long Beach, CA](https://hacoaa.org/meetings/)
 1. [Maine and New Brunswick](http://csoaamaine.org/meetings/)
@@ -49,6 +50,7 @@ It was originally designed to maintain a list of AA meetings in Santa Clara Coun
 1. [New Orleans, LA](http://www.aaneworleans.org/meetings/)
 1. [New Mexico](https://nm-aa.org/meetings/)
 1. [New York, NY](https://www.nyintergroup.org/meetings/)
+1. [North Central Washington](http://aancw.org/meetings)
 1. [Oahu, HI](http://oahucentraloffice.com/meetings/)
 1. [Orlando, FL](http://cflintergroup.org/meetings/)
 1. [Philadelphia, PA](http://www.aasepia.org/meetings/)
@@ -244,6 +246,12 @@ Also check out our [One Page Meeting List](https://github.com/meeting-guide/one-
 1. Edit location
 
 == Changelog ==
+
+= 2.14 =
+* Major edits to meeting and location detail pages (warning: if you have custom versions of these pages you will need to update them)
+* Fixing side admin menu bug on Districts page
+* Adding foundations for group contributions (not live yet)
+* Notes fields now being trimmed
 
 = 2.13.6 =
 * Fixing bug wherein if you save a meeting as a draft, all the other meetings at that location are saved as draft

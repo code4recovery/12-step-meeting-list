@@ -159,7 +159,7 @@ function tmsl_import_page() {
 		
 		//try fetching	
 		$response = wp_remote_get($_POST['tsml_add_data_source'], array(
-			'timeout' => 10,
+			'timeout' => 30,
 			'sslverify' => false,
 		));
 		if (is_array($response) && !empty($response['body']) && ($body = json_decode($response['body'], true))) {
@@ -487,7 +487,7 @@ function tmsl_import_page() {
 									<input type="text" name="tsml_add_data_source" placeholder="https://">
 								</div>
 								<div class="btn">
-									<input type="submit" class="button" value="<?php _e('Add a New Data Source', '12-step-meeting-list')?>">
+									<input type="submit" class="button" value="<?php _e('Add Data Source', '12-step-meeting-list')?>">
 								</div>
 							</form>
 						</div>

@@ -12,6 +12,7 @@ wp_localize_script('tsml_public', 'tsml_map', array(
 	'location_url' => get_permalink($meeting->post_parent),
 	'directions_url' => $meeting->directions,
 	'directions' => __('Directions', '12-step-meeting-list'),
+	'contributions_api_key' => $meeting->contributions_api_key,
 ));
 
 get_header();
@@ -29,78 +30,134 @@ get_header();
 	
 				<div class="row">
 					<div class="col-md-4">
+
+						<div class="panel panel-default">
+							<a href="<?php echo $meeting->directions?>" class="panel-heading">
+								<h3 class="panel-title">
+									<?php _e('Get Directions', '12-step-meeting-list')?>
+									<span class="glyphicon glyphicon-share-alt"></span>
+								</h3>
+							</a>
+						</div>
+						
+						<?php 
+						//ecommerce payment form
+						if (tsml_accepts_payments() && !empty($meeting->contributions_api_key)) {?>
+						
+						<form id="payment">
+							<input type="hidden" name="action" value="tsml_payment">
+							<?php wp_nonce_field($tsml_nonce, 'tsml_nonce', false)?>
+							<div class="panel panel-default panel-expandable">
+								<div class="panel-heading">
+									<h3 class="panel-title">
+										<?php _e('Make a Contribution', '12-step-meeting-list')?>
+										<span class="glyphicon glyphicon-chevron-left"></span>
+									</h3>
+								</div>
+								<ul class="list-group">
+									<li class="list-group-item">
+									    <?php _e('Donations go to the group treasurer. For a receipt, enter your email address. It will be kept confidential.', '12-step-meeting-list')?></p>
+									</li>
+									<li class="list-group-item list-group-item-form">
+										<input type="text" name="name" placeholder="<?php _e('Name (optional)', '12-step-meeting-list')?>">
+									</li>
+									<li class="list-group-item list-group-item-form">
+										<input type="text" name="email" placeholder="<?php _e('Email (optional)', '12-step-meeting-list')?>">
+									</li>
+									<li class="list-group-item list-group-item-form">
+										<input type="number" name="amount" id="amount" step="1" value="2">
+									</li>
+									<li class="list-group-item list-group-item-card credit-card">
+										<div id="card-element"></div>
+										<div id="card-errors" role="alert"></div>
+									</li>
+									<li class="list-group-item list-group-item-form credit-card">
+										<button type="submit"><?php _e('Pay with Credit Card', '12-step-meeting-list')?></button>
+									</li>
+									<li class="list-group-item list-group-item-form apple-pay">
+										<button type="submit"></button>
+									</li>
+								</ul>
+							</div>
+						</form>
+
+						<?php }?>
+						
 						<div class="panel panel-default">
 							<ul class="list-group">
-								<li class="list-group-item list-group-item-time">
+								<li class="list-group-item meeting-info">
+									<h3 class="list-group-item-heading"><?php _e('Meeting Information', '12-step-meeting-list')?></h3>
 									<?php 
+									echo '<p class="meeting-time">';
 									echo tsml_format_day_and_time($meeting->day, $meeting->time);
 									if (!empty($meeting->end_time)) {
 										/* translators: until */
 										echo __(' to ', '12-step-meeting-list'), tsml_format_time($meeting->end_time);
 									}
+									echo '</p>';
+									if (count($meeting->types)) {?>
+										<ul class="meeting-types">
+										<?php foreach ($meeting->types as $type) {?>
+											<li><i class="glyphicon glyphicon-ok"></i> <?php echo $type?></li>
+										<?php }
+										echo '</ul>';
+										if (!empty($meeting->type_description)) {
+											echo '<p class="meeting-type-description">' . $meeting->type_description . '</p>';
+										}
+									}
+										
+									if (!empty($meeting->notes)) {
+										echo '<section class="meeting-notes">' . wpautop($meeting->notes) . '</section>';
+									}
 									?>
 								</li>
 								<?php
-								$other_meetings = count($meeting->location_meetings) - 1;
+								$location_info = '<h3 class="list-group-item-heading">' . $meeting->location . '</h3>';
+								
+								if ($other_meetings = count($meeting->location_meetings) - 1) {
+									$location_info .= '<p class="location-other-meetings">' . sprintf(_n('%d other meeting at this location', '%d other meetings at this location', $other_meetings, '12-step-meeting-list'), $other_meetings) . '</p>';
+								}
+								
+								$location_info .= '<p class="location-address">' . tsml_format_address($meeting->formatted_address) . '</p>';
+
+								if (!empty($meeting->location_notes)) {
+									$location_info .= '<section class="location-notes">' . wpautop($meeting->location_notes) . '</section>';
+								}
+								
+								if (!empty($meeting->region)) {
+									$location_info .= '<p class="location-region">' . $meeting->region . '</p>';
+								}
+
 								echo tsml_link(
-									get_permalink($meeting->post_parent),
-										'<h4>' . $meeting->location . '</h4>' . 
-										($other_meetings ? sprintf(_n('%d other meeting at this location', '%d other meetings at this location', $other_meetings, '12-step-meeting-list'), $other_meetings) : '')
-									, 'tsml_meeting', 'list-group-item list-group-item-location');
-								?>
-								<a href="<?php echo $meeting->directions?>" class="list-group-item list-group-item-address">
-									<?php echo tsml_format_address($meeting->formatted_address)?>
-								</a>
-								<?php 
+									get_permalink($meeting->post_parent), 
+									$location_info, 
+									'tsml_meeting', 
+									'list-group-item list-group-item-location'
+								);
+
 								if (!empty($meeting->group_id)) {?>
 									<li class="list-group-item list-group-item-group">
-										<?php echo $meeting->group?>
+										<h3 class="list-group-item-heading"><?php echo $meeting->group?></h3>
+										<?php if (!empty($meeting->group_notes)) {?>
+											<section class="group-notes"><?php echo wpautop($meeting->group_notes)?></section>
+										<?php }
+										if (!empty($meeting->website)) {?>
+											<p class="group-website">
+												<a href="<?php echo $meeting->website?>" target="_blank"><?php echo $meeting->website?></a>
+											</p>
+										<?php }
+										if (!empty($meeting->email)) {?>
+											<p class="group-email">
+												<a href="mailto:<?php echo $meeting->email?>"><?php echo $meeting->email?></a>
+											</p>
+										<?php }
+										if (!empty($meeting->phone)) {?>
+											<p class="group-phone">
+												<a href="tel:<?php echo $meeting->phone?>"><?php echo $meeting->phone?></a>
+											</p>
+										</a>
+										<?php }?>
 									</li>
-									<?php if (!empty($meeting->website)) {?>
-									<a href="<?php echo $meeting->website?>" target="_blank" class="list-group-item list-group-item-group-website">
-										<?php echo $meeting->website?>
-									</a>
-									<?php }
-									if (!empty($meeting->email)) {?>
-									<a href="mailto:<?php echo $meeting->email?>" class="list-group-item list-group-item-group-email">
-										<?php echo $meeting->email?>
-									</a>
-									<?php }
-									if (!empty($meeting->phone)) {?>
-									<a href="tel:<?php echo $meeting->phone?>" class="list-group-item list-group-item-group-phone">
-										<?php echo $meeting->phone?>
-									</a>
-									<?php }
-									if (!empty($meeting->group_notes)) {?>
-									<li class="list-group-item list-group-item-group-notes">
-										<?php echo $meeting->group_notes?>
-									</li>
-									<?php }
-								}
-								if (!empty($meeting->region)) {?>
-								<li class="list-group-item list-group-item-region">
-									<?php echo $meeting->region?>
-								</li>
-								<?php }
-								if (count($meeting->types)) {?>
-								<li class="list-group-item list-group-item-types">
-									<?php foreach ($meeting->types as $type) {?>
-									<div><i class="glyphicon glyphicon-ok"></i> <?php echo $type?></div>
-									<?php }?>
-								</li>
-								<?php }
-								if (!empty($meeting->type_description)) {?>
-									<li class="list-group-item"><?php echo $meeting->type_description?></li>
-								<?php }
-								if (!empty($meeting->notes)) {?>
-								<li class="list-group-item list-group-item-notes">
-									<?php echo $meeting->notes?>
-								</li>
-								<?php }
-								if (!empty($meeting->location_notes)) {?>
-								<li class="list-group-item list-group-item-location-notes">
-									<?php echo $meeting->location_notes?>
-								</li>
 								<?php }?>
 								<li class="list-group-item list-group-item-updated">
 									<?php _e('Updated', '12-step-meeting-list')?>
@@ -110,36 +167,36 @@ get_header();
 						</div>
 	
 						<?php if (!empty($tsml_feedback_addresses)) {?>
-						<div id="feedback">
-							<button class="btn btn-default btn-block"><?php _e('Request a Change', '12-step-meeting-list')?></button>
-							
-							<form>
-								<input type="hidden" name="action" value="tsml_feedback">
-								<input type="hidden" name="tsml_formatted_address" value="<?php echo $meeting->formatted_address?>">
-								<input type="hidden" name="tsml_url" value="<?php echo admin_url('post.php?post=' . get_the_ID() . '&action=edit')?>">
-								<?php wp_nonce_field($tsml_nonce, 'tsml_nonce', false)?>
-								<div class="form-group">
-									<input type="text" id="tsml_name" name="tsml_name" placeholder="<?php _e('Your Name', '12-step-meeting-list')?>" class="form-control required">
+						<form id="feedback">
+							<input type="hidden" name="action" value="tsml_feedback">
+							<input type="hidden" name="tsml_formatted_address" value="<?php echo $meeting->formatted_address?>">
+							<input type="hidden" name="tsml_url" value="<?php echo admin_url('post.php?post=' . get_the_ID() . '&action=edit')?>">
+							<?php wp_nonce_field($tsml_nonce, 'tsml_nonce', false)?>
+							<div class="panel panel-default panel-expandable">
+								<div class="panel-heading">
+									<h3 class="panel-title">
+										<?php _e('Request an Update', '12-step-meeting-list')?>
+										<span class="glyphicon glyphicon-chevron-left"></span>
+									</h3>
 								</div>
-								<div class="form-group">
-									<input type="email" id="tsml_email" name="tsml_email" placeholder="<?php _e('Email Address', '12-step-meeting-list')?>" class="form-control required email">
-								</div>
-								<div class="form-group">
-									<textarea id="tsml_message" name="tsml_message" placeholder="<?php _e('Message', '12-step-meeting-list')?>" class="form-control required"></textarea>
-								</div>
-								<div class="row">
-									<div class="col-xs-8 form-group">
-										<input type="submit" class="btn btn-primary btn-block" value="<?php _e('Submit', '12-step-meeting-list')?>">
-									</div>
-									<div class="col-xs-4 form-group">
-										<button class="btn btn-default btn-block"><?php _e('Cancel', '12-step-meeting-list')?></button>
-									</div>
-								</div>
-							</form>
-							
-							<div class="alert alert-warning"></div>
-						</div>
+								<ul class="list-group">
+									<li class="list-group-item list-group-item-form">
+										<input type="text" id="tsml_name" name="tsml_name" placeholder="<?php _e('Your Name', '12-step-meeting-list')?>" class="required">
+									</li>
+									<li class="list-group-item list-group-item-form">
+										<input type="email" id="tsml_email" name="tsml_email" placeholder="<?php _e('Email Address', '12-step-meeting-list')?>" class="required email">
+									</li>
+									<li class="list-group-item list-group-item-form">
+										<textarea id="tsml_message" name="tsml_message" placeholder="<?php _e('Message', '12-step-meeting-list')?>" class="required"></textarea>
+									</li>
+									<li class="list-group-item list-group-item-form">
+										<button type="submit"><?php _e('Submit', '12-step-meeting-list')?></button>
+									</li>										
+								</ul>
+							</div>
+						</form>
 						<?php }?>
+						
 					</div>
 					<div class="col-md-8">
 						<div id="map" class="panel panel-default"></div>

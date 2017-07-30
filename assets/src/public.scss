@@ -1,17 +1,18 @@
 //bootstrap
 
-$icon_font_path:		'../fonts/';
-$gray:				#aaa;
-$black:				#333;
-$white:		 		#fdfdfc;
-$margin:				15px;
-$height:				550px;
+$icon_font_path		: '../fonts/';
+$color_gray			: #aaa;
+$color_highlight		: #ff6;		//for searching
+$color_black			: #333;
+$color_white			: #fdfdfc;
+$margin				: 15px;		//spacing between elements
+$height				: 550px;		//height of map and min-height of list
 
 #tsml {
 	@import '../../node_modules/bootstrap-sass/assets/stylesheets/_bootstrap.scss';
 	
 	mark {
-		background-color: #ff6;
+		background-color: $color_highlight;
 	}
 	
 	input:focus, button:focus {
@@ -45,7 +46,7 @@ $height:				550px;
 			font-size: 24px;
 		}
 		h5 {
-			margin: 15px 0 0 0;
+			margin: $margin 0 0 0;
 			font-size: 14px;
 			font-weight: bold;
 		}
@@ -56,7 +57,7 @@ $height:				550px;
 		a {
 			color: inherit;
 			&.btn-primary {
-				color: #fff;
+				color: $color_white;
 			}
 			small::before {
 				content: " / "
@@ -77,7 +78,7 @@ $height:				550px;
 				padding: 0;
 			}
 			dt {
-				color: $gray;
+				color: $color_gray;
 				font-weight: normal;
 				width: 62px;
 				clear: left;
@@ -230,7 +231,7 @@ $height:				550px;
 				}
 			}
 	
-			#table-wrapper { margin: 0 -15px; overflow: hidden; }
+			#table-wrapper { margin: 0 -$margin; overflow: hidden; }
 			#table-wrapper table { margin: 0; }
 			
 			table {
@@ -240,7 +241,7 @@ $height:				550px;
 				tbody {
 					tr {
 						display: block;
-						padding: 10px 15px 10px 110px;
+						padding: 10px $margin 10px 110px;
 						border-top: 1px solid #ddd;
 						position: relative;
 						td { 
@@ -251,7 +252,7 @@ $height:				550px;
 							text-align: left;
 							&.time {
 								position: absolute;
-								left: 15px;
+								left: $margin;
 								top: 10px;
 								width: 90px;
 								overflow: hidden;
@@ -259,7 +260,7 @@ $height:				550px;
 							}
 							&.distance {
 								position: absolute;
-								left: 15px;
+								left: $margin;
 								bottom: 10px;
 								font-size: 22px;
 								font-weight: bold;
@@ -274,8 +275,8 @@ $height:				550px;
 								width: 175px;
 								small {
 									position: absolute;
-									right: 15px;
-									color: $black;
+									right: $margin;
+									color: $color_black;
 									font-size: 11px;
 									top: 13px;
 								}
@@ -341,54 +342,173 @@ $height:				550px;
 			padding-left: 0;
 			padding-right: 0;
 		}
-		.panel, .alert, ul.meetings { margin-bottom: $margin; }
+		.panel, .btn { margin-bottom: $margin; }
 		h1 { font-size: 36px; margin-bottom: 4px; }
 		small {
-			color: $black;
+			color: $color_black;
 			&::before {
 				content: " / ";
 			}
 		}
 		#map { height: 500px; }
-		ul.list-group { margin: 0; padding: 0; }
-		.list-group-item h4 {
+		button { 
 			font-size: inherit;
-			font-weight: bold;
-			margin: 0;
-			line-height: inherit;
 		}
-		ul.meetings {
-			list-style-type: none;
-			padding: 0;
-			margin: 0 0 15px 0;
-			li {
-				padding-left: 90px;
-				position: relative;
-				span { 
-					position: absolute; 
-					left: 0; 
-					width: 80px;
-					text-align: right;
-					color: #999;
+		.panel {
+			.panel-heading {
+				background-color: white;
+				border-color: transparent;
+				border-radius: 3px;
+				transition: all .1s;
+				color: inherit;
+				display: block;
+				text-decoration: none !important;
+				.panel-title {
+					padding-right: 40px;
+					position: relative;
+					span.glyphicon {
+						position: absolute;
+						right: 0;
+						transition: all .1s;
+					}
 				}
 			}
-			&:last-child { margin-bottom: 0; }
+			ul.list-group { 
+				margin: 0; 
+				padding: 0; 
+				.list-group-item {
+					* {
+						margin: 0 0 8px 0;
+						background-color: transparent;
+						&:last-child { margin-bottom: 0; }
+					}
+					h3.list-group-item-heading {
+						font-size: 107%;
+						margin-bottom: 4px;
+						font-weight: bold;
+						line-height: inherit;
+						&:last-child { margin-bottom: 0; }
+					}
+					ul { 
+						list-style-type: none;
+						li { margin: 0; }
+					}
+					#card-element { margin-bottom: 0; }
+					&.has-error {
+						border-color: $state-danger-border;
+						color: $state-danger-text;
+						background-color: $state-danger-bg;
+					}
+					&.has-info {
+						border-color: $state-warning-border;
+						color: $state-warning-text;
+						background-color: $state-warning-bg;
+					}
+					&.list-group-item-form {
+						padding: 0;
+						input, textarea, button {
+							font-size: inherit;
+							border: 0;
+							border-radius: 0;
+							width: 100%;
+							text-transform: none;
+						}
+						input, textarea {
+							padding: 10px $margin;
+						}
+						button {
+							background-color: #eaeaea;
+							text-align: center;
+							width: 100%;
+							padding: 7px;
+							text-transform: uppercase;
+							font-size: 85%;
+							font-weight: bold;
+						}
+						textarea {
+							resize: none;
+							height: 250px;							
+						}
+						#amount {
+							font-size: 24px;
+							font-weight: bold;
+						}
+						&:last-child {
+							border-radius: 0 0 3px 3px;
+						}
+					}
+					&.list-group-item-meetings {
+						h4 { 
+							font-weight: bold; 
+							font-size: 85%;
+							margin: $margin 0 5px;
+							&:first-child { margin-top: 3px; }
+						}
+						ul {
+							list-style-type: none;
+							padding: 0;
+							li {
+								padding-left: 90px;
+								position: relative;
+								span { 
+									position: absolute; 
+									left: 0; 
+									width: 80px;
+									text-align: right;
+									color: #999;
+								}
+							}
+							&:last-child { margin-bottom: 0; }
+						}
+
+					}
+				}
+			}
+			&.panel-expandable {
+				.panel-title {
+					cursor: pointer;
+				}
+				ul.list-group { 
+					max-height: 0;
+					overflow: hidden;
+					transition: max-height .25s;  
+				}
+				&.expanded {
+					.panel-heading { 
+						border-color: #ddd;
+						background-color: #eee;
+						border-radius: 3px 3px 0 0;
+					}
+					.panel-title span.glyphicon {
+						transform: rotate(-90deg);
+					}
+					ul.list-group { 
+						max-height: 500px;
+					}
+				}
+			}
 		}
 	}
 	
-	#meeting #feedback {
-		margin-bottom: $margin;
-		form, .alert { display: none; }
-		input { text-transform: none; }
-		textarea { height: 250px; }
-		form { margin-bottom: $margin; }
-		&.form {
-			form { display: block; }
-			& > button { display: none; }
+	#meeting form {
+		&#payment {
+			li.apple-pay { display: none; }
+			&.apple-pay {
+				li.credit-card { display: none; }
+				li.apple-pay {
+					display: block;
+					button {
+						background-image: -webkit-named-image(apple-pay-logo-black);
+						height: 38px;
+						background-size: 100% 100%;
+						background-origin: content-box;
+						background-repeat: no-repeat;
+					}
+				}
+			}
 		}
-		&.confirm {
-			.alert { display: block; }
-			& > button { display: none; }
+		
+		&#feedback {
 		}
 	}
 	
@@ -402,7 +522,7 @@ $height:				550px;
 		    width: 100%;
 		    height: 100%;
 		    z-index: 9999;
-			background-color: $white;
+			background-color: $color_white;
 			max-width: none;
 		}
 		&.admin-bar {
@@ -439,7 +559,7 @@ $height:				550px;
 						text-transform: none;
 						cursor: pointer;
 						position: relative;
-						padding: 8px 15px;
+						padding: 8px $margin;
 						border: 0;
 						&[data-sort="asc"]:after, &[data-sort="desc"]:after {
 							content: "";
@@ -465,10 +585,10 @@ $height:				550px;
 							text-align: right;
 						}
 						&.region[data-sort="asc"]:after, &.region[data-sort="desc"]:after {
-							right: 15px;
+							right: $margin;
 						}
 						&.district[data-sort="asc"]:after, &.district[data-sort="desc"]:after {
-							right: 15px;
+							right: $margin;
 						}
 					}
 				}
@@ -478,7 +598,7 @@ $height:				550px;
 						&.name, &.location, &.time, &.distance, &.address, &.region, &.district, &.types {
 							white-space: normal;
 							display: table-cell; 
-							padding: 8px 8px 8px 15px;
+							padding: 8px 8px 8px $margin;
 							position: static;
 						} 
 						&.time {

@@ -14,8 +14,14 @@ if (!function_exists('dd')) {
 //used:		tsml_import() and save.php
 if (!function_exists('sanitize_text_area')) {
 	function sanitize_text_area($value) {
-		return implode("\n", array_map('sanitize_text_field', explode("\n", $value)));
+		return implode("\n", array_map('sanitize_text_field', explode("\n", trim($value))));
 	}
+}
+
+//function: boolean if site accepts payments (must be SSL, and, for demo purposes, must be one of the testing sites)
+//used: in admin_meeting.php single-meetings.php and in tsml_assets() below
+function tsml_accepts_payments() {
+	return (is_ssl() && in_array($_SERVER['HTTP_HOST'], array('aasanjose.dev')));
 }
 
 //function:	add an admin screen update message
@@ -46,7 +52,7 @@ function tsml_assets() {
 	} else {
 		//public page assets
 		wp_enqueue_style('tsml_public', plugins_url('../assets/css/public.min.css', __FILE__), array(), TSML_VERSION);
-		wp_enqueue_script('validate_js', plugins_url('../assets/js/jquery.validate.min.js', __FILE__), array('jquery'), TSML_VERSION, true);
+		wp_enqueue_script('jquery_validate', plugins_url('../assets/js/jquery.validate.min.js', __FILE__), array('jquery'), TSML_VERSION, true);
 		wp_enqueue_script('tsml_public', plugins_url('../assets/js/public.min.js', __FILE__), array('jquery', 'google_maps_api'), TSML_VERSION, true);
 		wp_localize_script('tsml_public', 'tsml', array(
 			'ajaxurl' => admin_url('admin-ajax.php'),
@@ -67,6 +73,12 @@ function tsml_assets() {
 			'street_only' => $tsml_street_only,
 			'types' => $tsml_types[$tsml_program],
 		));
+		
+		//stripe
+		if (tsml_accepts_payments()) {
+			wp_enqueue_script('stripe', 'https://js.stripe.com/v3/', null, 3, true);
+			wp_enqueue_script('stripe_v2', 'https://js.stripe.com/v2/', null, 2, true);
+		}
 	}
 }
 
@@ -442,14 +454,19 @@ function tsml_get_location($location_id=false) {
 		$location->{$key} = htmlentities($value[0], ENT_QUOTES);
 	}
 	$location->post_title	= htmlentities($location->post_title, ENT_QUOTES);
-	$location->notes 		= nl2br(esc_html($location->post_content));
+	$location->notes 		= esc_html($location->post_content);
 	if ($region = get_the_terms($location, 'tsml_region')) {
 		$location->region_id = $region[0]->term_id;
 		$location->region = $region[0]->name;
 	}
 
 	//directions link
-	$location->directions = 'https://maps.apple.com/?q=' . $location->latitude . ',' . $location->longitude . '&z=16';
+	$location->directions = 'https://maps.apple.com/?' . http_build_query(array(
+		'll' => $location->latitude . ',' . $location->longitude,
+		'q' => $location->location,
+		'address' => $location->formatted_address,
+		'z' => 16,
+	));
 
 	return $location;
 }
@@ -513,10 +530,10 @@ function tsml_get_meeting() {
 		$meeting->{$key} = ($key == 'types') ? $value[0] : htmlentities($value[0], ENT_QUOTES);
 	}
 	$meeting->types				= empty($meeting->types) ? array() : unserialize($meeting->types);
-	$meeting->post_title		= htmlentities($meeting->post_title, ENT_QUOTES);
+	$meeting->post_title			= htmlentities($meeting->post_title, ENT_QUOTES);
 	$meeting->location			= htmlentities($location->post_title, ENT_QUOTES);
-	$meeting->notes 			= nl2br(esc_html($meeting->post_content));
-	$meeting->location_notes	= nl2br(esc_html($location->post_content));
+	$meeting->notes 				= esc_html($meeting->post_content);
+	$meeting->location_notes		= esc_html($location->post_content);
 	
 	if ($region = get_the_terms($location, 'tsml_region')) {
 		$meeting->region_id = $region[0]->term_id;
@@ -535,13 +552,18 @@ function tsml_get_meeting() {
 	$meeting->location_meetings = tsml_get_meetings(array('location_id' => $location->ID));
 
 	//link for directions
-	$meeting->directions = 'https://maps.apple.com/?q=' . $meeting->latitude . ',' . $meeting->longitude . '&z=16';
+	$meeting->directions = 'https://maps.apple.com/?' . http_build_query(array(
+		'll' => $meeting->latitude . ',' . $meeting->longitude,
+		'q' => $meeting->location,
+		'address' => $meeting->formatted_address,
+		'z' => 16,
+	));
 
 	//if meeting is part of a group, include group info
 	if ($meeting->group_id) {
 		$group = get_post($meeting->group_id);
 		$meeting->group = htmlentities($group->post_title, ENT_QUOTES);
-		$meeting->group_notes = nl2br(esc_html($group->post_content));
+		$meeting->group_notes = esc_html($group->post_content);
 		$group_custom = get_post_meta($meeting->group_id);
 		foreach ($group_custom as $key=>$value) {
 			$meeting->{$key} = $value[0];
@@ -1236,6 +1258,18 @@ function tmsl_meetings_url($parameters) {
 	$url .= (strpos($url, '?') === false) ? '?' : '&';
 	$url .= http_build_query($parameters);
 	return $url;
+}
+
+//function: convert line breaks in plain text to HTML paragraphs
+//used:		functions.php in lieu of nl2br()
+function tsml_paragraphs($string) {
+	$paragraphs = '';
+	foreach (explode("\n", $string) as $line) {
+		if ($line = trim($line)) {
+			$paragraphs .= '<p>' . $line . '</p>';
+		}
+	}
+	return $paragraphs;
 }
 
 //function: set an option with the currently-used types

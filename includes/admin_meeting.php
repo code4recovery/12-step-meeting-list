@@ -216,10 +216,10 @@ function tsml_admin_init() {
 			))?>
 		</div>
 		<?php }
-		if (stristr($_SERVER['HTTP_HOST'], 'aasanjose') !== false) {?>
+		if (tsml_accepts_payments()) {?>
 		<div class="meta_form_row">
 			<label><?php _e('Stripe API Key', '12-step-meeting-list')?></label>
-			<input type="text" name="contributions_api_key" id="contributions_api_key" value="<?php echo @$group_custom['contributions_api_key']?>" placeholder="<?php _e('Stripe API Key')?>">
+			<input type="text" name="contributions_api_key" id="contributions_api_key" value="<?php echo @$group_custom['contributions_api_key'][0]?>" placeholder="<?php _e('Stripe API Key')?>">
 		</div>
 		<?php
 		}
