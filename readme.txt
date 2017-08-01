@@ -3,7 +3,7 @@ Contributors: meetingguide, aasanjose
 Tags: 12-step, aa, al-anon, coda, meetings, na, oa, saa, slaa
 Requires at least: 3.2
 Tested up to: 4.8
-Stable tag: 2.14
+Stable tag: 2.14.1
 
 This plugin helps 12 step programs list their meetings. It standardizes addresses, and displays results in a searchable list and map.
 
@@ -247,6 +247,10 @@ Also check out our [One Page Meeting List](https://github.com/meeting-guide/one-
 
 == Changelog ==
 
+= 2.14.1 =
+* When region is empty, it now guesses based on Google geocoded city
+* When changing meeting locations, address change checkbox is made visible
+
 = 2.14 =
 * Major edits to meeting and location detail pages (warning: if you have custom versions of these pages you will need to update them)
 * Fixing side admin menu bug on Districts page
@@ -276,55 +280,3 @@ Also check out our [One Page Meeting List](https://github.com/meeting-guide/one-
 
 = 2.13 =
 * New districts taxonomy for Areas 24 and 46
-
-= 2.12.12 =
-* Fixing error in last update affecting PHP < 5.5
-* Starting new districts taxonomy for Areas 24 and 46
-
-= 2.12.11 =
-* New widget areas on meeting and location detail pages
-* Readme tweaks
-
-= 2.12.10 =
-* FNV import not as dependent on the number of columns
-
-= 2.12.9 =
-* CSS fix for mobile devices if columns have been reordered
-
-= 2.12.8 =
-* Now able to set the order of the columns
-* Adding meeting type for English per Quebec
-
-= 2.12.7 =
-* Version bump
-
-= 2.12.6 =
-* Fixing default sort
-
-= 2.12.5 =
-* Now able to set sort order on meetings page
-
-= 2.12.4 =
-* Now able to import FNV format meeting data
-
-= 2.12.3 =
-* Appearance improvements for the Catch Box WP theme
-
-= 2.12.2 =
-* New App Store widget for Meeting Guide (per NIA District 11)
-* CSS option for upcoming meetings widget
-
-= 2.12.1 =
-* Importer fix (Sunday meetings were importing as 'by appointment')
-* Location notes were also getting imported as meeting notes
-* Main map now scrollable with mouse wheel, per Austin
-* Detail page map now no longer scrollable with mouse wheel
-* Meeting admin page warning if meeting is from an external data source
-* CSV meeting times now in 24 hour format
-* Refactoring javascript on detail pages to lighten server load
-* Meeting detail page location name moved to location link (rather than address link)
-* Fixing sidebar notice formatting on import page
-
-= 2.12 =
-* Importing from JSON data sources
-* Tweak to feedback form per Philadelphia

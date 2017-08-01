@@ -348,6 +348,14 @@ function tsml_ajax_import() {
 			$formatted_address = $data->results[0]->formatted_address;
 			$latitude = $data->results[0]->geometry->location->lat;
 			$longitude = $data->results[0]->geometry->location->lng;
+			$city = null;		
+			
+			//get city, we might need it for region below, and we are going to cache it
+			foreach ($data->results[0]->address_components as $component) {
+				if (in_array('locality', $component->types)) {
+					$city = $component->short_name;
+				}
+			}
 			
 			//some google API results are bad, and we can override them manually
 			if (array_key_exists($formatted_address, $tsml_google_overrides)) {
@@ -359,8 +367,11 @@ function tsml_ajax_import() {
 			}
 			
 			//save in cache
-			$addresses[$meeting['formatted_address']] = compact('formatted_address', 'latitude', 'longitude');
+			$addresses[$meeting['formatted_address']] = compact('formatted_address', 'latitude', 'longitude', 'city');
 		}
+
+		//try to guess region from google geocode
+		if (empty($meeting['region']) && !empty($city)) $meeting['region'] = $city;
 
 		//add region to taxonomy if it doesn't exist yet
 		if (!empty($meeting['region'])) {

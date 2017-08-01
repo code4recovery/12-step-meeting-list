@@ -119,7 +119,7 @@ jQuery(function($){
 		displayKey: 'value',
 		source: tsml_locations
 	}).on('typeahead:autocompleted typeahead:selected', function($e, location){
-		$('input[name=formatted_address]').val(location.formatted_address);
+		$('input[name=formatted_address]').val(location.formatted_address).trigger('change');
 		$('input[name=latitude]').val(location.latitude);
 		$('input[name=longitude]').val(location.longitude);
 		$('select[name=region] option[value=' + location.region + ']').prop('selected', true);
@@ -206,19 +206,7 @@ jQuery(function($){
 			}
 			
 			//save address
-			$('input#formatted_address').val(address.formatted_address);
-			
-			//unhide apply address to location?
-			if ($('div.apply_address_to_location').length) {
-				var original_address = $('input#formatted_address').attr('data-original-value');
-				if (original_address.length && (address.formatted_address != original_address)) {
-					$('div.apply_address_to_location').removeClass('hidden');
-					$('input[name="apply_address_to_location"]').prop('checked', true);
-				} else {
-					$('div.apply_address_to_location').addClass('hidden');
-					$('input[name="apply_address_to_location"]').prop('checked', false);
-				}
-			}
+			$('input#formatted_address').val(address.formatted_address).trigger('change');
 			
 			//check if location with same address is already in the system, populate form
 			$.getJSON(tsml.ajaxurl + '?action=address', { formatted_address: address.formatted_address }, function(data){
@@ -238,7 +226,22 @@ jQuery(function($){
 			});
 
 		});
-	});
+	}).change(function(){
+		
+		//unhide apply address to location?
+		if ($('div.apply_address_to_location').length) {
+			var original_address = $('input#formatted_address').attr('data-original-value');
+			var address = $('input#formatted_address').val();
+			if (original_address.length && (address != original_address)) {
+				$('div.apply_address_to_location').removeClass('hidden');
+				$('input[name="apply_address_to_location"]').prop('checked', true);
+			} else {
+				$('div.apply_address_to_location').addClass('hidden');
+				$('input[name="apply_address_to_location"]').prop('checked', false);
+			}
+		}
+	});			
+
 
 	if ($('input#formatted_address').val()) $('input#formatted_address').blur();
 
