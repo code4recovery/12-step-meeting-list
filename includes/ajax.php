@@ -282,7 +282,7 @@ function tsml_ajax_import() {
 	curl_setopt_array($ch, array(
 		CURLOPT_HEADER => 0, 
 		CURLOPT_RETURNTRANSFER => true, 
-		CURLOPT_TIMEOUT => 10,
+		CURLOPT_TIMEOUT => 60,
 		CURLOPT_SSL_VERIFYPEER => false,
 	));
 	
@@ -436,9 +436,9 @@ function tsml_ajax_import() {
 						}
 						$district_id = intval($term['term_id']);
 					}
+					
+					wp_set_object_terms($group_id, $district_id, 'tsml_district');
 				}
-				
-				wp_set_object_terms($group_id, $district_id, 'tsml_district');
 				
 				$groups[$meeting['group']] = $group_id;
 			}

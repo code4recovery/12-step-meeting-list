@@ -3,7 +3,7 @@ Contributors: meetingguide, aasanjose
 Tags: 12-step, aa, al-anon, coda, meetings, na, oa, saa, slaa
 Requires at least: 3.2
 Tested up to: 4.8
-Stable tag: 2.14.1
+Stable tag: 2.14.2
 
 This plugin helps 12 step programs list their meetings. It standardizes addresses, and displays results in a searchable list and map.
 
@@ -25,6 +25,7 @@ It was originally designed to maintain a list of AA meetings in Santa Clara Coun
 1. [Colorado Springs, CO](http://www.coloradospringsaa.org/meetings/)
 1. [Corpus Christi, TX](http://www.cbiaa.org/meetings/)
 1. [Davis, CA](http://aadavis.org/meetings/)
+1. [Daytona, FL](http://aadaytona.org/meetings/)
 1. [DuPage County, IL](http://dist41.aa-nia.org/meetings/)
 1. [East Bay, CA](http://eastbayaa.org/meetings)
 1. [Elk Grove Village, IL](http://d15aa.org/d15aa.org/?post_type=meetings)
@@ -38,6 +39,7 @@ It was originally designed to maintain a list of AA meetings in Santa Clara Coun
 1. [Kentucky](http://www.area26.net/wp/?post_type=tsml_meeting)
 1. [Lewis County, WA](http://lewiscountyaa.org/meetings/)
 1. [Long Beach, CA](https://hacoaa.org/meetings/)
+1. [Madison, WI](http://aamadisonwi.org/meetings/)
 1. [Maine and New Brunswick](http://csoaamaine.org/meetings/)
 1. [Maui, HI](http://aamaui.org/meetings)
 1. [Mesa, AZ](http://aamesaaz.org/meetings/)
@@ -45,6 +47,8 @@ It was originally designed to maintain a list of AA meetings in Santa Clara Coun
 1. [Minneapolis, MN](http://aaminneapolis.org/meetings/)
 1. [Mississippi](http://www.aa-mississippi.org/meetings/)
 1. [Modesto, CA](http://wp.cviaa.org/meetings/)
+1. [Montreal, Canada](http://aa87.org/meetings/)
+1. [Napa, CA](http://www.aanapa.org/meetings)
 1. [Naples, FL](http://aanaples.org/meetings/)
 1. [New Hampshire](http://nhaa.net/meetings/)
 1. [New Orleans, LA](http://www.aaneworleans.org/meetings/)
@@ -79,6 +83,7 @@ It was originally designed to maintain a list of AA meetings in Santa Clara Coun
 1. [Walnut Creek, CA](http://contracostaaa.org/meetings)
 1. [Warsaw, IN](http://www.aadistrict4143.com/meetings/)
 1. [Washington, DC](https://aa-dc.org/meetings)
+1. [Wenatchee, WA](http://aancw.org/meetings)
 1. [West Hawaii, HI](http://www.westhawaiiaa.org/meetings/)
 1. [West-Central Wisconsin](http://www.district05.org/meetings/)
 1. [Western Slope, CA](http://westernsloped22.org/meetings/)
@@ -246,6 +251,14 @@ Also check out our [One Page Meeting List](https://github.com/meeting-guide/one-
 1. Edit location
 
 == Changelog ==
+
+= 2.14.2 =
+* Fixing district-related notices on import (per NJ) and meeting edit page
+* Fixing Twenty Fourteen footer negative margin
+* Delete all before importing now includes districts
+* Extending geocoding timeout
+* Fixed meetings being saved as drafts when they should have been published
+* You can now remove a meeting's location (it will be saved as a draft)
 
 = 2.14.1 =
 * When region is empty, it now guesses based on Google geocoded city

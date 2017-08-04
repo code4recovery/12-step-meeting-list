@@ -900,10 +900,12 @@ body {
 		#page::before { display: none; }
 		#meetings { 
 			width: 100%; 
+			.page-header { max-width: none; }
 			&[data-view=list] { padding-bottom: 0; }
 		}
-		#meetings .page-header { max-width: none; }
 		&.masthead-fixed #main { margin-top: 0; }
+		#tsml { margin-bottom: 15px; }
+		#tsml #map { margin-bottom: 15px; }
 	}
 	&.twentyten {
 		#main { padding-top: 5px; font-size: 14px; }

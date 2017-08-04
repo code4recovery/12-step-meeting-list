@@ -83,8 +83,6 @@ function tmsl_import_page() {
 						//associate
 						$meeting = array_combine($header, $meeting);
 					}
-
-					//dd($meetings);
 					
 					//import into buffer, also done this way in data source import
 					tsml_import_buffer_set($meetings);

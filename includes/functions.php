@@ -231,8 +231,8 @@ function tsml_delete($post_ids) {
 			'numberposts' => -1,
 		));
 		
-		//when we're deleting *everything*, also delete regions
-		if ($term_ids = implode(',', $wpdb->get_col('SELECT term_id FROM ' . $wpdb->term_taxonomy . ' WHERE taxonomy IN ("tsml_region")'))) {
+		//when we're deleting *everything*, also delete regions & districts
+		if ($term_ids = implode(',', $wpdb->get_col('SELECT term_id FROM ' . $wpdb->term_taxonomy . ' WHERE taxonomy IN ("tsml_district", "tsml_region")'))) {
 			$wpdb->query('DELETE FROM ' . $wpdb->terms . ' WHERE term_id IN (' . $term_ids . ')');
 			$wpdb->query('DELETE FROM ' . $wpdb->term_taxonomy . ' WHERE term_id IN (' . $term_ids . ')');
 		}
@@ -447,11 +447,12 @@ function tsml_get_groups() {
 
 //function: template tag to get location, attach custom fields to it
 //used: single-locations.php
-function tsml_get_location($location_id=false) {
-	$location = get_post($location_id);
-	$custom = get_post_meta($location->ID);
-	foreach ($custom as $key=>$value) {
-		$location->{$key} = htmlentities($value[0], ENT_QUOTES);
+function tsml_get_location($location_id) {
+	if (!$location = get_post($location_id)) return;
+	if ($custom = get_post_meta($location->ID)) {
+		foreach ($custom as $key=>$value) {
+			$location->{$key} = htmlentities($value[0], ENT_QUOTES);
+		}
 	}
 	$location->post_title	= htmlentities($location->post_title, ENT_QUOTES);
 	$location->notes 		= esc_html($location->post_content);
@@ -1092,19 +1093,6 @@ function tsml_import_buffer_set($meetings, $data_source=null) {
 	update_option('tsml_import_buffer', $meetings, false);
 }
 
-/*function: check data sources on a cron, make any necessary updates
-//used:		cron set by admin_import.php
-function tsml_import_data_sources() {
-	global $tsml_data_sources;
-	foreach (array_keys($tsml_data_sources) as $url) {
-		
-		//todo fetch data, check for updates
-		
-		$tsml_data_sources[$url]['last_update'] = current_time('timestamp');
-	}
-	update_option('tsml_data_sources', $tsml_data_sources);
-}*/
-
 //function:	filter workaround for setting post_modified dates
 //used:		tsml_ajax_import()
 function tsml_import_post_modified($data, $postarr) {
@@ -1206,12 +1194,9 @@ function tsml_import_reformat_fnv($rows) {
 		}
 	}
 	
-	//dd($meetings);
-
 	//debugging types
 	$all_types = array_unique($all_types);
 	sort($all_types);
-	//dd($all_types);
 	
 	$return = array(array_keys($meetings[0]));
 	foreach ($meetings as $meeting) {

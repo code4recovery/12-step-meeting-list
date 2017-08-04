@@ -148,7 +148,9 @@ function tsml_admin_init() {
 			$group_custom = get_post_meta($group->ID);
 			$meetings = tsml_get_meetings(array('group_id'=>$group->ID));
 			$district = wp_get_post_terms($group->ID, 'tsml_district', array('fields'=>'ids'));
-			if (is_array($district) && !empty($district)) $district = $district[0];
+			if (is_array($district)) {
+				$district = empty($district) ? 0 : $district[0];
+			}
 		}
 		?>
 		<div class="meta_form_row typeahead">
@@ -212,7 +214,7 @@ function tsml_admin_init() {
 				'hide_empty' => false,
 				'orderby' => 'name',
 				'selected' => $district,
-				'show_option_none' => __('District:', '12-step-meeting-list'),
+				'show_option_none' => __('District', '12-step-meeting-list'),
 			))?>
 		</div>
 		<?php }

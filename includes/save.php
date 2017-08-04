@@ -4,11 +4,6 @@
 add_filter('wp_insert_post_data', 'tsml_insert_post_check', '99', 2);
 function tsml_insert_post_check($post) {
 	
-	//location-less meetings are saved as drafts
-	if (($post['post_type'] == 'tsml_meeting') && empty($post['post_parent']) && ($post['post_status'] == 'publish')) {
-		$post['post_status'] = 'draft';
-	}
-	
 	//sanitize text (remove html, trim)
 	if ($post['post_type'] == 'tsml_meeting') {
 		$post['post_content'] = sanitize_text_area($post['post_content']);
@@ -35,9 +30,9 @@ function tsml_save_post($post_id, $post, $update) {
 	}
 
 	//sanitize textareas
-	$strings = array('post_content', 'location_notes', 'group_notes');
-	foreach ($strings as $string) {
-		$_POST[$string] = stripslashes(sanitize_text_area($_POST[$string]));
+	$textareas = array('post_content', 'location_notes', 'group_notes');
+	foreach ($textareas as $textarea) {
+		$_POST[$textarea] = stripslashes(sanitize_text_area($_POST[$textarea]));
 	}
 
 	//get current meeting state to compare against
@@ -123,67 +118,70 @@ function tsml_save_post($post_id, $post, $update) {
 	}
 	
 	//exit here if the location is not ready
-	if (empty($_POST['formatted_address']) || empty($_POST['latitude']) || empty($_POST['longitude'])) {
-		return;
-	}
+	if (empty($_POST['formatted_address'])) {
+
+		$location_id = null;
+
+	} else {
+		
+		//save location information (set this value or get caught in a loop)
+		$_POST['post_type'] = 'tsml_location';
+		
+		//see if address is already in the database
+		if ($locations = get_posts(array(
+			'post_type' => 'tsml_location',
+			'numberposts' => 1,
+			'orderby' => 'id',
+			'order' => 'ASC',
+			'meta_key' => 'formatted_address',
+			'meta_value' => $_POST['formatted_address'],
+		))) {
+			$location_id = $locations[0]->ID;
+			if ($locations[0]->post_title != $_POST['location'] || $locations[0]->post_content != $_POST['location_notes']) {
+				if ($locations[0]->post_title != $_POST['location']) $changes[] = 'location';
+				if ($locations[0]->post_content != $_POST['location_notes']) $changes[] = 'location_notes';
+				wp_update_post(array(
+					'ID'			=> $location_id,
+					'post_title'	=> $_POST['location'],
+					'post_content'  => $_POST['location_notes'],
+				));
+			}
 	
-	//save location information (set this value or get caught in a loop)
-	$_POST['post_type'] = 'tsml_location';
-	
-	//see if address is already in the database
-	if ($locations = get_posts(array(
-		'post_type' => 'tsml_location',
-		'numberposts' => 1,
-		'orderby' => 'id',
-		'order' => 'ASC',
-		'meta_key' => 'formatted_address',
-		'meta_value' => $_POST['formatted_address'],
-	))) {
-		$location_id = $locations[0]->ID;
-		if ($locations[0]->post_title != $_POST['location'] || $locations[0]->post_content != $_POST['location_notes']) {
-			if ($locations[0]->post_title != $_POST['location']) $changes[] = 'location';
-			if ($locations[0]->post_content != $_POST['location_notes']) $changes[] = 'location_notes';
-			wp_update_post(array(
-				'ID'			=> $location_id,
+			//latitude longitude only if updated
+ 			foreach (array('latitude', 'longitude') as $field) {
+				if (!$update || $old_meeting->{$field} != $_POST[$field]) {
+					$changes[] = $field;
+					update_post_meta($location_id, $field, floatval($_POST[$field]));
+				}
+			}
+		
+			//update region
+			if (!$update || $old_meeting->region_id != $_POST['region']) {
+				$changes[] = 'region';
+				wp_set_object_terms($location_id, intval($_POST['region']), 'tsml_region');
+			}
+		} else {
+			$changes[] = 'location';
+			$changes[] = 'location_notes';
+			$location_id = wp_insert_post(array(
 				'post_title'	=> $_POST['location'],
+			  	'post_type'		=> 'tsml_location',
+			  	'post_status'	=> 'publish',
 				'post_content'  => $_POST['location_notes'],
 			));
-		}
-
-		//latitude longitude only if updated
-		foreach (array('latitude', 'longitude') as $field) {
-			if (!$update || $old_meeting->{$field} != $_POST[$field]) {
-				$changes[] = $field;
-				update_post_meta($location_id, $field, floatval($_POST[$field]));
-			}
-		}
-	
-		//update region
-		if (!$update || $old_meeting->region_id != $_POST['region']) {
-			$changes[] = 'region';
+			
+			//set latitude, longitude and region
+			add_post_meta($location_id, 'latitude', floatval($_POST['latitude']));
+			add_post_meta($location_id, 'longitude', floatval($_POST['longitude']));
 			wp_set_object_terms($location_id, intval($_POST['region']), 'tsml_region');
 		}
-	} else {
-		$changes[] = 'location';
-		$changes[] = 'location_notes';
-		$location_id = wp_insert_post(array(
-			'post_title'	=> $_POST['location'],
-		  	'post_type'		=> 'tsml_location',
-		  	'post_status'	=> 'publish',
-			'post_content'  => $_POST['location_notes'],
-		));
-		
-		//set latitude, longitude and region
-		add_post_meta($location_id, 'latitude', floatval($_POST['latitude']));
-		add_post_meta($location_id, 'longitude', floatval($_POST['longitude']));
-		wp_set_object_terms($location_id, intval($_POST['region']), 'tsml_region');
-	}
-
-	//update address & info on location
-	if (!$update || html_entity_decode($old_meeting->formatted_address) != $_POST['formatted_address']) {
-		$changes[] = 'formatted_address';
-		update_post_meta($location_id, 'formatted_address', $_POST['formatted_address']);
-	}
+	
+		//update address & info on location
+		if (!$update || html_entity_decode($old_meeting->formatted_address) != $_POST['formatted_address']) {
+			$changes[] = 'formatted_address';
+			update_post_meta($location_id, 'formatted_address', $_POST['formatted_address']);
+		}
+	}	
 
 	//set parent on this post (or all meetings at location) without re-triggering the save_posts hook (update 7/25/17: removing post_status from this)
 	if ($old_meeting->post_parent != $location_id) {
@@ -195,6 +193,9 @@ function tsml_save_post($post_id, $post, $update) {
 			}
 		}
 	}
+
+	//location-less meetings should all be drafts
+	$wpdb->query('UPDATE ' . $wpdb->posts . ' SET post_status = "draft" WHERE post_type = "tsml_meeting" AND post_parent = 0');
 	
 	//save group information (set this value or get caught in a loop)
 	$_POST['post_type'] = 'tsml_group';
@@ -308,17 +309,12 @@ function tsml_save_post($post_id, $post, $update) {
 	//update types in use
 	tsml_update_types_in_use();
 	
-	//send out email notifications
-	//if (wp_is_post_revision($post_id)) return;
-
 	//remove self
 	$user = wp_get_current_user();
 	$tsml_notification_addresses = array_diff($tsml_notification_addresses, array($user->user_email));
 	
 	//don't notify for lat / lon changes
 	$changes = array_diff($changes, array('latitude', 'longitude'));
-
-	//dd($changes);
 
 	if (count($tsml_notification_addresses) && count($changes)) {
 		$email =' <p style="font:14px arial;margin:15px 0;">';
