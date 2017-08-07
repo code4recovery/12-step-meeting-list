@@ -446,8 +446,9 @@ function tsml_get_groups() {
 }
 
 //function: template tag to get location, attach custom fields to it
+//$location_id can be false if there is a global post, eg on the single-locations template page
 //used: single-locations.php
-function tsml_get_location($location_id) {
+function tsml_get_location($location_id=false) {
 	if (!$location = get_post($location_id)) return;
 	if ($custom = get_post_meta($location->ID)) {
 		foreach ($custom as $key=>$value) {
@@ -520,11 +521,12 @@ function tsml_get_locations() {
 }
 
 //function: template tag to get meeting and location, attach custom fields to it
+//$meeting_id can be false if there is a global $post object, eg on the single meeting template page
 //used: single-meetings.php
-function tsml_get_meeting() {
+function tsml_get_meeting($meeting_id=false) {
 	global $tsml_program, $tsml_type_descriptions, $tsml_types;
 	
-	$meeting				= get_post();
+	$meeting					= get_post($meeting_id);
 	$location				= get_post($meeting->post_parent);
 	$custom					= array_merge(get_post_meta($meeting->ID), get_post_meta($location->ID));
 	foreach ($custom as $key=>$value) {

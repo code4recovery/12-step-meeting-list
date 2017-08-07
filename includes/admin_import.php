@@ -382,7 +382,7 @@ function tmsl_import_page() {
 									$delete_options = array(
 										'nothing'	=> __('don\'t delete anything', '12-step-meeting-list'),
 										'regions'	=> __('delete only the meetings, locations, and groups for the regions present in this CSV', '12-step-meeting-list'),
-										'all' 		=> __('delete all meetings, locations, groups, and regions', '12-step-meeting-list'),
+										'all' 		=> __('delete all meetings, locations, groups, districts, and regions', '12-step-meeting-list'),
 									);
 									if (!empty($tsml_data_sources)) {
 										$delete_options['no_data_source'] = __('delete all meetings, locations, and groups not from a data source', '12-step-meeting-list');
