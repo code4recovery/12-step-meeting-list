@@ -270,10 +270,49 @@ function tsml_distance($lat1, $lon1, $lat2, $lon2, $units='mi') {
 	return round($distance, 1);
 }
 
-//set content type for emails to html, remember to remove after use
-//used by tsml_feedback()
-function tsml_email_content_type_html() {
-	return 'text/html';
+//send a nice-looking email (used by tsml_ajax_feedback() and save.php (change notifications)
+function tsml_email($to, $subject, $message, $from=false) {
+
+	$headers = array('Content-Type: text/html; charset=UTF-8');
+	if ($from) $headers[] = 'From: ' . $from;
+	
+	//prepend subject as h1
+	$message = '<h1>' . $subject . '</h1>' . $message;
+	
+	//inline styles where necessary
+	$message = str_replace('<h1>', '<h1 style="margin: 0; font-weight:bold; font-size:24px;">', $message);
+	$message = str_replace('<hr>', '<hr style="margin: 15px 0; border: 0; height: 1px; background: #cccccc;">', $message);
+	$message = str_replace('<p>', '<p style="margin: 1em 0;">', $message);
+	$message = str_replace('<a ', '<a style="color: #6699cc; text-decoration: underline;" ', $message);
+
+	//wrap message in email-compliant html
+	$message = '<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+		<title>' . $subject . '</title>
+		<style type="text/css">
+		</style>
+	</head>
+	<body style="width:100% !important; -webkit-text-size-adjust:100%; -ms-text-size-adjust:100%; margin:0; padding:0; background-color:#eeeeee;">
+		<table cellpadding="0" cellspacing="0" border="0" style="background-color:#eeeeee; width:100%; height:100%;">
+			<tr>
+				<td style="text-align:center;padding-top:15px;">
+					<table cellpadding="0" cellspacing="0" border="0" align="center">
+						<tr>
+							<td width="630" valign="top" style="background-color:#ffffff; text-align:left; padding:15px; font-size:15px; font-family:Arial, sans-serif;">
+								' . $message . '
+							</td>
+						</tr>
+					</table>
+				</td>
+			</tr>
+		</table>
+	</body>
+</html>';
+
+	return wp_mail($to, '[12 Step Meeting List] ' . $subject, $message, $headers);
 }
 
 //take a full address and return it formatted for the front-end

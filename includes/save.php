@@ -317,13 +317,13 @@ function tsml_save_post($post_id, $post, $update) {
 	$changes = array_diff($changes, array('latitude', 'longitude'));
 
 	if (count($tsml_notification_addresses) && count($changes)) {
-		$email =' <p style="font:14px arial;margin:15px 0;">';
+		$message =' <p>';
 		if ($update) {
-			$email .= sprintf(__('This is to notify you that %s updated a <a style="color:#6699cc" href="%s">meeting</a> on the %s site.', '12-step-meeting-list'), $user->display_name, get_permalink($post->ID), get_bloginfo('name'));
+			$message .= sprintf(__('This is to notify you that %s updated a <a href="%s">meeting</a> on the %s site.', '12-step-meeting-list'), $user->display_name, get_permalink($post->ID), get_bloginfo('name'));
 		} else {
-			$email .= sprintf(__('This is to notify you that %s created a <a style="color:#6699cc" href="%s">new meeting</a> on the %s site.', '12-step-meeting-list'), $user->display_name, get_permalink($post->ID), get_bloginfo('name'));
+			$message .= sprintf(__('This is to notify you that %s created a <a href="%s">new meeting</a> on the %s site.', '12-step-meeting-list'), $user->display_name, get_permalink($post->ID), get_bloginfo('name'));
 		}
-		$email .= '</p><table style="font:14px arial;width:100%;border-collapse:collapse;padding:0;">';
+		$message .= '</p><table style="font:14px arial;width:100%;border-collapse:collapse;padding:0;">';
 		$fields = array('name', 'day', 'time', 'end_time', 'types', 'notes', 'location', 'formatted_address', 'region', 'location_notes', 'group', 'group_notes', 'contact_1_name', 'contact_1_email', 'contact_1_phone', 'contact_2_name', 'contact_2_email', 'contact_2_phone', 'contact_3_name', 'contact_3_email', 'contact_3_phone', 'last_contact');
 		foreach ($fields as $field) {
 			
@@ -353,16 +353,17 @@ function tsml_save_post($post_id, $post, $update) {
 			$field_name = __(ucwords(str_replace('_', ' ', $field)), '12-step-meeting-list');
 			
 			if (in_array($field, $changes)) {
-				$email .= '<tr style="border:1px solid #999;background-color:#fff;"><td style="width:150px;padding:5px">' . $field_name . '</td><td style="padding:5px">';
-				if (!empty($old)) $email .= '<strike style="color:#999">' . $old . '</strike> ';
-				$email .= $new . '</td></tr>';
+				$message .= '<tr style="border:1px solid #999;background-color:#fff;"><td style="width:150px;padding:5px">' . $field_name . '</td><td style="padding:5px">';
+				if (!empty($old)) $message .= '<strike style="color:#999">' . $old . '</strike> ';
+				$message .= $new . '</td></tr>';
 			} elseif (!empty($old)) {
-				$email .= '<tr style="border:1px solid #999;background-color:#eee;"><td style="width:150px;padding:5px">' . $field_name . '</td><td style="padding:5px">' . $old . '</td></tr>';
+				$message .= '<tr style="border:1px solid #999;background-color:#eee;"><td style="width:150px;padding:5px">' . $field_name . '</td><td style="padding:5px">' . $old . '</td></tr>';
 			}
 		}
-		$email .= '</table>';
+		$message .= '</table>';
 		$subject = $update ? __('Meeting Change Notification', '12-step-meeting-list') : __('New Meeting Notification', '12-step-meeting-list');
-		wp_mail($tsml_notification_addresses, $subject, $email, array('Content-Type: text/html; charset=UTF-8'));
+		tsml_email($tsml_notification_addresses, $subject, $message);
+		
 	} 
 
 }

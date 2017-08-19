@@ -209,29 +209,20 @@ add_action('wp_ajax_nopriv_tsml_feedback', 'tsml_ajax_feedback');
 function tsml_ajax_feedback() {
 	global $tsml_feedback_addresses, $tsml_nonce;
 	
-    $formatted_address = sanitize_text_field($_POST['tsml_formatted_address']);
-    $url = sanitize_text_field($_POST['tsml_url']);
-    $name    = sanitize_text_field($_POST['tsml_name']);
-    $email  = sanitize_email($_POST['tsml_email']);
-    $message  = stripslashes(implode('<br>', array_map('sanitize_text_field', explode("\n", $_POST['tsml_message']))));
+    $meeting  = tsml_get_meeting(intval($_POST['meeting_id']));
+    $name     = sanitize_text_field($_POST['tsml_name']);
+    $email    = sanitize_email($_POST['tsml_email']);
+    $message  = '<p>' . nl2br(sanitize_text_area(stripslashes($_POST['tsml_message']))) . '</p>';
+    $message .= '<hr><p>Address: ' . $meeting->formatted_address . '</p><p>Meeting: <a href="' . get_permalink($meeting->ID) . '">' . get_permalink($meeting->ID) . '</a></p>';
 
-    //append footer to message
-    $message .= '<hr><p>Address: ' . $formatted_address . '</p><p>Edit meeting: <a href="' . $url . '">' . $url . '</a></p>';
-
-	//sanitize input
-	
 	//email vars
-	$subject  = '[12 Step Meeting List] Meeting Feedback Form';
-	$headers  = 'From: ' . $name . ' <' . $email . '>' . "\r\n";
-
 	if (!isset($_POST['tsml_nonce']) || !wp_verify_nonce($_POST['tsml_nonce'], $tsml_nonce)) {
 		_e('Error: nonce value not set correctly. Email was not sent.', '12-step-meeting-list');
 	} elseif (empty($tsml_feedback_addresses) || empty($name) || !is_email($email) || empty($message)) {
 		_e('Error: required form value missing. Email was not sent.', '12-step-meeting-list');
 	} else {
 		//send HTML email
-		add_filter('wp_mail_content_type', 'tsml_email_content_type_html');
-		if (wp_mail($tsml_feedback_addresses, $subject, $message, $headers)) {
+		if (tsml_email($tsml_feedback_addresses, 'Meeting Feedback Form', $message, $name . ' <' . $email . '>')) {
 			_e('Thank you for your feedback.', '12-step-meeting-list');
 		} else {
 			global $phpmailer;

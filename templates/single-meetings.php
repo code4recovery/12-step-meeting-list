@@ -169,8 +169,7 @@ get_header();
 						<?php if (!empty($tsml_feedback_addresses)) {?>
 						<form id="feedback">
 							<input type="hidden" name="action" value="tsml_feedback">
-							<input type="hidden" name="tsml_formatted_address" value="<?php echo $meeting->formatted_address?>">
-							<input type="hidden" name="tsml_url" value="<?php echo admin_url('post.php?post=' . get_the_ID() . '&action=edit')?>">
+							<input type="hidden" name="meeting_id" value="<?php echo $meeting->ID?>">
 							<?php wp_nonce_field($tsml_nonce, 'tsml_nonce', false)?>
 							<div class="panel panel-default panel-expandable">
 								<div class="panel-heading">

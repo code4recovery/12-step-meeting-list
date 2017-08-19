@@ -3,7 +3,7 @@ Contributors: meetingguide, aasanjose
 Tags: 12-step, aa, al-anon, coda, meetings, na, oa, saa, slaa
 Requires at least: 3.2
 Tested up to: 4.8
-Stable tag: 2.14.3
+Stable tag: 2.14.4
 
 This plugin helps 12 step programs list their meetings. It standardizes addresses, and displays results in a searchable list and map.
 
@@ -17,6 +17,7 @@ It was originally designed to maintain a list of AA meetings in Santa Clara Coun
 
 1. [Arkansas](http://arkansascentraloffice.org/meetings/)
 1. [Austin, TX](http://austinaa.org/meetings/)
+1. [Batavia, IL](https://aadistrict61.org/archives/meetings)
 1. [Baton Rouge, LA](http://aabatonrouge.org/meetings/)
 1. [Bowling Green, KY](http://bowlinggreenaa.org/meetings/)
 1. [Charleston, WV](http://aawvdist1.org/wordpress/?post_type=tsml_meeting)
@@ -25,6 +26,7 @@ It was originally designed to maintain a list of AA meetings in Santa Clara Coun
 1. [Colorado Springs, CO](http://www.coloradospringsaa.org/meetings/)
 1. [Corpus Christi, TX](http://www.cbiaa.org/meetings/)
 1. [Davis, CA](http://aadavis.org/meetings/)
+1. [Dayton, OH](http://aadaytononline.org/meetings/)
 1. [Daytona, FL](http://aadaytona.org/meetings/)
 1. [DuPage County, IL](http://dist41.aa-nia.org/meetings/)
 1. [East Bay, CA](http://eastbayaa.org/meetings)
@@ -33,6 +35,7 @@ It was originally designed to maintain a list of AA meetings in Santa Clara Coun
 1. [Ft. Worth, TX](http://fortworthaa.org/?post_type=tsml_meeting)
 1. [Greensboro, NC](http://nc23.org/meetings/)
 1. [Harrisburg, PA](http://www.aaharrisburg.org/meetings/)
+1. [Hernando County, FL](http://www.aahernando.org/meetings/)
 1. [Joliet, IL](http://aadistrict51.org/meetings/)
 1. [Midlands, UK (Polish)](http://intergrupamidlands.co.uk/meetings/)
 1. [Kansas](https://ks-aa.org/meetings/)
@@ -107,6 +110,7 @@ It was originally designed to maintain a list of AA meetings in Santa Clara Coun
 **Codependents Anonymous**
 
 1. [Los Angeles, CA](http://www.lacoda.org/)
+1. [South SF Bay Area, CA](http://www.sbcoda.org/meetings/?d=any&v=list)
 
 **Heroin Anonymous**
 
@@ -251,6 +255,12 @@ Also check out our [One Page Meeting List](https://github.com/meeting-guide/one-
 1. Edit location
 
 == Changelog ==
+
+= 2.14.4 =
+* Adding Refuge Recovery
+* Fixing control margin
+* Changing link in feedback email to be public meeting URL (per Mississippi)
+* Improved email appearance
 
 = 2.14.3 =
 * Fixing error message on single location page

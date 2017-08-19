@@ -311,6 +311,9 @@ $height				: 550px;		//height of map and min-height of list
 	
 		&[data-view=list] {
 			padding-bottom: 0;
+			.controls {
+				padding-bottom: 15px;				
+			}
 			table {
 				display: table;
 			}
@@ -559,7 +562,7 @@ $height				: 550px;		//height of map and min-height of list
 						text-transform: none;
 						cursor: pointer;
 						position: relative;
-						padding: 8px $margin;
+						padding: $margin / 2 $margin ;
 						border: 0;
 						&[data-sort="asc"]:after, &[data-sort="desc"]:after {
 							content: "";
@@ -898,10 +901,13 @@ $height				: 550px;		//height of map and min-height of list
 body {
 	&.twentyfourteen {
 		#page::before { display: none; }
-		#meetings { 
+		#tsml #meetings { 
 			width: 100%; 
 			.page-header { max-width: none; }
-			&[data-view=list] { padding-bottom: 0; }
+			&[data-view=list] { 
+				padding-bottom: 0; 
+				.controls { padding-bottom: $margin / 2; }
+			}
 		}
 		&.masthead-fixed #main { margin-top: 0; }
 		#tsml { margin-bottom: 15px; }
