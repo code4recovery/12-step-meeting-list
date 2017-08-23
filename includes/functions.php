@@ -610,6 +610,11 @@ function tsml_get_meeting($meeting_id=false) {
 		foreach ($group_custom as $key=>$value) {
 			$meeting->{$key} = $value[0];
 		}
+		
+		if ($district = get_the_terms($group, 'tsml_district')) {
+			$meeting->district_id = $district[0]->term_id;
+			$meeting->district = $district[0]->name;
+		}
 	} else {
 		$meeting->group_id = null;
 		$meeting->group = null;

@@ -141,6 +141,9 @@ get_header();
 										<?php if (!empty($meeting->group_notes)) {?>
 											<section class="group-notes"><?php echo wpautop($meeting->group_notes)?></section>
 										<?php }
+										if (!empty($meeting->district)) {?>
+											<section class="group-district"><?php echo $meeting->district?></section>
+										<?php }											
 										if (!empty($meeting->website)) {?>
 											<p class="group-website">
 												<a href="<?php echo $meeting->website?>" target="_blank"><?php echo $meeting->website?></a>
