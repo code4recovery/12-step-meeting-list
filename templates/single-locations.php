@@ -32,7 +32,7 @@ get_header();
 							<ul class="list-group">
 								<li class="list-group-item list-group-item-address">
 									<p><?php echo tsml_format_address($location->formatted_address)?></p>
-									<?php if ($location->region) {?>
+									<?php if ($location->region && !strpos($location->formatted_address, $location->region)) {?>
 									<p><?php echo $location->region?></p>
 									<?php }
 									if ($location->notes) {?>

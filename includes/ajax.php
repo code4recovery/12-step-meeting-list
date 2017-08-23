@@ -440,7 +440,7 @@ function tsml_ajax_import() {
 			$location_id = $locations[$formatted_address];
 		} else {
 			$location_id = wp_insert_post(array(
-				'post_title'	=> $meeting['location'],
+				'post_title'		=> $meeting['location'],
 				'post_type'		=> 'tsml_location',
 				'post_content'	=> $meeting['location_notes'],
 				'post_status'	=> 'publish',
@@ -453,15 +453,17 @@ function tsml_ajax_import() {
 		}
 				
 		//save meeting to this location
-		$meeting_id = wp_insert_post(array(
-			'post_title'		=> $meeting['name'],
+		$options = array(
+			'post_title'			=> $meeting['name'],
 			'post_type'			=> 'tsml_meeting',
 			'post_status'		=> 'publish',
 			'post_parent'		=> $location_id,
 			'post_content'		=> trim($meeting['notes']), //not sure why recursive trim not catching this
 			'post_modified'		=> $meeting['post_modified'],
 			'post_modified_gmt'	=> $meeting['post_modified_gmt'],
-		));
+		);
+		if (!empty($meeting['slug'])) $options['post_name'] = $meeting['slug'];
+		$meeting_id = wp_insert_post($options);
 		
 		//add day and time(s) if not appointment meeting
 		if (!empty($meeting['time']) && (!empty($meeting['day']) || (string) $meeting['day'] === '0')) {

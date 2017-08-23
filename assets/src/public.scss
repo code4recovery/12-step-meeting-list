@@ -901,17 +901,18 @@ $height				: 550px;		//height of map and min-height of list
 body {
 	&.twentyfourteen {
 		#page::before { display: none; }
-		#tsml #meetings { 
-			width: 100%; 
-			.page-header { max-width: none; }
-			&[data-view=list] { 
-				padding-bottom: 0; 
-				.controls { padding-bottom: $margin / 2; }
+		#tsml { 
+			margin-bottom: 15px; 
+			#meetings { 
+				width: 100%; 
+				.page-header { max-width: none; }
+				&[data-view=list] { 
+					padding-bottom: 0; 
+					.controls { padding-bottom: $margin / 2; }
+				}
 			}
+			#map { margin-bottom: 15px; }
 		}
-		&.masthead-fixed #main { margin-top: 0; }
-		#tsml { margin-bottom: 15px; }
-		#tsml #map { margin-bottom: 15px; }
 	}
 	&.twentyten {
 		#main { padding-top: 5px; font-size: 14px; }

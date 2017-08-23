@@ -124,7 +124,7 @@ get_header();
 									$location_info .= '<section class="location-notes">' . wpautop($meeting->location_notes) . '</section>';
 								}
 								
-								if (!empty($meeting->region)) {
+								if (!empty($meeting->region) && !strpos($meeting->formatted_address, $meeting->region)) {
 									$location_info .= '<p class="location-region">' . $meeting->region . '</p>';
 								}
 

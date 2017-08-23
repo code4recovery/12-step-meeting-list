@@ -232,6 +232,9 @@ jQuery(function($){
 			
 			//only one search mode
 			$('#mode li').removeClass('active');
+			
+			//clear search when changing modes
+			$search_field.val('');
 
 			//remove meeting results
 			$('#meetings').addClass('empty');
