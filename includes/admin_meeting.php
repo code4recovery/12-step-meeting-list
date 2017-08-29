@@ -171,6 +171,20 @@ function tsml_admin_init() {
 				<?php }?>
 			</ol>
 		</div>
+		<?php }
+		if (wp_count_terms('tsml_district')) {?>
+		<div class="meta_form_row">
+			<label for="district"><?php _e('District', '12-step-meeting-list')?></label>
+			<?php wp_dropdown_categories(array(
+				'name' => 'district',
+				'taxonomy' => 'tsml_district',
+				'hierarchical' => true,
+				'hide_empty' => false,
+				'orderby' => 'name',
+				'selected' => $district,
+				'show_option_none' => __('District', '12-step-meeting-list'),
+			))?>
+		</div>
 		<?php }?>
 		<div class="meta_form_row">
 			<label><?php _e('Notes', '12-step-meeting-list')?></label>
@@ -204,21 +218,7 @@ function tsml_admin_init() {
 			<label><?php _e('Last Contact', '12-step-meeting-list')?></label>
 			<input type="date" name="last_contact" value="<?php echo @$group_custom['last_contact'][0]?>">
 		</div>
-		<?php if (wp_count_terms('tsml_district')) {?>
-		<div class="meta_form_row">
-			<label for="district"><?php _e('District', '12-step-meeting-list')?></label>
-			<?php wp_dropdown_categories(array(
-				'name' => 'district',
-				'taxonomy' => 'tsml_district',
-				'hierarchical' => true,
-				'hide_empty' => false,
-				'orderby' => 'name',
-				'selected' => $district,
-				'show_option_none' => __('District', '12-step-meeting-list'),
-			))?>
-		</div>
-		<?php }
-		if (tsml_accepts_payments()) {?>
+		<?php if (tsml_accepts_payments()) {?>
 		<div class="meta_form_row">
 			<label><?php _e('Stripe API Key', '12-step-meeting-list')?></label>
 			<input type="text" name="contributions_api_key" id="contributions_api_key" value="<?php echo @$group_custom['contributions_api_key'][0]?>" placeholder="<?php _e('Stripe API Key')?>">

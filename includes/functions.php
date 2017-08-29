@@ -298,7 +298,7 @@ function tsml_email($to, $subject, $message, $from=false) {
 	<body style="width:100% !important; -webkit-text-size-adjust:100%; -ms-text-size-adjust:100%; margin:0; padding:0; background-color:#eeeeee;">
 		<table cellpadding="0" cellspacing="0" border="0" style="background-color:#eeeeee; width:100%; height:100%;">
 			<tr>
-				<td style="text-align:center;padding-top:15px;">
+				<td valign="top" style="text-align:center;padding-top:15px;">
 					<table cellpadding="0" cellspacing="0" border="0" align="center">
 						<tr>
 							<td width="630" valign="top" style="background-color:#ffffff; text-align:left; padding:15px; font-size:15px; font-family:Arial, sans-serif;">
@@ -349,6 +349,15 @@ function tsml_format_name($name, $types=array()) {
 		$name .= ' <small>' . __('Women', '12-step-meeting-list') . '</small>';
 	}
 	return $name;
+}
+
+//get the next meeting start datetime for schema.org microdata
+//used:		single-meeting.php
+function tsml_format_next_start($meeting) {
+	if (empty($meeting->time)) return null;
+	$days = array('sunday', 'monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday');
+	$string = 'next ' . $days[$meeting->day] . ' ' . $meeting->time . ' ' . get_option('timezone_string');
+	return date('c', strtotime($string));
 }
 
 //function: locale-aware number format

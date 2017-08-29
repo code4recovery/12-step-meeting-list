@@ -186,6 +186,12 @@ body {
 				float: left;
 				&:focus { box-shadow: none; }
 			}
+			//wordpress is doing something fancy with checkboxes and it's not working
+			input[type=checkbox] {
+				-webkit-appearance: checkbox;
+				&:checked:before { display: none; }
+			}
+			
 			input[disabled] { opacity: .5; cursor: not-allowed; }
 		
 			&.typeahead {
