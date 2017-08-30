@@ -575,21 +575,45 @@ function tsml_get_meeting($meeting_id=false) {
 	global $tsml_program, $tsml_type_descriptions, $tsml_types;
 	
 	$meeting					= get_post($meeting_id);
-	$location				= get_post($meeting->post_parent);
-	$custom					= array_merge(get_post_meta($meeting->ID), get_post_meta($location->ID));
+	$custom					= get_post_meta($meeting->ID);
+
+	//location optional
+	if ($meeting->post_parent) {
+		
+		$location = get_post($meeting->post_parent);
+
+		$meeting->location_id = $location->id;
+
+		$custom = array_merge($custom, get_post_meta($location->ID));
+	
+		$meeting->location_notes = esc_html($location->post_content);
+		if ($region = get_the_terms($location, 'tsml_region')) {
+			$meeting->region_id = $region[0]->term_id;
+			$meeting->region = $region[0]->name;
+		}
+		
+		//get other meetings at this location
+		$meeting->location_meetings = tsml_get_meetings(array('location_id' => $location->ID));
+	
+		//link for directions
+		$meeting->directions = 'https://maps.apple.com/?' . http_build_query(array(
+			'll' => $meeting->latitude . ',' . $meeting->longitude,
+			'q' => $meeting->location,
+			'address' => $meeting->formatted_address,
+			'z' => 16,
+		));
+
+		$meeting->location			= htmlentities($location->post_title, ENT_QUOTES);
+	}
+	
+	//escape meeting values
 	foreach ($custom as $key=>$value) {
 		$meeting->{$key} = ($key == 'types') ? $value[0] : htmlentities($value[0], ENT_QUOTES);
 	}
-	$meeting->types				= empty($meeting->types) ? array() : unserialize($meeting->types);
+	if (empty($meeting->types)) $meeting->types = array();
+	if (!is_array($meeting->types)) $meeting->types = unserialize($meeting->types);
 	$meeting->post_title			= htmlentities($meeting->post_title, ENT_QUOTES);
-	$meeting->location			= htmlentities($location->post_title, ENT_QUOTES);
 	$meeting->notes 				= esc_html($meeting->post_content);
-	$meeting->location_notes		= esc_html($location->post_content);
-	
-	if ($region = get_the_terms($location, 'tsml_region')) {
-		$meeting->region_id = $region[0]->term_id;
-		$meeting->region = $region[0]->name;
-	}
 	
 	//type description?
 	foreach (array('C', 'O') as $type) {
@@ -599,17 +623,6 @@ function tsml_get_meeting($meeting_id=false) {
 		}
 	}
 	
-	//get other meetings at this location
-	$meeting->location_meetings = tsml_get_meetings(array('location_id' => $location->ID));
-
-	//link for directions
-	$meeting->directions = 'https://maps.apple.com/?' . http_build_query(array(
-		'll' => $meeting->latitude . ',' . $meeting->longitude,
-		'q' => $meeting->location,
-		'address' => $meeting->formatted_address,
-		'z' => 16,
-	));
-
 	//if meeting is part of a group, include group info
 	if ($meeting->group_id) {
 		$group = get_post($meeting->group_id);
@@ -1304,7 +1317,7 @@ function tmsl_meetings_url($parameters) {
 //used:		functions.php in lieu of nl2br()
 function tsml_paragraphs($string) {
 	$paragraphs = '';
-	foreach (explode("\n", $string) as $line) {
+	foreach (explode("\n", trim($string)) as $line) {
 		if ($line = trim($line)) {
 			$paragraphs .= '<p>' . $line . '</p>';
 		}

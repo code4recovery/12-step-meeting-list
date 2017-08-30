@@ -16,12 +16,15 @@ function tsml_insert_post_check($post) {
 add_action('save_post', 'tsml_save_post', 10, 3);
 function tsml_save_post($post_id, $post, $update) {
 	global $tsml_nonce, $wpdb, $tsml_notification_addresses, $tsml_days;
-
+	
 	//security
 	if (defined('DOING_AUTOSAVE') && DOING_AUTOSAVE) return;
 	if (!current_user_can('edit_post', $post_id)) return;
 	if (!isset($_POST['tsml_nonce']) || !wp_verify_nonce($_POST['tsml_nonce'], $tsml_nonce)) return;
 	if (!isset($_POST['post_type']) || ($_POST['post_type'] != 'tsml_meeting')) return;
+	
+	//update is always 1, probably because it's actually 'created' when the edit screen first loads (due to autosave)
+	$update = ($post->post_date !== $post->post_modified);
 	
 	//sanitize strings
 	$strings = array('post_title', 'location', 'formatted_address', 'post_status', 'group', 'last_contact');
@@ -160,7 +163,7 @@ function tsml_save_post($post_id, $post, $update) {
 				$changes[] = 'region';
 				wp_set_object_terms($location_id, intval($_POST['region']), 'tsml_region');
 			}
-		} else {
+		} elseif (!empty($_POST['formatted_address'])) {
 			$changes[] = 'location';
 			$changes[] = 'location_notes';
 			$location_id = wp_insert_post(array(
@@ -177,7 +180,7 @@ function tsml_save_post($post_id, $post, $update) {
 		}
 	
 		//update address & info on location
-		if (!$update || html_entity_decode($old_meeting->formatted_address) != $_POST['formatted_address']) {
+		if ($location_id && (!$update || html_entity_decode($old_meeting->formatted_address) != $_POST['formatted_address'])) {
 			$changes[] = 'formatted_address';
 			update_post_meta($location_id, 'formatted_address', $_POST['formatted_address']);
 		}
@@ -377,7 +380,6 @@ function tsml_save_post($post_id, $post, $update) {
 		$message .= '</table>';
 		$subject = $update ? __('Meeting Change Notification', '12-step-meeting-list') : __('New Meeting Notification', '12-step-meeting-list');
 		tsml_email($tsml_notification_addresses, $subject, $message);
-		
 	} 
 
 }

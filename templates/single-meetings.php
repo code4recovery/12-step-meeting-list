@@ -114,31 +114,33 @@ get_header();
 									?>
 								</li>
 								<?php
-								$location_info = '<div itemprop="location" itemscope itemtype="http://schema.org/Place">
-									<h3 class="list-group-item-heading">' . $meeting->location . '</h3>';
-								
-								if ($other_meetings = count($meeting->location_meetings) - 1) {
-									$location_info .= '<p class="location-other-meetings">' . sprintf(_n('%d other meeting at this location', '%d other meetings at this location', $other_meetings, '12-step-meeting-list'), $other_meetings) . '</p>';
+								if (!empty($meeting->location_id)) {
+									$location_info = '<div itemprop="location" itemscope itemtype="http://schema.org/Place">
+										<h3 class="list-group-item-heading">' . $meeting->location . '</h3>';
+									
+									if ($other_meetings = count($meeting->location_meetings) - 1) {
+										$location_info .= '<p class="location-other-meetings">' . sprintf(_n('%d other meeting at this location', '%d other meetings at this location', $other_meetings, '12-step-meeting-list'), $other_meetings) . '</p>';
+									}
+									
+									$location_info .= '<p class="location-address" itemprop="address" itemscope itemtype="http://schema.org/PostalAddress">' . tsml_format_address($meeting->formatted_address) . '</p>';
+	
+									if (!empty($meeting->location_notes)) {
+										$location_info .= '<section class="location-notes">' . wpautop($meeting->location_notes) . '</section>';
+									}
+									
+									if (!empty($meeting->region) && !strpos($meeting->formatted_address, $meeting->region)) {
+										$location_info .= '<p class="location-region">' . $meeting->region . '</p>';
+									}
+									
+									$location_info .= '</div>';
+	
+									echo tsml_link(
+										get_permalink($meeting->post_parent), 
+										$location_info, 
+										'tsml_meeting', 
+										'list-group-item list-group-item-location'
+									);
 								}
-								
-								$location_info .= '<p class="location-address" itemprop="address" itemscope itemtype="http://schema.org/PostalAddress">' . tsml_format_address($meeting->formatted_address) . '</p>';
-
-								if (!empty($meeting->location_notes)) {
-									$location_info .= '<section class="location-notes">' . wpautop($meeting->location_notes) . '</section>';
-								}
-								
-								if (!empty($meeting->region) && !strpos($meeting->formatted_address, $meeting->region)) {
-									$location_info .= '<p class="location-region">' . $meeting->region . '</p>';
-								}
-								
-								$location_info .= '</div>';
-
-								echo tsml_link(
-									get_permalink($meeting->post_parent), 
-									$location_info, 
-									'tsml_meeting', 
-									'list-group-item list-group-item-location'
-								);
 
 								if (!empty($meeting->group_id)) {?>
 									<li class="list-group-item list-group-item-group">
