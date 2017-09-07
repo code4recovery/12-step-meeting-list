@@ -661,9 +661,9 @@ if (!function_exists('tsml_get_meeting')) {
 		
 			//link for directions
 			$meeting->directions = 'https://maps.apple.com/?' . http_build_query(array(
-				'll' => $meeting->latitude . ',' . $meeting->longitude,
-				'q' => $meeting->location,
-				'address' => $meeting->formatted_address,
+				'll' => $location->latitude . ',' . $location->longitude,
+				'q' => $location->location,
+				'address' => $location->formatted_address,
 				'z' => 16,
 			));
 	
