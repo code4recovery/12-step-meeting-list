@@ -228,7 +228,7 @@ body {
 				
 				input { margin: 0 8px 0 0; }
 				label { 
-					float: none; display: block; margin: 0; padding: 5px 0; line-height: 16px; width: 100%; text-align: left; font-size: 13px; 
+					float: none; display: block; margin: 0; padding: 5px 0; line-height: 16px; width: 100%; text-align: left; font-size: 13px; -webkit-column-break-inside: avoid;
 					&.not_in_use { display: none; }
 				}
 				.toggle_more { 
