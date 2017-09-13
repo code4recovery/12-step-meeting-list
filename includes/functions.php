@@ -829,7 +829,8 @@ if (!function_exists('tsml_get_meetings')) {
 				);
 			} elseif ($arguments['time'] == 'upcoming') {
 				$meta_query[] = array(
-					array('key' => 'time', 'value' => current_time('H:i'), 'compare' => '>='),
+					//meetings that started in the last 30 minutes
+					array('key' => 'time', 'value' => date('H:i', current_time('timestamp') - 1800), 'compare' => '>='),
 				);
 			}
 		}
