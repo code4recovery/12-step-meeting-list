@@ -475,6 +475,8 @@ function tsml_define_strings() {
 			'SP'		=> __('Speaker', '12-step-meeting-list'),
 		),
 		'rr' => array(
+			'BE'		=> __('Beginners', '12-step-meeting-list'),
+			'BB'		=> __('Book Study', '12-step-meeting-list'),
 			'CC'		=> __('Child Care Available', '12-step-meeting-list'),
 			'DF'		=> __('Dog Friendly', '12-step-meeting-list'),
 			'8F'		=> __('Eightfold Path Study', '12-step-meeting-list'),

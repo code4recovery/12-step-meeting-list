@@ -183,6 +183,8 @@ function tmsl_import_page() {
 				'status' => 'OK',
 				'last_import' => current_time('timestamp'),
 				'count_meetings' => 0,
+				//'name' => sanitize_text_field($_POST['tsml_add_data_source_name']),
+				//'type' => 'JSON',
 			);
 			
 			//import feed
@@ -437,38 +439,39 @@ function tmsl_import_page() {
 					</div>
 					<div class="postbox">
 						<div class="inside">
-							<h3><?php _e('Data Sources <small>Beta</small>', '12-step-meeting-list')?></h3>
+							<h3><?php _e('Data Sources', '12-step-meeting-list')?></h3>
 							<p><?php printf(__('Data sources are JSON feeds that contain a website\'s public meeting data. They can be used to aggregate meetings from different sites into a single master list. 
 								The data source for this website is <a href="%s" target="_blank">right here</a>. More information is available at the <a href="%s" target="_blank">Meeting Guide API Specification</a>.', '12-step-meeting-list'), admin_url('admin-ajax.php') . '?action=meetings', 'https://github.com/meeting-guide/api')?></p>
 							<?php if (!empty($tsml_data_sources)) {?>
 							<table>
 								<thead>
 									<tr>
-										<th><?php _e('URL', '12-step-meeting-list')?></th>
-										<th><?php _e('Last Update', '12-step-meeting-list')?></th>
-										<th></th>
-										<th><?php _e('Meetings', '12-step-meeting-list')?></th>
-										<!--<th><?php _e('Status', '12-step-meeting-list')?></th>-->
-										<th></th>
+										<th class="small"></th>
+										<th><?php _e('Feed', '12-step-meeting-list')?></th>
+										<th class="align-center"><?php _e('Meetings', '12-step-meeting-list')?></th>
+										<th class="align-right"><?php _e('Last Update', '12-step-meeting-list')?></th>
+										<th class="small"></th>
 									</tr>
 								</thead>
 								<tbody>
 									<?php foreach ($tsml_data_sources as $feed => $properties) {?>
 									<tr data-source="<?php echo $feed?>">
-										<td><a href="<?php echo $feed?>" target="_blank"><?php echo $feed?></a></td>
-										<td>
-											<?php echo date(get_option('date_format') . ' ' . get_option('time_format'), $properties['last_import'])?>
-										</td>
-										<td>
+										<td class="small">
 											<form method="post" action="<?php echo $_SERVER['REQUEST_URI']?>">
 												<?php wp_nonce_field($tsml_nonce, 'tsml_nonce', false)?>
 												<input type="hidden" name="tsml_add_data_source" value="<?php echo $feed?>">
 												<input type="submit" value="Refresh" class="button button-small">
 											</form>
 										</td>
-										<td class="count_meetings"><?php echo number_format($properties['count_meetings'])?></td>
-										<!--<td><?php echo $properties['status']?></td>-->
 										<td>
+											<a href="<?php echo $feed?>" target="_blank"><?php echo @$properties['name'] ?: __('Unnamed Feed', '12-step-meeting-list')?></a>
+											(<?php echo @$properties['type'] ?: 'JSON'?>)
+										</td>
+										<td class="align-center"><?php echo number_format($properties['count_meetings'])?></td>
+										<td class="align-right">
+											<?php echo date(get_option('date_format') . ' ' . get_option('time_format'), $properties['last_import'])?>
+										</td>
+										<td class="small">
 											<form method="post" action="<?php echo $_SERVER['REQUEST_URI']?>">
 												<?php wp_nonce_field($tsml_nonce, 'tsml_nonce', false)?>
 												<input type="hidden" name="tsml_remove_data_source" value="<?php echo $feed?>">
@@ -482,7 +485,10 @@ function tmsl_import_page() {
 							<?php }?>
 							<form class="columns" method="post" action="<?php echo $_SERVER['REQUEST_URI']?>">
 								<?php wp_nonce_field($tsml_nonce, 'tsml_nonce', false)?>
-								<div class="input">
+								<div class="input-half">
+									<input type="text" name="tsml_add_data_source_name" placeholder="<?php _e('District 02', '12-step-meeting-list')?>">
+								</div>
+								<div class="input-half">
 									<input type="text" name="tsml_add_data_source" placeholder="https://">
 								</div>
 								<div class="btn">
@@ -509,8 +515,11 @@ function tmsl_import_page() {
 					<div class="postbox" id="settings">
 						<div class="inside">
 							<h3><?php _e('Settings', '12-step-meeting-list')?></h3>
-							<p><?php printf(__('The program determines which meeting types are available. If your program isn\'t not listed, <a href="%s">let us know</a> what types of meetings it has (Open, Closed, Topic Discussion, etc).', '12-step-meeting-list'), TSML_CONTACT_LINK)?></p>
 							<form method="post" action="<?php echo $_SERVER['REQUEST_URI']?>">
+								<details>
+									<summary><strong><?php _e('Program', '12-step-meeting-list')?></strong></summary>
+									<p><?php printf(__('The program determines which meeting types are available. If your program isn\'t not listed, <a href="%s">let us know</a> what types of meetings it has (Open, Closed, Topic Discussion, etc).', '12-step-meeting-list'), TSML_CONTACT_LINK)?></p>
+								</details>
 								<?php wp_nonce_field($tsml_nonce, 'tsml_nonce', false)?>
 								<select name="tsml_program" onchange="this.form.submit()">
 									<?php foreach ($tsml_programs as $key => $value) {?>
@@ -519,6 +528,27 @@ function tmsl_import_page() {
 								</select>
 							</form>
 							<form method="post" action="<?php echo $_SERVER['REQUEST_URI']?>">
+								<details>
+									<summary><strong><?php _e('Distance Units', '12-step-meeting-list')?></strong></summary>
+									<p><?php _e('This determines which units are used as radii on the meeting list page.', '12-step-meeting-list')?></p>
+								</details>
+								<?php wp_nonce_field($tsml_nonce, 'tsml_nonce', false)?>
+								<select name="tsml_distance_units" onchange="this.form.submit()">
+								<?php 
+								$distance_units = array(
+									'km' => __('Kilometers', '12-step-meeting-list'),
+									'mi' => __('Miles', '12-step-meeting-list'),	
+								);
+								foreach ($distance_units as $key => $value) {?>
+								<option value="<?php echo $key?>"<?php selected($tsml_distance_units, $key)?>><?php echo $value?></option>
+								<?php }?>
+								</select>
+							</form>
+							<form method="post" action="<?php echo $_SERVER['REQUEST_URI']?>">
+								<details>
+									<summary><strong><?php _e('Sharing', '12-step-meeting-list')?></strong></summary>
+									<p><?php _e('This determines which units are used as radii on the meeting list page.', '12-step-meeting-list')?></p>
+								</details>
 								<?php wp_nonce_field($tsml_nonce, 'tsml_nonce', false)?>
 								<select name="tsml_distance_units" onchange="this.form.submit()">
 								<?php 

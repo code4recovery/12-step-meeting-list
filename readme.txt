@@ -4,13 +4,15 @@ Donate link: https://meetingguide.org/donate
 Tags: 12-step, aa, al-anon, coda, meetings, na, oa, saa, slaa
 Requires at least: 3.2
 Tested up to: 4.8
-Stable tag: 2.14.14
+Stable tag: 2.15
 
 This plugin helps 12 step programs list their meetings. It standardizes addresses, and displays results in a searchable list and map.
 
 == Description ==
 
-This plugin is the easiest way to have your area's meetings listed in the [Meeting Guide mobile app](https://meetingguide.org/) for iOS and Android devices.
+This plugin helps 12 step programs list their meetings. It standardizes addresses, and displays results in a searchable list and map.
+
+It's also the easiest way to have your area's meetings listed in the [Meeting Guide mobile app](https://meetingguide.org/) for iOS and Android devices.
 
 It was originally designed to maintain a list of AA meetings in Santa Clara County, CA. It's now in use in the following areas:
 
@@ -87,6 +89,7 @@ It was originally designed to maintain a list of AA meetings in Santa Clara Coun
 1. [Topeka, KS](http://aatopeka.org/meetings/)
 1. [Tulsa, OK](http://district40aa.com/meetings)
 1. [Vancouver, Canada](http://www.vancouveraa.ca/meetings/)
+1. [Ventura County, CA](https://aaventuracounty.org/meetings)
 1. [Vienna, Austria](https://www.aavienna.com/meetings/)
 1. [Virginia](https://aavirginia.org/meetings/)
 1. [Walnut Creek, CA](http://contracostaaa.org/meetings)
@@ -110,7 +113,6 @@ It was originally designed to maintain a list of AA meetings in Santa Clara Coun
 
 1. [Lancaster, PA](http://lanclebalanon.org/meetings/?d=any)
 1. [Naples, FL](https://naplesafg.org/meetings)
-1. [Orange County, CA](http://ocalanon-d60.org/meetings?d=any)
 1. [Pennsylvania](http://pa-al-anon.org/meetings/)
 
 **Codependents Anonymous**
@@ -133,6 +135,10 @@ It was originally designed to maintain a list of AA meetings in Santa Clara Coun
 1. [Martha's Vineyard](http://www.mvana.org/meetings/?tsml-day=any)
 1. [Poland](http://anonimowinarkomani.org/meetings/)
 1. [Vienna](https://www.navienna.com/meetings/?d=any)
+
+**Refuge Recovery**
+
+1. [Oakland, CA](http://refugerecoveryoakland.org/meetings/)
 
 **Sex Addicts Anonymous**
 
@@ -186,6 +192,13 @@ No problem, just add this CSS to your theme:
 
 	div#meetings .controls ul.dropdown-menu div.expand { display: none; }
 	div#meetings .controls ul.dropdown-menu ul.children { height: auto; }
+
+= How can I show Any Day by default? =
+The easiest way is to link to that view straight from your navigation. Usually that looks like `/meetings/?tsml-day=any`, but it can vary depending on your settings.
+
+If you'd prefer to keep the default address, you could add this code to your theme's functions.php instead:
+
+	$tsml_defaults['day'] = null;
 
 = How do I change the default search radius for location searches? =
 Add this to your theme's functions.php. The value should be an existing value, ie 1, 5, 10, 25 or 50.
@@ -265,6 +278,12 @@ Also check out our [One Page Meeting List](https://github.com/meeting-guide/one-
 1. Edit location
 
 == Changelog ==
+
+= 2.15 =
+* Sites may now control their level of sharing
+* CSVs and Google Sheets can now be data sources
+* Support for User Role Editor plugin
+* FAQ item for any day view
 
 = 2.14.14 =
 * Upcoming meetings now include meetings that started in the last 30 minutes
