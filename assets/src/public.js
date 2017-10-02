@@ -83,9 +83,6 @@ jQuery(function($){
 		
 		//set page title
 		updateTitle();
-	
-		//dropdownify dropdowns (manually, to avoid conflicts)
-		$('.tsml-dropdown-toggle').dropdown();
 		
 		//if already searching, mark results
 		var $search_field = $('#meetings #search input[name=query]');

@@ -1,15 +1,18 @@
 === 12 Step Meeting List ===
 Contributors: meetingguide, aasanjose
+Donate link: https://meetingguide.org/donate
 Tags: 12-step, aa, al-anon, coda, meetings, na, oa, saa, slaa
 Requires at least: 3.2
 Tested up to: 4.8
-Stable tag: 2.14.9
+Stable tag: 2.15
 
 This plugin helps 12 step programs list their meetings. It standardizes addresses, and displays results in a searchable list and map.
 
 == Description ==
 
-This plugin is the easiest way to have your area's meetings listed in the [Meeting Guide mobile app](https://meetingguide.org/) for iOS and Android devices.
+This plugin helps 12 step programs list their meetings. It standardizes addresses, and displays results in a searchable list and map.
+
+It's also the easiest way to have your area's meetings listed in the [Meeting Guide mobile app](https://meetingguide.org/) for iOS and Android devices.
 
 It was originally designed to maintain a list of AA meetings in Santa Clara County, CA. It's now in use in the following areas:
 
@@ -19,10 +22,12 @@ It was originally designed to maintain a list of AA meetings in Santa Clara Coun
 1. [Austin, TX](http://austinaa.org/meetings/)
 1. [Batavia, IL](https://aadistrict61.org/archives/meetings)
 1. [Baton Rouge, LA](http://aabatonrouge.org/meetings/)
+1. [Bethlehem, PA](https://www.aalv.org/meetings)
 1. [Bowling Green, KY](http://bowlinggreenaa.org/meetings/)
 1. [Cancún, Mexico](http://aacancun.org/meetings/)
 1. [Charleston, WV](http://aawvdist1.org/wordpress/?post_type=tsml_meeting)
 1. [Charlotte, NC](http://charlotteaa.org/meetings/)
+1. [Cincinnati, OH](http://cincinnatiaa.org/meetings/)
 1. [Continental Europe](http://alcoholics-anonymous.eu/meetings/)
 1. [Colorado Springs, CO](http://www.coloradospringsaa.org/meetings/)
 1. [Corpus Christi, TX](http://www.cbiaa.org/meetings/)
@@ -60,10 +65,12 @@ It was originally designed to maintain a list of AA meetings in Santa Clara Coun
 1. [New York, NY](https://www.nyintergroup.org/meetings/)
 1. [North Central Washington](http://aancw.org/meetings)
 1. [Oahu, HI](http://oahucentraloffice.com/meetings/)
+1. [Oklahoma](http://aaoklahoma.org/meetings)
 1. [Orlando, FL](http://cflintergroup.org/meetings/)
 1. [Philadelphia, PA](http://www.aasepia.org/meetings/)
 1. [Portland, OR](http://home.pdxaa.org/meetings/)
 1. [Rochester, MN](http://aadistrict1.org/blog/meetings/)
+1. [Rhode Island](https://aainri.com/meetings/)
 1. [Sacramento, CA](http://aasacramento.org/meetings/)
 1. [San Francisco, CA](https://www.aasf.org/meetings)
 1. [San Jose, CA](https://aasanjose.org/meetings)
@@ -82,6 +89,7 @@ It was originally designed to maintain a list of AA meetings in Santa Clara Coun
 1. [Topeka, KS](http://aatopeka.org/meetings/)
 1. [Tulsa, OK](http://district40aa.com/meetings)
 1. [Vancouver, Canada](http://www.vancouveraa.ca/meetings/)
+1. [Ventura County, CA](https://aaventuracounty.org/meetings)
 1. [Vienna, Austria](https://www.aavienna.com/meetings/)
 1. [Virginia](https://aavirginia.org/meetings/)
 1. [Walnut Creek, CA](http://contracostaaa.org/meetings)
@@ -105,13 +113,16 @@ It was originally designed to maintain a list of AA meetings in Santa Clara Coun
 
 1. [Lancaster, PA](http://lanclebalanon.org/meetings/?d=any)
 1. [Naples, FL](https://naplesafg.org/meetings)
-1. [Orange County, CA](http://ocalanon-d60.org/meetings?d=any)
 1. [Pennsylvania](http://pa-al-anon.org/meetings/)
 
 **Codependents Anonymous**
 
 1. [Los Angeles, CA](http://www.lacoda.org/)
 1. [South SF Bay Area, CA](http://www.sbcoda.org/meetings/?d=any&v=list)
+
+**Debtors Anonymous**
+
+1. [Southern California](http://socalda.org/meetings/)
 
 **Heroin Anonymous**
 
@@ -124,6 +135,10 @@ It was originally designed to maintain a list of AA meetings in Santa Clara Coun
 1. [Martha's Vineyard](http://www.mvana.org/meetings/?tsml-day=any)
 1. [Poland](http://anonimowinarkomani.org/meetings/)
 1. [Vienna](https://www.navienna.com/meetings/?d=any)
+
+**Refuge Recovery**
+
+1. [Oakland, CA](http://refugerecoveryoakland.org/meetings/)
 
 **Sex Addicts Anonymous**
 
@@ -177,6 +192,13 @@ No problem, just add this CSS to your theme:
 
 	div#meetings .controls ul.dropdown-menu div.expand { display: none; }
 	div#meetings .controls ul.dropdown-menu ul.children { height: auto; }
+
+= How can I show Any Day by default? =
+The easiest way is to link to that view straight from your navigation. Usually that looks like `/meetings/?tsml-day=any`, but it can vary depending on your settings.
+
+If you'd prefer to keep the default address, you could add this code to your theme's functions.php instead:
+
+	$tsml_defaults['day'] = null;
 
 = How do I change the default search radius for location searches? =
 Add this to your theme's functions.php. The value should be an existing value, ie 1, 5, 10, 25 or 50.
@@ -256,6 +278,30 @@ Also check out our [One Page Meeting List](https://github.com/meeting-guide/one-
 1. Edit location
 
 == Changelog ==
+
+= 2.15 =
+* Sites may now control their level of sharing
+* CSVs and Google Sheets can now be data sources
+* Support for User Role Editor plugin
+* FAQ item for any day view
+
+= 2.14.14 =
+* Upcoming meetings now include meetings that started in the last 30 minutes
+* CSS meeting edit screen fix for Safari from Tech2Serve
+
+= 2.14.13 =
+* Adding region filter to admin Meetings screen
+* Adding donate link
+
+= 2.14.12 =
+* Fixing Bootstrap dropdown conflict
+
+= 2.14.11 =
+* Fixing directions button on meeting detail page
+
+= 2.14.10 =
+* Adding Debtors Anonymous
+* Adding 12 x 12 AA type per Cincinnati
 
 = 2.14.9 =
 * Location panel wasn't showing up on meeting detail page

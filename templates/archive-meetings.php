@@ -200,7 +200,7 @@ get_header();
 					<div class="input-group">
 						<input type="search" name="query" class="form-control" value="<?php echo $query?>" placeholder="<?php echo $mode_label?>" aria-label="Search" <?php echo ($mode == 'me') ? 'disabled' : ''?>>
 						<div class="input-group-btn" id="mode">
-							<button class="btn btn-default tsml-dropdown-toggle" data-toggle="dropdown" type="button">
+							<button class="btn btn-default" data-toggle="tsml-dropdown" type="button">
 								<i class="<?php echo $modes[$mode]['icon']?>"></i>
 								<span class="caret"></span>
 							</button>
@@ -227,7 +227,7 @@ get_header();
 			<div class="col-sm-6 col-md-2 col-md-pull-2">
 				<?php if ($regions_dropdown || $districts_dropdown) {?>
 				<div class="dropdown" id="region" data-mode="<?php echo ($district ? 'district' : 'region')?>">
-					<a class="btn btn-default btn-block tsml-dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
+					<a class="btn btn-default btn-block" data-toggle="tsml-dropdown" role="button" aria-haspopup="true" aria-expanded="false">
 						<span class="selected"><?php echo $region_label?></span>
 						<span class="caret"></span>
 					</a>
@@ -245,7 +245,7 @@ get_header();
 				</div>
 				<?php }?>
 				<div class="dropdown" id="distance">
-					<a class="btn btn-default btn-block tsml-dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
+					<a class="btn btn-default btn-block" data-toggle="tsml-dropdown" role="button" aria-haspopup="true" aria-expanded="false">
 						<span class="selected"><?php echo $distance_label?></span>
 						<span class="caret"></span>
 					</a>
@@ -259,7 +259,7 @@ get_header();
 			</div>
 			<div class="col-sm-6 col-md-2 col-md-pull-2">
 				<div class="dropdown" id="day">
-					<a class="btn btn-default btn-block tsml-dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
+					<a class="btn btn-default btn-block" data-toggle="tsml-dropdown" role="button" aria-haspopup="true" aria-expanded="false">
 						<span class="selected"><?php echo $day_label?></span>
 						<span class="caret"></span>
 					</a>
@@ -274,7 +274,7 @@ get_header();
 			</div>
 			<div class="col-sm-6 col-md-2 col-md-pull-2">
 				<div class="dropdown" id="time">
-					<a class="btn btn-default btn-block tsml-dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
+					<a class="btn btn-default btn-block" data-toggle="tsml-dropdown" role="button" aria-haspopup="true" aria-expanded="false">
 						<span class="selected"><?php echo $time_label?></span>
 						<span class="caret"></span>
 					</a>
@@ -292,7 +292,7 @@ get_header();
 			<div class="col-sm-6 col-md-2 col-md-pull-2">
 				<?php if (count($tsml_types_in_use)) {?>
 				<div class="dropdown" id="type">
-					<a class="btn btn-default btn-block tsml-dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
+					<a class="btn btn-default btn-block" data-toggle="tsml-dropdown" role="button" aria-haspopup="true" aria-expanded="false">
 						<span class="selected"><?php echo $type_label?></span>
 						<span class="caret"></span>
 					</a>

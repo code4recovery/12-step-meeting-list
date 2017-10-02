@@ -160,28 +160,13 @@ function tsml_define_strings() {
 	//used by tsml_meetings_sort() over and over
 	$tsml_days_order = array_keys($tsml_days);
 	
-	$tsml_programs = array(
-		'aca'		=> __('Adult Children of Alcoholics', '12-step-meeting-list'),
-		'al-anon'	=> __('Al-Anon', '12-step-meeting-list'),
-		'aa'			=> __('Alcoholics Anonymous', '12-step-meeting-list'),
-		'coda'		=> __('Co-Dependents Anonymous', '12-step-meeting-list'),
-		'ha'			=> __('Heroin Anonymous', '12-step-meeting-list'),
-		'na'			=> __('Narcotics Anonymous', '12-step-meeting-list'),
-		'oa'			=> __('Overeaters Anonymous', '12-step-meeting-list'),
-		'rca'		=> __('Recovering Couples Anonymous', '12-step-meeting-list'),
-		'rr'			=> __('Refuge Recovery', '12-step-meeting-list'),
-		'sa'			=> __('Sexaholics Anonymous', '12-step-meeting-list'),
-		'saa'		=> __('Sex Addicts Anonymous', '12-step-meeting-list'),
-		'sca'		=> __('Sexual Compulsives Anonymous', '12-step-meeting-list'),
-		'slaa'		=> __('Sex and Love Addicts Anonymous', '12-step-meeting-list'),
-	);
-	
 	//only used in $tsml_strings (todo combine with types, type descriptions and programs)
 	$tsml_program_short_names = array(
 		'aca'		=> __('ACA', '12-step-meeting-list'),
 		'al-anon'	=> __('Al-Anon', '12-step-meeting-list'),
 		'aa'			=> __('AA', '12-step-meeting-list'),
 		'coda'		=> __('CoDA', '12-step-meeting-list'),
+		'da'			=> __('DA', '12-step-meeting-list'),
 		'ha'			=> __('HA', '12-step-meeting-list'),
 		'na'			=> __('NA', '12-step-meeting-list'),
 		'oa'			=> __('OA', '12-step-meeting-list'),
@@ -191,6 +176,24 @@ function tsml_define_strings() {
 		'saa'		=> __('SAA', '12-step-meeting-list'),
 		'sca'		=> __('SCA', '12-step-meeting-list'),
 		'slaa'		=> __('SLAA', '12-step-meeting-list'),
+	);
+	
+	//supported program names (todo combine)
+	$tsml_programs = array(
+		'aca'		=> __('Adult Children of Alcoholics', '12-step-meeting-list'),
+		'al-anon'	=> __('Al-Anon', '12-step-meeting-list'),
+		'aa'			=> __('Alcoholics Anonymous', '12-step-meeting-list'),
+		'coda'		=> __('Co-Dependents Anonymous', '12-step-meeting-list'),
+		'da'			=> __('Debtors Anonymous', '12-step-meeting-list'),
+		'ha'			=> __('Heroin Anonymous', '12-step-meeting-list'),
+		'na'			=> __('Narcotics Anonymous', '12-step-meeting-list'),
+		'oa'			=> __('Overeaters Anonymous', '12-step-meeting-list'),
+		'rca'		=> __('Recovering Couples Anonymous', '12-step-meeting-list'),
+		'rr'			=> __('Refuge Recovery', '12-step-meeting-list'),
+		'sa'			=> __('Sexaholics Anonymous', '12-step-meeting-list'),
+		'saa'		=> __('Sex Addicts Anonymous', '12-step-meeting-list'),
+		'sca'		=> __('Sexual Compulsives Anonymous', '12-step-meeting-list'),
+		'slaa'		=> __('Sex and Love Addicts Anonymous', '12-step-meeting-list'),
 	);
 	
 	//strings that must be synced between the javascript and the PHP
@@ -230,6 +233,7 @@ function tsml_define_strings() {
 	$tsml_types = array(
 		'aa' => array(
 			'11'		=> __('11th Step Meditation', '12-step-meeting-list'),
+			'12x12'	=> __('12 Steps & 12 Traditions', '12-step-meeting-list'),
 			'ABSI'	=> __('As Bill Sees It', '12-step-meeting-list'),
 			'A'		=> __('Atheist / Agnostic', '12-step-meeting-list'),
 			'BA'		=> __('Babysitting Available', '12-step-meeting-list'),
@@ -353,6 +357,24 @@ function tsml_define_strings() {
 			'WRITE'	=> __('Writing', '12-step-meeting-list'),
 			'Y'		=> __('Young People', '12-step-meeting-list'),
 		),
+		'da' => array(
+			'AB'		=> __('Abundance', '12-step-meeting-list'),
+			'AR'		=> __('Artist', '12-step-meeting-list'),
+			'B'		=> __('Business Owner', '12-step-meeting-list'),
+			'C'		=> __('Closed', '12-step-meeting-list'),
+			'CL'		=> __('Clutter', '12-step-meeting-list'),
+			'M'		=> __('Men', '12-step-meeting-list'),
+			'N'		=> __('Numbers', '12-step-meeting-list'),
+			'O'		=> __('Open', '12-step-meeting-list'),
+			'P'		=> __('Prosperity', '12-step-meeting-list'),
+			'SP'		=> __('Speaker', '12-step-meeting-list'),
+			'ST'		=> __('Step Study', '12-step-meeting-list'),
+			'TI'		=> __('Time', '12-step-meeting-list'),
+			'TO'		=> __('Toolkit', '12-step-meeting-list'),
+			'V'		=> __('Vision', '12-step-meeting-list'),
+			'X'		=> __('Wheelchair Accessible', '12-step-meeting-list'),
+			'W'		=> __('Women', '12-step-meeting-list'),
+		),
 		'ha' => array(
 			'CPT'	=> __('12 Concepts', '12-step-meeting-list'),
 			'BT'		=> __('Basic Text', '12-step-meeting-list'),
@@ -453,6 +475,8 @@ function tsml_define_strings() {
 			'SP'		=> __('Speaker', '12-step-meeting-list'),
 		),
 		'rr' => array(
+			'BE'		=> __('Beginners', '12-step-meeting-list'),
+			'BB'		=> __('Book Study', '12-step-meeting-list'),
 			'CC'		=> __('Child Care Available', '12-step-meeting-list'),
 			'DF'		=> __('Dog Friendly', '12-step-meeting-list'),
 			'8F'		=> __('Eightfold Path Study', '12-step-meeting-list'),
