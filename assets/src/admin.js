@@ -141,6 +141,9 @@ jQuery(function($){
 		displayKey: 'value',
 		source: tsml_groups
 	}).on('typeahead:autocompleted typeahead:selected', function($e, group){
+        $('input[name=website]').val(group.website);
+        $('input[name=email]').val(group.email);
+        $('input[name=phone]').val(group.phone);        
 		$('input[name=contact_1_name]').val(group.contact_1_name);
 		$('input[name=contact_1_email]').val(group.contact_1_email);
 		$('input[name=contact_1_phone]').val(group.contact_1_phone);
