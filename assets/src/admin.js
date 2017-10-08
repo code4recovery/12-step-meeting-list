@@ -118,7 +118,16 @@ jQuery(function($){
 	$('input#location').typeahead(null, {
 		displayKey: 'value',
 		source: tsml_locations
-	}).on('typeahead:autocompleted typeahead:selected', function($e, location){
+	}).on('typeahead:change typeahead:autocompleted typeahead:selected', function($e, location){
+        if ($e.type === "typeahead:change") {
+            $.each(tsml_locations.index.datums, function() {
+                if (this.value.toUpperCase() === location.trim().toUpperCase()) {
+                    $('input[name=location]').val(this.value);
+                    location = this;
+                    return false;
+                }
+            });
+        }
 		$('input[name=formatted_address]').val(location.formatted_address).trigger('change');
 		$('input[name=latitude]').val(location.latitude);
 		$('input[name=longitude]').val(location.longitude);
@@ -140,7 +149,16 @@ jQuery(function($){
 	$('input#group').typeahead(null, {
 		displayKey: 'value',
 		source: tsml_groups
-	}).on('typeahead:autocompleted typeahead:selected', function($e, group){
+	}).on('typeahead:change typeahead:autocompleted typeahead:selected', function($e, group){
+        if ($e.type === "typeahead:change") {
+            $.each(tsml_groups.index.datums, function() {
+                if (this.value.toUpperCase() === group.trim().toUpperCase()) {
+                    $('input[name=group]').val(this.value);
+                    group = this;
+                    return false;
+                }
+            });
+        }
         $('input[name=website]').val(group.website);
         $('input[name=email]').val(group.email);
         $('input[name=phone]').val(group.phone);        
