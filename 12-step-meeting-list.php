@@ -10,9 +10,9 @@ Text Domain: 12-step-meeting-list
 */
 
 //define constants
-if (!defined('GROUP_CONTACT_COUNT'))		define('GROUP_CONTACT_COUNT',	3);
-if (!defined('TSML_CONTACT_LINK'))		define('TSML_CONTACT_LINK',		'mailto:info@meetingguide.org');
-if (!defined('TSML_PATH'))				define('TSML_PATH', 				plugin_dir_path(__FILE__));
+if (!defined('GROUP_CONTACT_COUNT'))	define('GROUP_CONTACT_COUNT',	3);
+if (!defined('TSML_CONTACT_EMAIL'))		define('TSML_CONTACT_EMAIL',	'info@meetingguide.org');
+if (!defined('TSML_PATH'))				define('TSML_PATH', 			plugin_dir_path(__FILE__));
 if (!defined('TSML_VERSION'))			define('TSML_VERSION',			'2.15');
 
 //include these files first

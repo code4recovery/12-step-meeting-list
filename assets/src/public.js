@@ -80,10 +80,7 @@ jQuery(function($){
 
 		//show/hide upcoming menu option
 		toggleUpcoming();
-		
-		//set page title
-		updateTitle();
-		
+				
 		//if already searching, mark results
 		var $search_field = $('#meetings #search input[name=query]');
 		if ($search_field.size() && $search_field.val().length) {
@@ -288,8 +285,27 @@ jQuery(function($){
 
 		$(this).parent().toggleClass('active');
 
+		//set page title
+		var string = '';
+		if ($('#meetings #day li.active').index()) {
+			string += $('#meetings #day span.selected').text();
+		}
+		if ($('#meetings #time li.active').index()) {
+			string += ' ' + $('#meetings #time span.selected').text();
+		}
+		if ($('#meetings #type li.active').index()) {
+			string += ' ' + $('#meetings #type span.selected').text();
+		}
+		string += ' ' + tsml.program + ' Meetings';
+		if ($('#meetings #region li.active').index()) {
+			string += ' in ' + $('#meetings #region span.selected').text();
+		}
+		document.title = string;
+		$('#tsml #meetings .title h1').text(string);
+
+		//show/hide upcoming menu option
 		toggleUpcoming();
-		updateTitle();
+		
 		doSearch(false);
 	});
 
@@ -496,6 +512,7 @@ jQuery(function($){
 	function getMeetings(data, keyword_searching) {
 		//request new meetings result
 		data.distance_units = tsml.distance_units;
+		data.nonce = tsml.nonce;
 				
 		$.post(tsml.ajaxurl, data, function(response){
 	
@@ -748,6 +765,7 @@ jQuery(function($){
 		}
 	}
 	
+	//sort the meetings by the current sort criteria after getting ajax
 	function sortMeetings() {
 		var $sorted = $('#meetings table thead th[data-sort]').first();
 		var sort = $sorted.attr('class');
@@ -755,7 +773,7 @@ jQuery(function($){
 		var tbody = document.getElementById('meetings_tbody');
 		var store = [];
 		var sort_index = $('#meetings table thead th').index($sorted);
-	
+			
 		//execute sort
 		for (var i = 0, len = tbody.rows.length; i < len; i++) {
 			var row = tbody.rows[i];
@@ -787,27 +805,7 @@ jQuery(function($){
 			$('#time li.upcoming').removeClass('hidden');
 		}
 	}	
-	
-	//save a string of the current state to the title bar, so that it prints nicely
-	function updateTitle() {
-		var string = '';
-		if ($('#meetings #day li.active').index()) {
-			string += $('#meetings #day span.selected').text();
-		}
-		if ($('#meetings #time li.active').index()) {
-			string += ' ' + $('#meetings #time span.selected').text();
-		}
-		if ($('#meetings #type li.active').index()) {
-			string += ' ' + $('#meetings #type span.selected').text();
-		}
-		string += ' ' + tsml.strings.program_short_name + ' Meetings';
-		if ($('#meetings #region li.active').index()) {
-			string += ' in ' + $('#meetings #region span.selected').text();
-		}
-		document.title = string;
-		$('#tsml #meetings .title h1').text(string);
-	}
-	
+		
 	//disable the typeahead (if you switched to a different search mode)	
 	function typeaheadDisable() {
 		$('#meetings #search input[name="query"]').typeahead('destroy');

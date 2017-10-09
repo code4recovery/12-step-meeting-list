@@ -56,24 +56,20 @@ body {
 			}
 			
 			p {
-				margin: 0 0 15px;
-				&:last-child { margin-bottom: 0; }
+				margin: 0 0 10px;
 			}
 
 			details {
 				summary {
-					margin-top: 20px;
+					margin: 25px 0 5px;
 					cursor: pointer;
 					outline: none;
-				}
-				&[open] summary {
-					margin-bottom: 10px;
 				}
 			}
 			
 			select {
 				width: 100%;
-				margin: 6px 0 12px; 
+				margin: 0;
 				&:last-child { margin-bottom: 4px; }
 			}
 			
@@ -82,14 +78,20 @@ body {
 
 			//get feedback & get notified
 			table {
-				margin: 0 0 15px; width: 100%; border: 0; border-spacing: 0; border-collapse: collapse;
+				margin: 0 0 10px; 
+				width: 100%; 
+				border: 0; 
+				border-spacing: 0; 
+				border-collapse: collapse;
 				tr {
 					th, td {
 						text-align: left;
 						margin: 0;
-						padding: 4px;
+						padding: 4px 0;
 						border: 0;
-						border-bottom: 1px solid #ccc;
+						input.button {
+							margin-right: 10px;
+						}
 						&.align-center {
 							text-align: center;
 						}
@@ -107,9 +109,11 @@ body {
 							span { cursor: pointer; }
 						}
 					}
+					td {
+						border-top: 1px solid #ddd;						
+					}
 					&:last-child td {
 						padding-bottom: 0;
-						border-bottom: 0;
 					}
 				}
 				form {
@@ -200,8 +204,8 @@ body {
 			}
 			input, select { 
 				border: 1px solid #ccc; 
-			    border-radius: 0;
-			    -webkit-border-radius: 0;
+				border-radius: 0;
+				-webkit-border-radius: 0;
 			}
 			input[type=radio], input[type=checkbox] { 
 				float: left;
@@ -218,8 +222,8 @@ body {
 			&.typeahead {
 				overflow: visible;
 				.twitter-typeahead{
-				     width: 85%;
-				     input { width: 100%; }
+					 width: 85%;
+					 input { width: 100%; }
 				}
 				.tt-hint { color: #999; }
 				.tt-menu { display: none !important; }

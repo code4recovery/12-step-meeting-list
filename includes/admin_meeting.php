@@ -20,7 +20,7 @@ function tsml_admin_init() {
 	add_meta_box('info', __('Meeting Information', '12-step-meeting-list'), 'tsml_meeting_box', 'tsml_meeting', 'normal', 'low');
 
 	function tsml_meeting_box() {
-		global $post, $tsml_days, $tsml_types, $tsml_program, $tsml_nonce, $tsml_types_in_use;
+		global $post, $tsml_days, $tsml_programs, $tsml_program, $tsml_nonce, $tsml_types_in_use;
 
 		//get post metadata
 		$meeting_custom 	= get_post_custom($post->ID);
@@ -47,11 +47,12 @@ function tsml_admin_init() {
 			<input type="text" class="time" name="time" id="time" value="<?php echo @$meeting_custom['time'][0]?>"<?php if (!strlen(@$meeting_custom['day'][0])) {?> disabled<?php }?> data-time-format="<?php echo get_option('time_format')?>">
 			<input type="text" class="time" name="end_time" id="end_time" value="<?php echo @$meeting_custom['end_time'][0]?>"<?php if (!strlen(@$meeting_custom['day'][0])) {?> disabled<?php }?> data-time-format="<?php echo get_option('time_format')?>">
 		</div>
+		<?php if (!empty($tsml_programs[$tsml_program]['types'])) {?>
 		<div class="meta_form_row">
 			<label for="tags"><?php _e('Types', '12-step-meeting-list')?></label>
-			<div class="checkboxes<?php if (!empty($tsml_types_in_use) && count($tsml_types_in_use) !== count($tsml_types[$tsml_program])) {?> has_more<?php }?>">
+			<div class="checkboxes<?php if (!empty($tsml_types_in_use) && count($tsml_types_in_use) !== count($tsml_programs[$tsml_program]['types'])) {?> has_more<?php }?>">
 			<?php 
-			foreach ($tsml_types[$tsml_program] as $key => $type) {?>
+			foreach ($tsml_programs[$tsml_program]['types'] as $key => $type) {?>
 				<label <?php if (!empty($tsml_types_in_use) && !in_array($key, $tsml_types_in_use)) { echo ' class="not_in_use"'; }?>>
 					<input type="checkbox" name="types[]" value="<?php echo $key?>" <?php if (in_array($key, $meeting_custom['types'])) {?> checked="checked"<?php }?>>
 					<?php echo $type?>
@@ -67,6 +68,7 @@ function tsml_admin_init() {
 				</div>
 			</div>
 		</div>
+		<?php }?>
 		<div class="meta_form_row">
 			<label for="content"><?php _e('Notes', '12-step-meeting-list')?></label>
 			<textarea name="content" id="content" placeholder="eg. Birthday speaker meeting last Saturday of the month"><?php echo $post->post_content?></textarea>
