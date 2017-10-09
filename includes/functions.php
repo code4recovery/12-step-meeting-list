@@ -39,7 +39,7 @@ if (!function_exists('tsml_alert')) {
 //used: in templates and on admin_edit.php
 if (!function_exists('tsml_assets')) {
 	function tsml_assets() {
-		global $tsml_street_only, $tsml_types, $tsml_strings, $tsml_program, $tsml_google_api_key, $tsml_google_overrides, $tsml_distance_units, $tsml_defaults, $tsml_language, $tsml_columns;
+		global $tsml_street_only, $tsml_programs, $tsml_strings, $tsml_program, $tsml_google_api_key, $tsml_google_overrides, $tsml_distance_units, $tsml_defaults, $tsml_language, $tsml_columns, $tsml_nonce;
 			
 		//google maps api needed for maps and address verification, can't be onboarded
 		wp_enqueue_script('google_maps_api', '//maps.googleapis.com/maps/api/js?key=' . $tsml_google_api_key);
@@ -61,7 +61,7 @@ if (!function_exists('tsml_assets')) {
 			wp_enqueue_script('tsml_public', plugins_url('../assets/js/public.min.js', __FILE__), array('jquery', 'google_maps_api'), TSML_VERSION, true);
 			wp_localize_script('tsml_public', 'tsml', array(
 				'ajaxurl' => admin_url('admin-ajax.php'),
-				'columns' => array_map('strtolower', $tsml_columns),
+				'columns' => array_keys($tsml_columns),
 				'days' => array(
 					__('Sunday', '12-step-meeting-list'),
 					__('Monday', '12-step-meeting-list'),
@@ -74,9 +74,11 @@ if (!function_exists('tsml_assets')) {
 				'defaults' => $tsml_defaults,
 				'distance_units' => $tsml_distance_units,
 				'language' => $tsml_language,
+				'program' => empty($tsml_programs[$tsml_program]['abbr']) ? $tsml_programs[$tsml_program]['name'] : $tsml_programs[$tsml_program]['abbr'],
 				'strings' => $tsml_strings,
 				'street_only' => $tsml_street_only,
-				'types' => $tsml_types[$tsml_program],
+				'types' => empty($tsml_programs[$tsml_program]['types']) ? array() : $tsml_programs[$tsml_program]['types'],
+				'nonce' => wp_create_nonce($tsml_nonce),
 			));
 			
 			//stripe
@@ -221,11 +223,11 @@ if (!function_exists('tsml_custom_post_types')) {
 //used:		theme's functions.php
 if (!function_exists('tsml_custom_types')) {
 	function tsml_custom_types($types) {
-		global $tsml_types, $tsml_program;
-		foreach ($types as $key=>$value) {
-			$tsml_types[$tsml_program][$key] = $value;
+		global $tsml_programs, $tsml_program;
+		foreach ($types as $key => $value) {
+			$tsml_programs[$tsml_program]['types'][$key] = $value;
 		}
-		asort($tsml_types[$tsml_program]);
+		asort($tsml_programs[$tsml_program]['types']);
 	}
 }
 
@@ -342,7 +344,7 @@ if (!function_exists('tsml_email')) {
 		</body>
 	</html>';
 	
-		return wp_mail($to, '[12 Step Meeting List] ' . $subject, $message, $headers);
+		return wp_mail($to, '[' . get_bloginfo('name') . '] ' . $subject, $message, $headers);
 	}
 }
 
@@ -636,7 +638,7 @@ if (!function_exists('tsml_get_locations')) {
 //used: single-meetings.php
 if (!function_exists('tsml_get_meeting')) {
 	function tsml_get_meeting($meeting_id=false) {
-		global $tsml_program, $tsml_type_descriptions, $tsml_types;
+		global $tsml_program, $tsml_programs;
 		
 		$meeting					= get_post($meeting_id);
 		$custom					= get_post_meta($meeting->ID);
@@ -680,12 +682,11 @@ if (!function_exists('tsml_get_meeting')) {
 		$meeting->post_title			= htmlentities($meeting->post_title, ENT_QUOTES);
 		$meeting->notes 				= esc_html($meeting->post_content);
 		
-		//type description?
-		foreach (array('C', 'O') as $type) {
-			if (in_array($type, $meeting->types) && !empty($tsml_type_descriptions[$tsml_program][$type])) {
-				$meeting->type_description = $tsml_type_descriptions[$tsml_program][$type];
-				break;
-			}
+		//type description? (todo support multiple)
+		$types_with_descriptions = array_intersect($meeting->types, array_keys($tsml_programs[$tsml_program]['type_descriptions']));
+		foreach ($types_with_descriptions as $type) {
+			$meeting->type_description = $tsml_programs[$tsml_program]['type_descriptions'][$type];
+			break;
 		}
 		
 		//if meeting is part of a group, include group info
@@ -711,8 +712,8 @@ if (!function_exists('tsml_get_meeting')) {
 		array_map('trim', $meeting->types);
 		$types = array();
 		foreach ($meeting->types as $type) {
-			if (!empty($tsml_types[$tsml_program][$type])) {
-				$types[] = $tsml_types[$tsml_program][$type];
+			if (!empty($tsml_programs[$tsml_program]['types'][$type])) {
+				$types[] = $tsml_programs[$tsml_program]['types'][$type];
 			}
 		}
 		sort($types);
@@ -1085,11 +1086,12 @@ if (!function_exists('tsml_get_meta')) {
 //called from save.php (updates) and archive-meetings.php (display)
 if (!function_exists('tsml_meeting_types')) {
 	function tsml_meeting_types($types) {
-		global $tsml_types, $tsml_program;
+		global $tsml_programs, $tsml_program;
+		if (empty($tsml_programs[$tsml_program]['types'])) return;
 		$return = array();
 		foreach ($types as $type) {
-			if (array_key_exists($type, $tsml_types[$tsml_program])) {
-				$return[] = $tsml_types[$tsml_program][$type];
+			if (array_key_exists($type, $tsml_programs[$tsml_program]['types'])) {
+				$return[] = $tsml_programs[$tsml_program]['types'][$type];
 			}
 		}
 		sort($return);
@@ -1101,10 +1103,10 @@ if (!function_exists('tsml_meeting_types')) {
 //called from admin_import.php (both CSV and JSON)
 if (!function_exists('tsml_import_buffer_set')) {
 	function tsml_import_buffer_set($meetings, $data_source=null) {
-		global $tsml_types, $tsml_program, $tsml_days;
+		global $tsml_programs, $tsml_program, $tsml_days;
 		
 		//uppercasing for value matching later
-		$upper_types = array_map('strtoupper', $tsml_types[$tsml_program]);
+		$upper_types = array_map('strtoupper', $tsml_programs[$tsml_program]['types']);
 		$upper_days = array_map('strtoupper', $tsml_days);
 	
 		$row_counter = 1;

@@ -36,6 +36,7 @@ It was originally designed to maintain a list of AA meetings in Santa Clara Coun
 1. [Daytona, FL](http://aadaytona.org/meetings/)
 1. [DuPage County, IL](http://dist41.aa-nia.org/meetings/)
 1. [East Bay, CA](http://eastbayaa.org/meetings)
+1. [East Tennessee](http://www.etiaa.org/meetings/)
 1. [Elk Grove Village, IL](http://d15aa.org/d15aa.org/?post_type=meetings)
 1. [Fargo, ND](http://www.fmmeetinglist.org/meetings/)
 1. [Ft. Worth, TX](http://fortworthaa.org/?post_type=tsml_meeting)
@@ -72,6 +73,7 @@ It was originally designed to maintain a list of AA meetings in Santa Clara Coun
 1. [Rochester, MN](http://aadistrict1.org/blog/meetings/)
 1. [Rhode Island](https://aainri.com/meetings/)
 1. [Sacramento, CA](http://aasacramento.org/meetings/)
+1. [Salinas, CA](https://aasalinas.org/meetings/)
 1. [San Francisco, CA](https://www.aasf.org/meetings)
 1. [San Jose, CA](https://aasanjose.org/meetings)
 1. [San Mateo, CA](http://aa-san-mateo.org/meetings)
@@ -211,9 +213,17 @@ Add this to your theme's functions.php.
 	$tsml_street_only = false;
 
 = Can I change the order of the columns on the meeting list page, eg put the Region first? =
-Add this to your theme's functions.php.
+Add this to your theme's functions.php. Feel free to change the order or column names (eg 'Region') but keep the keys the same (eg 'region').
 
-	$tsml_columns = array('Region', 'Time', 'Distance', 'Name', 'Location', 'Address', 'Types');
+	$tsml_columns = array(
+		'region' => 'Region',
+		'time' => 'Time',
+		'distance' => 'Distance',
+		'name' => 'Name',
+		'location' => 'Location',
+		'address' => 'Address',
+		'types' => 'Types'
+	);
 
 = Can I change the default sort order on the meeting list page? =
 By default, the plugin sorts by day, then time, then location name. To set your own sort index, add this to your functions.php:
@@ -223,10 +233,11 @@ By default, the plugin sorts by day, then time, then location name. To set your 
 = How can I override the meeting list or detail pages? =
 Copy the files from the plugin's templates directory into your theme's root directory. If you're using a theme from the Theme Directory, you may be better off creating a [Child Theme](https://codex.wordpress.org/Child_Themes). Now, you may override those pages. The archive-meetings.php file controls the meeting list page, single-meetings.php controls the meetings detail, and single-locations.php controls the location detail.
 
+*Please note* these pages will evolve over time. If you override, you will someday experience website errors after an update. If that happens, please update your theme's copy of the plugin pages. 
 
 = Can I import a custom spreadsheet format? =
-It will take some work on your end, but it's possible. Create a function called tsml_import_reformat, and use it to 
-reformat your CSV data to the standard format
+If you don't mind some PHP programming, then yes! Create a function called `tsml_import_reformat`, and use it to 
+reformat your incoming data to the standard format
 
 	if (!function_exists('tsml_import_reformat')) {
 		function tsml_import_reformat($meetings) {
@@ -263,7 +274,7 @@ That's right, we don't display that information by default for the sake of anony
 	<?php echo $meeting->contact_1_phone?>
 
 = Can I run this as my main website homepage? =
-Sure. Try this code:
+Sure. Try adding this code to your theme's functions.php:
 
 	add_action('pre_get_posts', 'tsml_front_page');
 	
@@ -280,10 +291,15 @@ Also check out our [One Page Meeting List](https://github.com/meeting-guide/one-
 == Changelog ==
 
 = 2.15 =
-* Sites may now control their level of sharing
-* CSVs and Google Sheets can now be data sources
-* Support for User Role Editor plugin
-* FAQ item for any day view
+* Sites now control their level of sharing
+* Columns were not simultaneously both editable and reorderable (per report from Suffolk County, NY)
+* Redesigned sidebar in Import & Settings
+* Support for User Role Editor plugin (per Matthew in Long Beach, CA)
+* Number of upcoming meetings in widget now can be up to 25 (per request from Suffolk County, NY)
+* Adding two new programs: Parents of Addicted Loved Ones and Support Groups
+* Refactoring variables.php for cleaner structure
+* Emails have site name in brackets rather than plugin name (per Refuge Recovery)
+* FAQ updates
 
 = 2.14.14 =
 * Upcoming meetings now include meetings that started in the last 30 minutes
@@ -351,27 +367,3 @@ Also check out our [One Page Meeting List](https://github.com/meeting-guide/one-
 * Fixing side admin menu bug on Districts page
 * Adding foundations for group contributions (not live yet)
 * Notes fields now being trimmed
-
-= 2.13.6 =
-* Fixing bug wherein if you save a meeting as a draft, all the other meetings at that location are saved as draft
-
-= 2.13.5 =
-* Forgot short name for HA
-
-= 2.13.4 =
-* Version bump
-
-= 2.13.3 =
-* Cleaning up some PHP notices
-* Listing for Heroin Anonymous
-
-= 2.13.2 =
-* Fixing address for meeting location in New York City
-
-= 2.13.1 =
-* Adding abbreviated program name to page title for SEO (requested by Area 37)
-* Waiting to set strings until the `plugins_loaded` hook for Polylang plugin (requested by NA Poland)
-* Updated open source license
-
-= 2.13 =
-* New districts taxonomy for Areas 24 and 46

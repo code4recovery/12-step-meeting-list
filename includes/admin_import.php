@@ -2,7 +2,7 @@
 	
 //import CSV file and handle settings
 function tmsl_import_page() {
-	global $wpdb, $tsml_types, $tsml_data_sources, $tsml_programs, $tsml_program, $tsml_nonce, $tsml_days, $tsml_feedback_addresses, $tsml_notification_addresses, $tsml_distance_units;
+	global $wpdb, $tsml_data_sources, $tsml_programs, $tsml_program, $tsml_nonce, $tsml_days, $tsml_feedback_addresses, $tsml_notification_addresses, $tsml_distance_units, $tsml_sharing, $tsml_sharing_keys;
 
 	$error = false;
 	
@@ -183,8 +183,8 @@ function tmsl_import_page() {
 				'status' => 'OK',
 				'last_import' => current_time('timestamp'),
 				'count_meetings' => 0,
-				//'name' => sanitize_text_field($_POST['tsml_add_data_source_name']),
-				//'type' => 'JSON',
+				'name' => sanitize_text_field($_POST['tsml_add_data_source_name']),
+				'type' => 'JSON',
 			);
 			
 			//import feed
@@ -290,6 +290,50 @@ function tmsl_import_page() {
 		tsml_alert(__('Distance units updated.', '12-step-meeting-list'));
 	}
 		
+	//change sharing setting
+	if (!empty($_POST['tsml_sharing']) && isset($_POST['tsml_nonce']) && wp_verify_nonce($_POST['tsml_nonce'], $tsml_nonce)) {
+		$tsml_sharing = ($_POST['tsml_sharing'] == 'open') ? 'open' : 'restricted';
+		update_option('tsml_sharing', $tsml_sharing);
+		tsml_alert(__('Sharing setting updated.', '12-step-meeting-list'));
+	}
+
+	//add a sharing key
+	if (!empty($_POST['tsml_add_sharing_key']) && isset($_POST['tsml_nonce']) && wp_verify_nonce($_POST['tsml_nonce'], $tsml_nonce)) {
+		$name = sanitize_text_field($_POST['tsml_add_sharing_key']);
+		$key = md5(uniqid($name, true));
+		$tsml_sharing_keys[$key] = $name;
+		asort($tsml_sharing_keys);
+		update_option('tsml_sharing_keys', $tsml_sharing_keys);
+		tsml_alert(__('Sharing key added.', '12-step-meeting-list'));
+
+		//users might expect that if they add "meeting guide" that then they are added to the app
+		if (strtolower($name) == 'meeting guide') {
+			$current_user = wp_get_current_user();
+			$message = admin_url('admin-ajax.php?') . http_build_query(array(
+				'action' => 'meetings',
+				'key' => $key,
+			));
+			tsml_email(TSML_CONTACT_EMAIL, 'Sharing Key', $message, $current_user->user_email);
+		}
+	}
+
+	//remove a sharing key
+	if (!empty($_POST['tsml_remove_sharing_key']) && isset($_POST['tsml_nonce']) && wp_verify_nonce($_POST['tsml_nonce'], $tsml_nonce)) {
+		$key = sanitize_text_field($_POST['tsml_remove_sharing_key']);
+		if (array_key_exists($key, $tsml_sharing_keys)) {
+			unset($tsml_sharing_keys[$key]);
+			if (empty($tsml_sharing_keys)) {
+				delete_option('tsml_sharing_keys');
+			} else {
+				update_option('tsml_sharing_keys', $tsml_sharing_keys);
+			}
+			tsml_alert(__('Sharing key removed.', '12-step-meeting-list'));
+		} else {
+			//theoretically should never get here, because user is choosing from a list
+			tsml_alert(sprintf(esc_html__('<p><code>%s</code> was not found in the list of sharing keys. Please try again.</p>', '12-step-meeting-list'), $key), 'error');
+		}
+	}
+	
 	//add a feedback email
 	if (!empty($_POST['tsml_add_feedback_address']) && isset($_POST['tsml_nonce']) && wp_verify_nonce($_POST['tsml_nonce'], $tsml_nonce)) {
 		$email = sanitize_text_field($_POST['tsml_add_feedback_address']);
@@ -422,13 +466,15 @@ function tmsl_import_page() {
 										<li><?php _e('<strong>Group Notes</strong> is for stuff like a short group history, or when the business meeting meets.', '12-step-meeting-list')?></li>
 										<li><?php _e('<strong>Contact 1/2/3 Name/Email/Phone</strong> (nine fields in total) are all optional, but will not be saved if there is not also a group name specified. By default, contact information is only visible inside the WordPress dashboard.', '12-step-meeting-list')?></li>
 										<li><?php _e('<strong>Last Contact</strong> is an optional date. A group name must be specified for it to be saved.', '12-step-meeting-list')?></li>
+										<?php if (!empty($tsml_programs[$tsml_program]['types'])) {?>
 										<li><?php _e('<strong>Types</strong> should be a comma-separated list of the following options. This list is determined by which program is selected at right.', '12-step-meeting-list')?>
 											<ul class="types">
-											<?php foreach ($tsml_types[$tsml_program] as $value) {?>
+											<?php foreach ($tsml_programs[$tsml_program]['types'] as $value) {?>
 												<li><?php echo $value?></li>
 											<?php }?>
 											</ul>
 										</li>
+										<?php }?>
 									</ul>
 									<?php if ($tsml_program == 'aa') {?>
 									<p><?php _e('Additionally, you may import spreadsheets that are in the General Service Office\'s FNV database "Group Search Results" format. This format has 162 columns, the first column is <code>ServiceNumber</code>.', '12-step-meeting-list')?></p>
@@ -465,7 +511,7 @@ function tmsl_import_page() {
 										</td>
 										<td>
 											<a href="<?php echo $feed?>" target="_blank"><?php echo @$properties['name'] ?: __('Unnamed Feed', '12-step-meeting-list')?></a>
-											(<?php echo @$properties['type'] ?: 'JSON'?>)
+											&bull; <?php echo @$properties['type'] ?: 'JSON'?>
 										</td>
 										<td class="align-center"><?php echo number_format($properties['count_meetings'])?></td>
 										<td class="align-right">
@@ -512,57 +558,6 @@ function tmsl_import_page() {
 					</div>
 					<?php }?>
 
-					<div class="postbox" id="settings">
-						<div class="inside">
-							<h3><?php _e('Settings', '12-step-meeting-list')?></h3>
-							<form method="post" action="<?php echo $_SERVER['REQUEST_URI']?>">
-								<details>
-									<summary><strong><?php _e('Program', '12-step-meeting-list')?></strong></summary>
-									<p><?php printf(__('The program determines which meeting types are available. If your program isn\'t not listed, <a href="%s">let us know</a> what types of meetings it has (Open, Closed, Topic Discussion, etc).', '12-step-meeting-list'), TSML_CONTACT_LINK)?></p>
-								</details>
-								<?php wp_nonce_field($tsml_nonce, 'tsml_nonce', false)?>
-								<select name="tsml_program" onchange="this.form.submit()">
-									<?php foreach ($tsml_programs as $key => $value) {?>
-									<option value="<?php echo $key?>"<?php selected($tsml_program, $key)?>><?php echo $value?></option>
-									<?php }?>
-								</select>
-							</form>
-							<form method="post" action="<?php echo $_SERVER['REQUEST_URI']?>">
-								<details>
-									<summary><strong><?php _e('Distance Units', '12-step-meeting-list')?></strong></summary>
-									<p><?php _e('This determines which units are used as radii on the meeting list page.', '12-step-meeting-list')?></p>
-								</details>
-								<?php wp_nonce_field($tsml_nonce, 'tsml_nonce', false)?>
-								<select name="tsml_distance_units" onchange="this.form.submit()">
-								<?php 
-								$distance_units = array(
-									'km' => __('Kilometers', '12-step-meeting-list'),
-									'mi' => __('Miles', '12-step-meeting-list'),	
-								);
-								foreach ($distance_units as $key => $value) {?>
-								<option value="<?php echo $key?>"<?php selected($tsml_distance_units, $key)?>><?php echo $value?></option>
-								<?php }?>
-								</select>
-							</form>
-							<form method="post" action="<?php echo $_SERVER['REQUEST_URI']?>">
-								<details>
-									<summary><strong><?php _e('Sharing', '12-step-meeting-list')?></strong></summary>
-									<p><?php _e('This determines which units are used as radii on the meeting list page.', '12-step-meeting-list')?></p>
-								</details>
-								<?php wp_nonce_field($tsml_nonce, 'tsml_nonce', false)?>
-								<select name="tsml_distance_units" onchange="this.form.submit()">
-								<?php 
-								$distance_units = array(
-									'km' => __('Kilometers', '12-step-meeting-list'),
-									'mi' => __('Miles', '12-step-meeting-list'),	
-								);
-								foreach ($distance_units as $key => $value) {?>
-								<option value="<?php echo $key?>"<?php selected($tsml_distance_units, $key)?>><?php echo $value?></option>
-								<?php }?>
-								</select>
-							</form>
-						</div>
-					</div>
 					<div class="postbox" id="wheres_my_info">
 						<div class="inside">
 							<h3><?php _e('Where\'s My Info?', '12-step-meeting-list')?></h3>
@@ -596,10 +591,96 @@ function tmsl_import_page() {
 							<?php }?>
 						</div>
 					</div>
-					<div class="postbox" id="want-user-feedback">
+
+					<div class="postbox" id="settings">
 						<div class="inside">
-							<h3><?php _e('Want User Feedback?', '12-step-meeting-list')?></h3>
-							<p><?php _e('Enable a meeting info feedback form by adding email addresses below.', '12-step-meeting-list')?></p>
+							<h3><?php _e('Settings', '12-step-meeting-list')?></h3>
+							<form method="post" action="<?php echo $_SERVER['REQUEST_URI']?>">
+								<details>
+									<summary><strong><?php _e('Program', '12-step-meeting-list')?></strong></summary>
+									<p><?php printf(__('This determines which meeting types are available. If your program isn\'t not listed, <a href="mailto:%s?subject=%s">let us know</a> what types of meetings it has (Open, Closed, Topic Discussion, etc).', '12-step-meeting-list'), TSML_CONTACT_EMAIL, rawurlencode('WordPress New Program Request'))?></p>
+								</details>
+								<?php wp_nonce_field($tsml_nonce, 'tsml_nonce', false)?>
+								<select name="tsml_program" onchange="this.form.submit()">
+									<?php foreach ($tsml_programs as $key => $value) {?>
+									<option value="<?php echo $key?>"<?php selected($tsml_program, $key)?>><?php echo $value['name']?></option>
+									<?php }?>
+								</select>
+							</form>
+							<form method="post" action="<?php echo $_SERVER['REQUEST_URI']?>">
+								<details>
+									<summary><strong><?php _e('Distance Units', '12-step-meeting-list')?></strong></summary>
+									<p><?php _e('This determines which units are used on the meeting list page.', '12-step-meeting-list')?></p>
+								</details>
+								<?php wp_nonce_field($tsml_nonce, 'tsml_nonce', false)?>
+								<select name="tsml_distance_units" onchange="this.form.submit()">
+								<?php 
+								foreach (array(
+										'km' => __('Kilometers', '12-step-meeting-list'),
+										'mi' => __('Miles', '12-step-meeting-list'),	
+									) as $key => $value) {?>
+									<option value="<?php echo $key?>"<?php selected($tsml_distance_units, $key)?>><?php echo $value?></option>
+								<?php }?>
+								</select>
+							</form>
+							<form method="post" action="<?php echo $_SERVER['REQUEST_URI']?>">
+								<details>
+									<summary><strong><?php _e('Sharing', '12-step-meeting-list')?></strong></summary>
+									<p><?php printf(__('You can share your meeting information with other websites and apps via your <a href="%s" target="_blank">meetings feed</a>.', '12-step-meeting-list'), admin_url('admin-ajax.php?action=meetings'))?></p>
+								</details>
+								<?php wp_nonce_field($tsml_nonce, 'tsml_nonce', false)?>
+								<select name="tsml_sharing" onchange="this.form.submit()">
+								<?php 
+								foreach (array(
+										'open' => __('Open', '12-step-meeting-list'),
+										'restricted' => __('Restricted', '12-step-meeting-list'),	
+									) as $key => $value) {?>
+									<option value="<?php echo $key?>"<?php selected($tsml_sharing, $key)?>><?php echo $value?></option>
+								<?php }?>
+								</select>
+							</form>
+
+							<?php if ($tsml_sharing == 'restricted') {?>
+								<details>
+									<summary><strong><?php _e('Authorized Apps', '12-step-meeting-list')?></strong></summary>
+									<p><?php _e('You may allow access to your meeting data for specific purposes, such as the <a target="_blank" href="https://meetingguide.org/">Meeting Guide App</a>.')?>
+								</details>
+								<?php if (count($tsml_sharing_keys)) {?>
+									<table class="tsml_sharing_list">
+										<?php foreach ($tsml_sharing_keys as $key => $name) {
+											$address = admin_url('admin-ajax.php?') . http_build_query(array(
+												'action' => 'meetings',
+												'key' => $key,
+											));
+										?>
+										<tr>
+											<td><a href="<?php echo $address?>" target="_blank"><?php echo $name?></td>
+											<td>
+												<form method="post" action="<?php echo $_SERVER['REQUEST_URI']?>">
+													<?php wp_nonce_field($tsml_nonce, 'tsml_nonce', false)?>
+													<input type="hidden" name="tsml_remove_sharing_key" value="<?php echo $key?>">
+													<span class="dashicons dashicons-no-alt"></span>
+												</form>
+											</td>
+										</tr>
+										<?php }?>
+									</table>
+								<?php }?>
+								<form class="columns" method="post" action="<?php echo $_SERVER['REQUEST_URI']?>">
+									<?php wp_nonce_field($tsml_nonce, 'tsml_nonce', false)?>
+									<div class="input">
+										<input type="text" name="tsml_add_sharing_key" placeholder="<?php _e('Meeting Guide')?>">
+									</div>
+									<div class="btn">
+										<input type="submit" class="button" value="<?php _e('Add', '12-step-meeting-list')?>">
+									</div>
+								</form>
+							<?php }?>
+
+							<details>
+								<summary><strong><?php _e('User Feedback Emails', '12-step-meeting-list')?></strong></summary>
+								<p><?php _e('Enable a meeting info feedback form by adding email addresses here.', '12-step-meeting-list')?></p>
+							</details>
 							<?php if (!empty($tsml_feedback_addresses)) {?>
 							<table class="tsml_address_list">
 								<?php foreach ($tsml_feedback_addresses as $address) {?>
@@ -625,12 +706,11 @@ function tmsl_import_page() {
 									<input type="submit" class="button" value="<?php _e('Add', '12-step-meeting-list')?>">
 								</div>
 							</form>
-						</div>
-					</div>
-					<div class="postbox" id="get-notified">
-						<div class="inside">
-							<h3><?php _e('Get Notified', '12-step-meeting-list')?></h3>
-							<p><?php _e('Receive notifications of meeting changes at the email addresses below.', '12-step-meeting-list')?></p>
+
+							<details>
+								<summary><strong><?php _e('Change Notification Emails', '12-step-meeting-list')?></strong></summary>
+								<p><?php _e('Receive notifications of meeting changes at the email addresses below.', '12-step-meeting-list')?></p>
+							</details>
 							<?php if (!empty($tsml_notification_addresses)) {?>
 							<table class="tsml_address_list">
 								<?php foreach ($tsml_notification_addresses as $address) {?>
@@ -658,24 +738,6 @@ function tmsl_import_page() {
 							</form>
 						</div>
 					</div>
-					<?php
-					if ($tsml_program == 'aa') {?>
-					<div class="postbox" id="try_the_apps">
-						<div class="inside">
-							<h3><?php _e('Try the Apps!', '12-step-meeting-list')?></h3>
-							<p class="buttons">
-								<a href="https://itunes.apple.com/us/app/meeting-guide/id1042822181">
-									<img src="<?php echo plugins_url('assets/img/apple.svg', __DIR__)?>" alt="<?php _e('Download on the iOS App Store')?>">
-								</a>
-								<a href="https://play.google.com/store/apps/details?id=org.meetingguide.app">
-									<img src="<?php echo plugins_url('assets/img/google.svg', __DIR__)?>" alt="<?php _e('Download on the Google Play Store')?>">
-								</a>
-							</p>
-							<p><?php printf(__('Want to have your meetings listed in a simple, free mobile app? <a href="%s" target="_blank">%d areas are currently participating</a>. No extra effort is required; simply continue to update your meetings in WordPress and the updates will flow down to app users.', '12-step-meeting-list'), 'https://meetingguide.org/', 90)?></p>
-							<p><?php printf(__('To get involved, please <a href="%s">get in touch</a>.', '12-step-meeting-list'), TSML_CONTACT_LINK)?></p>
-						</div>
-					</div>
-					<?php } else {?>
 					<div class="postbox">
 						<div class="inside">
 							<h3><?php _e('About this Plugin', '12-step-meeting-list')?></h3>
@@ -683,7 +745,6 @@ function tmsl_import_page() {
 							<p><?php printf(__('If you would like to help out with development, <a href="%s" target="_blank">visit us on GitHub</a>.', '12-step-meeting-list'), 'https://github.com/meeting-guide/12-step-meeting-list')?></p>
 						</div>
 					</div>
-					<?php }?>
 				</div>
 			</div>
 		</div>

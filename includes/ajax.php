@@ -7,18 +7,18 @@ add_action('wp_ajax_nopriv_tsml_locations', 'tsml_ajax_locations');
 function tsml_ajax_locations() {
 	$locations = tsml_get_locations();
 	$results = array();
-    foreach ($locations as $location) {
-        $results[] = array(
-            'value'				=> html_entity_decode($location['location']),
-            'formatted_address'	=> $location['formatted_address'],
-            'latitude'			=> $location['latitude'],
-            'longitude'			=> $location['longitude'],
-            'region'			=> $location['region_id'],
-            'notes'				=> html_entity_decode($location['location_notes']),
-            'tokens'			=> tsml_string_tokens($location['location']),
-            'type'				=> 'location',
-            'url'				=> $location['location_url'],
-        );
+	foreach ($locations as $location) {
+		$results[] = array(
+			'value'				=> html_entity_decode($location['location']),
+			'formatted_address'	=> $location['formatted_address'],
+			'latitude'			=> $location['latitude'],
+			'longitude'			=> $location['longitude'],
+			'region'			=> $location['region_id'],
+			'notes'				=> html_entity_decode($location['location_notes']),
+			'tokens'			=> tsml_string_tokens($location['location']),
+			'type'				=> 'location',
+			'url'				=> $location['location_url'],
+		);
 	}
 	wp_send_json($results);
 }
@@ -61,13 +61,13 @@ add_action('wp_ajax_nopriv_tsml_regions', 'tsml_ajax_regions');
 function tsml_ajax_regions() {
 	$regions = get_terms('tsml_region');
 	$results = array();
-    foreach ($regions as $region) {
-        $results[] = array(
-	        'id'				=> $region->term_id,
-            'value'				=> html_entity_decode($region->name),
-            'type'				=> 'region',
-            'tokens'			=> tsml_string_tokens($region->name),
-        );
+	foreach ($regions as $region) {
+		$results[] = array(
+			'id'				=> $region->term_id,
+			'value'				=> html_entity_decode($region->name),
+			'type'				=> 'region',
+			'tokens'			=> tsml_string_tokens($region->name),
+		);
 	}
 	wp_send_json($results);
 }
@@ -119,7 +119,7 @@ add_action('wp_ajax_nopriv_csv', 'tsml_ajax_csv');
 function tsml_ajax_csv() {
 
 	//going to need this later
-	global $tsml_days, $tsml_types, $tsml_program;
+	global $tsml_days, $tsml_programs, $tsml_program;
 
 	//get data source
 	$meetings = tsml_get_meetings();
@@ -180,7 +180,7 @@ function tsml_ajax_csv() {
 				$line[] = $tsml_days[$meeting[$column]];
 			} elseif ($column == 'types') {
 				$types = $meeting[$column];
-				foreach ($types as &$type) $type = $tsml_types[$tsml_program][trim($type)];
+				foreach ($types as &$type) $type = $tsml_programs[$tsml_program]['types'][trim($type)];
 				sort($types);
 				$line[] = $escape . implode(', ', $types) . $escape;
 			} elseif (strstr($column, 'notes')) {
@@ -213,11 +213,11 @@ add_action('wp_ajax_nopriv_tsml_feedback', 'tsml_ajax_feedback');
 function tsml_ajax_feedback() {
 	global $tsml_feedback_addresses, $tsml_nonce;
 	
-    $meeting  = tsml_get_meeting(intval($_POST['meeting_id']));
-    $name     = sanitize_text_field($_POST['tsml_name']);
-    $email    = sanitize_email($_POST['tsml_email']);
-    $message  = '<p>' . nl2br(sanitize_text_area(stripslashes($_POST['tsml_message']))) . '</p>';
-    $message .= '<hr><p>Address: ' . $meeting->formatted_address . '</p><p>Meeting: <a href="' . get_permalink($meeting->ID) . '">' . get_permalink($meeting->ID) . '</a></p>';
+	$meeting  = tsml_get_meeting(intval($_POST['meeting_id']));
+	$name	 = sanitize_text_field($_POST['tsml_name']);
+	$email	= sanitize_email($_POST['tsml_email']);
+	$message  = '<p>' . nl2br(sanitize_text_area(stripslashes($_POST['tsml_message']))) . '</p>';
+	$message .= '<hr><p>Address: ' . $meeting->formatted_address . '</p><p>Meeting: <a href="' . get_permalink($meeting->ID) . '">' . get_permalink($meeting->ID) . '</a></p>';
 
 	//email vars
 	if (!isset($_POST['tsml_nonce']) || !wp_verify_nonce($_POST['tsml_nonce'], $tsml_nonce)) {
@@ -513,7 +513,7 @@ function tsml_ajax_import() {
 	$meetings  = tsml_count_meetings();
 	$locations = tsml_count_locations();
 	$regions   = tsml_count_regions();
-	$groups    = tsml_count_groups();
+	$groups	= tsml_count_groups();
 	wp_send_json(array(
 		'errors'			=> $errors,
 		'remaining'		=> count($remaining),
@@ -534,7 +534,62 @@ function tsml_ajax_import() {
 add_action('wp_ajax_meetings', 'tsml_ajax_meetings');
 add_action('wp_ajax_nopriv_meetings', 'tsml_ajax_meetings');
 function tsml_ajax_meetings() {
-	if (!headers_sent()) header('Access-Control-Allow-Origin: *');
-	$meetings = empty($_POST) ? tsml_get_meetings($_GET) : tsml_get_meetings($_POST);
-	wp_send_json($meetings);
+	global $tsml_sharing, $tsml_sharing_keys, $tsml_nonce;
+
+	//works over GET or POST
+	$input = empty($_POST) ? $_GET : $_POST;
+
+	$valid = false;
+	
+	if ($tsml_sharing == 'open') {
+		$valid = true; //sharing is open
+	} elseif (!empty($input['nonce']) && wp_verify_nonce($input['nonce'], $tsml_nonce)) {
+		$valid = true; //nonce checks out
+	} elseif (!empty($input['key']) && array_key_exists($input['key'], $tsml_sharing_keys)) {
+		$valid = true; //key checks out
+	}
+
+	if ($valid) {
+		if (!headers_sent()) header('Access-Control-Allow-Origin: *');
+		wp_send_json(tsml_get_meetings($input));
+	} elseif (!headers_sent()) {
+		header('HTTP/1.1 401 Unauthorized', true, 401);
+	}
+
 }
+
+//temporary function to email keys to meeting guide so as not to interrupt service
+//will be removed when existing sites are upgraded
+
+add_action('wp_ajax_meeting_guide', 'tsml_ajax_meeting_guide');
+add_action('wp_ajax_nopriv_meeting_guide', 'tsml_ajax_meeting_guide');
+function tsml_ajax_meeting_guide() {
+	global $tsml_sharing, $tsml_sharing_keys;
+
+	$mg_key = false;
+
+	foreach ($tsml_sharing_keys as $key => $value) {
+		if ($value == 'Meeting Guide') {
+			$mg_key = $key;
+		}
+	}
+
+	if (empty($mg_key)) {
+		$mg_key = md5(uniqid('Meeting Guide', true));
+		$tsml_sharing_keys[$mg_key] = 'Meeting Guide';
+		asort($tsml_sharing_keys);
+		update_option('tsml_sharing_keys', $tsml_sharing_keys);
+	}
+
+	$message = admin_url('admin-ajax.php?') . http_build_query(array(
+		'action' => 'meetings',
+		'key' => $mg_key,
+	));
+
+	if (tsml_email(TSML_CONTACT_EMAIL, 'Sharing Key', $message)) {
+		die('sent');
+	} else {
+		die('not sent!');
+	}
+}
+
