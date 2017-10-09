@@ -29,24 +29,28 @@ add_action('wp_ajax_nopriv_tsml_groups', 'tsml_ajax_groups');
 function tsml_ajax_groups() {
 	$groups = get_posts('post_type=tsml_group&numberposts=-1');
 	$results = array();
-	foreach ($groups as $group) {
-		$title  = get_the_title($group->ID);
-		$group_custom = get_post_meta($group->ID);
-		$results[] = array(
-			'value'				=> html_entity_decode($title),
-			'contact_1_name'		=> @$group_custom['contact_1_name'][0],
-			'contact_1_email'	=> @$group_custom['contact_1_email'][0],
-			'contact_1_phone'	=> @$group_custom['contact_1_phone'][0],
-			'contact_2_name'		=> @$group_custom['contact_2_name'][0],
-			'contact_2_email'	=> @$group_custom['contact_2_email'][0],
-			'contact_2_phone'	=> @$group_custom['contact_2_phone'][0],
-			'contact_3_name'		=> @$group_custom['contact_3_name'][0],
-			'contact_3_email'	=> @$group_custom['contact_3_email'][0],
-			'contact_3_phone'	=> @$group_custom['contact_3_phone'][0],
-			'notes'				=> html_entity_decode($group->post_content),
-			'tokens'				=> tsml_string_tokens($title),
-			'type'				=> 'group',
-		);
+    foreach ($groups as $group) {
+        $title  = get_the_title($group->ID);
+        $group_custom = get_post_meta($group->ID);
+        $results[] = array(
+            'value'				=> html_entity_decode($title),
+            'website'               => @$group_custom['website'][0],
+            'email'             => @$group_custom['email'][0],
+            'phone'             => @$group_custom['phone'][0],
+            'contact_1_name'		=> @$group_custom['contact_1_name'][0],
+            'contact_1_email'	=> @$group_custom['contact_1_email'][0],
+            'contact_1_phone'	=> @$group_custom['contact_1_phone'][0],
+            'contact_2_name'		=> @$group_custom['contact_2_name'][0],
+            'contact_2_email'	=> @$group_custom['contact_2_email'][0],
+            'contact_2_phone'	=> @$group_custom['contact_2_phone'][0],
+            'contact_3_name'		=> @$group_custom['contact_3_name'][0],
+            'contact_3_email'	=> @$group_custom['contact_3_email'][0],
+            'contact_3_phone'	=> @$group_custom['contact_3_phone'][0],
+            'last_contact'      => @$group_custom['last_contact'][0],
+            'notes'				=> html_entity_decode($group->post_content),
+            'tokens'				=> tsml_string_tokens($title),
+            'type'				=> 'group',
+        );
 	}
 	wp_send_json($results);
 }
