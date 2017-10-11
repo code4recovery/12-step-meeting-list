@@ -29,28 +29,28 @@ add_action('wp_ajax_nopriv_tsml_groups', 'tsml_ajax_groups');
 function tsml_ajax_groups() {
 	$groups = get_posts('post_type=tsml_group&numberposts=-1');
 	$results = array();
-    foreach ($groups as $group) {
-        $title  = get_the_title($group->ID);
-        $group_custom = get_post_meta($group->ID);
-        $results[] = array(
-            'value'				=> html_entity_decode($title),
-            'website'               => @$group_custom['website'][0],
-            'email'             => @$group_custom['email'][0],
-            'phone'             => @$group_custom['phone'][0],
-            'contact_1_name'		=> @$group_custom['contact_1_name'][0],
-            'contact_1_email'	=> @$group_custom['contact_1_email'][0],
-            'contact_1_phone'	=> @$group_custom['contact_1_phone'][0],
-            'contact_2_name'		=> @$group_custom['contact_2_name'][0],
-            'contact_2_email'	=> @$group_custom['contact_2_email'][0],
-            'contact_2_phone'	=> @$group_custom['contact_2_phone'][0],
-            'contact_3_name'		=> @$group_custom['contact_3_name'][0],
-            'contact_3_email'	=> @$group_custom['contact_3_email'][0],
-            'contact_3_phone'	=> @$group_custom['contact_3_phone'][0],
-            'last_contact'      => @$group_custom['last_contact'][0],
-            'notes'				=> html_entity_decode($group->post_content),
-            'tokens'				=> tsml_string_tokens($title),
-            'type'				=> 'group',
-        );
+	foreach ($groups as $group) {
+		$title  = get_the_title($group->ID);
+		$group_custom = get_post_meta($group->ID);
+		$results[] = array(
+			'value'				=> html_entity_decode($title),
+			'website'			   => @$group_custom['website'][0],
+			'email'			 => @$group_custom['email'][0],
+			'phone'			 => @$group_custom['phone'][0],
+			'contact_1_name'		=> @$group_custom['contact_1_name'][0],
+			'contact_1_email'	=> @$group_custom['contact_1_email'][0],
+			'contact_1_phone'	=> @$group_custom['contact_1_phone'][0],
+			'contact_2_name'		=> @$group_custom['contact_2_name'][0],
+			'contact_2_email'	=> @$group_custom['contact_2_email'][0],
+			'contact_2_phone'	=> @$group_custom['contact_2_phone'][0],
+			'contact_3_name'		=> @$group_custom['contact_3_name'][0],
+			'contact_3_email'	=> @$group_custom['contact_3_email'][0],
+			'contact_3_phone'	=> @$group_custom['contact_3_phone'][0],
+			'last_contact'	  => @$group_custom['last_contact'][0],
+			'notes'				=> html_entity_decode($group->post_content),
+			'tokens'				=> tsml_string_tokens($title),
+			'type'				=> 'group',
+		);
 	}
 	wp_send_json($results);
 }
@@ -98,6 +98,56 @@ add_action('wp_ajax_tsml_cache', 'tsml_ajax_cache_clear');
 function tsml_ajax_cache_clear() {
 	delete_option('tsml_addresses');
 	die('address cache cleared!');	
+}
+
+// AJAX part of closest meetings widget
+add_action('wp_ajax_nopriv_display_closest_meetings', 'tsml_ajax_closest_meetings');
+add_action('wp_ajax_display_closest_meetings', 'tsml_ajax_closest_meetings'); 
+function tsml_ajax_closest_meetings($content) {
+
+	//security
+	if (!defined('DOING_AJAX' ) && !DOING_AJAX) return;
+
+	//sanitize inputs
+	$lat = floatval($_GET['lat']);
+	$long = floatval($_GET['long']);
+	$today = ($_GET['today'] == 'today') ? date('w') : intval($day);
+	$count = empty($_GET['count']) ? 5 : intval($_GET['count']);
+
+	//get meetings for today
+	$meetings = tsml_get_meetings(array('day' => intval($today)));
+
+	//set distances on all $meetings in day (todo use tsml_get_meetings())
+	$countMeetings = count($meetings);
+	for ($i = 0; $i < $countMeetings; $i++) {
+		$meetings[$i]['distance'] = sqrt(pow(abs(floatval($meetings[$i]['latitude'])) - abs($lat),2) + 
+			pow(abs(floatval($meetings[$i]['longitude'])) - abs(floatval($long)),2));
+	}
+
+	//re-set distances on all meetings?
+	$dist = array();
+	foreach ($meetings as $key => $row) {
+		if ($row['day'] == $today) {
+			$dist[$key] = array(
+				'distance' => tsml_distance($lat, $long, $row['latitude'], $row['longitude']),
+				'name' => $row['name'], 
+				'time_formatted' => $row['time_formatted'], 
+				'location' => $row['location'],
+				'formatted_address' => $row['formatted_address'],
+				'url' => $row['url'],
+				'location_url' => $row['location_url'],
+				'latitude' => $row['latitude'],
+				'longitude' => $row['longitude'],
+				'time' => $row['time']
+			);
+		} 
+	}
+
+	//sort meetings
+	array_multisort($dist, SORT_ASC, $meetings); 
+
+	//send JSON
+	wp_send_json(array_slice($dist, 0, $count));
 }
 
 //get all contact email addresses (for europe)
@@ -528,49 +578,6 @@ function tsml_ajax_import() {
 		),
 	));
 }
-
-// AJAX part of closest meetings widget
-function display_closest_meetings( $content ) {
-        global $wpdb;
-        $lat=$_GET['lat'];
-        $long=$_GET['long'];
-        $day=$_GET['today'];
-        
-        date_default_timezone_set("America/Los_Angeles");
-    	if ( defined( 'DOING_AJAX' ) && DOING_AJAX ) {
-
-            // Just for today
-            if ($day=='today'){
-                $today = date('w');
-            } else { 
-                $today = intval($day);
-            }
-            
-            $meetings = tsml_get_meetings(array('day' => intval($today)));
-
-            $countMeetings = count($meetings);
-            for ($i = 0; $i < $countMeetings; $i++) {
-                $meetings[$i]['distance'] = sqrt(pow(abs(floatval($meetings[$i]['latitude'])) - abs(floatval($lat)),2)+pow(abs(floatval($meetings[$i]['longitude'])) - abs(floatval($long)),2));
-            }
-        
-            $dist = array();
-            foreach ($meetings as $key => $row)
-            {
-                if ( $row['day'] == $today ) {
-                    $dist[$key] = array('distance'=>tsml_distance($lat,$long,$row['latitude'],$row['longitude']),'name'=>$row['name'],'time_formatted'=>$row['time_formatted'],'location'=>$row['location'],'formatted_address'=>$row['formatted_address'],'url'=>$row['url'],'location_url'=>$row['location_url'],'latitude'=>$row['latitude'],'longitude'=>$row['longitude'],'time'=>$row['time']);
-                } 
-            }
-            array_multisort($dist, SORT_ASC, $meetings); 
-
-            $distFin = array($dist[0], $dist[1], $dist[2], $dist[3], $dist[4]); 
-
-            $json = json_encode($distFin); 
-    	    echo $json;
-    	    die();
-	    }
-}
-add_action( 'wp_ajax_nopriv_display_closest_meetings', 'display_closest_meetings' );
-add_action( 'wp_ajax_display_closest_meetings', 'display_closest_meetings' ); 
 
 //api ajax function
 //used by theme, web app, mobile app

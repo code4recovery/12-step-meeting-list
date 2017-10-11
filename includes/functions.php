@@ -139,18 +139,18 @@ if (!function_exists('tsml_custom_post_types')) {
 			'labels' => array(
 				'name' => __('Regions', '12-step-meeting-list'),
 				'singular_name' => __('Region', '12-step-meeting-list'),
-				'menu_name'  => __('Regions', '12-step-meeting-list'),
-				'all_items'  => __('All Regions', '12-step-meeting-list'),
-				'edit_item'  => __('Edit Region', '12-step-meeting-list'),
-				'view_item'  => __('View Region', '12-step-meeting-list'),
-				'update_item'  => __('Update Region', '12-step-meeting-list'),
-				'add_new_item'  => __('Add New Region', '12-step-meeting-list'),
-				'new_item_name'  => __('New Region', '12-step-meeting-list'),
-				'parent_item'  => __('Parent Region', '12-step-meeting-list'),
-				'parent_item_colon'  => __('Parent Region:', '12-step-meeting-list'),
-				'search_items'  => __('Search Regions', '12-step-meeting-list'),
-				'popular_items'  => __('Popular Regions', '12-step-meeting-list'),
-				'not_found'  => __('No regions found.', '12-step-meeting-list'),
+				'menu_name' => __('Regions', '12-step-meeting-list'),
+				'all_items' => __('All Regions', '12-step-meeting-list'),
+				'edit_item' => __('Edit Region', '12-step-meeting-list'),
+				'view_item' => __('View Region', '12-step-meeting-list'),
+				'update_item' => __('Update Region', '12-step-meeting-list'),
+				'add_new_item' => __('Add New Region', '12-step-meeting-list'),
+				'new_item_name' => __('New Region', '12-step-meeting-list'),
+				'parent_item' => __('Parent Region', '12-step-meeting-list'),
+				'parent_item_colon' => __('Parent Region:', '12-step-meeting-list'),
+				'search_items' => __('Search Regions', '12-step-meeting-list'),
+				'popular_items' => __('Popular Regions', '12-step-meeting-list'),
+				'not_found' => __('No regions found.', '12-step-meeting-list'),
 			),
 			'hierarchical' => true,
 		));
@@ -159,60 +159,61 @@ if (!function_exists('tsml_custom_post_types')) {
 			'labels' => array(
 				'name' => __('District', '12-step-meeting-list'),
 				'singular_name' => __('District', '12-step-meeting-list'),
-				'menu_name'  => __('District', '12-step-meeting-list'),
-				'all_items'  => __('All Districts', '12-step-meeting-list'),
-				'edit_item'  => __('Edit District', '12-step-meeting-list'),
-				'view_item'  => __('View District', '12-step-meeting-list'),
-				'update_item'  => __('Update District', '12-step-meeting-list'),
-				'add_new_item'  => __('Add New District', '12-step-meeting-list'),
-				'new_item_name'  => __('New District', '12-step-meeting-list'),
-				'parent_item'  => __('Parent Area', '12-step-meeting-list'),
-				'parent_item_colon'  => __('Parent Area:', '12-step-meeting-list'),
-				'search_items'  => __('Search Districts', '12-step-meeting-list'),
-				'popular_items'  => __('Popular Districts', '12-step-meeting-list'),
-				'not_found'  => __('No districts found.', '12-step-meeting-list'),
+				'menu_name' => __('District', '12-step-meeting-list'),
+				'all_items' => __('All Districts', '12-step-meeting-list'),
+				'edit_item' => __('Edit District', '12-step-meeting-list'),
+				'view_item' => __('View District', '12-step-meeting-list'),
+				'update_item' => __('Update District', '12-step-meeting-list'),
+				'add_new_item' => __('Add New District', '12-step-meeting-list'),
+				'new_item_name' => __('New District', '12-step-meeting-list'),
+				'parent_item' => __('Parent Area', '12-step-meeting-list'),
+				'parent_item_colon' => __('Parent Area:', '12-step-meeting-list'),
+				'search_items' => __('Search Districts', '12-step-meeting-list'),
+				'popular_items' => __('Popular Districts', '12-step-meeting-list'),
+				'not_found' => __('No districts found.', '12-step-meeting-list'),
 			),
 			'hierarchical' => true,
 		));
 	
 		register_post_type('tsml_meeting',
 			array(
-				'labels'		=> array(
-					'name'			=>	__('Meetings', '12-step-meeting-list'),
-					'singular_name'	=>	__('Meeting', '12-step-meeting-list'),
-					'not_found'		=>	__('No meetings added yet.', '12-step-meeting-list'),
-					'add_new_item'	=>	__('Add New Meeting', '12-step-meeting-list'),
-					'search_items'	=>	__('Search Meetings', '12-step-meeting-list'),
-					'edit_item'		=>	__('Edit Meeting', '12-step-meeting-list'),
-					'view_item'		=>	__('View Meeting', '12-step-meeting-list'),
+				'labels' => array(
+					'name' =>	__('Meetings', '12-step-meeting-list'),
+					'singular_name' =>	__('Meeting', '12-step-meeting-list'),
+					'not_found' =>	__('No meetings added yet.', '12-step-meeting-list'),
+					'add_new_item' =>	__('Add New Meeting', '12-step-meeting-list'),
+					'search_items' =>	__('Search Meetings', '12-step-meeting-list'),
+					'edit_item' =>	__('Edit Meeting', '12-step-meeting-list'),
+					'view_item' =>	__('View Meeting', '12-step-meeting-list'),
 				),
-				'supports'		=> array('title'),
-				'public'		=> true,
-				'has_archive'	=> true,
-				'menu_icon'		=> 'dashicons-groups',
-				'rewrite'		=> array('slug'=>'meetings'),
+				'supports' => array('title'),
+				'public' => true,
+				'has_archive' => true,
+				'menu_icon' => 'dashicons-groups',
+				'rewrite' => array('slug'=>'meetings'),
+				'capability_type' => defined('URE_PLUGIN_URL') ? 'meeting' : 'post',
 			)
 		);
 	
 		register_post_type('tsml_location',
 			array(
-				'supports'		=> array('title'),
-				'public'		=> true,
-				'show_ui'		=> false,
-				'has_archive'	=> true,
-				'capabilities'	=> array('create_posts' => false),
-				'rewrite'		=> array('slug'=>'locations'),
-				'taxonomies'	=> array('tsml_region'),
+				'supports' => array('title'),
+				'public' => true,
+				'show_ui' => false,
+				'has_archive' => true,
+				'capabilities' => array('create_posts' => false),
+				'rewrite' => array('slug'=>'locations'),
+				'taxonomies' => array('tsml_region'),
 			)
 		);	
 	
 		register_post_type('tsml_group',
 			array(
-				'supports'		=> array('title'),
-				'public'		=> true,
-				'show_ui'		=> false,
-				'has_archive'	=> false,
-				'capabilities'	=> array('create_posts' => false),
+				'supports' => array('title'),
+				'public' => true,
+				'show_ui' => false,
+				'has_archive' => false,
+				'capabilities' => array('create_posts' => false),
 			)
 		);	
 	}
@@ -682,10 +683,12 @@ if (!function_exists('tsml_get_meeting')) {
 		$meeting->notes 				= esc_html($meeting->post_content);
 		
 		//type description? (todo support multiple)
-		$types_with_descriptions = array_intersect($meeting->types, array_keys($tsml_programs[$tsml_program]['type_descriptions']));
-		foreach ($types_with_descriptions as $type) {
-			$meeting->type_description = $tsml_programs[$tsml_program]['type_descriptions'][$type];
-			break;
+		if (!empty($tsml_programs[$tsml_program]['type_descriptions'])) {
+			$types_with_descriptions = array_intersect($meeting->types, array_keys($tsml_programs[$tsml_program]['type_descriptions']));
+			foreach ($types_with_descriptions as $type) {
+				$meeting->type_description = $tsml_programs[$tsml_program]['type_descriptions'][$type];
+				break;
+			}
 		}
 		
 		//if meeting is part of a group, include group info
