@@ -529,6 +529,49 @@ function tsml_ajax_import() {
 	));
 }
 
+// AJAX part of closest meetings widget
+function display_closest_meetings( $content ) {
+        global $wpdb;
+        $lat=$_GET['lat'];
+        $long=$_GET['long'];
+        $day=$_GET['today'];
+        
+        date_default_timezone_set("America/Los_Angeles");
+    	if ( defined( 'DOING_AJAX' ) && DOING_AJAX ) {
+
+            // Just for today
+            if ($day=='today'){
+                $today = date('w');
+            } else { 
+                $today = intval($day);
+            }
+            
+            $meetings = tsml_get_meetings(array('day' => intval($today)));
+
+            $countMeetings = count($meetings);
+            for ($i = 0; $i < $countMeetings; $i++) {
+                $meetings[$i]['distance'] = sqrt(pow(abs(floatval($meetings[$i]['latitude'])) - abs(floatval($lat)),2)+pow(abs(floatval($meetings[$i]['longitude'])) - abs(floatval($long)),2));
+            }
+        
+            $dist = array();
+            foreach ($meetings as $key => $row)
+            {
+                if ( $row['day'] == $today ) {
+                    $dist[$key] = array('distance'=>tsml_distance($lat,$long,$row['latitude'],$row['longitude']),'name'=>$row['name'],'time_formatted'=>$row['time_formatted'],'location'=>$row['location'],'formatted_address'=>$row['formatted_address'],'url'=>$row['url'],'location_url'=>$row['location_url'],'latitude'=>$row['latitude'],'longitude'=>$row['longitude'],'time'=>$row['time']);
+                } 
+            }
+            array_multisort($dist, SORT_ASC, $meetings); 
+
+            $distFin = array($dist[0], $dist[1], $dist[2], $dist[3], $dist[4]); 
+
+            $json = json_encode($distFin); 
+    	    echo $json;
+    	    die();
+	    }
+}
+add_action( 'wp_ajax_nopriv_display_closest_meetings', 'display_closest_meetings' );
+add_action( 'wp_ajax_display_closest_meetings', 'display_closest_meetings' ); 
+
 //api ajax function
 //used by theme, web app, mobile app
 add_action('wp_ajax_meetings', 'tsml_ajax_meetings');
