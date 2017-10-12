@@ -81,8 +81,9 @@ It was originally designed to maintain a list of AA meetings in Santa Clara Coun
 1. [Santa Fe, NM](http://santafeaa.org/meetings/)
 1. [Savannah, GA](http://savannahaa.com/meetings-list/)
 1. [Secular AA](https://www.secularaa.org/meetings/)
-1. [Southern Colorado](http://www.puebloaa.org/meetings/)
 1. [Sonoma County, CA](http://www.sonomacountyaa.org/meetings/)
+1. [Southern Colorado](http://www.puebloaa.org/meetings/)
+1. [South Florida District 20](http://district20aa.org/meetings/)
 1. [St. Louis, MO](https://aastl.org/meetings/)
 1. [State College, PA](http://www.district43.com/meetings/)
 1. [Streamwood, IL](http://dist23.aa-nia.org/meetings)
@@ -292,7 +293,9 @@ Also check out our [One Page Meeting List](https://github.com/meeting-guide/one-
 == Changelog ==
 
 = 2.15.2 =
-* Fixing error message on meeting detail page (per report by NA Poland)
+* Fixing error message on meeting detail page (per NA Poland)
+* Removing User Role Editor support (per Area 72)
+* If Google Analytics is installed, capturing search terms (per WAIA)
 
 = 2.15.1 =
 * Meeting edit page improvements and bug fixes by Tim R

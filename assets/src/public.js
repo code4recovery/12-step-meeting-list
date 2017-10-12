@@ -206,6 +206,7 @@ jQuery(function($){
 	//controls changes
 	$('#meetings .controls').on('submit', '#search', function(){
 		//capture submit event
+		trackAnalytics('search', $search_field.val())
 		doSearch(true);
 		return false;
 	}).on('click', 'div.expand', function(e){
@@ -250,12 +251,11 @@ jQuery(function($){
 			//change placeholder text
 			$search_field.attr('placeholder', $(this).text());
 			
-			//clear and focus input (not sure why this was here, but it's focusing the field annoyingly)
-			//$search_field.val('').focus();
 		} else if (param == 'distance') {
 			//distance only one
 			$('#distance li').removeClass('active');
 			$('#distance span.selected').html($(this).html());
+			trackAnalytics('distance', $(this).text());
 		} else if (param == 'region') {
 			
 			//switch between region and district mode
@@ -269,18 +269,23 @@ jQuery(function($){
 			//region only one
 			$('#region li').removeClass('active');
 			$('#region span.selected').html($(this).html());
+			trackAnalytics('region', $(this).text());
+			
 		} else if (param == 'day') {
 			//day only one selected
 			$('#day li').removeClass('active');
 			$('#day span.selected').html($(this).html());
+			trackAnalytics('day', $(this).text());
 		} else if (param == 'time') {
 			//time only one
 			$('#time li').removeClass('active');
 			$('#time span.selected').html($(this).html());
+			trackAnalytics('time', $(this).text());
 		} else if (param == 'type') {
 			//type only one
 			$('#type li').removeClass('active');
 			$('#type span.selected').html($(this).html());
+			trackAnalytics('type', $(this).text());
 		}
 
 		$(this).parent().toggleClass('active');
@@ -804,7 +809,16 @@ jQuery(function($){
 		} else {
 			$('#time li.upcoming').removeClass('hidden');
 		}
-	}	
+	}
+
+	//send event to google analytics, if loaded
+	function trackAnalytics(action, label) {
+		if (typeof ga === 'function') {
+			//console.log('sending ' + action + ': ' + label + ' to google analytics');
+			ga('send', 'event', '12 Step Meeting List', action, label);
+		}
+	}
+	
 		
 	//disable the typeahead (if you switched to a different search mode)	
 	function typeaheadDisable() {
@@ -843,10 +857,13 @@ jQuery(function($){
 				active.parent().addClass('active');
 				$('#region span.selected').html(active.html());
 				$('#search input[name="query"]').val('').typeahead('val', '');
+				trackAnalytics('region', active.text());
 				doSearch(false);
 			} else if (item.type == 'location') {
+				trackAnalytics('location', item.value);
 				location.href = item.url;
 			} else if (item.type == 'group') {
+				trackAnalytics('group', item.value);
 				doSearch(true);
 			}
 		});

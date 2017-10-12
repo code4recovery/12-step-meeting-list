@@ -191,7 +191,6 @@ if (!function_exists('tsml_custom_post_types')) {
 				'has_archive' => true,
 				'menu_icon' => 'dashicons-groups',
 				'rewrite' => array('slug'=>'meetings'),
-				'capability_type' => defined('URE_PLUGIN_URL') ? 'meeting' : 'post',
 			)
 		);
 	
