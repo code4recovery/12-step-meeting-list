@@ -89,7 +89,7 @@ class TSML_Widget_Upcoming extends WP_Widget {
 		<p>
 			<label for="<?php echo esc_attr($this->get_field_id('count'))?>"><?php _e('Show:', '12-step-meeting-list')?></label> 
 			<select class="widefat" id="<?php echo esc_attr($this->get_field_id('title'))?>" name="<?php echo esc_attr($this->get_field_name('count'))?>">
-				<?php for ($i = 1; $i < 11; $i++) {?>
+				<?php for ($i = 1; $i < 26; $i++) {?>
 					<option value="<?php echo $i?>"<?php selected($i, esc_attr($count))?>><?php echo $i?></option>
 				<?php }?>
 			</select>
@@ -224,17 +224,22 @@ class TSML_Widget_Closest extends WP_Widget {
 		);
 	}
 	
-
-    
 	//front-end display of widget 
 	public function widget($args, $instance) {
-		//$table = display_upcoming_meetings($instance);
-	    $table = do_shortcode('tsml_closest');
-		if (empty($table)) return do_shortcode('tsml_closest');
+		global $tsml_days;
+
+			wp_enqueue_script('closestmeetings', plugins_url('../assets/js/closestmeetings.min.js', __FILE__), array('jquery'), TSML_VERSION, true );
+			wp_localize_script('closestmeetings', 'displayclosestmeetings', array(
+				'ajax_url' => admin_url( 'admin-ajax.php' ),
+				'time' => __('Time', '12-step-meeting-list'),
+				'meeting' => __('Meeting', '12-step-meeting-list'),
+				'distance' => __('Distance', '12-step-meeting-list'),
+			));
+		
 		if (empty($instance['title'])) $instance['title'] = '';
 		if (!empty($instance['css'])) {
 			echo '<style type="text/css">
-			    #dataxhr th.time, #dataxhr th..name, #dataxhr th..distance { background-color: #fff; }
+				#dataxhr th.time, #dataxhr th.name, #dataxhr th.distance { background-color: #fff; }
 				.tsml-widget-closest {
 					background-color: transparent;
 					padding: 0;
@@ -277,6 +282,8 @@ class TSML_Widget_Closest extends WP_Widget {
 				.widgets-meetings-top .tsml-widget-closest {
 					margin: 0 0 15px;
 				}
+				#closest { margin: 20px auto 40px; width: 100%; text-align: center; }
+				#closest a { margin: 0 auto 36px auto; }
 			</style>'; 
 		}
 		
@@ -287,14 +294,24 @@ class TSML_Widget_Closest extends WP_Widget {
 		if (!empty($instance['title'])) {
 			echo $args['before_title'] . apply_filters('widget_title', $instance['title']) . $args['after_title'];
 		}
-		//echo $table;
+
+		//permalinks-agnostic link to archive page
 		$link = get_post_type_archive_link('tsml_meeting');
 		$link .= ((strpos($link, '?') === false) ? '?' : '&') . 'tsml-mode=me';
-		$link = "/meetings?tsml-mode=me";
-		echo '<select id="geolocate" onchange="closestmeetings();"><option value="today">today</option><option value="1">Monday</option><option value="2">Tuesday</option><option value="3">Wednesday</option><option value="4">Thursday</option><option value="5">Friday</option><option value="6">Saturday</option><option value="0">Sunday</option></select><table class="tsml_closestmeetings table table-striped" id="dataxhr"></table><p style="margin: 20px auto; width: 100%; text-align: center;" id="closest"><a href="/meetings/?tsml-day=any&tsml-distance=5&tsml-mode=me&tsml-view=map" style="margin: 0 auto 36px auto;">all meetings near me</a></p><br><br>';
+
+		echo '<select id="geolocate" onchange="closestmeetings();">
+			<option value="today">' . __('Today', '12-step-meeting-list') . '</option>';
+		foreach ($tsml_days as $key => $value) {
+			echo '<option value="' . $key . '">' . $value . '</option>';
+		}
+		echo '</select>
+			<table class="tsml_closestmeetings table table-striped" id="dataxhr"></table>
+			<p id="closest">
+				<a href="' . $link . '">' . __('All Meetings Near Me', '12-step-meeting-list') . '</a>
+			</p>';
+			
 		echo $args['after_widget'];
-		
-	    }
+	}
 
 	//backend form
 	public function form($instance) {
@@ -308,7 +325,7 @@ class TSML_Widget_Closest extends WP_Widget {
 		<p>
 			<label for="<?php echo esc_attr($this->get_field_id('count'))?>"><?php _e('Show:', '12-step-meeting-list')?></label> 
 			<select class="widefat" id="<?php echo esc_attr($this->get_field_id('title'))?>" name="<?php echo esc_attr($this->get_field_name('count'))?>">
-				<?php for ($i = 4; $i < 5; $i++) {?>
+				<?php for ($i = 4; $i < 26; $i++) {?>
 					<option value="<?php echo $i?>"<?php selected($i, esc_attr($count))?>><?php echo $i?></option>
 				<?php }?>
 			</select>
@@ -330,18 +347,12 @@ class TSML_Widget_Closest extends WP_Widget {
 	}
 }
 
-add_action( 'wp_enqueue_scripts', 'closest_enqueue_scripts' );
-function closest_enqueue_scripts() {
-	wp_enqueue_script( 'closestmeetings', '/wp-content/plugins/12-step-meeting-list/assets/js/closestmeetings.min.js', array('jquery'), '1.0', true );
-	wp_localize_script( 'closestmeetings', 'displayclosestmeetings', array(
-		'ajax_url' => admin_url( 'admin-ajax.php' )
-	));
-}
-
-// register widgets
+//register widgets
 function tsml_widget() {
-    register_widget('TSML_Widget_Upcoming');
-    register_widget('TSML_Widget_App_Store');
-    register_widget('TSML_Widget_Closest');
+	register_widget('TSML_Widget_Upcoming');
+	register_widget('TSML_Widget_App_Store');
+	if (in_array($_SERVER['HTTP_HOST'], array('aasanjose.dev', 'hacoaa.org'))) {
+		register_widget('TSML_Widget_Closest');
+	}
 }
 add_action('widgets_init', 'tsml_widget');
