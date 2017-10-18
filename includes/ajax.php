@@ -112,6 +112,9 @@ function tsml_ajax_closest_meetings($content) {
 	$lat = floatval($_GET['lat']);
 	$long = floatval($_GET['long']);
 	$day = sanitize_text_field($_GET['today']);
+	
+	date_default_timezone_set(get_option('timezone_string'));
+	
 //	$today = ($_GET['today'] == 'today') ? date('w') : intval($day);
             // Just for today
             if ($day=='today'){
