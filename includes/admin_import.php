@@ -510,8 +510,8 @@ function tmsl_import_page() {
 											</form>
 										</td>
 										<td>
-											<a href="<?php echo $feed?>" target="_blank"><?php echo @$properties['name'] ?: __('Unnamed Feed', '12-step-meeting-list')?></a>
-											&bull; <?php echo @$properties['type'] ?: 'JSON'?>
+											<a href="<?php echo $feed?>" target="_blank"><?php echo !empty($properties['name']) ? $properties['name'] : __('Unnamed Feed', '12-step-meeting-list')?></a>
+											&bull; <?php echo !empty($properties['type']) ? $properties['type'] : 'JSON'?>
 										</td>
 										<td class="align-center"><?php echo number_format($properties['count_meetings'])?></td>
 										<td class="align-right">
@@ -554,7 +554,7 @@ function tmsl_import_page() {
 					
 					if (!is_ssl()) {?>
 					<div class="notice notice-warning inline">
-						<p><?php _e('If you enable SSL, your users will be able to search for meetings relative to their location.', '12-step-meeting-list')?></p>
+						<p><?php _e('If you enable SSL (https), your users will be able to search near them.', '12-step-meeting-list')?></p>
 					</div>
 					<?php }?>
 
