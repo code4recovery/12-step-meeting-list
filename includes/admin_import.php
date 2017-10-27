@@ -554,7 +554,7 @@ function tmsl_import_page() {
 					
 					if (!is_ssl()) {?>
 					<div class="notice notice-warning inline">
-						<p><?php _e('If you enable SSL (https), your users will be able to search near them.', '12-step-meeting-list')?></p>
+						<p><?php _e('If you enable SSL (https), your users will be able to search near their location.', '12-step-meeting-list')?></p>
 					</div>
 					<?php }?>
 

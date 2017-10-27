@@ -61,7 +61,7 @@ jQuery(function($){
 	$('.toggle_more').on('click', 'a', function(e){
 		e.preventDefault();
 		$(this).closest('.checkboxes').toggleClass('showing_more');
-	})
+	});
 
 	//day picker
 	$('select#day').change(function(){
@@ -123,17 +123,16 @@ jQuery(function($){
             $.each(tsml_locations.index.datums, function() {
                 if (this.value.toUpperCase() === location.trim().toUpperCase()) {
                     $('input[name=location]').val(this.value);
-                    location = this;
+					$('input[name=formatted_address]').val(this.formatted_address).trigger('change');
+					$('input[name=latitude]').val(this.latitude);
+					$('input[name=longitude]').val(this.longitude);
+					$('select[name=region] option[value=' + this.region + ']').prop('selected', true);
+					$('textarea[name=location_notes]').val(this.notes);
+					setMap(this.latitude, this.longitude);
                     return false;
                 }
             });
         }
-		$('input[name=formatted_address]').val(location.formatted_address).trigger('change');
-		$('input[name=latitude]').val(location.latitude);
-		$('input[name=longitude]').val(location.longitude);
-		$('select[name=region] option[value=' + location.region + ']').prop('selected', true);
-		$('textarea[name=location_notes]').val(location.notes);
-		setMap(location.latitude, location.longitude);
 	});
 
 	//group typeahead

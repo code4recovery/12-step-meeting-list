@@ -4,7 +4,7 @@ Donate link: https://meetingguide.org/donate
 Tags: 12-step, aa, al-anon, coda, meetings, na, oa, saa, slaa
 Requires at least: 3.2
 Tested up to: 4.8
-Stable tag: 2.15.3
+Stable tag: 2.15.4
 
 This plugin helps 12 step programs list their meetings. It standardizes addresses, and displays results in a searchable list and map.
 
@@ -43,6 +43,7 @@ It was originally designed to maintain a list of AA meetings in Santa Clara Coun
 1. [Greensboro, NC](http://nc23.org/meetings/)
 1. [Harrisburg, PA](http://www.aaharrisburg.org/meetings/)
 1. [Hernando County, FL](http://www.aahernando.org/meetings/)
+1. [Inland Empire, CA](https://aainlandempire.org/meetings)
 1. [Joliet, IL](http://aadistrict51.org/meetings/)
 1. [Midlands, UK (Polish)](http://intergrupamidlands.co.uk/meetings/)
 1. [Kansas](https://ks-aa.org/meetings/)
@@ -110,6 +111,7 @@ It was originally designed to maintain a list of AA meetings in Santa Clara Coun
 
 **Adult Children of Alcoholics**
 
+1. [Arizona](http://aca-arizona.org/meetings/?tsml-day=any)
 1. [Southern California](http://www.socalaca.org/meetings/?d=any)
 1. [Texas](http://lonestaraca.org/meetings/)
 
@@ -119,10 +121,14 @@ It was originally designed to maintain a list of AA meetings in Santa Clara Coun
 1. [Naples, FL](https://naplesafg.org/meetings)
 1. [Pennsylvania](http://pa-al-anon.org/meetings/)
 
-**Codependents Anonymous**
+**Co-Dependents Anonymous**
 
-1. [Los Angeles, CA](http://www.lacoda.org/)
+1. [Los Angeles, CA](http://www.lacodapreview.lacoda.org/wp/index.php/meetings/?d=any)
 1. [South SF Bay Area, CA](http://www.sbcoda.org/meetings/?d=any&v=list)
+
+**Cocaine Anonymous**
+
+1. [Illinois](http://illinoisareaca.org/meetings)
 
 **Debtors Anonymous**
 
@@ -291,6 +297,13 @@ Also check out our [One Page Meeting List](https://github.com/meeting-guide/one-
 1. Edit location
 
 == Changelog ==
+
+= 2.15.4 =
+* More descriptive 'request change' emails (per San Francisco)
+* Fixing a bug wherein it wasn't possible to change an established location name
+* Edit meeting page postboxes are no longer collapsible (was confusing in San Jose)
+* Adding a meeting type for ACA
+* Updating Google API key to be paid by Meeting Guide donation form
 
 = 2.15.3 =
 * Fixing error on PHP 5.2

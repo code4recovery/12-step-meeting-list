@@ -190,6 +190,13 @@ body {
 	//meeting add/edit
 	&.post-type-tsml_meeting {
 
+		//remove these because it can confuse people to hide it
+		.postbox {
+			.handlediv { display: none; }
+			.hndle { background-color: #fafafa; }
+			&.closed .inside { display: block; }
+		}
+
 		.meta_form_row {
 			padding: 10px 0 0; overflow: auto; clear: left;
 			label, input, div.checkboxes, #map { float: left; line-height: 100%; } 
@@ -221,14 +228,12 @@ body {
 		
 			&.typeahead {
 				overflow: visible;
-/*                @import '../../node_modules/bootstrap-sass/assets/stylesheets/_bootstrap.scss'; */
 	            @import 'typeahead-bootstrap.scss';
 				.twitter-typeahead{
 					 width: 85%;
 					 input { width: 100%; }
 				}
 				.tt-hint { color: #999; }
-/*				.tt-menu { display: none !important; } */
 			}
 			
 			&.checkbox {

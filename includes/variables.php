@@ -37,8 +37,8 @@ $tsml_distance_units = get_option('tsml_distance_units', 'mi');
 //load email addresses to send user feedback about meetings
 $tsml_feedback_addresses = get_option('tsml_feedback_addresses', array());
 
-//most plugins would require you to specify your own
-$tsml_google_api_key = 'AIzaSyCC3p6PSf6iQbXi-Itwn9C24_FhkbDUkdg';
+//usage is paid for by donations at meetingguide.org/donate
+$tsml_google_api_key = 'AIzaSyBRvfz_gFi4Gb93h9iW3-lgQYnQiek_Xjc';
 
 /*
 unfortunately the google geocoding API is not always perfect. used by tsml_import() and admin.js
@@ -184,6 +184,7 @@ function tsml_define_strings() {
 			),
 			'types'		=> array(
 				'A'		=> __('Age Restricted 18+', '12-step-meeting-list'),
+				'AV'		=> __('Audio / Visual', '12-step-meeting-list'),
 				'B'		=> __('Book Study', '12-step-meeting-list'),
 				'BEG'	=> __('Beginners', '12-step-meeting-list'),
 				'C'		=> __('Closed', '12-step-meeting-list'),

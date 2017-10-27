@@ -266,8 +266,45 @@ function tsml_ajax_feedback() {
 	$meeting  = tsml_get_meeting(intval($_POST['meeting_id']));
 	$name	 = sanitize_text_field($_POST['tsml_name']);
 	$email	= sanitize_email($_POST['tsml_email']);
-	$message  = '<p>' . nl2br(sanitize_text_area(stripslashes($_POST['tsml_message']))) . '</p>';
-	$message .= '<hr><p>Address: ' . $meeting->formatted_address . '</p><p>Meeting: <a href="' . get_permalink($meeting->ID) . '">' . get_permalink($meeting->ID) . '</a></p>';
+
+	$message  = '<p style="padding-bottom: 20px; border-bottom: 2px dashed #ccc; margin-bottom: 20px;">' . nl2br(sanitize_text_area(stripslashes($_POST['tsml_message']))) . '</p>';
+	
+	$message_lines = array(
+		__('Meeting', '12-step-meeting-list') => '<a href="' . get_permalink($meeting->ID) . '">' . $meeting->post_title . '</a>',
+		__('When', '12-step-meeting-list') => tsml_format_day_and_time($meeting->day, $meeting->time),
+	);
+
+	if (!empty($meeting->types)) {
+		$message_lines[__('Types', '12-step-meeting-list')] = implode(', ', $meeting->types);
+	}
+		
+	if (!empty($meeting->notes)) {
+		$message_lines[__('Notes', '12-step-meeting-list')] = $meeting->notes;
+	}
+		
+	if (!empty($meeting->location)) {
+		$message_lines[__('Location', '12-step-meeting-list')] = $meeting->location;
+	}
+		
+	if (!empty($meeting->notes)) {
+		$message_lines[__('Types', '12-step-meeting-list')] = $meeting->notes;
+	}
+		
+	if (!empty($meeting->formatted_address)) {
+		$message_lines[__('Address', '12-step-meeting-list')] = $meeting->formatted_address;
+	}
+		
+	if (!empty($meeting->region)) {
+		$message_lines[__('Region', '12-step-meeting-list')] = $meeting->region;
+	}
+		
+	if (!empty($meeting->location_notes)) {
+		$message_lines[__('Location Notes', '12-step-meeting-list')] = $meeting->location_notes;
+	}
+
+	foreach	($message_lines as $key => $value) {
+		$message .= '<p>' . $key . ': ' . $value . '</p>';
+	}
 
 	//email vars
 	if (!isset($_POST['tsml_nonce']) || !wp_verify_nonce($_POST['tsml_nonce'], $tsml_nonce)) {
