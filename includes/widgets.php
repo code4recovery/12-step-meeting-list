@@ -60,6 +60,9 @@ class TSML_Widget_Upcoming extends WP_Widget {
 				.widgets-meetings-top .tsml-widget-upcoming {
 					margin: 0 0 15px;
 				}
+				table.tsml_closestmeetings.table-striped tr:nth-child(even) , table.tsml_closestmeetings.table-striped tr:nth-child(even)  {
+    background-color: #fff;
+}
 			</style>';
 		}
 		
