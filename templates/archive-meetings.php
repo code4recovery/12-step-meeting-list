@@ -48,7 +48,7 @@ if (isset($_GET['tsml-region']) && term_exists(intval($_GET['tsml-region']), 'ts
 } elseif (isset($_GET['tsml-district']) && term_exists(intval($_GET['tsml-district']), 'tsml_district')) {
 	$district = $_GET['tsml-district'];
 }
-if (isset($_GET['tsml-type']) && array_key_exists($_GET['tsml-type'], $tsml_types[$tsml_program])) $type = $_GET['tsml-type'];
+if (isset($_GET['tsml-type']) && array_key_exists($_GET['tsml-type'], $tsml_programs[$tsml_program]['types'])) $type = $_GET['tsml-type'];
 if (isset($_GET['tsml-time']) && (($_GET['tsml-time'] == 'upcoming') || array_key_exists($_GET['tsml-time'], $times))) $time = $_GET['tsml-time'];
 if (isset($_GET['tsml-view']) && in_array($_GET['tsml-view'], array('list', 'map'))) $view = $_GET['tsml-view'];
 if (isset($_GET['tsml-distance']) && intval($_GET['tsml-distance'])) $distance = $_GET['tsml-distance'];
@@ -80,7 +80,7 @@ if ($region) {
 	$region_label = $term->name;
 }
 $type_default = __('Any Type', '12-step-meeting-list');
-$type_label = ($type && array_key_exists($type, $tsml_types[$tsml_program])) ? $tsml_types[$tsml_program][$type] : $type_default;
+$type_label = ($type && array_key_exists($type, $tsml_programs[$tsml_program]['types'])) ? $tsml_programs[$tsml_program]['types'][$type] : $type_default;
 $mode_label = array_key_exists($mode, $modes) ? $modes[$mode]['title'] : $modes[0]['title'];
 $distance_label = $distances[$distance];
 
@@ -89,7 +89,7 @@ $tsml_page_title = array();
 if ($day !== null) $tsml_page_title[] = $tsml_days[$day];
 if ($time) $tsml_page_title[] = $time_label;
 if ($type) $tsml_page_title[] = $type_label;
-$tsml_page_title[] = $tsml_strings['program_short_name'];
+$tsml_page_title[] = empty($tsml_programs[$tsml_program]['abbr']) ? $tsml_programs[$tsml_program]['name'] : $tsml_programs[$tsml_program]['abbr'];
 $tsml_page_title[] = __('Meetings', '12-step-meeting-list');
 if ($region) $tsml_page_title[] = __('in', '12-step-meeting-list') . ' ' . $region_label;
 $tsml_page_title = implode(' ', $tsml_page_title);
@@ -290,7 +290,7 @@ get_header();
 				</div>
 			</div>
 			<div class="col-sm-6 col-md-2 col-md-pull-2">
-				<?php if (count($tsml_types_in_use)) {?>
+				<?php if (count($tsml_types_in_use) && !empty($tsml_programs[$tsml_program]['types'])) {?>
 				<div class="dropdown" id="type">
 					<a class="btn btn-default btn-block" data-toggle="tsml-dropdown" role="button" aria-haspopup="true" aria-expanded="false">
 						<span class="selected"><?php echo $type_label?></span>
@@ -300,7 +300,7 @@ get_header();
 						<li<?php if (empty($type)) echo ' class="active"'?>><a><?php echo $type_default?></a></li>
 						<li class="divider"></li>
 						<?php 
-						$types_to_list = array_intersect_key($tsml_types[$tsml_program], array_flip($tsml_types_in_use));
+						$types_to_list = array_intersect_key($tsml_programs[$tsml_program]['types'], array_flip($tsml_types_in_use));
 						foreach ($types_to_list as $key=>$thistype) {?>
 						<li<?php if ($key == $type) echo ' class="active"'?>><a href="<?php echo tmsl_meetings_url(array('tsml-type'=>$key))?>" data-id="<?php echo $key?>"><?php echo $thistype?></a></li>
 						<?php } ?>
@@ -320,8 +320,7 @@ get_header();
 				<div id="table-wrapper">
 					<table class="table table-striped">
 						<thead class="hidden-print">
-							<?php foreach ($tsml_columns as $column) {
-								$key = strtolower($column);
+							<?php foreach ($tsml_columns as $key => $column) {
 								echo '<th class="' . $key . '"' . ($tsml_sort_by == $key ? ' data-sort="asc"' : '') . '>' . __($column, '12-step-meeting-list') . '</th>';
 							}?>
 						</thead>
@@ -359,9 +358,9 @@ get_header();
 								$sort_time = $meeting['day'] . '-' . ($meeting['time'] == '00:00' ? '23:59' : $meeting['time']);
 								?>
 							<tr>
-								<?php foreach ($tsml_columns as $column) {
-									switch ($column) {
-										case 'Time':?>
+								<?php foreach ($tsml_columns as $key => $column) {
+									switch ($key) {
+										case 'time':?>
 									<td class="time" data-sort="<?php echo $sort_time . '-' . sanitize_title($meeting['location'])?>"><span><?php 
 										if (($day === null) && !empty($meeting['time'])) {
 											echo tsml_format_day_and_time($meeting['day'], $meeting['time'], '</span><span>');
@@ -372,41 +371,41 @@ get_header();
 									<?php
 										break;
 
-										case 'Distance':?>
+										case 'distance':?>
 									<td class="distance" data-sort="<?php echo $meeting['distance']?>"><?php echo $meeting['distance']?></td>
 									<?php
 										break;
 
-										case 'Name':?>
+										case 'name':?>
 									<td class="name" data-sort="<?php echo sanitize_title($meeting['name']) . '-' . $sort_time?>">
 										<?php echo $meeting['link']?>
 									</td>
 									<?php
 										break;
 
-										case 'Location':?>
+										case 'location':?>
 									<td class="location" data-sort="<?php echo sanitize_title($meeting['location']) . '-' . $sort_time?>">
 										<?php echo $meeting['location']?>
 									</td>
 									<?php
 										break;
 
-										case 'Address':?>
+										case 'address':?>
 									<td class="address" data-sort="<?php echo sanitize_title($meeting['formatted_address']) . '-' . $sort_time?>"><?php echo tsml_format_address($meeting['formatted_address'], $tsml_street_only)?></td>
 									<?php
 										break;
 
-										case 'Region':?>
+										case 'region':?>
 									<td class="region" data-sort="<?php echo sanitize_title($meeting['region']) . '-' . $sort_time?>"><?php echo $meeting['region']?></td>
 									<?php
 										break;
 
-										case 'District':?>
+										case 'district':?>
 									<td class="district" data-sort="<?php echo sanitize_title($meeting['district']) . '-' . $sort_time?>"><?php echo $meeting['district']?></td>
 									<?php
 										break;
 
-										case 'Types':?>
+										case 'types':?>
 									<td class="types" data-sort="<?php echo sanitize_title(tsml_meeting_types($meeting['types'])) . '-' . $sort_time?>"><?php echo tsml_meeting_types($meeting['types'])?></td>
 									<?php
 										break;
