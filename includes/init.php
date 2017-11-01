@@ -52,6 +52,10 @@ function tsml_init() {
 	//add plugin version number to header
 	add_action('wp_head', 'tsml_head');
 	function tsml_head() {
+		global $tsml_sharing;
 		echo '<meta name="12_step_meeting_list" content="' . TSML_VERSION . '">' . PHP_EOL;
+		if ($tsml_sharing == 'open') {
+			echo '<link rel="alternate" type="application/json" title="Meetings Feed" href="' . admin_url('admin-ajax.php?action=meetings') . '">' . PHP_EOL;
+		}
 	}
 }

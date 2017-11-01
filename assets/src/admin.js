@@ -61,7 +61,7 @@ jQuery(function($){
 	$('.toggle_more').on('click', 'a', function(e){
 		e.preventDefault();
 		$(this).closest('.checkboxes').toggleClass('showing_more');
-	})
+	});
 
 	//day picker
 	$('select#day').change(function(){
@@ -118,13 +118,21 @@ jQuery(function($){
 	$('input#location').typeahead(null, {
 		displayKey: 'value',
 		source: tsml_locations
-	}).on('typeahead:autocompleted typeahead:selected', function($e, location){
-		$('input[name=formatted_address]').val(location.formatted_address).trigger('change');
-		$('input[name=latitude]').val(location.latitude);
-		$('input[name=longitude]').val(location.longitude);
-		$('select[name=region] option[value=' + location.region + ']').prop('selected', true);
-		$('textarea[name=location_notes]').val(location.notes);
-		setMap(location.latitude, location.longitude);
+	}).on('typeahead:change typeahead:autocompleted typeahead:selected', function($e, location){
+        if ($e.type === "typeahead:change") {
+            $.each(tsml_locations.index.datums, function() {
+                if (this.value.toUpperCase() === location.trim().toUpperCase()) {
+                    $('input[name=location]').val(this.value);
+					$('input[name=formatted_address]').val(this.formatted_address).trigger('change');
+					$('input[name=latitude]').val(this.latitude);
+					$('input[name=longitude]').val(this.longitude);
+					$('select[name=region] option[value=' + this.region + ']').prop('selected', true);
+					$('textarea[name=location_notes]').val(this.notes);
+					setMap(this.latitude, this.longitude);
+                    return false;
+                }
+            });
+        }
 	});
 
 	//group typeahead
@@ -140,7 +148,19 @@ jQuery(function($){
 	$('input#group').typeahead(null, {
 		displayKey: 'value',
 		source: tsml_groups
-	}).on('typeahead:autocompleted typeahead:selected', function($e, group){
+	}).on('typeahead:change typeahead:autocompleted typeahead:selected', function($e, group){
+        if ($e.type === "typeahead:change") {
+            $.each(tsml_groups.index.datums, function() {
+                if (this.value.toUpperCase() === group.trim().toUpperCase()) {
+                    $('input[name=group]').val(this.value);
+                    group = this;
+                    return false;
+                }
+            });
+        }
+        $('input[name=website]').val(group.website);
+        $('input[name=email]').val(group.email);
+        $('input[name=phone]').val(group.phone);        
 		$('input[name=contact_1_name]').val(group.contact_1_name);
 		$('input[name=contact_1_email]').val(group.contact_1_email);
 		$('input[name=contact_1_phone]').val(group.contact_1_phone);
