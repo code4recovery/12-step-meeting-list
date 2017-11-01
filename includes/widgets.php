@@ -60,6 +60,9 @@ class TSML_Widget_Upcoming extends WP_Widget {
 				.widgets-meetings-top .tsml-widget-upcoming {
 					margin: 0 0 15px;
 				}
+				table.tsml_closestmeetings.table-striped tr:nth-child(even) , table.tsml_closestmeetings.table-striped tr:nth-child(even)  {
+    background-color: #fff;
+}
 			</style>';
 		}
 		
@@ -325,7 +328,7 @@ class TSML_Widget_Closest extends WP_Widget {
 		<p>
 			<label for="<?php echo esc_attr($this->get_field_id('count'))?>"><?php _e('Show:', '12-step-meeting-list')?></label> 
 			<select class="widefat" id="<?php echo esc_attr($this->get_field_id('title'))?>" name="<?php echo esc_attr($this->get_field_name('count'))?>">
-				<?php for ($i = 4; $i < 5; $i++) {?>
+				<?php for ($i = 4; $i < 26; $i++) {?>
 					<option value="<?php echo $i?>"<?php selected($i, esc_attr($count))?>><?php echo $i?></option>
 				<?php }?>
 			</select>

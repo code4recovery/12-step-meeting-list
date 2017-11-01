@@ -111,8 +111,17 @@ function tsml_ajax_closest_meetings($content) {
 	//sanitize inputs
 	$lat = floatval($_GET['lat']);
 	$long = floatval($_GET['long']);
-	$today = ($_GET['today'] == 'today') ? date('w') : intval($day);
-	$count = empty($_GET['count']) ? 5 : intval($_GET['count']);
+	$day = sanitize_text_field($_GET['today']);
+	
+	date_default_timezone_set(get_option('timezone_string'));
+	
+//	$today = ($_GET['today'] == 'today') ? date('w') : intval($day);
+            // Just for today
+            if ($day=='today'){
+                $today = date('w');
+            } else { 
+                $today = intval(sanitize_text_field($day));
+            }
 
 	//get meetings for today
 	$meetings = tsml_get_meetings(array('day' => intval($today)));
@@ -147,8 +156,22 @@ function tsml_ajax_closest_meetings($content) {
 	array_multisort($dist, SORT_ASC, $meetings); 
 
 	//send JSON
-	wp_send_json(array_slice($dist, 0, $count));
-}
+
+  $widget_options = get_option("widget_tsml_widget_closest");
+	function empty_sort ($a, $b) {
+        if ($a == '' && $b != '') return 1;
+        if ($b == '' && $a != '') return -1;
+        return 0; 
+    }
+
+    usort($widget_options, 'empty_sort');
+    
+	if ( isset( $widget_options[ 0 ]['count'] ) ) {
+	   $count_val = intval($widget_options[ 0 ]['count']);
+	   wp_send_json(array_slice($dist, 0, $count_val));
+    } else {
+	   wp_send_json(array_slice($dist, 0, 5));
+    }
 
 //get all contact email addresses (for europe)
 //linked from admin_import.php
@@ -267,6 +290,7 @@ function tsml_ajax_feedback() {
 	$name	 = sanitize_text_field($_POST['tsml_name']);
 	$email	= sanitize_email($_POST['tsml_email']);
 
+ 
 	$message  = '<p style="padding-bottom: 20px; border-bottom: 2px dashed #ccc; margin-bottom: 20px;">' . nl2br(sanitize_text_area(stripslashes($_POST['tsml_message']))) . '</p>';
 	
 	$message_lines = array(
@@ -679,4 +703,3 @@ function tsml_ajax_meeting_guide() {
 		die('not sent!');
 	}
 }
-
