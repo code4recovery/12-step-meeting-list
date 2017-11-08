@@ -4,7 +4,7 @@ Donate link: https://meetingguide.org/donate
 Tags: 12-step, aa, al-anon, coda, meetings, na, oa, saa, slaa
 Requires at least: 3.2
 Tested up to: 4.8
-Stable tag: 2.15.4
+Stable tag: 2.15.5
 
 This plugin helps 12 step programs list their meetings. It standardizes addresses, and displays results in a searchable list and map.
 
@@ -92,7 +92,9 @@ It was originally designed to maintain a list of AA meetings in Santa Clara Coun
 1. [Toronto, Canada](https://aatoronto.org/meetings/)
 1. [Tri Valley, CA](http://trivalleyaa.org/meetings/)
 1. [Topeka, KS](http://aatopeka.org/meetings/)
+1. [Traverse City, MI](http://district11-aa.org/meetings/)
 1. [Tulsa, OK](http://district40aa.com/meetings)
+1. [Vacaville, CA](http://aasolanonorth.org/meetings/)
 1. [Vancouver, Canada](http://www.vancouveraa.ca/meetings/)
 1. [Ventura County, CA](https://aaventuracounty.org/meetings)
 1. [Vienna, Austria](https://www.aavienna.com/meetings/)
@@ -243,6 +245,11 @@ Copy the files from the plugin's templates directory into your theme's root dire
 
 *Please note* these pages will evolve over time. If you override, you will someday experience website errors after an update. If that happens, please update your theme's copy of the plugin pages. 
 
+= Can I flag in the list when there are notes on a meeting? =
+Yes, with CSS. Rows that have meeting notes will have a 'notes' class. To add an asterisk, for example, try this:
+
+	#tsml tr.notes a:after { content: "*"; }
+
 = Can I import a custom spreadsheet format? =
 If you don't mind some PHP programming, then yes! Create a function called `tsml_import_reformat`, and use it to 
 reformat your incoming data to the standard format
@@ -267,6 +274,9 @@ You can make use of the [gettext filter](https://codex.wordpress.org/Plugin_API/
 		return $translated_text;
 	}
 	add_filter('gettext', 'theme_override_tsml_strings', 20, 3);
+
+= How can I temporarily hide a meeting without deleting it? =
+Save it as a draft by editing the meeting's Status.
 
 = Are there any shortcodes? =
 Yes, you can use `[tsml_meeting_count]`, `[tsml_location_count]`, `[tsml_group_count]`, and `[tsml_region_count]` to display human-formatted counts of your entities. For example, "Our area currently comprises [tsml_meeting_count] meetings." Also `[tsml_next_meetings count="5"]` displays a small table with the next several meetings in it. Use the `count` parameter to adjust how many are displayed. This will be unstyled if you're not using bootstrap in your theme.
@@ -297,6 +307,11 @@ Also check out our [One Page Meeting List](https://github.com/meeting-guide/one-
 1. Edit location
 
 == Changelog ==
+
+= 2.15.5 =
+* Fixing margin bug on meeting list page
+* Adding meeting type for Milwaukee
+* Adding a notes row class per San Francisco
 
 = 2.15.4 =
 * More descriptive 'request change' emails (per San Francisco)

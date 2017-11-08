@@ -357,7 +357,7 @@ get_header();
 								
 								$sort_time = $meeting['day'] . '-' . ($meeting['time'] == '00:00' ? '23:59' : $meeting['time']);
 								?>
-							<tr>
+							<tr <?php if (!empty($meeting['notes'])) {?> class="notes"<?php }?>>
 								<?php foreach ($tsml_columns as $key => $column) {
 									switch ($key) {
 										case 'time':?>

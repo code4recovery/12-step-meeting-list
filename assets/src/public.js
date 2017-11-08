@@ -595,7 +595,9 @@ jQuery(function($){
 					obj.types = obj.types.join(', ');
 					
 					//add new table row
-					var string = '<tr>';
+					var string = '<tr';
+					if (obj.notes.length) string += ' class="notes"'
+					string += '>';
 					for (var i = 0; i < tsml.columns.length; i++) {
 						switch (tsml.columns[i])	 {
 							case 'time':
