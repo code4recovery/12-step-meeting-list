@@ -100,7 +100,7 @@ function tsml_ajax_cache_clear() {
 	die('address cache cleared!');	
 }
 
-// AJAX part of closest meetings widget
+//AJAX part of closest meetings widget
 add_action('wp_ajax_nopriv_display_closest_meetings', 'tsml_ajax_closest_meetings');
 add_action('wp_ajax_display_closest_meetings', 'tsml_ajax_closest_meetings'); 
 function tsml_ajax_closest_meetings($content) {
@@ -113,15 +113,7 @@ function tsml_ajax_closest_meetings($content) {
 	$long = floatval($_GET['long']);
 	$day = sanitize_text_field($_GET['today']);
 	
-	date_default_timezone_set(get_option('timezone_string'));
-	
-//	$today = ($_GET['today'] == 'today') ? date('w') : intval($day);
-            // Just for today
-            if ($day=='today'){
-                $today = date('w');
-            } else { 
-                $today = intval(sanitize_text_field($day));
-            }
+	$today = ($_GET['today'] == 'today') ? current_time('w') : intval($day);
 
 	//get meetings for today
 	$meetings = tsml_get_meetings(array('day' => intval($today)));
@@ -155,23 +147,23 @@ function tsml_ajax_closest_meetings($content) {
 	//sort meetings
 	array_multisort($dist, SORT_ASC, $meetings); 
 
-	//send JSON
-
-  $widget_options = get_option("widget_tsml_widget_closest");
+	//don't see where this option is getting set
+	$widget_options = get_option('widget_tsml_widget_closest');
 	function empty_sort ($a, $b) {
-        if ($a == '' && $b != '') return 1;
-        if ($b == '' && $a != '') return -1;
-        return 0; 
+		if ($a == '' && $b != '') return 1;
+		if ($b == '' && $a != '') return -1;
+		return 0; 
     }
 
     usort($widget_options, 'empty_sort');
     
-	if ( isset( $widget_options[ 0 ]['count'] ) ) {
-	   $count_val = intval($widget_options[ 0 ]['count']);
-	   wp_send_json(array_slice($dist, 0, $count_val));
+	if (isset($widget_options[ 0 ]['count'] ) ) {
+		$count_val = intval($widget_options[ 0 ]['count']);
+		wp_send_json(array_slice($dist, 0, $count_val));
     } else {
-	   wp_send_json(array_slice($dist, 0, 5));
+		wp_send_json(array_slice($dist, 0, 5));
     }
+}
 
 //get all contact email addresses (for europe)
 //linked from admin_import.php

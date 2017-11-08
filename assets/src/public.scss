@@ -1,12 +1,10 @@
-//bootstrap
-
-$icon_font_path		: '../fonts/';
-$color_gray			: #aaa;
-$color_highlight		: #ff6;		//for searching
-$color_black			: #333;
-$color_white			: #fdfdfc;
-$margin				: 15px;		//spacing between elements
-$height				: 550px;		//height of map and min-height of list
+$icon_font_path: '../fonts/'; //bootstrap
+$color_gray: #aaa;
+$color_highlight: #ff6; //for searching
+$color_black: #333;
+$color_white: #fdfdfc;
+$margin: 15px; //spacing between elements
+$height: 550px; //height of map and min-height of list
 
 #tsml {
 	@import '../../node_modules/bootstrap-sass/assets/stylesheets/_bootstrap.scss';
@@ -232,7 +230,7 @@ $height				: 550px;		//height of map and min-height of list
 				}
 			}
 	
-			#table-wrapper { margin: 0 -$margin; overflow: hidden; }
+			#table-wrapper { margin: 0 -#{$margin}; overflow: hidden; }
 			#table-wrapper table { margin: 0; }
 			
 			table {
@@ -702,16 +700,14 @@ body {
 	&.twentyfourteen {
 		#page::before { display: none; }
 		#tsml { 
-			margin-bottom: 15px; 
 			#meetings { 
 				width: 100%; 
 				.page-header { max-width: none; }
 				&[data-view=list] { 
 					padding-bottom: 0; 
-					.controls { padding-bottom: $margin / 2; }
+					.controls { padding-bottom: 0; }
 				}
 			}
-			#map { margin-bottom: 15px; }
 		}
 	}
 	&.twentyten {

@@ -60,9 +60,6 @@ class TSML_Widget_Upcoming extends WP_Widget {
 				.widgets-meetings-top .tsml-widget-upcoming {
 					margin: 0 0 15px;
 				}
-				table.tsml_closestmeetings.table-striped tr:nth-child(even) , table.tsml_closestmeetings.table-striped tr:nth-child(even)  {
-    background-color: #fff;
-}
 			</style>';
 		}
 		
@@ -285,7 +282,7 @@ class TSML_Widget_Closest extends WP_Widget {
 				.widgets-meetings-top .tsml-widget-closest {
 					margin: 0 0 15px;
 				}
-				#closest { margin: 20px auto 40px; width: 100%; text-align: center; }
+				#closest { margin: 20px auto 40px; width: 100%; }
 				#closest a { margin: 0 auto 36px auto; }
 			</style>'; 
 		}
@@ -310,7 +307,7 @@ class TSML_Widget_Closest extends WP_Widget {
 		echo '</select>
 			<table class="tsml_closestmeetings table table-striped" id="dataxhr"></table>
 			<p id="closest">
-				<a href="' . $link . '">' . __('All Meetings Near Me', '12-step-meeting-list') . '</a>
+				<a href="' . $link . '">' . __('View More&hellip;', '12-step-meeting-list') . '</a>
 			</p>';
 			
 		echo $args['after_widget'];
