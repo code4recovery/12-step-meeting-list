@@ -142,7 +142,7 @@ get_header();
 									);
 								}
 
-								if (!empty($meeting->group_id)) {?>
+								if (!empty($meeting->group) || !empty($meeting->website) || !empty($meeting->email) || !empty($meeting->phone)) {?>
 									<li class="list-group-item list-group-item-group">
 										<h3 class="list-group-item-heading"><?php echo $meeting->group?></h3>
 										<?php if (!empty($meeting->group_notes)) {?>

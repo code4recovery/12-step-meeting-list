@@ -520,8 +520,14 @@ jQuery(function($){
 		data.nonce = tsml.nonce;
 				
 		$.post(tsml.ajaxurl, data, function(response){
-	
-			if (!response.length) {
+
+			if (typeof response != 'object') {
+								
+				//there was a problem with the data source
+				$('#meetings').addClass('empty');
+				setAlert('data_error');				
+				
+			} else if (!response.length) {
 	
 				//if keyword and no results, clear other parameters and search again
 				if (keyword_searching && (typeof data.day !== 'undefined' || typeof data.region !== 'undefined' || typeof data.time !== 'undefined' || typeof data.type !== 'undefined')) {

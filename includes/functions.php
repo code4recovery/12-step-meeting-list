@@ -639,20 +639,16 @@ if (!function_exists('tsml_get_meeting')) {
 	function tsml_get_meeting($meeting_id=false) {
 		global $tsml_program, $tsml_programs;
 		
-		$meeting					= get_post($meeting_id);
-		$custom					= get_post_meta($meeting->ID);
-	
-		//location optional
+		$meeting 		= get_post($meeting_id);
+		$custom 		= get_post_meta($meeting->ID);
+
+		//add optional location information
 		if ($meeting->post_parent) {
-			
 			$location = get_post($meeting->post_parent);
-	
 			$meeting->location_id = $location->ID;
-	
 			$custom = array_merge($custom, get_post_meta($location->ID));
-		
+			$meeting->location = htmlentities($location->post_title, ENT_QUOTES);
 			$meeting->location_notes = esc_html($location->post_content);
-			
 			if ($region = get_the_terms($location, 'tsml_region')) {
 				$meeting->region_id = $region[0]->term_id;
 				$meeting->region = $region[0]->name;
@@ -668,8 +664,6 @@ if (!function_exists('tsml_get_meeting')) {
 				'address' => $location->formatted_address,
 				'z' => 16,
 			));
-	
-			$meeting->location			= htmlentities($location->post_title, ENT_QUOTES);
 		}
 		
 		//escape meeting values
@@ -977,7 +971,7 @@ if (!function_exists('tsml_get_meetings')) {
 			if (empty($locations[$post->post_parent])) continue;
 	
 			$array = array_merge(array(
-				'id'					=> $post->ID,
+				'id'				=> $post->ID,
 				'name'				=> $post->post_title,
 				'slug'				=> $post->post_name,
 				'notes'				=> $post->post_content,
@@ -986,11 +980,34 @@ if (!function_exists('tsml_get_meetings')) {
 				'url'				=> get_permalink($post->ID),
 				'time'				=> @$meeting_meta[$post->ID]['time'],
 				'end_time'			=> @$meeting_meta[$post->ID]['end_time'],
-				'time_formatted'		=> tsml_format_time(@$meeting_meta[$post->ID]['time']),
+				'time_formatted'	=> tsml_format_time(@$meeting_meta[$post->ID]['time']),
 				'distance'			=> '',
 				'day'				=> @$meeting_meta[$post->ID]['day'],
 				'types'				=> empty($meeting_meta[$post->ID]['types']) ? array() : array_values(unserialize($meeting_meta[$post->ID]['types'])),
 			), $locations[$post->post_parent]);
+
+			if (!empty($meeting_meta[$post->ID]['email'])) {
+				$array['email'] = $meeting_meta[$post->ID]['email'];
+			}
+			
+			if (!empty($meeting_meta[$post->ID]['website'])) {
+				$array['website'] = $meeting_meta[$post->ID]['website'];
+			}
+			
+			if (!empty($meeting_meta[$post->ID]['phone'])) {
+				$array['phone'] = $meeting_meta[$post->ID]['phone'];
+			}
+
+			if (current_user_can('edit_posts')) {
+				for ($i = 1; $i <= GROUP_CONTACT_COUNT; $i++) {
+					foreach(array('name', 'phone', 'email') as $type) {
+						$key = implode('_', array('contact', $i, $type));
+						if (!empty($meeting_meta[$post->ID][$key])) {
+							$array[$key] = $meeting_meta[$post->ID][$key];
+						}
+					}
+				}
+			}
 			
 			//append group info to meeting
 			if (!empty($meeting_meta[$post->ID]['group_id']) && array_key_exists($meeting_meta[$post->ID]['group_id'], $groups)) {
@@ -1037,7 +1054,7 @@ if (!function_exists('tsml_get_meta')) {
 		$keys = array(
 			'tsml_group' => '"website", "email", "phone", "last_contact"' . (current_user_can('edit_posts') ? ', "contact_1_email", "contact_1_phone", "contact_2_name", "contact_2_email", "contact_2_phone", "contact_3_name", "contact_3_email", "contact_3_phone"' : ''),
 			'tsml_location' => '"formatted_address", "latitude", "longitude"',
-			'tsml_meeting' => '"day", "time", "end_time", "types", "group_id"',
+			'tsml_meeting' => '"day", "time", "end_time", "types", "group_id", "website", "email", "phone", "last_contact"' . (current_user_can('edit_posts') ? ', "contact_1_email", "contact_1_phone", "contact_2_name", "contact_2_email", "contact_2_phone", "contact_3_name", "contact_3_email", "contact_3_phone"' : ''),
 		);
 		if (!array_key_exists($type, $keys)) return trigger_error('tsml_get_meta for unexpected type ' . $type);
 		$meta = array();

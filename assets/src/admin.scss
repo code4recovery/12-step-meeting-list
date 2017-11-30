@@ -236,14 +236,21 @@ body {
 				.tt-hint { color: #999; }
 			}
 			
-			&.checkbox {
+			&.checkbox, &.radio {
 				padding-left: 15%;
 				line-height: 1;
 				label { 
 					width: auto;
-					margin: 0; 
+					margin: 0 0 5px 0; 
 					font-size: 13px;
-					input { margin: 1px 7px 0 0; }
+					display: block;
+					float: none;
+					text-align: left;
+					input {
+						margin: 1px 7px 0 0; 
+						&[type="radio"] { border-radius: 10px; }
+					}
+					&:last-child { margin-bottom: 0; }
 				}
 			}
 		

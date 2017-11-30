@@ -4,7 +4,7 @@ Donate link: https://meetingguide.org/donate
 Tags: 12-step, aa, al-anon, coda, meetings, na, oa, saa, slaa
 Requires at least: 3.2
 Tested up to: 4.8
-Stable tag: 2.15.5
+Stable tag: 2.16
 
 This plugin helps 12 step programs list their meetings. It standardizes addresses, and displays results in a searchable list and map.
 
@@ -38,6 +38,7 @@ It was originally designed to maintain a list of AA meetings in Santa Clara Coun
 1. [East Bay, CA](http://eastbayaa.org/meetings)
 1. [East Tennessee](http://www.etiaa.org/meetings/)
 1. [Elk Grove Village, IL](http://d15aa.org/d15aa.org/?post_type=meetings)
+1. [Elgin, IL](http://dist22.aa-nia.org/meetings/)
 1. [Fargo, ND](http://www.fmmeetinglist.org/meetings/)
 1. [Ft. Worth, TX](http://fortworthaa.org/?post_type=tsml_meeting)
 1. [Greensboro, NC](http://nc23.org/meetings/)
@@ -45,9 +46,9 @@ It was originally designed to maintain a list of AA meetings in Santa Clara Coun
 1. [Hernando County, FL](http://www.aahernando.org/meetings/)
 1. [Inland Empire, CA](https://aainlandempire.org/meetings)
 1. [Joliet, IL](http://aadistrict51.org/meetings/)
-1. [Midlands, UK (Polish)](http://intergrupamidlands.co.uk/meetings/)
 1. [Kansas](https://ks-aa.org/meetings/)
 1. [Kentucky](http://www.area26.net/wp/?post_type=tsml_meeting)
+1. [Lakeland, FL](http://www.heartlandintergroup.org/wp/meetings/)
 1. [Lewis County, WA](http://lewiscountyaa.org/meetings/)
 1. [Long Beach, CA](https://hacoaa.org/meetings/)
 1. [Madison, WI](http://aamadisonwi.org/meetings/)
@@ -55,6 +56,7 @@ It was originally designed to maintain a list of AA meetings in Santa Clara Coun
 1. [Maui, HI](http://aamaui.org/meetings)
 1. [Mesa, AZ](http://aamesaaz.org/meetings/)
 1. [Miami, FL](https://aamiamidade.org/meetings)
+1. [Midlands, UK (Polish)](http://intergrupamidlands.co.uk/meetings/)
 1. [Minneapolis, MN](http://aaminneapolis.org/meetings/)
 1. [Minnesota](http://aaminnesota.com/meetings/)
 1. [Mississippi](http://www.aa-mississippi.org/meetings/)
@@ -83,11 +85,13 @@ It was originally designed to maintain a list of AA meetings in Santa Clara Coun
 1. [Savannah, GA](http://savannahaa.com/meetings-list/)
 1. [Secular AA](https://www.secularaa.org/meetings/)
 1. [Sonoma County, CA](http://www.sonomacountyaa.org/meetings/)
-1. [Southern Colorado](http://www.puebloaa.org/meetings/)
 1. [South Florida District 20](http://district20aa.org/meetings/)
+1. [Southern Colorado](http://www.puebloaa.org/meetings/)
+1. [Southwestern Missouri](https://aaswmo.org/meetings)
 1. [St. Louis, MO](https://aastl.org/meetings/)
 1. [State College, PA](http://www.district43.com/meetings/)
 1. [Streamwood, IL](http://dist23.aa-nia.org/meetings)
+1. [Tampa, FL](http://www.meetings.aatampa-area.org/meetings/)
 1. [Tidewater Area, VA](http://www.tidewaterintergroup.org/meetings/)
 1. [Toronto, Canada](https://aatoronto.org/meetings/)
 1. [Tri Valley, CA](http://trivalleyaa.org/meetings/)
@@ -97,7 +101,6 @@ It was originally designed to maintain a list of AA meetings in Santa Clara Coun
 1. [Vacaville, CA](http://aasolanonorth.org/meetings/)
 1. [Vancouver, Canada](http://www.vancouveraa.ca/meetings/)
 1. [Ventura County, CA](https://aaventuracounty.org/meetings)
-1. [Vienna, Austria](https://www.aavienna.com/meetings/)
 1. [Virginia](https://aavirginia.org/meetings/)
 1. [Walnut Creek, CA](http://contracostaaa.org/meetings)
 1. [Warsaw, IN](http://www.aadistrict4143.com/meetings/)
@@ -307,6 +310,13 @@ Also check out our [One Page Meeting List](https://github.com/meeting-guide/one-
 1. Edit location
 
 == Changelog ==
+
+= 2.16 =
+* Can save contact information on a meeting without specifying a group (per Refuge Recovery)
+* Fixed saving conflict with WP post revisions
+* Fixed bug where lost data source name when refreshing
+* Adding email address to change request email (per NA Poland)
+* Displays error message when there's a problem with data source (per Sacramento)
 
 = 2.15.5 =
 * Fixing margin bug on meeting list page
