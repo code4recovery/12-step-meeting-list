@@ -286,6 +286,7 @@ function tsml_ajax_feedback() {
 	$message  = '<p style="padding-bottom: 20px; border-bottom: 2px dashed #ccc; margin-bottom: 20px;">' . nl2br(sanitize_text_area(stripslashes($_POST['tsml_message']))) . '</p>';
 	
 	$message_lines = array(
+		__('Requested By', '12-step-meeting-list') => $name . ' &lt;<a href="mailto:' . $email . '">' . $email . '</a>&gt;',
 		__('Meeting', '12-step-meeting-list') => '<a href="' . get_permalink($meeting->ID) . '">' . $meeting->post_title . '</a>',
 		__('When', '12-step-meeting-list') => tsml_format_day_and_time($meeting->day, $meeting->time),
 	);
@@ -486,9 +487,11 @@ function tsml_ajax_import() {
 				$region_id = intval($term['term_id']);
 			}
 		}
-		
+
 		//handle group (can't have a group if group name not specified)
-		if (!empty($meeting['group'])) {
+		if (empty($meeting['group'])) {
+			$group_id = null;
+		} else {
 			if (!array_key_exists($meeting['group'], $groups)) {
 				$group_id = wp_insert_post(array(
 				  	'post_type'		=> 'tsml_group',
@@ -497,29 +500,6 @@ function tsml_ajax_import() {
 					'post_content'  => empty($meeting['group_notes']) ? '' : $meeting['group_notes'],
 				));
 				
-				for ($i = 1; $i <= GROUP_CONTACT_COUNT; $i++) {
-					foreach (array('name', 'phone', 'email') as $field) {
-						$key = 'contact_' . $i . '_' . $field;
-						if (!empty($meeting[$key])) update_post_meta($group_id, $key, $meeting[$key]);
-					}					
-				}
-
-				if (!empty($meeting['website'])) {
-					update_post_meta($group_id, 'website', esc_url_raw($meeting['website'], array('http', 'https')));
-				}
-				
-				if (!empty($meeting['email'])) {
-					update_post_meta($group_id, 'email', $meeting['email']);
-				}
-				
-				if (!empty($meeting['phone'])) {
-					update_post_meta($group_id, 'phone', $meeting['phone']);
-				}
-				
-				if (!empty($meeting['last_contact']) && ($last_contact = strtotime($meeting['last_contact']))) {
-					update_post_meta($group_id, 'last_contact', date('Y-m-d', $last_contact));
-				}
-
 				//add district to taxonomy if it doesn't exist yet
 				if (!empty($meeting['district'])) {
 					if (!$term = term_exists($meeting['district'], 'tsml_district', 0)) {
@@ -541,7 +521,7 @@ function tsml_ajax_import() {
 				$groups[$meeting['group']] = $group_id;
 			}
 		}
-		
+
 		//save location if not already in the database
 		if (array_key_exists($formatted_address, $locations)) {
 			$location_id = $locations[$formatted_address];
@@ -590,6 +570,33 @@ function tsml_ajax_import() {
 			}
 		}
 
+		//handle contact information (could be meeting or group)
+		$contact_entity_id = empty($group_id) ? $meeting_id : $group_id;
+		for ($i = 1; $i <= GROUP_CONTACT_COUNT; $i++) {
+			foreach (array('name', 'phone', 'email') as $field) {
+				$key = 'contact_' . $i . '_' . $field;
+				if (!empty($meeting[$key])) update_post_meta($contact_entity_id, $key, $meeting[$key]);
+			}					
+		}
+
+		if (!empty($meeting['website'])) {
+			$errors[] = '<li value="' . $contact_entity_id . '">Found website <code>' . esc_url_raw($meeting['website'], array('http', 'https')) . '</code>.</li>';
+			update_post_meta($contact_entity_id, 'website', esc_url_raw($meeting['website'], array('http', 'https')));
+		}
+		
+		if (!empty($meeting['email'])) {
+			$errors[] = '<li value="' . $contact_entity_id . '">Found email <code>' . $meeting['email'] . '</code>.</li>';
+			update_post_meta($contact_entity_id, 'email', $meeting['email']);
+		}
+		
+		if (!empty($meeting['phone'])) {
+			update_post_meta($contact_entity_id, 'phone', $meeting['phone']);
+		}
+		
+		if (!empty($meeting['last_contact']) && ($last_contact = strtotime($meeting['last_contact']))) {
+			update_post_meta($contact_entity_id, 'last_contact', date('Y-m-d', $last_contact));
+		}
+
 	}
 
 	//close curl handle
@@ -618,15 +625,15 @@ function tsml_ajax_import() {
 	$regions   = tsml_count_regions();
 	$groups	= tsml_count_groups();
 	wp_send_json(array(
-		'errors'			=> $errors,
+		'errors'		=> $errors,
 		'remaining'		=> count($remaining),
-		'counts'			=> compact('meetings', 'locations', 'regions', 'groups'),
+		'counts'		=> compact('meetings', 'locations', 'regions', 'groups'),
 		'data_sources' 	=> $tsml_data_sources,
 		'geocoded'		=> $geocoded,
 		'descriptions'	=> array(
 			'meetings'	=> sprintf(_n('%s meeting', '%s meetings', $meetings, '12-step-meeting-list'), number_format_i18n($meetings)),
 			'locations'	=> sprintf(_n('%s location', '%s locations', $locations, '12-step-meeting-list'), number_format_i18n($locations)),
-			'groups'		=> sprintf(_n('%s group', '%s groups', $groups, '12-step-meeting-list'), number_format_i18n($groups)),
+			'groups'	=> sprintf(_n('%s group', '%s groups', $groups, '12-step-meeting-list'), number_format_i18n($groups)),
 			'regions'	=> sprintf(_n('%s region', '%s regions', $regions, '12-step-meeting-list'), number_format_i18n($regions)),
 		),
 	));

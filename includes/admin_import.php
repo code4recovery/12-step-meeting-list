@@ -186,7 +186,7 @@ function tmsl_import_page() {
 				'name' => sanitize_text_field($_POST['tsml_add_data_source_name']),
 				'type' => 'JSON',
 			);
-			
+
 			//import feed
 			tsml_import_buffer_set($body, $_POST['tsml_add_data_source']);
 			
@@ -460,12 +460,12 @@ function tmsl_import_page() {
 										<li><?php _e('<strong>Group</strong> is a way of grouping contacts. Meetings with the same group name will be linked and share contact information.', '12-step-meeting-list')?></li>
 										<li><?php _e('<strong>District</strong> is user-defined and can be anything, but should be a string rather than an integer, e.g. \'District 01\' rather than \'1.\' A group name must also be specified.', '12-step-meeting-list')?></li>
 										<li><?php _e('<strong>Sub District</strong> makes the District hierachical.', '12-step-meeting-list')?></li>
-										<li><?php _e('<strong>Website</strong> is optional, but a group name must also be specified.', '12-step-meeting-list')?></li>
-										<li><?php _e('<strong>Email</strong> is optional, but a group name must also be specified. This is a public email address.', '12-step-meeting-list')?></li>
-										<li><?php _e('<strong>Phone</strong> is optional, but a group name must also be specified. This is a public phone number.', '12-step-meeting-list')?></li>
 										<li><?php _e('<strong>Group Notes</strong> is for stuff like a short group history, or when the business meeting meets.', '12-step-meeting-list')?></li>
-										<li><?php _e('<strong>Contact 1/2/3 Name/Email/Phone</strong> (nine fields in total) are all optional, but will not be saved if there is not also a group name specified. By default, contact information is only visible inside the WordPress dashboard.', '12-step-meeting-list')?></li>
-										<li><?php _e('<strong>Last Contact</strong> is an optional date. A group name must be specified for it to be saved.', '12-step-meeting-list')?></li>
+										<li><?php _e('<strong>Website</strong> is optional.', '12-step-meeting-list')?></li>
+										<li><?php _e('<strong>Email</strong> is optional. This is a public email address.', '12-step-meeting-list')?></li>
+										<li><?php _e('<strong>Phone</strong> is optional. This is a public phone number.', '12-step-meeting-list')?></li>
+										<li><?php _e('<strong>Contact 1/2/3 Name/Email/Phone</strong> (nine fields in total) are all optional. By default, contact information is only visible inside the WordPress dashboard.', '12-step-meeting-list')?></li>
+										<li><?php _e('<strong>Last Contact</strong> is an optional date.', '12-step-meeting-list')?></li>
 										<?php if (!empty($tsml_programs[$tsml_program]['types'])) {?>
 										<li><?php _e('<strong>Types</strong> should be a comma-separated list of the following options. This list is determined by which program is selected at right.', '12-step-meeting-list')?>
 											<ul class="types">
@@ -506,6 +506,7 @@ function tmsl_import_page() {
 											<form method="post" action="<?php echo $_SERVER['REQUEST_URI']?>">
 												<?php wp_nonce_field($tsml_nonce, 'tsml_nonce', false)?>
 												<input type="hidden" name="tsml_add_data_source" value="<?php echo $feed?>">
+												<input type="hidden" name="tsml_add_data_source_name" value="<?php echo @$properties['name']?>">
 												<input type="submit" value="Refresh" class="button button-small">
 											</form>
 										</td>

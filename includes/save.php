@@ -20,6 +20,7 @@ function tsml_save_post($post_id, $post, $update) {
 	//security
 	if (defined('DOING_AUTOSAVE') && DOING_AUTOSAVE) return;
 	if (!current_user_can('edit_post', $post_id)) return;
+	if (wp_is_post_revision($post_id)) return;
 	if (!isset($_POST['tsml_nonce']) || !wp_verify_nonce($_POST['tsml_nonce'], $tsml_nonce)) return;
 	if (!isset($_POST['post_type']) || ($_POST['post_type'] != 'tsml_meeting')) return;
 	
@@ -198,12 +199,66 @@ function tsml_save_post($post_id, $post, $update) {
 	}
 
 	//location-less meetings should all be drafts
-	$wpdb->query('UPDATE ' . $wpdb->posts . ' SET post_status = "draft" WHERE post_type = "tsml_meeting" AND post_parent = 0');
+	$wpdb->query('UPDATE ' . $wpdb->posts . ' SET post_status = "draft" WHERE post_type = "tsml_meeting" AND post_status = "publish" AND post_parent = 0');
 	
 	//save group information (set this value or get caught in a loop)
 	$_POST['post_type'] = 'tsml_group';
 
 	if (empty($_POST['group'])) {
+		//adding contact information to individual meeting
+		//meeting website
+		if (!empty($_POST['website'])) {
+			update_post_meta($post->ID, 'website', esc_url_raw($_POST['website'], array('http', 'https')));
+		} else {
+			delete_post_meta($post->ID, 'website');
+		}
+		
+		//meeting email
+		if (!empty($_POST['email'])) {
+			update_post_meta($post->ID, 'email', sanitize_text_field($_POST['email']));
+		} else {
+			delete_post_meta($post->ID, 'email');
+		}
+		
+		//meeting phone
+		if (!empty($_POST['phone'])) {
+			update_post_meta($post->ID, 'phone', sanitize_text_field($_POST['phone']));
+		} else {
+			delete_post_meta($post->ID, 'phone');
+		}
+		
+		//meeting info
+		for ($i = 1; $i <= GROUP_CONTACT_COUNT; $i++) {
+			foreach (array('name', 'email', 'phone') as $field) {
+				$key = 'contact_' . $i . '_' . $field;
+				$_POST[$key] = sanitize_text_field($_POST[$key]);
+				if (!$update || $old_meeting->{$key} != $_POST[$key]) {
+					$changes[] = $key;
+					if (empty($_POST[$key])) {
+						delete_post_meta($post->ID, $key); 
+					} else {
+						update_post_meta($post->ID, $key, $_POST[$key]);
+					}
+				}
+			}
+		}
+		
+		//last contact
+		if (!empty($_POST['last_contact'])) {
+			update_post_meta($post->ID, 'last_contact', date('Y-m-d', strtotime($_POST['last_contact'])));
+		} else {
+			delete_post_meta($post->ID, 'last_contact');
+		}
+		
+		//stripe API key
+		if (tsml_accepts_payments() && !empty($_POST['contributions_api_key'])) {
+			echo $_POST['contributions_api_key'];
+			update_post_meta($post->ID, 'contributions_api_key', sanitize_text_field($_POST['contributions_api_key']));
+		} else {
+			delete_post_meta($post->ID, 'contributions_api_key');
+		}
+
+		//switching from group to no group
 		if (!empty($old_meeting->group)) {
 			$changes[] = 'group';
 			if (!empty($old_meeting->group_notes)) $changes[] = 'group_notes';
