@@ -4,7 +4,7 @@ Donate link: https://meetingguide.org/donate
 Tags: 12-step, aa, al-anon, coda, meetings, na, oa, saa, slaa
 Requires at least: 3.2
 Tested up to: 4.8
-Stable tag: 2.16
+Stable tag: 2.16.1
 
 This plugin helps 12 step programs list their meetings. It standardizes addresses, and displays results in a searchable list and map.
 
@@ -311,6 +311,9 @@ Also check out our [One Page Meeting List](https://github.com/meeting-guide/one-
 
 == Changelog ==
 
+= 2.16.1 =
+* Fixing unexpected '@' PHP error on meeting edit page
+
 = 2.16 =
 * Can save contact information on a meeting without specifying a group (per Refuge Recovery)
 * Fixed saving conflict with WP post revisions
@@ -340,7 +343,7 @@ Also check out our [One Page Meeting List](https://github.com/meeting-guide/one-
 * If Google Analytics is installed, capturing search terms (per WAIA)
 
 = 2.15.1 =
-* Meeting edit page improvements and bug fixes by Tim R
+* Meeting edit page improvements and bug fixes by Tech2Serve
 
 = 2.15 =
 * Sites now control their level of sharing

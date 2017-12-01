@@ -152,10 +152,10 @@ function tsml_admin_init() {
 		}
 		?>
 		<div class="meta_form_row radio">
-			<label><input type="radio" name="group_status" value="individual"<?php checked(empty(@$meeting->group))?>> <?php _e('Individual meeting', '12-step-meeting-list')?></label>
-			<label><input type="radio" name="group_status" value="group"<?php checked(!empty(@$meeting->group))?>> <?php _e('Part of a group', '12-step-meeting-list')?></label>
+			<label><input type="radio" name="group_status" value="individual"<?php checked(empty($meeting->group))?>> <?php _e('Individual meeting', '12-step-meeting-list')?></label>
+			<label><input type="radio" name="group_status" value="group"<?php checked(!empty($meeting->group))?>> <?php _e('Part of a group', '12-step-meeting-list')?></label>
 		</div>
-		<div class="meta_form_row typeahead<?php if (empty(@$meeting->group)) echo ' hidden'?>">
+		<div class="meta_form_row typeahead<?php if (empty($meeting->group)) echo ' hidden'?>">
 			<label for="group"><?php _e('Group', '12-step-meeting-list')?></label>
 			<input type="text" name="group" id="group" value="<?php echo @$meeting->group?>">
 		</div>
@@ -175,7 +175,7 @@ function tsml_admin_init() {
 		</div>
 		<?php }
 		if (wp_count_terms('tsml_district')) {?>
-		<div class="meta_form_row<?php if (empty(@$meeting->group)) echo ' hidden'?>">
+		<div class="meta_form_row<?php if (empty($meeting->group)) echo ' hidden'?>">
 			<label for="district"><?php _e('District', '12-step-meeting-list')?></label>
 			<?php wp_dropdown_categories(array(
 				'name' => 'district',
@@ -188,7 +188,7 @@ function tsml_admin_init() {
 			))?>
 		</div>
 		<?php }?>
-		<div class="meta_form_row<?php if (empty(@$meeting->name)) echo ' hidden'?>">
+		<div class="meta_form_row<?php if (empty($meeting->name)) echo ' hidden'?>">
 			<label for="group_notes"><?php _e('Notes', '12-step-meeting-list')?></label>
 			<textarea name="group_notes" id="group_notes" placeholder="<?php _e('eg. Group history, when the business meeting is, etc.', '12-step-meeting-list')?>"><?php echo @$meeting->notes?></textarea>
 		</div>
