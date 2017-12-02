@@ -178,7 +178,8 @@ get_header();
 							</ul>
 						</div>
 
-						<?php if ($tsml_contact_display == 'public') {
+						<?php 
+						if ($tsml_contact_display == 'public') {
 							for ($i = 1; $i <= GROUP_CONTACT_COUNT; $i++) {
 								if (!empty($meeting->{'contact_' . $i . '_name'}) || !empty($meeting->{'contact_' . $i . '_email'}) || !empty($meeting->{'contact_' . $i . '_phone'})) {?>
 								<div class="panel panel-default">
@@ -186,7 +187,7 @@ get_header();
 										<h3 class="panel-title">
 											<?php if (!empty($meeting->{'contact_' . $i . '_name'})) echo $meeting->{'contact_' . $i . '_name'}?>
 											<span class="panel-title-buttons">
-												<?php if (!empty($meeting->{'contact_' . $i . '_email'})) {?><a href="mailto:<?php echo $meeting->{'contact_' . $i . '_email'}?>"><span class="glyphicon glyphicon-envelope"></span></a><? }?>
+												<?php if (!empty($meeting->{'contact_' . $i . '_email'})) {?><a href="mailto:<?php echo $meeting->{'contact_' . $i . '_email'}?>"><span class="glyphicon glyphicon-envelope"></span></a><?php }?>
 												<?php if (!empty($meeting->{'contact_' . $i . '_phone'})) {?><a href="tel:<?php echo preg_replace('~\D~', '', $meeting->{'contact_' . $i . '_phone'})?>"><span class="glyphicon glyphicon-earphone"></span></a><?php }?>
 											</span>
 										</h3>
