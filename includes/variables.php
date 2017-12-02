@@ -15,6 +15,9 @@ $tsml_columns = array(
 	'types' => 'Types'
 );
 
+//whether contacts are displayed publicly (defaults to no)
+$tsml_contact_display = get_option('tsml_contact_display', 'private');
+
 //load the array of URLs that we're using
 $tsml_data_sources = get_option('tsml_data_sources', array());
 

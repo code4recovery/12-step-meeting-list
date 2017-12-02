@@ -4,7 +4,7 @@ Donate link: https://meetingguide.org/donate
 Tags: 12-step, aa, al-anon, coda, meetings, na, oa, saa, slaa
 Requires at least: 3.2
 Tested up to: 4.8
-Stable tag: 2.16.1
+Stable tag: 2.16.2
 
 This plugin helps 12 step programs list their meetings. It standardizes addresses, and displays results in a searchable list and map.
 
@@ -72,6 +72,7 @@ It was originally designed to maintain a list of AA meetings in Santa Clara Coun
 1. [Oahu, HI](http://oahucentraloffice.com/meetings/)
 1. [Oklahoma](http://aaoklahoma.org/meetings)
 1. [Orlando, FL](http://cflintergroup.org/meetings/)
+1. [Pensacola, FL](http://aapensacola.org/meetings/)
 1. [Philadelphia, PA](http://www.aasepia.org/meetings/)
 1. [Portland, OR](http://home.pdxaa.org/meetings/)
 1. [Rochester, MN](http://aadistrict1.org/blog/meetings/)
@@ -311,15 +312,18 @@ Also check out our [One Page Meeting List](https://github.com/meeting-guide/one-
 
 == Changelog ==
 
+= 2.16.2 =
+* Adding new setting to make contact info public on meeting detail pages (Refuge Recovery)
+
 = 2.16.1 =
 * Fixing unexpected '@' PHP error on meeting edit page
 
 = 2.16 =
-* Can save contact information on a meeting without specifying a group (per Refuge Recovery)
+* Can save contact information on a meeting without specifying a group (Refuge Recovery)
 * Fixed saving conflict with WP post revisions
 * Fixed bug where lost data source name when refreshing
 * Adding email address to change request email (per NA Poland)
-* Displays error message when there's a problem with data source (per Sacramento)
+* Displays error message when there's a problem with data source (Sacramento)
 
 = 2.15.5 =
 * Fixing margin bug on meeting list page
@@ -327,7 +331,7 @@ Also check out our [One Page Meeting List](https://github.com/meeting-guide/one-
 * Adding a notes row class per San Francisco
 
 = 2.15.4 =
-* More descriptive 'request change' emails (per San Francisco)
+* More descriptive 'request change' emails (San Francisco)
 * Fixing a bug wherein it wasn't possible to change an established location name
 * Edit meeting page postboxes are no longer collapsible (was confusing in San Jose)
 * Adding a meeting type for ACA
@@ -338,87 +342,20 @@ Also check out our [One Page Meeting List](https://github.com/meeting-guide/one-
 * Adding Cocaine Anonymous
 
 = 2.15.2 =
-* Fixing error message on meeting detail page (per NA Poland)
-* Removing User Role Editor support (per Area 72)
-* If Google Analytics is installed, capturing search terms (per WAIA)
+* Fixing error message on meeting detail page (NA Poland)
+* Removing User Role Editor support (Area 72)
+* If Google Analytics is installed, capturing search terms (Washington, DC)
 
 = 2.15.1 =
 * Meeting edit page improvements and bug fixes by Tech2Serve
 
 = 2.15 =
 * Sites now control their level of sharing
-* Columns were not simultaneously both editable and reorderable (per report from Suffolk County, NY)
+* Columns were not simultaneously both editable and reorderable (Suffolk County, NY)
 * Redesigned sidebar in Import & Settings
-* Support for User Role Editor plugin (per Matthew in Long Beach, CA)
-* Number of upcoming meetings in widget now can be up to 25 (per request from Suffolk County, NY)
+* Support for User Role Editor plugin (Long Beach, CA)
+* Number of upcoming meetings in widget now can be up to 25 (Suffolk County, NY)
 * Adding two new programs: Parents of Addicted Loved Ones and Support Groups
 * Refactoring variables.php for cleaner structure
-* Emails have site name in brackets rather than plugin name (per Refuge Recovery)
+* Emails have site name in brackets rather than plugin name (Refuge Recovery)
 * FAQ updates
-
-= 2.14.14 =
-* Upcoming meetings now include meetings that started in the last 30 minutes
-* CSS meeting edit screen fix for Safari from Tech2Serve
-
-= 2.14.13 =
-* Adding region filter to admin Meetings screen
-* Adding donate link
-
-= 2.14.12 =
-* Fixing Bootstrap dropdown conflict
-
-= 2.14.11 =
-* Fixing directions button on meeting detail page
-
-= 2.14.10 =
-* Adding Debtors Anonymous
-* Adding 12 x 12 AA type per Cincinnati
-
-= 2.14.9 =
-* Location panel wasn't showing up on meeting detail page
-* Making functions all overridable 
-
-= 2.14.8 =
-* Fixing warnings noticed by Charlotte
-* New meeting notification
-
-= 2.14.7 =
-* Starting to add Schema.org/Event microdata for SEO per Long Beach
-* District change notification per Kentucky
-* Type checkbox issue per San Jose
-
-= 2.14.6 =
-* Adding district, if present, to meeting detail page
-
-= 2.14.5 =
-* Fixing Twenty Fourteen 'sticky masthead' issue
-* Don't repeat the region if it's already in the address (on detail pages)
-* You can now optionally specify the meeting's slug (helps to preserve app data integrity)
-* Clears the search field when you change search modes
-
-= 2.14.4 =
-* Adding Refuge Recovery
-* Fixing control margin
-* Changing link in feedback email to be public meeting URL (per Mississippi)
-* Improved email appearance
-
-= 2.14.3 =
-* Fixing error message on single location page
-
-= 2.14.2 =
-* Fixing district-related notices on import (per NJ) and meeting edit page
-* Fixing Twenty Fourteen footer negative margin
-* Delete all before importing now includes districts
-* Extending geocoding timeout
-* Fixed meetings being saved as drafts when they should have been published
-* You can now remove a meeting's location (it will be saved as a draft)
-
-= 2.14.1 =
-* When region is empty, it now guesses based on Google geocoded city
-* When changing meeting locations, address change checkbox is made visible
-
-= 2.14 =
-* Major edits to meeting and location detail pages (warning: if you have custom versions of these pages you will need to update them)
-* Fixing side admin menu bug on Districts page
-* Adding foundations for group contributions (not live yet)
-* Notes fields now being trimmed

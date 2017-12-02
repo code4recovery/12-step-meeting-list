@@ -2,7 +2,7 @@
 	
 //import CSV file and handle settings
 function tmsl_import_page() {
-	global $wpdb, $tsml_data_sources, $tsml_programs, $tsml_program, $tsml_nonce, $tsml_days, $tsml_feedback_addresses, $tsml_notification_addresses, $tsml_distance_units, $tsml_sharing, $tsml_sharing_keys;
+	global $wpdb, $tsml_data_sources, $tsml_programs, $tsml_program, $tsml_nonce, $tsml_days, $tsml_feedback_addresses, $tsml_notification_addresses, $tsml_distance_units, $tsml_sharing, $tsml_sharing_keys, $tsml_contact_display;
 
 	$error = false;
 	
@@ -288,6 +288,13 @@ function tmsl_import_page() {
 		$tsml_distance_units = ($_POST['tsml_distance_units'] == 'mi') ? 'mi' : 'km';
 		update_option('tsml_distance_units', $tsml_distance_units);
 		tsml_alert(__('Distance units updated.', '12-step-meeting-list'));
+	}
+		
+	//change distance units
+	if (!empty($_POST['tsml_contact_display']) && isset($_POST['tsml_nonce']) && wp_verify_nonce($_POST['tsml_nonce'], $tsml_nonce)) {
+		$tsml_contact_display = ($_POST['tsml_contact_display'] == 'public') ? 'public' : 'private';
+		update_option('tsml_contact_display', $tsml_contact_display);
+		tsml_alert(__('Contact privacy updated.', '12-step-meeting-list'));
 	}
 		
 	//change sharing setting
@@ -621,6 +628,22 @@ function tmsl_import_page() {
 										'mi' => __('Miles', '12-step-meeting-list'),	
 									) as $key => $value) {?>
 									<option value="<?php echo $key?>"<?php selected($tsml_distance_units, $key)?>><?php echo $value?></option>
+								<?php }?>
+								</select>
+							</form>
+							<form method="post" action="<?php echo $_SERVER['REQUEST_URI']?>">
+								<details>
+									<summary><strong><?php _e('Meeting/Group Contacts Are', '12-step-meeting-list')?></strong></summary>
+									<p><?php _e('This determines whether contacts are displayed publicly on meeting detail pages.', '12-step-meeting-list')?></p>
+								</details>
+								<?php wp_nonce_field($tsml_nonce, 'tsml_nonce', false)?>
+								<select name="tsml_contact_display" onchange="this.form.submit()">
+								<?php 
+								foreach (array(
+										'public' => __('Public', '12-step-meeting-list'),
+										'private' => __('Private', '12-step-meeting-list'),	
+									) as $key => $value) {?>
+									<option value="<?php echo $key?>"<?php selected($tsml_contact_display, $key)?>><?php echo $value?></option>
 								<?php }?>
 								</select>
 							</form>

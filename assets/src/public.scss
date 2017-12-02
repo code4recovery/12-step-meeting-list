@@ -368,10 +368,14 @@ $height: 550px; //height of map and min-height of list
 				.panel-title {
 					padding-right: 40px;
 					position: relative;
-					span.glyphicon {
+					.panel-title-buttons {
 						position: absolute;
 						right: 0;
 						transition: all .1s;
+						a {
+							color: inherit;
+							& + a { margin-left: 15px; }
+						}
 					}
 				}
 			}

@@ -37,7 +37,9 @@ get_header();
 							<a href="<?php echo $meeting->directions?>" class="panel-heading">
 								<h3 class="panel-title">
 									<?php _e('Get Directions', '12-step-meeting-list')?>
-									<span class="glyphicon glyphicon-share-alt"></span>
+									<span class="panel-title-buttons">
+										<span class="glyphicon glyphicon-share-alt"></span>
+									</span>
 								</h3>
 							</a>
 						</div>
@@ -175,8 +177,26 @@ get_header();
 								</li>
 							</ul>
 						</div>
+
+						<?php if ($tsml_contact_display == 'public') {
+							for ($i = 1; $i <= GROUP_CONTACT_COUNT; $i++) {
+								if (!empty($meeting->{'contact_' . $i . '_name'}) || !empty($meeting->{'contact_' . $i . '_email'}) || !empty($meeting->{'contact_' . $i . '_phone'})) {?>
+								<div class="panel panel-default">
+									<div class="panel-heading">
+										<h3 class="panel-title">
+											<?php if (!empty($meeting->{'contact_' . $i . '_name'})) echo $meeting->{'contact_' . $i . '_name'}?>
+											<span class="panel-title-buttons">
+												<?php if (!empty($meeting->{'contact_' . $i . '_email'})) {?><a href="mailto:<?php echo $meeting->{'contact_' . $i . '_email'}?>"><span class="glyphicon glyphicon-envelope"></span></a><? }?>
+												<?php if (!empty($meeting->{'contact_' . $i . '_phone'})) {?><a href="tel:<?php echo preg_replace('~\D~', '', $meeting->{'contact_' . $i . '_phone'})?>"><span class="glyphicon glyphicon-earphone"></span></a><?php }?>
+											</span>
+										</h3>
+									</div>
+								</div>
+								<?php }
+							}
+						}
 	
-						<?php if (!empty($tsml_feedback_addresses)) {?>
+						if (!empty($tsml_feedback_addresses)) {?>
 						<form id="feedback">
 							<input type="hidden" name="action" value="tsml_feedback">
 							<input type="hidden" name="meeting_id" value="<?php echo $meeting->ID?>">
@@ -185,7 +205,9 @@ get_header();
 								<div class="panel-heading">
 									<h3 class="panel-title">
 										<?php _e('Request an Update', '12-step-meeting-list')?>
-										<span class="glyphicon glyphicon-chevron-left"></span>
+										<span class="panel-title-buttons">
+											<span class="glyphicon glyphicon-chevron-left"></span>
+										</span>
 									</h3>
 								</div>
 								<ul class="list-group">

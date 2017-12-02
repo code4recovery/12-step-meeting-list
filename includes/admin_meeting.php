@@ -140,6 +140,7 @@ function tsml_admin_init() {
 	add_meta_box('group', __('Contact Information <small>Optional</small>', '12-step-meeting-list'), 'tsml_group_box', 'tsml_meeting', 'normal', 'low');
 	
 	function tsml_group_box() {
+		global $tsml_contact_display;
 		$meeting = tsml_get_meeting();
 		$meetings = array();
 		$district = 0;
@@ -205,7 +206,14 @@ function tsml_admin_init() {
 			<input type="text" name="phone" id="phone" value="<?php echo @$meeting->phone?>" placeholder="(800) 555-1212">
 		</div>
 		<div class="meta_form_row">
-			<label><?php _e('Contacts', '12-step-meeting-list')?></label>
+			<label>
+				<?php _e('Contacts', '12-step-meeting-list')?>
+				<span style="display: block;font-size:90%;color:#999;">(<?php if ($tsml_contact_display == 'public') {
+					_e('Public', '12-step-meeting-list');
+				} else {
+					_e('Private', '12-step-meeting-list');
+				}?>)</span>
+			</label>
 			<div class="container">
 				<?php for ($i = 1; $i <= GROUP_CONTACT_COUNT; $i++) {?>
 				<div class="row">

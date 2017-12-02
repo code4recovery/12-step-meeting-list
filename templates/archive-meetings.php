@@ -55,7 +55,9 @@ if (isset($_GET['tsml-distance']) && intval($_GET['tsml-distance'])) $distance =
 if (isset($_GET['tsml-mode']) && array_key_exists($_GET['tsml-mode'], $modes)) $mode = $_GET['tsml-mode'];
 
 //day default
+$today = true;
 if (isset($_GET['tsml-day'])) {
+	$today = false;
 	$day = ($_GET['tsml-day'] == 'any') ? null : intval($_GET['tsml-day']);
 }
 
@@ -86,7 +88,9 @@ $distance_label = $distances[$distance];
 
 //create page title (todo redo with sprintf)
 $tsml_page_title = array();
-if ($day !== null) $tsml_page_title[] = $tsml_days[$day];
+if ($day !== null) {
+	$tsml_page_title[] = $today ? __('Today\'s', '12-step-meeting-list') : $tsml_days[$day];
+}
 if ($time) $tsml_page_title[] = $time_label;
 if ($type) $tsml_page_title[] = $type_label;
 $tsml_page_title[] = empty($tsml_programs[$tsml_program]['abbr']) ? $tsml_programs[$tsml_program]['name'] : $tsml_programs[$tsml_program]['abbr'];
