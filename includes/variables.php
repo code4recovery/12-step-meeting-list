@@ -45,7 +45,7 @@ $tsml_google_api_key = 'AIzaSyBRvfz_gFi4Gb93h9iW3-lgQYnQiek_Xjc';
 
 /*
 unfortunately the google geocoding API is not always perfect. used by tsml_import() and admin.js
-find correct coordinates with http://nominatim.openstreetmap.org/
+find correct coordinates with http://nominatim.openstreetmap.org/ and https://www.latlong.net/
 */
 $tsml_google_overrides = array(
 	//first congregational church
@@ -65,6 +65,12 @@ $tsml_google_overrides = array(
 		'formatted_address'	=> '1 VA Center, Augusta, ME 04330, US',
 		'latitude'			=> '44.2803692',
 		'longitude'			=> '-69.7042675',
+	),
+	//fellowship hall at calvary baptist church (only apple maps knows of this address)
+	'61 State St, Brewer, ME 04412, USA' => array(
+		'formatted_address'	=> '12 Family Center Ln, Brewer, ME 04412, USA',
+		'latitude'			=> '44.794759',
+		'longitude'			=> '-68.761303',
 	),
 	//toronto meeting that is showing up with zero_results
 	'519 Church St, Toronto, ON M4Y 2C9, Canada' => array(
@@ -540,12 +546,24 @@ function tsml_define_strings() {
 				'BE'		=> __('Beginners', '12-step-meeting-list'),
 				'BB'		=> __('Book Study', '12-step-meeting-list'),
 				'CC'		=> __('Child Care Available', '12-step-meeting-list'),
+				'DA'		=> __('Danish', '12-step-meeting-list'),
 				'DF'		=> __('Dog Friendly', '12-step-meeting-list'),
+				'NL'		=> __('Dutch', '12-step-meeting-list'),
 				'8F'		=> __('Eightfold Path Study', '12-step-meeting-list'),
+				'EN'		=> __('English', '12-step-meeting-list'),
+				'FI'		=> __('Finnish', '12-step-meeting-list'),
+				'FR'		=> __('French', '12-step-meeting-list'),
+				'DE'		=> __('German', '12-step-meeting-list'),
+				'IS'		=> __('Inventory Study', '12-step-meeting-list'),
 				'IW'		=> __('Inventory Writing', '12-step-meeting-list'),
 				'LGBTQ'	=> __('LGBTQ', '12-step-meeting-list'),
 				'M'		=> __('Men', '12-step-meeting-list'),
-				'WA'		=> __('Wheelchair Accessible', '12-step-meeting-list'),
+				'MI'		=> __('Mindfulness Practice', '12-step-meeting-list'),
+				'PR'		=> __('Process Addictions', '12-step-meeting-list'),
+				'ES'		=> __('Spanish', '12-step-meeting-list'),
+				'SV'		=> __('Swedish', '12-step-meeting-list'),
+				'TH'		=> __('Thai', '12-step-meeting-list'),
+				'WA'		=> __('Wheelchair Access', '12-step-meeting-list'),
 				'W'		=> __('Women', '12-step-meeting-list'),
 			),
 		),

@@ -79,6 +79,7 @@ if (!function_exists('tsml_assets')) {
 				'street_only' => $tsml_street_only,
 				'types' => empty($tsml_programs[$tsml_program]['types']) ? array() : $tsml_programs[$tsml_program]['types'],
 				'nonce' => wp_create_nonce($tsml_nonce),
+				'debug' => WP_DEBUG,
 			));
 			
 			//stripe

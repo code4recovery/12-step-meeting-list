@@ -220,11 +220,15 @@ jQuery(function($){
 		//these are live hrefs now
 		e.preventDefault();
 
+		tsmlDebug('dropdown click');
+
 		//dropdown menu click
 		var param = $(this).closest('div').attr('id');
 		
 		if (param == 'mode') {
 			
+			tsmlDebug('search mode');
+
 			//only one search mode
 			$('#mode li').removeClass('active');
 			
@@ -253,13 +257,14 @@ jQuery(function($){
 			
 		} else if (param == 'distance') {
 			//distance only one
+			tsmlDebug('distance');
 			$('#distance li').removeClass('active');
 			$('#distance span.selected').html($(this).html());
 			trackAnalytics('distance', $(this).text());
 		} else if (param == 'region') {
-			
 			//switch between region and district mode
 			if ($(this).hasClass('switch')) {
+				tsmlDebug('switching between region and district');
 				var mode = $(this).parent().hasClass('region') ? 'district' : 'region';
 				$(this).closest('div.dropdown').attr('data-mode', mode);
 				e.stopPropagation();
@@ -267,22 +272,26 @@ jQuery(function($){
 			}
 			
 			//region only one
+			tsmlDebug('region or district');
 			$('#region li').removeClass('active');
 			$('#region span.selected').html($(this).html());
 			trackAnalytics('region', $(this).text());
 			
 		} else if (param == 'day') {
 			//day only one selected
+			tsmlDebug('day');
 			$('#day li').removeClass('active');
 			$('#day span.selected').html($(this).html());
 			trackAnalytics('day', $(this).text());
 		} else if (param == 'time') {
 			//time only one
+			tsmlDebug('time');
 			$('#time li').removeClass('active');
 			$('#time span.selected').html($(this).html());
 			trackAnalytics('time', $(this).text());
 		} else if (param == 'type') {
 			//type only one
+			tsmlDebug('type');
 			$('#type li').removeClass('active');
 			$('#type span.selected').html($(this).html());
 			trackAnalytics('type', $(this).text());
@@ -384,6 +393,9 @@ jQuery(function($){
 			distance: $('#distance li.active a').attr('data-id'),
 			view: $('#meetings .toggle-view.active').attr('data-id'),
 		}
+
+		tsmlDebug('doing search');
+		tsmlDebug(data);
 		
 		//get current query string for history and appending to links
 		var query_string = {};
@@ -817,6 +829,11 @@ jQuery(function($){
 		} else {
 			$('#time li.upcoming').removeClass('hidden');
 		}
+	}
+
+	function tsmlDebug(string) {
+		if (!tsml.debug) return;
+		console.log(string);
 	}
 
 	//send event to google analytics, if loaded

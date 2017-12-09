@@ -580,12 +580,10 @@ function tsml_ajax_import() {
 		}
 
 		if (!empty($meeting['website'])) {
-			$errors[] = '<li value="' . $contact_entity_id . '">Found website <code>' . esc_url_raw($meeting['website'], array('http', 'https')) . '</code>.</li>';
 			update_post_meta($contact_entity_id, 'website', esc_url_raw($meeting['website'], array('http', 'https')));
 		}
 		
 		if (!empty($meeting['email'])) {
-			$errors[] = '<li value="' . $contact_entity_id . '">Found email <code>' . $meeting['email'] . '</code>.</li>';
 			update_post_meta($contact_entity_id, 'email', $meeting['email']);
 		}
 		
