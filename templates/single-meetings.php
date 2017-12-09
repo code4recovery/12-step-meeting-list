@@ -212,6 +212,9 @@ get_header();
 									</h3>
 								</div>
 								<ul class="list-group">
+									<li class="list-group-item list-group-item-warning">
+										<?php _e('Use this form to submit a change to the meeting information above.', '12-step-meeting-list')?>
+									</li>
 									<li class="list-group-item list-group-item-form">
 										<input type="text" id="tsml_name" name="tsml_name" placeholder="<?php _e('Your Name', '12-step-meeting-list')?>" class="required">
 									</li>

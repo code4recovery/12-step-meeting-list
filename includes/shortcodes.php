@@ -1,5 +1,6 @@
 <?php
 
+//make shortcodes from functions in functions.php
 add_shortcode('tsml_group_count', 'tsml_group_count');
 add_shortcode('tsml_location_count', 'tsml_count_locations');
 add_shortcode('tsml_meeting_count', 'tsml_count_meetings');
@@ -40,16 +41,33 @@ function tsml_next_meetings($arguments) {
 }
 add_shortcode('tsml_next_meetings', 'tsml_next_meetings');
 
-/*function:	usort for next meetings
-//used:		tsml_next_meetings()
-function tsml_next_meetings_sort($a, $b) {
-	$today = current_time('w');
-	$time = current_time('H:i');
+//output a list of types with links for AA-DC
+function tsml_types_list() {
+	global $tsml_types_in_use, $tsml_programs, $tsml_program;
+	$types = array();
+	$base = get_post_type_archive_link('tsml_meeting') . '?tsml-day=any&tsml-type=';
+	foreach ($tsml_types_in_use as $type) {
+		$types[$tsml_programs[$tsml_program]['types'][$type]] = '<li><a href="' . $base . $type . '">' . $tsml_programs[$tsml_program]['types'][$type] . '</a></li>';
+	}
+	ksort($types);
+	return '<h3>Types</h3><ul>' . implode($types) . '</ul>';
+}
+add_shortcode('tsml_types_list', 'tsml_types_list');
 
-	//increment day to be 'next week' if earlier than now
-	if ($a['day'] < $today || ($a['day'] == $today && $a['time'] < $time)) $a['day'] += 7;
-	if ($b['day'] < $today || ($b['day'] == $today && $b['time'] < $time)) $b['day'] += 7;
-	
-	//return standard compare	
-	return tsml_sort_meetings($a, $b);
-}*/
+//output a list of regions with links for AA-DC
+function tsml_regions_list() {
+	//run function recursively
+	function get_regions($parent=0) {
+		$taxonomy = 'tsml_region';
+		$terms = get_terms(compact('taxonomy', 'parent'));
+		if (!count($terms)) return;
+		$base = get_post_type_archive_link('tsml_meeting') . '?tsml-day=any&tsml-region=';
+		foreach ($terms as &$term) {
+			$term = '<li><a href="' . $base . $term->term_id . '">' . $term->name . '</a>' . get_regions($term->term_id) . '</li>';
+		}
+		return '<ul>' . implode($terms) . '</ul>';
+	}
+
+	return '<h3>Regions</h3>' . get_regions();
+}
+add_shortcode('tsml_regions_list', 'tsml_regions_list');
