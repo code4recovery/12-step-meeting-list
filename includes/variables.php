@@ -48,12 +48,6 @@ unfortunately the google geocoding API is not always perfect. used by tsml_impor
 find correct coordinates with http://nominatim.openstreetmap.org/ and https://www.latlong.net/
 */
 $tsml_google_overrides = array(
-	//first congregational church
-	'Beach 94th St, Queens, NY 11693, USA' => array(
-		'formatted_address'	=> '320 Beach 94th Street, Queens, NY 11693, US',
-		'latitude'			=> '40.587465',
-		'longitude'			=> '-73.81683149999999',
-	),
 	//franklin memorial hospital
 	'Farmington, ME, USA' => array(
 		'formatted_address'	=> '111 Franklin Health Commons, Farmington, ME 04938, US',
@@ -72,12 +66,26 @@ $tsml_google_overrides = array(
 		'latitude'			=> '44.794759',
 		'longitude'			=> '-68.761303',
 	),
+
 	//toronto meeting that is showing up with zero_results
 	'519 Church St, Toronto, ON M4Y 2C9, Canada' => array(
 		'formatted_address'	=> '519 Church St, Toronto, ON M4Y 2C9, Canada',
 		'latitude'			=> '43.666532',
 		'longitude'			=> '-79.38097',
 	),
+
+	//nyc
+	'Beach 94th St, Queens, NY 11693, USA' => array(
+		'formatted_address'	=> '320 Beach 94th Street, Queens, NY 11693, US',
+		'latitude'			=> '40.587465',
+		'longitude'			=> '-73.81683149999999',
+	),
+	'14-54 31st Ave, Long Island City, NY 11106, USA' => array(
+		'formatted_address'	=> '14-54 31st Rd, Long Island City, NY 11106, USA',
+		'latitude'			=> '40.7667739',
+		'longitude'			=> '-73.9306111',
+	),
+
 	//nyc locations that for some reason include the premise name
 	'Advent Lutheran Church, 2504 Broadway, New York, NY 10025, USA' => array(
 		'formatted_address'	=> '2504 Broadway, New York, NY 10025, USA',
@@ -114,17 +122,21 @@ $tsml_google_overrides = array(
 		'latitude'			=> '40.7133468',
 		'longitude'			=> '-74.0025814',
 	),
-	'150 Church St, Santa Cruz, CA 95060, USA' => array(
-		'formatted_address'	=> '150 Church St, Davenport, CA 95017, USA',
-		'latitude'			=> '37.012471',
-		'longitude'			=> '-122.192971',
-	),
+	
 	//lgbt center
 	'208 E 13th St, New York, NY 10003, USA' => array(
 		'formatted_address' => '208 W 13th St, New York, NY 10011, USA',
 		'latitude'			=> '40.73800835',
 		'longitude'			=> '-74.0010489174602',
 	),
+
+	//santa cruz
+	'150 Church St, Santa Cruz, CA 95060, USA' => array(
+		'formatted_address'	=> '150 Church St, Davenport, CA 95017, USA',
+		'latitude'			=> '37.012471',
+		'longitude'			=> '-122.192971',
+	),
+
 );
 
 //get the blog's language (used as a parameter when geocoding)
