@@ -4,7 +4,7 @@ Donate link: https://meetingguide.org/donate
 Tags: 12-step, aa, al-anon, coda, meetings, na, oa, saa, slaa
 Requires at least: 3.2
 Tested up to: 4.8
-Stable tag: 2.16.4
+Stable tag: 2.16.5
 
 This plugin helps 12 step programs list their meetings. It standardizes addresses, and displays results in a searchable list and map.
 
@@ -50,11 +50,13 @@ It was originally designed to maintain a list of AA meetings in Santa Clara Coun
 1. [Kansas](https://ks-aa.org/meetings/)
 1. [Kentucky](http://www.area26.net/wp/?post_type=tsml_meeting)
 1. [Lakeland, FL](http://www.heartlandintergroup.org/wp/meetings/)
+1. [Langley, Canada](http://www.district43aa.org/meetings/)
 1. [Lewis County, WA](http://lewiscountyaa.org/meetings/)
 1. [Long Beach, CA](https://hacoaa.org/meetings/)
 1. [Madison, WI](http://aamadisonwi.org/meetings/)
 1. [Maine and New Brunswick](http://csoaamaine.org/meetings/)
 1. [Maui, HI](http://aamaui.org/meetings)
+1. [Mercer County, PA](http://www.wpadistrict52aa.org/meetings/)
 1. [Mesa, AZ](http://aamesaaz.org/meetings/)
 1. [Miami, FL](https://aamiamidade.org/meetings)
 1. [Midlands, UK (Polish)](http://intergrupamidlands.co.uk/meetings/)
@@ -317,6 +319,9 @@ Also check out our [One Page Meeting List](https://github.com/meeting-guide/one-
 1. Edit location
 
 == Changelog ==
+
+= 2.16.5 =
+* Geocoding address fix (NYC)
 
 = 2.16.4 =
 * Two new shortcodes (DC)
