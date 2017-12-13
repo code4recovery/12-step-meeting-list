@@ -17,6 +17,13 @@ wp_localize_script('tsml_public', 'tsml_map', array(
 
 $startDate = tsml_format_next_start($meeting);
 
+//adding custom body classes
+add_filter('body_class', 'tsml_body_class');
+function tsml_body_class($classes) {
+	$classes[] = 'tsml tsml-detail tsml-meeting';
+	return $classes;
+}
+
 get_header();
 ?>
 

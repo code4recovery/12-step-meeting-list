@@ -176,6 +176,13 @@ $districts_dropdown = wp_list_categories(array(
 	'echo' => false,
 ));
 
+//adding custom body classes
+add_filter('body_class', 'tsml_body_class');
+function tsml_body_class($classes) {
+	$classes[] = 'tsml tsml-meetings';
+	return $classes;
+}
+
 //do this after everything is loaded
 get_header();
 
