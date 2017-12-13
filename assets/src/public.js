@@ -39,8 +39,10 @@ jQuery(function($){
 	
 	var $body = $('body');
 	
-	if ($body.hasClass('post-type-archive-tsml_meeting')) {
+	//if ($body.hasClass('post-type-archive-tsml_meeting')) {
+	if (typeof tsml_map !== 'object')  { //provided by template pages
 
+		//list/map page
 		var map = new google.maps.Map(document.getElementById('map'), {
 			disableDefaultUI: true,
 			scrollwheel: true,
@@ -100,6 +102,7 @@ jQuery(function($){
 
 	} else {
 		
+		//meeting or location detail page
 		tsml_map.latitude -= 0;
 		tsml_map.longitude -= 0;
 		
