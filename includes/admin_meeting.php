@@ -189,9 +189,9 @@ function tsml_admin_init() {
 			))?>
 		</div>
 		<?php }?>
-		<div class="meta_form_row<?php if (empty($meeting->name)) echo ' hidden'?>">
+		<div class="meta_form_row<?php if (empty($meeting->group)) echo ' hidden'?>">
 			<label for="group_notes"><?php _e('Notes', '12-step-meeting-list')?></label>
-			<textarea name="group_notes" id="group_notes" placeholder="<?php _e('eg. Group history, when the business meeting is, etc.', '12-step-meeting-list')?>"><?php echo @$meeting->notes?></textarea>
+			<textarea name="group_notes" id="group_notes" placeholder="<?php _e('eg. Group history, when the business meeting is, etc.', '12-step-meeting-list')?>"><?php echo @$meeting->group_notes?></textarea>
 		</div>
 		<div class="meta_form_row">
 			<label for="website"><?php _e('Website', '12-step-meeting-list')?></label>
