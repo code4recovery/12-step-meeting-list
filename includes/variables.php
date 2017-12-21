@@ -561,6 +561,10 @@ function tsml_define_strings() {
 		'rr'				=> array(
 			'abbr'		=> __('Refuge Recovery', '12-step-meeting-list'),
 			'name' 		=> __('Refuge Recovery', '12-step-meeting-list'),
+			'type_descriptions' => array(
+				'M' => __('Men’s meetings are for anyone who identifies as male.', '12-step-meeting-list'),
+				'W' => __('Women’s meetings are for anyone who identifies as female.', '12-step-meeting-list'),
+			),
 			'types' 		=> array(
 				'BE'		=> __('Beginners', '12-step-meeting-list'),
 				'BB'		=> __('Book Study', '12-step-meeting-list'),
