@@ -35,6 +35,7 @@ function tsml_ajax_groups() {
 		$results[] = array(
 			'value'				=> html_entity_decode($title),
 			'website'			   => @$group_custom['website'][0],
+			'website_2'			   => @$group_custom['website_2'][0],
 			'email'			 => @$group_custom['email'][0],
 			'phone'			 => @$group_custom['phone'][0],
 			'contact_1_name'		=> @$group_custom['contact_1_name'][0],
@@ -170,11 +171,11 @@ function tsml_ajax_closest_meetings($content) {
 add_action('wp_ajax_contacts', 'tsml_ajax_contacts');
 function tsml_ajax_contacts() {
 	global $wpdb;
-	$group_ids = $wpdb->get_col('SELECT id FROM ' . $wpdb->posts . ' WHERE post_type = "tsml_group"');
-	$emails = $wpdb->get_col('SELECT meta_value FROM ' . $wpdb->postmeta . ' WHERE meta_key IN ("contact_1_email", "contact_2_email", "contact_3_email") AND post_id IN (' . implode(',', $group_ids) . ')');
+	$post_ids = $wpdb->get_col('SELECT id FROM ' . $wpdb->posts . ' WHERE post_type IN ("tsml_group", "tsml_meeting")');
+	$emails = $wpdb->get_col('SELECT meta_value FROM ' . $wpdb->postmeta . ' WHERE meta_key IN ("email", "contact_1_email", "contact_2_email", "contact_3_email") AND post_id IN (' . implode(',', $post_ids) . ')');
 	$emails = array_unique(array_filter($emails));
 	sort($emails);
-	die(implode(',', $emails));
+	die(implode(',<br>', $emails));
 }
 
 //function:	export csv
@@ -206,6 +207,7 @@ function tsml_ajax_csv() {
 		'district' => 			'District',
 		'sub_district' => 		'Sub District',
 		'website' => 			'Website',
+		'website_2' => 			'Website 2',
 		'email' => 				'Email',
 		'phone' => 				'Phone',
 		'group_notes' => 		'Group Notes',
@@ -581,6 +583,10 @@ function tsml_ajax_import() {
 
 		if (!empty($meeting['website'])) {
 			update_post_meta($contact_entity_id, 'website', esc_url_raw($meeting['website'], array('http', 'https')));
+		}
+		
+		if (!empty($meeting['website_2'])) {
+			update_post_meta($contact_entity_id, 'website_2', esc_url_raw($meeting['website_2'], array('http', 'https')));
 		}
 		
 		if (!empty($meeting['email'])) {

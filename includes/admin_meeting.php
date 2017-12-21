@@ -198,6 +198,10 @@ function tsml_admin_init() {
 			<input type="text" name="website" id="website" value="<?php echo @$meeting->website?>" placeholder="https://">
 		</div>
 		<div class="meta_form_row">
+			<label for="website_2"><?php _e('Website 2', '12-step-meeting-list')?></label>
+			<input type="text" name="website_2" id="website_2" value="<?php echo @$meeting->website_2?>" placeholder="https://">
+		</div>
+		<div class="meta_form_row">
 			<label for="email"><?php _e('Email', '12-step-meeting-list')?></label>
 			<input type="text" name="email" id="email" value="<?php echo @$meeting->email?>" placeholder="group@website.org">
 		</div>

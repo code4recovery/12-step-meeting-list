@@ -213,6 +213,13 @@ function tsml_save_post($post_id, $post, $update) {
 			delete_post_meta($post->ID, 'website');
 		}
 		
+		//meeting website 2
+		if (!empty($_POST['website_2'])) {
+			update_post_meta($post->ID, 'website_2', esc_url_raw($_POST['website_2'], array('http', 'https')));
+		} else {
+			delete_post_meta($post->ID, 'website_2');
+		}
+		
 		//meeting email
 		if (!empty($_POST['email'])) {
 			update_post_meta($post->ID, 'email', sanitize_text_field($_POST['email']));
@@ -315,6 +322,13 @@ function tsml_save_post($post_id, $post, $update) {
 			update_post_meta($group_id, 'website', esc_url_raw($_POST['website'], array('http', 'https')));
 		} else {
 			delete_post_meta($group_id, 'website');
+		}
+		
+		//group website 2
+		if (!empty($_POST['website_2'])) {
+			update_post_meta($group_id, 'website_2', esc_url_raw($_POST['website_2'], array('http', 'https')));
+		} else {
+			delete_post_meta($group_id, 'website_2');
 		}
 		
 		//group email

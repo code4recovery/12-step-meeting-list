@@ -530,6 +530,7 @@ if (!function_exists('tsml_get_groups')) {
 				'sub_district'		=> $sub_district,
 				'group_notes'		=> $post->post_content,
 				'website'			=> @$group_meta[$post->ID]['website'],
+				'website_2'			=> @$group_meta[$post->ID]['website_2'],
 				'email'				=> @$group_meta[$post->ID]['email'],
 				'phone'				=> @$group_meta[$post->ID]['phone'],
 				'last_contact'		=> @$group_meta[$post->ID]['last_contact'],
@@ -946,6 +947,7 @@ if (!function_exists('tsml_get_meetings')) {
 			'group' => null, 
 			'group_notes' => null, 
 			'website' => null, 
+			'website_2' => null, 
 			'email' => null, 
 			'phone' => null, 
 			'last_contact' => null,
@@ -993,6 +995,10 @@ if (!function_exists('tsml_get_meetings')) {
 			
 			if (!empty($meeting_meta[$post->ID]['website'])) {
 				$array['website'] = $meeting_meta[$post->ID]['website'];
+			}
+			
+			if (!empty($meeting_meta[$post->ID]['website_2'])) {
+				$array['website_2'] = $meeting_meta[$post->ID]['website_2'];
 			}
 			
 			if (!empty($meeting_meta[$post->ID]['phone'])) {

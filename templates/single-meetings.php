@@ -151,7 +151,7 @@ get_header();
 									);
 								}
 
-								if (!empty($meeting->group) || !empty($meeting->website) || !empty($meeting->email) || !empty($meeting->phone)) {?>
+								if (!empty($meeting->group) || !empty($meeting->website) || !empty($meeting->website_2) || !empty($meeting->email) || !empty($meeting->phone)) {?>
 									<li class="list-group-item list-group-item-group">
 										<h3 class="list-group-item-heading"><?php echo $meeting->group?></h3>
 										<?php if (!empty($meeting->group_notes)) {?>
@@ -163,6 +163,11 @@ get_header();
 										if (!empty($meeting->website)) {?>
 											<p class="group-website">
 												<a href="<?php echo $meeting->website?>" target="_blank"><?php echo $meeting->website?></a>
+											</p>
+										<?php }
+										if (!empty($meeting->website_2)) {?>
+											<p class="group-website_2">
+												<a href="<?php echo $meeting->website_2?>" target="_blank"><?php echo $meeting->website_2?></a>
 											</p>
 										<?php }
 										if (!empty($meeting->email)) {?>
