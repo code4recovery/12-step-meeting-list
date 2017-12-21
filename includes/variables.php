@@ -137,6 +137,13 @@ $tsml_google_overrides = array(
 		'longitude'			=> '-122.192971',
 	),
 
+	//refuge recovery
+	'20, 19100 Ventura Blvd, Tarzana, CA 91356, USA' => array(
+		'formatted_address'	=> '19100 Ventura Blvd, Tarzana, CA 91356, USA',
+		'latitude'			=> '34.17217249999999',
+		'longitude'			=> '-118.548945',
+	),
+
 );
 
 //get the blog's language (used as a parameter when geocoding)

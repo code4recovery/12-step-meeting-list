@@ -4,17 +4,17 @@ Donate link: https://meetingguide.org/donate
 Tags: 12-step, aa, al-anon, coda, meetings, na, oa, saa, slaa
 Requires at least: 3.2
 Tested up to: 4.8
-Stable tag: 2.16.7
+Stable tag: 2.16.8
 
-This plugin helps 12 step programs list their meetings. It standardizes addresses, and displays results in a searchable list and map.
+This plugin helps twelve step recovery programs list their meetings. It standardizes addresses, and displays results in a searchable list and map.
 
 == Description ==
 
-This plugin helps 12 step programs list their meetings. It standardizes addresses, and displays results in a searchable list and map.
+This plugin helps twelve step recovery programs list their meetings. It standardizes addresses, and displays results in a searchable list and map.
 
 It's also the easiest way to have your area's meetings listed in the [Meeting Guide mobile app](https://meetingguide.org/) for iOS and Android devices.
 
-It was originally designed to maintain a list of AA meetings in Santa Clara County, CA. It's now in use in the following areas:
+This plugin was originally designed to maintain a list of AA meetings in Santa Clara County, CA. It's now in use in the following areas:
 
 **Alcoholics Anonymous**
 
@@ -160,6 +160,7 @@ It was originally designed to maintain a list of AA meetings in Santa Clara Coun
 
 **Refuge Recovery**
 
+1. [Main Website](https://www.refugerecovery.org/meetings/)
 1. [Oakland, CA](http://refugerecoveryoakland.org/meetings/)
 
 **Sex Addicts Anonymous**
@@ -319,6 +320,10 @@ Also check out our [One Page Meeting List](https://github.com/meeting-guide/one-
 1. Edit location
 
 == Changelog ==
+
+= 2.16.8 =
+* Adding second URL field (Refuge Recovery)
+* Bringing back email link
 
 = 2.16.7 =
 * Fixing bugs in Group Notes field (Kentucky)

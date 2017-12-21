@@ -197,7 +197,7 @@ $height: 550px; //height of map and min-height of list
 							clear: both;
 							font-weight: 400;
 							line-height: 1.42857143;
-							color: #333;
+							color: $color_black;
 							&:hover {
 								color: #262626;
 								text-decoration: none;
@@ -578,11 +578,11 @@ $height: 550px; //height of map and min-height of list
 						}
 						&[data-sort="asc"]:after {
 							border-width: 0 4px 8px;
-							border-color: transparent transparent #aaa transparent;
+							border-color: transparent transparent $color_gray transparent;
 						}
 						&[data-sort="desc"]:after {
 							border-width: 8px 4px 0;
-							border-color: #aaa transparent transparent;
+							border-color: $color_gray transparent transparent;
 						}
 						&.address, &.types { 
 							display: none;
