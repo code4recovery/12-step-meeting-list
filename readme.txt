@@ -4,7 +4,7 @@ Donate link: https://meetingguide.org/donate
 Tags: 12-step, aa, al-anon, coda, meetings, na, oa, saa, slaa
 Requires at least: 3.2
 Tested up to: 4.8
-Stable tag: 2.16.9
+Stable tag: 2.16.10
 
 This plugin helps twelve step recovery programs list their meetings. It standardizes addresses, and displays results in a searchable list and map.
 
@@ -25,6 +25,7 @@ This plugin was originally designed to maintain a list of AA meetings in Santa C
 1. [Baton Rouge, LA](http://aabatonrouge.org/meetings/)
 1. [Bethlehem, PA](https://www.aalv.org/meetings)
 1. [Bowling Green, KY](http://bowlinggreenaa.org/meetings/)
+1. [Brainerd, MN](http://aacentrallakes.org/meetings/)
 1. [Cancún, Mexico](http://aacancun.org/meetings/)
 1. [Charleston, WV](http://aawvdist1.org/wordpress/?post_type=tsml_meeting)
 1. [Charlotte, NC](http://charlotteaa.org/meetings/)
@@ -320,6 +321,9 @@ Also check out our [One Page Meeting List](https://github.com/meeting-guide/one-
 1. Edit location
 
 == Changelog ==
+
+= 2.16.10 =
+* Google address override (Refuge Recovery)
 
 = 2.16.9 =
 * Type descriptions for Women's and Men's meetings (Refuge Recovery)
