@@ -143,6 +143,11 @@ $tsml_google_overrides = array(
 		'latitude'			=> '34.17217249999999',
 		'longitude'			=> '-118.548945',
 	),
+	'1669 Euclid Ave, Boulder, CO 80302, USA' => array(
+		'formatted_address'	=> '1669 Euclid Ave, Boulder, CO 80309, USA',
+		'latitude'			=> '40.0065706',
+		'longitude'			=> '-105.2717488',
+	),
 
 );
 
