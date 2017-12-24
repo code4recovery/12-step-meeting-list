@@ -85,8 +85,6 @@ $tsml_google_overrides = array(
 		'latitude'			=> '40.7667739',
 		'longitude'			=> '-73.9306111',
 	),
-
-	//nyc locations that for some reason include the premise name
 	'Advent Lutheran Church, 2504 Broadway, New York, NY 10025, USA' => array(
 		'formatted_address'	=> '2504 Broadway, New York, NY 10025, USA',
 		'latitude'			=> '40.7926923',
@@ -122,8 +120,6 @@ $tsml_google_overrides = array(
 		'latitude'			=> '40.7133468',
 		'longitude'			=> '-74.0025814',
 	),
-	
-	//lgbt center
 	'208 E 13th St, New York, NY 10003, USA' => array(
 		'formatted_address' => '208 W 13th St, New York, NY 10011, USA',
 		'latitude'			=> '40.73800835',
@@ -147,6 +143,11 @@ $tsml_google_overrides = array(
 		'formatted_address'	=> '1669 Euclid Ave, Boulder, CO 80309, USA',
 		'latitude'			=> '40.0065706',
 		'longitude'			=> '-105.2717488',
+	),
+	'55-514 Hawi Rd, Waimea, HI 96743, USA' => array(
+		'formatted_address'	=> '55-514 Hawi Rd, Hawi, HI 96743, USA',
+		'latitude'			=> '20.2376863',
+		'longitude'			=> '-155.830639',
 	),
 
 );
