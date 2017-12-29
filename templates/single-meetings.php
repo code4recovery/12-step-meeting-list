@@ -246,6 +246,9 @@ get_header();
 						
 					</div>
 					<div class="col-md-8">
+						<?php if(has_post_thumbnail()) { ?>
+							<img src="<?php echo get_the_post_thumbnail_url(); ?>" class="panel panel-default meeting-thumbnail img-responsive">
+						<?php } ?>
 						<div id="map" class="panel panel-default"></div>
 					</div>
 				</div>

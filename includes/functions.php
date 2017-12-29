@@ -187,7 +187,7 @@ if (!function_exists('tsml_custom_post_types')) {
 					'edit_item' =>	__('Edit Meeting', '12-step-meeting-list'),
 					'view_item' =>	__('View Meeting', '12-step-meeting-list'),
 				),
-				'supports' => array('title'),
+				'supports' => array('title', 'thumbnail'),
 				'public' => true,
 				'has_archive' => true,
 				'menu_icon' => 'dashicons-groups',
