@@ -187,7 +187,9 @@ if (!function_exists('tsml_custom_post_types')) {
 					'edit_item' =>	__('Edit Meeting', '12-step-meeting-list'),
 					'view_item' =>	__('View Meeting', '12-step-meeting-list'),
 				),
-				'supports' => array('title', 'thumbnail'),
+				//not sure if we want this on the meeting or on the location
+				//'supports' => array('title', 'thumbnail'),
+				'supports' => array('title'),
 				'public' => true,
 				'has_archive' => true,
 				'menu_icon' => 'dashicons-groups',
@@ -941,31 +943,7 @@ if (!function_exists('tsml_get_meetings')) {
 			'post__in'			=> array_unique($search_results),
 			'post_parent__in'	=> $location_ids,
 		));
-	
-		//need this later, need to supply default values to groupless meetings
-		$null_group_info = array(
-			'group' => null, 
-			'group_notes' => null, 
-			'website' => null, 
-			'website_2' => null, 
-			'email' => null, 
-			'phone' => null, 
-			'last_contact' => null,
-		);
-		if (current_user_can('edit_posts')) {
-			$null_group_info = array_merge($null_group_info, array(
-				'contact_1_name' => null, 
-				'contact_1_email' => null, 
-				'contact_1_phone' => null, 
-				'contact_2_name' => null, 
-				'contact_2_email' => null, 
-				'contact_2_phone' => null, 
-				'contact_3_name' => null, 
-				'contact_3_email' => null, 
-				'contact_3_phone' => null,
-			));
-		}
-	
+		
 		$meeting_meta = tsml_get_meta('tsml_meeting');
 	
 		//make an array of the meetings
@@ -1019,8 +997,6 @@ if (!function_exists('tsml_get_meetings')) {
 			//append group info to meeting
 			if (!empty($meeting_meta[$post->ID]['group_id']) && array_key_exists($meeting_meta[$post->ID]['group_id'], $groups)) {
 				$array = array_merge($array, $groups[$meeting_meta[$post->ID]['group_id']]);
-			} else {
-				$array = array_merge($array, $null_group_info);
 			}
 			
 			$meetings[] = $array;
