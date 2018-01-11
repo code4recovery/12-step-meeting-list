@@ -187,6 +187,9 @@ add_action('plugins_loaded', 'tsml_define_strings');
 function tsml_define_strings() {
 	global $tsml_days, $tsml_days_order, $tsml_programs, $tsml_program, $tsml_strings, $tsml_types_in_use;
 
+        //load internationalization
+        load_plugin_textdomain('12-step-meeting-list', false, '12-step-meeting-list/languages');
+
 	//days of the week
 	$tsml_days	= array(
 		__('Sunday', '12-step-meeting-list'),
