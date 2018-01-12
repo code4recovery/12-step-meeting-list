@@ -682,12 +682,14 @@ function tsml_ajax_meeting_guide() {
 
 	$mg_key = false;
 
+	//check for existing keys
 	foreach ($tsml_sharing_keys as $key => $value) {
 		if ($value == 'Meeting Guide') {
 			$mg_key = $key;
 		}
 	}
 
+	//add new key
 	if (empty($mg_key)) {
 		$mg_key = md5(uniqid('Meeting Guide', true));
 		$tsml_sharing_keys[$mg_key] = 'Meeting Guide';
@@ -695,14 +697,16 @@ function tsml_ajax_meeting_guide() {
 		update_option('tsml_sharing_keys', $tsml_sharing_keys);
 	}
 
+	//build url
 	$message = admin_url('admin-ajax.php?') . http_build_query(array(
 		'action' => 'meetings',
 		'key' => $mg_key,
 	));
 
+	//send email
 	if (tsml_email(TSML_CONTACT_EMAIL, 'Sharing Key', $message)) {
 		die('sent');
-	} else {
-		die('not sent!');
 	}
+
+	die('not sent!');
 }

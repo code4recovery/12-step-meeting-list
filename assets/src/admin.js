@@ -82,15 +82,31 @@ jQuery(function($){
 	//time picker
 	$('input.time').timepicker();
 	
-	//auto-suggest end time
+	//auto-suggest end time (todo maybe think about using moment for this)
 	$('input#time').change(function(){
+
+		//get time parts
 		var parts = $(this).val().split(':');
 		if (parts.length !== 2) return;
 		var hours = parts[0] - 0;
-		hours = (hours == 23) ? 0 : hours + 1;
+		var parts = parts[1].split(' ');
+		if (parts.length !== 2) return;
+		var minutes = parts[0];
+		var ampm = parts[1];
+
+		//increment hour
+		if (hours == 12) {
+			hours = 1;
+		} else {
+			hours++;
+			if (hours == 12) {
+				ampm = (ampm == 'am') ? 'pm' : 'am';
+			}
+		}
 		hours += '';
-		if (hours.length == 1) hours = '0' + hours;
-		$('input#end_time').val(hours + ':' + parts[1]).timepicker();
+
+		//set field value
+		$('input#end_time').val(hours + ':' + minutes + ' ' + ampm);
 	});
 	
 	//types checkboxes: ensure not both open and closed
