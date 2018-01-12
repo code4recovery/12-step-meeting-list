@@ -11,9 +11,6 @@ function tsml_init() {
 	//run any necessary upgrades
 	tsml_upgrades();
 	
-	//load internationalization
-	load_plugin_textdomain('12-step-meeting-list', false, '12-step-meeting-list/languages');
-	
 	//meeting list page
 	add_filter('archive_template', 'tsml_archive_template');
 	function tsml_archive_template($template) {
