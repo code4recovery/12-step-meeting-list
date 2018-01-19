@@ -4,7 +4,7 @@ Donate link: https://meetingguide.org/donate
 Tags: 12-step, aa, al-anon, coda, meetings, na, oa, saa, slaa
 Requires at least: 3.2
 Tested up to: 4.9
-Stable tag: 2.16.14
+Stable tag: 2.16.15
 
 This plugin helps twelve step recovery programs list their meetings. It standardizes addresses, and displays results in a searchable list and map.
 
@@ -52,6 +52,7 @@ This plugin was originally designed to maintain a list of AA meetings in Santa C
 1. [Kansas](https://ks-aa.org/meetings/)
 1. [Kentucky](http://www.area26.net/wp/?post_type=tsml_meeting)
 1. [Lakeland, FL](http://www.heartlandintergroup.org/wp/meetings/)
+1. [Lancaster, PA](http://www.lancasteraa.org/meetings-list/)
 1. [Langley, Canada](http://www.district43aa.org/meetings/)
 1. [Lewis County, WA](http://lewiscountyaa.org/meetings/)
 1. [Long Beach, CA](https://hacoaa.org/meetings/)
@@ -66,6 +67,7 @@ This plugin was originally designed to maintain a list of AA meetings in Santa C
 1. [Minnesota](http://aaminnesota.com/meetings/)
 1. [Mississippi](http://www.aa-mississippi.org/meetings/)
 1. [Modesto, CA](http://wp.cviaa.org/meetings/)
+1. [Monterey, CA](http://www.aamonterey.org/meetings/)
 1. [Montreal, Canada](http://aa87.org/meetings/)
 1. [Napa, CA](http://www.aanapa.org/meetings)
 1. [Naples, FL](http://aanaples.org/meetings/)
@@ -97,6 +99,7 @@ This plugin was originally designed to maintain a list of AA meetings in Santa C
 1. [South Florida District 20](http://district20aa.org/meetings/)
 1. [Southern Colorado](http://www.puebloaa.org/meetings/)
 1. [Southwestern Missouri](https://aaswmo.org/meetings)
+1. [Spokane, WA](http://aaspokane.org/meetings/)
 1. [St. Louis, MO](https://aastl.org/meetings/)
 1. [State College, PA](http://www.district43.com/meetings/)
 1. [Streamwood, IL](http://dist23.aa-nia.org/meetings)
@@ -322,6 +325,9 @@ Also check out our [One Page Meeting List](https://github.com/meeting-guide/one-
 1. Edit location
 
 == Changelog ==
+
+= 2.16.15 =
+* @codifryed updated language template file
 
 = 2.16.14 =
 * @codifryed put `load_plugin_textdomain` in the proper hook
