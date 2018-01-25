@@ -4,7 +4,7 @@ Donate link: https://meetingguide.org/donate
 Tags: 12-step, aa, al-anon, coda, meetings, na, oa, saa, slaa
 Requires at least: 3.2
 Tested up to: 4.9
-Stable tag: 2.16.15
+Stable tag: 2.16.16
 
 This plugin helps twelve step recovery programs list their meetings. It standardizes addresses, and displays results in a searchable list and map.
 
@@ -71,11 +71,13 @@ This plugin was originally designed to maintain a list of AA meetings in Santa C
 1. [Montreal, Canada](http://aa87.org/meetings/)
 1. [Napa, CA](http://www.aanapa.org/meetings)
 1. [Naples, FL](http://aanaples.org/meetings/)
+1. [Nassau County, NY](http://nassauaa.org/meetings)
 1. [New Hampshire](http://nhaa.net/meetings/)
 1. [New Orleans, LA](http://www.aaneworleans.org/meetings/)
 1. [New Mexico](https://nm-aa.org/meetings/)
 1. [New York, NY](https://www.nyintergroup.org/meetings/)
 1. [North Central Washington](http://aancw.org/meetings)
+1. [North Port, FL](http://aalifeline.org/meetings/)
 1. [Oahu, HI](http://oahucentraloffice.com/meetings/)
 1. [Oklahoma](http://aaoklahoma.org/meetings)
 1. [Orlando, FL](http://cflintergroup.org/meetings/)
@@ -325,6 +327,9 @@ Also check out our [One Page Meeting List](https://github.com/meeting-guide/one-
 1. Edit location
 
 == Changelog ==
+
+= 2.16.16 =
+* Google API key wasn't present in frontend, might have been causing geocoding issues
 
 = 2.16.15 =
 * @codifryed updated language template file

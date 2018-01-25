@@ -71,15 +71,16 @@ if (!function_exists('tsml_assets')) {
 					__('Friday', '12-step-meeting-list'),
 					__('Saturday', '12-step-meeting-list'),
 				),
+				'debug' => WP_DEBUG,
 				'defaults' => $tsml_defaults,
 				'distance_units' => $tsml_distance_units,
+				'google_api_key' => $tsml_google_api_key,
 				'language' => $tsml_language,
-				'program' => empty($tsml_programs[$tsml_program]['abbr']) ? $tsml_programs[$tsml_program]['name'] : $tsml_programs[$tsml_program]['abbr'],
-				'strings' => $tsml_strings,
-				'street_only' => $tsml_street_only,
-				'types' => empty($tsml_programs[$tsml_program]['types']) ? array() : $tsml_programs[$tsml_program]['types'],
 				'nonce' => wp_create_nonce($tsml_nonce),
-				'debug' => WP_DEBUG,
+				'program' => empty($tsml_programs[$tsml_program]['abbr']) ? $tsml_programs[$tsml_program]['name'] : $tsml_programs[$tsml_program]['abbr'],
+				'street_only' => $tsml_street_only,
+				'strings' => $tsml_strings,
+				'types' => empty($tsml_programs[$tsml_program]['types']) ? array() : $tsml_programs[$tsml_program]['types'],
 			));
 			
 			//stripe
