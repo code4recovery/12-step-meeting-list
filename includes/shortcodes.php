@@ -30,10 +30,10 @@ function tsml_next_meetings($arguments) {
 	return '<table class="tsml_next_meetings table table-striped">
 		<thead>
 			<tr>
-				<th class="time">' . __('Time', '12-step-meeting-list') . '</td>
-				<th class="name">' . __('Meeting', '12-step-meeting-list') . '</td>
-				<th class="location">' . __('Location', '12-step-meeting-list') . '</td>
-				<th class="region">' . __('Region', '12-step-meeting-list') . '</td>
+				<th class="time">' . __('Time', '12-step-meeting-list') . '</th>
+				<th class="name">' . __('Meeting', '12-step-meeting-list') . '</th>
+				<th class="location">' . __('Location', '12-step-meeting-list') . '</th>
+				<th class="region">' . __('Region', '12-step-meeting-list') . '</th>
 			</tr>
 		</thead>
 		<tbody>' . $rows . '</tbody>
