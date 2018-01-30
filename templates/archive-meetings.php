@@ -189,7 +189,7 @@ get_header();
 ?>
 <div id="tsml">
 	
-	<div id="meetings" data-view="<?php echo $view?>" data-mode="<?php echo $mode?>" class="container<?php if (!count($meetings)) {?> empty<?php }?>" role="main">
+	<div id="meetings" data-view="<?php echo $view?>" data-mode="<?php echo $mode?>" tax-mode="<?php echo $district ? 'district' : 'region'?>" class="container<?php if (!count($meetings)) {?> empty<?php }?>" role="main">
 
 		<div class="row title">
 			<div class="col-xs-12">
@@ -237,7 +237,7 @@ get_header();
 			</div>
 			<div class="col-sm-6 col-md-2 col-md-pull-2">
 				<?php if ($regions_dropdown || $districts_dropdown) {?>
-				<div class="dropdown" id="region" data-mode="<?php echo ($district ? 'district' : 'region')?>">
+				<div class="dropdown" id="region">
 					<a class="btn btn-default btn-block" data-toggle="tsml-dropdown" role="button" aria-haspopup="true" aria-expanded="false">
 						<span class="selected"><?php echo $region_label?></span>
 						<span class="caret"></span>
@@ -344,6 +344,8 @@ get_header();
 								$meeting['region'] = (!empty($meeting['sub_region'])) ? htmlentities($meeting['sub_region'], ENT_QUOTES) : htmlentities($meeting['region'], ENT_QUOTES);
 								if (!empty($meeting['district'])) {
 									$meeting['district'] = (!empty($meeting['sub_district'])) ? htmlentities($meeting['sub_district'], ENT_QUOTES) : htmlentities($meeting['district'], ENT_QUOTES);
+								} else {
+									$meeting['district'] = '';
 								}
 								$meeting['link'] = tsml_link($meeting['url'], tsml_format_name($meeting['name'], $meeting['types']), 'post_type');
 								

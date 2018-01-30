@@ -283,7 +283,7 @@ $height: 550px; //height of map and min-height of list
 							&.location, &.address, &.region, &.district {
 								width: 220px;
 							}
-							&.types {
+							&.types, &.district {
 								display: none;
 							}
 						}
@@ -298,8 +298,15 @@ $height: 550px; //height of map and min-height of list
 				display: none;
 			}
 		}
+		
+		&[tax-mode="district"] {
+			.results {
+				.district { display: block; }
+				.region { display: none; }
+			}
+		}
 	
-		&[data-view=map] {
+		&[data-view="map"] {
 			#map {
 				display: block;
 			}
@@ -326,10 +333,10 @@ $height: 550px; //height of map and min-height of list
 			#region { 
 				display: block; 
 				li.district { display: none; }
-				&[data-mode="district"] {
-					li.district { display: block; }
-					li.region { display: none; }
-				}
+			}
+			&[tax-mode="district"] #region {
+				li.district { display: block; }
+				li.region { display: none; }
 			}
 			th.distance, td.distance { display: none !important; }
 		}
@@ -584,7 +591,7 @@ $height: 550px; //height of map and min-height of list
 							border-width: 8px 4px 0;
 							border-color: $color_gray transparent transparent;
 						}
-						&.address, &.types { 
+						&.address, &.types, &.district { 
 							display: none;
 						}
 						&.distance {
@@ -631,12 +638,17 @@ $height: 550px; //height of map and min-height of list
 						&.location {
 							width: 35%;
 						}
-						&.address, &.types { 
+						&.address, &.types, &.district { 
 							display: none;
 						}
 					}
 				}
 			}
+		}
+		
+		&[tax-mode="district"] {
+			th.district, td.district { display: table-cell; }
+			th.region, td.region { display: none; }
 		}
 		
 		/* little bit of padding on larger screens */

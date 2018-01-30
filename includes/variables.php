@@ -12,6 +12,7 @@ $tsml_columns = array(
 	'location' => 'Location',
 	'address' => 'Address',
 	'region' => 'Region',
+	'district' => 'District',
 	'types' => 'Types'
 );
 

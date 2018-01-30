@@ -269,7 +269,7 @@ jQuery(function($){
 			if ($(this).hasClass('switch')) {
 				tsmlDebug('switching between region and district');
 				var mode = $(this).parent().hasClass('region') ? 'district' : 'region';
-				$(this).closest('div.dropdown').attr('data-mode', mode);
+				$(this).closest('#meetings').attr('tax-mode', mode);
 				e.stopPropagation();
 				return;
 			}
