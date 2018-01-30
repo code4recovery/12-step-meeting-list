@@ -56,6 +56,19 @@ function tsml_ajax_groups() {
 	wp_send_json($results);
 }
 
+/*possible endpoint for future add/edit meeting webhook
+add_action('wp_ajax_tsml_push', 'tsml_ajax_push');
+add_action('wp_ajax_nopriv_tsml_push', 'tsml_ajax_push');
+function tsml_ajax_push() {
+	//todo check key for authorization
+	//update meeting
+	//send debug email to website admin
+	$message = '<pre>' . print_r($_POST, true) . '</pre>';
+	$headers = array('Content-Type: text/html; charset=UTF-8');
+	wp_mail(get_option('admin_email'), 'POST Data Received', $message, $headers);
+	die('POST received');
+}*/
+
 //ajax for the search typeahead
 add_action('wp_ajax_tsml_regions', 'tsml_ajax_regions');
 add_action('wp_ajax_nopriv_tsml_regions', 'tsml_ajax_regions');

@@ -4,7 +4,7 @@ Donate link: https://meetingguide.org/donate
 Tags: 12-step, aa, al-anon, coda, meetings, na, oa, saa, slaa
 Requires at least: 3.2
 Tested up to: 4.9
-Stable tag: 2.16.16
+Stable tag: 2.16.17
 
 This plugin helps twelve step recovery programs list their meetings. It standardizes addresses, and displays results in a searchable list and map.
 
@@ -327,6 +327,9 @@ Also check out our [One Page Meeting List](https://github.com/meeting-guide/one-
 1. Edit location
 
 == Changelog ==
+
+= 2.16.17 =
+* @XGhozt00 fixed an HTML bug in the Upcoming Meetings shortcode & widget
 
 = 2.16.16 =
 * Google API key wasn't present in frontend, might have been causing geocoding issues
