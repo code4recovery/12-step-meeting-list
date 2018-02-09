@@ -109,18 +109,17 @@ get_header();
 									if (count($meeting->types)) {?>
 										<ul class="meeting-types">
 										<?php foreach ($meeting->types as $type) {?>
-											<li><i class="glyphicon glyphicon-ok"></i> <?php echo $type?></li>
+											<li><i class="glyphicon glyphicon-ok"></i> <?php _e($type, '12-step-meeting-list')?></li>
+										<?php }?>
+										</ul>
+										<?php if (!empty($meeting->type_description)) {?>
+											<p class="meeting-type-description"><?php _e($meeting->type_description, '12-step-meeting-list')?></p>
 										<?php }
-										echo '</ul>';
-										if (!empty($meeting->type_description)) {
-											echo '<p class="meeting-type-description">' . $meeting->type_description . '</p>';
-										}
 									}
 										
-									if (!empty($meeting->notes)) {
-										echo '<section class="meeting-notes">' . wpautop($meeting->notes) . '</section>';
-									}
-									?>
+									if (!empty($meeting->notes)) {?>
+										<section class="meeting-notes"><?php wpautop($meeting->notes)?></section>
+									<?php }?>
 								</li>
 								<?php
 								if (!empty($meeting->location_id)) {
