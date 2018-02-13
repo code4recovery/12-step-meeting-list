@@ -1005,8 +1005,9 @@ if (!function_exists('tsml_get_meetings')) {
 		
 		//if latitude and longitude are set, then calculate distances
 		if (!empty($arguments['latitude']) && !empty($arguments['longitude']) && !empty($arguments['distance_units'])) {
-			foreach ($meetings as &$meeting) {
-				$meeting['distance'] = tsml_distance($arguments['latitude'], $arguments['longitude'], $meeting['latitude'], $meeting['longitude'], $arguments['distance_units']);
+			$count_meetings = count($meetings);
+			for ($i = 0; $i < $count_meetings; $i++) {
+				$meetings[$i]['distance'] = tsml_distance($arguments['latitude'], $arguments['longitude'], $meetings[$i]['latitude'], $meetings[$i]['longitude'], $arguments['distance_units']);
 			}
 	
 			//if distance is set, then filter by distance
