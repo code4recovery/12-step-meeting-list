@@ -216,7 +216,7 @@ get_header();
 							<div class="panel panel-default panel-expandable">
 								<div class="panel-heading">
 									<h3 class="panel-title">
-										<?php _e('Request an Update', '12-step-meeting-list')?>
+										<?php _e('Request a change to this listing', '12-step-meeting-list')?>
 										<span class="panel-title-buttons">
 											<span class="glyphicon glyphicon-chevron-left"></span>
 										</span>
