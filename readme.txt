@@ -4,7 +4,7 @@ Donate link: https://meetingguide.org/donate
 Tags: 12-step, aa, al-anon, coda, meetings, na, oa, saa, slaa
 Requires at least: 3.2
 Tested up to: 4.9
-Stable tag: 2.16.20
+Stable tag: 2.16.21
 
 This plugin helps twelve step recovery programs list their meetings. It standardizes addresses, and displays results in a searchable list and map.
 
@@ -26,6 +26,7 @@ This plugin was originally designed to maintain a list of AA meetings in Santa C
 1. [Bethlehem, PA](https://www.aalv.org/meetings)
 1. [Bowling Green, KY](http://bowlinggreenaa.org/meetings/)
 1. [Brainerd, MN](http://aacentrallakes.org/meetings/)
+1. [Burlington, NC](http://www.aanc33.org/meetings/)
 1. [Cancún, Mexico](http://aacancun.org/meetings/)
 1. [Charleston, WV](http://aawvdist1.org/wordpress/?post_type=tsml_meeting)
 1. [Charlotte, NC](http://charlotteaa.org/meetings/)
@@ -139,7 +140,7 @@ This plugin was originally designed to maintain a list of AA meetings in Santa C
 **Al-Anon**
 
 1. [Lancaster, PA](http://lanclebalanon.org/meetings/?d=any)
-1. [Naples, FL](https://naplesafg.org/meetings)
+1. [Naples, FL](http://naplesal-anon.org/meetings)
 1. [Pennsylvania](http://pa-al-anon.org/meetings/)
 
 **Co-Dependents Anonymous**
@@ -330,6 +331,9 @@ Also check out our [One Page Meeting List](https://github.com/meeting-guide/one-
 1. Edit location
 
 == Changelog ==
+
+= 2.16.21 =
+* "Request a change to this listing" verbiage change (Refuge Recovery)
 
 = 2.16.20 =
 * Removing pass-by-reference from nearby meeting filter (Cocaine Anonymous UK)
