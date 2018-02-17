@@ -306,10 +306,10 @@ if (!function_exists('tsml_distance')) {
 
 //send a nice-looking email (used by tsml_ajax_feedback() and save.php (change notifications)
 if (!function_exists('tsml_email')) {
-	function tsml_email($to, $subject, $message, $from=false) {
+	function tsml_email($to, $subject, $message, $reply_to=false) {
 	
 		$headers = array('Content-Type: text/html; charset=UTF-8');
-		if ($from) $headers[] = 'From: ' . $from;
+		if ($reply_to) $headers[] = 'Reply-To: ' . $reply_to;
 		
 		//prepend subject as h1
 		$message = '<h1>' . $subject . '</h1>' . $message;
