@@ -151,6 +151,12 @@ $tsml_google_overrides = array(
 		'longitude'			=> '-155.830639',
 	),
 
+	//new mexico
+	'1114 Private Drive, Dixon, NM 87527, USA' => array(
+		'formatted_address'	=> '1114 Private Drive, Dixon, NM 87527, USA',
+		'latitude'			=> '36.1988282',
+		'longitude'			=> '-105.88777240000002',
+	),
 );
 
 //get the blog's language (used as a parameter when geocoding)
