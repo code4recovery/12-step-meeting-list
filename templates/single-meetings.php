@@ -118,7 +118,7 @@ get_header();
 									}
 										
 									if (!empty($meeting->notes)) {?>
-										<section class="meeting-notes"><?php wpautop($meeting->notes)?></section>
+										<section class="meeting-notes"><?php echo wpautop($meeting->notes)?></section>
 									<?php }?>
 								</li>
 								<?php
