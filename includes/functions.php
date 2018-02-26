@@ -917,13 +917,17 @@ if (!function_exists('tsml_get_meetings')) {
 					'tax_query'			=> array(
 						array(
 							'taxonomy'	=> 'tsml_region',
-							'field'		=> 'name',
-							'terms'		=> $query,
+							'field'		=> 'id',
+							'terms'		=> get_terms(array(
+								'taxonomy' => 'tsml_region',
+								'search' => $query,
+								'fields' => 'ids',
+							)),
 						),
 					),
 				))
 			);
-			
+
 			if (count($parents)) {
 				$search_results = array_merge($search_results, get_posts(array(
 					'post_type'			=> 'tsml_meeting',

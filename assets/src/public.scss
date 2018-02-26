@@ -115,7 +115,7 @@ $height: 550px; //height of map and min-height of list
 				margin-bottom: $margin;
 				height: 34px;
 			}
-			input[name=query] {
+			input {
 				margin: 0;
 				border-radius: 4px 0 0 4px;
 				font-size: 16px; //this might seem big, but it prevents zooming on focus
