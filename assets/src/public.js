@@ -56,7 +56,7 @@ jQuery(function($){
 
 		//search typeahead
 		var tsml_regions = new Bloodhound({
-			datumTokenizer: Bloodhound.tokenizers.obj.whitespace('value'),
+			datumTokenizer: Bloodhound.tokenizers.obj.nonword('value'),
 			queryTokenizer: Bloodhound.tokenizers.whitespace,
 			prefetch: {
 				url: tsml.ajaxurl + '?action=tsml_regions',
