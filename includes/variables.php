@@ -328,6 +328,7 @@ function tsml_define_strings() {
 				'TR'		=> __('Tradition Study', '12-step-meeting-list'),
 				'T'		=> __('Transgender', '12-step-meeting-list'),
 				'X'		=> __('Wheelchair Access', '12-step-meeting-list'),
+				'XB'	=> __('Wheelchair-Accessible Bathroom', '12-step-meeting-list'),
 				'W'		=> __('Women', '12-step-meeting-list'),
 				'Y'		=> __('Young People', '12-step-meeting-list'),
 			),
