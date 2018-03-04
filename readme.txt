@@ -4,7 +4,7 @@ Donate link: https://meetingguide.org/donate
 Tags: 12-step, aa, al-anon, coda, meetings, na, oa, saa, slaa
 Requires at least: 3.2
 Tested up to: 4.9
-Stable tag: 2.16.25
+Stable tag: 2.16.26
 
 This plugin helps twelve step recovery programs list their meetings. It standardizes addresses, and displays results in a searchable list and map.
 
@@ -90,6 +90,7 @@ This plugin was originally designed to maintain a list of AA meetings in Santa C
 1. [Québec, Canada (Région 87, Southwest)](http://aa87.org/meetings/)
 1. [Québec, Canada (Région 88, Southeast)](http://aa-quebec.org/region88/WP/meetings/)
 1. [Rochester, MN](http://aadistrict1.org/blog/meetings/)
+1. [Rockland County, NY](https://rocklandnyaa.org/meetings/)
 1. [Rhode Island](https://aainri.com/meetings/)
 1. [Sacramento, CA](http://aasacramento.org/meetings/)
 1. [Salinas, CA](https://aasalinas.org/meetings/)
@@ -99,6 +100,7 @@ This plugin was originally designed to maintain a list of AA meetings in Santa C
 1. [Santa Fe, NM](http://santafeaa.org/meetings/)
 1. [Savannah, GA](http://savannahaa.com/meetings-list/)
 1. [Secular AA](https://www.secularaa.org/meetings/)
+1. [Shreveport, LA](http://aa-shreveport.org/meetings/)
 1. [Sonoma County, CA](http://www.sonomacountyaa.org/meetings/)
 1. [South Florida District 20](http://district20aa.org/meetings/)
 1. [Southern Colorado](http://www.puebloaa.org/meetings/)
@@ -331,6 +333,9 @@ Also check out our [One Page Meeting List](https://github.com/meeting-guide/one-
 1. Edit location
 
 == Changelog ==
+
+= 2.16.26 =
+* Adding meeting type (Connecticut)
 
 = 2.16.25 =
 * Searching for part of a region wasn't working (Baltimore)
