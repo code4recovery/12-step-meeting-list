@@ -130,6 +130,10 @@ function tsml_save_post($post_id, $post, $update) {
 		
 		//save location information (set this value or get caught in a loop)
 		$_POST['post_type'] = 'tsml_location';
+
+		//location name changed?
+		if (!$update || $old_meeting->location != $_POST['location']) $changes[] = 'location';
+		if (!$update || $old_meeting->location_notes != $_POST['location_notes']) $changes[] = 'location_notes';
 		
 		//see if address is already in the database
 		if ($locations = get_posts(array(
@@ -142,8 +146,6 @@ function tsml_save_post($post_id, $post, $update) {
 		))) {
 			$location_id = $locations[0]->ID;
 			if ($locations[0]->post_title != $_POST['location'] || $locations[0]->post_content != $_POST['location_notes']) {
-				if ($locations[0]->post_title != $_POST['location']) $changes[] = 'location';
-				if ($locations[0]->post_content != $_POST['location_notes']) $changes[] = 'location_notes';
 				wp_update_post(array(
 					'ID'			=> $location_id,
 					'post_title'	=> $_POST['location'],
@@ -165,8 +167,6 @@ function tsml_save_post($post_id, $post, $update) {
 				wp_set_object_terms($location_id, intval($_POST['region']), 'tsml_region');
 			}
 		} elseif (!empty($_POST['formatted_address'])) {
-			$changes[] = 'location';
-			$changes[] = 'location_notes';
 			$location_id = wp_insert_post(array(
 				'post_title'	=> $_POST['location'],
 			  	'post_type'		=> 'tsml_location',
@@ -427,7 +427,7 @@ function tsml_save_post($post_id, $post, $update) {
 				}
 				if ($update && !empty($old_meeting->region)) $old = $old_meeting->region;
 			} elseif ($field == 'district') {
-				if ($term = get_term($_POST['district'], 'tsml_district')) {
+				if (!empty($_POST['district']) && ($term = get_term($_POST['district'], 'tsml_district'))) {
 					$new = $term->name;
 				}
 				if ($update && !empty($old_meeting->district)) $old = $old_meeting->district;

@@ -235,9 +235,6 @@ jQuery(function($){
 			//only one search mode
 			$('#mode li').removeClass('active');
 			
-			//clear search when changing modes
-			$search_field.val('');
-
 			//remove meeting results
 			$('#meetings').addClass('empty');
 			
@@ -662,7 +659,11 @@ jQuery(function($){
 				if ((data.mode == 'search') && data.query) $('#tsml td').not('.time').mark(data.query);
 	
 				//remove old markers and reset bounds
-				for (var i = 0; i < markers.length; i++) markers[i].setMap(null);
+				for (var i = 0; i < markers.length; i++) {
+					if ((typeof markers[i] == 'object') && markers[i]) {
+						markers[i].setMap(null);
+					}
+				}
 				markers = [];
 				bounds = new google.maps.LatLngBounds;
 				
@@ -725,6 +726,9 @@ jQuery(function($){
 		//cast as numeric;
 		lat -= 0;
 		lng -= 0;
+
+		//stop if coordinates are empty
+		if (!lat && !lng) return;
 		
 		//set new marker
 		var marker = new google.maps.Marker({
@@ -771,7 +775,9 @@ jQuery(function($){
 				var marker = setMapMarker(location.name, location.latitude, location.longitude, content);
 					
 				//add to map bounds
-				bounds.extend(marker.position);
+				if ((typeof marker == 'object') && marker) {
+					bounds.extend(marker.position);
+				}
 				
 				markers[markers.length] = marker;
 			}

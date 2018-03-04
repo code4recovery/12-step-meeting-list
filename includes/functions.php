@@ -527,29 +527,29 @@ if (!function_exists('tsml_get_groups')) {
 			}
 	
 			$groups[$post->ID] = array(
-				'group_id'			=> $post->ID, //so as not to conflict with another id when combined
-				'group'				=> $post->post_title,
-				'district'			=> $district,
-				'sub_district'		=> $sub_district,
-				'group_notes'		=> $post->post_content,
-				'website'			=> @$group_meta[$post->ID]['website'],
-				'website_2'			=> @$group_meta[$post->ID]['website_2'],
-				'email'				=> @$group_meta[$post->ID]['email'],
-				'phone'				=> @$group_meta[$post->ID]['phone'],
-				'last_contact'		=> @$group_meta[$post->ID]['last_contact'],
+				'group_id' => $post->ID, //so as not to conflict with another id when combined
+				'group' => $post->post_title,
+				'district' => $district,
+				'sub_district' => $sub_district,
+				'group_notes' => $post->post_content,
+				'website' => empty($group_meta[$post->ID]['website']) ? null : $group_meta[$post->ID]['website'],
+				'website_2' => empty($group_meta[$post->ID]['website_2']) ? null : $group_meta[$post->ID]['website_2'],
+				'email' => empty($group_meta[$post->ID]['email']) ? null : $group_meta[$post->ID]['email'],
+				'phone' => empty($group_meta[$post->ID]['phone']) ? null : $group_meta[$post->ID]['phone'],
+				'last_contact' => empty($group_meta[$post->ID]['last_contact']) ? null : $group_meta[$post->ID]['last_contact'],
 			);
 			
 			if (current_user_can('edit_posts')) {
 				$groups[$post->ID] = array_merge($groups[$post->ID], array(
-					'contact_1_name'		=> @$group_meta[$post->ID]['contact_1_name'],
-					'contact_1_email'	=> @$group_meta[$post->ID]['contact_1_email'],
-					'contact_1_phone'	=> @$group_meta[$post->ID]['contact_1_phone'],
-					'contact_2_name'		=> @$group_meta[$post->ID]['contact_2_name'],
-					'contact_2_email'	=> @$group_meta[$post->ID]['contact_2_email'],
-					'contact_2_phone'	=> @$group_meta[$post->ID]['contact_2_phone'],
-					'contact_3_name'		=> @$group_meta[$post->ID]['contact_3_name'],
-					'contact_3_email'	=> @$group_meta[$post->ID]['contact_3_email'],
-					'contact_3_phone'	=> @$group_meta[$post->ID]['contact_3_phone'],
+					'contact_1_name' => empty($group_meta[$post->ID]['contact_1_name']) ? null : $group_meta[$post->ID]['contact_1_name'],
+					'contact_1_email' => empty($group_meta[$post->ID]['contact_1_email']) ? null : $group_meta[$post->ID]['contact_1_email'],
+					'contact_1_phone' => empty($group_meta[$post->ID]['contact_1_phone']) ? null : $group_meta[$post->ID]['contact_1_phone'],
+					'contact_2_name' => empty($group_meta[$post->ID]['contact_2_name']) ? null : $group_meta[$post->ID]['contact_2_name'],
+					'contact_2_email' => empty($group_meta[$post->ID]['contact_2_email']) ? null : $group_meta[$post->ID]['contact_2_email'],
+					'contact_2_phone' => empty($group_meta[$post->ID]['contact_2_phone']) ? null : $group_meta[$post->ID]['contact_2_phone'],
+					'contact_3_name' => empty($group_meta[$post->ID]['contact_3_name']) ? null : $group_meta[$post->ID]['contact_3_name'],
+					'contact_3_email' => empty($group_meta[$post->ID]['contact_3_email']) ? null : $group_meta[$post->ID]['contact_3_email'],
+					'contact_3_phone' => empty($group_meta[$post->ID]['contact_3_phone']) ? null : $group_meta[$post->ID]['contact_3_phone'],
 				));
 			}
 		}
@@ -620,16 +620,16 @@ if (!function_exists('tsml_get_locations')) {
 			}
 			
 			$locations[$post->ID] = array(
-				'location_id'		=> $post->ID, //so as not to conflict with another id when combined
-				'location'			=> $post->post_title,
-				'location_notes'	=> $post->post_content,
-				'location_url'		=> get_permalink($post->ID),
-				'formatted_address' => @$location_meta[$post->ID]['formatted_address'],
-				'latitude'			=> @$location_meta[$post->ID]['latitude'],
-				'longitude'			=> @$location_meta[$post->ID]['longitude'],
-				'region_id'			=> $region_id,
-				'region'			=> $region,
-				'sub_region'		=> $sub_region,
+				'location_id' => $post->ID, //so as not to conflict with another id when combined
+				'location' => $post->post_title,
+				'location_notes' => $post->post_content,
+				'location_url' => get_permalink($post->ID),
+				'formatted_address' => empty($location_meta[$post->ID]['formatted_address']) ? null : $location_meta[$post->ID]['formatted_address'],
+				'latitude' => empty($location_meta[$post->ID]['latitude']) ? null : $location_meta[$post->ID]['latitude'],
+				'longitude' => empty($location_meta[$post->ID]['longitude']) ? null : $location_meta[$post->ID]['longitude'],
+				'region_id' => $region_id,
+				'region' => $region,
+				'sub_region' => $sub_region,
 			);
 		}
 		
