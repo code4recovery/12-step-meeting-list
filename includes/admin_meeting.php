@@ -59,10 +59,10 @@ function tsml_admin_init() {
 			<?php }?>
 				<div class="toggle_more">
 					<div class="more">
-						<span class="dashicons dashicons-arrow-down-alt2"></span> <a href="#more-types"><?php _e('More', '12-step-meeting-list')?></a>
+						<span class="dashicons dashicons-arrow-down-alt2"></span> <a href="#more-types"><?php _e('View all', '12-step-meeting-list')?></a>
 					</div>
 					<div class="less">
-						<span class="dashicons dashicons-arrow-up-alt2"></span> <a href="#more-types"><?php _e('Fewer', '12-step-meeting-list')?></a>
+						<span class="dashicons dashicons-arrow-up-alt2"></span> <a href="#more-types"><?php _e('Hide types not in use', '12-step-meeting-list')?></a>
 					</div>
 				</div>
 			</div>
@@ -87,13 +87,13 @@ function tsml_admin_init() {
 		?>
 		<div class="meta_form_row typeahead">
 			<label for="location"><?php _e('Location', '12-step-meeting-list')?></label>
-			<input type="text" name="location" id="location" value="<?php echo @$location->post_title?>">
+			<input type="text" name="location" id="location" value="<?php if (!empty($location->post_title)) echo $location->post_title?>">
 		</div>
 		<div class="meta_form_row">
 			<label for="formatted_address"><?php _e('Address', '12-step-meeting-list')?></label>
-			<input type="text" name="formatted_address" id="formatted_address" value="<?php echo @$location->formatted_address?>" data-original-value="<?php echo @$location->formatted_address?>">
-			<input type="hidden" name="latitude" id="latitude" value="<?php echo @$location->latitude?>">
-			<input type="hidden" name="longitude" id="longitude" value="<?php echo @$location->longitude?>">
+			<input type="text" name="formatted_address" id="formatted_address" value="<?php if (!empty($location->formatted_address)) echo $location->formatted_address?>" data-original-value="<?php if (!empty($location->formatted_address)) echo $location->formatted_address?>">
+			<input type="hidden" name="latitude" id="latitude" value="<?php if (!empty($location->latitude)) echo $location->latitude?>">
+			<input type="hidden" name="longitude" id="longitude" value="<?php if (!empty($location->longitude)) echo $location->longitude?>">
 		</div>
 		<?php if (count($meetings) > 1) {?>
 		<div class="meta_form_row checkbox apply_address_to_location hidden">
@@ -109,7 +109,7 @@ function tsml_admin_init() {
 				'hierarchical' => true,
 				'hide_empty' => false,
 				'orderby' => 'name',
-				'selected' => @$location->region_id,
+				'selected' => empty($location->region_id) ? null : $location->region_id,
 				'show_option_none' => __('Region', '12-step-meeting-list'),
 			))?>
 		</div>
@@ -132,7 +132,7 @@ function tsml_admin_init() {
 		<?php }?>
 		<div class="meta_form_row">
 			<label><?php _e('Notes', '12-step-meeting-list')?></label>
-			<textarea name="location_notes" placeholder="<?php _e('eg. Around back, basement, ring buzzer', '12-step-meeting-list')?>"><?php echo @$location->post_content?></textarea>
+			<textarea name="location_notes" placeholder="<?php _e('eg. Around back, basement, ring buzzer', '12-step-meeting-list')?>"><?php if (!empty($location->post_content)) echo $location->post_content?></textarea>
 		</div>
 		<?php
 	}

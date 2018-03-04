@@ -239,6 +239,7 @@ body {
 			&.checkbox, &.radio {
 				padding-left: 15%;
 				line-height: 1;
+				overflow: visible; //there was a scroll on the individual / part of a group that showed when second radio selected
 				label { 
 					width: auto;
 					margin: 0 0 5px 0; 

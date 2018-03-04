@@ -1,5 +1,23 @@
 jQuery(function($){
 
+	//make sure geocoding is finished (basic form validation)
+	var form_valid = false;
+
+	function formIsValid() {
+		form_valid = true;
+		$('#publish').removeClass('disabled');
+	}
+
+	function formIsNotValid() {
+		form_valid = false;
+		$('#publish').addClass('disabled');
+	}
+
+	$('form#post').submit(function(){
+		console.log('returning ' + form_valid);
+		return form_valid;
+	});
+
 	//recursively run import
 	function runImport() {
 
@@ -134,21 +152,12 @@ jQuery(function($){
 	$('input#location').typeahead(null, {
 		displayKey: 'value',
 		source: tsml_locations
-	}).on('typeahead:change typeahead:autocompleted typeahead:selected', function($e, location){
-        if ($e.type === "typeahead:change") {
-            $.each(tsml_locations.index.datums, function() {
-                if (this.value.toUpperCase() === location.trim().toUpperCase()) {
-                    $('input[name=location]').val(this.value);
-					$('input[name=formatted_address]').val(this.formatted_address).trigger('change');
-					$('input[name=latitude]').val(this.latitude);
-					$('input[name=longitude]').val(this.longitude);
-					$('select[name=region] option[value=' + this.region + ']').prop('selected', true);
-					$('textarea[name=location_notes]').val(this.notes);
-					setMap(this.latitude, this.longitude);
-                    return false;
-                }
-            });
-        }
+	}).on('typeahead:autocompleted typeahead:selected', function($e, location){
+		$('input[name=formatted_address]').val(location.formatted_address).trigger('change');
+		$('input[name=latitude]').val(location.latitude);
+		$('input[name=longitude]').val(location.longitude);
+		$('select[name=region] option[value=' + location.region + ']').prop('selected', true);
+		$('textarea[name=location_notes]').val(location.notes);
 	});
 
 	//group typeahead
@@ -164,16 +173,7 @@ jQuery(function($){
 	$('input#group').typeahead(null, {
 		displayKey: 'value',
 		source: tsml_groups
-	}).on('typeahead:change typeahead:autocompleted typeahead:selected', function($e, group){
-        if ($e.type === "typeahead:change") {
-            $.each(tsml_groups.index.datums, function() {
-                if (this.value.toUpperCase() === group.trim().toUpperCase()) {
-                    $('input[name=group]').val(this.value);
-                    group = this;
-                    return false;
-                }
-            });
-        }
+	}).on('typeahead:autocompleted typeahead:selected', function($e, group){
         $('input[name=website]').val(group.website);
         $('input[name=email]').val(group.email);
         $('input[name=phone]').val(group.phone);        
@@ -211,7 +211,10 @@ jQuery(function($){
 	});
 
 	//address / map
-	$('input#formatted_address').blur(function(){
+	$('input#formatted_address').change(function(){
+
+		//disable submit until geocoding completes
+		formIsNotValid();
 
 		//setting new form
 		$('input#latitude').val('');
@@ -222,6 +225,7 @@ jQuery(function($){
 		if (!val.length) {
 			setMap();
 			$('input#formatted_address').val(''); //clear any spaces
+			formIsValid();
 			return;
 		}
 
@@ -257,8 +261,8 @@ jQuery(function($){
 				});
 			}
 			
-			//save address
-			$('input#formatted_address').val(address.formatted_address).trigger('change');
+			//save address and check apply change box status
+			$('input#formatted_address').val(address.formatted_address).trigger('keyup');
 			
 			//check if location with same address is already in the system, populate form
 			$.getJSON(tsml.ajaxurl + '?action=address', { formatted_address: address.formatted_address }, function(data){
@@ -275,27 +279,32 @@ jQuery(function($){
 					//set to guessed region earlier
 					$('select[name=region] option[value=' + region_id + ']').prop('selected', true);
 				}
+
+				//form is ok to submit again
+				formIsValid();
 			});
 
 		});
-	}).change(function(){
-		
+	}).keyup(function(){
+
+		//disable submit, will need to do geocoding on change
+		var original_address = $(this).attr('data-original-value');
+		if (original_address != $(this).val()) {
+			formIsNotValid(); 
+		}
+
 		//unhide apply address to location?
-		if ($('div.apply_address_to_location').length) {
-			var original_address = $('input#formatted_address').attr('data-original-value');
-			var address = $('input#formatted_address').val();
-			if (original_address.length && (address != original_address)) {
+		if ($('div.apply_address_to_location').size()) {
+			if (original_address.length && (original_address != $(this).val())) {
 				$('div.apply_address_to_location').removeClass('hidden');
-				$('input[name="apply_address_to_location"]').prop('checked', true);
 			} else {
 				$('div.apply_address_to_location').addClass('hidden');
-				$('input[name="apply_address_to_location"]').prop('checked', false);
 			}
 		}
 	});			
 
-
-	if ($('input#formatted_address').val()) $('input#formatted_address').blur();
+	//when page loads, run lookup
+	if ($('input#formatted_address').val()) $('input#formatted_address').trigger('change');
 
 	function setMap(latitude, longitude) {
 		if (!latitude || !longitude) {
@@ -305,10 +314,11 @@ jQuery(function($){
 		var myLatlng = new google.maps.LatLng(latitude, longitude);
 		var map = new google.maps.Map(document.getElementById('map'), { 
 			zoom: 16, 
-			zoomControl: false,
+			zoomControl: true,
 			scrollwheel: false,
 			streetViewControl: false,
 			mapTypeControl: false,
+			fullscreenControl: false,
 			center: myLatlng
 		});
 		var marker = new google.maps.Marker({ position: myLatlng, map: map });

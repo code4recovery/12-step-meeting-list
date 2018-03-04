@@ -4,7 +4,7 @@ Donate link: https://meetingguide.org/donate
 Tags: 12-step, aa, al-anon, coda, meetings, na, oa, saa, slaa
 Requires at least: 3.2
 Tested up to: 4.9
-Stable tag: 2.16.26
+Stable tag: 2.17
 
 This plugin helps twelve step recovery programs list their meetings. It standardizes addresses, and displays results in a searchable list and map.
 
@@ -334,8 +334,13 @@ Also check out our [One Page Meeting List](https://github.com/meeting-guide/one-
 
 == Changelog ==
 
-= 2.16.26 =
-* Adding meeting type (Connecticut)
+= 2.17 =
+* By default, "apply this updated address to all meetings at this location" is unchecked now (Kentucky)
+* "Apply this updated address" now appears while making changes to an address, not after (Kentucky)
+* Form submit now disabled while geocodes are pending (NYC)
+* Map view no longer displays pins with empty coordinates (NYC)
+* Update email now properly reflecting changes to location name and notes (Kentucky)
+* Switching search modes no longer clears the current search (Baltimore)
 
 = 2.16.25 =
 * Searching for part of a region wasn't working (Baltimore)
@@ -419,45 +424,3 @@ Also check out our [One Page Meeting List](https://github.com/meeting-guide/one-
 
 = 2.16.1 =
 * Fixing unexpected '@' PHP error on meeting edit page
-
-= 2.16 =
-* Can save contact information on a meeting without specifying a group (Refuge Recovery)
-* Fixed saving conflict with WP post revisions
-* Fixed bug where lost data source name when refreshing
-* Adding email address to change request email (per NA Poland)
-* Displays error message when there's a problem with data source (Sacramento)
-
-= 2.15.5 =
-* Fixing margin bug on meeting list page
-* Adding meeting type for Milwaukee
-* Adding a notes row class per San Francisco
-
-= 2.15.4 =
-* More descriptive 'request change' emails (San Francisco)
-* Fixing a bug wherein it wasn't possible to change an established location name
-* Edit meeting page postboxes are no longer collapsible (was confusing in San Jose)
-* Adding a meeting type for ACA
-* Updating Google API key to be paid by Meeting Guide donation form
-
-= 2.15.3 =
-* Fixing error on PHP 5.2
-* Adding Cocaine Anonymous
-
-= 2.15.2 =
-* Fixing error message on meeting detail page (NA Poland)
-* Removing User Role Editor support (Area 72)
-* If Google Analytics is installed, capturing search terms (Washington, DC)
-
-= 2.15.1 =
-* Meeting edit page improvements and bug fixes by Tech2Serve
-
-= 2.15 =
-* Sites now control their level of sharing
-* Columns were not simultaneously both editable and reorderable (Suffolk County, NY)
-* Redesigned sidebar in Import & Settings
-* Support for User Role Editor plugin (Long Beach, CA)
-* Number of upcoming meetings in widget now can be up to 25 (Suffolk County, NY)
-* Adding two new programs: Parents of Addicted Loved Ones and Support Groups
-* Refactoring variables.php for cleaner structure
-* Emails have site name in brackets rather than plugin name (Refuge Recovery)
-* FAQ updates
