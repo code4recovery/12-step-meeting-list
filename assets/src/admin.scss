@@ -215,13 +215,16 @@ body {
 				-webkit-border-radius: 0;
 			}
 			input[type=radio], input[type=checkbox] { 
-				float: left;
-				&:focus { box-shadow: none; }
+				box-shadow: none;
+				&:checked:before { display: none; }
 			}
 			//wordpress is doing something fancy with checkboxes and it's not working
 			input[type=checkbox] {
 				-webkit-appearance: checkbox;
-				&:checked:before { display: none; }
+			}
+			
+			input[type=radio] {
+				-webkit-appearance: radio;
 			}
 			
 			input[disabled] { opacity: .5; cursor: not-allowed; }
@@ -239,26 +242,29 @@ body {
 			&.checkbox, &.radio {
 				padding-left: 15%;
 				line-height: 1;
-				overflow: visible; //there was a scroll on the individual / part of a group that showed when second radio selected
 				label { 
 					width: auto;
-					margin: 0 0 5px 0; 
+					margin: 0; 
 					font-size: 13px;
 					display: block;
 					float: none;
 					text-align: left;
+					position: relative;
+					padding: 0 0 0 20px;
 					input {
-						margin: 1px 7px 0 0; 
-						&[type="radio"] { border-radius: 10px; }
+						position: absolute;
+						left: 0;
+						top: 5px;
 					}
-					&:last-child { margin-bottom: 0; }
+					&:first-child { margin-bottom: 5px; }
 				}
 			}
 		
 			textarea { height: 140px; }
 			&:last-child { margin-bottom: 0; }
 			div.checkboxes { 
-				overflow: auto;
+				overflow-x: hidden;
+				overflow-y: auto;
 				padding: 0;
 				height: auto; 
 				-webkit-columns: 3 auto;
@@ -266,9 +272,24 @@ body {
 				columns: 3 auto;
 				position: relative;
 				
-				input { margin: 0 8px 0 0; }
 				label { 
-					float: none; display: block; margin: 0; padding: 5px 0; line-height: 16px; width: 100%; text-align: left; font-size: 13px; -webkit-column-break-inside: avoid;
+					float: none; 
+					display: block;
+					margin: 0;
+					line-height: 16px;
+					width: 100%;
+					text-align: left;
+					font-size: 13px;
+					-webkit-column-break-inside: avoid;
+					padding: 5px 0 5px 20px;
+					position: relative;
+					box-sizing: border-box;
+					input { 
+						position: absolute;
+						top: 10px;
+						left: 0;
+					}
+
 					&.not_in_use { display: none; }
 				}
 				.toggle_more { 
