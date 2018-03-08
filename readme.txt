@@ -4,7 +4,7 @@ Donate link: https://meetingguide.org/donate
 Tags: 12-step, aa, al-anon, coda, meetings, na, oa, saa, slaa
 Requires at least: 3.2
 Tested up to: 4.9
-Stable tag: 2.17.2
+Stable tag: 2.17.3
 
 This plugin helps twelve step recovery programs list their meetings. It standardizes addresses, and displays results in a searchable list and map.
 
@@ -49,6 +49,7 @@ This plugin was originally designed to maintain a list of AA meetings in Santa C
 1. [Hagerstown, MD](http://hagerstownaa.org/meetings/)
 1. [Harrisburg, PA](http://www.aaharrisburg.org/meetings/)
 1. [Hernando County, FL](http://www.aahernando.org/meetings/)
+1. [Idaho](https://idahoarea18aa.org/meetings)
 1. [Inland Empire, CA](https://aainlandempire.org/meetings)
 1. [Joliet, IL](http://aadistrict51.org/meetings/)
 1. [Kansas](https://ks-aa.org/meetings/)
@@ -334,6 +335,9 @@ Also check out our [One Page Meeting List](https://github.com/meeting-guide/one-
 1. Edit location
 
 == Changelog ==
+
+= 2.17.3 =
+* Meeting author support (Connecticut)
 
 = 2.17.2 =
 * Fixing Firefox display issue on types checkboxes in meeting edit page (LA ACA)

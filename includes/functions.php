@@ -190,7 +190,7 @@ if (!function_exists('tsml_custom_post_types')) {
 				),
 				//not sure if we want this on the meeting or on the location
 				//'supports' => array('title', 'thumbnail'),
-				'supports' => array('title'),
+				'supports' => array('title', 'author'),
 				'public' => true,
 				'has_archive' => true,
 				'menu_icon' => 'dashicons-groups',

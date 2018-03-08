@@ -11,6 +11,13 @@ function tsml_change_default_title($title){
     return $title;
 }
 
+//move author meta box to right side
+add_action('do_meta_boxes', 'tsml_move_author_meta_box');
+function tsml_move_author_meta_box(){
+	remove_meta_box('authordiv', 'tsml_meeting', 'normal');
+	add_meta_box('authordiv', __('Editor', '12-step-meeting-list'), 'post_author_meta_box', 'tsml_meeting', 'side', 'default');
+}
+
 //edit page
 add_action('admin_init', 'tsml_admin_init');
 function tsml_admin_init() {
