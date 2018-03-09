@@ -579,9 +579,7 @@ if (!function_exists('tsml_get_location')) {
 		//directions link
 		$location->directions = 'https://maps.apple.com/?' . http_build_query(array(
 			'll' => $location->latitude . ',' . $location->longitude,
-			'q' => $location->location,
-			'address' => $location->formatted_address,
-			'z' => 16,
+			'q' => $location->post_title,
 		));
 	
 		return $location;
@@ -665,9 +663,7 @@ if (!function_exists('tsml_get_meeting')) {
 			//link for directions
 			$meeting->directions = 'https://maps.apple.com/?' . http_build_query(array(
 				'll' => $location->latitude . ',' . $location->longitude,
-				'q' => $location->location,
-				'address' => $location->formatted_address,
-				'z' => 16,
+				'q' => $meeting->location,
 			));
 		}
 		

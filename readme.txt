@@ -4,7 +4,7 @@ Donate link: https://meetingguide.org/donate
 Tags: 12-step, aa, al-anon, coda, meetings, na, oa, saa, slaa
 Requires at least: 3.2
 Tested up to: 4.9
-Stable tag: 2.17.4
+Stable tag: 2.17.5
 
 This plugin helps twelve step recovery programs list their meetings. It standardizes addresses, and displays results in a searchable list and map.
 
@@ -159,6 +159,11 @@ This plugin was originally designed to maintain a list of AA meetings in Santa C
 **Debtors Anonymous**
 
 1. [Southern California](http://socalda.org/meetings/)
+
+**Gamblers Anonymous**
+
+1. [Australia](http://gaaustralia.org.au/meetings/?d=any&v=list)
+1. [Los Angeles](https://www.laintergroup.com/meetings/)
 
 **Heroin Anonymous**
 
@@ -335,6 +340,10 @@ Also check out our [One Page Meeting List](https://github.com/meeting-guide/one-
 1. Edit location
 
 == Changelog ==
+
+= 2.17.5 =
+* Fixing directions links (NC District 33)
+* Adding Gamblers Anonymous
 
 = 2.17.4 =
 * Contact name wasn't showing up in CSV (Milwaukee)
