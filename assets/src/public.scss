@@ -317,9 +317,6 @@ $height: 550px; //height of map and min-height of list
 	
 		&[data-view=list] {
 			padding-bottom: 0;
-			.controls {
-				padding-bottom: 15px;				
-			}
 			table {
 				display: table;
 			}
@@ -719,10 +716,6 @@ body {
 			#meetings { 
 				width: 100%; 
 				.page-header { max-width: none; }
-				&[data-view=list] { 
-					padding-bottom: 0; 
-					.controls { padding-bottom: 0; }
-				}
 			}
 		}
 	}

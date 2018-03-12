@@ -4,7 +4,7 @@ Donate link: https://meetingguide.org/donate
 Tags: 12-step, aa, al-anon, coda, meetings, na, oa, saa, slaa
 Requires at least: 3.2
 Tested up to: 4.9
-Stable tag: 2.17.5
+Stable tag: 2.17.6
 
 This plugin helps twelve step recovery programs list their meetings. It standardizes addresses, and displays results in a searchable list and map.
 
@@ -74,7 +74,8 @@ This plugin was originally designed to maintain a list of AA meetings in Santa C
 1. [Monterey, CA](http://www.aamonterey.org/meetings/)
 1. [Montreal, Canada](http://aa87.org/meetings/)
 1. [Napa, CA](http://www.aanapa.org/meetings)
-1. [Naples, FL](http://aanaples.org/meetings/)
+1. [Naples, FL District 20](http://district20aa.org/meetings/)
+1. [Naples, FL Intergroup](http://aanaples.org/meetings/)
 1. [Nassau County, NY](http://nassauaa.org/meetings)
 1. [New Hampshire](http://nhaa.net/meetings/)
 1. [New Orleans, LA](http://www.aaneworleans.org/meetings/)
@@ -104,7 +105,7 @@ This plugin was originally designed to maintain a list of AA meetings in Santa C
 1. [Secular AA](https://www.secularaa.org/meetings/)
 1. [Shreveport, LA](http://aa-shreveport.org/meetings/)
 1. [Sonoma County, CA](http://www.sonomacountyaa.org/meetings/)
-1. [South Florida District 20](http://district20aa.org/meetings/)
+1. [South Lexington, KY](http://aasouthlexingtonky.org/meetings/)
 1. [Southern Colorado](http://www.puebloaa.org/meetings/)
 1. [Southern New Jersey](http://aasj.org/meetings/)
 1. [Southwestern Missouri](https://aaswmo.org/meetings)
@@ -340,6 +341,11 @@ Also check out our [One Page Meeting List](https://github.com/meeting-guide/one-
 1. Edit location
 
 == Changelog ==
+
+= 2.17.6 =
+* Fixing CSS spacing issue on mobile
+* Changing list heading in meeting list (LA Gamblers Anonymous)
+* Adding type description for GA (LA Gamblers Anonymous)
 
 = 2.17.5 =
 * Fixing directions links (NC District 33)
