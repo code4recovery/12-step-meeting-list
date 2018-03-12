@@ -4,11 +4,11 @@ don't make changes! it'll make staying updated much harder.
 for updates / questions, please contact wordpress@meetingguide.org
 */
 
-//load the set of columns that should be present in the list
+//load the set of columns that should be present in the list (not sure why this shouldn't go after plugins_loaded below)
 $tsml_columns = array(
 	'time' => 'Time',
 	'distance' => 'Distance', 
-	'name' => 'Name',
+	'name' => 'Meeting',
 	'location' => 'Location',
 	'address' => 'Address',
 	'region' => 'Region',
@@ -459,6 +459,9 @@ function tsml_define_strings() {
 		'ga'				=> array(
 			'abbr'		=> __('GA', '12-step-meeting-list'),
 			'name' 		=> __('Gamblers Anonymous', '12-step-meeting-list'),
+			'type_descriptions' => array(
+				'C' => __('This meeting is closed; only those who have a desire to stop gambling may attend.', '12-step-meeting-list'),
+			),
 			'types' 		=> array(
 				'BA'		=> __('Babysitting Available', '12-step-meeting-list'),
 				'B'		=> __('Big Book', '12-step-meeting-list'),
