@@ -4,7 +4,7 @@ Donate link: https://meetingguide.org/donate
 Tags: 12-step, aa, al-anon, coda, meetings, na, oa, saa, slaa
 Requires at least: 3.2
 Tested up to: 4.9
-Stable tag: 2.17.6
+Stable tag: 2.17.7
 
 This plugin helps twelve step recovery programs list their meetings. It standardizes addresses, and displays results in a searchable list and map.
 
@@ -55,7 +55,7 @@ This plugin was originally designed to maintain a list of AA meetings in Santa C
 1. [Kansas](https://ks-aa.org/meetings/)
 1. [Kentucky](http://www.area26.net/wp/?post_type=tsml_meeting)
 1. [Lakeland, FL](https://www.heartlandintergroup.org/meetings/)
-1. [Lancaster, PA](http://www.lancasteraa.org/meetings-list/)
+1. [Lancaster, PA](http://www.lancasteraa.org/meetings/)
 1. [Langley, Canada](http://www.district43aa.org/meetings/)
 1. [Lee County, FL](http://leecountyaa.org/meetings)
 1. [Lewis County, WA](http://lewiscountyaa.org/meetings/)
@@ -92,6 +92,7 @@ This plugin was originally designed to maintain a list of AA meetings in Santa C
 1. [Québec, Canada (All)](http://aa-quebec.org/aaqc_wp/meetings/)
 1. [Québec, Canada (Région 87, Southwest)](http://aa87.org/meetings/)
 1. [Québec, Canada (Région 88, Southeast)](http://aa-quebec.org/region88/WP/meetings/)
+1. [Reading, PA](http://readingberksintergroup.org/meetings/)
 1. [Rochester, MN](http://aadistrict1.org/blog/meetings/)
 1. [Rockland County, NY](https://rocklandnyaa.org/meetings/)
 1. [Rhode Island](https://aainri.com/meetings/)
@@ -341,6 +342,9 @@ Also check out our [One Page Meeting List](https://github.com/meeting-guide/one-
 1. Edit location
 
 == Changelog ==
+
+= 2.17.7 =
+* Adding meeting type for Al-Anon
 
 = 2.17.6 =
 * Fixing CSS spacing issue on mobile
