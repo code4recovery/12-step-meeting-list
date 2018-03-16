@@ -265,6 +265,7 @@ function tsml_define_strings() {
 				'L'		=> __('Lesbian', '12-step-meeting-list'),
 				'M'		=> __('Men', '12-step-meeting-list'),
 				'O'		=> __('Open', '12-step-meeting-list'),
+				'SM'		=> __('Smoking Permitted', '12-step-meeting-list'),
 				'S'		=> __('Spanish', '12-step-meeting-list'),
 				'SP'		=> __('Speaker', '12-step-meeting-list'),
 				'ST'		=> __('Step Meeting', '12-step-meeting-list'),
