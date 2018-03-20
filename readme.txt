@@ -4,7 +4,7 @@ Donate link: https://meetingguide.org/donate
 Tags: 12-step, aa, al-anon, coda, meetings, na, oa, saa, slaa
 Requires at least: 3.2
 Tested up to: 4.9
-Stable tag: 2.17.7
+Stable tag: 2.17.8
 
 This plugin helps twelve step recovery programs list their meetings. It standardizes addresses, and displays results in a searchable list and map.
 
@@ -333,6 +333,12 @@ Sure. Try adding this code to your theme's functions.php:
 	
 Also check out our [One Page Meeting List](https://github.com/meeting-guide/one-page-meeting-list) theme.
 	
+= Can I use this plugin to list telephone meetings or other meetings without a fixed location? =
+No, there's not a good way to do this at this time. All meetings currently need to have a geographic location.
+
+Some sites have used a general geographic area, such as a city name, but this isn't a very good solution, because a map
+pin will still show up for these meetings and people will try to get directions to them. 
+	
 == Screenshots ==
 
 1. Meeting list page
@@ -342,6 +348,12 @@ Also check out our [One Page Meeting List](https://github.com/meeting-guide/one-
 1. Edit location
 
 == Changelog ==
+
+= 2.17.8 =
+* Gamblers Anonymous meeting types (LA Gamblers Anonymous)
+* FAQ item about telephone meetings (LA Gamblers Anonymous)
+* Sunday issue in change notification emails (Tidewater Intergroup)
+* Javascript setting default time value when changing from Appointment to a day
 
 = 2.17.7 =
 * Adding meeting type for Al-Anon

@@ -413,8 +413,8 @@ function tsml_save_post($post_id, $post, $update) {
 				if ($update) $old = $old_meeting->post_content;
 				$new = $_POST['post_content'];
 			} elseif ($field == 'day') {
-				if ($update) $old = empty($old_meeting->day) ? __('Appointment', '12-step-meeting-list') : $tsml_days[$old_meeting->day];
-				$new = empty($_POST['day']) ? __('Appointment', '12-step-meeting-list') : $tsml_days[$_POST['day']];
+				if ($update) $old = in_array($old_meeting->day, array('0', '1', '2', '3', '4', '5', '6')) ? $tsml_days[$old_meeting->day] : __('Appointment', '12-step-meeting-list');
+				$new = in_array($_POST['day'], array('0', '1', '2', '3', '4', '5', '6')) ? $tsml_days[$_POST['day']] : __('Appointment', '12-step-meeting-list');
 			} elseif ($field == 'time') {
 				if ($update) $old = empty($old_meeting->time) ? '' : tsml_format_time($old_meeting->time, '');
 				$new = empty($_POST['time']) ? '' : tsml_format_time($_POST['time'], '');
