@@ -92,8 +92,10 @@ jQuery(function($){
 			if (val) {
 				$time.removeAttr('disabled');
 				$end_time.removeAttr('disabled');
-				if (!$time.val() && $time.attr('data-value')) $time.val($time.attr('data-value'));
-				if (!$end_time.val() && $end_time.attr('data-value')) $end_time.val($end_time.attr('data-value'));
+				var newTime = (!$time.val() && $time.attr('data-value')) ? $time.attr('data-value') : '00:00';
+				var newEndTime = (!$end_time.val() && $end_time.attr('data-value')) ? $end_time.attr('data-value') : '01:00';
+				$time.val(newTime).timepicker();
+				$end_time.val(newEndTime).timepicker();
 			} else {
 				$time.attr('data-value', $time.val()).val('').attr('disabled', 'disabled');
 				$end_time.attr('data-value', $end_time.val()).val('').attr('disabled', 'disabled');
