@@ -324,8 +324,11 @@ body {
 			::-moz-placeholder			{ color: #ccc; }
 			:-ms-input-placeholder		{ color: #ccc; }
 		
-		
-			#map { background-color: #f6f6f6; height: 300px; padding: 0; }
+			#map { 
+				background-color: #f6f6f6;
+				height: 300px;
+				padding: 0;
+			}
 			
 			//meetings at a location
 			ol {
@@ -362,7 +365,11 @@ body {
 					}
 				}
 			}
-
+		}
+		
+		#contact-type {
+			&[data-type="meeting"] .group-visible { display: none; }
+			&[data-type="group"] .group-visible { display: block; }
 		}
 	}
 }

@@ -4,7 +4,7 @@ Donate link: https://meetingguide.org/donate
 Tags: 12-step, aa, al-anon, coda, meetings, na, oa, saa, slaa
 Requires at least: 3.2
 Tested up to: 4.9
-Stable tag: 2.17.8
+Stable tag: 2.17.9
 
 This plugin helps twelve step recovery programs list their meetings. It standardizes addresses, and displays results in a searchable list and map.
 
@@ -86,6 +86,7 @@ This plugin was originally designed to maintain a list of AA meetings in Santa C
 1. [Oahu, HI](http://oahucentraloffice.com/meetings/)
 1. [Oklahoma](http://aaoklahoma.org/meetings)
 1. [Orlando, FL](http://cflintergroup.org/meetings/)
+1. [Palm Springs, CA](http://aainthedesert.org/meetings/)
 1. [Pensacola, FL](http://aapensacola.org/meetings/)
 1. [Philadelphia, PA](http://www.aasepia.org/meetings/)
 1. [Portland, OR](http://home.pdxaa.org/meetings/)
@@ -116,6 +117,7 @@ This plugin was originally designed to maintain a list of AA meetings in Santa C
 1. [Streamwood, IL](http://dist23.aa-nia.org/meetings)
 1. [Tampa, FL](http://www.meetings.aatampa-area.org/meetings/)
 1. [Tidewater Area, VA](http://www.tidewaterintergroup.org/meetings/)
+1. [Tokyo, Japan](https://www.aatokyo.org/meetings/)
 1. [Toronto, Canada](https://aatoronto.org/meetings/)
 1. [Tri Valley, CA](http://trivalleyaa.org/meetings/)
 1. [Topeka, KS](http://aatopeka.org/meetings/)
@@ -348,6 +350,10 @@ pin will still show up for these meetings and people will try to get directions 
 1. Edit location
 
 == Changelog ==
+
+= 2.17.9 =
+* Removing "Business" meeting type
+* Adding group Venmo link option
 
 = 2.17.8 =
 * Gamblers Anonymous meeting types (LA Gamblers Anonymous)

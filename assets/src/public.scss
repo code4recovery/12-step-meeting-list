@@ -499,29 +499,7 @@ $height: 550px; //height of map and min-height of list
 			}
 		}
 	}
-	
-	#meeting form {
-		&#payment {
-			li.apple-pay { display: none; }
-			&.apple-pay {
-				li.credit-card { display: none; }
-				li.apple-pay {
-					display: block;
-					button {
-						background-image: -webkit-named-image(apple-pay-logo-black);
-						height: 38px;
-						background-size: 100% 100%;
-						background-origin: content-box;
-						background-repeat: no-repeat;
-					}
-				}
-			}
-		}
 		
-		&#feedback {
-		}
-	}
-	
 	body.tsml_fullscreen {
 		#meetings {
 		    position: fixed;

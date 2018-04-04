@@ -290,7 +290,6 @@ function tsml_define_strings() {
 				'B'		=> __('Big Book', '12-step-meeting-list'),
 				'H'		=> __('Birthday', '12-step-meeting-list'),
 				'BRK'	=> __('Breakfast', '12-step-meeting-list'),
-				'BUS'	=> __('Business', '12-step-meeting-list'),
 				'CF'		=> __('Child-Friendly', '12-step-meeting-list'),
 				'C'		=> __('Closed', '12-step-meeting-list'),
 				'CAN'	=> __('Candlelight', '12-step-meeting-list'),
