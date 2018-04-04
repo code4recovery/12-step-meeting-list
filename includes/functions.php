@@ -18,14 +18,6 @@ if (!function_exists('sanitize_text_area')) {
 	}
 }
 
-//function: boolean if site accepts payments (must be SSL, and, for demo purposes, must be one of the testing sites)
-//used: in admin_meeting.php single-meetings.php and in tsml_assets() below
-if (!function_exists('tsml_accepts_payments')) {
-	function tsml_accepts_payments() {
-		return (is_ssl() && in_array($_SERVER['HTTP_HOST'], array('aasanjose.dev')));
-	}
-}
-
 //function:	add an admin screen update message
 //used:		tsml_import() and admin_types.php
 //$type:		can be success, warning or error
@@ -82,12 +74,6 @@ if (!function_exists('tsml_assets')) {
 				'strings' => $tsml_strings,
 				'types' => empty($tsml_programs[$tsml_program]['types']) ? array() : $tsml_programs[$tsml_program]['types'],
 			));
-			
-			//stripe
-			if (tsml_accepts_payments()) {
-				wp_enqueue_script('stripe', 'https://js.stripe.com/v3/', null, 3, true);
-				wp_enqueue_script('stripe_v2', 'https://js.stripe.com/v2/', null, 2, true);
-			}
 		}
 	}
 }
@@ -536,6 +522,7 @@ if (!function_exists('tsml_get_groups')) {
 				'website_2' => empty($group_meta[$post->ID]['website_2']) ? null : $group_meta[$post->ID]['website_2'],
 				'email' => empty($group_meta[$post->ID]['email']) ? null : $group_meta[$post->ID]['email'],
 				'phone' => empty($group_meta[$post->ID]['phone']) ? null : $group_meta[$post->ID]['phone'],
+				'venmo' => empty($group_meta[$post->ID]['venmo']) ? null : $group_meta[$post->ID]['venmo'],
 				'last_contact' => empty($group_meta[$post->ID]['last_contact']) ? null : $group_meta[$post->ID]['last_contact'],
 			);
 			
@@ -1037,7 +1024,7 @@ if (!function_exists('tsml_get_meta')) {
 		//don't show contact information if user is not logged in
 		//contact info still available on an individual meeting basis via tsml_get_meeting()
 		$keys = array(
-			'tsml_group' => '"website", "website_2", "email", "phone", "last_contact"' . (current_user_can('edit_posts') ? ', "contact_1_name", "contact_1_email", "contact_1_phone", "contact_2_name", "contact_2_email", "contact_2_phone", "contact_3_name", "contact_3_email", "contact_3_phone"' : ''),
+			'tsml_group' => '"website", "website_2", "email", "phone", "venmo", "last_contact"' . (current_user_can('edit_posts') ? ', "contact_1_name", "contact_1_email", "contact_1_phone", "contact_2_name", "contact_2_email", "contact_2_phone", "contact_3_name", "contact_3_email", "contact_3_phone"' : ''),
 			'tsml_location' => '"formatted_address", "latitude", "longitude"',
 			'tsml_meeting' => '"day", "time", "end_time", "types", "group_id", "website", "website_2", "email", "phone", "last_contact"' . (current_user_can('edit_posts') ? ', "contact_1_name", "contact_1_email", "contact_1_phone", "contact_2_name", "contact_2_email", "contact_2_phone", "contact_3_name", "contact_3_email", "contact_3_phone"' : ''),
 		);

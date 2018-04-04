@@ -130,28 +130,6 @@ jQuery(function($){
 		
 		google.maps.event.trigger(marker, 'click');
 		
-		//stripe payments
-		if (tsml_map.contributions_api_key) {
-			var stripe = Stripe(tsml_map.contributions_api_key);
-			
-			Stripe.applePay.checkAvailability(function(available) {
-				if (available) {
-					$('#payment').addClass('apple-pay');
-				} else {
-					var elements = stripe.elements();
-					var card = elements.create('card', { 
-						style: {
-							base: {
-								fontSize: '16px',
-								lineHeight: '24px'
-							}
-						}
-					});
-					card.mount('#card-element');
-				}
-			});
-		}
-
 	}
 		
 	//b) jQuery event handlers

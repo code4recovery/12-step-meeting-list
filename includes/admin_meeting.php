@@ -77,7 +77,7 @@ function tsml_admin_init() {
 		<?php }?>
 		<div class="meta_form_row">
 			<label for="content"><?php _e('Notes', '12-step-meeting-list')?></label>
-			<textarea name="content" id="content" placeholder="eg. Birthday speaker meeting last Saturday of the month"><?php echo $meeting->post_content?></textarea>
+			<textarea name="content" id="content" placeholder="<?php _e('eg. Birthday speaker meeting last Saturday of the month', '12-step-meeting-list')?>"><?php echo $meeting->post_content?></textarea>
 		</div>
 		<?php
 	}		
@@ -159,92 +159,92 @@ function tsml_admin_init() {
 			}
 		}
 		?>
-		<div class="meta_form_row radio">
-			<label><input type="radio" name="group_status" value="individual"<?php checked(empty($meeting->group))?>> <?php _e('Individual meeting', '12-step-meeting-list')?></label>
-			<label><input type="radio" name="group_status" value="group"<?php checked(!empty($meeting->group))?>> <?php _e('Part of a group', '12-step-meeting-list')?></label>
-		</div>
-		<div class="meta_form_row typeahead<?php if (empty($meeting->group)) echo ' hidden'?>">
-			<label for="group"><?php _e('Group', '12-step-meeting-list')?></label>
-			<input type="text" name="group" id="group" value="<?php echo @$meeting->group?>">
-		</div>
-		<div class="meta_form_row checkbox apply_group_to_location hidden">
-			<label><input type="checkbox" name="apply_group_to_location"> <?php _e('Apply this group to all meetings at this location', '12-step-meeting-list')?></label>
-		</div>
-		<?php if (count($meetings) > 1) {?>
-		<div class="meta_form_row">
-			<label>Meetings</label>
-			<ol>
-				<?php foreach ($meetings as $m) {
-					if ($m['id'] != @$meeting->ID) $m['name'] = '<a href="' . get_edit_post_link($m['id']) . '">' . $m['name'] . '</a>';
-				?>
-				<li><span><?php echo tsml_format_day_and_time($m['day'], $m['time'], ' ', true)?></span> <?php echo $m['name']?></li>
-				<?php }?>
-			</ol>
-		</div>
-		<?php }
-		if (wp_count_terms('tsml_district')) {?>
-		<div class="meta_form_row<?php if (empty($meeting->group)) echo ' hidden'?>">
-			<label for="district"><?php _e('District', '12-step-meeting-list')?></label>
-			<?php wp_dropdown_categories(array(
-				'name' => 'district',
-				'taxonomy' => 'tsml_district',
-				'hierarchical' => true,
-				'hide_empty' => false,
-				'orderby' => 'name',
-				'selected' => $district,
-				'show_option_none' => __('District', '12-step-meeting-list'),
-			))?>
-		</div>
-		<?php }?>
-		<div class="meta_form_row<?php if (empty($meeting->group)) echo ' hidden'?>">
-			<label for="group_notes"><?php _e('Notes', '12-step-meeting-list')?></label>
-			<textarea name="group_notes" id="group_notes" placeholder="<?php _e('eg. Group history, when the business meeting is, etc.', '12-step-meeting-list')?>"><?php echo @$meeting->group_notes?></textarea>
-		</div>
-		<div class="meta_form_row">
-			<label for="website"><?php _e('Website', '12-step-meeting-list')?></label>
-			<input type="text" name="website" id="website" value="<?php echo @$meeting->website?>" placeholder="https://">
-		</div>
-		<div class="meta_form_row">
-			<label for="website_2"><?php _e('Website 2', '12-step-meeting-list')?></label>
-			<input type="text" name="website_2" id="website_2" value="<?php echo @$meeting->website_2?>" placeholder="https://">
-		</div>
-		<div class="meta_form_row">
-			<label for="email"><?php _e('Email', '12-step-meeting-list')?></label>
-			<input type="text" name="email" id="email" value="<?php echo @$meeting->email?>" placeholder="group@website.org">
-		</div>
-		<div class="meta_form_row">
-			<label for="phone"><?php _e('Phone', '12-step-meeting-list')?></label>
-			<input type="text" name="phone" id="phone" value="<?php echo @$meeting->phone?>" placeholder="(800) 555-1212">
-		</div>
-		<div class="meta_form_row">
-			<label>
-				<?php _e('Contacts', '12-step-meeting-list')?>
-				<span style="display: block;font-size:90%;color:#999;">(<?php if ($tsml_contact_display == 'public') {
-					_e('Public', '12-step-meeting-list');
-				} else {
-					_e('Private', '12-step-meeting-list');
-				}?>)</span>
-			</label>
-			<div class="container">
-				<?php for ($i = 1; $i <= GROUP_CONTACT_COUNT; $i++) {?>
-				<div class="row">
-					<div><input type="text" name="contact_<?php echo $i?>_name" placeholder="<?php _e('Name', '12-step-meeting-list')?>" value="<?php echo @$meeting->{'contact_' . $i . '_name'}?>"></div>
-					<div><input type="text" name="contact_<?php echo $i?>_email" placeholder="<?php _e('Email', '12-step-meeting-list')?>" value="<?php echo @$meeting->{'contact_' . $i . '_email'}?>"></div>
-					<div><input type="text" name="contact_<?php echo $i?>_phone" placeholder="<?php _e('Phone', '12-step-meeting-list')?>" value="<?php echo @$meeting->{'contact_' . $i . '_phone'}?>"></div>
+		<div id="contact-type" data-type="<?php echo empty($meeting->group) ? 'meeting' : 'group'?>">
+			<div class="meta_form_row radio">
+				<label><input type="radio" name="group_status" value="meeting"<?php checked(empty($meeting->group))?>> <?php _e('Individual meeting', '12-step-meeting-list')?></label>
+				<label><input type="radio" name="group_status" value="group"<?php checked(!empty($meeting->group))?>> <?php _e('Part of a group', '12-step-meeting-list')?></label>
+			</div>
+			<div class="meta_form_row typeahead group-visible">
+				<label for="group"><?php _e('Group', '12-step-meeting-list')?></label>
+				<input type="text" name="group" id="group" value="<?php echo @$meeting->group?>">
+			</div>
+			<div class="meta_form_row checkbox apply_group_to_location hidden">
+				<label><input type="checkbox" name="apply_group_to_location"> <?php _e('Apply this group to all meetings at this location', '12-step-meeting-list')?></label>
+			</div>
+			<?php if (count($meetings) > 1) {?>
+			<div class="meta_form_row">
+				<label>Meetings</label>
+				<ol>
+					<?php foreach ($meetings as $m) {
+						if ($m['id'] != @$meeting->ID) $m['name'] = '<a href="' . get_edit_post_link($m['id']) . '">' . $m['name'] . '</a>';
+					?>
+					<li><span><?php echo tsml_format_day_and_time($m['day'], $m['time'], ' ', true)?></span> <?php echo $m['name']?></li>
+					<?php }?>
+				</ol>
+			</div>
+			<?php }
+			if (wp_count_terms('tsml_district')) {?>
+			<div class="meta_form_row group-visible">
+				<label for="district"><?php _e('District', '12-step-meeting-list')?></label>
+				<?php wp_dropdown_categories(array(
+					'name' => 'district',
+					'taxonomy' => 'tsml_district',
+					'hierarchical' => true,
+					'hide_empty' => false,
+					'orderby' => 'name',
+					'selected' => $district,
+					'show_option_none' => __('District', '12-step-meeting-list'),
+				))?>
+			</div>
+			<?php }?>
+			<div class="meta_form_row group-visible">
+				<label for="group_notes"><?php _e('Notes', '12-step-meeting-list')?></label>
+				<textarea name="group_notes" id="group_notes" placeholder="<?php _e('eg. Group history, when the business meeting is, etc.', '12-step-meeting-list')?>"><?php echo @$meeting->group_notes?></textarea>
+			</div>
+			<div class="meta_form_row">
+				<label for="website"><?php _e('Website', '12-step-meeting-list')?></label>
+				<input type="text" name="website" id="website" value="<?php echo @$meeting->website?>" placeholder="https://">
+			</div>
+			<div class="meta_form_row">
+				<label for="website_2"><?php _e('Website 2', '12-step-meeting-list')?></label>
+				<input type="text" name="website_2" id="website_2" value="<?php echo @$meeting->website_2?>" placeholder="https://">
+			</div>
+			<div class="meta_form_row">
+				<label for="email"><?php _e('Email', '12-step-meeting-list')?></label>
+				<input type="text" name="email" id="email" value="<?php echo @$meeting->email?>" placeholder="group@website.org">
+			</div>
+			<div class="meta_form_row">
+				<label for="phone"><?php _e('Phone', '12-step-meeting-list')?></label>
+				<input type="text" name="phone" id="phone" value="<?php echo @$meeting->phone?>" placeholder="(800) 555-1212">
+			</div>
+			<div class="meta_form_row group-visible">
+				<label><?php _e('Venmo', '12-step-meeting-list')?></label>
+				<input type="text" name="venmo" placeholder="@group-venmo" value="<?php echo @$meeting->venmo?>">
+			</div>
+			<div class="meta_form_row">
+				<label>
+					<?php _e('Contacts', '12-step-meeting-list')?>
+					<span style="display: block;font-size:90%;color:#999;">(<?php if ($tsml_contact_display == 'public') {
+						_e('Public', '12-step-meeting-list');
+					} else {
+						_e('Private', '12-step-meeting-list');
+					}?>)</span>
+				</label>
+				<div class="container">
+					<?php for ($i = 1; $i <= GROUP_CONTACT_COUNT; $i++) {?>
+					<div class="row">
+						<div><input type="text" name="contact_<?php echo $i?>_name" placeholder="<?php _e('Name', '12-step-meeting-list')?>" value="<?php echo @$meeting->{'contact_' . $i . '_name'}?>"></div>
+						<div><input type="text" name="contact_<?php echo $i?>_email" placeholder="<?php _e('Email', '12-step-meeting-list')?>" value="<?php echo @$meeting->{'contact_' . $i . '_email'}?>"></div>
+						<div><input type="text" name="contact_<?php echo $i?>_phone" placeholder="<?php _e('Phone', '12-step-meeting-list')?>" value="<?php echo @$meeting->{'contact_' . $i . '_phone'}?>"></div>
+					</div>
+					<?php }?>
 				</div>
-				<?php }?>
+			</div>
+			<div class="meta_form_row">
+				<label for="last_contact"><?php _e('Last Contact', '12-step-meeting-list')?></label>
+				<input type="date" name="last_contact" value="<?php echo @$meeting->last_contact?>">
 			</div>
 		</div>
-		<div class="meta_form_row">
-			<label for="last_contact"><?php _e('Last Contact', '12-step-meeting-list')?></label>
-			<input type="date" name="last_contact" value="<?php echo @$meeting->last_contact?>">
-		</div>
-		<?php if (tsml_accepts_payments()) {?>
-		<div class="meta_form_row">
-			<label for="contributions_api_key"><?php _e('Stripe API Key', '12-step-meeting-list')?></label>
-			<input type="text" name="contributions_api_key" id="contributions_api_key" value="<?php echo @$meeting->contributions_api_key?>" placeholder="<?php _e('Stripe API Key')?>">
-		</div>
 		<?php
-		}
 	}	
 }

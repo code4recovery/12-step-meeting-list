@@ -257,14 +257,6 @@ function tsml_save_post($post_id, $post, $update) {
 			delete_post_meta($post->ID, 'last_contact');
 		}
 		
-		//stripe API key
-		if (tsml_accepts_payments() && !empty($_POST['contributions_api_key'])) {
-			echo $_POST['contributions_api_key'];
-			update_post_meta($post->ID, 'contributions_api_key', sanitize_text_field($_POST['contributions_api_key']));
-		} else {
-			delete_post_meta($post->ID, 'contributions_api_key');
-		}
-
 		//switching from group to no group
 		if (!empty($old_meeting->group)) {
 			$changes[] = 'group';
@@ -345,6 +337,13 @@ function tsml_save_post($post_id, $post, $update) {
 			delete_post_meta($group_id, 'phone');
 		}
 		
+		//group venmo
+		if (!empty($_POST['venmo']) && (substr($_POST['venmo'], 0, 1) == '@')) {
+			update_post_meta($group_id, 'venmo', sanitize_text_field($_POST['venmo']));
+		} else {
+			delete_post_meta($group_id, 'venmo');
+		}
+		
 		//contact info
 		for ($i = 1; $i <= GROUP_CONTACT_COUNT; $i++) {
 			foreach (array('name', 'email', 'phone') as $field) {
@@ -367,15 +366,7 @@ function tsml_save_post($post_id, $post, $update) {
 		} else {
 			delete_post_meta($group_id, 'last_contact');
 		}
-		
-		//stripe API key
-		if (tsml_accepts_payments() && !empty($_POST['contributions_api_key'])) {
-			echo $_POST['contributions_api_key'];
-			update_post_meta($group_id, 'contributions_api_key', sanitize_text_field($_POST['contributions_api_key']));
-		} else {
-			delete_post_meta($group_id, 'contributions_api_key');
-		}
-		
+				
 	}
 
 	//deleted orphaned locations and groups

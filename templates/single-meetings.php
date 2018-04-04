@@ -50,50 +50,7 @@ get_header();
 								</h3>
 							</a>
 						</div>
-						
-						<?php 
-						//ecommerce payment form
-						if (tsml_accepts_payments() && !empty($meeting->contributions_api_key)) {?>
-						
-						<form id="payment">
-							<input type="hidden" name="action" value="tsml_payment">
-							<?php wp_nonce_field($tsml_nonce, 'tsml_nonce', false)?>
-							<div class="panel panel-default panel-expandable">
-								<div class="panel-heading">
-									<h3 class="panel-title">
-										<?php _e('Make a Contribution', '12-step-meeting-list')?>
-										<span class="glyphicon glyphicon-chevron-left"></span>
-									</h3>
-								</div>
-								<ul class="list-group">
-									<li class="list-group-item">
-									    <?php _e('Donations go to the group treasurer. For a receipt, enter your email address. It will be kept confidential.', '12-step-meeting-list')?></p>
-									</li>
-									<li class="list-group-item list-group-item-form">
-										<input type="text" name="name" placeholder="<?php _e('Name (optional)', '12-step-meeting-list')?>">
-									</li>
-									<li class="list-group-item list-group-item-form">
-										<input type="text" name="email" placeholder="<?php _e('Email (optional)', '12-step-meeting-list')?>">
-									</li>
-									<li class="list-group-item list-group-item-form">
-										<input type="number" name="amount" id="amount" step="1" value="2">
-									</li>
-									<li class="list-group-item list-group-item-card credit-card">
-										<div id="card-element"></div>
-										<div id="card-errors" role="alert"></div>
-									</li>
-									<li class="list-group-item list-group-item-form credit-card">
-										<button type="submit"><?php _e('Pay with Credit Card', '12-step-meeting-list')?></button>
-									</li>
-									<li class="list-group-item list-group-item-form apple-pay">
-										<button type="submit"></button>
-									</li>
-								</ul>
-							</div>
-						</form>
-
-						<?php }?>
-						
+												
 						<div class="panel panel-default">
 							<ul class="list-group">
 								<li class="list-group-item meeting-info">
@@ -173,10 +130,16 @@ get_header();
 											<p class="group-email">
 												<a href="mailto:<?php echo $meeting->email?>"><?php echo $meeting->email?></a>
 											</p>
-										<?php }
+											<?php }
 										if (!empty($meeting->phone)) {?>
 											<p class="group-phone">
 												<a href="tel:<?php echo $meeting->phone?>"><?php echo $meeting->phone?></a>
+											</p>
+										</a>
+										<?php }
+										if (!empty($meeting->venmo)) {?>
+											<p class="group-venmo">
+												Venmo: <a href="https://venmo.com/<?php echo substr($meeting->venmo, 1)?>" target="_blank"><?php echo $meeting->venmo?></a>
 											</p>
 										</a>
 										<?php }?>

@@ -196,18 +196,12 @@ jQuery(function($){
 		});
 
 		$('input[name="group_status"]').change(function(){
-			if ($(this).val() == 'individual') {
-				$('input#group').closest('.meta_form_row').addClass('hidden');
+			$('#contact-type').attr('data-type', $(this).val());
+			if ($(this).val() == 'meeting') {
 				$('input#group').val('');
-				$('textarea#group_notes').closest('.meta_form_row').addClass('hidden');
 				$('textarea#group_notes').val('');
-				$('select#district').closest('.meta_form_row').addClass('hidden');
 				$('select#district').val('');
 				$('.apply_group_to_location').addClass('hidden');
-			} else {
-				$('input#group').closest('.meta_form_row').removeClass('hidden');
-				$('textarea#group_notes').closest('.meta_form_row').removeClass('hidden');
-				$('select#district').closest('.meta_form_row').removeClass('hidden');
 			}
 		});
 
