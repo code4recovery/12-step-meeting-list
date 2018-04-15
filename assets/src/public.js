@@ -111,7 +111,7 @@ jQuery(function($){
 		//build infowindow content
 		var content = '<h3>' + location_link + '</h3>'+
 			'<p>' + formatAddress(tsml_map.address) + '</p>'+
-			'<p><a class="btn btn-default" href="' + tsml_map.directions_url + '" target="_blank">' + tsml_map.directions + '</a></p>';
+			'<p><a class="btn btn-default tsml-directions" data-latitude="' + tsml_map.latitude + '" data-longitude="' + tsml_map.longitude + '" data-location="' + tsml_map.location + '">' + tsml_map.directions + '</a></p>';
 											
 		var map = new google.maps.Map(document.getElementById('map'), {
 			zoom: 15,
@@ -134,6 +134,19 @@ jQuery(function($){
 		
 	//b) jQuery event handlers
 	
+	//handle directions links; send to Apple Maps (iOS), or Google Maps (everything else)
+	var iOS = !!navigator.platform && /iPad|iPhone|iPod/.test(navigator.platform);
+	$body.on('click', 'a.tsml-directions', function(e){
+		e.preventDefault();
+		var directions = (iOS ? 'maps://?' : 'https://maps.google.com/?') + $.param({
+			daddr: $(this).attr('data-latitude') + ',' + $(this).attr('data-longitude'),
+			saddr: 'Current Location',
+			q: $(this).attr('data-location')
+		});
+		window.open(directions);
+	});
+
+	//expand region select
 	$('.panel-expandable').on('click', '.panel-heading', function(e){
 		$(this).closest('.panel-expandable').toggleClass('expanded');
 		console.log('click');
@@ -502,7 +515,7 @@ jQuery(function($){
 		}
 		return '<a href="' + url + '">' + text + '</a>';
 	}
-	
+
 	//actually get the meetings from the JSON resource and output them
 	function getMeetings(data, keyword_searching) {
 		//request new meetings result

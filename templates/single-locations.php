@@ -36,6 +36,17 @@ get_header();
 				<div class="row location">
 					<div class="col-md-4">
 						<div class="panel panel-default">
+							<a class="panel-heading tsml-directions" data-latitude="<?php echo $location->latitude?>" data-longitude="<?php echo $location->longitude?>" data-location="<?php echo $location->post_title?>">
+								<h3 class="panel-title">
+									<?php _e('Get Directions', '12-step-meeting-list')?>
+									<span class="panel-title-buttons">
+										<span class="glyphicon glyphicon-share-alt"></span>
+									</span>
+								</h3>
+							</a>
+						</div>
+
+						<div class="panel panel-default">
 							<ul class="list-group">
 								<li class="list-group-item list-group-item-address">
 									<p><?php echo tsml_format_address($location->formatted_address)?></p>
