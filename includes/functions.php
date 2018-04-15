@@ -563,9 +563,10 @@ if (!function_exists('tsml_get_location')) {
 			$location->region = $region[0]->name;
 		}
 	
-		//directions link
-		$location->directions = 'https://maps.apple.com/?' . http_build_query(array(
-			'll' => $location->latitude . ',' . $location->longitude,
+		//directions link (obsolete 4/15/2018, keeping for compatibility)
+		$location->directions = 'https://maps.google.com/?' . http_build_query(array(
+			'daddr' => $location->latitude . ',' . $location->longitude,
+			'saddr' => 'Current Location',
 			'q' => $location->post_title,
 		));
 	
@@ -647,9 +648,10 @@ if (!function_exists('tsml_get_meeting')) {
 			//get other meetings at this location
 			$meeting->location_meetings = tsml_get_meetings(array('location_id' => $location->ID));
 		
-			//link for directions
-			$meeting->directions = 'https://maps.apple.com/?' . http_build_query(array(
-				'll' => $location->latitude . ',' . $location->longitude,
+			//directions link (obsolete 4/15/2018, keeping for compatibility)
+			$meeting->directions = 'https://maps.google.com/?' . http_build_query(array(
+				'daddr' => $location->latitude . ',' . $location->longitude,
+				'saddr' => 'Current Location',
 				'q' => $meeting->location,
 			));
 		}

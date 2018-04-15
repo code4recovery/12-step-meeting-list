@@ -4,7 +4,7 @@ Donate link: https://meetingguide.org/donate
 Tags: 12-step, aa, al-anon, coda, meetings, na, oa, saa, slaa
 Requires at least: 3.2
 Tested up to: 4.9
-Stable tag: 2.17.9
+Stable tag: 2.17.10
 
 This plugin helps twelve step recovery programs list their meetings. It standardizes addresses, and displays results in a searchable list and map.
 
@@ -93,6 +93,7 @@ This plugin was originally designed to maintain a list of AA meetings in Santa C
 1. [Québec, Canada (All)](http://aa-quebec.org/aaqc_wp/meetings/)
 1. [Québec, Canada (Région 87, Southwest)](http://aa87.org/meetings/)
 1. [Québec, Canada (Région 88, Southeast)](http://aa-quebec.org/region88/WP/meetings/)
+1. [Regina, Canada](http://www.aaregina.com/meetings/)
 1. [Reading, PA](http://readingberksintergroup.org/meetings/)
 1. [Rochester, MN](http://aadistrict1.org/blog/meetings/)
 1. [Rockland County, NY](https://rocklandnyaa.org/meetings/)
@@ -113,6 +114,8 @@ This plugin was originally designed to maintain a list of AA meetings in Santa C
 1. [Southwestern Missouri](https://aaswmo.org/meetings)
 1. [Spokane, WA](http://aaspokane.org/meetings/)
 1. [St. Louis, MO](https://aastl.org/meetings/)
+1. [St. Lucie, FL](http://aastlucieintergroup.com/meetings/)
+1. [St. Peters, MO](https://tricountyaa.org/meetings/)
 1. [State College, PA](http://www.district43.com/meetings/)
 1. [Streamwood, IL](http://dist23.aa-nia.org/meetings)
 1. [Tampa, FL](http://www.meetings.aatampa-area.org/meetings/)
@@ -150,6 +153,7 @@ This plugin was originally designed to maintain a list of AA meetings in Santa C
 1. [Lancaster, PA](http://lanclebalanon.org/meetings/?d=any)
 1. [Naples, FL](http://naplesal-anon.org/meetings)
 1. [Pennsylvania](http://pa-al-anon.org/meetings/)
+1. [Washington](http://wa-al-anon.org/meetings/)
 
 **Co-Dependents Anonymous**
 
@@ -182,9 +186,13 @@ This plugin was originally designed to maintain a list of AA meetings in Santa C
 1. [Poland](http://anonimowinarkomani.org/meetings/)
 1. [Vienna](https://www.navienna.com/meetings/?d=any)
 
+**Recovering Couples Anonymous**
+
+1. [Main Website](http://recovering-couples.org/meetings/)
+
 **Refuge Recovery**
 
-1. [Main Website](https://www.refugerecovery.org/meetings/)
+1. [Main Website](https://refugerecovery.org/meetings/)
 1. [Oakland, CA](http://refugerecoveryoakland.org/meetings/)
 
 **Sex Addicts Anonymous**
@@ -350,6 +358,11 @@ pin will still show up for these meetings and people will try to get directions 
 1. Edit location
 
 == Changelog ==
+
+= 2.17.10 =
+* Changing the way directions links work
+* Adding "Indigenous" meeting type
+* Adding directions link to the top of location page (same as already exists on meeting page)
 
 = 2.17.9 =
 * Removing "Business" meeting type
