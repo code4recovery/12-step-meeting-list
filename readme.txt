@@ -4,7 +4,7 @@ Donate link: https://meetingguide.org/donate
 Tags: 12-step, aa, al-anon, coda, meetings, na, oa, saa, slaa
 Requires at least: 3.2
 Tested up to: 4.9
-Stable tag: 2.17.10
+Stable tag: 2.17.11
 
 This plugin helps twelve step recovery programs list their meetings. It standardizes addresses, and displays results in a searchable list and map.
 
@@ -183,7 +183,10 @@ This plugin was originally designed to maintain a list of AA meetings in Santa C
 1. [Lancaster, PA](http://lancasterpana.org/meetings/)
 1. [Maine](http://www.namaine.org/meetings/)
 1. [Martha's Vineyard](http://www.mvana.org/meetings/?tsml-day=any)
+1. [Marysville, CA](https://middlemountainarea.com/meetings/)
 1. [Poland](http://anonimowinarkomani.org/meetings/)
+1. [Roseville, CA](https://sfana.org/meetings/)
+1. [Sacramento, CA](https://sacramentona.org/meetings/)
 1. [Vienna](https://www.navienna.com/meetings/?d=any)
 
 **Recovering Couples Anonymous**
@@ -358,6 +361,9 @@ pin will still show up for these meetings and people will try to get directions 
 1. Edit location
 
 == Changelog ==
+
+= 2.17.11 =
+* Changing "Atheist / Agnostic" AA meeting type to "Secular"
 
 = 2.17.10 =
 * Changing the way directions links work
