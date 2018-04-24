@@ -4,7 +4,7 @@ Donate link: https://meetingguide.org/donate
 Tags: 12-step, aa, al-anon, coda, meetings, na, oa, saa, slaa
 Requires at least: 3.2
 Tested up to: 4.9
-Stable tag: 2.17.11
+Stable tag: 2.17.12
 
 This plugin helps twelve step recovery programs list their meetings. It standardizes addresses, and displays results in a searchable list and map.
 
@@ -47,6 +47,7 @@ This plugin was originally designed to maintain a list of AA meetings in Santa C
 1. [Ft. Worth, TX](http://fortworthaa.org/?post_type=tsml_meeting)
 1. [Greensboro, NC](http://nc23.org/meetings/)
 1. [Hagerstown, MD](http://hagerstownaa.org/meetings/)
+1. [Harrisburg, IL](http://aa-district16.org/meetings/)
 1. [Harrisburg, PA](http://www.aaharrisburg.org/meetings/)
 1. [Hernando County, FL](http://www.aahernando.org/meetings/)
 1. [Idaho](https://idahoarea18aa.org/meetings)
@@ -54,6 +55,7 @@ This plugin was originally designed to maintain a list of AA meetings in Santa C
 1. [Joliet, IL](http://aadistrict51.org/meetings/)
 1. [Kansas](https://ks-aa.org/meetings/)
 1. [Kentucky](http://www.area26.net/wp/?post_type=tsml_meeting)
+1. [Lafayette, LA](http://aa-acadiana.org/site/meetings/)
 1. [Lakeland, FL](https://www.heartlandintergroup.org/meetings/)
 1. [Lancaster, PA](http://www.lancasteraa.org/meetings/)
 1. [Langley, Canada](http://www.district43aa.org/meetings/)
@@ -188,6 +190,7 @@ This plugin was originally designed to maintain a list of AA meetings in Santa C
 1. [Roseville, CA](https://sfana.org/meetings/)
 1. [Sacramento, CA](https://sacramentona.org/meetings/)
 1. [Vienna](https://www.navienna.com/meetings/?d=any)
+1. [Western Oklahoma](https://wascokna.org/meetings/)
 
 **Recovering Couples Anonymous**
 
@@ -361,6 +364,9 @@ pin will still show up for these meetings and people will try to get directions 
 1. Edit location
 
 == Changelog ==
+
+= 2.17.12 =
+* Adding a draft version of a PDF meeting schedule
 
 = 2.17.11 =
 * Changing "Atheist / Agnostic" AA meeting type to "Secular"

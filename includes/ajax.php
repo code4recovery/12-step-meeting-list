@@ -56,6 +56,14 @@ function tsml_ajax_groups() {
 	wp_send_json($results);
 }
 
+//PDF meeting schedule
+add_action('wp_ajax_tsml_pdf', 'tsml_ajax_pdf');
+add_action('wp_ajax_nopriv_tsml_pdf', 'tsml_ajax_pdf');
+function tsml_ajax_pdf() {
+	tsml_pdf();
+	exit;
+}
+
 /*possible endpoint for future add/edit meeting webhook
 add_action('wp_ajax_tsml_push', 'tsml_ajax_push');
 add_action('wp_ajax_nopriv_tsml_push', 'tsml_ajax_push');

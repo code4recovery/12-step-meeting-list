@@ -3,7 +3,7 @@
 Plugin Name: 12 Step Meeting List
 Plugin URI: https://wordpress.org/plugins/12-step-meeting-list/
 Description: Manage a list of recovery meetings
-Version: 2.17.11
+Version: 2.17.12
 Author: Meeting Guide
 Author URI: https://meetingguide.org
 Text Domain: 12-step-meeting-list
@@ -13,7 +13,7 @@ Text Domain: 12-step-meeting-list
 if (!defined('GROUP_CONTACT_COUNT')) define('GROUP_CONTACT_COUNT', 3);
 if (!defined('TSML_CONTACT_EMAIL')) define('TSML_CONTACT_EMAIL', 'info@meetingguide.org');
 if (!defined('TSML_PATH')) define('TSML_PATH', plugin_dir_path(__FILE__));
-if (!defined('TSML_VERSION')) define('TSML_VERSION', '2.17.11');
+if (!defined('TSML_VERSION')) define('TSML_VERSION', '2.17.12');
 
 //include these files first
 include(TSML_PATH . '/includes/variables.php');
@@ -22,6 +22,7 @@ include(TSML_PATH . '/includes/functions.php');
 //include public files
 include(TSML_PATH . '/includes/ajax.php');
 include(TSML_PATH . '/includes/init.php');
+include(TSML_PATH . '/includes/pdf.php');
 include(TSML_PATH . '/includes/shortcodes.php');
 include(TSML_PATH . '/includes/widgets.php');
 include(TSML_PATH . '/includes/widgets_init.php');

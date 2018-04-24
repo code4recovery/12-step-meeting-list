@@ -571,6 +571,7 @@ function tmsl_import_page() {
 							<h3><?php _e('Where\'s My Info?', '12-step-meeting-list')?></h3>
 							<p><?php printf(__('Your public meetings page is <a href="%s">right here</a>. Link that page from your site\'s nav menu to make it visible to the public.', '12-step-meeting-list'), get_post_type_archive_link('tsml_meeting'))?></p>
 							<p><?php printf(__('You can also download your meetings in <a href="%s">CSV format</a>.', '12-step-meeting-list'), admin_url('admin-ajax.php') . '?action=csv')?></p>
+							<p><?php printf(__('A very basic <a href="%s">PDF schedule</a> is available.', '12-step-meeting-list'), admin_url('admin-ajax.php') . '?action=tsml_pdf')?></p>
 							<?php
 							$meetings = tsml_count_meetings();
 							$locations = tsml_count_locations();
