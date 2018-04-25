@@ -1,4 +1,6 @@
 <?php
+//special implementation of tcpdf to generate printed meeting schedule
+//used by includes/ajax.php tsml_ajax_pdf()
 
 //config before including TCPDF
 define('K_TCPDF_EXTERNAL_CONFIG', true);
@@ -17,9 +19,11 @@ if (!class_exists('TSMLPDF')) {
 
 		protected $options = array(); //configuration options
 
-		protected $page_width; //width - margins
+		protected $content_width; //width - margins
 
-		protected $meetings; //array to hold all the meetings
+		protected $current_region;
+
+		protected $last_region;
 
 		public function __construct($options=array()) {
 
@@ -37,7 +41,7 @@ if (!class_exists('TSMLPDF')) {
 				'width' => 8.5,
 			), $options);
 
-			$this->page_width = $options['width'] - ($options['margin'] * 2);
+			$this->content_width = $options['width'] - ($options['margin'] * 2);
 
 			//call TCPDF
 			parent::__construct($this->options['orientation'], $this->options['units'], array($this->options['width'], $this->options['height']));
@@ -54,8 +58,11 @@ if (!class_exists('TSMLPDF')) {
 			$this->SetFillColor(255, 182, 193); //pink for debugging
 
 			//get data
-			$this->meetings = tsml_get_meetings();
-			usort($this->meetings, 'tsml_pdf_sort');
+			$meetings = tsml_get_meetings();
+			usort($meetings, array($this, 'SortMeetings'));
+
+			//get current region
+			$this->current_region = $meetings[0]['region'];
 
 			//get output started
 			$this->SetCellPadding(0);
@@ -64,13 +71,13 @@ if (!class_exists('TSMLPDF')) {
 			//column widths
 			$day_width = .4;
 			$time_width = .6;
-			$right_width = $this->page_width - $day_width - $time_width;
+			$right_width = $this->content_width - $day_width - $time_width;
 
 			//runtime variables we'll need
 			$days = array('SUN', 'MON', 'TUE', 'WED', 'THU', 'FRI', 'SAT');
 			$last_region = $last_day = '';
 
-			foreach ($this->meetings as $meeting) {
+			foreach ($meetings as $meeting) {
 
 				//format meeting name and group
 				$meeting_name = strtoupper($meeting['name']);
@@ -89,23 +96,20 @@ if (!class_exists('TSMLPDF')) {
 				if (!empty($meeting['location_notes'])) $meeting['location'] .= ' (' . $meeting['location_notes'] . ')';
 
 				//header for the region
-				if ($region != $last_region) {
-					$this->SetFontHeading();
-					$this->Cell($this->page_width, .1, $region, 'B', 1);
-					$this->Ln(.05);
-					$this->SetFontNormal();
-					$last_region = $region;
+				if ($region != $this->current_region) {
+					$this->Header($region);
 				}
 
 				//line one
+				$this->SetFontNormal();
 				if ($meeting['day'] != $last_day) {
 					$this->Cell($day_width, .1, $days[$meeting['day']]);
 					$last_day = $meeting['day'];
 				} else {
 					$this->Cell($day_width, .1, '', 0, 0);
 				}
-				$this->Cell($time_width, .1, $meeting['time_formatted']);
 				$this->SetFont(PDF_FONT_NAME_MAIN, 'B', 7);
+				$this->Cell($time_width, .1, $meeting['time_formatted']);
 				$this->MultiCell($right_width, .1, $meeting_name, 0, 'L');
 				$this->SetFontNormal();
 
@@ -120,16 +124,28 @@ if (!class_exists('TSMLPDF')) {
 			return $this;
 		}
 
-		public function Header() {
-			$this->SetXY($this->options['margin'], $this->options['margin']);
+		public function Header($region=-1) {
+			if ($region == -1) {
+				//called from addpage
+				$this->SetXY($this->options['margin'], $this->options['margin']);
+			} else {
+				$this->current_region = $region;				
+			}
+
+			$contd = ($this->last_region == $this->current_region) ? ' (continued)' : '';
+
 			$this->SetFontHeading();
-			$this->Cell($this->page_width, 0, '<< TCPDF Example 003 >>', 0, 0, 'C');
+			$this->Cell($this->content_width, .1, $this->current_region . $contd, 'B');
+			$this->Ln(.25);
+			$this->SetFontNormal();
+
+			$this->last_region = $this->current_region;
 		}
 
 		public function Footer() {
 			$this->SetXY($this->options['margin'], 0 - $this->options['margin']);
 			$this->SetFontNormal();
-			$this->Cell($this->page_width, 0, $this->PageNo(), 0, 0, 'C');
+			$this->Cell($this->content_width, 0, $this->PageNo(), 0, 0, 'C');
 		}
 
 		public function SetFontHeading() {
@@ -140,38 +156,20 @@ if (!class_exists('TSMLPDF')) {
 			$this->SetFont(PDF_FONT_NAME_MAIN, '', 7);
 		}
 
+		//sort by region, then sub-region, then day, then time, then meeting name, then location
+		function SortMeetings($a, $b) {
+			if ($a['region'] != $b['region']) return strcmp($a['region'], $b['region']);
+			if ($a['sub_region'] != $b['sub_region']) return strcmp($a['sub_region'], $b['sub_region']);
+			if ($a['day'] != $b['day']) return strcmp($a['day'], $b['day']);
+			if ($a['time'] != $b['time']) return strcmp($a['time'], $b['time']);
+			if ($a['name'] != $b['name']) return strcmp($a['name'], $b['name']);
+			return strcmp($a['location'], $b['location']);
+		}
+
+		//return the international symbol of access rather than x
 		public function FormatTypes($element) {
 			if ($element == 'X') return '♿︎';
 			return $element;
 		}
-	}
-}
-
-//create a basic pdf
-if (!function_exists('tsml_pdf')) {
-	function tsml_pdf() {
-		
-		//create new PDF document
-		$pdf = new TSMLPDF(array(
-			'margin' => .25, 
-			'width' => 4.25,
-		));
-
-		//send to browser
-		if (!headers_sent()) {
-			$pdf->Output('meeting-schedule.pdf', 'I');
-		}
-	}
-}
-
-//sort by region, then sub-region, then day, then time, then meeting name, then location
-if (!function_exists('tsml_pdf_sort')) {
-	function tsml_pdf_sort($a, $b) {
-		if ($a['region'] != $b['region']) return strcmp($a['region'], $b['region']);
-		if ($a['sub_region'] != $b['sub_region']) return strcmp($a['sub_region'], $b['sub_region']);
-		if ($a['day'] != $b['day']) return strcmp($a['day'], $b['day']);
-		if ($a['time'] != $b['time']) return strcmp($a['time'], $b['time']);
-		if ($a['name'] != $b['name']) return strcmp($a['name'], $b['name']);
-		return strcmp($a['location'], $b['location']);
 	}
 }

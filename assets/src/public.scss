@@ -521,7 +521,7 @@ $height: 550px; //height of map and min-height of list
 	}
 	
 	/* Small devices (tablets, 768px and up) */
-	@media (min-width: 768px) {
+	@media screen and (min-width: 768px) {
 		#meetings {
 			.controls {
 				margin-bottom: 0;
@@ -632,7 +632,7 @@ $height: 550px; //height of map and min-height of list
 	
 	
 	/* Medium devices (desktops, 992px and up) */
-	@media (min-width: 992px) {
+	@media screen and (min-width: 992px) {
 		#meetings .results table {
 			thead tr th.address, tbody tr td.address { 
 				display: table-cell;
@@ -647,7 +647,7 @@ $height: 550px; //height of map and min-height of list
 	}
 	
 	/* Large devices (large desktops, 1200px and up) */
-	@media (min-width: 1200px) {
+	@media screen and (min-width: 1200px) {
 		#meetings .results {
 			table .address {
 				display: table-cell;
@@ -661,13 +661,16 @@ $height: 550px; //height of map and min-height of list
 	@media print {
 		a[href]:after {
 			content: none !important; /* Remove Bootstrap's (http://) when printing */
-	
 		}
 		#meetings .results table {
 			tr {
+				display: block;
 				width: 50%;
 				float: left;
 				min-height: 170px;
+			}
+			@-moz-document url-prefix() { 
+				tr { float: none; }
 			}
 			td {
 				&.name, &.location, &.address, &.region, &.district, &.types {
@@ -695,6 +698,10 @@ body {
 				width: 100%; 
 				.page-header { max-width: none; }
 			}
+		}
+		//don't do huge print header on twenty fourteen
+		@media print {
+			.header-main { padding: 0 10px; }
 		}
 	}
 	&.twentyten {
