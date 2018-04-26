@@ -30,6 +30,7 @@ if (!class_exists('TSMLPDF')) {
 			//mix options with defaults
 			$this->options = array_merge(array(
 				'author' => get_bloginfo('name'),
+				'continued' => ' (contd.)',
 				'creator' => get_home_url(),
 				'height' => 11,
 				'keywords' => 'Meetings',
@@ -37,11 +38,15 @@ if (!class_exists('TSMLPDF')) {
 				'orientation' => 'p',
 				'subject' => 'Meeting Schedule',
 				'title' => 'Meeting Schedule',
+				'types' => array(
+					'X' => '♿︎',
+				),
+				'types_separator' => ' ',
 				'units' => 'in',
 				'width' => 8.5,
 			), $options);
 
-			$this->content_width = $options['width'] - ($options['margin'] * 2);
+			$this->content_width = $this->options['width'] - ($this->options['margin'] * 2);
 
 			//call TCPDF
 			parent::__construct($this->options['orientation'], $this->options['units'], array($this->options['width'], $this->options['height']));
@@ -52,7 +57,7 @@ if (!class_exists('TSMLPDF')) {
 			$this->SetCreator($this->options['creator']);
 			$this->SetAuthor($this->options['author']);
 			$this->SetKeywords($this->options['keywords']);
-			$this->SetMargins($this->options['margin'], $this->options['margin'] * 2);
+			$this->SetMargins($this->options['margin'], $this->options['margin'] * 1.75);
 			$this->SetAutoPageBreak(true, $this->options['margin'] * 1.5);
 			$this->SetFontSubsetting(true);
 			$this->SetFillColor(255, 182, 193); //pink for debugging
@@ -85,7 +90,7 @@ if (!class_exists('TSMLPDF')) {
 
 				//format types
 				$types = array_map(array($this, 'FormatTypes'), $meeting['types']);
-				$types = implode(', ', $types);
+				$types = implode($this->options['types_separator'], $types);
 
 				//format region
 				$region = $meeting['region'];
@@ -132,11 +137,11 @@ if (!class_exists('TSMLPDF')) {
 				$this->current_region = $region;				
 			}
 
-			$contd = ($this->last_region == $this->current_region) ? ' (continued)' : '';
+			$contd = ($this->last_region == $this->current_region) ? $this->options['continued'] : '';
 
 			$this->SetFontHeading();
 			$this->Cell($this->content_width, .1, $this->current_region . $contd, 'B');
-			$this->Ln(.25);
+			$this->Ln(.2);
 			$this->SetFontNormal();
 
 			$this->last_region = $this->current_region;
@@ -166,10 +171,10 @@ if (!class_exists('TSMLPDF')) {
 			return strcmp($a['location'], $b['location']);
 		}
 
-		//return the international symbol of access rather than x
+		//replace types with local ones
 		public function FormatTypes($element) {
-			if ($element == 'X') return '♿︎';
-			return $element;
+			if (!array_key_exists($element, $this->options['types'])) return $element;
+			return $this->options['types'][$element];
 		}
 	}
 }

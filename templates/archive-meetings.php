@@ -206,7 +206,7 @@ get_header();
 		<?php }?>
 	
 		<div class="row controls hidden-print">
-			<div class="col-sm-6 col-md-2">
+			<div class="col-sm-6 col-md-2 control-search">
 				<form id="search" role="search" action=".">
 					<div class="input-group">
 						<input type="search" name="query" class="form-control" value="<?php echo $query?>" placeholder="<?php echo $mode_label?>" aria-label="Search" <?php echo ($mode == 'me') ? 'disabled' : ''?>>
@@ -225,7 +225,7 @@ get_header();
 					<input type="submit">
 				</form>
 			</div>
-			<div class="col-sm-6 col-md-2 col-md-push-8">
+			<div class="col-sm-6 col-md-2 col-md-push-8 control-view">
 				<div class="btn-group btn-group-justified" id="action">
 					<a class="btn btn-default toggle-view<?php if ($view == 'list') {?> active<?php }?>" href="<?php echo tmsl_meetings_url(array('tsml-view'=>'list'))?>" data-id="list" role="button">
 						<?php _e('List', '12-step-meeting-list')?>
@@ -235,7 +235,7 @@ get_header();
 					</a>
 				</div>
 			</div>
-			<div class="col-sm-6 col-md-2 col-md-pull-2">
+			<div class="col-sm-6 col-md-2 col-md-pull-2 control-region">
 				<?php if ($regions_dropdown || $districts_dropdown) {?>
 				<div class="dropdown" id="region">
 					<a class="btn btn-default btn-block" data-toggle="tsml-dropdown" role="button" aria-haspopup="true" aria-expanded="false">
@@ -268,7 +268,7 @@ get_header();
 					</ul>
 				</div>
 			</div>
-			<div class="col-sm-6 col-md-2 col-md-pull-2">
+			<div class="col-sm-6 col-md-2 col-md-pull-2 control-day">
 				<div class="dropdown" id="day">
 					<a class="btn btn-default btn-block" data-toggle="tsml-dropdown" role="button" aria-haspopup="true" aria-expanded="false">
 						<span class="selected"><?php echo $day_label?></span>
@@ -283,7 +283,7 @@ get_header();
 					</ul>
 				</div>
 			</div>
-			<div class="col-sm-6 col-md-2 col-md-pull-2">
+			<div class="col-sm-6 col-md-2 col-md-pull-2 control-time">
 				<div class="dropdown" id="time">
 					<a class="btn btn-default btn-block" data-toggle="tsml-dropdown" role="button" aria-haspopup="true" aria-expanded="false">
 						<span class="selected"><?php echo $time_label?></span>
@@ -300,7 +300,7 @@ get_header();
 					</ul>
 				</div>
 			</div>
-			<div class="col-sm-6 col-md-2 col-md-pull-2">
+			<div class="col-sm-6 col-md-2 col-md-pull-2 control-type">
 				<?php if (count($tsml_types_in_use) && !empty($tsml_programs[$tsml_program]['types'])) {?>
 				<div class="dropdown" id="type">
 					<a class="btn btn-default btn-block" data-toggle="tsml-dropdown" role="button" aria-haspopup="true" aria-expanded="false">
@@ -331,9 +331,11 @@ get_header();
 				<div id="table-wrapper">
 					<table class="table table-striped">
 						<thead class="hidden-print">
-							<?php foreach ($tsml_columns as $key => $column) {
-								echo '<th class="' . $key . '"' . ($tsml_sort_by == $key ? ' data-sort="asc"' : '') . '>' . __($column, '12-step-meeting-list') . '</th>';
-							}?>
+							<tr>
+								<?php foreach ($tsml_columns as $key => $column) {
+									echo '<th class="' . $key . '"' . ($tsml_sort_by == $key ? ' data-sort="asc"' : '') . '>' . __($column, '12-step-meeting-list') . '</th>';
+								}?>
+							</tr>
 						</thead>
 						<tbody id="meetings_tbody">
 							<?php

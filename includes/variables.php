@@ -315,6 +315,7 @@ function tsml_define_strings() {
 				'N'		=> __('Native American', '12-step-meeting-list'),
 				'BE'	=> __('Newcomer', '12-step-meeting-list'),
 				'O'		=> __('Open', '12-step-meeting-list'),
+				'POC'	=> __('People of Color', '12-step-meeting-list'),
 				'P'		=> __('Professionals', '12-step-meeting-list'),
 				'POL'	=> __('Polish', '12-step-meeting-list'),
 				'POR'	=> __('Portuguese', '12-step-meeting-list'),
