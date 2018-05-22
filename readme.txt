@@ -4,7 +4,7 @@ Donate link: https://meetingguide.org/donate
 Tags: 12-step, aa, al-anon, coda, meetings, na, oa, saa, slaa
 Requires at least: 3.2
 Tested up to: 4.9
-Stable tag: 2.17.15
+Stable tag: 2.17.16
 
 This plugin helps twelve step recovery programs list their meetings. It standardizes addresses, and displays results in a searchable list and map.
 
@@ -28,6 +28,7 @@ This plugin was originally designed to maintain a list of AA meetings in Santa C
 1. [Brainerd, MN](http://aacentrallakes.org/meetings/)
 1. [Burlington, NC](http://www.aanc33.org/meetings/)
 1. [Cancún, Mexico](http://aacancun.org/meetings/)
+1. [Charleston, SC](http://tcio.org/meetings)
 1. [Charleston, WV](http://aawvdist1.org/wordpress/?post_type=tsml_meeting)
 1. [Charlotte, NC](http://charlotteaa.org/meetings/)
 1. [Cincinnati, OH](http://cincinnatiaa.org/meetings/)
@@ -43,6 +44,7 @@ This plugin was originally designed to maintain a list of AA meetings in Santa C
 1. [Elk Grove Village, IL](http://d15aa.org/d15aa.org/?post_type=meetings)
 1. [Elgin, IL](http://dist22.aa-nia.org/meetings/)
 1. [Fargo, ND](http://www.fmmeetinglist.org/meetings/)
+1. [Fredericksburg, VA](http://www.aadistrict30va.org/wp/meetings/)
 1. [Fresno, CA](http://www.fresnoaa.org/gfaia/wp/meetings/)
 1. [Ft. Worth, TX](http://fortworthaa.org/?post_type=tsml_meeting)
 1. [Greensboro, NC](http://nc23.org/meetings/)
@@ -52,8 +54,10 @@ This plugin was originally designed to maintain a list of AA meetings in Santa C
 1. [Hernando County, FL](http://www.aahernando.org/meetings/)
 1. [Idaho](https://idahoarea18aa.org/meetings)
 1. [Inland Empire, CA](https://aainlandempire.org/meetings)
+1. [Jacksonville, FL](http://neflaa.org/wiktor/meetings/)
 1. [Joliet, IL](http://aadistrict51.org/meetings/)
 1. [Kansas](https://ks-aa.org/meetings/)
+1. [Kansas City](https://kc-aa.org/meetings/)
 1. [Kentucky](http://www.area26.net/wp/?post_type=tsml_meeting)
 1. [Lafayette, LA](http://aa-acadiana.org/site/meetings/)
 1. [Lakeland, FL](https://www.heartlandintergroup.org/meetings/)
@@ -111,6 +115,7 @@ This plugin was originally designed to maintain a list of AA meetings in Santa C
 1. [Shreveport, LA](http://aa-shreveport.org/meetings/)
 1. [Sonoma County, CA](http://www.sonomacountyaa.org/meetings/)
 1. [South Lexington, KY](http://aasouthlexingtonky.org/meetings/)
+1. [Southeastern Indiana](http://seigaa.org/meetings/)
 1. [Southern Colorado](http://www.puebloaa.org/meetings/)
 1. [Southern New Jersey](http://aasj.org/meetings/)
 1. [Southwestern Missouri](https://aaswmo.org/meetings)
@@ -189,6 +194,7 @@ This plugin was originally designed to maintain a list of AA meetings in Santa C
 1. [Poland](http://anonimowinarkomani.org/meetings/)
 1. [Roseville, CA](https://sfana.org/meetings/)
 1. [Sacramento, CA](https://sacramentona.org/meetings/)
+1. [Toledo, OH](https://toledonameetings.com/meetings/)
 1. [Vienna](https://www.navienna.com/meetings/?d=any)
 1. [Western Oklahoma](https://wascokna.org/meetings/)
 
@@ -312,13 +318,13 @@ reformat your incoming data to the standard format
 	}
 
 = How can I change some of the text on the template pages, eg the column headings? =
-You can make use of the [gettext filter](https://codex.wordpress.org/Plugin_API/Filter_Reference/gettext) to override the plugin's translation strings. For example, if you wanted to replace 'Region' with 'Province,' you could add the following to your functions.php file.
+You can make use of the [gettext filter](https://codex.wordpress.org/Plugin_API/Filter_Reference/gettext) to override the plugin's translation strings. For example, if you wanted to replace 'Region' with 'City,' you could add the following to your functions.php file.
 
 	function theme_override_tsml_strings($translated_text, $text, $domain) {
 		if ($domain == '12-step-meeting-list') {
 			switch ($translated_text) {
 				case 'Region':
-					return 'Province';
+					return 'City';
 			}
 		}
 		return $translated_text;
@@ -365,6 +371,10 @@ pin will still show up for these meetings and people will try to get directions 
 1. Edit location
 
 == Changelog ==
+
+= 2.17.16 =
+* Fixing Varnish cache-related error when generating CSV (Tidewater Intergroup)
+* Save location as draft when there are some meetings but they are unpublished (East Bay)
 
 = 2.17.15 =
 * Classes for styling / removing control boxes (Sexaholics Anonymous)

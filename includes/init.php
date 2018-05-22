@@ -45,8 +45,17 @@ function tsml_init() {
 		$classes[] = sanitize_title($theme->Template);
 		return $classes;
 	}
-	
-	//add plugin version number to header
+}
+
+if (is_admin()) {
+	//delete orphans when trashing posts
+	add_action('trashed_post', 'tsml_trashed_post');
+	function tsml_trashed_post($post_id) {
+	    if (get_post_type($post_id) !== 'tsml_meeting') return;
+	    tsml_delete_orphans();
+	}
+} else {
+	//add plugin version number to header on public site
 	add_action('wp_head', 'tsml_head');
 	function tsml_head() {
 		global $tsml_sharing;

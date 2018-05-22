@@ -294,14 +294,8 @@ function tsml_ajax_csv() {
 		$return .= implode($delimiter, $line) . PHP_EOL;
 	}
 
-	//dd($return);
-	
 	//headers to trigger file download
-	header('Cache-Control: maxage=1');
-	header('Pragma: public');
-	header('Content-Description: File Transfer');
-	header('Content-Type: text/plain');
-	header('Content-Length: ' . strlen($return));
+	header('Content-Type: text/csv');
 	header('Content-Disposition: attachment; filename="meetings.csv"');
 
 	//output
