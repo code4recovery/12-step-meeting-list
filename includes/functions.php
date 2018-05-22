@@ -261,7 +261,7 @@ if (!function_exists('tsml_delete')) {
 		$post_ids = implode(', ', $post_ids);
 		
 		//run deletes
-		$wpdb->query('DELETE FROM ' . $wpdb->posts . ' WHERE id IN (' . $post_ids . ')');
+		$wpdb->query('DELETE FROM ' . $wpdb->posts . ' WHERE ID IN (' . $post_ids . ')');
 		$wpdb->query('DELETE FROM ' . $wpdb->postmeta . ' WHERE post_id IN (' . $post_ids . ')');
 		$wpdb->query('DELETE FROM ' . $wpdb->term_relationships . ' WHERE object_id IN (' . $post_ids . ')');
 	}
@@ -272,9 +272,16 @@ if (!function_exists('tsml_delete')) {
 if (!function_exists('tsml_delete_orphans')) {
 	function tsml_delete_orphans() {
 		global $wpdb;
-		$location_ids = $wpdb->get_col('SELECT ID FROM ' . $wpdb->posts . ' l WHERE l.post_type = "tsml_location" AND (SELECT COUNT(*) FROM ' . $wpdb->posts . ' m WHERE m.post_type="tsml_meeting" AND m.post_parent = l.id) = 0');
-		$group_ids = $wpdb->get_col('SELECT ID FROM ' . $wpdb->posts . ' g WHERE g.post_type = "tsml_group" AND (SELECT COUNT(*) FROM ' . $wpdb->postmeta . ' m WHERE m.meta_key="group_id" AND m.meta_value = g.id) = 0');
+		$location_ids = $wpdb->get_col('SELECT l.ID FROM ' . $wpdb->posts . ' l WHERE l.post_type = "tsml_location" AND (SELECT COUNT(*) FROM ' . $wpdb->posts . ' m WHERE m.post_type="tsml_meeting" AND m.post_parent = l.id) = 0');
+		$group_ids = $wpdb->get_col('SELECT g.ID FROM ' . $wpdb->posts . ' g WHERE g.post_type = "tsml_group" AND (SELECT COUNT(*) FROM ' . $wpdb->postmeta . ' m WHERE m.meta_key="group_id" AND m.meta_value = g.id) = 0');
 		tsml_delete(array_merge($location_ids, $group_ids));
+
+		//edge case: draft-ify locations with only unpublished meetings
+		$location_ids = $wpdb->get_col('SELECT l.ID FROM ' . $wpdb->posts . ' l 
+			WHERE l.post_type = "tsml_location" AND 
+				(SELECT COUNT(*) FROM wp_posts m 
+				WHERE m.post_type="tsml_meeting" AND m.post_status="publish" AND m.post_parent = l.id) = 0');
+		$wpdb->query('UPDATE ' . $wpdb->posts . ' l SET l.post_status = "draft" WHERE ID IN (' . implode(', ', $location_ids) . ')');
 	}
 }
 
