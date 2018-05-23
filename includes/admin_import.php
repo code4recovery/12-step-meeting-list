@@ -2,7 +2,9 @@
 	
 //import CSV file and handle settings
 function tmsl_import_page() {
-	global $wpdb, $tsml_data_sources, $tsml_programs, $tsml_program, $tsml_nonce, $tsml_days, $tsml_feedback_addresses, $tsml_notification_addresses, $tsml_distance_units, $tsml_sharing, $tsml_sharing_keys, $tsml_contact_display;
+	global $wpdb, $tsml_data_sources, $tsml_programs, $tsml_program, $tsml_nonce, $tsml_days, $tsml_feedback_addresses, 
+	$tsml_notification_addresses, $tsml_distance_units, $tsml_sharing, $tsml_sharing_keys, $tsml_contact_display,
+	$tsml_google_maps_key, $tsml_legacy_maps_key;
 
 	$error = false;
 	
@@ -404,6 +406,22 @@ function tmsl_import_page() {
 			tsml_alert(sprintf(esc_html__('<p><code>%s</code> was not found in the list of addresses. Please try again.</p>', '12-step-meeting-list'), $email), 'error');
 		}
 	}
+
+	//add an API key
+	if (!empty($_POST['tsml_add_google_maps_key']) && isset($_POST['tsml_nonce']) && wp_verify_nonce($_POST['tsml_nonce'], $tsml_nonce)) {
+		$key = sanitize_text_field($_POST['tsml_add_google_maps_key']);
+		if ($key !== $tsml_google_maps_key) { //don't acutally save a built-in key
+			if (empty($key)) {
+				delete_option('tsml_google_maps_key');
+				$tsml_google_maps_key = $tsml_legacy_maps_key;
+				tsml_alert(__('API key removed.', '12-step-meeting-list'));
+			} else {
+				update_option('tsml_google_maps_key', $key);
+				$tsml_google_maps_key = $key;
+				tsml_alert(__('API key saved.', '12-step-meeting-list'));
+			}
+		}
+	}
 	?>
 	<div class="wrap">
 		<h2><?php _e('Import & Settings', '12-step-meeting-list')?></h2>
@@ -421,6 +439,46 @@ function tmsl_import_page() {
 						<div class="progress-bar"></div>
 					</div>
 					<ol id="tsml_import_errors" class="error inline hidden"></ol>
+					<?php }?>
+
+					<?php if ($tsml_google_maps_key == $tsml_legacy_maps_key) {?>
+					<div class="notice notice-warning inline" style="margin: 1px 0 22px;">
+						<div class="inside">
+							<h3>Get a Google API Key</h3>
+							<p>Due to a change in Google's pricing, it's no longer possible for us to include an unrestricted Google Maps
+								API key with this plugin. There is <a href="https://meetingguide.org/google-api" target="_blank">more 
+								about why here</a>.</p>
+							<p>An API key enables Google Maps on your public and admin webpages. Please 
+								<a href="https://developers.google.com/maps/documentation/javascript/get-api-key" target="_blank">go here</a> 
+								to get a key from Google. The process should only take a few minutes, although you will have to 
+								enter a credit card. 
+								<a href="https://theeventscalendar.com/knowledgebase/setting-up-your-google-maps-api-key/" target="_blank">Here 
+								are some instructions</a>.</p>
+							<p>Be sure to:<br>
+								<span class="dashicons dashicons-yes"></span> Enable the Google Maps Javascript API<br>
+								<span class="dashicons dashicons-yes"></span> Secure your credentials by adding your website URL to the list
+								of allowed referrers</p>
+							<p>Once you're done, paste your new key below.</p>
+							<p><strong>In all likelihood you will never be charged.</strong> Your site would have to get a 
+								tremendous amount of traffic for that to happen.</p>
+							<p><strong>If this is a hassle, and you are an AA service entity, we can cover the cost of your traffic 
+								with our AA member donations.</strong> Please <a href="mailto:info@meetingguide.org?subject=API Key Whitelist <?php echo $_SERVER['HTTP_HOST']?>">let us know</a>
+								about your site and mention what type of AA service entity you are (Central Office, General Service
+								Area, District, International GSO, etc). Once you're added you'll see a plugin update and this 
+								message will disappear.</p>
+							<p><strong>This site is currently using a key that will expire on June 10, 2018.</strong> Once it expires, 
+								your users will see error messages where the maps should be.</p>
+							<form class="columns" method="post" action="<?php echo $_SERVER['REQUEST_URI']?>" style="margin:15px -5px 22px;">
+								<?php wp_nonce_field($tsml_nonce, 'tsml_nonce', false)?>
+								<div class="input">
+									<input type="text" name="tsml_add_google_maps_key" placeholder="Enter Google API key here">
+								</div>
+								<div class="btn">
+									<input type="submit" class="button" value="<?php _e('Add Key', '12-step-meeting-list')?>">
+								</div>
+							</form>
+						</div>
+					</div>
 					<?php }?>
 					
 					<div class="postbox">
@@ -571,7 +629,7 @@ function tmsl_import_page() {
 							<h3><?php _e('Where\'s My Info?', '12-step-meeting-list')?></h3>
 							<p><?php printf(__('Your public meetings page is <a href="%s">right here</a>. Link that page from your site\'s nav menu to make it visible to the public.', '12-step-meeting-list'), get_post_type_archive_link('tsml_meeting'))?></p>
 							<p><?php printf(__('You can also download your meetings in <a href="%s">CSV format</a>.', '12-step-meeting-list'), admin_url('admin-ajax.php') . '?action=csv')?></p>
-							<p><?php printf(__('A very basic <a href="%s">PDF schedule</a> is available.', '12-step-meeting-list'), admin_url('admin-ajax.php') . '?action=tsml_pdf')?></p>
+							<p><?php printf(__('A very basic PDF schedule is available in two sizes: <a href="%s">half page</a> and <a href="%s">full page</a>.', '12-step-meeting-list'), admin_url('admin-ajax.php') . '?action=tsml_pdf', admin_url('admin-ajax.php') . '?action=tsml_pdf&width=8.5')?></p>
 							<?php
 							$meetings = tsml_count_meetings();
 							$locations = tsml_count_locations();
@@ -759,6 +817,22 @@ function tmsl_import_page() {
 									<input type="submit" class="button" value="<?php _e('Add', '12-step-meeting-list')?>">
 								</div>
 							</form>
+
+							<?php if ($tsml_google_maps_key !== $tsml_legacy_maps_key) {?>
+							<details>
+								<summary><strong><?php _e('Google API Key', '12-step-meeting-list')?></strong></summary>
+								<p><?php _e('Key that Google uses to authorize usage of its Maps services', '12-step-meeting-list')?></p>
+							</details>
+							<form class="columns" method="post" action="<?php echo $_SERVER['REQUEST_URI']?>">
+								<?php wp_nonce_field($tsml_nonce, 'tsml_nonce', false)?>
+								<div class="input">
+									<input type="text" name="tsml_add_google_maps_key" value="<?php echo $tsml_google_maps_key?>" placeholder="Enter Google API key here">
+								</div>
+								<div class="btn">
+									<input type="submit" class="button" value="<?php _e('Update', '12-step-meeting-list')?>">
+								</div>
+							</form>
+							<?php }?>
 						</div>
 					</div>
 					<div class="postbox">

@@ -19,6 +19,9 @@ $tsml_columns = array(
 //whether contacts are displayed publicly (defaults to no)
 $tsml_contact_display = get_option('tsml_contact_display', 'private');
 
+//empty global curl handle in case we need it
+$tsml_curl_handle = null;
+
 //load the array of URLs that we're using
 $tsml_data_sources = get_option('tsml_data_sources', array());
 
@@ -41,8 +44,50 @@ $tsml_distance_units = get_option('tsml_distance_units', 'mi');
 //load email addresses to send user feedback about meetings
 $tsml_feedback_addresses = get_option('tsml_feedback_addresses', array());
 
-//usage is paid for by donations at meetingguide.org/donate
-$tsml_google_api_key = 'AIzaSyBRvfz_gFi4Gb93h9iW3-lgQYnQiek_Xjc';
+//this key will stop working 6/10/2018
+$tsml_legacy_maps_key = 'AIzaSyBRvfz_gFi4Gb93h9iW3-lgQYnQiek_Xjc';
+
+//load the API key user saved, if any
+if (!$tsml_google_maps_key = get_option('tsml_google_maps_key')) {
+	$host = (substr($_SERVER['HTTP_HOST'], 0, 4) == 'www.') ? substr($_SERVER['HTTP_HOST'], 4) : $_SERVER['HTTP_HOST'];
+	if (in_array($host, array(
+		'aa-acadiana.org', 'aa-cenla.org', 'aa-dc.org', 'aa-district16.org', 'aa-mississippi.org', 'aa-nia-dist11.org', 
+		'aa-quebec.org', 'aa-san-mateo.org', 'aa-shreveport.org', 'aa-westerncolorado.com', 'aa87.org', 'aabatonrouge.org',
+		'aacancun.org', 'aacentrallakes.org', 'aacentralohio.org', 'aadavis.org', 'aadaytona.org', 'aadaytononline.org', 
+		'aadistrict1.org', 'aadistrict30va.org', 'aadistrict4143.com', 'aadistrict51.org', 'aadistrict61.org', 'aaharrisburg.org', 
+		'aahernando.org', 'aainlandempire.org', 'aainri.com', 'aainthedesert.org', 'aalifeline.org', 'aalv.org', 'aamadisonwi.org', 
+		'aamaui.org', 'aamesaaz.org', 'aamiamidade.org', 'aaminneapolis.org', 'aaminnesota.com', 'aamonterey.org', 'aanapa.org', 
+		'aanaples.org',
+		'aanc33.org', 'aancw.org', 'aaneworleans.org', 'aaoklahoma.org', 'aapensacola.org', 'aaregina.com', 'aasacramento.org',
+		'aasalinas.org', 'aasanjose.org', 'aasepia.org', 'aasf.org', 'aasj.org', 'aasolanonorth.org', 'aasouthlexingtonky.org',
+		'aaspokane.org', 'aastl.org', 'aastlucieintergroup.com', 'aaswmo.org', 'aatokyo.org', 'aatopeka.org', 'aatoronto.org',
+		'aaventuracounty.org', 'aawvdist1.org', 'alcoholics-anonymous.eu', 'area26.net', 'area72aa.org',
+		'arkansascentraloffice.org', 'austinaa.org', 'bowlinggreenaa.org', 'cbiaa.org', 'cflintergroup.org', 'charlotteaa.org',
+		'cincinnatiaa.org', 'coloradospringsaa.org', 'contracostaaa.org', 'csoaamaine.org', 'd15aa.org', 'dist22.aa-nia.org',
+		'dist23.aa-nia.org', 'dist41.aa-nia.org', 'district05.org', 'district11-aa.org', 'district12.org', 'district20aa.org',
+		'district40aa.com', 'district43.com', 'district43aa.org', 'eastbayaa.org', 'etiaa.org', 'fmmeetinglist.org', 
+		'fortworthaa.org', 'fresnoaa.org', 'hacoaa.org', 'hagerstownaa.org', 'heartlandintergroup.org', 'home.pdxaa.org', 
+		'idahoarea18aa.org', 'intergrupamidlands.co.uk', 'kc-aa.org', 'ks-aa.org', 'lancasteraa.org', 'leecountyaa.org',
+		'lewiscountyaa.org', 'meetings.aatampa-area.org', 'nassauaa.org', 'nc23.org', 'ndiaa.org', 'neflaa.org', 'nhaa.net',
+		'nm-aa.org', 'oahucentraloffice.com', 'puebloaa.org', 'readingberksintergroup.org', 
+		'rocklandnyaa.org', 'santafeaa.org', 'savannahaa.com', 'secularaa.org', 'seigaa.org', 'sonomacountyaa.org', 'tcio.org',
+		'tidewaterintergroup.org', 'tricountyaa.org', 'trivalleyaa.org', 'vancouveraa.ca', 'westernsloped22.org', 
+		'westhawaiiaa.org', 'wkintergroup.org', 'wp.cviaa.org', 'wpadistrict52aa.org', 
+		//'aasanjose.test',
+	))) {
+		$tsml_google_maps_key = 'AIzaSyBQnO24CgG8GS5-zypNqfRFrsv648SnrbU';
+	} elseif ($host == 'nyintergroup.org') {
+		//special key for new york (to gauge usage on most-active website)
+		$tsml_google_maps_key = 'AIzaSyBfpu1JpKTsUkHqVLKIUv3TKNzdd66n_9k';
+	} else {
+		$tsml_google_maps_key = $tsml_legacy_maps_key;
+
+		if (is_admin() && @$_GET['page'] != 'import') {
+			//warn user if necessary
+			tsml_alert(sprintf(__('12 Step Meeting List needs a <a href="%s">Google Maps API Key</a> to work properly.', '12-step-meeting-list'), admin_url('edit.php?post_type=tsml_meeting&page=import')), 'warning');
+		}
+	}
+}
 
 /*
 unfortunately the google geocoding API is not always perfect. used by tsml_import() and admin.js
@@ -52,18 +97,21 @@ $tsml_google_overrides = array(
 	//franklin memorial hospital
 	'Farmington, ME, USA' => array(
 		'formatted_address'	=> '111 Franklin Health Commons, Farmington, ME 04938, US',
+		'city' 				=> 'Farmington',
 		'latitude'			=> '44.62654999999999',
 		'longitude'			=> '-70.162092',
 	),
 	//maine va medical center
 	'Augusta, ME 04330, USA' => array(
 		'formatted_address'	=> '1 VA Center, Augusta, ME 04330, US',
+		'city'				=> 'Augusta',
 		'latitude'			=> '44.2803692',
 		'longitude'			=> '-69.7042675',
 	),
 	//fellowship hall at calvary baptist church (only apple maps knows of this address)
 	'61 State St, Brewer, ME 04412, USA' => array(
 		'formatted_address'	=> '12 Family Center Ln, Brewer, ME 04412, USA',
+		'city'				=> 'Brewer',
 		'latitude'			=> '44.794759',
 		'longitude'			=> '-68.761303',
 	),
@@ -71,6 +119,7 @@ $tsml_google_overrides = array(
 	//toronto meeting that is showing up with zero_results
 	'519 Church St, Toronto, ON M4Y 2C9, Canada' => array(
 		'formatted_address'	=> '519 Church St, Toronto, ON M4Y 2C9, Canada',
+		'city'				=> 'Toronto',
 		'latitude'			=> '43.666532',
 		'longitude'			=> '-79.38097',
 	),
@@ -78,51 +127,61 @@ $tsml_google_overrides = array(
 	//nyc
 	'Beach 94th St, Queens, NY 11693, USA' => array(
 		'formatted_address'	=> '320 Beach 94th Street, Queens, NY 11693, US',
+		'city'				=> 'Queens',
 		'latitude'			=> '40.587465',
 		'longitude'			=> '-73.81683149999999',
 	),
 	'14-54 31st Ave, Long Island City, NY 11106, USA' => array(
 		'formatted_address'	=> '14-54 31st Rd, Long Island City, NY 11106, USA',
+		'city'				=> 'Long Island City',
 		'latitude'			=> '40.7667739',
 		'longitude'			=> '-73.9306111',
 	),
 	'Advent Lutheran Church, 2504 Broadway, New York, NY 10025, USA' => array(
 		'formatted_address'	=> '2504 Broadway, New York, NY 10025, USA',
+		'city'				=> 'New York',
 		'latitude'			=> '40.7926923',
 		'longitude'			=> '-73.9726924',
 	),
 	'St. Thomas More\'s Church, 65 E 89th St, New York, NY 10128, USA' => array(
 		'formatted_address'	=> '65 E 89th St, New York, NY 10128, USA',
+		'city'				=> 'New York',
 		'latitude'			=> '40.7827448',
 		'longitude'			=> '-73.9567008',
 	),
 	'St. Catherine of Siena\'s Church, 411 E 68th St, New York, NY 10065, USA' => array(
 		'formatted_address'	=> '411 E 68th St, New York, NY 10065, USA',
+		'city'				=> 'New York',
 		'latitude'			=> '40.7652978',
 		'longitude'			=> '-73.9570329',
 	),
 	'Our Lady of Good Counsel Church, 230 E 90th St, New York, NY 10128, USA' => array(
 		'formatted_address'	=> '230 E 90th St, New York, NY 10128, USA',
+		'city'				=> 'New York',
 		'latitude'			=> '40.7806471',
 		'longitude'			=> '-73.9509674',
 	),
 	'Church of Our Lady of Guadalupe, 229 W 14th St, New York, NY 10011, USA' => array(
 		'formatted_address'	=> '229 W 14th St, New York, NY 10011, USA',
+		'city'				=> 'New York',
 		'latitude'			=> '40.7393643',
 		'longitude'			=> '-74.00081270000001',
 	),
 	'Westlands, 1 Mead Way, Bronxville, NY 10708, USA' => array(
 		'formatted_address'	=> '1 Mead Way, Bronxville, NY 10708, USA',
+		'city'				=> 'Bronxville',
 		'latitude'			=> '40.935443',
 		'longitude'			=> '-73.8437546',
 	),
 	'St. Andrew\'s Church, 20 Cardinal Hayes Pl, New York, NY 10007, USA' => array(
 		'formatted_address'	=> '519 Church St, Toronto, ON M4Y 2C9, Canada',
+		'city'				=> 'Toronto',
 		'latitude'			=> '40.7133468',
 		'longitude'			=> '-74.0025814',
 	),
 	'208 E 13th St, New York, NY 10003, USA' => array(
 		'formatted_address' => '208 W 13th St, New York, NY 10011, USA',
+		'city'				=> 'New York',
 		'latitude'			=> '40.73800835',
 		'longitude'			=> '-74.0010489174602',
 	),
@@ -130,6 +189,7 @@ $tsml_google_overrides = array(
 	//santa cruz
 	'150 Church St, Santa Cruz, CA 95060, USA' => array(
 		'formatted_address'	=> '150 Church St, Davenport, CA 95017, USA',
+		'city'				=> 'Davenport',
 		'latitude'			=> '37.012471',
 		'longitude'			=> '-122.192971',
 	),
@@ -137,16 +197,19 @@ $tsml_google_overrides = array(
 	//refuge recovery
 	'20, 19100 Ventura Blvd, Tarzana, CA 91356, USA' => array(
 		'formatted_address'	=> '19100 Ventura Blvd, Tarzana, CA 91356, USA',
+		'city'				=> 'Tarzana',
 		'latitude'			=> '34.17217249999999',
 		'longitude'			=> '-118.548945',
 	),
 	'1669 Euclid Ave, Boulder, CO 80302, USA' => array(
 		'formatted_address'	=> '1669 Euclid Ave, Boulder, CO 80309, USA',
+		'city'				=> 'Boulder',
 		'latitude'			=> '40.0065706',
 		'longitude'			=> '-105.2717488',
 	),
 	'55-514 Hawi Rd, Waimea, HI 96743, USA' => array(
 		'formatted_address'	=> '55-514 Hawi Rd, Hawi, HI 96743, USA',
+		'city'				=> 'Hawi',
 		'latitude'			=> '20.2376863',
 		'longitude'			=> '-155.830639',
 	),
@@ -154,6 +217,7 @@ $tsml_google_overrides = array(
 	//new mexico
 	'1114 Private Drive, Dixon, NM 87527, USA' => array(
 		'formatted_address'	=> '1114 Private Drive, Dixon, NM 87527, USA',
+		'city'				=> 'Dixon',
 		'latitude'			=> '36.1988282',
 		'longitude'			=> '-105.88777240000002',
 	),

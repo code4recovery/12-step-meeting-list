@@ -38,10 +38,10 @@ jQuery(function($){
 				for (var i = 0; i < data.errors.length; i++) $errors.append(data.errors[i]);
 			}
 			
-			//console.log('geocoded ' + data.geocoded)
-			
 			//if there are more to import, go again
 			if (data.remaining) runImport();
+		}).fail(function(jqxhr, textStatus, error) {
+			console.warn(textStatus, error);
 		});
 	}
 
@@ -228,43 +228,38 @@ jQuery(function($){
 				return;
 			}
 
-			$.getJSON('https://maps.googleapis.com/maps/api/geocode/json', { 
-					address: val, 
-					key: tsml.google_api_key,
-					language: tsml.language
-				}, function(data){
+			$.getJSON(tsml.ajaxurl, { 
+				action: 'tsml_geocode',
+				address: val, 
+				nonce: tsml.nonce
+			}, function(geocoded){
 
 				//check status first, eg REQUEST_DENIED, ZERO_RESULTS
-				if (data.status != 'OK') return;
-							
-				var google_overrides = $.parseJSON(tsml.google_overrides);
-				
-				//check if there is an override, because the Google Geocoding API is not always right
-				var address = (typeof google_overrides[data.results[0].formatted_address] == 'undefined') ? {
-					formatted_address: data.results[0].formatted_address,
-					latitude: data.results[0].geometry.location.lat,
-					longitude: data.results[0].geometry.location.lng
-				} : address = google_overrides[data.results[0].formatted_address];
-				
+				if (geocoded.status == 'error') return;
+											
 				//set lat + lng
-				$('input#latitude').val(address.latitude);
-				$('input#longitude').val(address.longitude);
-				setMap(address.latitude, address.longitude);
+				$('input#latitude').val(geocoded.latitude);
+				$('input#longitude').val(geocoded.longitude);
+				setMap(geocoded.latitude, geocoded.longitude);
 
 				//guess region if not set
 				var region_id = false;
 				if (!$('select#region option[selected]').length) {
 					$('select#region option').each(function(){
 						var region_name = $(this).text().replace('&nbsp;', '').trim();
-						if (address.formatted_address.indexOf(region_name) != -1) region_id = $(this).attr('value');
+						if (geocoded.city && region_name == geocded.city) {
+							region_id = $(this).attr('value');
+						} else if (geocoded.formatted_address.indexOf(region_name) != -1) {
+							region_id = $(this).attr('value');
+						}
 					});
 				}
 				
 				//save address and check apply change box status
-				$('input#formatted_address').val(address.formatted_address).trigger('keyup');
+				$('input#formatted_address').val(geocoded.formatted_address).trigger('keyup');
 				
 				//check if location with same address is already in the system, populate form
-				$.getJSON(tsml.ajaxurl + '?action=address', { formatted_address: address.formatted_address }, function(data){
+				$.getJSON(tsml.ajaxurl + '?action=address', { formatted_address: geocoded.formatted_address }, function(data){
 					if (data) {
 						$('input[name=location]').val(data.location);
 						if (data.region != $('select[name=region]').val()) {

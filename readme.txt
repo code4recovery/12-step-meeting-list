@@ -4,7 +4,7 @@ Donate link: https://meetingguide.org/donate
 Tags: 12-step, aa, al-anon, coda, meetings, na, oa, saa, slaa
 Requires at least: 3.2
 Tested up to: 4.9
-Stable tag: 2.17.16
+Stable tag: 3.0.0
 
 This plugin helps twelve step recovery programs list their meetings. It standardizes addresses, and displays results in a searchable list and map.
 
@@ -34,6 +34,7 @@ This plugin was originally designed to maintain a list of AA meetings in Santa C
 1. [Cincinnati, OH](http://cincinnatiaa.org/meetings/)
 1. [Continental Europe](http://alcoholics-anonymous.eu/meetings/)
 1. [Colorado Springs, CO](http://www.coloradospringsaa.org/meetings/)
+1. [Columbus, OH](https://aacentralohio.org/meetings/)
 1. [Corpus Christi, TX](http://www.cbiaa.org/meetings/)
 1. [Davis, CA](http://aadavis.org/meetings/)
 1. [Dayton, OH](http://aadaytononline.org/meetings/)
@@ -88,6 +89,7 @@ This plugin was originally designed to maintain a list of AA meetings in Santa C
 1. [New Mexico](https://nm-aa.org/meetings/)
 1. [New York, NY](https://www.nyintergroup.org/meetings/)
 1. [North Central Washington](http://aancw.org/meetings)
+1. [North Coast, LA](http://district12.org/meetings/)
 1. [North Port, FL](http://aalifeline.org/meetings/)
 1. [Oahu, HI](http://oahucentraloffice.com/meetings/)
 1. [Oklahoma](http://aaoklahoma.org/meetings)
@@ -95,6 +97,7 @@ This plugin was originally designed to maintain a list of AA meetings in Santa C
 1. [Palm Springs, CA](http://aainthedesert.org/meetings/)
 1. [Pensacola, FL](http://aapensacola.org/meetings/)
 1. [Philadelphia, PA](http://www.aasepia.org/meetings/)
+1. [Placerville, CA](http://westernsloped22.org/meetings/)
 1. [Portland, OR](http://home.pdxaa.org/meetings/)
 1. [Québec, Canada (All)](http://aa-quebec.org/aaqc_wp/meetings/)
 1. [Québec, Canada (Région 87, Southwest)](http://aa87.org/meetings/)
@@ -143,7 +146,7 @@ This plugin was originally designed to maintain a list of AA meetings in Santa C
 1. [Wenatchee, WA](http://aancw.org/meetings)
 1. [West Hawaii, HI](http://www.westhawaiiaa.org/meetings/)
 1. [West-Central Wisconsin](http://www.district05.org/meetings/)
-1. [Western Slope, CA](http://westernsloped22.org/meetings/)
+1. [Western Colorado](https://aa-westerncolorado.com/meetings/)
 1. [Western Kentucky](http://wkintergroup.org/meetings/)
 1. [Western Washington](http://area72aa.org/meetings/)
 1. [Wilmington, DE](http://ndiaa.org/meetings/)
@@ -371,6 +374,14 @@ pin will still show up for these meetings and people will try to get directions 
 1. Edit location
 
 == Changelog ==
+
+= 3.0.0 =
+* Responds to [Google's imminent API price increase](https://meetingguide.org/google-api) by requiring most websites to sign up for a Google Maps API key
+* Whitelists all existing AA websites we know of
+* Provides link for those we don't to request whitelisting
+* Provides instructions and form for others to enter their API key
+* Reduces usage of Maps API by only loading it on demand
+* Caches user geocodes
 
 = 2.17.16 =
 * Fixing Varnish cache-related error when generating CSV (Tidewater Intergroup)

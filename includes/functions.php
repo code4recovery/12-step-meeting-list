@@ -31,10 +31,10 @@ if (!function_exists('tsml_alert')) {
 //used: in templates and on admin_edit.php
 if (!function_exists('tsml_assets')) {
 	function tsml_assets() {
-		global $tsml_street_only, $tsml_programs, $tsml_strings, $tsml_program, $tsml_google_api_key, $tsml_google_overrides, $tsml_distance_units, $tsml_defaults, $tsml_language, $tsml_columns, $tsml_nonce;
+		global $tsml_street_only, $tsml_programs, $tsml_strings, $tsml_program, $tsml_google_maps_key, $tsml_google_overrides, $tsml_distance_units, $tsml_defaults, $tsml_language, $tsml_columns, $tsml_nonce;
 			
 		//google maps api needed for maps and address verification, can't be onboarded
-		wp_enqueue_script('google_maps_api', '//maps.googleapis.com/maps/api/js?key=' . $tsml_google_api_key);
+		wp_enqueue_script('google_maps_api', '//maps.googleapis.com/maps/api/js?key=' . $tsml_google_maps_key);
 		
 		if (is_admin()) {
 			//dashboard page assets
@@ -42,9 +42,7 @@ if (!function_exists('tsml_assets')) {
 			wp_enqueue_script('tsml_admin', plugins_url('../assets/js/admin.min.js', __FILE__), array('jquery', 'google_maps_api'), TSML_VERSION, true);
 			wp_localize_script('tsml_admin', 'tsml', array(
 				'ajaxurl' => admin_url('admin-ajax.php'),
-				'language' => $tsml_language,
-				'google_api_key' => $tsml_google_api_key,
-				'google_overrides' => json_encode($tsml_google_overrides),
+				'nonce' => wp_create_nonce($tsml_nonce),
 			));
 		} else {
 			//public page assets
@@ -66,8 +64,7 @@ if (!function_exists('tsml_assets')) {
 				'debug' => WP_DEBUG,
 				'defaults' => $tsml_defaults,
 				'distance_units' => $tsml_distance_units,
-				'google_api_key' => $tsml_google_api_key,
-				'language' => $tsml_language,
+				'google_api_key' => $tsml_google_maps_key,
 				'nonce' => wp_create_nonce($tsml_nonce),
 				'program' => empty($tsml_programs[$tsml_program]['abbr']) ? $tsml_programs[$tsml_program]['name'] : $tsml_programs[$tsml_program]['abbr'],
 				'street_only' => $tsml_street_only,
@@ -281,7 +278,9 @@ if (!function_exists('tsml_delete_orphans')) {
 			WHERE l.post_type = "tsml_location" AND 
 				(SELECT COUNT(*) FROM wp_posts m 
 				WHERE m.post_type="tsml_meeting" AND m.post_status="publish" AND m.post_parent = l.id) = 0');
-		$wpdb->query('UPDATE ' . $wpdb->posts . ' l SET l.post_status = "draft" WHERE ID IN (' . implode(', ', $location_ids) . ')');
+		if (count($location_ids)) {
+			$wpdb->query('UPDATE ' . $wpdb->posts . ' l SET l.post_status = "draft" WHERE ID IN (' . implode(', ', $location_ids) . ')');
+		}
 	}
 }
 
@@ -451,6 +450,107 @@ if (!function_exists('tsml_front_page')) {
 			$wp_query->is_post_type_archive = 1;
 			$wp_query->is_archive = 1;
 		}
+	}
+}
+
+//function: request accurate address information from google
+//used:		tsml_ajax_import(), tsml_ajax_geocode()
+if (!function_exists('tsml_geocode')) {
+	function tsml_geocode($address) {
+		global $tsml_curl_handle, $tsml_language, $tsml_google_overrides;
+
+		//check cache
+		$addresses	= get_option('tsml_addresses', array());
+		if (array_key_exists($address, $addresses)) {
+			$addresses[$address]['status'] = 'cache';
+			return $addresses[$address];
+		}
+
+		//initialize curl handle if necessary
+		if (!$tsml_curl_handle) {
+			$tsml_curl_handle = curl_init();
+			curl_setopt_array($tsml_curl_handle, array(
+				CURLOPT_HEADER => 0, 
+				CURLOPT_RETURNTRANSFER => true, 
+				CURLOPT_TIMEOUT => 60,
+				CURLOPT_SSL_VERIFYPEER => false,
+			));	
+		}
+	
+		//send request to google
+		curl_setopt($tsml_curl_handle, CURLOPT_URL, 'https://maps.googleapis.com/maps/api/geocode/json?' . http_build_query(array(
+			'key' => 'AIzaSyCwIhOSfKs47DOe24JXM8nxfw1gC05BaiU',
+			'address' => $address,
+			'language' => $tsml_language,
+		)));
+
+		$result = curl_exec($tsml_curl_handle);
+		
+		//could not connect error
+		if (empty($result)) {
+			return array(
+				'status' => 'error', 
+				'reason' => 'Google could not validate the address <code>' . $address . '</code>. Response was <code>' . curl_error($tsml_curl_handle) . '</code>',
+			);
+		}
+		
+		//decode result
+		$data = json_decode($result);
+
+		if ($data->status == 'OK') {
+			//ok great
+		} elseif ($data->status == 'OVER_QUERY_LIMIT') {
+			//if over query limit, wait two seconds and retry, or then exit
+			//this isn't structured well. what if there are zero_results on the second attempt?
+			sleep(2);
+			$data = json_decode(curl_exec($ch));
+			if ($data->status == 'OVER_QUERY_LIMIT') {
+				return array(
+					'status' => 'error', 
+					'reason' => 'We are over the rate limit for the Google Geocoding API.'
+				);
+			}
+		} elseif ($data->status == 'ZERO_RESULTS') {
+			if (empty($result)) {
+				return array(
+					'status' => 'error', 
+					'reason' => 'Google could not validate the address <code>' . $address . '</code>',
+				);
+			}
+		} else {
+			return array(
+				'status' => 'error', 
+				'reason' => 'Google gave an unexpected response for address <code>' . $address . '</code>. Response was <pre>' . var_export($data, true) . '</pre>',
+			);
+		}
+
+		//check our overrides array in case google is wrong
+		if (array_key_exists($data->results[0]->formatted_address, $tsml_google_overrides)) {
+			$response = $tsml_google_overrides[$data->results[0]->formatted_address];
+		} else {
+			//start building response
+			$response = array(
+				'formatted_address' => $data->results[0]->formatted_address,
+				'latitude' => $data->results[0]->geometry->location->lat,
+				'longitude' => $data->results[0]->geometry->location->lng,
+				'city' => null,
+			);
+
+			//get city, we might need it for the region, and we are going to cache it
+			foreach ($data->results[0]->address_components as $component) {
+				if (in_array('locality', $component->types)) {
+					$response['city'] = $component->short_name;
+				}
+			}
+		}
+		
+		//cache result
+		$addresses[$address] = $response;
+		update_option('tsml_addresses', $addresses);
+
+		//add a status and return it
+		$response['status'] = 'geocode';
+		return $response;
 	}
 }
 
