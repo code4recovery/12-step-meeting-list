@@ -9,50 +9,17 @@ jQuery(function($){
 
 	//a) procedural logic
 	
-	var infowindow = new google.maps.InfoWindow();
-		
-	var searchMarker;
-	
-	var markers = [];
-	
-	var bounds = new google.maps.LatLngBounds();
-	
-	var userIcon = {
-		path: 'M20.5,0.5 c11.046,0,20,8.656,20,19.333c0,10.677-12.059,21.939-20,38.667c-5.619-14.433-20-27.989-20-38.667C0.5,9.156,9.454,0.5,20.5,0.5z',
-		fillColor: '#2c78b3',
-		fillOpacity: 1,
-		anchor: new google.maps.Point(40,50),
-		strokeWeight: 2,
-		strokeColor: '#2c52b3',
-		scale: .6
-	}
-	
-	var locationIcon = {
-		path: 'M20.5,0.5 c11.046,0,20,8.656,20,19.333c0,10.677-12.059,21.939-20,38.667c-5.619-14.433-20-27.989-20-38.667C0.5,9.156,9.454,0.5,20.5,0.5z',
-		fillColor: '#f76458',
-		fillOpacity: 1,
-		anchor: new google.maps.Point(40,50),
-		strokeWeight: 2,
-		strokeColor: '#b3382c',
-		scale: .6
-	}
+	var infowindow, searchMarker, map, markers, bounds;
 	
 	var $body = $('body');
 	
 	//if ($body.hasClass('post-type-archive-tsml_meeting')) {
 	if (typeof tsml_map !== 'object')  { //provided by template pages
 
-		//list/map page
-		var map = new google.maps.Map(document.getElementById('map'), {
-			disableDefaultUI: true,
-			scrollwheel: true,
-			streetViewControl: true,
-			zoomControl: true,
-			fullscreenControl: true,
-			mapTypeControlOptions: {
-				mapTypeIds: [google.maps.MapTypeId.ROADMAP, 'map_style']
-			}
-		});
+		//list/map page (only create if we're on the map view)
+		if ($('a.toggle-view[data-id="map"]').hasClass('active')) {
+			createMap();
+		}
 
 		//search typeahead
 		var tsml_regions = new Bloodhound({
@@ -92,8 +59,10 @@ jQuery(function($){
 		var mode = $('#search li.active a').attr('data-id');
 		if (mode == 'search') {
 			typeaheadEnable();
-			setMapMarkers();
-			setMapBounds();
+			if (map) {
+				setMapMarkers();
+				setMapBounds();
+			}
 		} else if ((mode == 'location') && $search_field.val().length) {
 			doSearch(false);
 		} else if (mode == 'me') {
@@ -113,7 +82,7 @@ jQuery(function($){
 			'<p>' + formatAddress(tsml_map.address) + '</p>'+
 			'<p><a class="btn btn-default tsml-directions" data-latitude="' + tsml_map.latitude + '" data-longitude="' + tsml_map.longitude + '" data-location="' + tsml_map.location + '">' + tsml_map.directions + '</a></p>';
 											
-		var map = new google.maps.Map(document.getElementById('map'), {
+		map = new google.maps.Map(document.getElementById('map'), {
 			zoom: 15,
 			center: new google.maps.LatLng((tsml_map.latitude + .0025), tsml_map.longitude),
 			disableDefaultUI: true,
@@ -126,7 +95,9 @@ jQuery(function($){
 			}
 		});
 		
-		var marker = setMapMarker(tsml_map.location, tsml_map.latitude, tsml_map.longitude, content);
+		infowindow = new google.maps.InfoWindow();
+
+		marker = setMapMarker(tsml_map.location, tsml_map.latitude, tsml_map.longitude, content);
 		
 		google.maps.event.trigger(marker, 'click');
 		
@@ -149,7 +120,7 @@ jQuery(function($){
 	//expand region select
 	$('.panel-expandable').on('click', '.panel-heading', function(e){
 		$(this).closest('.panel-expandable').toggleClass('expanded');
-		console.log('click');
+		tsmlDebug('expanding region');
 	})
 	
 	//single meeting page feedback form
@@ -327,6 +298,13 @@ jQuery(function($){
 		//don't do anything
 		if (action == previous) return;
 
+		//init map if it doesn't exist yet
+		if (action == 'map' && !map) {
+			createMap();
+			setMapMarkers();
+			setMapBounds();			
+		}
+
 		//toggle control, set meetings div
 		$('#meetings #action .toggle-view').toggleClass('active');
 		$('#meetings').attr('data-view', action);
@@ -368,6 +346,27 @@ jQuery(function($){
 
 	//c) functions
 	
+	//create a  google map
+	function createMap() {
+			
+		markers = [];
+		
+		bounds = new google.maps.LatLngBounds();
+		
+		map = new google.maps.Map(document.getElementById('map'), {
+			disableDefaultUI: true,
+			scrollwheel: true,
+			streetViewControl: true,
+			zoomControl: true,
+			fullscreenControl: true,
+			mapTypeControlOptions: {
+				mapTypeIds: [google.maps.MapTypeId.ROADMAP, 'map_style']
+			}
+		});
+
+		tsmlDebug('created map');
+	}
+
 	//run search (triggered by dropdown toggle or form submit) ('keyword_searching' means the current intent is keyword search)
 	function doSearch(keyword_searching) {
 	
@@ -434,23 +433,23 @@ jQuery(function($){
 				$('#search button i').removeClass().addClass('glyphicon glyphicon-refresh spinning');
 	
 				//geocode the address
-				$.getJSON('https://maps.googleapis.com/maps/api/geocode/json', { 
+				$.getJSON(tsml.ajaxurl, { 
+					action: 'tsml_geocode',
 					address: data.query, 
-					key: tsml.google_api_key,
-					language: tsml.language,
-				}, function(geocoded_data) {
+					nonce: tsml.nonce,
+				}, function(geocoded) {
 					$('#search button i').removeClass().addClass('glyphicon glyphicon-map-marker');
-					if (geocoded_data.status == 'OK') {
-						$search_field.val(geocoded_data.results[0].formatted_address);
-						data.latitude = geocoded_data.results[0].geometry.location.lat;
-						data.longitude = geocoded_data.results[0].geometry.location.lng;
-						data.query = ''; //don't actually keyword search this
-						setSearchMarker(data);
-						getMeetings(data, keyword_searching);
-					} else {
+					if (geocoded.status == 'error') {
 						//show error message
 						setSearchMarker();
 						setAlert('loc_error');
+					} else {
+						$search_field.val(geocoded.formatted_address);
+						data.latitude = geocoded.latitude;
+						data.longitude = geocoded.longitude;
+						data.query = ''; //don't actually keyword search this
+						setSearchMarker(data);
+						getMeetings(data, keyword_searching);
 					}
 				});
 			} else {
@@ -726,7 +725,15 @@ jQuery(function($){
 			position: { lat: lat, lng: lng },
 			map: map,
 			title: title,
-			icon: locationIcon,
+			icon: {
+				path: 'M20.5,0.5 c11.046,0,20,8.656,20,19.333c0,10.677-12.059,21.939-20,38.667c-5.619-14.433-20-27.989-20-38.667C0.5,9.156,9.454,0.5,20.5,0.5z',
+				fillColor: '#f76458',
+				fillOpacity: 1,
+				anchor: new google.maps.Point(40,50),
+				strokeWeight: 2,
+				strokeColor: '#b3382c',
+				scale: .6
+			},
 		});
 	
 		//add infowindow event
@@ -746,6 +753,8 @@ jQuery(function($){
 			if (locations.hasOwnProperty(location_id)) {
 				var location = locations[location_id];
 	
+				infowindow = new google.maps.InfoWindow();
+
 				//create infowindow content
 				var content = '<h3>' + formatLink(location.url, location.name, 'post_type') + '</h3>' +
 					'<address>' + formatAddress(location.formatted_address) + '</address>';
@@ -783,7 +792,15 @@ jQuery(function($){
 		}
 		if (typeof data == 'object') {
 			searchMarker = new google.maps.Marker({
-				icon: userIcon,
+				icon: {
+					path: 'M20.5,0.5 c11.046,0,20,8.656,20,19.333c0,10.677-12.059,21.939-20,38.667c-5.619-14.433-20-27.989-20-38.667C0.5,9.156,9.454,0.5,20.5,0.5z',
+					fillColor: '#2c78b3',
+					fillOpacity: 1,
+					anchor: new google.maps.Point(40,50),
+					strokeWeight: 2,
+					strokeColor: '#2c52b3',
+					scale: .6
+				},
 				position: new google.maps.LatLng(data.latitude, data.longitude),
 				map: map,
 			});
@@ -839,7 +856,7 @@ jQuery(function($){
 	//send event to google analytics, if loaded
 	function trackAnalytics(action, label) {
 		if (typeof ga === 'function') {
-			//console.log('sending ' + action + ': ' + label + ' to google analytics');
+			tsmlDebug('sending ' + action + ': ' + label + ' to google analytics');
 			ga('send', 'event', '12 Step Meeting List', action, label);
 		}
 	}
