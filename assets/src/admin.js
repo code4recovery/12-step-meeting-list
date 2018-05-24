@@ -247,7 +247,7 @@ jQuery(function($){
 				if (!$('select#region option[selected]').length) {
 					$('select#region option').each(function(){
 						var region_name = $(this).text().replace('&nbsp;', '').trim();
-						if (geocoded.city && region_name == geocded.city) {
+						if (geocoded.city && region_name == geocoded.city) {
 							region_id = $(this).attr('value');
 						} else if (geocoded.formatted_address.indexOf(region_name) != -1) {
 							region_id = $(this).attr('value');
