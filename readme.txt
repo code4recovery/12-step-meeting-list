@@ -4,7 +4,7 @@ Donate link: https://meetingguide.org/donate
 Tags: 12-step, aa, al-anon, coda, meetings, na, oa, saa, slaa
 Requires at least: 3.2
 Tested up to: 4.9
-Stable tag: 3.0.0
+Stable tag: 3.0.1
 
 This plugin helps twelve step recovery programs list their meetings. It standardizes addresses, and displays results in a searchable list and map.
 
@@ -140,6 +140,7 @@ This plugin was originally designed to maintain a list of AA meetings in Santa C
 1. [Vancouver, Canada](http://www.vancouveraa.ca/meetings/)
 1. [Ventura County, CA](https://aaventuracounty.org/meetings)
 1. [Virginia](https://aavirginia.org/meetings/)
+1. [Waco, TX](https://centexintergroup.com/meetings/)
 1. [Walnut Creek, CA](http://contracostaaa.org/meetings)
 1. [Warsaw, IN](http://www.aadistrict4143.com/meetings/)
 1. [Washington, DC](https://aa-dc.org/meetings)
@@ -375,6 +376,9 @@ pin will still show up for these meetings and people will try to get directions 
 
 == Changelog ==
 
+= 3.0.1 =
+* Whitelisting
+
 = 3.0.0 =
 * Responds to [Google's imminent API price increase](https://meetingguide.org/google-api) by requiring most websites to sign up for a Google Maps API key
 * Whitelists all existing AA websites we know of
@@ -450,86 +454,3 @@ pin will still show up for these meetings and people will try to get directions 
 * Map view no longer displays pins with empty coordinates (NYC)
 * Update email now properly reflecting changes to location name and notes (Kentucky)
 * Switching search modes no longer clears the current search (Baltimore)
-
-= 2.16.25 =
-* Searching for part of a region wasn't working (Baltimore)
-* Search typeahead font size was different than the field, making it illegible
-
-= 2.16.24 =
-* Notes field wasn't showing up (Fort Worth)
-* Shortcodes easier to override
-
-= 2.16.23 =
-* Geocoding fix (New Mexico)
-
-= 2.16.22 =
-* Some email messages (from yahoo.com and aol.com) were not getting delivered when using Mailgun SMTP (San Jose)
-
-= 2.16.21 =
-* "Request a change to this listing" verbiage change (Refuge Recovery)
-
-= 2.16.20 =
-* Removing pass-by-reference from nearby meeting filter (Cocaine Anonymous UK)
-
-= 2.16.19 =
-* Translating meeting description bugfix (Monterey)
-
-= 2.16.18 =
-* Adding district column for meeting list (when district mode is toggled)
-
-= 2.16.17 =
-* @XGhozt00 fixed an HTML bug in the Upcoming Meetings shortcode & widget
-
-= 2.16.16 =
-* Google API key wasn't present in frontend, might have been causing geocoding issues
-
-= 2.16.15 =
-* @codifryed updated language template file
-
-= 2.16.14 =
-* @codifryed put `load_plugin_textdomain` in the proper hook
-* Fixing end time suggestions (per Greensboro, NC)
-
-= 2.16.13 =
-* Fixing empty meeting contact info in CSV (Refuge Recovery)
-
-= 2.16.12 =
-* Adding Open & Closed meeting types (Refuge Recovery)
-
-= 2.16.11 =
-* Google address override (Refuge Recovery)
-
-= 2.16.10 =
-* Google address override (Refuge Recovery)
-
-= 2.16.9 =
-* Type descriptions for Women's and Men's meetings (Refuge Recovery)
-
-= 2.16.8 =
-* Adding second URL field (Refuge Recovery)
-* Showing contact email link even when there are no groups
-
-= 2.16.7 =
-* Fixing bugs in Group Notes field (Kentucky)
-
-= 2.16.6 =
-* Javascript body class fix (Napa)
-
-= 2.16.5 =
-* Geocoding address fix (NYC)
-
-= 2.16.4 =
-* Two new shortcodes (DC)
-* Description for meeting change form (DC)
-* Javascript console debug statements (Connecticut)
-* Geocoding address fix (Maine)
-* New language meeting types (Refuge Recovery)
-
-= 2.16.3 =
-* Meeting detail page bug fix
-
-= 2.16.2 =
-* Adding new setting to make contact info public on meeting detail pages (Refuge Recovery)
-
-= 2.16.1 =
-* Fixing unexpected '@' PHP error on meeting edit page
