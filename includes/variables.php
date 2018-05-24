@@ -76,7 +76,7 @@ if (!$tsml_google_maps_key = get_option('tsml_google_maps_key')) {
 		'aa-palmbeachcounty.org', 'aabutte-glenn.org', 'aacincinnati.org', 'meetings.aalakesumter.com', 'aaloraincounty.org', 
 		'district32.aanc32.server299.com', 'aanorthport.org', 'aapasco.org', 'aasyracuse.org', 'grupuri.aaromania.ro', 
 		'ashevilleaa.org', 'lebanonpaaa.org', 'martincountyaa.org', 'demo.memphis-aa.org', 'memphis-aa.org', 'nassauny-aa.org', 
-		'snocoaa.org', 'vapsc.org',
+		'snocoaa.org', 'vapsc.org', 'aahouston.org', 'seattleaa.org', 'ct-aa.org', '6b1.f33.myftpupload.com',
 		//'aasanjose.test',
 	))) {
 		$tsml_google_maps_key = 'AIzaSyBQnO24CgG8GS5-zypNqfRFrsv648SnrbU';
