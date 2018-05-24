@@ -72,7 +72,7 @@ if (!$tsml_google_maps_key = get_option('tsml_google_maps_key')) {
 		'puebloaa.org', 'readingberksintergroup.org', 'rocklandnyaa.org', 'santafeaa.org', 'savannahaa.com', 'secularaa.org', 
 		'seigaa.org', 'sonomacountyaa.org', 'tcio.org', 'tidewaterintergroup.org', 'tricountyaa.org', 'trivalleyaa.org', 
 		'vancouveraa.ca', 'westernsloped22.org', 'westhawaiiaa.org', 'wkintergroup.org', 'wp.cviaa.org', 'wpadistrict52aa.org', 
-		'wordpress.baltimoreaa.org', 'baltimoreaa.org',
+		'wordpress.baltimoreaa.org', 'baltimoreaa.org', 'aamyrtlebeach.org',
 		//'aasanjose.test',
 	))) {
 		$tsml_google_maps_key = 'AIzaSyBQnO24CgG8GS5-zypNqfRFrsv648SnrbU';
@@ -82,10 +82,11 @@ if (!$tsml_google_maps_key = get_option('tsml_google_maps_key')) {
 	} else {
 		$tsml_google_maps_key = $tsml_legacy_maps_key;
 
-		if (is_admin() && @$_GET['page'] != 'import') {
-			//warn user if necessary
+		//warn user on dashboard page
+		function tsml_api_key_notice() {
 			tsml_alert(sprintf(__('12 Step Meeting List needs a <a href="%s">Google Maps API Key</a> to work properly.', '12-step-meeting-list'), admin_url('edit.php?post_type=tsml_meeting&page=import')), 'warning');
 		}
+		add_action('load-index.php', 'tsml_api_key_notice');
 	}
 }
 

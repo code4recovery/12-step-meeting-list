@@ -4,7 +4,7 @@ Donate link: https://meetingguide.org/donate
 Tags: 12-step, aa, al-anon, coda, meetings, na, oa, saa, slaa
 Requires at least: 3.2
 Tested up to: 4.9
-Stable tag: 3.0.3
+Stable tag: 3.0.4
 
 This plugin helps twelve step recovery programs list their meetings. It standardizes addresses, and displays results in a searchable list and map.
 
@@ -80,6 +80,7 @@ This plugin was originally designed to maintain a list of AA meetings in Santa C
 1. [Modesto, CA](http://wp.cviaa.org/meetings/)
 1. [Monterey, CA](http://www.aamonterey.org/meetings/)
 1. [Montreal, Canada](http://aa87.org/meetings/)
+1. [Myrtle Beach, SC](http://aamyrtlebeach.org/meetings/)
 1. [Napa, CA](http://www.aanapa.org/meetings)
 1. [Naples, FL District 20](http://district20aa.org/meetings/)
 1. [Naples, FL Intergroup](http://aanaples.org/meetings/)
@@ -375,6 +376,10 @@ pin will still show up for these meetings and people will try to get directions 
 1. Edit location
 
 == Changelog ==
+
+= 3.0.4 =
+* Whitelisting
+* Only display notice about API key on the main dashboard page
 
 = 3.0.3 =
 * Fixing a bug causing the Publish button to be greyed out
