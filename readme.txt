@@ -4,7 +4,7 @@ Donate link: https://meetingguide.org/donate
 Tags: 12-step, aa, al-anon, coda, meetings, na, oa, saa, slaa
 Requires at least: 3.2
 Tested up to: 4.9
-Stable tag: 3.0.4
+Stable tag: 3.0.5
 
 This plugin helps twelve step recovery programs list their meetings. It standardizes addresses, and displays results in a searchable list and map.
 
@@ -20,6 +20,7 @@ This plugin was originally designed to maintain a list of AA meetings in Santa C
 
 1. [Alexandria, LA](http://www.aa-cenla.org/meetings/?tsml-day=any)
 1. [Arkansas](http://arkansascentraloffice.org/meetings/)
+1. [Asheville, NC](http://ashevilleaa.org/meetings/)
 1. [Austin, TX](http://austinaa.org/meetings/)
 1. [Batavia, IL](https://aadistrict61.org/archives/meetings)
 1. [Baton Rouge, LA](http://aabatonrouge.org/meetings/)
@@ -31,7 +32,8 @@ This plugin was originally designed to maintain a list of AA meetings in Santa C
 1. [Charleston, SC](http://tcio.org/meetings)
 1. [Charleston, WV](http://aawvdist1.org/wordpress/?post_type=tsml_meeting)
 1. [Charlotte, NC](http://charlotteaa.org/meetings/)
-1. [Cincinnati, OH](http://cincinnatiaa.org/meetings/)
+1. [Chico, CA](http://www.aabutte-glenn.org/meetings/)
+1. [Cincinnati, OH](http://aacincinnati.org/meetings/)
 1. [Continental Europe](http://alcoholics-anonymous.eu/meetings/)
 1. [Colorado Springs, CO](http://www.coloradospringsaa.org/meetings/)
 1. [Columbus, OH](https://aacentralohio.org/meetings/)
@@ -39,7 +41,7 @@ This plugin was originally designed to maintain a list of AA meetings in Santa C
 1. [Davis, CA](http://aadavis.org/meetings/)
 1. [Dayton, OH](http://aadaytononline.org/meetings/)
 1. [Daytona, FL](http://aadaytona.org/meetings/)
-1. [DuPage County, IL](http://dist41.aa-nia.org/meetings/)
+1. [DuPage County, IL](http://dupage41aa.org/meetings/)
 1. [East Bay, CA](http://eastbayaa.org/meetings)
 1. [East Tennessee](http://www.etiaa.org/meetings/)
 1. [Elk Grove Village, IL](http://d15aa.org/d15aa.org/?post_type=meetings)
@@ -64,11 +66,14 @@ This plugin was originally designed to maintain a list of AA meetings in Santa C
 1. [Lakeland, FL](https://www.heartlandintergroup.org/meetings/)
 1. [Lancaster, PA](http://www.lancasteraa.org/meetings/)
 1. [Langley, Canada](http://www.district43aa.org/meetings/)
+1. [Lebanon, PA](http://www.lebanonpaaa.org/meetings/)
 1. [Lee County, FL](http://leecountyaa.org/meetings)
+1. [Leesburg, FL](http://meetings.aalakesumter.com/)
 1. [Lewis County, WA](http://lewiscountyaa.org/meetings/)
 1. [Long Beach, CA](https://hacoaa.org/meetings/)
 1. [Madison, WI](http://aamadisonwi.org/meetings/)
 1. [Maine and New Brunswick](http://csoaamaine.org/meetings/)
+1. [Martin County, FL](http://martincountyaa.org/meetings/)
 1. [Maui, HI](http://aamaui.org/meetings)
 1. [Mercer County, PA](http://www.wpadistrict52aa.org/meetings/)
 1. [Mesa, AZ](http://aamesaaz.org/meetings/)
@@ -91,10 +96,11 @@ This plugin was originally designed to maintain a list of AA meetings in Santa C
 1. [New York, NY](https://www.nyintergroup.org/meetings/)
 1. [North Central Washington](http://aancw.org/meetings)
 1. [North Coast, LA](http://district12.org/meetings/)
-1. [North Port, FL](http://aalifeline.org/meetings/)
+1. [North Port, FL](http://aanorthport.org/meetings/)
 1. [Oahu, HI](http://oahucentraloffice.com/meetings/)
 1. [Oklahoma](http://aaoklahoma.org/meetings)
 1. [Orlando, FL](http://cflintergroup.org/meetings/)
+1. [Palm Beach County, FL](http://aa-palmbeachcounty.org/new/meetings)
 1. [Palm Springs, CA](http://aainthedesert.org/meetings/)
 1. [Pensacola, FL](http://aapensacola.org/meetings/)
 1. [Philadelphia, PA](http://www.aasepia.org/meetings/)
@@ -107,6 +113,7 @@ This plugin was originally designed to maintain a list of AA meetings in Santa C
 1. [Reading, PA](http://readingberksintergroup.org/meetings/)
 1. [Rochester, MN](http://aadistrict1.org/blog/meetings/)
 1. [Rockland County, NY](https://rocklandnyaa.org/meetings/)
+1. [Romania](https://grupuri.aaromania.ro/meetings/)
 1. [Rhode Island](https://aainri.com/meetings/)
 1. [Sacramento, CA](http://aasacramento.org/meetings/)
 1. [Salinas, CA](https://aasalinas.org/meetings/)
@@ -117,10 +124,12 @@ This plugin was originally designed to maintain a list of AA meetings in Santa C
 1. [Savannah, GA](http://savannahaa.com/meetings-list/)
 1. [Secular AA](https://www.secularaa.org/meetings/)
 1. [Shreveport, LA](http://aa-shreveport.org/meetings/)
+1. [Snohomish County, WA](http://snocoaa.org/wordpress_4.1/?post_type=tsml_meeting)
 1. [Sonoma County, CA](http://www.sonomacountyaa.org/meetings/)
 1. [South Lexington, KY](http://aasouthlexingtonky.org/meetings/)
 1. [Southeastern Indiana](http://seigaa.org/meetings/)
 1. [Southern Colorado](http://www.puebloaa.org/meetings/)
+1. [Southern Illinois](http://www.aa-district14.org/meetings/)
 1. [Southern New Jersey](http://aasj.org/meetings/)
 1. [Southwestern Missouri](https://aaswmo.org/meetings)
 1. [Spokane, WA](http://aaspokane.org/meetings/)
@@ -129,6 +138,7 @@ This plugin was originally designed to maintain a list of AA meetings in Santa C
 1. [St. Peters, MO](https://tricountyaa.org/meetings/)
 1. [State College, PA](http://www.district43.com/meetings/)
 1. [Streamwood, IL](http://dist23.aa-nia.org/meetings)
+1. [Syracuse, NY](http://www.aasyracuse.org/meetings/)
 1. [Tampa, FL](http://www.meetings.aatampa-area.org/meetings/)
 1. [Tidewater Area, VA](http://www.tidewaterintergroup.org/meetings/)
 1. [Tokyo, Japan](https://www.aatokyo.org/meetings/)
@@ -141,6 +151,7 @@ This plugin was originally designed to maintain a list of AA meetings in Santa C
 1. [Vancouver, Canada](http://www.vancouveraa.ca/meetings/)
 1. [Ventura County, CA](https://aaventuracounty.org/meetings)
 1. [Virginia](https://aavirginia.org/meetings/)
+1. [Virginia Peninsula](http://vapsc.org/meetings)
 1. [Waco, TX](https://centexintergroup.com/meetings/)
 1. [Walnut Creek, CA](http://contracostaaa.org/meetings)
 1. [Warsaw, IN](http://www.aadistrict4143.com/meetings/)
@@ -148,9 +159,11 @@ This plugin was originally designed to maintain a list of AA meetings in Santa C
 1. [Wenatchee, WA](http://aancw.org/meetings)
 1. [West Hawaii, HI](http://www.westhawaiiaa.org/meetings/)
 1. [West-Central Wisconsin](http://www.district05.org/meetings/)
+1. [West Pasco, FL](http://www.aapasco.org/meetings/)
 1. [Western Colorado](https://aa-westerncolorado.com/meetings/)
 1. [Western Kentucky](http://wkintergroup.org/meetings/)
 1. [Western Washington](http://area72aa.org/meetings/)
+1. [Wheaton, IL](http://aa-nia-dist40.org/meetings/)
 1. [Wilmington, DE](http://ndiaa.org/meetings/)
 1. [Woodstock, IL](http://aa-nia-dist11.org/meetings/)
 
@@ -376,6 +389,9 @@ pin will still show up for these meetings and people will try to get directions 
 1. Edit location
 
 == Changelog ==
+
+= 3.0.5 =
+* Whitelisting
 
 = 3.0.4 =
 * Whitelisting
