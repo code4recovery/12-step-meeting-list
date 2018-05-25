@@ -649,21 +649,23 @@ jQuery(function($){
 				if ((data.mode == 'search') && data.query) $('#tsml td').not('.time').mark(data.query);
 	
 				//remove old markers and reset bounds
-				for (var i = 0; i < markers.length; i++) {
-					if ((typeof markers[i] == 'object') && markers[i]) {
-						markers[i].setMap(null);
+				if (markers && bounds) {
+					for (var i = 0; i < markers.length; i++) {
+						if ((typeof markers[i] == 'object') && markers[i]) {
+							markers[i].setMap(null);
+						}
 					}
+					markers = [];
+					bounds = new google.maps.LatLngBounds;
+
+					//add user marker if it exists
+					if ((typeof searchMarker == 'object') && searchMarker) {
+						bounds.extend(searchMarker.position);
+					}
+		
+					setMapMarkers();
+					setMapBounds();
 				}
-				markers = [];
-				bounds = new google.maps.LatLngBounds;
-				
-				//add user marker if it exists
-				if ((typeof searchMarker == 'object') && searchMarker) {
-					bounds.extend(searchMarker.position);
-				}
-	
-				setMapMarkers();
-				setMapBounds();
 			}
 		}, 'json');	
 	}
