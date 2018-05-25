@@ -72,11 +72,14 @@ if (!$tsml_google_maps_key = get_option('tsml_google_maps_key')) {
 		'puebloaa.org', 'readingberksintergroup.org', 'rocklandnyaa.org', 'santafeaa.org', 'savannahaa.com', 'secularaa.org', 
 		'seigaa.org', 'sonomacountyaa.org', 'tcio.org', 'tidewaterintergroup.org', 'tricountyaa.org', 'trivalleyaa.org', 
 		'vancouveraa.ca', 'westernsloped22.org', 'westhawaiiaa.org', 'wkintergroup.org', 'wp.cviaa.org', 'wpadistrict52aa.org', 
-		'wordpress.baltimoreaa.org', 'baltimoreaa.org', 'aamyrtlebeach.org', 'aa-district14.org', 'aa-nia-dist40.org', 
-		'aa-palmbeachcounty.org', 'aabutte-glenn.org', 'aacincinnati.org', 'meetings.aalakesumter.com', 'aaloraincounty.org', 
-		'district32.aanc32.server299.com', 'aanorthport.org', 'aapasco.org', 'aasyracuse.org', 'grupuri.aaromania.ro', 
-		'ashevilleaa.org', 'lebanonpaaa.org', 'martincountyaa.org', 'demo.memphis-aa.org', 'memphis-aa.org', 'nassauny-aa.org', 
-		'snocoaa.org', 'vapsc.org', 'aahouston.org', 'seattleaa.org', 'ct-aa.org', '6b1.f33.myftpupload.com',
+		'baltimoreaa.org', 'aamyrtlebeach.org', 'aa-district14.org', 'aa-nia-dist40.org', 'aa-palmbeachcounty.org', 
+		'aabutte-glenn.org', 'aacincinnati.org', 'meetings.aalakesumter.com', 'aaloraincounty.org', 'district32.aanc32.server299.com', 
+		'aanorthport.org', 'aapasco.org', 'aasyracuse.org', 'grupuri.aaromania.ro', 'ashevilleaa.org', 'lebanonpaaa.org', 
+		'martincountyaa.org', 'demo.memphis-aa.org', 'memphis-aa.org', 'nassauny-aa.org', 'snocoaa.org', 'vapsc.org', 
+		'aahouston.org', 'seattleaa.org', 'ct-aa.org', 
+		
+		//dev sites
+		'boston.meetingguide.org', '6b1.f33.myftpupload.com', 'wordpress.baltimoreaa.org', 
 		//'aasanjose.test',
 	))) {
 		$tsml_google_maps_key = 'AIzaSyBQnO24CgG8GS5-zypNqfRFrsv648SnrbU';
