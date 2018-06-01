@@ -1,7 +1,7 @@
 //map functions -- methods must all support both google maps and mapbox
 
 //declare some global variables
-var infowindow, searchLocation, searchMarker, map, markers = [], bounds, mapMode = 'none', locationIcon, searchIcon;
+var infowindow, searchLocation, searchMarker, tsmlmap, markers = [], bounds, mapMode = 'none', locationIcon, searchIcon;
 
 //create an empty map
 function createMap(scrollwheel, locations, searchLocation) {
@@ -11,7 +11,7 @@ function createMap(scrollwheel, locations, searchLocation) {
 		mapMode = 'google';
 		
 		//init map
-		if (!map) map = new google.maps.Map(document.getElementById('map'), {
+		if (!tsmlmap) tsmlmap = new google.maps.Map(document.getElementById('map'), {
 			disableDefaultUI: true,
 			scrollwheel: scrollwheel,
 			zoomControl: true,
@@ -30,14 +30,14 @@ function createMap(scrollwheel, locations, searchLocation) {
 		mapboxgl.accessToken = tsml.mapbox_key;
 
 		//init map
-		if (!map) {
-			map = new mapboxgl.Map({
+		if (!tsmlmap) {
+			tsmlmap = new mapboxgl.Map({
 				container: 'map',
 				style: 'mapbox://styles/mapbox/streets-v9',
 			});
 
 			//add zoom control
-			map.addControl(new mapboxgl.NavigationControl({
+			tsmlmap.addControl(new mapboxgl.NavigationControl({
 				showCompass: false,
 			}));
 		}
@@ -108,32 +108,32 @@ function setMapBounds() {
 	if (mapMode == 'google') {
 		if (markers.length > 1) {
 			//multiple markers
-			map.fitBounds(bounds);
+			tsmlmap.fitBounds(bounds);
 		} else if (markers.length == 1) {
 			//if only one marker, zoom in and click the infowindow
 			var center = bounds.getCenter();
 			if (markers[0].getClickable()) {
-				map.setCenter({ lat: center.lat() + .0025, lng: center.lng() });
+				tsmlmap.setCenter({ lat: center.lat() + .0025, lng: center.lng() });
 				google.maps.event.trigger(markers[0],'click');
 			} else {
-				map.setCenter({ lat: center.lat(), lng: center.lng() });
+				tsmlmap.setCenter({ lat: center.lat(), lng: center.lng() });
 			}
-			map.setZoom(15);
+			tsmlmap.setZoom(15);
 		}
 	} else if (mapMode == 'mapbox') {
 		if (markers.length > 1) {
 			//multiple markers
-			map.fitBounds([[bounds.west, bounds.south], [bounds.east, bounds.north]], {
+			tsmlmap.fitBounds([[bounds.west, bounds.south], [bounds.east, bounds.north]], {
 				duration: 0,
 				padding: 100,
 			});
 		} else if (markers.length == 1) {
 			//if only one marker, zoom in and open the popup if it exists
 			if (markers[0].getPopup()) {
-				map.setZoom(14).setCenter([ bounds.east, bounds.north + .0025 ]);
+				tsmlmap.setZoom(14).setCenter([ bounds.east, bounds.north + .0025 ]);
 				markers[0].togglePopup();
 			} else {
-				map.setZoom(14).setCenter([ bounds.east, bounds.north ]);
+				tsmlmap.setZoom(14).setCenter([ bounds.east, bounds.north ]);
 			}
 		}
 	}
@@ -153,7 +153,7 @@ function setMapMarker(title, position, content) {
 		//set new marker
 		marker = new google.maps.Marker({
 			position: position,
-			map: map,
+			map: tsmlmap,
 			title: title,
 			icon: {
 				path: 'M20.5,0.5 c11.046,0,20,8.656,20,19.333c0,10.677-12.059,21.939-20,38.667c-5.619-14.433-20-27.989-20-38.667C0.5,9.156,9.454,0.5,20.5,0.5z',
@@ -194,7 +194,7 @@ function setMapMarker(title, position, content) {
 			marker.setPopup(popup);
 		}
 
-		marker.addTo(map);
+		marker.addTo(tsmlmap);
 
 	}
 
@@ -316,7 +316,7 @@ function setSearchMarker(data) {
 		el.style.width = '26px';
 		el.style.height = '38.4px';
 
-		marker = new mapboxgl.Marker(el).setLngLat([data.longitude, data.latitude]).addTo(map);
+		marker = new mapboxgl.Marker(el).setLngLat([data.longitude, data.latitude]).addTo(tsmlmap);
 
 	}
 }
