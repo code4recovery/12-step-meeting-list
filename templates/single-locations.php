@@ -8,7 +8,8 @@ wp_localize_script('tsml_public', 'tsml_map', array(
 	'latitude' => $location->latitude,
 	'longitude' => $location->longitude,
 	'location' => get_the_title(),
-	'address' => $location->formatted_address,
+	'location_id' => $location->ID,
+	'formatted_address' => $location->formatted_address,
 	'directions_url' => $location->directions,
 	'directions' => __('Directions', '12-step-meeting-list'),
 ));

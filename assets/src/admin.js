@@ -222,7 +222,7 @@ jQuery(function($){
 			var val = $(this).val().trim();
 			
 			if (!val.length) {
-				setMap();
+				createMap(false);
 				$('input#formatted_address').val(''); //clear any spaces
 				formIsValid();
 				return;
@@ -240,7 +240,7 @@ jQuery(function($){
 				//set lat + lng
 				$('input#latitude').val(geocoded.latitude);
 				$('input#longitude').val(geocoded.longitude);
-				setMap(geocoded.latitude, geocoded.longitude);
+				createMap(false, {0: geocoded});
 
 				//guess region if not set
 				var region_id = false;
@@ -300,23 +300,6 @@ jQuery(function($){
 		//when page loads, run lookup
 		if ($('input#formatted_address').val()) $('input#formatted_address').trigger('change');
 
-		function setMap(latitude, longitude) {
-			if (!latitude || !longitude) {
-				$('div#map').html('');
-				return;
-			}
-			var myLatlng = new google.maps.LatLng(latitude, longitude);
-			var map = new google.maps.Map(document.getElementById('map'), { 
-				zoom: 16, 
-				zoomControl: true,
-				scrollwheel: false,
-				streetViewControl: false,
-				mapTypeControl: false,
-				fullscreenControl: false,
-				center: myLatlng
-			});
-			var marker = new google.maps.Marker({ position: myLatlng, map: map });
-		}
 	}
 
 });

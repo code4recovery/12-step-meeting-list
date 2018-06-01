@@ -44,58 +44,8 @@ $tsml_distance_units = get_option('tsml_distance_units', 'mi');
 //load email addresses to send user feedback about meetings
 $tsml_feedback_addresses = get_option('tsml_feedback_addresses', array());
 
-//this key will stop working 6/10/2018
-$tsml_legacy_maps_key = 'AIzaSyBRvfz_gFi4Gb93h9iW3-lgQYnQiek_Xjc';
-
 //load the API key user saved, if any
-if (!$tsml_google_maps_key = get_option('tsml_google_maps_key')) {
-	$host = (substr($_SERVER['HTTP_HOST'], 0, 4) == 'www.') ? substr($_SERVER['HTTP_HOST'], 4) : $_SERVER['HTTP_HOST'];
-	if (in_array($host, array(
-		'aa-acadiana.org', 'aa-cenla.org', 'aa-dc.org', 'aa-district16.org', 'aa-mississippi.org', 'aa-nia-dist11.org', 
-		'aa-quebec.org', 'aa-san-mateo.org', 'aa-shreveport.org', 'aa-westerncolorado.com', 'aa87.org', 'aabatonrouge.org',
-		'aacancun.org', 'aacentrallakes.org', 'aacentralohio.org', 'aadavis.org', 'aadaytona.org', 'aadaytononline.org', 
-		'aadistrict1.org', 'aadistrict30va.org', 'aadistrict4143.com', 'aadistrict51.org', 'aadistrict61.org', 'aafortwayne.org',
-		'aaharrisburg.org', 'aahernando.org', 'aainlandempire.org', 'aainri.com', 'aainthedesert.org', 'aalifeline.org', 
-		'aalv.org', 'aamadisonwi.org', 'aamaui.org', 'aamesaaz.org', 'aamiamidade.org', 'aaminneapolis.org', 'aaminnesota.com', 
-		'aamonterey.org', 'aanapa.org', 'aanaples.org', 'aanc33.org', 'aancw.org', 'aaneworleans.org', 'aaoklahoma.org', 
-		'aapensacola.org', 'aaregina.com', 'aasacramento.org', 'aasalinas.org', 'aasanjose.org', 'aasepia.org', 'aasf.org', 
-		'aasj.org', 'aasolanonorth.org', 'aasouthlexingtonky.org', 'aaspokane.org', 'aastl.org', 'aastlucieintergroup.com', 
-		'aaswmo.org', 'aatokyo.org', 'aatopeka.org', 'aatoronto.org', 'aaventuracounty.org', 'aawvdist1.org', 
-		'alcoholics-anonymous.eu', 'area26.net', 'area72aa.org', 'arkansascentraloffice.org', 'austinaa.org', 'bowlinggreenaa.org', 
-		'cbiaa.org', 'centexintergroup.com', 'cflintergroup.org', 'charlotteaa.org', 'cincinnatiaa.org', 'coloradospringsaa.org', 
-		'contracostaaa.org', 'csoaamaine.org', 'd15aa.org', 'dist22.aa-nia.org', 'dist23.aa-nia.org', 'dist41.aa-nia.org', 
-		'district05.org', 'district11-aa.org', 'district12.org', 'district20aa.org', 'district40aa.com', 'district43.com', 
-		'district43aa.org', 'eastbayaa.org', 'etiaa.org', 'fmmeetinglist.org', 'fortworthaa.org', 'fresnoaa.org', 'hacoaa.org', 
-		'hagerstownaa.org', 'heartlandintergroup.org', 'home.pdxaa.org', 'idahoarea18aa.org', 'intergrupamidlands.co.uk', 
-		'kc-aa.org', 'ks-aa.org', 'lancasteraa.org', 'leecountyaa.org', 'lewiscountyaa.org', 'meetings.aatampa-area.org', 
-		'nassauaa.org', 'nc23.org', 'ndiaa.org', 'neflaa.org', 'nhaa.net', 'nm-aa.org', 'nosdco-aa.org', 'oahucentraloffice.com', 
-		'puebloaa.org', 'readingberksintergroup.org', 'rocklandnyaa.org', 'santafeaa.org', 'savannahaa.com', 'secularaa.org', 
-		'seigaa.org', 'sonomacountyaa.org', 'tcio.org', 'tidewaterintergroup.org', 'tricountyaa.org', 'trivalleyaa.org', 
-		'vancouveraa.ca', 'westernsloped22.org', 'westhawaiiaa.org', 'wkintergroup.org', 'wp.cviaa.org', 'wpadistrict52aa.org', 
-		'baltimoreaa.org', 'aamyrtlebeach.org', 'aa-district14.org', 'aa-nia-dist40.org', 'aa-palmbeachcounty.org', 
-		'aabutte-glenn.org', 'aacincinnati.org', 'meetings.aalakesumter.com', 'aaloraincounty.org', 'district32.aanc32.server299.com', 
-		'aanorthport.org', 'aapasco.org', 'aasyracuse.org', 'grupuri.aaromania.ro', 'ashevilleaa.org', 'lebanonpaaa.org', 
-		'martincountyaa.org', 'demo.memphis-aa.org', 'memphis-aa.org', 'nassauny-aa.org', 'snocoaa.org', 'vapsc.org', 
-		'aahouston.org', 'seattleaa.org', 'ct-aa.org', 
-		
-		//dev sites
-		'boston.meetingguide.org', '6b1.f33.myftpupload.com', 'wordpress.baltimoreaa.org', 
-		//'aasanjose.test',
-	))) {
-		$tsml_google_maps_key = 'AIzaSyBQnO24CgG8GS5-zypNqfRFrsv648SnrbU';
-	} elseif ($host == 'nyintergroup.org') {
-		//special key for new york (to gauge usage on most-active website)
-		$tsml_google_maps_key = 'AIzaSyBfpu1JpKTsUkHqVLKIUv3TKNzdd66n_9k';
-	} else {
-		$tsml_google_maps_key = $tsml_legacy_maps_key;
-
-		//warn user on dashboard page
-		function tsml_api_key_notice() {
-			tsml_alert(sprintf(__('12 Step Meeting List needs a <a href="%s">Google Maps API Key</a> to work properly.', '12-step-meeting-list'), admin_url('edit.php?post_type=tsml_meeting&page=import')), 'warning');
-		}
-		add_action('load-index.php', 'tsml_api_key_notice');
-	}
-}
+$tsml_google_maps_key = get_option('tsml_google_maps_key');
 
 /*
 unfortunately the google geocoding API is not always perfect. used by tsml_import() and admin.js
@@ -233,6 +183,9 @@ $tsml_google_overrides = array(
 
 //get the blog's language (used as a parameter when geocoding)
 $tsml_language = substr(get_bloginfo('language'), 0, 2);
+
+//alternative maps provider
+$tsml_mapbox_key = get_option('tsml_mapbox_key');
 
 //used to secure forms
 $tsml_nonce = plugin_basename(__FILE__);
