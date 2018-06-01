@@ -7,7 +7,8 @@
   "devDependencies": {
     "bootstrap-sass": "^3.3.7",
     "gulp": "^3.9.1",
-    "laravel-elixir": "^6.0.0-9",
+    "laravel-elixir": "^6.0.0-18",
+    "mapbox-gl": "^0.45.0",
     "mark.js": "github:julmot/mark.js",
     "timepicker": "^1.11.5",
     "typeahead.js": "^0.11.1"

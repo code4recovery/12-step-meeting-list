@@ -50,9 +50,16 @@ if (isset($_GET['tsml-region']) && term_exists(intval($_GET['tsml-region']), 'ts
 }
 if (isset($_GET['tsml-type']) && array_key_exists($_GET['tsml-type'], $tsml_programs[$tsml_program]['types'])) $type = $_GET['tsml-type'];
 if (isset($_GET['tsml-time']) && (($_GET['tsml-time'] == 'upcoming') || array_key_exists($_GET['tsml-time'], $times))) $time = $_GET['tsml-time'];
-if (isset($_GET['tsml-view']) && in_array($_GET['tsml-view'], array('list', 'map'))) $view = $_GET['tsml-view'];
 if (isset($_GET['tsml-distance']) && intval($_GET['tsml-distance'])) $distance = $_GET['tsml-distance'];
 if (isset($_GET['tsml-mode']) && array_key_exists($_GET['tsml-mode'], $modes)) $mode = $_GET['tsml-mode'];
+
+if ($tsml_mapbox_key || $tsml_google_maps_key) {
+	$maps_enabled = true;
+	if (isset($_GET['tsml-view']) && in_array($_GET['tsml-view'], array('list', 'map'))) $view = $_GET['tsml-view'];
+} else {
+	$maps_enabled = false;
+	$view = 'list';
+}
 
 //day default
 $today = true;
@@ -226,6 +233,7 @@ get_header();
 				</form>
 			</div>
 			<div class="col-sm-6 col-md-2 col-md-push-8 control-view">
+				<?php if ($maps_enabled) {?>
 				<div class="btn-group btn-group-justified" id="action">
 					<a class="btn btn-default toggle-view<?php if ($view == 'list') {?> active<?php }?>" href="<?php echo tmsl_meetings_url(array('tsml-view'=>'list'))?>" data-id="list" role="button">
 						<?php _e('List', '12-step-meeting-list')?>
@@ -234,6 +242,7 @@ get_header();
 						<?php _e('Map', '12-step-meeting-list')?>
 					</a>
 				</div>
+				<?php } ?>
 			</div>
 			<div class="col-sm-6 col-md-2 col-md-pull-2 control-region">
 				<?php if ($regions_dropdown || $districts_dropdown) {?>
@@ -363,11 +372,11 @@ get_header();
 								}
 										
 								$locations[$meeting['location_id']]['meetings'][] = array(
-									'time'=>$meeting['time_formatted'],
-									'day'=>$meeting['day'],
-									'name'=>$meeting['name'],
-									'url'=>$meeting['url'], //can't use link here, unfortunately
-									'types'=>$meeting['types'],
+									'time' => $meeting['time_formatted'],
+									'day' => $meeting['day'],
+									'name' => $meeting['name'],
+									'url' => $meeting['url'], //can't use link here, unfortunately
+									'types' => $meeting['types'],
 								);
 								
 								$sort_time = $meeting['day'] . '-' . ($meeting['time'] == '00:00' ? '23:59' : $meeting['time']);

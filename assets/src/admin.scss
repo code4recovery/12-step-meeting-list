@@ -336,6 +336,8 @@ body {
 				background-color: #f6f6f6;
 				height: 300px;
 				padding: 0;
+				*:focus { outline: none; }
+				.mapboxgl-ctrl-logo, .mapboxgl-ctrl-attrib { display: none; }
 			}
 			
 			//meetings at a location

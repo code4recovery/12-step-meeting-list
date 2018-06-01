@@ -7,12 +7,12 @@ $meeting = tsml_get_meeting();
 wp_localize_script('tsml_public', 'tsml_map', array(
 	'latitude' => $meeting->latitude,
 	'longitude' => $meeting->longitude,
+	'location_id' => $meeting->post_parent,
 	'location' => get_the_title($meeting->post_parent),
-	'address' => $meeting->formatted_address,
+	'formatted_address' => $meeting->formatted_address,
 	'location_url' => get_permalink($meeting->post_parent),
 	'directions_url' => $meeting->directions,
 	'directions' => __('Directions', '12-step-meeting-list'),
-	'contributions_api_key' => $meeting->contributions_api_key,
 ));
 
 $startDate = tsml_format_next_start($meeting);

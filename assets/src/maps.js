@@ -1,0 +1,323 @@
+//map functions -- methods must all support both google maps and mapbox
+
+//declare some global variables
+var infowindow, searchLocation, searchMarker, map, markers = [], bounds, mapMode = 'none', locationIcon, searchIcon;
+
+//create an empty map
+function createMap(scrollwheel, locations, searchLocation) {
+
+	if (typeof(google) == 'object') {
+
+		mapMode = 'google';
+		
+		//init map
+		if (!map) map = new google.maps.Map(document.getElementById('map'), {
+			disableDefaultUI: true,
+			scrollwheel: scrollwheel,
+			zoomControl: true,
+		});
+
+		//init popup
+		infowindow = new google.maps.InfoWindow();
+
+		//init bounds
+		bounds = new google.maps.LatLngBounds();
+
+	} else if (tsml.mapbox_key) {
+
+		mapMode = 'mapbox';
+
+		mapboxgl.accessToken = tsml.mapbox_key;
+
+		//init map
+		if (!map) {
+			map = new mapboxgl.Map({
+				container: 'map',
+				style: 'mapbox://styles/mapbox/streets-v9',
+			});
+
+			//add zoom control
+			map.addControl(new mapboxgl.NavigationControl({
+				showCompass: false,
+			}));
+		}
+
+		//init bounds
+		bounds = {
+			north: false,
+			south: false,
+			east: false,
+			west: false,
+		};
+
+		//custom marker icons
+		locationIcon = window.btoa('<?xml version="1.0" encoding="utf-8"?><svg viewBox="-1.1 -1.086 43.182 63.273" xmlns="http://www.w3.org/2000/svg"><path fill="#f76458" stroke="#b3382c" stroke-width="3" d="M20.5,0.5 c11.046,0,20,8.656,20,19.333c0,10.677-12.059,21.939-20,38.667c-5.619-14.433-20-27.989-20-38.667C0.5,9.156,9.454,0.5,20.5,0.5z"/></svg>');
+		searchIcon = window.btoa('<?xml version="1.0" encoding="utf-8"?><svg viewBox="-1.1 -1.086 43.182 63.273" xmlns="http://www.w3.org/2000/svg"><path fill="#2c78b3" stroke="#2c52b3" stroke-width="3" d="M20.5,0.5 c11.046,0,20,8.656,20,19.333c0,10.677-12.059,21.939-20,38.667c-5.619-14.433-20-27.989-20-38.667C0.5,9.156,9.454,0.5,20.5,0.5z"/></svg>');
+
+	} else if (tsml.google_maps_key) {
+
+		console.warn('google key present but google maps not invoked');
+
+	}
+
+	setMapMarkers(locations, searchLocation);
+}
+
+
+//format an address: replace commas with breaks
+function formatAddress(address, street_only) {
+	address = address.split(', ');
+	if (street_only) return address[0];
+	if (address[address.length-1] == 'USA') {
+		address.pop(); //don't show USA
+		var state_and_zip = address.pop();
+		address[address.length-1] += ', ' + state_and_zip;
+	}
+	return address.join('<br>');
+}
+
+//format a link to a meeting result page, preserving all but the excluded query string keys
+function formatLink(url, text, exclude) {
+	if (!url) return text;
+	if (location.search) {
+		var query_pairs = location.search.substr(1).split('&');
+		var new_query_pairs = [];
+		for (var i = 0; i < query_pairs.length; i++) {
+			var query_parts = query_pairs[i].split('=');
+			if (query_parts[0] != exclude) new_query_pairs[new_query_pairs.length] = query_parts[0] + '=' + query_parts[1];
+		}
+		if (new_query_pairs.length) {
+			url += ((url.indexOf('?') == -1) ? '?' : '&') + new_query_pairs.join('&');
+		}
+	}
+	return '<a href="' + url + '">' + text + '</a>';
+}
+
+//remove search marker
+function removeSearchMarker() {
+	searchLocation = null;
+	if ((typeof searchMarker == 'object') && searchMarker) {
+		searchMarker.setMap(null);
+		searchMarker = null;
+	}
+}
+
+//set / initialize map
+function setMapBounds() {
+
+	if (mapMode == 'google') {
+		if (markers.length > 1) {
+			//multiple markers
+			map.fitBounds(bounds);
+		} else if (markers.length == 1) {
+			//if only one marker, zoom in and click the infowindow
+			var center = bounds.getCenter();
+			if (markers[0].getClickable()) {
+				map.setCenter({ lat: center.lat() + .0025, lng: center.lng() });
+				google.maps.event.trigger(markers[0],'click');
+			} else {
+				map.setCenter({ lat: center.lat(), lng: center.lng() });
+			}
+			map.setZoom(15);
+		}
+	} else if (mapMode == 'mapbox') {
+		if (markers.length > 1) {
+			//multiple markers
+			map.fitBounds([[bounds.west, bounds.south], [bounds.east, bounds.north]], {
+				duration: 0,
+				padding: 100,
+			});
+		} else if (markers.length == 1) {
+			//if only one marker, zoom in and open the popup if it exists
+			if (markers[0].getPopup()) {
+				map.setZoom(14).setCenter([ bounds.east, bounds.north + .0025 ]);
+				markers[0].togglePopup();
+			} else {
+				map.setZoom(14).setCenter([ bounds.east, bounds.north ]);
+			}
+		}
+	}
+
+}
+
+//set single marker, called by all public pages
+function setMapMarker(title, position, content) {
+	
+	//stop if coordinates are empty
+	if (!position.lat && !position.lng) return;
+	
+	var marker;
+
+	if (mapMode == 'google') {
+
+		//set new marker
+		marker = new google.maps.Marker({
+			position: position,
+			map: map,
+			title: title,
+			icon: {
+				path: 'M20.5,0.5 c11.046,0,20,8.656,20,19.333c0,10.677-12.059,21.939-20,38.667c-5.619-14.433-20-27.989-20-38.667C0.5,9.156,9.454,0.5,20.5,0.5z',
+				fillColor: '#f76458',
+				fillOpacity: 1,
+				anchor: new google.maps.Point(40,50),
+				strokeWeight: 2,
+				strokeColor: '#b3382c',
+				scale: .6
+			},
+		});
+
+		//add infowindow event
+		if (content) {			
+			google.maps.event.addListener(marker, 'click', (function(marker) {
+				return function() {
+					infowindow.setContent('<div class="tsml_infowindow">' + content + '</div>');
+					infowindow.open(map, marker);
+				}
+			})(marker));
+		} else {
+			marker.setClickable(false); //we'll check this when setting center
+		}
+
+	} else if (mapMode == 'mapbox') {
+
+		var el = document.createElement('div');
+		el.className = 'marker';
+		el.style.backgroundImage = 'url(data:image/svg+xml;base64,' + locationIcon + ')';
+		el.style.width = '26px';
+		el.style.height = '38.4px';
+
+		marker = new mapboxgl.Marker(el).setLngLat(position);
+
+		if (content) {
+			var popup = new mapboxgl.Popup({ offset: 25 });
+			popup.setHTML(content);
+			marker.setPopup(popup);
+		}
+
+		marker.addTo(map);
+
+	}
+
+	return marker;	
+}
+
+//add one or more markers to a map
+function setMapMarkers(locations, searchLocation) {
+
+	//remove existing markers
+	if (markers.length) {
+		for (var i = 0; i < markers.length; i++) {
+			if (mapMode == 'google') {
+				markers[i].setMap(null);
+			} else if (mapMode == 'mapbox') {
+				markers[i].remove();
+			}
+		}
+		markers = [];
+	}
+
+	//set search location?
+	removeSearchMarker();
+	if (searchLocation) {
+		setSearchMarker(searchLocation);
+	}
+
+	//convert to array and sort it by latitude (for marker overlaps)
+	var location_array = Object.values(locations);
+	location_array.sort(function(a, b) {
+		return b.latitude - a.latitude;
+	});
+
+	//loop through and create new markers
+	for (var i = 0; i < location_array.length; i++) {
+		var location = location_array[i];
+
+		var content;
+
+		if (location.url && location.formatted_address) {
+
+			//create infowindow content
+			content = '<h3>' + formatLink(location.url, location.name, 'post_type') + '</h3>' +
+				'<address>' + formatAddress(location.formatted_address) + '</address>';
+
+			//make directions button
+			if (location.directions && location.directions_url) {
+				content += '<a href="' + location.directions_url + '" class="btn btn-default">' + location.directions + '</a>';
+			}
+			
+			//make meeting list
+			if (location.meetings && location.meetings.length) {
+				var current_day = null;
+				for (var j = 0; j < location.meetings.length; j++) {
+					var meeting = location.meetings[j];
+					if (current_day != meeting.day) {
+						if (current_day) content += '</dl>';
+						current_day = meeting.day;
+						if (typeof tsml.days[current_day] !== 'undefined') content += '<h5>' + tsml.days[current_day] + '</h5>';
+						content += '<dl>';
+					}
+					content += '<dt>' + meeting.time + '</dt><dd>' + formatLink(meeting.url, meeting.name, 'post_type') + '</dd>';
+				}
+				content += '</dl>';
+			}
+		}
+
+		//make coordinates numeric
+		var position = {
+			lat: parseFloat(location.latitude),
+			lng: parseFloat(location.longitude),
+		}
+
+		var marker = setMapMarker(location.name, position, content);
+		
+		//manage bounds
+		if ((typeof marker == 'object') && marker) {
+			if (mapMode == 'google') {
+				bounds.extend(marker.position);
+			} else if (mapMode == 'mapbox') {
+				if (!bounds.north || position.lat > bounds.north) bounds.north = position.lat;
+				if (!bounds.south || position.lat < bounds.south) bounds.south = position.lat;
+				if (!bounds.east || position.lng > bounds.east) bounds.east = position.lng;
+				if (!bounds.west || position.lng < bounds.west) bounds.west = position.lng;
+			}
+		}
+		
+		markers.push(marker);
+	}
+
+	setMapBounds();
+}
+
+//set or remove the search marker (user location or search center)
+function setSearchMarker(data) {
+	removeSearchMarker();
+	if (!data || !data.latitude) return;
+	if (mapMode == 'google') {
+		searchMarker = new google.maps.Marker({
+			icon: {
+				path: 'M20.5,0.5 c11.046,0,20,8.656,20,19.333c0,10.677-12.059,21.939-20,38.667c-5.619-14.433-20-27.989-20-38.667C0.5,9.156,9.454,0.5,20.5,0.5z',
+				fillColor: '#2c78b3',
+				fillOpacity: 1,
+				anchor: new google.maps.Point(40,50),
+				strokeWeight: 2,
+				strokeColor: '#2c52b3',
+				scale: .6
+			},
+			position: new google.maps.LatLng(data.latitude, data.longitude),
+			map: map,
+		});
+
+		bounds.extend(searchMarker.position);
+	} else if (mapMode == 'mapbox') {
+
+		var el = document.createElement('div');
+		el.className = 'marker';
+		el.style.backgroundImage = 'url(data:image/svg+xml;base64,' + searchIcon + ')';
+		el.style.width = '26px';
+		el.style.height = '38.4px';
+
+		marker = new mapboxgl.Marker(el).setLngLat([data.longitude, data.latitude]).addTo(map);
+
+	}
+}
+

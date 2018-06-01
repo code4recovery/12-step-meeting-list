@@ -4,7 +4,7 @@ Donate link: https://meetingguide.org/donate
 Tags: 12-step, aa, al-anon, coda, meetings, na, oa, saa, slaa
 Requires at least: 3.2
 Tested up to: 4.9
-Stable tag: 3.0.6
+Stable tag: 3.1.0
 
 This plugin helps twelve step recovery programs list their meetings. It standardizes addresses, and displays results in a searchable list and map.
 
@@ -20,6 +20,7 @@ This plugin was originally designed to maintain a list of AA meetings in Santa C
 
 1. [Alexandria, LA](http://www.aa-cenla.org/meetings/?tsml-day=any)
 1. [Arkansas](http://arkansascentraloffice.org/meetings/)
+1. [Aspen, CO](http://www.coaadistrict14.org/)
 1. [Asheville, NC](http://ashevilleaa.org/meetings/)
 1. [Austin, TX](http://austinaa.org/meetings/)
 1. [Batavia, IL](https://aadistrict61.org/archives/meetings)
@@ -88,7 +89,7 @@ This plugin was originally designed to maintain a list of AA meetings in Santa C
 1. [Myrtle Beach, SC](http://aamyrtlebeach.org/meetings/)
 1. [Napa, CA](http://www.aanapa.org/meetings)
 1. [Naples, FL District 20](http://district20aa.org/meetings/)
-1. [Naples, FL Intergroup](http://aanaples.org/meetings/)
+1. [Naples, FL Intergroup](http://wp3.aanaples.org/meetings/)
 1. [Nassau County, NY](http://nassauaa.org/meetings)
 1. [New Hampshire](http://nhaa.net/meetings/)
 1. [New Orleans, LA](http://www.aaneworleans.org/meetings/)
@@ -389,6 +390,11 @@ pin will still show up for these meetings and people will try to get directions 
 1. Edit location
 
 == Changelog ==
+
+= 3.1.0 =
+* Mapbox support
+* Maps are now optional
+* Removed notice from main dashboard page
 
 = 3.0.6 =
 * Bugfix: dropdowns could be unresponsive if map not yet invoked

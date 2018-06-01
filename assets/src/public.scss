@@ -26,7 +26,7 @@ $height: 550px; //height of map and min-height of list
 	    -animation: spin .7s infinite linear;
 	    -webkit-animation: spin_webkit .7s infinite linear;
 	}
-	
+
 	@-webkit-keyframes spin_webkit {
 	    from { -webkit-transform: rotate(0deg);}
 	    to { -webkit-transform: rotate(360deg);}
@@ -36,64 +36,116 @@ $height: 550px; //height of map and min-height of list
 	    from { transform: scale(1) rotate(0deg);}
 	    to { transform: scale(1) rotate(360deg);}
 	}
+
+	#map {
+		background-color: #eee;
+		border: 1px solid #ddd;
+		border-radius: 4px;
+		font-family: inherit;
+		font-size: 85%;
+		
+		button.mapboxgl-ctrl-icon { 
+			&:focus {
+				background-color: rgba(0, 0, 0, 0);
+			}
+			&:hover {
+				background-color: rgba(0, 0, 0, .05);
+			}
+			&:active {
+				background-color: rgba(0, 0, 0, 0.1);
+			}
+		}		
 	
-	.tsml_infowindow {
-		width: 200px;
-		max-height: 250px;
-		h3 {
-			margin: 0 0 $margin 0;
-			font-size: 24px;
+		.mapboxgl-popup-content-wrapper {
+			border-radius: 4px;
 		}
-		h5 {
-			margin: $margin 0 0 0;
-			font-size: 14px;
-			font-weight: bold;
-		}
-		address {
-			font-style: normal;
-			margin: 0 0 $margin 0;
-		}
-		a {
-			color: inherit;
-			&.btn-primary {
-				color: $color_white;
-			}
-			small::before {
-				content: " / "
-			}
-		}
-		p {
-			margin-bottom: $margin;
-			&:last-child {
-				margin-bottom: 0;
-			}
-		}
-		dl {
+
+		.mapboxgl-popup-content {
+			border-radius: 5px;
+			width: 260px;
 			overflow: auto;
-			margin: 0;
-			dt, dd {
-				float: left;
+		}
+
+		.mapboxgl-ctrl-attrib {
+			font-size: 11px;
+			a { color: #777; }
+		}
+		
+		button.mapboxgl-popup-close-button {
+			color: #c3c3c3;
+			font-size: 1.5rem;
+			padding: 4px 8px;
+			&:hover {
+				background-color: transparent;
+				color: #777;
+				text-decoration: none;
+			}
+		}
+		
+		.marker { cursor: pointer; }
+
+		.tsml_infowindow {
+			width: 200px;
+		}
+
+		.tsml_infowindow, .mapboxgl-popup-content {
+			max-height: 250px;
+			h3 {
+				margin: 0 0 20px 0;
+				font-size: 20px;
+				font-weight: 600;
+			}
+			h5 {
+				margin: $margin 0 0 0;
+				font-size: 14px;
+				font-weight: bold;
+			}
+			address {
+				font-style: normal;
+				margin: 0 0 $margin 0;
+			}
+			a {
+				color: inherit;
+				&.btn {
+					margin-bottom: 5px;
+				}
+				small::before {
+					content: " / "
+				}
+			}
+			p {
+				margin-bottom: $margin;
+				&:last-child {
+					margin-bottom: 0;
+				}
+			}
+			dl {
+				overflow: auto;
 				margin: 0;
-				padding: 0;
-			}
-			dt {
-				color: $color_gray;
-				font-weight: normal;
-				width: 62px;
-				clear: left;
-				margin-right: 6px;
-				text-align: right;
-				overflow: hidden;
-				text-overflow: ellipsis;
-				word-wrap: nowrap;
-				font-size: 12px;
-			}
-			dd {
-				width: 132px;
+				dt, dd {
+					float: left;
+					margin: 0;
+					padding: 0;
+				}
+				dt {
+					color: $color_gray;
+					font-weight: normal;
+					width: 62px;
+					clear: left;
+					margin-right: 6px;
+					text-align: right;
+					overflow: hidden;
+					text-overflow: ellipsis;
+					word-wrap: nowrap;
+					font-size: 12px;
+				}
+				dd {
+					width: 132px;
+				}
 			}
 		}
 	}
-	
+
 	#meetings, #meeting, #location {
 		text-align: left;
 		a { cursor: pointer; }
@@ -115,15 +167,10 @@ $height: 550px; //height of map and min-height of list
 				margin-bottom: $margin;
 				height: 34px;
 			}
-			input {
-				margin: 0;
-				border-radius: 4px 0 0 4px;
-				font-size: 16px; //this might seem big, but it prevents zooming on focus
-			}
 			/* need to have this button, and display: none will not work */
 			input[type=submit] {
-				visibility:hidden;
-				position:absolute;
+				visibility: hidden;
+				position: absolute;
 				left: -1000px;
 			}
 			input, .btn {
@@ -131,6 +178,12 @@ $height: 550px; //height of map and min-height of list
 				padding: 6px 12px;
 				margin: 0;
 				text-transform: none;
+			}
+			input {
+				margin: 0;
+				border-radius: 4px 0 0 4px;
+				font-size: 16px; //this might seem big, but it prevents zooming on focus
+				padding-right: 0;
 			}
 			.input-group-btn:last-child > .btn { 
 				margin-left: -1px; 
@@ -292,8 +345,6 @@ $height: 550px; //height of map and min-height of list
 			}
 				
 			#map {
-				border: 1px solid #ddd;
-				border-radius: 4px;
 				height: $height;
 				display: none;
 			}
@@ -356,7 +407,9 @@ $height: 550px; //height of map and min-height of list
 				content: " / ";
 			}
 		}
-		#map { height: 500px; }
+		#map { 
+			height: 500px; 
+		}
 		button { 
 			font-size: inherit;
 		}

@@ -8,18 +8,9 @@
 jQuery(function($){
 
 	//a) procedural logic
-	
-	var infowindow, searchMarker, map, markers, bounds;
-	
 	var $body = $('body');
 	
-	//if ($body.hasClass('post-type-archive-tsml_meeting')) {
-	if (typeof tsml_map !== 'object')  { //provided by template pages
-
-		//list/map page (only create if we're on the map view)
-		if ($('a.toggle-view[data-id="map"]').hasClass('active')) {
-			createMap();
-		}
+	if (typeof tsml_map !== 'object')  { //main meetings page
 
 		//search typeahead
 		var tsml_regions = new Bloodhound({
@@ -59,48 +50,31 @@ jQuery(function($){
 		var mode = $('#search li.active a').attr('data-id');
 		if (mode == 'search') {
 			typeaheadEnable();
-			if (map) {
-				setMapMarkers();
-				setMapBounds();
+			//list/map page (only create if we're on the map view)
+			if ($('a.toggle-view[data-id="map"]').hasClass('active')) {
+				createMap(true, locations);
 			}
 		} else if ((mode == 'location') && $search_field.val().length) {
-			doSearch(false);
+			doSearch();
 		} else if (mode == 'me') {
-			doSearch(false);
+			doSearch();
 		}
 
-	} else {
-		
-		//meeting or location detail page
-		tsml_map.latitude -= 0;
-		tsml_map.longitude -= 0;
+	} else { //meeting or location detail page
 		
 		var location_link = (typeof tsml_map.location_url === 'undefined') ? tsml_map.location : formatLink(tsml_map.location_url, tsml_map.location, 'tsml_meeting');
-		
-		//build infowindow content
-		var content = '<h3>' + location_link + '</h3>'+
-			'<p>' + formatAddress(tsml_map.address) + '</p>'+
-			'<p><a class="btn btn-default tsml-directions" data-latitude="' + tsml_map.latitude + '" data-longitude="' + tsml_map.longitude + '" data-location="' + tsml_map.location + '">' + tsml_map.directions + '</a></p>';
-											
-		map = new google.maps.Map(document.getElementById('map'), {
-			zoom: 15,
-			center: new google.maps.LatLng((tsml_map.latitude + .0025), tsml_map.longitude),
-			disableDefaultUI: true,
-			scrollwheel: false,
-			streetViewControl: true,
-			zoomControl: true,
-			fullscreenControl: true,
-			mapTypeControlOptions: {
-				mapTypeIds: [google.maps.MapTypeId.ROADMAP, 'map_style']
-			}
-		});
-		
-		infowindow = new google.maps.InfoWindow();
-
-		marker = setMapMarker(tsml_map.location, tsml_map.latitude, tsml_map.longitude, content);
-		
-		google.maps.event.trigger(marker, 'click');
-		
+		locations = {};
+		locations[tsml_map.location_id] = {
+			latitude: tsml_map.latitude,
+			longitude: tsml_map.longitude,
+			formatted_address: tsml_map.formatted_address,
+			name: tsml_map.location,
+			meetings: [],
+			directions: tsml_map.directions,
+			directions_url: tsml_map.directions_url,
+			url: tsml_map.location_url,
+		};
+		createMap(false, locations);
 	}
 		
 	//b) jQuery event handlers
@@ -120,12 +94,12 @@ jQuery(function($){
 	//expand region select
 	$('.panel-expandable').on('click', '.panel-heading', function(e){
 		$(this).closest('.panel-expandable').toggleClass('expanded');
-		tsmlDebug('expanding region');
+		if (tsml.debug) console.log('expanding region');
 	})
 	
 	//single meeting page feedback form
 	$('#meeting #feedback').validate({
-		onfocusout:false,
+		onfocusout: false,
 		onkeyup: function(element) { },
 		highlight: function(element, errorClass, validClass) {
 			$(element).parent().addClass('has-error');
@@ -172,7 +146,7 @@ jQuery(function($){
 	$('#meetings .controls').on('submit', '#search', function(){
 		//capture submit event
 		trackAnalytics('search', $search_field.val())
-		doSearch(true);
+		doSearch();
 		return false;
 	}).on('click', 'div.expand', function(e){
 		//expand or contract regions submenu
@@ -185,14 +159,14 @@ jQuery(function($){
 		//these are live hrefs now
 		e.preventDefault();
 
-		tsmlDebug('dropdown click');
+		if (tsml.debug) console.log('dropdown click');
 
 		//dropdown menu click
 		var param = $(this).closest('div').attr('id');
 		
 		if (param == 'mode') {
 			
-			tsmlDebug('search mode');
+			if (tsml.debug) console.log('search mode');
 
 			//only one search mode
 			$('#mode li').removeClass('active');
@@ -219,14 +193,14 @@ jQuery(function($){
 			
 		} else if (param == 'distance') {
 			//distance only one
-			tsmlDebug('distance');
+			if (tsml.debug) console.log('distance');
 			$('#distance li').removeClass('active');
 			$('#distance span.selected').html($(this).html());
 			trackAnalytics('distance', $(this).text());
 		} else if (param == 'region') {
 			//switch between region and district mode
 			if ($(this).hasClass('switch')) {
-				tsmlDebug('switching between region and district');
+				if (tsml.debug) console.log('switching between region and district');
 				var mode = $(this).parent().hasClass('region') ? 'district' : 'region';
 				$(this).closest('#meetings').attr('tax-mode', mode);
 				e.stopPropagation();
@@ -234,26 +208,26 @@ jQuery(function($){
 			}
 			
 			//region only one
-			tsmlDebug('region or district');
+			if (tsml.debug) console.log('region or district');
 			$('#region li').removeClass('active');
 			$('#region span.selected').html($(this).html());
 			trackAnalytics('region', $(this).text());
 			
 		} else if (param == 'day') {
 			//day only one selected
-			tsmlDebug('day');
+			if (tsml.debug) console.log('day');
 			$('#day li').removeClass('active');
 			$('#day span.selected').html($(this).html());
 			trackAnalytics('day', $(this).text());
 		} else if (param == 'time') {
 			//time only one
-			tsmlDebug('time');
+			if (tsml.debug) console.log('time');
 			$('#time li').removeClass('active');
 			$('#time span.selected').html($(this).html());
 			trackAnalytics('time', $(this).text());
 		} else if (param == 'type') {
 			//type only one
-			tsmlDebug('type');
+			if (tsml.debug) console.log('type');
 			$('#type li').removeClass('active');
 			$('#type span.selected').html($(this).html());
 			trackAnalytics('type', $(this).text());
@@ -282,7 +256,7 @@ jQuery(function($){
 		//show/hide upcoming menu option
 		toggleUpcoming();
 		
-		doSearch(false);
+		doSearch();
 	});
 
 	//toggle between list and map
@@ -298,17 +272,15 @@ jQuery(function($){
 		//don't do anything
 		if (action == previous) return;
 
-		//init map if it doesn't exist yet
-		if (action == 'map' && !map) {
-			createMap();
-			setMapMarkers();
-			setMapBounds();			
-		}
-
 		//toggle control, set meetings div
 		$('#meetings #action .toggle-view').toggleClass('active');
 		$('#meetings').attr('data-view', action);
-		
+
+		//init map if it doesn't exist yet
+		if (action == 'map') {
+			createMap(true, locations, searchLocation);
+		}
+
 		//save the query in the query string, if the browser is up to it
 		if (history.pushState) {
 			if (action == tsml.defaults.view) {
@@ -317,17 +289,6 @@ jQuery(function($){
 				var url = updateQueryString('tsml-view', action);
 			}
 			window.history.pushState({path:url}, '', url);
-		}
-		
-		//wake up the map if needed
-		if (action == 'map' && previous == 'list') {
-			google.maps.event.trigger(map, 'resize');
-	 		setMapBounds();
-	 		
-	 		//this is a little crazy, but is needed on iOS, don't know why
-	 		setTimeout(function(){
-		 		$body.click();
-		 	}, 100);
 		}
 		
 	});
@@ -346,32 +307,11 @@ jQuery(function($){
 
 	//c) functions
 	
-	//create a  google map
-	function createMap() {
-			
-		markers = [];
-		
-		bounds = new google.maps.LatLngBounds();
-		
-		map = new google.maps.Map(document.getElementById('map'), {
-			disableDefaultUI: true,
-			scrollwheel: true,
-			streetViewControl: true,
-			zoomControl: true,
-			fullscreenControl: true,
-			mapTypeControlOptions: {
-				mapTypeIds: [google.maps.MapTypeId.ROADMAP, 'map_style']
-			}
-		});
-
-		tsmlDebug('created map');
-	}
-
-	//run search (triggered by dropdown toggle or form submit) ('keyword_searching' means the current intent is keyword search)
-	function doSearch(keyword_searching) {
+	//run search (triggered by dropdown toggle or form submit)
+	function doSearch() {
 	
-		//prepare data for ajax
-		var data = { 
+		//prepare query for ajax
+		var controls = { 
 			action: 'meetings',
 			query: $('#meetings #search input[name=query]').val().trim(),
 			mode: $('#search li.active a').attr('data-id'),
@@ -384,27 +324,30 @@ jQuery(function($){
 			view: $('#meetings .toggle-view.active').attr('data-id'),
 		}
 
-		tsmlDebug('doing search');
-		tsmlDebug(data);
+		//reset search location
+		searchLocation = null;
+
+		if (tsml.debug) console.log('doing search');
+		if (tsml.debug) console.log(controls);
 		
 		//get current query string for history and appending to links
 		var query_string = {};
-		query_string['tsml-day'] = data.day ? data.day : 'any';
-		if ((data.mode != 'search') && (data.distance != tsml.defaults.distance)) {
-			query_string['tsml-distance'] = data.distance;
+		query_string['tsml-day'] = controls.day ? controls.day : 'any';
+		if ((controls.mode != 'search') && (controls.distance != tsml.defaults.distance)) {
+			query_string['tsml-distance'] = controls.distance;
 		}
-		if (data.mode && (data.mode != tsml.defaults.mode)) query_string['tsml-mode'] = data.mode;
-		if (data.query && (data.query != tsml.defaults.query)) query_string['tsml-query'] = data.query;
-		if (data.mode == 'search') {
-			if (data.region != tsml.defaults.region) {
-				query_string['tsml-region'] = data.region;
-			} else if (data.district != tsml.defaults.district) {
-				query_string['tsml-district'] = data.district;
+		if (controls.mode && (controls.mode != tsml.defaults.mode)) query_string['tsml-mode'] = controls.mode;
+		if (controls.query && (controls.query != tsml.defaults.query)) query_string['tsml-query'] = controls.query;
+		if (controls.mode == 'search') {
+			if (controls.region != tsml.defaults.region) {
+				query_string['tsml-region'] = controls.region;
+			} else if (controls.district != tsml.defaults.district) {
+				query_string['tsml-district'] = controls.district;
 			}
 		}
-		if (data.time && (data.time != tsml.defaults.time)) query_string['tsml-time'] = data.time;
-		if (data.type && (data.type != tsml.defaults.type)) query_string['tsml-type'] = data.type;
-		if (data.view != tsml.defaults.view) query_string['tsml-view'] = data.view;
+		if (controls.time && (controls.time != tsml.defaults.time)) query_string['tsml-time'] = controls.time;
+		if (controls.type && (controls.type != tsml.defaults.type)) query_string['tsml-type'] = controls.type;
+		if (controls.view != tsml.defaults.view) query_string['tsml-view'] = controls.view;
 		query_string = $.param(query_string);
 		
 		//save the query in the query string, if the browser is up to it
@@ -418,16 +361,16 @@ jQuery(function($){
 		}
 	
 		//set the mode on the parent object
-		$('#meetings').attr('data-mode', data.mode);
+		$('#meetings').attr('data-mode', controls.mode);
 		
-		if (data.mode == 'search') {
+		if (controls.mode == 'search') {
 			typeaheadEnable();
-			setSearchMarker();
-			getMeetings(data, keyword_searching);
-		} else if (data.mode == 'location') {
+			removeSearchMarker(); //clear search marker if it exists
+			getMeetings(controls);
+		} else if (controls.mode == 'location') {
 			typeaheadDisable();
 	
-			if (data.query) {
+			if (controls.query) {
 				
 				//start spinner
 				$('#search button i').removeClass().addClass('glyphicon glyphicon-refresh spinning');
@@ -435,27 +378,36 @@ jQuery(function($){
 				//geocode the address
 				$.getJSON(tsml.ajaxurl, { 
 					action: 'tsml_geocode',
-					address: data.query, 
+					address: controls.query, 
 					nonce: tsml.nonce,
 				}, function(geocoded) {
+					if (tsml.debug) console.log('geocoded', geocoded);
 					$('#search button i').removeClass().addClass('glyphicon glyphicon-map-marker');
 					if (geocoded.status == 'error') {
 						//show error message
-						setSearchMarker();
+						removeSearchMarker(); //clear marker if it exists
 						setAlert('loc_error');
 					} else {
 						$search_field.val(geocoded.formatted_address);
-						data.latitude = geocoded.latitude;
-						data.longitude = geocoded.longitude;
-						data.query = ''; //don't actually keyword search this
-						setSearchMarker(data);
-						getMeetings(data, keyword_searching);
+						controls.latitude = geocoded.latitude;
+						controls.longitude = geocoded.longitude;
+						controls.query = ''; //don't actually keyword search this
+						searchLocation = {
+							latitude: controls.latitude,
+							longitude: controls.longitude,
+						};
+						getMeetings(controls);
 					}
 				});
 			} else {
 				setAlert('loc_empty');
 			}
-		} else if (data.mode == 'me') {
+		} else if (controls.mode == 'me') {
+
+			if (controls.query) {
+				$('#meetings #search input[name=query]').val('');
+				controls.query = '';
+			}
 	
 			//start spinner
 			$('#search button i').removeClass().addClass('glyphicon glyphicon-refresh spinning');
@@ -463,14 +415,17 @@ jQuery(function($){
 			if (navigator.geolocation) {
 				navigator.geolocation.getCurrentPosition(function(pos) {
 					$('#search button i').removeClass().addClass('glyphicon glyphicon-user');
-					data.latitude = pos.coords.latitude;
-					data.longitude = pos.coords.longitude;
-					setSearchMarker(data);
-					getMeetings(data, keyword_searching);
+					controls.latitude = pos.coords.latitude;
+					controls.longitude = pos.coords.longitude;
+					searchLocation = {
+						latitude: controls.latitude,
+						longitude: controls.longitude,
+					};
+					getMeetings(controls);
 				}, function() {
 					//browser supports but can't get geolocation
 					$('#search button i').removeClass().addClass('glyphicon glyphicon-user'); //todo switch to location
-					setSearchMarker();
+					removeSearchMarker();
 					setAlert('geo_error');
 				}, {
 					enableHighAccuracy: true,
@@ -480,48 +435,20 @@ jQuery(function($){
 			} else {
 				//browser doesn't support geolocation
 				$('#search button i').removeClass().addClass('glyphicon glyphicon-user'); //todo switch to location
-				setSearchMarker();
+				removeSearchMarker();
 				setAlert('geo_error_browser');
 			}
 		}
 		
 	}
 	
-	//format an address: replace commas with breaks
-	function formatAddress(address, street_only) {
-		address = address.split(', ');
-		if (street_only) return address[0];
-		if (address[address.length-1] == 'USA') {
-			address.pop(); //don't show USA
-			var state_and_zip = address.pop();
-			address[address.length-1] += ', ' + state_and_zip;
-		}
-		return address.join('<br>');
-	}
-	
-	//format a link to a meeting result page, preserving all but the excluded query string keys
-	function formatLink(url, text, exclude) {
-		if (location.search) {
-			var query_pairs = location.search.substr(1).split('&');
-			var new_query_pairs = [];
-			for (var i = 0; i < query_pairs.length; i++) {
-				var query_parts = query_pairs[i].split('=');
-				if (query_parts[0] != exclude) new_query_pairs[new_query_pairs.length] = query_parts[0] + '=' + query_parts[1];
-			}
-			if (new_query_pairs.length) {
-				url += ((url.indexOf('?') == -1) ? '?' : '&') + new_query_pairs.join('&');
-			}
-		}
-		return '<a href="' + url + '">' + text + '</a>';
-	}
-
 	//actually get the meetings from the JSON resource and output them
-	function getMeetings(data, keyword_searching) {
+	function getMeetings(controls) {
 		//request new meetings result
-		data.distance_units = tsml.distance_units;
-		data.nonce = tsml.nonce;
+		controls.distance_units = tsml.distance_units;
+		controls.nonce = tsml.nonce;
 				
-		$.post(tsml.ajaxurl, data, function(response){
+		$.post(tsml.ajaxurl, controls, function(response){
 
 			if (typeof response != 'object') {
 								
@@ -532,7 +459,7 @@ jQuery(function($){
 			} else if (!response.length) {
 	
 				//if keyword and no results, clear other parameters and search again
-				if (keyword_searching && (typeof data.day !== 'undefined' || typeof data.region !== 'undefined' || typeof data.time !== 'undefined' || typeof data.type !== 'undefined')) {
+				if (controls.query && (typeof controls.day !== 'undefined' || typeof controls.region !== 'undefined' || typeof controls.time !== 'undefined' || typeof controls.type !== 'undefined')) {
 					$('#day li').removeClass('active').first().addClass('active');
 					$('#time li').removeClass('active').first().addClass('active');
 					$('#region li').removeClass('active').first().addClass('active');
@@ -543,7 +470,7 @@ jQuery(function($){
 					$('#time span.selected').html($('#time li:first-child a').html());
 					$('#region span.selected').html($('#region li:first-child a').html());
 					$('#type span.selected').html($('#type li:first-child a').html());
-					return doSearch(true);
+					return doSearch();
 				}
 	
 				$('#meetings').addClass('empty');
@@ -551,11 +478,6 @@ jQuery(function($){
 			} else {
 				$('#meetings').removeClass('empty');
 	
-				//refresh map if visible
-				if ($('#meetings').attr('data-view') == 'map') {
-					google.maps.event.trigger(map, 'resize');
-				}
-				
 				setAlert();
 	
 				locations = [];
@@ -609,7 +531,7 @@ jQuery(function($){
 					for (var i = 0; i < tsml.columns.length; i++) {
 						switch (tsml.columns[i])	 {
 							case 'time':
-							string += '<td class="time" data-sort="' + sort_time + '-' + sanitizeTitle(obj.location) + '"><span>' + (data.day || !obj.day ? obj.time_formatted : tsml.days[obj.day] + '</span><span>' + obj.time_formatted) + '</span></td>';
+							string += '<td class="time" data-sort="' + sort_time + '-' + sanitizeTitle(obj.location) + '"><span>' + (controls.day || !obj.day ? obj.time_formatted : tsml.days[obj.day] + '</span><span>' + obj.time_formatted) + '</span></td>';
 							break;
 							
 							case 'distance':
@@ -646,26 +568,12 @@ jQuery(function($){
 				
 				sortMeetings();
 				
-				if ((data.mode == 'search') && data.query) $('#tsml td').not('.time').mark(data.query);
+				if ((controls.mode == 'search') && controls.query) $('#tsml td').not('.time').mark(controls.query);
 	
-				//remove old markers and reset bounds
-				if (markers && bounds) {
-					for (var i = 0; i < markers.length; i++) {
-						if ((typeof markers[i] == 'object') && markers[i]) {
-							markers[i].setMap(null);
-						}
-					}
-					markers = [];
-					bounds = new google.maps.LatLngBounds;
-
-					//add user marker if it exists
-					if ((typeof searchMarker == 'object') && searchMarker) {
-						bounds.extend(searchMarker.position);
-					}
-		
-					setMapMarkers();
-					setMapBounds();
+				if (controls.view == 'map') {
+					createMap(true, locations, searchLocation);
 				}
+
 			}
 		}, 'json');	
 	}
@@ -698,117 +606,7 @@ jQuery(function($){
 			$('#alert').html(tsml.strings[message_key]).removeClass('hidden');
 		}
 	}
-	
-	//set / initialize map
-	function setMapBounds() {
-		if (markers.length > 1) {
-			map.fitBounds(bounds);
-		} else if (markers.length == 1) {
-			map.setCenter(bounds.getCenter());
-			if (mode == 'map') google.maps.event.trigger(markers[0],'click');
-			map.setZoom(14);
-		} else if (markers.length == 0) {
-			//currently holds last position, not sure if that's good
-		}
-	}
-	
-	//set single marker, called by all public pages
-	function setMapMarker(title, lat, lng, content) {
 		
-		//cast as numeric;
-		lat -= 0;
-		lng -= 0;
-
-		//stop if coordinates are empty
-		if (!lat && !lng) return;
-		
-		//set new marker
-		var marker = new google.maps.Marker({
-			position: { lat: lat, lng: lng },
-			map: map,
-			title: title,
-			icon: {
-				path: 'M20.5,0.5 c11.046,0,20,8.656,20,19.333c0,10.677-12.059,21.939-20,38.667c-5.619-14.433-20-27.989-20-38.667C0.5,9.156,9.454,0.5,20.5,0.5z',
-				fillColor: '#f76458',
-				fillOpacity: 1,
-				anchor: new google.maps.Point(40,50),
-				strokeWeight: 2,
-				strokeColor: '#b3382c',
-				scale: .6
-			},
-		});
-	
-		//add infowindow event
-		google.maps.event.addListener(marker, 'click', (function(marker) {
-			return function() {
-				infowindow.setContent('<div class="tsml_infowindow">' + content + '</div>');
-				infowindow.open(map, marker);
-			}
-		})(marker));
-		
-		return marker;
-	}
-	
-	//load map, called from archive-meetings.php
-	function setMapMarkers() {
-		for (var location_id in locations) {
-			if (locations.hasOwnProperty(location_id)) {
-				var location = locations[location_id];
-	
-				infowindow = new google.maps.InfoWindow();
-
-				//create infowindow content
-				var content = '<h3>' + formatLink(location.url, location.name, 'post_type') + '</h3>' +
-					'<address>' + formatAddress(location.formatted_address) + '</address>';
-					
-				var current_day = null;
-				for (var i = 0; i < location.meetings.length; i++) {
-					var meeting = location.meetings[i];
-					if (current_day != meeting.day) {
-						if (current_day) content += '</dl>';
-						current_day = meeting.day;
-						if (typeof tsml.days[current_day] !== 'undefined') content += '<h5>' + tsml.days[current_day] + '</h5>';
-						content += '<dl>';
-					}
-					content += '<dt>' + meeting.time + '</dt><dd>' + formatLink(meeting.url, meeting.name, 'post_type') + '</dd>';
-				}
-				content += '</dl>';
-				
-				var marker = setMapMarker(location.name, location.latitude, location.longitude, content);
-					
-				//add to map bounds
-				if ((typeof marker == 'object') && marker) {
-					bounds.extend(marker.position);
-				}
-				
-				markers[markers.length] = marker;
-			}
-		}
-	}
-	
-	//set or remove the search marker (user location or search center)
-	function setSearchMarker(data) {
-		if ((typeof searchMarker == 'object') && searchMarker) {
-			searchMarker.setMap(null);
-			searchMarker = null;
-		}
-		if (typeof data == 'object') {
-			searchMarker = new google.maps.Marker({
-				icon: {
-					path: 'M20.5,0.5 c11.046,0,20,8.656,20,19.333c0,10.677-12.059,21.939-20,38.667c-5.619-14.433-20-27.989-20-38.667C0.5,9.156,9.454,0.5,20.5,0.5z',
-					fillColor: '#2c78b3',
-					fillOpacity: 1,
-					anchor: new google.maps.Point(40,50),
-					strokeWeight: 2,
-					strokeColor: '#2c52b3',
-					scale: .6
-				},
-				position: new google.maps.LatLng(data.latitude, data.longitude),
-				map: map,
-			});
-		}
-	}
-	
 	//sort the meetings by the current sort criteria after getting ajax
 	function sortMeetings() {
 		var $sorted = $('#meetings table thead th[data-sort]').first();
@@ -850,19 +648,13 @@ jQuery(function($){
 		}
 	}
 
-	function tsmlDebug(string) {
-		if (!tsml.debug) return;
-		console.log(string);
-	}
-
 	//send event to google analytics, if loaded
 	function trackAnalytics(action, label) {
 		if (typeof ga === 'function') {
-			tsmlDebug('sending ' + action + ': ' + label + ' to google analytics');
+			if (tsml.debug) console.log('sending ' + action + ': ' + label + ' to google analytics');
 			ga('send', 'event', '12 Step Meeting List', action, label);
 		}
 	}
-	
 		
 	//disable the typeahead (if you switched to a different search mode)	
 	function typeaheadDisable() {
@@ -902,13 +694,13 @@ jQuery(function($){
 				$('#region span.selected').html(active.html());
 				$('#search input[name="query"]').val('').typeahead('val', '');
 				trackAnalytics('region', active.text());
-				doSearch(false);
+				doSearch();
 			} else if (item.type == 'location') {
 				trackAnalytics('location', item.value);
 				location.href = item.url;
 			} else if (item.type == 'group') {
 				trackAnalytics('group', item.value);
-				doSearch(true);
+				doSearch();
 			}
 		});
 	}
