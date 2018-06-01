@@ -85,7 +85,7 @@ function tsml_admin_init() {
 	add_meta_box('location', __('Location Information', '12-step-meeting-list'), 'tsml_location_box', 'tsml_meeting', 'normal', 'low');
 	
 	function tsml_location_box() {
-		global $post, $tsml_days;
+		global $post, $tsml_days, $tsml_mapbox_key, $tsml_google_maps_key;
 		$meetings = array();
 		if ($post->post_parent) {
 			$location = tsml_get_location($post->post_parent);
@@ -120,12 +120,14 @@ function tsml_admin_init() {
 				'show_option_none' => __('Region', '12-step-meeting-list'),
 			))?>
 		</div>
-		<?php }?>
+		<?php }
+		if ($tsml_mapbox_key || $tsml_google_maps_key) {?>
 		<div class="meta_form_row">
 			<label><?php _e('Map', '12-step-meeting-list')?></label>
 			<div id="map"></div>
 		</div>
-		<?php if (count($meetings) > 1) {?>
+		<?php }
+		if (count($meetings) > 1) {?>
 		<div class="meta_form_row">
 			<label><?php _e('Meetings', '12-step-meeting-list')?></label>
 			<ol>
