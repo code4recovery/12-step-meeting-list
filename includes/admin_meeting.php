@@ -120,14 +120,18 @@ function tsml_admin_init() {
 				'show_option_none' => __('Region', '12-step-meeting-list'),
 			))?>
 		</div>
-		<?php }
-		if ($tsml_mapbox_key || $tsml_google_maps_key) {?>
+		<?php }?>
+		
 		<div class="meta_form_row">
 			<label><?php _e('Map', '12-step-meeting-list')?></label>
-			<div id="map"></div>
+			<div id="map">
+				<?php if (empty($tsml_mapbox_key) && empty($tsml_google_maps_key)) {?>
+				<p>Enable maps on the <a href="<?php echo admin_url('edit.php?post_type=tsml_meeting&page=import')?>">Import & Settings</a> page.</p>
+				<?php }?>
+			</div>
 		</div>
-		<?php }
-		if (count($meetings) > 1) {?>
+		
+		<?php if (count($meetings) > 1) {?>
 		<div class="meta_form_row">
 			<label><?php _e('Meetings', '12-step-meeting-list')?></label>
 			<ol>

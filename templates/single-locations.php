@@ -5,13 +5,14 @@ $location = tsml_get_location();
 
 //define some vars for the map
 wp_localize_script('tsml_public', 'tsml_map', array(
+	'formatted_address' => $location->formatted_address,
+	'directions' => __('Directions', '12-step-meeting-list'),
+	'directions_url' => $location->directions,
 	'latitude' => $location->latitude,
-	'longitude' => $location->longitude,
 	'location' => get_the_title(),
 	'location_id' => $location->ID,
-	'formatted_address' => $location->formatted_address,
-	'directions_url' => $location->directions,
-	'directions' => __('Directions', '12-step-meeting-list'),
+	'location_url' => get_permalink($location->ID),
+	'longitude' => $location->longitude,
 ));
 
 //adding custom body classes
@@ -84,7 +85,9 @@ get_header();
 						</div>
 					</div>
 					<div class="col-md-8">
+						<?php if (!empty($tsml_mapbox_key) || !empty($tsml_google_maps_key)) {?>
 						<div id="map" class="panel panel-default"></div>
+						<?php }?>
 					</div>
 				</div>
 			
