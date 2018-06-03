@@ -282,7 +282,7 @@ if (!function_exists('tsml_delete_orphans')) {
 		//edge case: draft-ify locations with only unpublished meetings
 		$location_ids = $wpdb->get_col('SELECT l.ID FROM ' . $wpdb->posts . ' l 
 			WHERE l.post_type = "tsml_location" AND 
-				(SELECT COUNT(*) FROM wp_posts m 
+				(SELECT COUNT(*) FROM ' . $wpdb->posts . ' m 
 				WHERE m.post_type="tsml_meeting" AND m.post_status="publish" AND m.post_parent = l.id) = 0');
 		if (count($location_ids)) {
 			$wpdb->query('UPDATE ' . $wpdb->posts . ' l SET l.post_status = "draft" WHERE ID IN (' . implode(', ', $location_ids) . ')');

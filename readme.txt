@@ -4,7 +4,7 @@ Donate link: https://meetingguide.org/donate
 Tags: 12-step, aa, al-anon, coda, meetings, na, oa, saa, slaa
 Requires at least: 3.2
 Tested up to: 4.9
-Stable tag: 3.1.0
+Stable tag: 3.1.1
 
 This plugin helps twelve step recovery programs list their meetings. It standardizes addresses, and displays results in a searchable list and map.
 
@@ -390,6 +390,14 @@ pin will still show up for these meetings and people will try to get directions 
 1. Edit location
 
 == Changelog ==
+
+= 3.1.1 =
+* Bug fix when saving a meeting if you have a database prefix (Ft Worth)
+* Paragraph spacing on no-SSL warning
+* Badging Import & Settings link if notices present
+* Adding link on admin page to enable maps
+* Removing empty map on meeting & location detail pages if maps not enabled
+* Map infowindow is back on location detail page
 
 = 3.1.0 =
 * Mapbox support

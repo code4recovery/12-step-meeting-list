@@ -55,10 +55,6 @@ body {
 				li { margin-bottom: 0; }
 			}
 			
-			p {
-				margin: 0 0 10px;
-			}
-
 			details {
 				summary {
 					margin: 25px 0 5px;
@@ -338,6 +334,12 @@ body {
 				padding: 0;
 				*:focus { outline: none; }
 				.mapboxgl-ctrl-logo, .mapboxgl-ctrl-attrib { display: none; }
+				p { 
+					font-style: italic;
+					font-size: 15px;
+					margin: 8px 10px;
+					color: #999;
+				}
 			}
 			
 			//meetings at a location

@@ -858,7 +858,11 @@ function tmsl_import_page() {
 									<input type="text" name="tsml_add_mapbox_key" value="<?php echo $tsml_mapbox_key?>" placeholder="Enter Mapbox access token here">
 								</div>
 								<div class="btn">
+									<?php if (empty($tsml_mapbox_key)) {?>
+									<input type="submit" class="button" value="<?php _e('Add', '12-step-meeting-list')?>">
+									<?php } else {?>
 									<input type="submit" class="button" value="<?php _e('Update', '12-step-meeting-list')?>">
+									<?php }?>
 								</div>
 							</form>
 
@@ -872,7 +876,11 @@ function tmsl_import_page() {
 									<input type="text" name="tsml_add_google_maps_key" value="<?php echo $tsml_google_maps_key?>" placeholder="Enter Google API key here">
 								</div>
 								<div class="btn">
+									<?php if (empty($tsml_google_maps_key)) {?>
+									<input type="submit" class="button" value="<?php _e('Add', '12-step-meeting-list')?>">
+									<?php } else {?>
 									<input type="submit" class="button" value="<?php _e('Update', '12-step-meeting-list')?>">
+									<?php }?>
 								</div>
 							</form>
 						</div>

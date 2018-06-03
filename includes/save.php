@@ -60,7 +60,7 @@ function tsml_save_post($post_id, $post, $update) {
 	}
 
 	//check types for not-array-ness
-	if (!is_array($_POST['types'])) $_POST['types'] = array(); //not sure if this actually happens
+	if (empty($_POST['types']) || !is_array($_POST['types'])) $_POST['types'] = array(); //not sure if this actually happens
 	
 	//don't allow it to be both open and closed
 	if (in_array('C', $_POST['types']) && in_array('O', $_POST['types'])) {

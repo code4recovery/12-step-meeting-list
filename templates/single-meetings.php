@@ -5,14 +5,14 @@ $meeting = tsml_get_meeting();
 
 //define some vars for the map
 wp_localize_script('tsml_public', 'tsml_map', array(
-	'latitude' => $meeting->latitude,
-	'longitude' => $meeting->longitude,
-	'location_id' => $meeting->post_parent,
-	'location' => get_the_title($meeting->post_parent),
-	'formatted_address' => $meeting->formatted_address,
-	'location_url' => get_permalink($meeting->post_parent),
-	'directions_url' => $meeting->directions,
 	'directions' => __('Directions', '12-step-meeting-list'),
+	'directions_url' => $meeting->directions,
+	'formatted_address' => $meeting->formatted_address,
+	'latitude' => $meeting->latitude,
+	'location' => get_the_title($meeting->post_parent),
+	'location_id' => $meeting->post_parent,
+	'location_url' => get_permalink($meeting->post_parent),
+	'longitude' => $meeting->longitude,
 ));
 
 $startDate = tsml_format_next_start($meeting);
@@ -211,7 +211,9 @@ get_header();
 						<?php /* if (has_post_thumbnail()) { ?>
 							<img src="<?php echo get_the_post_thumbnail_url(); ?>" class="panel panel-default meeting-thumbnail img-responsive">
 						<?php } */ ?>
+						<?php if (!empty($tsml_mapbox_key) || !empty($tsml_google_maps_key)) {?>
 						<div id="map" class="panel panel-default"></div>
+						<?php }?>
 					</div>
 				</div>
 			</div>
