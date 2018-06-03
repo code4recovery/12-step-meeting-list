@@ -6,24 +6,7 @@ var infowindow, searchLocation, searchMarker, tsmlmap, markers = [], bounds, map
 //create an empty map
 function createMap(scrollwheel, locations, searchLocation) {
 
-	if (typeof(google) == 'object') {
-
-		mapMode = 'google';
-		
-		//init map
-		if (!tsmlmap) tsmlmap = new google.maps.Map(document.getElementById('map'), {
-			disableDefaultUI: true,
-			scrollwheel: scrollwheel,
-			zoomControl: true,
-		});
-
-		//init popup
-		infowindow = new google.maps.InfoWindow();
-
-		//init bounds
-		bounds = new google.maps.LatLngBounds();
-
-	} else if (tsml.mapbox_key) {
+	if (tsml.mapbox_key) {
 
 		mapMode = 'mapbox';
 
@@ -56,7 +39,26 @@ function createMap(scrollwheel, locations, searchLocation) {
 
 	} else if (tsml.google_maps_key) {
 
-		console.warn('google key present but google maps not invoked');
+		//check to see if google ready (wp google maps was removing other map scripts for a while)
+		if (typeof(google) !== 'object') {
+			console.warn('google key present but google script not ready');
+			return;
+		}
+
+		mapMode = 'google';
+		
+		//init map
+		if (!tsmlmap) tsmlmap = new google.maps.Map(document.getElementById('map'), {
+			disableDefaultUI: true,
+			scrollwheel: scrollwheel,
+			zoomControl: true,
+		});
+
+		//init popup
+		infowindow = new google.maps.InfoWindow();
+
+		//init bounds
+		bounds = new google.maps.LatLngBounds();
 
 	}
 
