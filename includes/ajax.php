@@ -240,7 +240,7 @@ if (!function_exists('tsml_ajax_csv')) {
 		$columns = array(
 			'time' =>				'Time',
 			'end_time' =>			'End Time',
-			'day' =>					'Day',
+			'day' =>				'Day',
 			'name' =>				'Name',
 			'location' =>			'Location',
 			'formatted_address' =>	'Address',
@@ -254,24 +254,25 @@ if (!function_exists('tsml_ajax_csv')) {
 			'sub_district' => 		'Sub District',
 			'website' => 			'Website',
 			'website_2' => 			'Website 2',
+			'venmo' => 				'Venmo',
 			'email' => 				'Email',
 			'phone' => 				'Phone',
 			'group_notes' => 		'Group Notes',
-			'updated' =>				'Updated',
+			'updated' =>			'Updated',
 		);
 		
 		//append contact info if user has permission
 		if (current_user_can('edit_posts')) {
 			$columns = array_merge($columns, array(
 				'contact_1_name' =>		'Contact 1 Name',
-				'contact_1_email' =>		'Contact 1 Email',
-				'contact_1_phone' =>		'Contact 1 Phone',
+				'contact_1_email' =>	'Contact 1 Email',
+				'contact_1_phone' =>	'Contact 1 Phone',
 				'contact_2_name' =>		'Contact 2 Name',
-				'contact_2_email' =>		'Contact 2 Email',
-				'contact_2_phone' =>		'Contact 2 Phone',
+				'contact_2_email' =>	'Contact 2 Email',
+				'contact_2_phone' =>	'Contact 2 Phone',
 				'contact_3_name' =>		'Contact 3 Name',
-				'contact_3_email' =>		'Contact 3 Email',
-				'contact_3_phone' =>		'Contact 3 Phone',
+				'contact_3_email' =>	'Contact 3 Email',
+				'contact_3_phone' =>	'Contact 3 Phone',
 				'last_contact' => 		'Last Contact',
 			));
 		}
@@ -298,7 +299,7 @@ if (!function_exists('tsml_ajax_csv')) {
 					$line[] = $escape . implode(', ', $types) . $escape;
 				} elseif (strstr($column, 'notes')) {
 					$line[] = $escape . strip_tags(str_replace($escape, str_repeat($escape, 2), $meeting[$column])) . $escape;
-				} else {
+				} elseif (array_key_exists($column, $meeting)) {
 					$line[] = $escape . str_replace($escape, '', $meeting[$column]) . $escape;
 				}
 			}
