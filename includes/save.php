@@ -188,7 +188,7 @@ function tsml_save_post($post_id, $post, $update) {
 	}	
 
 	//set parent on this post (or all meetings at location) without re-triggering the save_posts hook (update 7/25/17: removing post_status from this)
-	if ($old_meeting->post_parent != $location_id) {
+	if ($update && ($old_meeting->post_parent != $location_id)) {
 		if (empty($_POST['apply_address_to_location'])) {
 			$wpdb->query($wpdb->prepare('UPDATE ' . $wpdb->posts . ' SET post_parent = %d WHERE ID = %d', $location_id, $post->ID));
 		} else {
@@ -365,8 +365,7 @@ function tsml_save_post($post_id, $post, $update) {
 			update_post_meta($group_id, 'last_contact', date('Y-m-d', strtotime($_POST['last_contact'])));
 		} else {
 			delete_post_meta($group_id, 'last_contact');
-		}
-				
+		}	
 	}
 
 	//deleted orphaned locations and groups
@@ -440,6 +439,5 @@ function tsml_save_post($post_id, $post, $update) {
 		$message .= '</table>';
 		$subject = $update ? __('Meeting Change Notification', '12-step-meeting-list') : __('New Meeting Notification', '12-step-meeting-list');
 		tsml_email($tsml_notification_addresses, $subject, $message);
-	} 
-
+	}
 }
