@@ -1240,6 +1240,20 @@ if (!function_exists('tsml_import_buffer_set')) {
 					$meeting[$key] = sanitize_text_field($value);
 				}
 			}
+
+			//column aliases
+			if (empty($meeting['postal_code']) && !empty($meeting['zip'])) {
+				$meeting['postal_code'] = $meeting['zip'];
+			}
+			if (empty($meeting['name']) && !empty($meeting['meeting'])) {
+				$meeting['name'] = $meeting['meeting'];
+			}
+			if (empty($meeting['location']) && !empty($meeting['location_name'])) {
+				$meeting['location'] = $meeting['location_name'];
+			}
+			if (empty($meeting['time']) && !empty($meeting['start_time'])) {
+				$meeting['time'] = $meeting['start_time'];
+			}
 	
 			//if '@' is in address, remove it and everything after
 			if (!empty($meeting['address']) && $pos = strpos($meeting['address'], '@')) $meeting['address'] = trim(substr($meeting['address'], 0, $pos));
@@ -1253,7 +1267,7 @@ if (!function_exists('tsml_import_buffer_set')) {
 			if (isset($meeting['day']) && !array_key_exists($meeting['day'], $upper_days)) {
 				$meeting['day'] = array_search(strtoupper($meeting['day']), $upper_days);
 			}
-		
+
 			//sanitize time & day
 			if (empty($meeting['time']) || ($meeting['day'] === false)) {
 				$meeting['time'] = $meeting['end_time'] = $meeting['day'] = false; //by appointment

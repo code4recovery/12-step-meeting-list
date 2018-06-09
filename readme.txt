@@ -4,7 +4,7 @@ Donate link: https://meetingguide.org/donate
 Tags: 12-step, aa, al-anon, coda, meetings, na, oa, saa, slaa
 Requires at least: 3.2
 Tested up to: 4.9
-Stable tag: 3.1.4
+Stable tag: 3.1.5
 
 This plugin helps twelve step recovery programs list their meetings. It standardizes addresses, and displays results in a searchable list and map.
 
@@ -121,6 +121,7 @@ This plugin was originally designed to maintain a list of AA meetings in Santa C
 1. [San Francisco, CA](https://www.aasf.org/meetings)
 1. [San Jose, CA](https://aasanjose.org/meetings)
 1. [San Mateo, CA](http://aa-san-mateo.org/meetings)
+1. [Santa Barbara, CA](https://santabarbaraaa.com/meetings)
 1. [Santa Fe, NM](http://santafeaa.org/meetings/)
 1. [Savannah, GA](http://savannahaa.com/meetings-list/)
 1. [Secular AA](https://www.secularaa.org/meetings/)
@@ -390,6 +391,11 @@ pin will still show up for these meetings and people will try to get directions 
 1. Edit location
 
 == Changelog ==
+
+= 3.1.5 =
+* Fixing Internet Explorer map error
+* Borrows Google Maps key from The Events Calendar if needed and available
+* Adding column aliases for import (you can now use ZIP for Postal Code, for example)
 
 = 3.1.4 =
 * Adding type for "Digital Basket"

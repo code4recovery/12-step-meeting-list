@@ -225,8 +225,9 @@ function setMapMarkers(locations, searchLocation) {
 	}
 
 	//convert to array and sort it by latitude (for marker overlaps)
-	var location_array = Object.values(locations);
-	location_array.sort(function(a, b) {
+	var location_array = Object.keys(locations).map(function(e) {
+		return locations[e];
+	}).sort(function(a, b) {
 		return b.latitude - a.latitude;
 	});
 
