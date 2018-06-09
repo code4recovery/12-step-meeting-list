@@ -187,6 +187,16 @@ $tsml_language = substr(get_bloginfo('language'), 0, 2);
 //alternative maps provider
 $tsml_mapbox_key = get_option('tsml_mapbox_key');
 
+//if no maps key, check to see if the events calendar plugin has one
+if (empty($tsml_google_maps_key) && empty($tsml_mapbox_key)) {
+	if ($tribe_options = get_option('tribe_events_calendar_options', array())) {
+		if (array_key_exists('google_maps_js_api_key', $tribe_options)) {
+			$tsml_google_maps_key = $tribe_options['google_maps_js_api_key'];
+			update_option('tsml_google_maps_key', $tsml_google_maps_key);
+		}
+	}
+}
+
 //used to secure forms
 $tsml_nonce = plugin_basename(__FILE__);
 
