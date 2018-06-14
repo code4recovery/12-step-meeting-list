@@ -4,7 +4,7 @@ Donate link: https://meetingguide.org/donate
 Tags: 12-step, aa, al-anon, coda, meetings, na, oa, saa, slaa
 Requires at least: 3.2
 Tested up to: 4.9
-Stable tag: 3.1.5
+Stable tag: 3.1.6
 
 This plugin helps twelve step recovery programs list their meetings. It standardizes addresses, and displays results in a searchable list and map.
 
@@ -99,6 +99,7 @@ This plugin was originally designed to maintain a list of AA meetings in Santa C
 1. [North Coast, LA](http://district12.org/meetings/)
 1. [North Port, FL](http://aanorthport.org/meetings/)
 1. [Oahu, HI](http://oahucentraloffice.com/meetings/)
+1. [Ogden, UT](https://northernutahaa.org/meetings/)
 1. [Oklahoma](http://aaoklahoma.org/meetings)
 1. [Orlando, FL](http://cflintergroup.org/meetings/)
 1. [Palm Beach County, FL](http://aa-palmbeachcounty.org/new/meetings)
@@ -391,6 +392,9 @@ pin will still show up for these meetings and people will try to get directions 
 1. Edit location
 
 == Changelog ==
+
+= 3.1.6 =
+* Adding geocode override (Regina)
 
 = 3.1.5 =
 * Fixing Internet Explorer map error

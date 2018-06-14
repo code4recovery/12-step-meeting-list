@@ -179,6 +179,14 @@ $tsml_google_overrides = array(
 		'latitude'			=> '36.1988282',
 		'longitude'			=> '-105.88777240000002',
 	),
+
+	//regina canada
+	'Kwakiutl Totem Pole, Regina, SK S4S, Canada' => array(
+		'formatted_address'	=> 'Kwakiutl Totem Pole, Regina, SK S4S, Canada',
+		'city'				=> 'Regina',
+		'latitude'			=> '50.428500',
+		'longitude'			=> '-104.612917',
+	),
 );
 
 //get the blog's language (used as a parameter when geocoding)
