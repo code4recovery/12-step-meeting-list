@@ -465,6 +465,11 @@ if (!function_exists('tsml_geocode')) {
 	function tsml_geocode($address) {
 		global $tsml_curl_handle, $tsml_language, $tsml_google_overrides;
 
+		//check overrides first before anything
+		if (array_key_exists($address, $tsml_google_overrides)) {
+			return $tsml_google_overrides[$address];
+		}
+
 		//check cache
 		$addresses	= get_option('tsml_addresses', array());
 		if (array_key_exists($address, $addresses)) {
@@ -530,7 +535,7 @@ if (!function_exists('tsml_geocode')) {
 			);
 		}
 
-		//check our overrides array in case google is wrong
+		//check our overrides array again in case google is wrong
 		if (array_key_exists($data->results[0]->formatted_address, $tsml_google_overrides)) {
 			$response = $tsml_google_overrides[$data->results[0]->formatted_address];
 		} else {
