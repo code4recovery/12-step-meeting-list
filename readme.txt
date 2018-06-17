@@ -4,7 +4,7 @@ Donate link: https://meetingguide.org/donate
 Tags: 12-step, aa, al-anon, coda, meetings, na, oa, saa, slaa
 Requires at least: 3.2
 Tested up to: 4.9
-Stable tag: 3.1.6
+Stable tag: 3.1.7
 
 This plugin helps twelve step recovery programs list their meetings. It standardizes addresses, and displays results in a searchable list and map.
 
@@ -23,6 +23,7 @@ This plugin was originally designed to maintain a list of AA meetings in Santa C
 1. [Aspen, CO](http://www.coaadistrict14.org/)
 1. [Asheville, NC](http://ashevilleaa.org/meetings/)
 1. [Austin, TX](http://austinaa.org/meetings/)
+1. [Baltimore, MD](https://baltimoreaa.org/meetings/)
 1. [Batavia, IL](https://aadistrict61.org/archives/meetings)
 1. [Baton Rouge, LA](http://aabatonrouge.org/meetings/)
 1. [Bethlehem, PA](https://www.aalv.org/meetings)
@@ -149,6 +150,7 @@ This plugin was originally designed to maintain a list of AA meetings in Santa C
 1. [Tri Valley, CA](http://trivalleyaa.org/meetings/)
 1. [Topeka, KS](http://aatopeka.org/meetings/)
 1. [Traverse City, MI](http://district11-aa.org/meetings/)
+1. [Tulare County, CA](http://aa-tulareco.org/meetings/)
 1. [Tulsa, OK](http://district40aa.com/meetings)
 1. [Vacaville, CA](http://aasolanonorth.org/meetings/)
 1. [Vancouver, Canada](http://www.vancouveraa.ca/meetings/)
@@ -392,6 +394,9 @@ pin will still show up for these meetings and people will try to get directions 
 1. Edit location
 
 == Changelog ==
+
+= 3.1.7 =
+* Updating Meeting Guide Google Play link
 
 = 3.1.6 =
 * Adding geocode override (Regina)

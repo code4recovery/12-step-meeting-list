@@ -201,7 +201,7 @@ class TSML_Widget_App_Store extends WP_Widget {
 				<a href="https://itunes.apple.com/us/app/meeting-guide/id1042822181" target="_blank">
 					<img src="' . plugins_url('assets/img/apple.svg', __DIR__) . '" alt="App Store" width="113.13" height="38.2">
 				</a>
-				<a href="https://play.google.com/store/apps/details?id=org.meetingguide.app" target="_blank">
+				<a href="https://play.google.com/store/apps/details?id=org.meetingguide" target="_blank">
 					<img src="' . plugins_url('assets/img/google.svg', __DIR__) . '" alt="Google Play" width="113.13" height="38.2">
 				</a>
 			</nav>
