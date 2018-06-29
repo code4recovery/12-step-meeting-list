@@ -78,7 +78,7 @@ jQuery(function($){
 	}
 		
 	//b) jQuery event handlers
-	
+
 	//handle directions links; send to Apple Maps (iOS), or Google Maps (everything else)
 	var iOS = !!navigator.platform && /iPad|iPhone|iPod/.test(navigator.platform);
 	$body.on('click', 'a.tsml-directions', function(e){
@@ -226,14 +226,28 @@ jQuery(function($){
 			$('#time span.selected').html($(this).html());
 			trackAnalytics('time', $(this).text());
 		} else if (param == 'type') {
-			//type only one
+			//type can be multiple
 			if (tsml.debug) console.log('type');
-			$('#type li').removeClass('active');
-			$('#type span.selected').html($(this).html());
+			if (!e.metaKey) $('#type li').removeClass('active');
 			trackAnalytics('type', $(this).text());
 		}
 
 		$(this).parent().toggleClass('active');
+
+		//wait to set label on type until we have a complete count
+		if (param == 'type') {
+			if ($('#type li.active a[data-id]').size()) {
+				if (tsml.debug) console.log($('#type li.active a[data-id]').size() + ' types selected');
+				var types = [];
+				$('#type li.active a[data-id]').each(function(){
+					types.push($(this).text());
+				});
+				$('#type span.selected').html(types.join(' + '));
+			} else {
+				if (tsml.debug) console.log('no types selected');
+				$('#type span.selected').html($(this).text());
+			}
+		}
 
 		//set page title
 		var string = '';
@@ -310,6 +324,12 @@ jQuery(function($){
 	//run search (triggered by dropdown toggle or form submit)
 	function doSearch() {
 	
+		//types can be multiple
+		var types = [];
+		$('#type li.active a').each(function(){
+			types.push($(this).attr('data-id'));
+		});
+
 		//prepare query for ajax
 		var controls = { 
 			action: 'meetings',
@@ -319,7 +339,7 @@ jQuery(function($){
 			district: $('#region li.district.active a').attr('data-id'),
 			day: $('#day li.active a').attr('data-id'),
 			time: $('#time li.active a').attr('data-id'),
-			type: $('#type li.active a').attr('data-id'),
+			type: types.join(','),
 			distance: $('#distance li.active a').attr('data-id'),
 			view: $('#meetings .toggle-view.active').attr('data-id'),
 		}

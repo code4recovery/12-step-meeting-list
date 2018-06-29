@@ -1,8 +1,17 @@
-var elixir = require('laravel-elixir');
+let mix = require('laravel-mix');
 
-elixir(function(mix) {
-	mix
-	.sass('./assets/src/admin.scss', './assets/css/admin.css')
+/*
+ |--------------------------------------------------------------------------
+ | Mix Asset Management
+ |--------------------------------------------------------------------------
+ |
+ | Mix provides a clean, fluent API for defining some Webpack build steps
+ | for your Laravel application. By default, we are compiling the Sass
+ | file for the application as well as bundling up all the JS files.
+ |
+ */
+
+mix.sass('./assets/src/admin.scss', './assets/css/admin.css')
 	.styles([
 		'./node_modules/timepicker/jquery.timepicker.min.css',
 		'./node_modules/mapbox-gl/dist/mapbox-gl.css',
@@ -13,7 +22,9 @@ elixir(function(mix) {
 		'./node_modules/mapbox-gl/dist/mapbox-gl.css',
 		'./assets/css/public.css'
 	], './assets/css/public.min.css')
-	.scripts([
+	.options({
+		processCssUrls: false
+  	}).scripts([
 		'./node_modules/timepicker/jquery.timepicker.min.js',
 		'./node_modules/typeahead.js/dist/typeahead.bundle.js',
 		'./node_modules/mapbox-gl/dist/mapbox-gl.js',
@@ -28,4 +39,3 @@ elixir(function(mix) {
 		'./assets/src/maps.js',
 		'./assets/src/public.js'
 	], './assets/js/public.min.js');
-});

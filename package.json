@@ -1,15 +1,19 @@
 {
   "private": true,
   "scripts": {
-    "prod": "gulp --production",
-    "dev": "gulp watch"
+    "dev": "npm run development",
+    "development": "cross-env NODE_ENV=development node_modules/webpack/bin/webpack.js --progress --hide-modules --config=node_modules/laravel-mix/setup/webpack.config.js",
+    "watch": "npm run development -- --watch",
+    "watch-poll": "npm run watch -- --watch-poll",
+    "prod": "npm run production",
+    "production": "cross-env NODE_ENV=production node_modules/webpack/bin/webpack.js --no-progress --hide-modules --config=node_modules/laravel-mix/setup/webpack.config.js"
   },
   "devDependencies": {
     "bootstrap-sass": "^3.3.7",
-    "gulp": "^3.9.1",
-    "laravel-elixir": "^6.0.0-18",
-    "mapbox-gl": "^0.45.0",
-    "mark.js": "github:julmot/mark.js",
+    "cross-env": "^5.2.0",
+    "laravel-mix": "^2.1.11",
+    "mapbox-gl": "^0.46.0",
+    "mark.js": "^8.11.1",
     "timepicker": "^1.11.5",
     "typeahead.js": "^0.11.1"
   }

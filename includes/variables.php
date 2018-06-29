@@ -780,21 +780,21 @@ function tsml_define_strings() {
 	
 	//strings that must be synced between the javascript and the PHP
 	$tsml_strings = array(
-		'data_error'			 => __('Got an improper response from the server, try refreshing the page.', '12-step-meeting-list'),
-		'email_not_sent'		 => __('Email was not sent.', '12-step-meeting-list'),
-		'loc_empty'			 => __('Enter a location in the field above.', '12-step-meeting-list'),
-		'loc_error'			 => __('Google could not find that location.', '12-step-meeting-list'),
-		'loc_thinking'		 => __('Looking up address…', '12-step-meeting-list'),
-		'geo_error'			 => __('There was an error getting your location.', '12-step-meeting-list'),
-		'geo_error_browser'	 => __('Your browser does not appear to support geolocation.', '12-step-meeting-list'),
-		'geo_thinking'		 => __('Finding you…', '12-step-meeting-list'),
-		'groups'				 => __('Groups', '12-step-meeting-list'),
-		'locations'			 => __('Locations', '12-step-meeting-list'),
-		'meetings'			 => __('Meetings', '12-step-meeting-list'),
-		'men'				 => __('Men', '12-step-meeting-list'),
-		'no_meetings'		 => __('No meetings were found matching the selected criteria.', '12-step-meeting-list'),
-		'regions'			 => __('Regions', '12-step-meeting-list'),
-		'women'				 => __('Women', '12-step-meeting-list'),
+		'data_error'		=> __('Got an improper response from the server, try refreshing the page.', '12-step-meeting-list'),
+		'email_not_sent'	=> __('Email was not sent.', '12-step-meeting-list'),
+		'loc_empty'			=> __('Enter a location in the field above.', '12-step-meeting-list'),
+		'loc_error'			=> __('Google could not find that location.', '12-step-meeting-list'),
+		'loc_thinking'		=> __('Looking up address…', '12-step-meeting-list'),
+		'geo_error'			=> __('There was an error getting your location.', '12-step-meeting-list'),
+		'geo_error_browser'	=> __('Your browser does not appear to support geolocation.', '12-step-meeting-list'),
+		'geo_thinking'		=> __('Finding you…', '12-step-meeting-list'),
+		'groups'			=> __('Groups', '12-step-meeting-list'),
+		'locations'			=> __('Locations', '12-step-meeting-list'),
+		'meetings'			=> __('Meetings', '12-step-meeting-list'),
+		'men'				=> __('Men', '12-step-meeting-list'),
+		'no_meetings'		=> __('No meetings were found matching the selected criteria.', '12-step-meeting-list'),
+		'regions'			=> __('Regions', '12-step-meeting-list'),
+		'women'				=> __('Women', '12-step-meeting-list'),
 	);
 	
 	$tsml_types_in_use = get_option('tsml_types_in_use', array());
