@@ -48,7 +48,15 @@ if (isset($_GET['tsml-region']) && term_exists(intval($_GET['tsml-region']), 'ts
 } elseif (isset($_GET['tsml-district']) && term_exists(intval($_GET['tsml-district']), 'tsml_district')) {
 	$district = $_GET['tsml-district'];
 }
-if (isset($_GET['tsml-type']) && array_key_exists($_GET['tsml-type'], $tsml_programs[$tsml_program]['types'])) $type = $_GET['tsml-type'];
+$types = array();
+if (!empty($_GET['tsml-type'])) {
+	$type_queries = explode(',', $_GET['tsml-type']);
+	foreach ($type_queries as $type_query) {
+		if (array_key_exists($type_query, $tsml_programs[$tsml_program]['types'])) {
+			$types[] = $type_query;
+		}
+	}
+}
 if (isset($_GET['tsml-time']) && (($_GET['tsml-time'] == 'upcoming') || array_key_exists($_GET['tsml-time'], $times))) $time = $_GET['tsml-time'];
 if (isset($_GET['tsml-distance']) && intval($_GET['tsml-distance'])) $distance = $_GET['tsml-distance'];
 if (isset($_GET['tsml-mode']) && array_key_exists($_GET['tsml-mode'], $modes)) $mode = $_GET['tsml-mode'];
@@ -89,7 +97,13 @@ if ($region) {
 	$region_label = $term->name;
 }
 $type_default = __('Any Type', '12-step-meeting-list');
-$type_label = ($type && array_key_exists($type, $tsml_programs[$tsml_program]['types'])) ? $tsml_programs[$tsml_program]['types'][$type] : $type_default;
+if (!count($types)) {
+	$type_label	= $type_default;
+} else {
+	$type_label = implode(' + ', array_map(function($type) use ($tsml_programs, $tsml_program) {
+		return $tsml_programs[$tsml_program]['types'][$type];
+	}, $types));
+}
 $mode_label = array_key_exists($mode, $modes) ? $modes[$mode]['title'] : $modes[0]['title'];
 $distance_label = $distances[$distance];
 
@@ -99,7 +113,7 @@ if ($day !== null) {
 	$tsml_page_title[] = $today ? __('Today\'s', '12-step-meeting-list') : $tsml_days[$day];
 }
 if ($time) $tsml_page_title[] = $time_label;
-if ($type) $tsml_page_title[] = $type_label;
+if (count($types)) $tsml_page_title[] = $type_label;
 $tsml_page_title[] = empty($tsml_programs[$tsml_program]['abbr']) ? $tsml_programs[$tsml_program]['name'] : $tsml_programs[$tsml_program]['abbr'];
 $tsml_page_title[] = __('Meetings', '12-step-meeting-list');
 if ($region) $tsml_page_title[] = __('in', '12-step-meeting-list') . ' ' . $region_label;
@@ -125,6 +139,7 @@ $message = '';
 
 //run query
 if ($mode == 'search') {
+	$type = implode(',', $types);
 	$meetings	= tsml_get_meetings(compact('mode', 'day', 'time', 'region', 'district', 'type', 'query'));	
 	if (!count($meetings)) $message = $tsml_strings['no_meetings'];
 } elseif ($mode == 'location') {
@@ -156,6 +171,7 @@ $regions_dropdown = wp_list_categories(array(
 	'value' => $region,
 	'show_option_none' => null,
 	'echo' => false,
+	//'show_count' => true,
 ));
 
 class Walker_Districts_Dropdown extends Walker_Category {
@@ -181,6 +197,7 @@ $districts_dropdown = wp_list_categories(array(
 	'value' => $district,
 	'show_option_none' => null,
 	'echo' => false,
+	//'show_count' => true,
 ));
 
 //adding custom body classes
@@ -317,12 +334,12 @@ get_header();
 						<span class="caret"></span>
 					</a>
 					<ul class="dropdown-menu" role="menu">
-						<li<?php if (empty($type)) echo ' class="active"'?>><a><?php echo $type_default?></a></li>
+						<li<?php if (!count($types)) echo ' class="active"'?>><a><?php echo $type_default?></a></li>
 						<li class="divider"></li>
 						<?php 
 						$types_to_list = array_intersect_key($tsml_programs[$tsml_program]['types'], array_flip($tsml_types_in_use));
 						foreach ($types_to_list as $key=>$thistype) {?>
-						<li<?php if ($key == $type) echo ' class="active"'?>><a href="<?php echo tmsl_meetings_url(array('tsml-type'=>$key))?>" data-id="<?php echo $key?>"><?php echo $thistype?></a></li>
+						<li<?php if (in_array($key, $types)) echo ' class="active"'?>><a href="<?php echo tmsl_meetings_url(array('tsml-type'=>$key))?>" data-id="<?php echo $key?>"><?php echo $thistype?></a></li>
 						<?php } ?>
 					</ul>
 				</div>

@@ -4,7 +4,7 @@ Donate link: https://meetingguide.org/donate
 Tags: 12-step, aa, al-anon, coda, meetings, na, oa, saa, slaa
 Requires at least: 3.2
 Tested up to: 4.9
-Stable tag: 3.1.7
+Stable tag: 3.1.8
 
 This plugin helps twelve step recovery programs list their meetings. It standardizes addresses, and displays results in a searchable list and map.
 
@@ -115,6 +115,7 @@ This plugin was originally designed to maintain a list of AA meetings in Santa C
 1. [Regina, Canada](http://www.aaregina.com/meetings/)
 1. [Reading, PA](http://readingberksintergroup.org/meetings/)
 1. [Rochester, MN](http://aadistrict1.org/blog/meetings/)
+1. [Rochester, NY](https://www.rochester-ny-aa.org/meetings/)
 1. [Rockland County, NY](https://rocklandnyaa.org/meetings/)
 1. [Romania](https://grupuri.aaromania.ro/meetings/)
 1. [Rhode Island](https://aainri.com/meetings/)
@@ -155,6 +156,7 @@ This plugin was originally designed to maintain a list of AA meetings in Santa C
 1. [Vacaville, CA](http://aasolanonorth.org/meetings/)
 1. [Vancouver, Canada](http://www.vancouveraa.ca/meetings/)
 1. [Ventura County, CA](https://aaventuracounty.org/meetings)
+1. [Vienna, Austria](https://www.aavienna.com/meetings/?tsml-day=any)
 1. [Virginia](https://aavirginia.org/meetings/)
 1. [Virginia Peninsula](http://vapsc.org/meetings)
 1. [Waco, TX](https://centexintergroup.com/meetings/)
@@ -218,7 +220,7 @@ This plugin was originally designed to maintain a list of AA meetings in Santa C
 1. [Roseville, CA](https://sfana.org/meetings/)
 1. [Sacramento, CA](https://sacramentona.org/meetings/)
 1. [Toledo, OH](https://toledonameetings.com/meetings/)
-1. [Vienna](https://www.navienna.com/meetings/?d=any)
+1. [Vienna](https://www.navienna.com/meetings/?tsml-day=any)
 1. [Western Oklahoma](https://wascokna.org/meetings/)
 
 **Recovering Couples Anonymous**
@@ -238,6 +240,7 @@ This plugin was originally designed to maintain a list of AA meetings in Santa C
 
 1. [Main Website](http://ws.sexaholics.org/meetings/)
 1. [St. Louis, MO](http://www.sastl.net/meetings/?tsml-day=any)
+1. [Triad, NC](https://www.triadsa.org/meetings/)
 
 [Let us know](mailto:info@meetingguide.org) if you're using this plugin and would like to be listed here.
 
@@ -394,6 +397,10 @@ pin will still show up for these meetings and people will try to get directions 
 1. Edit location
 
 == Changelog ==
+
+= 3.1.8 =
+* Select multiple types with modifier key down (Atlanta)
+* Upgrading the build tool to Laravel Mix, should fix NPM warning on Github
 
 = 3.1.7 =
 * Updating Meeting Guide Google Play link

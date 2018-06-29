@@ -942,11 +942,14 @@ if (!function_exists('tsml_get_meetings')) {
 	
 		//todo convert this into a custom taxonomy
 		if (!empty($arguments['type'])) {
-			$meta_query[] = array(
-				'key'	=> 'types',
-				'compare'=>'LIKE',
-				'value'	=> '"' . sanitize_text_field($arguments['type']) . '"',
-			);
+			$types = explode(',', $arguments['type']);
+			foreach ($types as $type) {
+				$meta_query[] = array(
+					'key'	=> 'types',
+					'compare'=>'LIKE',
+					'value'	=> '"' . sanitize_text_field($type) . '"',
+				);
+			}
 		}
 		
 		//group id must be an integer
