@@ -861,6 +861,9 @@ if (!function_exists('tsml_get_meetings')) {
 					),
 				),
 			));
+
+			//without a location_id here wordpress will return everything
+			if (empty($parents)) $parents = array(0);
 			
 			//if location_ids is already set, reduce it
 			$location_ids = ($location_ids === null) ? $parents : array_intersect($location_ids, $parents);
@@ -888,7 +891,10 @@ if (!function_exists('tsml_get_meetings')) {
 					),
 				),
 			));
-			
+
+			//without a group_id here wordpress will return everything
+			if (empty($parents)) $parents = array(0);
+
 			//if location_ids is already set, reduce it
 			$group_ids = ($group_ids === null) ? $parents : array_intersect($group_ids, $parents);
 		}
@@ -953,7 +959,7 @@ if (!function_exists('tsml_get_meetings')) {
 		}
 		
 		//group id must be an integer
-		if (!empty($group_ids)) {
+		if ($group_ids !== null) {
 			$meta_query[] = array(
 				'key'		=> 'group_id',
 				'compare'	=> 'IN',
@@ -968,7 +974,7 @@ if (!function_exists('tsml_get_meetings')) {
 			$search_results = get_posts(array(
 				'post_type'			=> 'tsml_meeting',
 				'numberposts'		=> -1,
-				'fields'				=> 'ids',
+				'fields'			=> 'ids',
 				's'					=> $query,
 			));
 			
