@@ -100,9 +100,13 @@ $type_default = __('Any Type', '12-step-meeting-list');
 if (!count($types)) {
 	$type_label	= $type_default;
 } else {
-	$type_label = implode(' + ', array_map(function($type) use ($tsml_programs, $tsml_program) {
-		return $tsml_programs[$tsml_program]['types'][$type];
-	}, $types));
+	$type_label = array();
+	foreach ($types as $type) {
+		if (array_key_exists($type, $tsml_programs[$tsml_program]['types'])) {
+			$type_label[] = $tsml_programs[$tsml_program]['types'][$type];
+		}
+	}
+	$type_label = implode(' + ', $type_label);
 }
 $mode_label = array_key_exists($mode, $modes) ? $modes[$mode]['title'] : $modes[0]['title'];
 $distance_label = $distances[$distance];
