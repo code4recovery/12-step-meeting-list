@@ -4,7 +4,7 @@ Donate link: https://meetingguide.org/donate
 Tags: 12-step, aa, al-anon, coda, meetings, na, oa, saa, slaa
 Requires at least: 3.2
 Tested up to: 4.9
-Stable tag: 3.1.10
+Stable tag: 3.1.11
 
 This plugin helps twelve step recovery programs list their meetings. It standardizes addresses, and displays results in a searchable list and map.
 
@@ -195,6 +195,7 @@ This plugin was originally designed to maintain a list of AA meetings in Santa C
 **Cocaine Anonymous**
 
 1. [Illinois](http://illinoisareaca.org/meetings)
+1. [Los Angeles, CA](http://ca4la.org/meetings/)
 
 **Debtors Anonymous**
 
@@ -203,7 +204,7 @@ This plugin was originally designed to maintain a list of AA meetings in Santa C
 **Gamblers Anonymous**
 
 1. [Australia](http://gaaustralia.org.au/meetings/?d=any&v=list)
-1. [Los Angeles](https://www.laintergroup.com/meetings/)
+1. [Los Angeles, CA](https://www.laintergroup.com/meetings/)
 
 **Heroin Anonymous**
 
@@ -214,13 +215,13 @@ This plugin was originally designed to maintain a list of AA meetings in Santa C
 1. [Chinook, CA](http://chinookna.org/meetings/)
 1. [Lancaster, PA](http://lancasterpana.org/meetings/)
 1. [Maine](http://www.namaine.org/meetings/)
-1. [Martha's Vineyard](http://www.mvana.org/meetings/?tsml-day=any)
+1. [Martha's Vineyard, MA](http://www.mvana.org/meetings/?tsml-day=any)
 1. [Marysville, CA](https://middlemountainarea.com/meetings/)
 1. [Poland](http://anonimowinarkomani.org/meetings/)
 1. [Roseville, CA](https://sfana.org/meetings/)
 1. [Sacramento, CA](https://sacramentona.org/meetings/)
 1. [Toledo, OH](https://toledonameetings.com/meetings/)
-1. [Vienna](https://www.navienna.com/meetings/?tsml-day=any)
+1. [Vienna, Austria](https://www.navienna.com/meetings/?tsml-day=any)
 1. [Western Oklahoma](https://wascokna.org/meetings/)
 
 **Recovering Couples Anonymous**
@@ -397,6 +398,9 @@ pin will still show up for these meetings and people will try to get directions 
 1. Edit location
 
 == Changelog ==
+
+= 3.1.11 =
+* CSV security: user must be logged in or sharing must be open
 
 = 3.1.10 =
 * PHP 5.3 compliance (Baltimore)

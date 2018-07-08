@@ -231,7 +231,12 @@ if (!function_exists('tsml_ajax_csv')) {
 	function tsml_ajax_csv() {
 
 		//going to need this later
-		global $tsml_days, $tsml_programs, $tsml_program;
+		global $tsml_days, $tsml_programs, $tsml_program, $tsml_sharing;
+
+		//security
+		if (($tsml_sharing != 'open') && !is_user_logged_in()) {
+			tsml_ajax_unauthorized();
+		}
 
 		//get data source
 		$meetings = tsml_get_meetings();
