@@ -42,7 +42,7 @@ extract($tsml_defaults);
 $region = $district = null;
 
 //parse query string
-if (isset($_GET['tsml-query'])) $query = sanitize_text_field($_GET['tsml-query']);
+if (isset($_GET['tsml-query'])) $query = sanitize_text_field(stripslashes($_GET['tsml-query']));
 if (isset($_GET['tsml-region']) && term_exists(intval($_GET['tsml-region']), 'tsml_region')) {
 	$region = $_GET['tsml-region'];
 } elseif (isset($_GET['tsml-district']) && term_exists(intval($_GET['tsml-district']), 'tsml_district')) {

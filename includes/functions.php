@@ -982,14 +982,14 @@ if (!function_exists('tsml_get_meetings')) {
 			if ($group_ids = get_posts(array(
 					'post_type'			=> 'tsml_group',
 					'numberposts'		=> -1,
-					'fields'				=> 'ids',
+					'fields'			=> 'ids',
 					's'					=> $query,
 				))) {
 				$search_results = array_merge($search_results, get_posts(array(
 					'post_type'			=> 'tsml_meeting',
 					'numberposts'		=> -1,
-					'fields'				=> 'ids',
-					'meta_query'			=> array(
+					'fields'			=> 'ids',
+					'meta_query'		=> array(
 						array(
 							'key'		=> 'group_id',
 							'compare'	=> 'IN',
@@ -1005,15 +1005,15 @@ if (!function_exists('tsml_get_meetings')) {
 				get_posts(array(
 					'post_type'			=> 'tsml_location',
 					'numberposts'		=> -1,
-					'fields'				=> 'ids',
+					'fields'			=> 'ids',
 					's'					=> $query,
 				)),
 				//searching address
 				get_posts(array(
 					'post_type'			=> 'tsml_location',
 					'numberposts'		=> -1,
-					'fields'				=> 'ids',
-					'meta_query'			=> array(
+					'fields'			=> 'ids',
+					'meta_query'		=> array(
 						array(
 							'key'		=> 'formatted_address',
 							'value'		=> $query,
@@ -1025,7 +1025,7 @@ if (!function_exists('tsml_get_meetings')) {
 				get_posts(array(
 					'post_type'			=> 'tsml_location',
 					'numberposts'		=> -1,
-					'fields'				=> 'ids',
+					'fields'			=> 'ids',
 					'tax_query'			=> array(
 						array(
 							'taxonomy'	=> 'tsml_region',
@@ -1056,7 +1056,7 @@ if (!function_exists('tsml_get_meetings')) {
 		$posts = get_posts(array(
 			'post_type'			=> 'tsml_meeting',
 			'numberposts'		=> -1,
-			'meta_query'			=> $meta_query,
+			'meta_query'		=> $meta_query,
 			'post__in'			=> array_unique($search_results),
 			'post_parent__in'	=> $location_ids,
 		));

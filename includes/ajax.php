@@ -33,10 +33,9 @@ if (!function_exists('tsml_ajax_groups')) {
 		$groups = get_posts('post_type=tsml_group&numberposts=-1');
 		$results = array();
 		foreach ($groups as $group) {
-			$title  = get_the_title($group->ID);
 			$group_custom = get_post_meta($group->ID);
 			$results[] = array(
-				'value'				=> html_entity_decode($title),
+				'value'				=> $group->post_title,
 				'website'			=> @$group_custom['website'][0],
 				'website_2'			=> @$group_custom['website_2'][0],
 				'email'				=> @$group_custom['email'][0],
@@ -51,7 +50,7 @@ if (!function_exists('tsml_ajax_groups')) {
 				'contact_3_email'	=> @$group_custom['contact_3_email'][0],
 				'contact_3_phone'	=> @$group_custom['contact_3_phone'][0],
 				'last_contact'		=> @$group_custom['last_contact'][0],
-				'notes'				=> html_entity_decode($group->post_content),
+				'notes'				=> $group->post_content,
 				'tokens'			=> tsml_string_tokens($title),
 				'type'				=> 'group',
 			);
