@@ -9,6 +9,7 @@ jQuery(function($){
 
 	//a) procedural logic
 	var $body = $('body');
+	var typeaheadEnabled = false;
 	
 	if (typeof tsml_map !== 'object')  { //main meetings page
 
@@ -327,7 +328,9 @@ jQuery(function($){
 		//types can be multiple
 		var types = [];
 		$('#type li.active a').each(function(){
-			types.push($(this).attr('data-id'));
+			if ($(this).attr('data-id')) {
+				types.push($(this).attr('data-id'));
+			}
 		});
 
 		//prepare query for ajax
@@ -339,7 +342,7 @@ jQuery(function($){
 			district: $('#region li.district.active a').attr('data-id'),
 			day: $('#day li.active a').attr('data-id'),
 			time: $('#time li.active a').attr('data-id'),
-			type: types.join(','),
+			type: types.length ? types.join(',') : undefined,
 			distance: $('#distance li.active a').attr('data-id'),
 			view: $('#meetings .toggle-view.active').attr('data-id'),
 		}
@@ -490,6 +493,7 @@ jQuery(function($){
 					$('#time span.selected').html($('#time li:first-child a').html());
 					$('#region span.selected').html($('#region li:first-child a').html());
 					$('#type span.selected').html($('#type li:first-child a').html());
+
 					return doSearch();
 				}
 	
@@ -678,11 +682,16 @@ jQuery(function($){
 		
 	//disable the typeahead (if you switched to a different search mode)	
 	function typeaheadDisable() {
+		if (!typeaheadEnabled) return;
+		typeaheadEnabled = false;
 		$('#meetings #search input[name="query"]').typeahead('destroy');
 	}
 	
 	//enable the typeahead (if you switch back to search)
 	function typeaheadEnable() {
+		if (typeaheadEnabled) return;
+		if (tsml.debug) console.log('enabling typeahead');
+		typeaheadEnabled = true;
 		$('#meetings #search input[name="query"]').typeahead({
 			highlight: true
 		}, {
