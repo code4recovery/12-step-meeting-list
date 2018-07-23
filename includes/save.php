@@ -188,7 +188,7 @@ function tsml_save_post($post_id, $post, $update) {
 	}	
 
 	//set parent on this post (or all meetings at location) without re-triggering the save_posts hook (update 7/25/17: removing post_status from this)
-	if ($update && ($old_meeting->post_parent != $location_id)) {
+	if (!$update || ($old_meeting->post_parent != $location_id)) {
 		if (empty($_POST['apply_address_to_location'])) {
 			$wpdb->query($wpdb->prepare('UPDATE ' . $wpdb->posts . ' SET post_parent = %d WHERE ID = %d', $location_id, $post->ID));
 		} else {
