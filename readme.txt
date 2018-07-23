@@ -4,7 +4,7 @@ Donate link: https://meetingguide.org/donate
 Tags: 12-step, aa, al-anon, coda, meetings, na, oa, saa, slaa
 Requires at least: 3.2
 Tested up to: 4.9
-Stable tag: 3.1.12
+Stable tag: 3.1.13
 
 This plugin helps twelve step recovery programs list their meetings. It standardizes addresses, and displays results in a searchable list and map.
 
@@ -113,13 +113,14 @@ This plugin was originally designed to maintain a list of AA meetings in Santa C
 1. [Québec, Canada (All)](http://aa-quebec.org/aaqc_wp/meetings/)
 1. [Québec, Canada (Région 87, Southwest)](http://aa87.org/meetings/)
 1. [Québec, Canada (Région 88, Southeast)](http://aa-quebec.org/region88/WP/meetings/)
-1. [Regina, Canada](http://www.aaregina.com/meetings/)
 1. [Reading, PA](http://readingberksintergroup.org/meetings/)
+1. [Redmond, OR](http://coigaa.org/meetings/)
+1. [Regina, Canada](http://www.aaregina.com/meetings/)
+1. [Rhode Island](https://aainri.com/meetings/)
 1. [Rochester, MN](http://aadistrict1.org/blog/meetings/)
 1. [Rochester, NY](https://www.rochester-ny-aa.org/meetings/)
 1. [Rockland County, NY](https://rocklandnyaa.org/meetings/)
 1. [Romania](https://grupuri.aaromania.ro/meetings/)
-1. [Rhode Island](https://aainri.com/meetings/)
 1. [Sacramento, CA](http://aasacramento.org/meetings/)
 1. [Salinas, CA](https://aasalinas.org/meetings/)
 1. [San Francisco, CA](https://www.aasf.org/meetings)
@@ -399,6 +400,10 @@ pin will still show up for these meetings and people will try to get directions 
 1. Edit location
 
 == Changelog ==
+
+= 3.1.13 =
+* Bug saving locations on new meetings
+* Address geocoding fix (Maine)
 
 = 3.1.12 =
 * Fixing search for groups with apostrophes

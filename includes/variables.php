@@ -52,26 +52,30 @@ unfortunately the google geocoding API is not always perfect. used by tsml_impor
 find correct coordinates with http://nominatim.openstreetmap.org/ and https://www.latlong.net/
 */
 $tsml_google_overrides = array(
-	//franklin memorial hospital
+	//maine
 	'Farmington, ME, USA' => array(
 		'formatted_address'	=> '111 Franklin Health Commons, Farmington, ME 04938, US',
 		'city' 				=> 'Farmington',
 		'latitude'			=> '44.62654999999999',
 		'longitude'			=> '-70.162092',
 	),
-	//maine va medical center
 	'Augusta, ME 04330, USA' => array(
 		'formatted_address'	=> '1 VA Center, Augusta, ME 04330, US',
 		'city'				=> 'Augusta',
 		'latitude'			=> '44.2803692',
 		'longitude'			=> '-69.7042675',
 	),
-	//fellowship hall at calvary baptist church (only apple maps knows of this address)
 	'61 State St, Brewer, ME 04412, USA' => array(
 		'formatted_address'	=> '12 Family Center Ln, Brewer, ME 04412, USA',
 		'city'				=> 'Brewer',
 		'latitude'			=> '44.794759',
 		'longitude'			=> '-68.761303',
+	),
+	'37 Skowhegan Rd, Fairfield, ME 04903, USA' => array(
+		'formatted_address'	=> '37 Skowhegan Rd, Fairfield, ME 04903, USA',
+		'city'				=> 'Fairfield',
+		'latitude'			=> '44.597699',
+		'longitude'			=> '-69.599635',
 	),
 
 	//toronto meeting that is showing up with zero_results
