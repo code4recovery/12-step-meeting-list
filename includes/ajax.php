@@ -238,7 +238,7 @@ if (!function_exists('tsml_ajax_csv')) {
 		}
 
 		//get data source
-		$meetings = tsml_get_meetings();
+		$meetings = tsml_get_meetings(array(), true);
 
 		//define columns to output, always in English for portability (per Poland NA)
 		$columns = array(
@@ -262,25 +262,20 @@ if (!function_exists('tsml_ajax_csv')) {
 			'email' => 				'Email',
 			'phone' => 				'Phone',
 			'group_notes' => 		'Group Notes',
+			'contact_1_name' =>		'Contact 1 Name',
+			'contact_1_email' =>	'Contact 1 Email',
+			'contact_1_phone' =>	'Contact 1 Phone',
+			'contact_2_name' =>		'Contact 2 Name',
+			'contact_2_email' =>	'Contact 2 Email',
+			'contact_2_phone' =>	'Contact 2 Phone',
+			'contact_3_name' =>		'Contact 3 Name',
+			'contact_3_email' =>	'Contact 3 Email',
+			'contact_3_phone' =>	'Contact 3 Phone',
+			'last_contact' => 		'Last Contact',
+			'author' => 			'Author',
 			'updated' =>			'Updated',
 		);
 		
-		//append contact info if user has permission
-		if (current_user_can('edit_posts')) {
-			$columns = array_merge($columns, array(
-				'contact_1_name' =>		'Contact 1 Name',
-				'contact_1_email' =>	'Contact 1 Email',
-				'contact_1_phone' =>	'Contact 1 Phone',
-				'contact_2_name' =>		'Contact 2 Name',
-				'contact_2_email' =>	'Contact 2 Email',
-				'contact_2_phone' =>	'Contact 2 Phone',
-				'contact_3_name' =>		'Contact 3 Name',
-				'contact_3_email' =>	'Contact 3 Email',
-				'contact_3_phone' =>	'Contact 3 Phone',
-				'last_contact' => 		'Last Contact',
-			));
-		}
-
 		//helper vars
 		$delimiter = ',';
 		$escape = '"';
@@ -305,6 +300,8 @@ if (!function_exists('tsml_ajax_csv')) {
 					$line[] = $escape . strip_tags(str_replace($escape, str_repeat($escape, 2), $meeting[$column])) . $escape;
 				} elseif (array_key_exists($column, $meeting)) {
 					$line[] = $escape . str_replace($escape, '', $meeting[$column]) . $escape;
+				} else {
+					$line[] = '';
 				}
 			}
 			$return .= implode($delimiter, $line) . PHP_EOL;
@@ -421,7 +418,7 @@ if (!function_exists('function_name')) {
 
 		//manage import buffer	
 		if (count($meetings) > $limit) {
-			//slice off the first hundred, save the remaining back to the import buffer
+			//slice off the first batch, save the remaining back to the import buffer
 			$remaining = array_slice($meetings, $limit);
 			update_option('tsml_import_buffer', $remaining);
 			$meetings = array_slice($meetings, 0, $limit);
@@ -537,6 +534,7 @@ if (!function_exists('function_name')) {
 				'post_content'		=> trim($meeting['notes']), //not sure why recursive trim not catching this
 				'post_modified'		=> $meeting['post_modified'],
 				'post_modified_gmt'	=> $meeting['post_modified_gmt'],
+				'post_author'		=> $meeting['post_author'],
 			);
 			if (!empty($meeting['slug'])) $options['post_name'] = $meeting['slug'];
 			$meeting_id = wp_insert_post($options);

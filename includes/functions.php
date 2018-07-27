@@ -827,14 +827,16 @@ if (!function_exists('tsml_get_meeting')) {
 }
 
 //function: get meetings based on unsanitized $arguments
+//private parameter is whether to include meeting contacts and authors
 //used:		tsml_meetings_api(), single-locations.php, archive-meetings.php 
 if (!function_exists('tsml_get_meetings')) {
-	function tsml_get_meetings($arguments=array()) {
+	function tsml_get_meetings($arguments=array(), $private=false) {
 	
 		//will need these later
 		$search_results = $meetings = array();
 		$groups = tsml_get_groups();	
 		$locations = tsml_get_locations();
+		$users = tsml_get_users();
 		
 		//start building meta_query for meetings
 		$meta_query = array('relation' => 'AND');
@@ -1100,7 +1102,7 @@ if (!function_exists('tsml_get_meetings')) {
 				$array['phone'] = $meeting_meta[$post->ID]['phone'];
 			}
 
-			if (current_user_can('edit_posts')) {
+			if ($private) {
 				for ($i = 1; $i <= GROUP_CONTACT_COUNT; $i++) {
 					foreach(array('name', 'phone', 'email') as $type) {
 						$key = implode('_', array('contact', $i, $type));
@@ -1108,6 +1110,10 @@ if (!function_exists('tsml_get_meetings')) {
 							$array[$key] = $meeting_meta[$post->ID][$key];
 						}
 					}
+				}
+
+				if (array_key_exists($post->post_author, $users)) {
+					$array['author'] = $users[$post->post_author];
 				}
 			}
 			
@@ -1201,6 +1207,20 @@ if (!function_exists('tsml_get_meta')) {
 	}
 }
 
+//function get author usernames & ids
+//used by tsml_get_meetings() and import ajax
+if (!function_exists('tsml_get_users')) {
+	function tsml_get_users($keyed_by_id=true) {
+		$users = get_users(array(
+			'fields' => array('ID', 'user_login'),
+		));
+		foreach ($users as $user) {
+			$return[$user->ID] = $user->user_login;
+		}
+		return ($keyed_by_id) ? $return : array_flip($return);
+	}
+}
+
 //return spelled-out meeting types
 //called from save.php (updates) and archive-meetings.php (display)
 if (!function_exists('tsml_meeting_types')) {
@@ -1229,6 +1249,10 @@ if (!function_exists('tsml_import_buffer_set')) {
 		$upper_days = array_map('strtoupper', $tsml_days);
 	
 		$row_counter = 1;
+
+		//get users, keyed by username
+		$users = tsml_get_users(false);
+		$user_id = get_current_user_id();
 	
 		//convert the array to UTF-8
 		array_walk_recursive($meetings, 'tsml_format_utf8');
@@ -1314,7 +1338,7 @@ if (!function_exists('tsml_import_buffer_set')) {
 				if (!empty($meeting['country'])) $address[] = $meeting['country'];
 				$meeting['formatted_address'] = implode(', ', $address);
 			}
-	
+
 			//notes
 			if (empty($meeting['notes'])) $meeting['notes'] = '';
 			if (empty($meeting['location_notes'])) $meeting['location_notes'] = '';
@@ -1325,6 +1349,13 @@ if (!function_exists('tsml_import_buffer_set')) {
 			$meeting['post_modified'] = date('Y-m-d H:i:s', $meeting['updated']);
 			$meeting['post_modified_gmt'] = get_gmt_from_date($meeting['post_modified']);
 			
+			//author
+			if (!empty($meeting['author']) && array_key_exists($meeting['author'], $users)) {
+				$meeting['post_author'] = $users[$meeting['author']];
+			} else {
+				$meeting['post_author'] = $user_id;
+			}
+
 			//default region to city if not specified
 			if (empty($meeting['region']) && !empty($meeting['city'])) $meeting['region'] = $meeting['city'];
 	
