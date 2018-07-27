@@ -4,7 +4,7 @@ Donate link: https://meetingguide.org/donate
 Tags: 12-step, aa, al-anon, coda, meetings, na, oa, saa, slaa
 Requires at least: 3.2
 Tested up to: 4.9
-Stable tag: 3.1.13
+Stable tag: 3.1.14
 
 This plugin helps twelve step recovery programs list their meetings. It standardizes addresses, and displays results in a searchable list and map.
 
@@ -196,6 +196,7 @@ This plugin was originally designed to maintain a list of AA meetings in Santa C
 
 **Cocaine Anonymous**
 
+1. [England + Wales](https://cocaineanonymous.org.uk/)
 1. [Illinois](http://illinoisareaca.org/meetings)
 1. [Los Angeles, CA](http://ca4la.org/meetings/)
 
@@ -400,6 +401,10 @@ pin will still show up for these meetings and people will try to get directions 
 1. Edit location
 
 == Changelog ==
+
+= 3.1.14 =
+* Address geocoding fix part II (Maine)
+* Adding author field to import & export (Connecticut)
 
 = 3.1.13 =
 * Bug saving locations on new meetings

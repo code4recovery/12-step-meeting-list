@@ -54,13 +54,13 @@ find correct coordinates with http://nominatim.openstreetmap.org/ and https://ww
 $tsml_google_overrides = array(
 	//maine
 	'Farmington, ME, USA' => array(
-		'formatted_address'	=> '111 Franklin Health Commons, Farmington, ME 04938, US',
+		'formatted_address'	=> '111 Franklin Health Commons, Farmington, ME 04938, USA',
 		'city' 				=> 'Farmington',
 		'latitude'			=> '44.62654999999999',
 		'longitude'			=> '-70.162092',
 	),
 	'Augusta, ME 04330, USA' => array(
-		'formatted_address'	=> '1 VA Center, Augusta, ME 04330, US',
+		'formatted_address'	=> '1 VA Center, Augusta, ME 04330, USA',
 		'city'				=> 'Augusta',
 		'latitude'			=> '44.2803692',
 		'longitude'			=> '-69.7042675',
@@ -71,12 +71,19 @@ $tsml_google_overrides = array(
 		'latitude'			=> '44.794759',
 		'longitude'			=> '-68.761303',
 	),
-	'37 Skowhegan Rd, Fairfield, ME 04903, USA' => array(
-		'formatted_address'	=> '37 Skowhegan Rd, Fairfield, ME 04903, USA',
+	'Skowhegan Rd, Fairfield, ME, USA' => array(
+		'formatted_address'	=> '37 Skowhegan Rd, Fairfield, ME 04937, USA',
 		'city'				=> 'Fairfield',
 		'latitude'			=> '44.597699',
 		'longitude'			=> '-69.599635',
 	),
+	'37 Skowhegan Rd, Fairfield, ME, 04937, USA' => array(
+		'formatted_address'	=> '37 Skowhegan Rd, Fairfield, ME 04937, USA',
+		'city'				=> 'Fairfield',
+		'latitude'			=> '44.597699',
+		'longitude'			=> '-69.599635',
+	),
+
 
 	//toronto meeting that is showing up with zero_results
 	'519 Church St, Toronto, ON M4Y 2C9, Canada' => array(
