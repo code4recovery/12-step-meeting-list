@@ -4,7 +4,7 @@ Donate link: https://meetingguide.org/donate
 Tags: 12-step, aa, al-anon, coda, meetings, na, oa, saa, slaa
 Requires at least: 3.2
 Tested up to: 4.9
-Stable tag: 3.1.14
+Stable tag: 3.1.15
 
 This plugin helps twelve step recovery programs list their meetings. It standardizes addresses, and displays results in a searchable list and map.
 
@@ -60,6 +60,7 @@ This plugin was originally designed to maintain a list of AA meetings in Santa C
 1. [Hernando County, FL](http://www.aahernando.org/meetings/)
 1. [Idaho](https://idahoarea18aa.org/meetings)
 1. [Inland Empire, CA](https://aainlandempire.org/meetings)
+1. [Israel](http://aa-israel.online/meetings/)
 1. [Jacksonville, FL](http://neflaa.org/wiktor/meetings/)
 1. [Joliet, IL](http://aadistrict51.org/meetings/)
 1. [Kansas](https://ks-aa.org/meetings/)
@@ -83,7 +84,7 @@ This plugin was originally designed to maintain a list of AA meetings in Santa C
 1. [Miami, FL](https://aamiamidade.org/meetings)
 1. [Midlands, UK (Polish)](http://intergrupamidlands.co.uk/meetings/)
 1. [Minneapolis, MN](http://aaminneapolis.org/meetings/)
-1. [Minnesota](http://aaminnesota.com/meetings/)
+1. [Minnesota](https://aaminnesota.org/meetings/)
 1. [Mississippi](http://www.aa-mississippi.org/meetings/)
 1. [Modesto, CA](http://wp.cviaa.org/meetings/)
 1. [Monterey, CA](http://www.aamonterey.org/meetings/)
@@ -401,6 +402,9 @@ pin will still show up for these meetings and people will try to get directions 
 1. Edit location
 
 == Changelog ==
+
+= 3.1.15 =
+* Adding Hebrew meeting type (Israel)
 
 = 3.1.14 =
 * Address geocoding fix part II (Maine)
