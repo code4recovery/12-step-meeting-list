@@ -852,14 +852,16 @@ if (!function_exists('tsml_get_meetings')) {
 	
 		//filter by region
 		if (!empty($arguments['region'])) {
+
 			$parents = get_posts(array(
 				'post_type'			=> 'tsml_location',
 				'numberposts'		=> -1,
-				'fields'				=> 'ids',
+				'fields'			=> 'ids',
 				'tax_query'			=> array(
 					array(
 						'taxonomy'	=> 'tsml_region',
-						'terms'		=> intval($arguments['region']),
+						'terms'		=> sanitize_title($arguments['region']),
+						'field'		=> 'slug',
 					),
 				),
 			));
@@ -885,11 +887,12 @@ if (!function_exists('tsml_get_meetings')) {
 			$parents = get_posts(array(
 				'post_type'			=> 'tsml_group',
 				'numberposts'		=> -1,
-				'fields'				=> 'ids',
+				'fields'			=> 'ids',
 				'tax_query'			=> array(
 					array(
 						'taxonomy'	=> 'tsml_district',
-						'terms'		=> intval($arguments['district']),
+						'terms'		=> sanitize_title($arguments['district']),
+						'field'		=> 'slug',
 					),
 				),
 			));

@@ -43,11 +43,28 @@ $region = $district = null;
 
 //parse query string
 if (isset($_GET['tsml-query'])) $query = sanitize_text_field(stripslashes($_GET['tsml-query']));
-if (isset($_GET['tsml-region']) && term_exists(intval($_GET['tsml-region']), 'tsml_region')) {
-	$region = $_GET['tsml-region'];
-} elseif (isset($_GET['tsml-district']) && term_exists(intval($_GET['tsml-district']), 'tsml_district')) {
-	$district = $_GET['tsml-district'];
+if (isset($_GET['tsml-region'])) {
+	if (term_exists(sanitize_text_field($_GET['tsml-region']), 'tsml_region')) {
+		$region = $_GET['tsml-region'];
+	} elseif (term_exists(intval($_GET['tsml-region']), 'tsml_region')) {
+		//legacy integer region, redirect
+		$term = get_term(intval($_GET['tsml-region']), 'tsml_region');
+		wp_redirect(add_query_arg('tsml-region', $term->slug));
+	} else {
+		wp_redirect(add_query_arg('tsml-region', null));
+	}
+} elseif (isset($_GET['tsml-district'])) {
+	if (term_exists(sanitize_text_field($_GET['tsml-district']), 'tsml_district')) {
+		$district = $_GET['tsml-district'];
+	} elseif (term_exists(intval($_GET['tsml-district']), 'tsml_district')) {
+		//legacy integer district, redirect
+		$term = get_term(intval($_GET['tsml-district']), 'tsml_district');
+		wp_redirect(add_query_arg('tsml-district', $term->slug));
+	} else {
+		wp_redirect(add_query_arg('tsml-district', null));
+	}
 }
+
 $types = array();
 if (!empty($_GET['tsml-type'])) {
 	$type_queries = explode(',', $_GET['tsml-type']);
@@ -90,10 +107,10 @@ if ($time == 'upcoming') {
 }
 $region_default = $region_label = __('Everywhere', '12-step-meeting-list');
 if ($region) {
-	$term = get_term($region, 'tsml_region');
+	$term = get_term_by('slug', $region, 'tsml_region');
 	$region_label = $term->name;
 } elseif ($district) {
-	$term = get_term($district, 'tsml_district');
+	$term = get_term_by('slug', $district, 'tsml_district');
 	$region_label = $term->name;
 }
 $type_default = __('Any Type', '12-step-meeting-list');
@@ -155,9 +172,9 @@ if ($mode == 'search') {
 class Walker_Regions_Dropdown extends Walker_Category {
 	function start_el(&$output, $category, $depth=0, $args=array(), $id=0) {
 		$classes = array('region');
-		if ($args['value'] == esc_attr($category->term_id)) $classes[] = 'active';
+		if ($args['value'] == esc_attr($category->slug)) $classes[] = 'active';
 		$classes = count($classes) ? ' class="' . implode(' ', $classes) . '"' : '';
-		$output .= '<li' . $classes . '><a href="' . tmsl_meetings_url(array('tsml-region'=>$category->term_id)) . '" data-id="' . $category->term_id . '">' . $category->name . '</a>';
+		$output .= '<li' . $classes . '><a href="' . tmsl_meetings_url(array('tsml-region'=>$category->slug)) . '" data-id="' . $category->slug . '">' . $category->name . '</a>';
 		if ($args['has_children']) $output .= '<div class="expand"></div>';
 	}
 	function end_el(&$output, $item, $depth=0, $args=array()) {
@@ -181,9 +198,9 @@ $regions_dropdown = wp_list_categories(array(
 class Walker_Districts_Dropdown extends Walker_Category {
 	function start_el(&$output, $category, $depth=0, $args=array(), $id=0) {
 		$classes = array('district');
-		if ($args['value'] == esc_attr($category->term_id)) $classes[] = 'active';
+		if ($args['value'] == esc_attr($category->slug)) $classes[] = 'active';
 		$classes = count($classes) ? ' class="' . implode(' ', $classes) . '"' : '';
-		$output .= '<li' . $classes . '><a href="' . tmsl_meetings_url(array('tsml-district'=>$category->term_id)) . '" data-id="' . $category->term_id . '">' . $category->name . '</a>';
+		$output .= '<li' . $classes . '><a href="' . tmsl_meetings_url(array('tsml-district'=>$category->slug)) . '" data-id="' . $category->slug . '">' . $category->name . '</a>';
 		if ($args['has_children']) $output .= '<div class="expand"></div>';
 	}
 	function end_el(&$output, $item, $depth=0, $args=array()) {

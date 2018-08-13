@@ -1,10 +1,10 @@
 === 12 Step Meeting List ===
 Contributors: meetingguide, aasanjose
-Donate link: https://meetingguide.org/donate
+Donate link: https://meetingguide.org/contribute
 Tags: 12-step, aa, al-anon, coda, meetings, na, oa, saa, slaa
 Requires at least: 3.2
 Tested up to: 4.9
-Stable tag: 3.1.15
+Stable tag: 3.2
 
 This plugin helps twelve step recovery programs list their meetings. It standardizes addresses, and displays results in a searchable list and map.
 
@@ -79,6 +79,7 @@ This plugin was originally designed to maintain a list of AA meetings in Santa C
 1. [Maine and New Brunswick](http://csoaamaine.org/meetings/)
 1. [Martin County, FL](http://martincountyaa.org/meetings/)
 1. [Maui, HI](http://aamaui.org/meetings)
+1. [Memphis, TN](http://www.memphis-aa.org/meetings)
 1. [Mercer County, PA](http://www.wpadistrict52aa.org/meetings/)
 1. [Mesa, AZ](http://aamesaaz.org/meetings/)
 1. [Miami, FL](https://aamiamidade.org/meetings)
@@ -402,6 +403,9 @@ pin will still show up for these meetings and people will try to get directions 
 1. Edit location
 
 == Changelog ==
+
+= 3.2 =
+* URLs now use region and district slugs, rather than IDs, for more readable URLs (Area 22)
 
 = 3.1.15 =
 * Adding Hebrew meeting type (Israel)
