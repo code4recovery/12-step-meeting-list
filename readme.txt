@@ -4,7 +4,7 @@ Donate link: https://meetingguide.org/contribute
 Tags: 12-step, aa, al-anon, coda, meetings, na, oa, saa, slaa
 Requires at least: 3.2
 Tested up to: 4.9
-Stable tag: 3.2
+Stable tag: 3.2.1
 
 This plugin helps twelve step recovery programs list their meetings. It standardizes addresses, and displays results in a searchable list and map.
 
@@ -70,6 +70,7 @@ This plugin was originally designed to maintain a list of AA meetings in Santa C
 1. [Lakeland, FL](https://www.heartlandintergroup.org/meetings/)
 1. [Lancaster, PA](http://www.lancasteraa.org/meetings/)
 1. [Langley, Canada](http://www.district43aa.org/meetings/)
+1. [Lawrence, KS](http://aa-ksdist23.org/wp/meetings/)
 1. [Lebanon, PA](http://www.lebanonpaaa.org/meetings/)
 1. [Lee County, FL](http://leecountyaa.org/meetings)
 1. [Leesburg, FL](http://meetings.aalakesumter.com/)
@@ -186,9 +187,10 @@ This plugin was originally designed to maintain a list of AA meetings in Santa C
 
 **Al-Anon**
 
-1. [Lancaster, PA](http://lanclebalanon.org/meetings/?d=any)
+1. [Lancaster, PA](https://lanclebalanon.org/meetings/?tsml-day=any)
 1. [Naples, FL](http://naplesal-anon.org/meetings)
 1. [Pennsylvania](http://pa-al-anon.org/meetings/)
+1. [South Florida](http://alanonsofla.org/meetings/?tsml-day=any)
 1. [Washington](http://wa-al-anon.org/meetings/)
 
 **Co-Dependents Anonymous**
@@ -404,6 +406,9 @@ pin will still show up for these meetings and people will try to get directions 
 
 == Changelog ==
 
+= 3.2.1 =
+* Adding English meeting type for Al-Anon (South Florida)
+
 = 3.2 =
 * URLs now use region and district slugs, rather than IDs, for more readable URLs (Area 22)
 
@@ -495,71 +500,3 @@ pin will still show up for these meetings and people will try to get directions 
 * Provides instructions and form for others to enter their API key
 * Reduces usage of Maps API by only loading it on demand
 * Caches user geocodes
-
-= 2.17.16 =
-* Fixing Varnish cache-related error when generating CSV (Tidewater Intergroup)
-* Save location as draft when there are some meetings but they are unpublished (East Bay)
-
-= 2.17.15 =
-* Classes for styling / removing control boxes (Sexaholics Anonymous)
-* Adding "People of Color" meeting type (East Bay)
-
-= 2.17.14 =
-* PDF improvements
-* Firefox printing improvements
-
-= 2.17.13 =
-* PDF bug fix
-
-= 2.17.12 =
-* Adding a draft version of a PDF meeting schedule
-
-= 2.17.11 =
-* Changing "Atheist / Agnostic" AA meeting type to "Secular"
-
-= 2.17.10 =
-* Changing the way directions links work
-* Adding "Indigenous" meeting type
-* Adding directions link to the top of location page (same as already exists on meeting page)
-
-= 2.17.9 =
-* Removing "Business" meeting type
-* Adding group Venmo link option
-
-= 2.17.8 =
-* Gamblers Anonymous meeting types (LA Gamblers Anonymous)
-* FAQ item about telephone meetings (LA Gamblers Anonymous)
-* Sunday issue in change notification emails (Tidewater Intergroup)
-* Javascript setting default time value when changing from Appointment to a day
-
-= 2.17.7 =
-* Adding meeting type for Al-Anon
-
-= 2.17.6 =
-* Fixing CSS spacing issue on mobile
-* Changing list heading in meeting list (LA Gamblers Anonymous)
-* Adding type description for GA (LA Gamblers Anonymous)
-
-= 2.17.5 =
-* Fixing directions links (NC District 33)
-* Adding Gamblers Anonymous
-
-= 2.17.4 =
-* Contact name wasn't showing up in CSV (Milwaukee)
-
-= 2.17.3 =
-* Meeting author support (Connecticut)
-
-= 2.17.2 =
-* Fixing Firefox display issue on types checkboxes in meeting edit page (LA ACA)
-
-= 2.17.1 =
-* Fixing bug that prevented certain posts from saving (PA Al-Anon)
-
-= 2.17 =
-* By default, "apply this updated address to all meetings at this location" is unchecked now (Kentucky)
-* "Apply this updated address" now appears while making changes to an address, not after (Kentucky)
-* Form submit now disabled while geocodes are pending (NYC)
-* Map view no longer displays pins with empty coordinates (NYC)
-* Update email now properly reflecting changes to location name and notes (Kentucky)
-* Switching search modes no longer clears the current search (Baltimore)
