@@ -122,6 +122,15 @@ if (!function_exists('tsml_count_regions')) {
 	}
 }
 
+//function:	add local overrides to google (this may someday be removed)
+//used:		in user themes
+if (!function_exists('tsml_custom_addresses')) {
+	function tsml_custom_addresses($custom_overrides) {
+		global $tsml_google_overrides;
+		$tsml_google_overrides = array_merge($tsml_google_overrides, $custom_overrides);
+	}
+}
+
 //function: register custom post types
 //used: 	init.php on every request, also in change_activation_state() for plugin activation or deactivation
 if (!function_exists('tsml_custom_post_types')) {
