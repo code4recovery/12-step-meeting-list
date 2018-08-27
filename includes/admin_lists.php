@@ -4,7 +4,7 @@
 add_action('restrict_manage_posts', 'tsml_restrict_manage_posts' );
 function tsml_restrict_manage_posts(){
 
-    if (@$_GET['post_type'] != 'tsml_meeting') return;
+	if (@$_GET['post_type'] != 'tsml_meeting') return;
 
 	wp_dropdown_categories(array(
 		'show_option_all'    => 'Region',
@@ -22,7 +22,7 @@ function tsml_restrict_manage_posts(){
 # If filter is set, restrict results
 add_filter('parse_query', 'tsml_posts_filter');
 function tsml_posts_filter($query){
-    global $pagenow, $wpdb;
+	global $pagenow, $wpdb;
 
 	if (($pagenow !='edit.php') || (@$_GET['post_type'] != 'tsml_meeting') || empty($_GET['region'])) return;
 	
@@ -33,7 +33,7 @@ function tsml_posts_filter($query){
 	
 	if (empty($parent_ids)) $parent_ids = array(0); //impossible scenario to show no results
 
-    $query->query_vars['post_parent__in'] = $parent_ids;
+	$query->query_vars['post_parent__in'] = $parent_ids;
 		
 }
 
@@ -41,14 +41,14 @@ function tsml_posts_filter($query){
 # Custom columns for meetings
 add_filter('manage_edit-tsml_meeting_columns', 'tmsl_admin_meetings_columns');
 function tmsl_admin_meetings_columns($defaults) {
-    return array(
-	    	'cb'			=> '<input type="checkbox" />',
-	    	'title'		=> __('Meeting', '12-step-meeting-list'),
-	    	'day'		=> __('Day', '12-step-meeting-list'),
-	    	'time'		=> __('Time', '12-step-meeting-list'),
-	    	'region'		=> __('Region'),
-	    	'date'		=> __('Date', '12-step-meeting-list'),
-    );	
+	return array(
+			'cb'		=> '<input type="checkbox" />',
+			'title'		=> __('Meeting', '12-step-meeting-list'),
+			'day'		=> __('Day', '12-step-meeting-list'),
+			'time'		=> __('Time', '12-step-meeting-list'),
+			'region'	=> __('Region'),
+			'date'		=> __('Date', '12-step-meeting-list'),
+	);	
 }
 
 # If you're deleting meetings, also delete locations
@@ -90,35 +90,35 @@ function tsml_admin_meetings_sortable_columns($columns) {
 # Apply sorting
 add_filter('request', 'tsml_sorting');
 function tsml_sorting($vars) {
-    if (isset($vars['orderby'])) {
-	    	switch($vars['orderby']) {
-	    		case 'day':
-		    		return array_merge($vars, array(
-			            'meta_key' => 'day',
-			            'orderby' => 'meta_value'
-			        ));
-	    		case 'time':
-		    		return array_merge($vars, array(
-			            'meta_key' => 'time',
-			            'orderby' => 'meta_value'
-			        ));
+	if (isset($vars['orderby'])) {
+			switch($vars['orderby']) {
+				case 'day':
+					return array_merge($vars, array(
+						'meta_key' => 'day',
+						'orderby' => 'meta_value'
+					));
+				case 'time':
+					return array_merge($vars, array(
+						'meta_key' => 'time',
+						'orderby' => 'meta_value'
+					));
 			/* case 'region':
-		    		return array_merge($vars, array(
-			            'meta_key' => 'region',
-			            'orderby' => 'meta_value'
-			        ));
+					return array_merge($vars, array(
+						'meta_key' => 'region',
+						'orderby' => 'meta_value'
+					));
 			*/
-	    	}
-    }
-    return $vars;
+			}
+	}
+	return $vars;
 }
 
 //remove quick edit because meetings could get messed up without custom fields
 add_filter('post_row_actions', 'tsml_post_row_actions', 10, 2);
 function tsml_post_row_actions($actions) {
 	global $post;
-    if ($post->post_type == 'tsml_meeting') {
+	if ($post->post_type == 'tsml_meeting') {
 		unset($actions['inline hide-if-no-js']);
 	}
-    return $actions;
+	return $actions;
 }

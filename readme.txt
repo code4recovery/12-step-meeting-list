@@ -4,7 +4,7 @@ Donate link: https://meetingguide.org/contribute
 Tags: 12-step, aa, al-anon, coda, meetings, na, oa, saa, slaa
 Requires at least: 3.2
 Tested up to: 4.9
-Stable tag: 3.2.1
+Stable tag: 3.2.2
 
 This plugin helps twelve step recovery programs list their meetings. It standardizes addresses, and displays results in a searchable list and map.
 
@@ -76,6 +76,8 @@ This plugin was originally designed to maintain a list of AA meetings in Santa C
 1. [Leesburg, FL](http://meetings.aalakesumter.com/)
 1. [Lewis County, WA](http://lewiscountyaa.org/meetings/)
 1. [Long Beach, CA](https://hacoaa.org/meetings/)
+1. [Los Angeles, CA](http://lacoaa.org/meetings/)
+1. [Marblehead, MA](https://aaemass1819.org/meetings/)
 1. [Madison, WI](http://aamadisonwi.org/meetings/)
 1. [Maine and New Brunswick](http://csoaamaine.org/meetings/)
 1. [Martin County, FL](http://martincountyaa.org/meetings/)
@@ -137,6 +139,7 @@ This plugin was originally designed to maintain a list of AA meetings in Santa C
 1. [Snohomish County, WA](http://snocoaa.org/wordpress_4.1/?post_type=tsml_meeting)
 1. [Sonoma County, CA](http://www.sonomacountyaa.org/meetings/)
 1. [South Lexington, KY](http://aasouthlexingtonky.org/meetings/)
+1. [South Roxana, IL](http://aa-district18.org/meetings/)
 1. [Southeastern Indiana](http://seigaa.org/meetings/)
 1. [Southern Colorado](http://www.puebloaa.org/meetings/)
 1. [Southern Illinois](http://www.aa-district14.org/meetings/)
@@ -289,6 +292,22 @@ Please note a few things about custom types:
 = Where are my meetings listed? =
 It depends on your Permalinks setup. The easiest way to find the link is to go to the **Dashboard > Meetings > Import & Settings** page and look for it under "Where's My Info?"
 
+= I need to correct a meeting address or change a pin's location =
+We get our geocoding positions from Google (this true even if your maps are by Mapbox). Google is correct an amazing amount of the time, but not always. If you need to add a custom location, add this to your theme's functions.php. 
+
+Note you can add multiple entries to the array below.
+
+	if (function_exists('tsml_custom_types')) {
+		tsml_custom_addresses(array(
+			'5 Avenue Anatole France, 75007 Paris, France' => array(
+				'formatted_address' => '5 Avenue Anatole France, 75007 Paris, France',
+				'city' => 'Paris',
+				'latitude' => 48.858372,
+				'longitude' => 2.294481,
+			),
+		));
+	}
+
 = How can I make the Region dropdown not be collapsible? =
 No problem, just add this CSS to your theme:
 
@@ -377,11 +396,7 @@ Additionally, you can use `[tsml_types_list]` and `[tsml_regions_list]` to outpu
 It is translated into Polish. If you would like to volunteer to help translate another language, we would be pleased to work with you.
 
 = I entered contact information into the meeting edit page but don't see it displayed on the site. =
-That's right, we don't display that information by default for the sake of anonymity. To display it in your theme, you should follow the instructions above for overriding the meeting detail and location detail pages and then drop some or all of these tags in your PHP:
-
-	<?php echo $meeting->contact_1_name?>
-	<?php echo $meeting->contact_1_email?>
-	<?php echo $meeting->contact_1_phone?>
+That's right, we don't display that information by default for the sake of anonymity. To display it in your theme, go to Import & Settings and set the Meeting/Group Contacts dropdown to "public."
 
 = Can I run this as my main website homepage? =
 Sure. Try adding this code to your theme's functions.php:
@@ -405,6 +420,9 @@ pin will still show up for these meetings and people will try to get directions 
 1. Edit location
 
 == Changelog ==
+
+= 3.2.2 =
+* Add custom address overrides for your location (CAUK)
 
 = 3.2.1 =
 * Adding English meeting type for Al-Anon (South Florida)
