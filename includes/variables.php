@@ -56,32 +56,32 @@ $tsml_google_overrides = array(
 	'Farmington, ME, USA' => array(
 		'formatted_address'	=> '111 Franklin Health Commons, Farmington, ME 04938, USA',
 		'city' 				=> 'Farmington',
-		'latitude'			=> '44.62654999999999',
-		'longitude'			=> '-70.162092',
+		'latitude'			=> 44.62654999999999,
+		'longitude'			=> -70.162092,
 	),
 	'Augusta, ME 04330, USA' => array(
 		'formatted_address'	=> '1 VA Center, Augusta, ME 04330, USA',
 		'city'				=> 'Augusta',
-		'latitude'			=> '44.2803692',
-		'longitude'			=> '-69.7042675',
+		'latitude'			=> 44.2803692,
+		'longitude'			=> -69.7042675,
 	),
 	'61 State St, Brewer, ME 04412, USA' => array(
 		'formatted_address'	=> '12 Family Center Ln, Brewer, ME 04412, USA',
 		'city'				=> 'Brewer',
-		'latitude'			=> '44.794759',
-		'longitude'			=> '-68.761303',
+		'latitude'			=> 44.794759,
+		'longitude'			=> -68.761303,
 	),
 	'Skowhegan Rd, Fairfield, ME, USA' => array(
 		'formatted_address'	=> '37 Skowhegan Rd, Fairfield, ME 04937, USA',
 		'city'				=> 'Fairfield',
-		'latitude'			=> '44.597699',
-		'longitude'			=> '-69.599635',
+		'latitude'			=> 44.597699,
+		'longitude'			=> -69.599635,
 	),
 	'37 Skowhegan Rd, Fairfield, ME, 04937, USA' => array(
 		'formatted_address'	=> '37 Skowhegan Rd, Fairfield, ME 04937, USA',
 		'city'				=> 'Fairfield',
-		'latitude'			=> '44.597699',
-		'longitude'			=> '-69.599635',
+		'latitude'			=> 44.597699,
+		'longitude'			=> -69.599635,
 	),
 
 
@@ -89,114 +89,122 @@ $tsml_google_overrides = array(
 	'519 Church St, Toronto, ON M4Y 2C9, Canada' => array(
 		'formatted_address'	=> '519 Church St, Toronto, ON M4Y 2C9, Canada',
 		'city'				=> 'Toronto',
-		'latitude'			=> '43.666532',
-		'longitude'			=> '-79.38097',
+		'latitude'			=> 43.666532,
+		'longitude'			=> -79.38097,
 	),
 
 	//nyc
 	'Beach 94th St, Queens, NY 11693, USA' => array(
 		'formatted_address'	=> '320 Beach 94th Street, Queens, NY 11693, US',
 		'city'				=> 'Queens',
-		'latitude'			=> '40.587465',
-		'longitude'			=> '-73.81683149999999',
+		'latitude'			=> 40.587465,
+		'longitude'			=> -73.81683149999999,
 	),
 	'14-54 31st Ave, Long Island City, NY 11106, USA' => array(
 		'formatted_address'	=> '14-54 31st Rd, Long Island City, NY 11106, USA',
 		'city'				=> 'Long Island City',
-		'latitude'			=> '40.7667739',
-		'longitude'			=> '-73.9306111',
+		'latitude'			=> 40.7667739,
+		'longitude'			=> -73.9306111,
 	),
 	'Advent Lutheran Church, 2504 Broadway, New York, NY 10025, USA' => array(
 		'formatted_address'	=> '2504 Broadway, New York, NY 10025, USA',
 		'city'				=> 'New York',
-		'latitude'			=> '40.7926923',
-		'longitude'			=> '-73.9726924',
+		'latitude'			=> 40.7926923,
+		'longitude'			=> -73.9726924,
 	),
 	'St. Thomas More\'s Church, 65 E 89th St, New York, NY 10128, USA' => array(
 		'formatted_address'	=> '65 E 89th St, New York, NY 10128, USA',
 		'city'				=> 'New York',
-		'latitude'			=> '40.7827448',
-		'longitude'			=> '-73.9567008',
+		'latitude'			=> 40.7827448,
+		'longitude'			=> -73.9567008,
 	),
 	'St. Catherine of Siena\'s Church, 411 E 68th St, New York, NY 10065, USA' => array(
 		'formatted_address'	=> '411 E 68th St, New York, NY 10065, USA',
 		'city'				=> 'New York',
-		'latitude'			=> '40.7652978',
-		'longitude'			=> '-73.9570329',
+		'latitude'			=> 40.7652978,
+		'longitude'			=> -73.9570329,
 	),
 	'Our Lady of Good Counsel Church, 230 E 90th St, New York, NY 10128, USA' => array(
 		'formatted_address'	=> '230 E 90th St, New York, NY 10128, USA',
 		'city'				=> 'New York',
-		'latitude'			=> '40.7806471',
-		'longitude'			=> '-73.9509674',
+		'latitude'			=> 40.7806471,
+		'longitude'			=> -73.9509674,
 	),
 	'Church of Our Lady of Guadalupe, 229 W 14th St, New York, NY 10011, USA' => array(
 		'formatted_address'	=> '229 W 14th St, New York, NY 10011, USA',
 		'city'				=> 'New York',
-		'latitude'			=> '40.7393643',
-		'longitude'			=> '-74.00081270000001',
+		'latitude'			=> 40.7393643,
+		'longitude'			=> -74.00081270000001,
 	),
 	'Westlands, 1 Mead Way, Bronxville, NY 10708, USA' => array(
 		'formatted_address'	=> '1 Mead Way, Bronxville, NY 10708, USA',
 		'city'				=> 'Bronxville',
-		'latitude'			=> '40.935443',
-		'longitude'			=> '-73.8437546',
+		'latitude'			=> 40.935443,
+		'longitude'			=> -73.8437546,
 	),
 	'St. Andrew\'s Church, 20 Cardinal Hayes Pl, New York, NY 10007, USA' => array(
 		'formatted_address'	=> '519 Church St, Toronto, ON M4Y 2C9, Canada',
 		'city'				=> 'Toronto',
-		'latitude'			=> '40.7133468',
-		'longitude'			=> '-74.0025814',
+		'latitude'			=> 40.7133468,
+		'longitude'			=> -74.0025814,
 	),
 	'208 E 13th St, New York, NY 10003, USA' => array(
 		'formatted_address' => '208 W 13th St, New York, NY 10011, USA',
 		'city'				=> 'New York',
-		'latitude'			=> '40.73800835',
-		'longitude'			=> '-74.0010489174602',
+		'latitude'			=> 40.73800835,
+		'longitude'			=> -74.0010489174602,
 	),
 
 	//santa cruz
 	'150 Church St, Santa Cruz, CA 95060, USA' => array(
 		'formatted_address'	=> '150 Church St, Davenport, CA 95017, USA',
 		'city'				=> 'Davenport',
-		'latitude'			=> '37.012471',
-		'longitude'			=> '-122.192971',
+		'latitude'			=> 37.012471,
+		'longitude'			=> -122.192971,
 	),
 
 	//refuge recovery
 	'20, 19100 Ventura Blvd, Tarzana, CA 91356, USA' => array(
 		'formatted_address'	=> '19100 Ventura Blvd, Tarzana, CA 91356, USA',
 		'city'				=> 'Tarzana',
-		'latitude'			=> '34.17217249999999',
-		'longitude'			=> '-118.548945',
+		'latitude'			=> 34.17217249999999,
+		'longitude'			=> -118.548945,
 	),
 	'1669 Euclid Ave, Boulder, CO 80302, USA' => array(
 		'formatted_address'	=> '1669 Euclid Ave, Boulder, CO 80309, USA',
 		'city'				=> 'Boulder',
-		'latitude'			=> '40.0065706',
-		'longitude'			=> '-105.2717488',
+		'latitude'			=> 40.0065706,
+		'longitude'			=> -105.2717488,
 	),
 	'55-514 Hawi Rd, Waimea, HI 96743, USA' => array(
 		'formatted_address'	=> '55-514 Hawi Rd, Hawi, HI 96743, USA',
 		'city'				=> 'Hawi',
-		'latitude'			=> '20.2376863',
-		'longitude'			=> '-155.830639',
+		'latitude'			=> 20.2376863,
+		'longitude'			=> -155.830639,
 	),
 
 	//new mexico
 	'1114 Private Drive, Dixon, NM 87527, USA' => array(
 		'formatted_address'	=> '1114 Private Drive, Dixon, NM 87527, USA',
 		'city'				=> 'Dixon',
-		'latitude'			=> '36.1988282',
-		'longitude'			=> '-105.88777240000002',
+		'latitude'			=> 36.1988282,
+		'longitude'			=> -105.88777240000002,
 	),
 
 	//regina canada
 	'Kwakiutl Totem Pole, Regina, SK S4S, Canada' => array(
 		'formatted_address'	=> 'Kwakiutl Totem Pole, Regina, SK S4S, Canada',
 		'city'				=> 'Regina',
-		'latitude'			=> '50.428500',
-		'longitude'			=> '-104.612917',
+		'latitude'			=> 50.428500,
+		'longitude'			=> -104.612917,
+	),
+
+	//maine
+	'185 Main St, Freeport, ME 04032, USA' => array(
+		'formatted_address'	=> '185 Main St, Freeport, ME 04032, USA',
+		'city'				=> 'Freeport',
+		'latitude'			=> 43.862634,
+		'longitude'			=> -70.100545,
 	),
 );
 
