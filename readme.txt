@@ -4,7 +4,7 @@ Donate link: https://meetingguide.org/contribute
 Tags: 12-step, aa, al-anon, coda, meetings, na, oa, saa, slaa
 Requires at least: 3.2
 Tested up to: 4.9
-Stable tag: 3.2.2
+Stable tag: 3.2.3
 
 This plugin helps twelve step recovery programs list their meetings. It standardizes addresses, and displays results in a searchable list and map.
 
@@ -104,6 +104,7 @@ This plugin was originally designed to maintain a list of AA meetings in Santa C
 1. [New York, NY](https://www.nyintergroup.org/meetings/)
 1. [North Central Washington](http://aancw.org/meetings)
 1. [North Coast, LA](http://district12.org/meetings/)
+1. [North County San Diego, CA](https://ncsandiegoaa.org/meetings)
 1. [North Port, FL](http://aanorthport.org/meetings/)
 1. [Oahu, HI](http://oahucentraloffice.com/meetings/)
 1. [Ogden, UT](https://northernutahaa.org/meetings/)
@@ -134,6 +135,7 @@ This plugin was originally designed to maintain a list of AA meetings in Santa C
 1. [Santa Barbara, CA](https://santabarbaraaa.com/meetings)
 1. [Santa Fe, NM](http://santafeaa.org/meetings/)
 1. [Savannah, GA](http://savannahaa.com/meetings-list/)
+1. [Seattle, WA](https://www.seattleaa.org/meetings/)
 1. [Secular AA](https://www.secularaa.org/meetings/)
 1. [Shreveport, LA](http://aa-shreveport.org/meetings/)
 1. [Snohomish County, WA](http://snocoaa.org/wordpress_4.1/?post_type=tsml_meeting)
@@ -420,6 +422,9 @@ pin will still show up for these meetings and people will try to get directions 
 1. Edit location
 
 == Changelog ==
+
+= 3.2.3 =
+* Address fix for Maine
 
 = 3.2.2 =
 * Add custom address overrides for your location (CAUK)
