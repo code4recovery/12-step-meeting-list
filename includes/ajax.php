@@ -349,10 +349,6 @@ if (!function_exists('tsml_ajax_feedback')) {
 			$message_lines[__('Location', '12-step-meeting-list')] = $meeting->location;
 		}
 			
-		if (!empty($meeting->notes)) {
-			$message_lines[__('Types', '12-step-meeting-list')] = $meeting->notes;
-		}
-			
 		if (!empty($meeting->formatted_address)) {
 			$message_lines[__('Address', '12-step-meeting-list')] = $meeting->formatted_address;
 		}
@@ -527,7 +523,7 @@ if (!function_exists('function_name')) {
 					
 			//save meeting to this location
 			$options = array(
-				'post_title'			=> $meeting['name'],
+				'post_title'		=> $meeting['name'],
 				'post_type'			=> 'tsml_meeting',
 				'post_status'		=> 'publish',
 				'post_parent'		=> $location_id,

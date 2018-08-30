@@ -1378,7 +1378,7 @@ if (!function_exists('tsml_import_buffer_set')) {
 			foreach ($types as $type) {
 				$upper_type = trim(strtoupper($type));
 				if (array_key_exists($upper_type, $upper_types)) {
-					$meeting['types'][] = $type;
+					$meeting['types'][] = $upper_type;
 				} elseif (in_array($upper_type, array_values($upper_types))) {
 					$meeting['types'][] = array_search($upper_type, $upper_types);
 				} else {
