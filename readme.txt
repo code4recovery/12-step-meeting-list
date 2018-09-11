@@ -4,7 +4,7 @@ Donate link: https://meetingguide.org/contribute
 Tags: 12-step, aa, al-anon, coda, meetings, na, oa, saa, slaa
 Requires at least: 3.2
 Tested up to: 4.9
-Stable tag: 3.2.4
+Stable tag: 3.2.5
 
 This plugin helps twelve step recovery programs list their meetings. It standardizes addresses, and displays results in a searchable list and map.
 
@@ -41,12 +41,14 @@ This plugin was originally designed to maintain a list of AA meetings in Santa C
 1. [Columbus, OH](https://aacentralohio.org/meetings/)
 1. [Corpus Christi, TX](http://www.cbiaa.org/meetings/)
 1. [Dallas, TX](https://www.aadallas.org/wordpress/meetings/)
+1. [Davenport, IA](http://www.aaquadcities.org/meetings/)
 1. [Davis, CA](http://aadavis.org/meetings/)
 1. [Dayton, OH](http://aadaytononline.org/meetings/)
 1. [Daytona, FL](http://aadaytona.org/meetings/)
 1. [DuPage County, IL](http://dupage41aa.org/meetings/)
 1. [East Bay, CA](http://eastbayaa.org/meetings)
 1. [East Tennessee](http://www.etiaa.org/meetings/)
+1. [Eastern Washington](http://area92aa.org/meetings/)
 1. [Elk Grove Village, IL](http://d15aa.org/d15aa.org/?post_type=meetings)
 1. [Elgin, IL](http://dist22.aa-nia.org/meetings/)
 1. [Fargo, ND](http://www.fmmeetinglist.org/meetings/)
@@ -59,10 +61,11 @@ This plugin was originally designed to maintain a list of AA meetings in Santa C
 1. [Harrisburg, IL](http://aa-district16.org/meetings/)
 1. [Harrisburg, PA](http://www.aaharrisburg.org/meetings/)
 1. [Hernando County, FL](http://www.aahernando.org/meetings/)
+1. [Houston, TX](https://aahouston.org/meetings/)
 1. [Idaho](https://idahoarea18aa.org/meetings)
 1. [Inland Empire, CA](https://aainlandempire.org/meetings)
 1. [Israel](http://aa-israel.online/meetings/)
-1. [Jacksonville, FL](http://neflaa.org/wiktor/meetings/)
+1. [Jacksonville, FL](https://neflaa.org/meetings/)
 1. [Joliet, IL](http://aadistrict51.org/meetings/)
 1. [Kansas](https://ks-aa.org/meetings/)
 1. [Kansas City](https://kc-aa.org/meetings/)
@@ -81,6 +84,7 @@ This plugin was originally designed to maintain a list of AA meetings in Santa C
 1. [Marblehead, MA](https://aaemass1819.org/meetings/)
 1. [Madison, WI](http://aamadisonwi.org/meetings/)
 1. [Maine and New Brunswick](http://csoaamaine.org/meetings/)
+1. [Mansfield, OH](https://mansfieldaa.org/?post_type=tsml_meeting)
 1. [Martin County, FL](http://martincountyaa.org/meetings/)
 1. [Maui, HI](http://aamaui.org/meetings)
 1. [Memphis, TN](http://www.memphis-aa.org/meetings)
@@ -106,6 +110,7 @@ This plugin was originally designed to maintain a list of AA meetings in Santa C
 1. [North Central Washington](http://aancw.org/meetings)
 1. [North Coast, LA](http://district12.org/meetings/)
 1. [North County San Diego, CA](https://ncsandiegoaa.org/meetings)
+1. [North Dakota](https://aanorthdakota.org/meetings)
 1. [North Port, FL](http://aanorthport.org/meetings/)
 1. [Oahu, HI](http://oahucentraloffice.com/meetings/)
 1. [Ogden, UT](https://northernutahaa.org/meetings/)
@@ -113,6 +118,7 @@ This plugin was originally designed to maintain a list of AA meetings in Santa C
 1. [Orlando, FL](http://cflintergroup.org/meetings/)
 1. [Palm Beach County, FL](http://aa-palmbeachcounty.org/new/meetings)
 1. [Palm Springs, CA](http://aainthedesert.org/meetings/)
+1. [Paris, France](http://www.aaparis.org/meetings/)
 1. [Pensacola, FL](http://aapensacola.org/meetings/)
 1. [Philadelphia, PA](http://www.aasepia.org/meetings/)
 1. [Placerville, CA](http://westernsloped22.org/meetings/)
@@ -193,6 +199,7 @@ This plugin was originally designed to maintain a list of AA meetings in Santa C
 
 **Al-Anon**
 
+1. [Dayton, OH(https://www.al-anondaytonoh.org/meetings)
 1. [Lancaster, PA](https://lanclebalanon.org/meetings/?tsml-day=any)
 1. [Naples, FL](http://naplesal-anon.org/meetings)
 1. [Pennsylvania](http://pa-al-anon.org/meetings/)
@@ -423,6 +430,9 @@ pin will still show up for these meetings and people will try to get directions 
 1. Edit location
 
 == Changelog ==
+
+= 3.2.5 =
+* Null address bug fix (San Francisco)
 
 = 3.2.4 =
 * LGBTQ meeting type was not importing properly (Seattle)
