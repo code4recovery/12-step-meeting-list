@@ -604,6 +604,8 @@ jQuery(function($){
 	
 	//slugify a string, like WordPress's sanitize_title()
 	function sanitizeTitle(str) {
+		if (str == null) return '';
+
 		str = str.replace(/^\s+|\s+$/g, ''); // trim
 		str = str.toLowerCase();
 		
