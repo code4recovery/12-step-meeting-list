@@ -109,7 +109,7 @@ if (!function_exists('tsml_ajax_regions')) {
 		$results = array();
 		foreach ($regions as $region) {
 			$results[] = array(
-				'id'				=> $region->term_id,
+				'id'				=> $region->slug,
 				'value'				=> html_entity_decode($region->name),
 				'type'				=> 'region',
 				'tokens'			=> tsml_string_tokens($region->name),
