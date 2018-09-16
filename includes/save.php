@@ -207,39 +207,51 @@ function tsml_save_post($post_id, $post, $update) {
 	if (empty($_POST['group'])) {
 		//adding contact information to individual meeting
 		//meeting website
-		if (!empty($_POST['website'])) {
-			update_post_meta($post->ID, 'website', esc_url_raw($_POST['website'], array('http', 'https')));
-		} else {
-			delete_post_meta($post->ID, 'website');
+		if (!$update || strcmp($old_meeting->website, $_POST['website']) !== 0) {
+			$changes[] = 'website';
+			if (empty($_POST['website'])) {
+				delete_post_meta($post->ID, 'website');
+			} else {
+				update_post_meta($post->ID, 'website', esc_url_raw($_POST['website'], array('http', 'https')));
+			}
 		}
 		
 		//meeting website 2
-		if (!empty($_POST['website_2'])) {
-			update_post_meta($post->ID, 'website_2', esc_url_raw($_POST['website_2'], array('http', 'https')));
-		} else {
-			delete_post_meta($post->ID, 'website_2');
+		if (!$update || strcmp($old_meeting->website_2, $_POST['website_2']) !== 0) {
+			$changes[] = 'website_2';
+			if (empty($_POST['website_2'])) {
+				delete_post_meta($post->ID, 'website_2');
+			} else {
+				update_post_meta($post->ID, 'website_2', esc_url_raw($_POST['website_2'], array('http', 'https')));
+			}
 		}
 		
 		//meeting email
-		if (!empty($_POST['email'])) {
-			update_post_meta($post->ID, 'email', sanitize_text_field($_POST['email']));
-		} else {
-			delete_post_meta($post->ID, 'email');
+		if (!$update || strcmp($old_meeting->email, $_POST['email']) !== 0) {
+			$changes[] = 'email';
+			if (empty($_POST['email'])) {
+				delete_post_meta($post->ID, 'email');
+			} else {
+				update_post_meta($post->ID, 'email', sanitize_text_field($_POST['email']));
+			}
 		}
 		
 		//meeting phone
-		if (!empty($_POST['phone'])) {
-			update_post_meta($post->ID, 'phone', sanitize_text_field($_POST['phone']));
-		} else {
-			delete_post_meta($post->ID, 'phone');
+		if (!$update || strcmp($old_meeting->phone, $_POST['phone']) !== 0) {
+			$changes[] = 'phone';
+			if (empty($_POST['phone'])) {
+				delete_post_meta($post->ID, 'phone');
+			} else {
+				update_post_meta($post->ID, 'phone', sanitize_text_field($_POST['phone']));
+			}
 		}
-		
+
 		//meeting info
 		for ($i = 1; $i <= GROUP_CONTACT_COUNT; $i++) {
 			foreach (array('name', 'email', 'phone') as $field) {
 				$key = 'contact_' . $i . '_' . $field;
 				$_POST[$key] = sanitize_text_field($_POST[$key]);
-				if (!$update || $old_meeting->{$key} != $_POST[$key]) {
+				if (!$update || strcmp($old_meeting->{$key}, $_POST[$key]) !== 0) {
 					$changes[] = $key;
 					if (empty($_POST[$key])) {
 						delete_post_meta($post->ID, $key); 
@@ -251,10 +263,13 @@ function tsml_save_post($post_id, $post, $update) {
 		}
 		
 		//last contact
-		if (!empty($_POST['last_contact'])) {
-			update_post_meta($post->ID, 'last_contact', date('Y-m-d', strtotime($_POST['last_contact'])));
-		} else {
-			delete_post_meta($post->ID, 'last_contact');
+		if (!$update || strcmp($old_meeting->last_contact, date('Y-m-d', strtotime($_POST['last_contact']))) !== 0) {
+			$changes[] = 'last_contact';
+			if (empty($_POST['last_contact'])) {
+				delete_post_meta($post->ID, 'last_contact');
+			} else {
+				update_post_meta($post->ID, 'last_contact', date('Y-m-d', strtotime($_POST['last_contact'])));
+			}
 		}
 		
 		//switching from group to no group
@@ -310,38 +325,63 @@ function tsml_save_post($post_id, $post, $update) {
 		}
 		
 		//group website
-		if (!empty($_POST['website'])) {
-			update_post_meta($group_id, 'website', esc_url_raw($_POST['website'], array('http', 'https')));
-		} else {
-			delete_post_meta($group_id, 'website');
+		if (!$update || strcmp($old_meeting->website, $_POST['website']) !== 0) {
+			$changes[] = 'website';
+			if (empty($_POST['website'])) {
+				delete_post_meta($group_id, 'website');
+			} else {
+				update_post_meta($group_id, 'website', esc_url_raw($_POST['website'], array('http', 'https')));
+			}
 		}
-		
+
 		//group website 2
-		if (!empty($_POST['website_2'])) {
-			update_post_meta($group_id, 'website_2', esc_url_raw($_POST['website_2'], array('http', 'https')));
-		} else {
-			delete_post_meta($group_id, 'website_2');
+		if (!$update || strcmp($old_meeting->website_2, $_POST['website_2']) !== 0) {
+			$changes[] = 'website_2';
+			if (empty($_POST['website_2'])) {
+				delete_post_meta($group_id, 'website_2');
+			} else {
+				update_post_meta($group_id, 'website_2', esc_url_raw($_POST['website_2'], array('http', 'https')));
+			}
 		}
 		
 		//group email
-		if (!empty($_POST['email'])) {
-			update_post_meta($group_id, 'email', sanitize_text_field($_POST['email']));
-		} else {
-			delete_post_meta($group_id, 'email');
+		if (!$update || strcmp($old_meeting->email, $_POST['email']) !== 0) {
+			$changes[] = 'email';
+			if (empty($_POST['email'])) {
+				delete_post_meta($group_id, 'email');
+			} else {
+				update_post_meta($group_id, 'email', sanitize_text_field($_POST['email']));
+			}
 		}
 		
 		//group phone
-		if (!empty($_POST['phone'])) {
-			update_post_meta($group_id, 'phone', sanitize_text_field($_POST['phone']));
-		} else {
-			delete_post_meta($group_id, 'phone');
+		if (!$update || strcmp($old_meeting->phone, $_POST['phone']) !== 0) {
+			$changes[] = 'phone';
+			if (empty($_POST['phone'])) {
+				delete_post_meta($group_id, 'phone');
+			} else {
+				update_post_meta($group_id, 'phone', sanitize_text_field($_POST['phone']));
+			}
+		}
+		
+		//group mailing address
+		if (!$update || strcmp($old_meeting->mailing_address, $_POST['mailing_address']) !== 0) {
+			$changes[] = 'mailing_address';
+			if (empty($_POST['mailing_address'])) {
+				delete_post_meta($group_id, 'mailing_address');
+			} else {
+				update_post_meta($group_id, 'mailing_address', sanitize_text_field($_POST['mailing_address']));
+			}
 		}
 		
 		//group venmo
-		if (!empty($_POST['venmo']) && (substr($_POST['venmo'], 0, 1) == '@')) {
-			update_post_meta($group_id, 'venmo', sanitize_text_field($_POST['venmo']));
-		} else {
-			delete_post_meta($group_id, 'venmo');
+		if (!$update || strcmp($old_meeting->venmo, $_POST['venmo']) !== 0) {
+			$changes[] = 'venmo';
+			if (empty($_POST['venmo']) || (substr($_POST['venmo'], 0, 1) != '@')) {
+				delete_post_meta($group_id, 'venmo');
+			} else {
+				update_post_meta($group_id, 'venmo', sanitize_text_field($_POST['venmo']));
+			}
 		}
 		
 		//contact info
@@ -389,7 +429,12 @@ function tsml_save_post($post_id, $post, $update) {
 			$message .= sprintf(__('This is to notify you that %s created a <a href="%s">new meeting</a> on the %s site.', '12-step-meeting-list'), $user->display_name, get_permalink($post->ID), get_bloginfo('name'));
 		}
 		$message .= '</p><table style="font:14px arial;width:100%;border-collapse:collapse;padding:0;">';
-		$fields = array('name', 'day', 'time', 'end_time', 'types', 'notes', 'location', 'formatted_address', 'region', 'location_notes', 'group', 'district', 'group_notes', 'contact_1_name', 'contact_1_email', 'contact_1_phone', 'contact_2_name', 'contact_2_email', 'contact_2_phone', 'contact_3_name', 'contact_3_email', 'contact_3_phone', 'last_contact');
+		$fields = array('name', 'day', 'time', 'end_time', 'types', 'notes', 'location', 
+			'formatted_address', 'region', 'location_notes', 'group', 'district', 'group_notes', 
+			'website', 'website_2', 'email', 'phone', 'mailing_address', 'venmo',
+			'contact_1_name', 'contact_1_email', 'contact_1_phone', 
+			'contact_2_name', 'contact_2_email', 'contact_2_phone', 
+			'contact_3_name', 'contact_3_email', 'contact_3_phone', 'last_contact');
 		foreach ($fields as $field) {
 			$new = $old = '';
 			
@@ -438,6 +483,7 @@ function tsml_save_post($post_id, $post, $update) {
 		}
 		$message .= '</table>';
 		$subject = $update ? __('Meeting Change Notification', '12-step-meeting-list') : __('New Meeting Notification', '12-step-meeting-list');
+		$subject .= ': ' . sanitize_text_field($_POST['post_title']);
 		tsml_email($tsml_notification_addresses, $subject, $message);
 	}
 }

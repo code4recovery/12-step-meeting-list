@@ -4,7 +4,7 @@ Donate link: https://meetingguide.org/contribute
 Tags: 12-step, aa, al-anon, coda, meetings, na, oa, saa, slaa
 Requires at least: 3.2
 Tested up to: 4.9
-Stable tag: 3.2.5
+Stable tag: 3.2.6
 
 This plugin helps twelve step recovery programs list their meetings. It standardizes addresses, and displays results in a searchable list and map.
 
@@ -27,6 +27,7 @@ This plugin was originally designed to maintain a list of AA meetings in Santa C
 1. [Batavia, IL](https://aadistrict61.org/archives/meetings)
 1. [Baton Rouge, LA](http://aabatonrouge.org/meetings/)
 1. [Bethlehem, PA](https://www.aalv.org/meetings)
+1. [Boston, MA](https://aaboston.org/meetings)
 1. [Bowling Green, KY](http://bowlinggreenaa.org/meetings/)
 1. [Brainerd, MN](http://aacentrallakes.org/meetings/)
 1. [Burlington, NC](http://www.aanc33.org/meetings/)
@@ -39,6 +40,7 @@ This plugin was originally designed to maintain a list of AA meetings in Santa C
 1. [Continental Europe](http://alcoholics-anonymous.eu/meetings/)
 1. [Colorado Springs, CO](http://www.coloradospringsaa.org/meetings/)
 1. [Columbus, OH](https://aacentralohio.org/meetings/)
+1. [Connecticut](https://ct-aa.org/meetings/)
 1. [Corpus Christi, TX](http://www.cbiaa.org/meetings/)
 1. [Dallas, TX](https://www.aadallas.org/wordpress/meetings/)
 1. [Davenport, IA](http://www.aaquadcities.org/meetings/)
@@ -116,6 +118,7 @@ This plugin was originally designed to maintain a list of AA meetings in Santa C
 1. [Ogden, UT](https://northernutahaa.org/meetings/)
 1. [Oklahoma](http://aaoklahoma.org/meetings)
 1. [Orlando, FL](http://cflintergroup.org/meetings/)
+1. [Oshawa, Canada](http://www.aadurham.org/meetings/)
 1. [Palm Beach County, FL](http://aa-palmbeachcounty.org/new/meetings)
 1. [Palm Springs, CA](http://aainthedesert.org/meetings/)
 1. [Paris, France](http://www.aaparis.org/meetings/)
@@ -431,6 +434,11 @@ pin will still show up for these meetings and people will try to get directions 
 
 == Changelog ==
 
+= 3.2.6 =
+* Fixing sort by distance bug (Connecticut)
+* Adding group address field (New Mexico)
+* Change notification and feedback email subject tweaks (Washington, DC)
+
 = 3.2.5 =
 * Null address bug fix (San Francisco)
 
@@ -510,30 +518,3 @@ pin will still show up for these meetings and people will try to get directions 
 * Mapbox support
 * Maps are now optional
 * Removed notice from main dashboard page
-
-= 3.0.6 =
-* Bugfix: dropdowns could be unresponsive if map not yet invoked
-
-= 3.0.5 =
-* Whitelisting
-
-= 3.0.4 =
-* Whitelisting
-* Only display notice about API key on the main dashboard page
-
-= 3.0.3 =
-* Fixing a bug causing the Publish button to be greyed out
-
-= 3.0.2 =
-* Whitelisting
-
-= 3.0.1 =
-* Whitelisting
-
-= 3.0.0 =
-* Responds to [Google's imminent API price increase](https://meetingguide.org/google-api) by requiring most websites to sign up for a Google Maps API key
-* Whitelists all existing AA websites we know of
-* Provides link for those we don't to request whitelisting
-* Provides instructions and form for others to enter their API key
-* Reduces usage of Maps API by only loading it on demand
-* Caches user geocodes
