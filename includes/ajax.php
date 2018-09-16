@@ -328,7 +328,6 @@ if (!function_exists('tsml_ajax_feedback')) {
 		$name	 = sanitize_text_field($_POST['tsml_name']);
 		$email	= sanitize_email($_POST['tsml_email']);
 
-	 
 		$message  = '<p style="padding-bottom: 20px; border-bottom: 2px dashed #ccc; margin-bottom: 20px;">' . nl2br(sanitize_text_area(stripslashes($_POST['tsml_message']))) . '</p>';
 		
 		$message_lines = array(
@@ -372,7 +371,8 @@ if (!function_exists('tsml_ajax_feedback')) {
 			_e('Error: required form value missing. Email was not sent.', '12-step-meeting-list');
 		} else {
 			//send HTML email
-			if (tsml_email($tsml_feedback_addresses, 'Meeting Feedback Form', $message, $name . ' <' . $email . '>')) {
+			$subject = __('Meeting Feedback Form', '12-step-meeting-list') . ': ' . $meeting->post_title;
+			if (tsml_email($tsml_feedback_addresses, $subject, $message, $name . ' <' . $email . '>')) {
 				_e('Thank you for your feedback.', '12-step-meeting-list');
 			} else {
 				global $phpmailer;

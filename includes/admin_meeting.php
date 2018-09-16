@@ -224,6 +224,10 @@ function tsml_admin_init() {
 				<input type="text" name="phone" id="phone" value="<?php echo @$meeting->phone?>" placeholder="(800) 555-1212">
 			</div>
 			<div class="meta_form_row group-visible">
+				<label for="mailing_address"><?php _e('Mailing Address', '12-step-meeting-list')?></label>
+				<input type="text" name="mailing_address" id="mailing_address" value="<?php echo @$meeting->mailing_address?>" placeholder="123 Main St, Anytown OK">
+			</div>
+			<div class="meta_form_row group-visible">
 				<label><?php _e('Venmo', '12-step-meeting-list')?></label>
 				<input type="text" name="venmo" placeholder="@group-venmo" value="<?php echo @$meeting->venmo?>">
 			</div>

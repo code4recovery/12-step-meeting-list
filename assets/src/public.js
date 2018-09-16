@@ -645,7 +645,9 @@ jQuery(function($){
 		//execute sort
 		for (var i = 0, len = tbody.rows.length; i < len; i++) {
 			var row = tbody.rows[i];
-			store.push([row.cells[sort_index].getAttribute('data-sort'), row]);
+			var value = row.cells[sort_index].getAttribute('data-sort');
+			if (sort == 'distance') value = parseFloat(value);
+			store.push([value, row]);
 		}
 		store.sort(function(x,y){
 			if (x[0] > y[0]) return (order == 'asc') ? 1 : -1;
