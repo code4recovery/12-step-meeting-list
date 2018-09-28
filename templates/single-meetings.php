@@ -28,12 +28,12 @@ get_header();
 ?>
 
 <div id="tsml">
-	<div id="meeting" class="container" itemscope itemtype="http://schema.org/Event">
+	<div id="meeting" class="container">
 		<div class="row">
 			<div class="col-md-10 col-md-offset-1 main">
 			
 				<div class="page-header">
-					<h1 itemprop="name"><?php echo tsml_format_name($meeting->post_title, $meeting->types)?></h1>
+					<h1><?php echo tsml_format_name($meeting->post_title, $meeting->types)?></h1>
 					<?php echo tsml_link(get_post_type_archive_link('tsml_meeting'), '<i class="glyphicon glyphicon-chevron-right"></i> ' . __('Back to Meetings', '12-step-meeting-list'), 'tsml_meeting')?>
 				</div>
 	
@@ -56,7 +56,7 @@ get_header();
 								<li class="list-group-item meeting-info">
 									<h3 class="list-group-item-heading"><?php _e('Meeting Information', '12-step-meeting-list')?></h3>
 									<?php 
-									echo '<p class="meeting-time"' . ($startDate ? ' itemprop="startDate" content="' . $startDate . '"' : '') . '>';
+									echo '<p class="meeting-time"' . ($startDate ? ' content="' . $startDate . '"' : '') . '>';
 									echo tsml_format_day_and_time($meeting->day, $meeting->time);
 									if (!empty($meeting->end_time)) {
 										/* translators: until */
@@ -80,14 +80,14 @@ get_header();
 								</li>
 								<?php
 								if (!empty($meeting->location_id)) {
-									$location_info = '<div itemprop="location" itemscope itemtype="http://schema.org/Place">
+									$location_info = '<div>
 										<h3 class="list-group-item-heading">' . $meeting->location . '</h3>';
 									
 									if ($other_meetings = count($meeting->location_meetings) - 1) {
 										$location_info .= '<p class="location-other-meetings">' . sprintf(_n('%d other meeting at this location', '%d other meetings at this location', $other_meetings, '12-step-meeting-list'), $other_meetings) . '</p>';
 									}
 									
-									$location_info .= '<p class="location-address" itemprop="address" itemscope itemtype="http://schema.org/PostalAddress">' . tsml_format_address($meeting->formatted_address) . '</p>';
+									$location_info .= '<p class="location-address">' . tsml_format_address($meeting->formatted_address) . '</p>';
 	
 									if (!empty($meeting->location_notes)) {
 										$location_info .= '<section class="location-notes">' . wpautop($meeting->location_notes) . '</section>';

@@ -259,7 +259,10 @@ jQuery(function($){
 				$('input#formatted_address').val(geocoded.formatted_address).trigger('keyup');
 				
 				//check if location with same address is already in the system, populate form
-				$.getJSON(tsml.ajaxurl + '?action=address', { formatted_address: geocoded.formatted_address }, function(data){
+				$.getJSON(tsml.ajaxurl, { 
+					action: 'tsml_address', 
+					formatted_address: geocoded.formatted_address 
+				}, function(data){
 					if (data) {
 						$('input[name=location]').val(data.location);
 						if (data.region != $('select[name=region]').val()) {

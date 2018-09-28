@@ -4,7 +4,7 @@ Donate link: https://meetingguide.org/contribute
 Tags: 12-step, aa, al-anon, coda, meetings, na, oa, saa, slaa
 Requires at least: 3.2
 Tested up to: 4.9
-Stable tag: 3.2.8
+Stable tag: 3.2.9
 
 This plugin helps twelve step recovery programs list their meetings. It standardizes addresses, and displays results in a searchable list and map.
 
@@ -203,7 +203,7 @@ This plugin was originally designed to maintain a list of AA meetings in Santa C
 
 **Al-Anon**
 
-1. [Dayton, OH(https://www.al-anondaytonoh.org/meetings)
+1. [Dayton, OH](https://www.al-anondaytonoh.org/meetings)
 1. [Lancaster, PA](https://lanclebalanon.org/meetings/?tsml-day=any)
 1. [Naples, FL](http://naplesal-anon.org/meetings)
 1. [Pennsylvania](http://pa-al-anon.org/meetings/)
@@ -212,6 +212,7 @@ This plugin was originally designed to maintain a list of AA meetings in Santa C
 
 **Co-Dependents Anonymous**
 
+1. [Canada](http://codacanada.ca/?tsml-day=any&post_type=tsml_meeting)
 1. [Los Angeles, CA](http://www.lacodapreview.lacoda.org/wp/index.php/meetings/?d=any)
 1. [South SF Bay Area, CA](http://www.sbcoda.org/meetings/?d=any&v=list)
 
@@ -434,6 +435,10 @@ pin will still show up for these meetings and people will try to get directions 
 1. Edit location
 
 == Changelog ==
+
+= 3.2.9 =
+* Removing Schema.org markup (CAUK)
+* Updating admin address AJAX hook name (Secular AA)
 
 = 3.2.8 =
 * Fixing undefined types bug (Minneapolis)
