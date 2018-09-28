@@ -120,7 +120,7 @@ if (!function_exists('tsml_ajax_regions')) {
 }
 
 //ajax for address checking
-add_action('wp_ajax_address', 'tsml_admin_ajax_address');
+add_action('wp_ajax_tsml_address', 'tsml_admin_ajax_address');
 if (!function_exists('tsml_admin_ajax_address')) {
 	function tsml_admin_ajax_address() {
 		if (!$posts = get_posts(array(
