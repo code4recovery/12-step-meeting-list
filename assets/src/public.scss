@@ -440,6 +440,7 @@ $height: 550px; //height of map and min-height of list
 				margin: 0; 
 				padding: 0; 
 				.list-group-item {
+					margin: 0; 
 					* {
 						margin: 0 0 8px 0;
 						background-color: transparent;
@@ -454,7 +455,10 @@ $height: 550px; //height of map and min-height of list
 					}
 					ul { 
 						list-style-type: none;
-						li { margin: 0; }
+						li { 
+							margin: 0; 
+							list-style-type: none;
+						}
 					}
 					#card-element { margin-bottom: 0; }
 					&.has-error {

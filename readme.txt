@@ -4,7 +4,7 @@ Donate link: https://meetingguide.org/contribute
 Tags: 12-step, aa, al-anon, coda, meetings, na, oa, saa, slaa
 Requires at least: 3.2
 Tested up to: 4.9
-Stable tag: 3.2.9
+Stable tag: 3.2.10
 
 This plugin helps twelve step recovery programs list their meetings. It standardizes addresses, and displays results in a searchable list and map.
 
@@ -58,6 +58,7 @@ This plugin was originally designed to maintain a list of AA meetings in Santa C
 1. [Fredericksburg, VA](http://www.aadistrict30va.org/wp/meetings/)
 1. [Fresno, CA](http://www.fresnoaa.org/gfaia/wp/meetings/)
 1. [Ft. Worth, TX](http://fortworthaa.org/?post_type=tsml_meeting)
+1. [Gloucester, VA](http://vadist15aa.org/meetings/)
 1. [Greensboro, NC](http://nc23.org/meetings/)
 1. [Hagerstown, MD](http://hagerstownaa.org/meetings/)
 1. [Harrisburg, IL](http://aa-district16.org/meetings/)
@@ -435,6 +436,9 @@ pin will still show up for these meetings and people will try to get directions 
 1. Edit location
 
 == Changelog ==
+
+= 3.2.10 =
+* CSS tweak (Gloucester, VA)
 
 = 3.2.9 =
 * Removing Schema.org markup (CAUK)
