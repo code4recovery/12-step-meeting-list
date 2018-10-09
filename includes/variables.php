@@ -4,6 +4,9 @@ don't make changes! it'll make staying updated much harder.
 for updates / questions, please contact wordpress@meetingguide.org
 */
 
+//get the current boundaries of the coverage map
+$tsml_bounds = get_option('tsml_bounds');
+
 //load the set of columns that should be present in the list (not sure why this shouldn't go after plugins_loaded below)
 $tsml_columns = array(
 	'time' => 'Time',

@@ -81,6 +81,46 @@ if (!function_exists('tsml_assets')) {
 	}
 }
 
+//set tsml_bounds from current data
+if (!function_exists('tsml_bounds')) {
+	function tsml_bounds() {
+		global $wpdb, $tsml_bounds;
+
+		//get north & south
+		$latitudes = $wpdb->get_row('SELECT 
+				MAX(m.meta_value) north,
+				MIN(m.meta_value) south
+			FROM ' . $wpdb->postmeta . ' m
+			JOIN ' . $wpdb->posts . ' p ON p.ID = m.post_id
+			WHERE m.meta_key = "latitude" AND p.post_type = "tsml_location"');
+
+		//get east & west
+		$longitudes = $wpdb->get_row('SELECT 
+				MAX(m.meta_value) west,
+				MIN(m.meta_value) east
+			FROM ' . $wpdb->postmeta . ' m
+			JOIN ' . $wpdb->posts . ' p ON p.ID = m.post_id
+			WHERE m.meta_key = "longitude" AND p.post_type = "tsml_location"');
+
+		//if results, get bounding box and cache it
+		if ($latitudes && $longitudes) {
+
+			//add 25% margin to the bounds
+			$width = ($longitudes->east - $longitudes->west) / 25;
+			$height = ($latitudes->north - $latitudes->south) / 25;
+
+			$tsml_bounds = array(
+				'north' => $latitudes->north + $height,
+				'east' => $longitudes->east + $width,
+				'south' => $latitudes->south - $height,
+				'west' => $longitudes->west - $width,
+			);
+
+			update_option('tsml_bounds', $tsml_bounds);
+		}
+	}
+}
+
 //called by register_activation_hook in 12-step-meeting-list.php
 //hands off to tsml_custom_post_types
 if (!function_exists('tsml_change_activation_state')) {
@@ -472,7 +512,7 @@ if (!function_exists('tsml_front_page')) {
 //used:		tsml_ajax_import(), tsml_ajax_geocode()
 if (!function_exists('tsml_geocode')) {
 	function tsml_geocode($address) {
-		global $tsml_curl_handle, $tsml_language, $tsml_google_overrides;
+		global $tsml_curl_handle, $tsml_language, $tsml_google_overrides, $tsml_bounds;
 
 		//check overrides first before anything
 		if (array_key_exists($address, $tsml_google_overrides)) {
@@ -496,13 +536,21 @@ if (!function_exists('tsml_geocode')) {
 				CURLOPT_SSL_VERIFYPEER => false,
 			));	
 		}
-	
-		//send request to google
-		curl_setopt($tsml_curl_handle, CURLOPT_URL, 'https://maps.googleapis.com/maps/api/geocode/json?' . http_build_query(array(
+
+		//start list of options for geocoding request
+		$options = array(
 			'key' => 'AIzaSyCwIhOSfKs47DOe24JXM8nxfw1gC05BaiU',
 			'address' => $address,
 			'language' => $tsml_language,
-		)));
+		);
+
+		//bias the viewport if we know the bounds
+		if ($tsml_bounds) {
+			$options['bounds'] = $tsml_bounds['south'] . ',' . $tsml_bounds['west'] . '|' . $tsml_bounds['north'] . ',' . $tsml_bounds['east'];			
+		}
+	
+		//send request to google
+		curl_setopt($tsml_curl_handle, CURLOPT_URL, 'https://maps.googleapis.com/maps/api/geocode/json?' . http_build_query($options));
 
 		$result = curl_exec($tsml_curl_handle);
 		

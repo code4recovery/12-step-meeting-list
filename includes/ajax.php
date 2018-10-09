@@ -587,6 +587,9 @@ if (!function_exists('function_name')) {
 		//have to update the cache of types in use
 		tsml_update_types_in_use();
 
+		//update viewport biasing for geocoding
+		tsml_bounds();
+
 		//remove post_modified thing added earlier
 		remove_filter('wp_insert_post_data', 'tsml_import_post_modified', 99);
 		
