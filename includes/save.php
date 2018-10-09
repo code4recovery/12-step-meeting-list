@@ -413,6 +413,9 @@ function tsml_save_post($post_id, $post, $update) {
 	
 	//update types in use
 	tsml_update_types_in_use();
+
+	//update bounds for geocoding
+	tsml_bounds();
 	
 	//remove self
 	$user = wp_get_current_user();
