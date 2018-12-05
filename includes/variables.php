@@ -209,6 +209,14 @@ $tsml_google_overrides = array(
 		'latitude' => 43.862634,
 		'longitude' => -70.100545,
 	),
+
+	//east bay
+	'19806 Wisteria St, Castro Valley, CA 94546, USA' => array(
+		'formatted_address' => '19806 Wisteria St, Castro Valley, CA 94546, USA',
+		'city' => 'Castro Valley',
+		'latitude' => 37.7009164,
+		'longitude' => -122.08583,
+	),
 );
 
 //get the blog's language (used as a parameter when geocoding)
