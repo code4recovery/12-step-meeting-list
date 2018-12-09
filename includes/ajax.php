@@ -407,7 +407,7 @@ add_action('wp_ajax_tsml_import', 'tsml_ajax_import');
 if (!function_exists('function_name')) {
 	function tsml_ajax_import() {
 		global $tsml_data_sources;
-		
+
 		$meetings	= get_option('tsml_import_buffer', array());
 		$errors		= array();
 		$limit		= 25;
@@ -545,13 +545,7 @@ if (!function_exists('function_name')) {
 			//add types, group, and data_source if available
 			if (!empty($meeting['types'])) add_post_meta($meeting_id, 'types', $meeting['types']);
 			if (!empty($meeting['group'])) add_post_meta($meeting_id, 'group_id', $groups[$meeting['group']]);
-			if (!empty($meeting['data_source'])) {
-				add_post_meta($meeting_id, 'data_source', $meeting['data_source']);
-				if (array_key_exists($meeting['data_source'], $tsml_data_sources)) {
-					if (empty($tsml_data_sources[$meeting['data_source']]['count_meetings'])) $tsml_data_sources[$meeting['data_source']]['count_meetings'] = 0;
-					$tsml_data_sources[$meeting['data_source']]['count_meetings']++;
-				}
-			}
+			if (!empty($meeting['data_source'])) add_post_meta($meeting_id, 'data_source', $meeting['data_source']);
 
 			//handle contact information (could be meeting or group)
 			$contact_entity_id = empty($group_id) ? $meeting_id : $group_id;
@@ -593,19 +587,23 @@ if (!function_exists('function_name')) {
 		//remove post_modified thing added earlier
 		remove_filter('wp_insert_post_data', 'tsml_import_post_modified', 99);
 		
-		//number format the data sources
-		foreach ($tsml_data_sources as $url => $props) {
-			$tsml_data_sources[$url]['count_meetings'] = number_format($tsml_data_sources[$url]['count_meetings']);
-		}
-		
-		//save updated data sources
-		update_option('tsml_data_sources', $tsml_data_sources);
-
 		//send json result to browser
 		$meetings  = tsml_count_meetings();
 		$locations = tsml_count_locations();
 		$regions   = tsml_count_regions();
 		$groups	= tsml_count_groups();
+
+		//update the data source counts for the database
+		foreach ($tsml_data_sources as $url => $props) {
+			$tsml_data_sources[$url]['count_meetings'] = count(tsml_get_data_source_ids($url));
+		}
+		update_option('tsml_data_sources', $tsml_data_sources);
+
+		//now format the counts for JSON output
+		foreach ($tsml_data_sources as $url => $props) {
+			$tsml_data_sources[$url]['count_meetings'] = number_format($props['count_meetings']);
+		}
+
 		wp_send_json(array(
 			'errors'		=> $errors,
 			'remaining'		=> count($remaining),

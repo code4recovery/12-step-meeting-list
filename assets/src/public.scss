@@ -184,6 +184,7 @@ $height: 550px; //height of map and min-height of list
 				border-radius: 4px 0 0 4px;
 				font-size: 16px; //this might seem big, but it prevents zooming on focus
 				padding-right: 0;
+				min-height: 0;
 			}
 			.input-group-btn:last-child > .btn { 
 				margin-left: -1px; 

@@ -27,7 +27,7 @@ jQuery(function($){
 			//update the counts in the data sources
 			if (data.data_sources) {
 				$.each(data.data_sources, function(url, props) {
-					$('tr[data-source="' + url + '"] td.count_meetings').html(props.count_meetings);
+					$('tr[data-source="' + url + '"] td.count_meetings').text(props.count_meetings);
 				});
 			}
 			
