@@ -67,6 +67,11 @@ function tsml_save_post($post_id, $post, $update) {
 		$_POST['types'] = array_values(array_diff($_POST['types'], array('C')));
 	}
 
+	//don't allow it to be both men and women
+	if (in_array('M', $_POST['types']) && in_array('W', $_POST['types'])) {
+		$_POST['types'] = array_values(array_diff($_POST['types'], array('W')));
+	}
+
 	//compare types
 	if (!$update || implode(', ', $old_meeting->types) != tsml_meeting_types($_POST['types'])) {
 		$changes[] = 'types';

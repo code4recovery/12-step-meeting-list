@@ -3,8 +3,8 @@ Contributors: meetingguide, aasanjose
 Donate link: https://meetingguide.org/contribute
 Tags: 12-step, aa, al-anon, coda, meetings, na, oa, saa, slaa
 Requires at least: 3.2
-Tested up to: 4.9
-Stable tag: 3.2.13
+Tested up to: 5.0
+Stable tag: 3.2.14
 
 This plugin helps twelve step recovery programs list their meetings. It standardizes addresses, and displays results in a searchable list and map.
 
@@ -22,12 +22,15 @@ This plugin was originally designed to maintain a list of AA meetings in Santa C
 1. [Arkansas](http://arkansascentraloffice.org/meetings/)
 1. [Aspen, CO](http://www.coaadistrict14.org/)
 1. [Asheville, NC](http://ashevilleaa.org/meetings/)
+1. [Atlantic City, NJ](https://www.capeatlanticaa.org/meetings/)
 1. [Austin, TX](http://austinaa.org/meetings/)
 1. [Baltimore, MD](https://baltimoreaa.org/meetings/)
+1. [Barrington, IL](http://barringtonaa.org/meetings/)
 1. [Batavia, IL](https://aadistrict61.org/archives/meetings)
 1. [Baton Rouge, LA](http://aabatonrouge.org/meetings/)
 1. [Bethlehem, PA](https://www.aalv.org/meetings)
 1. [Boston, MA](https://aaboston.org/meetings)
+1. [Boulder, CO](https://bouldercountyaa.com/meetings)
 1. [Bowling Green, KY](http://bowlinggreenaa.org/meetings/)
 1. [Brainerd, MN](http://aacentrallakes.org/meetings/)
 1. [Burlington, NC](http://www.aanc33.org/meetings/)
@@ -51,6 +54,7 @@ This plugin was originally designed to maintain a list of AA meetings in Santa C
 1. [East Bay, CA](http://eastbayaa.org/meetings)
 1. [East Tennessee](http://www.etiaa.org/meetings/)
 1. [Eastern Washington](http://area92aa.org/meetings/)
+1. [Edinburgh, UK](https://aa-edinburgh.org.uk/meetings/)
 1. [Elk Grove Village, IL](http://d15aa.org/d15aa.org/?post_type=meetings)
 1. [Elgin, IL](http://dist22.aa-nia.org/meetings/)
 1. [Fargo, ND](http://www.fmmeetinglist.org/meetings/)
@@ -60,6 +64,7 @@ This plugin was originally designed to maintain a list of AA meetings in Santa C
 1. [Ft. Worth, TX](http://fortworthaa.org/?post_type=tsml_meeting)
 1. [Gloucester, VA](http://vadist15aa.org/meetings/)
 1. [Greensboro, NC](http://nc23.org/meetings/)
+1. [Greenville, SC](https://ggig.org/meetings/)
 1. [Hagerstown, MD](http://hagerstownaa.org/meetings/)
 1. [Harrisburg, IL](http://aa-district16.org/meetings/)
 1. [Harrisburg, PA](http://www.aaharrisburg.org/meetings/)
@@ -72,6 +77,7 @@ This plugin was originally designed to maintain a list of AA meetings in Santa C
 1. [Joliet, IL](http://aadistrict51.org/meetings/)
 1. [Kansas](https://ks-aa.org/meetings/)
 1. [Kansas City](https://kc-aa.org/meetings/)
+1. [Kauai, HI](http://kauaimeetings.com/meetings/)
 1. [Kentucky](http://www.area26.net/wp/?post_type=tsml_meeting)
 1. [Lafayette, LA](http://aa-acadiana.org/site/meetings/)
 1. [Lakeland, FL](https://www.heartlandintergroup.org/meetings/)
@@ -135,6 +141,7 @@ This plugin was originally designed to maintain a list of AA meetings in Santa C
 1. [Redmond, OR](http://coigaa.org/meetings/)
 1. [Regina, Canada](http://www.aaregina.com/meetings/)
 1. [Rhode Island](https://aainri.com/meetings/)
+1. [Roanoke, VA](http://aaroanoke.org/?post_type=tsml_meeting)
 1. [Rochester, MN](http://aadistrict1.org/blog/meetings/)
 1. [Rochester, NY](https://www.rochester-ny-aa.org/meetings/)
 1. [Rockland County, NY](https://rocklandnyaa.org/meetings/)
@@ -142,6 +149,7 @@ This plugin was originally designed to maintain a list of AA meetings in Santa C
 1. [Sacramento, CA](http://aasacramento.org/meetings/)
 1. [Salinas, CA](https://aasalinas.org/meetings/)
 1. [San Francisco, CA](https://www.aasf.org/meetings)
+1. [San Luis Obispo, CA](https://www.sloaa.org/meetings/)
 1. [San Jose, CA](https://aasanjose.org/meetings)
 1. [San Mateo, CA](http://aa-san-mateo.org/meetings)
 1. [Santa Barbara, CA](https://santabarbaraaa.com/meetings)
@@ -150,6 +158,7 @@ This plugin was originally designed to maintain a list of AA meetings in Santa C
 1. [Seattle, WA](https://www.seattleaa.org/meetings/)
 1. [Secular AA](https://www.secularaa.org/meetings/)
 1. [Shreveport, LA](http://aa-shreveport.org/meetings/)
+1. [Slovenia](http://www.aa-slovenia.si/meetings/)
 1. [Snohomish County, WA](http://snocoaa.org/wordpress_4.1/?post_type=tsml_meeting)
 1. [Sonoma County, CA](http://www.sonomacountyaa.org/meetings/)
 1. [South Lexington, KY](http://aasouthlexingtonky.org/meetings/)
@@ -289,7 +298,7 @@ Basically you can just install it and you should be good to go. For a quick walk
 = My meeting type isn't listed! =
 If it's a broadly-applicable meeting type, please [contact us](mailto:wordpress@meetingguide.org) so we can include it for you. We want to maintain consistency for the [mobile apps](https://meetingguide.org/), so not all proposals are included.
 
-If you have access to your theme's functions.php, you may add additional meeting types for your area. Simply adapt the following example to your purposes:
+If you have access to your theme's functions.php, you may add additional meeting types or rename existing ones. Simply adapt the following example to your purposes:
 
 	if (function_exists('tsml_custom_types')) {
 		tsml_custom_types(array(
@@ -370,6 +379,23 @@ Copy the files from the plugin's templates directory into your theme's root dire
 
 *Please note* these pages will evolve over time. If you override, you will someday experience website errors after an update. If that happens, please update your theme's copy of the plugin pages. 
 
+= Can I see types in the meeting list? And can I adjust the /Men and /Women after the meeting name? =
+To see types in the meeting list, one way to do it is to add some CSS to your theme which will make a types column visible.
+
+	@media screen and (min-width: 768px) {
+	  #tsml #meetings .types { display: table-cell !important; }
+	}
+
+One drawback of this approach is that it shows all the meeting types, and you might not want all of them to be displayed over and over in the meeting list.
+
+Another approach is to adjust which meeting types are "flagged" in the meeting names, by default for most programs this is /Men and /Women. To adjust this, find the meeting type code for each type you want to show and include it in your theme's functions.php like this:
+
+	if (function_exists('tsml_custom_flags')) {
+		tsml_custom_flags(array('M', 'W', 'O', 'C'));
+	}
+
+The code above will add "Open" and "Closed" flags to the meeting name.
+
 = When there are notes on a meeting, can I indicate that somehow in the meeting list? =
 Yes, with CSS. Rows that have meeting notes will have a 'notes' class. To add an asterisk, for example, try this:
 
@@ -436,6 +462,11 @@ pin will still show up for these meetings and people will try to get directions 
 1. Edit location
 
 == Changelog ==
+
+= 3.2.14 =
+* Added ability to adjust which types are flagged (Edinburgh)
+* CSS fix on search field (Kauai)
+* Fixing improper JSON import counts (Area 72 District 32)
 
 = 3.2.13 =
 * Address fix (East Bay)

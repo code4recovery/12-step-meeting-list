@@ -171,6 +171,15 @@ if (!function_exists('tsml_custom_addresses')) {
 	}
 }
 
+//fuction:	define custom flags (/men, /women) for your area
+//used:		theme's functions.php
+if (!function_exists('tsml_custom_flags')) {
+	function tsml_custom_flags($flags) {
+		global $tsml_programs, $tsml_program;
+		$tsml_programs[$tsml_program]['flags'] = $flags;
+	}
+}
+
 //function: register custom post types
 //used: 	init.php on every request, also in change_activation_state() for plugin activation or deactivation
 if (!function_exists('tsml_custom_post_types')) {
@@ -431,12 +440,15 @@ if (!function_exists('tsml_format_day_and_time')) {
 //used:		archive-meetings.php
 if (!function_exists('tsml_format_name')) {
 	function tsml_format_name($name, $types=array()) {
-		if (in_array('Men', $types) || in_array('M', $types)) {
-			$name .= ' <small>' . __('Men', '12-step-meeting-list') . '</small>';
-		} elseif (in_array('Women', $types) || in_array('W', $types)) {
-			$name .= ' <small>' . __('Women', '12-step-meeting-list') . '</small>';
+		global $tsml_program, $tsml_programs;
+		if (empty($tsml_programs[$tsml_program]['flags']) || !is_array($tsml_programs[$tsml_program]['flags'])) return $name;
+		$append = array();
+		foreach ($types as $type) {
+			if (in_array($type, $tsml_programs[$tsml_program]['flags'])) {
+				$append[] = $tsml_programs[$tsml_program]['types'][$type];
+			}
 		}
-		return $name;
+		return $name . ' <small>' . implode(', ', $append) . '</small>';
 	}
 }
 
@@ -651,6 +663,23 @@ if (!function_exists('tsml_get_all_meetings')) {
 if (!function_exists('tsml_get_all_regions')) {
 	function tsml_get_all_regions() {
 		return get_terms('tsml_region', array('fields'=>'ids', 'hide_empty'=>false));
+	}
+}
+
+//function: get meeting ids for a data source
+//used:		tsml_ajax_import, import/settings page
+if (!function_exists('tsml_get_data_source_ids')) {
+	function tsml_get_data_source_ids($source) {
+		return get_posts(array(
+			'post_type'		=> 'tsml_meeting',
+			'numberposts'	=> -1,
+			'fields'		=> 'ids',
+			'meta_query'	=> array(array(
+				'key' 		=> 'data_source',
+				'value'		=> $source,
+				'compare'	=> '=',
+			)),
+		));
 	}
 }
 

@@ -166,18 +166,7 @@ function tmsl_import_page() {
 
 			//if already set, hard refresh
 			if (array_key_exists($_POST['tsml_add_data_source'], $tsml_data_sources)) {
-				tsml_delete(get_posts(array(
-					'post_type'		=> 'tsml_meeting',
-					'numberposts'	=> -1,
-					'fields'			=> 'ids',
-					'meta_query'		=> array(
-						array(
-							'key' => 'data_source',
-							'value' => $_POST['tsml_add_data_source'],
-							'compare' => '=',
-						),
-					),
-				)));
+				tsml_delete(tsml_get_data_source_ids($_POST['tsml_add_data_source']));
 				tsml_delete_orphans();
 			}
 			
@@ -194,12 +183,7 @@ function tmsl_import_page() {
 			
 			//save data source configuration
 			update_option('tsml_data_sources', $tsml_data_sources);
-			
-			/*schedule cron
-			if (!wp_next_scheduled('tsml_import_data_sources')) {
-				wp_schedule_event(time(), 'hourly', 'tsml_import_data_sources');
-			}*/
-			
+						
 		} elseif (!is_array($response)) {
 			
 			tsml_alert(__('Invalid response, <pre>' . print_r($response, true) . '</pre>.', '12-step-meeting-list'), 'error');
@@ -249,18 +233,7 @@ function tmsl_import_page() {
 		if (array_key_exists($_POST['tsml_remove_data_source'], $tsml_data_sources)) {
 			
 			//remove all meetings for this data source
-			tsml_delete(get_posts(array(
-				'post_type'		=> 'tsml_meeting',
-				'numberposts'	=> -1,
-				'fields'			=> 'ids',
-				'meta_query'		=> array(
-					array(
-						'key' => 'data_source',
-						'value' => $_POST['tsml_remove_data_source'],
-						'compare' => '=',
-					),
-				),
-			)));
+			tsml_delete(tsml_get_data_source_ids($_POST['tsml_remove_data_source']));
 			
 			//clean up orphaned locations & groups
 			tsml_delete_orphans();
@@ -268,11 +241,6 @@ function tmsl_import_page() {
 			//remove data source
 			unset($tsml_data_sources[$_POST['tsml_remove_data_source']]);
 			update_option('tsml_data_sources', $tsml_data_sources);
-			
-			//unschedule cron?
-			if (empty($tsml_data_sources) && wp_next_scheduled('tsml_import_data_sources')) {
-				wp_clear_scheduled_hook('tsml_import_data_sources');
-			}
 			
 			tsml_alert(__('Data source removed.', '12-step-meeting-list'));
 		}
@@ -439,6 +407,12 @@ function tmsl_import_page() {
 		$tsml_mapbox_key = null;
 		delete_option('tsml_mapbox_key');
 	}
+
+	/*debugging
+	delete_option('tsml_data_sources');
+	tsml_delete('everything');
+	tsml_delete_orphans();
+	*/
 	?>
 	<div class="wrap">
 		<h2><?php _e('Import & Settings', '12-step-meeting-list')?></h2>
@@ -609,7 +583,7 @@ function tmsl_import_page() {
 											<a href="<?php echo $feed?>" target="_blank"><?php echo !empty($properties['name']) ? $properties['name'] : __('Unnamed Feed', '12-step-meeting-list')?></a>
 											&bull; <?php echo !empty($properties['type']) ? $properties['type'] : 'JSON'?>
 										</td>
-										<td class="align-center"><?php echo number_format($properties['count_meetings'])?></td>
+										<td class="align-center count_meetings"><?php echo number_format($properties['count_meetings'])?></td>
 										<td class="align-right">
 											<?php echo date(get_option('date_format') . ' ' . get_option('time_format'), $properties['last_import'])?>
 										</td>
