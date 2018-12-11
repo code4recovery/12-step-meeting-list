@@ -448,7 +448,7 @@ if (!function_exists('tsml_format_name')) {
 				$append[] = $tsml_programs[$tsml_program]['types'][$type];
 			}
 		}
-		return $name . ' <small>' . implode(', ', $append) . '</small>';
+		return count($append) ? $name . ' <small>' . implode(', ', $append) . '</small>' : $name;
 	}
 }
 
