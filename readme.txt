@@ -4,7 +4,7 @@ Donate link: https://meetingguide.org/contribute
 Tags: 12-step, aa, al-anon, coda, meetings, na, oa, saa, slaa
 Requires at least: 3.2
 Tested up to: 5.0
-Stable tag: 3.2.14
+Stable tag: 3.2.15
 
 This plugin helps twelve step recovery programs list their meetings. It standardizes addresses, and displays results in a searchable list and map.
 
@@ -120,6 +120,7 @@ This plugin was originally designed to maintain a list of AA meetings in Santa C
 1. [North Coast, LA](http://district12.org/meetings/)
 1. [North County San Diego, CA](https://ncsandiegoaa.org/meetings)
 1. [North Dakota](https://aanorthdakota.org/meetings)
+1. [North Idaho](http://northidahoaa.org/meetings/)
 1. [North Port, FL](http://aanorthport.org/meetings/)
 1. [Northern Indiana](http://www.area22indiana.org/meetings/)
 1. [Oahu, HI](http://oahucentraloffice.com/meetings/)
@@ -462,6 +463,9 @@ pin will still show up for these meetings and people will try to get directions 
 1. Edit location
 
 == Changelog ==
+
+= 3.2.15 =
+* Hiding the empty slashes introducted in 3.2.14
 
 = 3.2.14 =
 * Added ability to adjust which types are flagged (Edinburgh)
