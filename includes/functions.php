@@ -184,6 +184,7 @@ if (!function_exists('tsml_custom_flags')) {
 //used: 	init.php on every request, also in change_activation_state() for plugin activation or deactivation
 if (!function_exists('tsml_custom_post_types')) {
 	function tsml_custom_post_types() {
+		global $tsml_slug;
 		register_taxonomy('tsml_region', 'tsml_location', array(
 			'labels' => array(
 				'name' => __('Regions', '12-step-meeting-list'),
@@ -241,7 +242,7 @@ if (!function_exists('tsml_custom_post_types')) {
 				'public' => true,
 				'has_archive' => true,
 				'menu_icon' => 'dashicons-groups',
-				'rewrite' => array('slug'=>'meetings'),
+				'rewrite' => array('slug'=>$tsml_slug),
 			)
 		);
 	
