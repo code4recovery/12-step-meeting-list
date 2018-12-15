@@ -4,7 +4,7 @@ Donate link: https://meetingguide.org/contribute
 Tags: 12-step, aa, al-anon, coda, meetings, na, oa, saa, slaa
 Requires at least: 3.2
 Tested up to: 5.0
-Stable tag: 3.2.15
+Stable tag: 3.3
 
 This plugin helps twelve step recovery programs list their meetings. It standardizes addresses, and displays results in a searchable list and map.
 
@@ -33,6 +33,7 @@ This plugin was originally designed to maintain a list of AA meetings in Santa C
 1. [Boulder, CO](https://bouldercountyaa.com/meetings)
 1. [Bowling Green, KY](http://bowlinggreenaa.org/meetings/)
 1. [Brainerd, MN](http://aacentrallakes.org/meetings/)
+1. [Breckenridge, CO](http://district17coloradoaa.org/meetings/)
 1. [Burlington, NC](http://www.aanc33.org/meetings/)
 1. [Cancún, Mexico](http://aacancun.org/meetings/)
 1. [Charleston, SC](http://tcio.org/meetings)
@@ -72,6 +73,7 @@ This plugin was originally designed to maintain a list of AA meetings in Santa C
 1. [Houston, TX](https://aahouston.org/meetings/)
 1. [Idaho](https://idahoarea18aa.org/meetings)
 1. [Inland Empire, CA](https://aainlandempire.org/meetings)
+1. [Iowa](http://www.aa-iowa.org/meetings/)
 1. [Israel](http://aa-israel.online/meetings/)
 1. [Jacksonville, FL](https://neflaa.org/meetings/)
 1. [Joliet, IL](http://aadistrict51.org/meetings/)
@@ -453,7 +455,14 @@ No, there's not a good way to do this at this time. All meetings currently need 
 
 Some sites have used a general geographic area, such as a city name, but this isn't a very good solution, because a map
 pin will still show up for these meetings and people will try to get directions to them. 
-	
+
+= Can I change the URL of the meetings list? =
+Yes, try setting the $tsml_slug variable in your functions.php.
+
+	$tsml_slug = 'schedule';
+
+To apply these changes, you must go to Settings > Permalinks and click "Save Changes"
+
 == Screenshots ==
 
 1. Meeting list page
@@ -463,6 +472,9 @@ pin will still show up for these meetings and people will try to get directions 
 1. Edit location
 
 == Changelog ==
+
+= 3.3 =
+* Ability to customize URL address (Western Portland)
 
 = 3.2.15 =
 * Hiding the empty slashes introducted in 3.2.14
@@ -516,65 +528,3 @@ pin will still show up for these meetings and people will try to get directions 
 
 = 3.2 =
 * URLs now use region and district slugs, rather than IDs, for more readable URLs (Area 22)
-
-= 3.1.15 =
-* Adding Hebrew meeting type (Israel)
-
-= 3.1.14 =
-* Address geocoding fix part II (Maine)
-* Adding author field to import & export (Connecticut)
-
-= 3.1.13 =
-* Bug saving locations on new meetings
-* Address geocoding fix (Maine)
-
-= 3.1.12 =
-* Fixing search for groups with apostrophes
-
-= 3.1.11 =
-* CSV security: user must be logged in or sharing must be open
-
-= 3.1.10 =
-* PHP 5.3 compliance (Baltimore)
-
-= 3.1.9 =
-* Hiding empty regions and districts (Northern Indiana)
-* When region or district filter doesn't match any results, return nothing (Northern Indiana)
-
-= 3.1.8 =
-* Select multiple types with modifier key down (Atlanta)
-* Upgrading the build tool to Laravel Mix, should fix NPM warning on Github
-
-= 3.1.7 =
-* Updating Meeting Guide Google Play link
-
-= 3.1.6 =
-* Adding geocode override (Regina)
-
-= 3.1.5 =
-* Fixing Internet Explorer map error
-* Borrows Google Maps key from The Events Calendar if needed and available
-* Adding column aliases for import (you can now use ZIP for Postal Code, for example)
-
-= 3.1.4 =
-* Adding type for "Digital Basket"
-
-= 3.1.3 =
-* Fixing PHP notice when adding a new meeting
-* Adding Venmo column to CSV
-
-= 3.1.2 =
-* Bug fix, thinks Google is the right thing but it's really Mapbox (SoCal ACA)
-
-= 3.1.1 =
-* Bug fix when saving a meeting if you have a database prefix (Ft Worth)
-* Paragraph spacing on no-SSL warning
-* Badging Import & Settings link if notices present
-* Adding link on admin page to enable maps
-* Removing empty map on meeting & location detail pages if maps not enabled
-* Map infowindow is back on location detail page
-
-= 3.1.0 =
-* Mapbox support
-* Maps are now optional
-* Removed notice from main dashboard page
