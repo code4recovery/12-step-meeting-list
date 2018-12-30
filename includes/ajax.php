@@ -501,6 +501,8 @@ if (!function_exists('function_name')) {
 					}
 					
 					$groups[$meeting['group']] = $group_id;
+				} else {
+					$group_id = $groups[$meeting['group']];
 				}
 			}
 
