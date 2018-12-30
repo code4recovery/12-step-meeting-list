@@ -4,7 +4,7 @@ Donate link: https://meetingguide.org/contribute
 Tags: 12-step, aa, al-anon, coda, meetings, na, oa, saa, slaa
 Requires at least: 3.2
 Tested up to: 5.0
-Stable tag: 3.3
+Stable tag: 3.3.1
 
 This plugin helps twelve step recovery programs list their meetings. It standardizes addresses, and displays results in a searchable list and map.
 
@@ -109,6 +109,7 @@ This plugin was originally designed to maintain a list of AA meetings in Santa C
 1. [Modesto, CA](http://wp.cviaa.org/meetings/)
 1. [Monterey, CA](http://www.aamonterey.org/meetings/)
 1. [Montreal, Canada](http://aa87.org/meetings/)
+1. [Morganton, NC](http://ncd12aa.org/meetings/)
 1. [Myrtle Beach, SC](http://aamyrtlebeach.org/meetings/)
 1. [Napa, CA](http://www.aanapa.org/meetings)
 1. [Naples, FL District 20](http://district20aa.org/meetings/)
@@ -339,8 +340,8 @@ Note you can add multiple entries to the array below.
 = How can I make the Region dropdown not be collapsible? =
 No problem, just add this CSS to your theme:
 
-	div#meetings .controls ul.dropdown-menu div.expand { display: none; }
-	div#meetings .controls ul.dropdown-menu ul.children { height: auto; }
+	#tsml #meetings .controls ul.dropdown-menu div.expand { display: none; }
+	#tsml #meetings .controls ul.dropdown-menu ul.children { height: auto; }
 
 = How can I show Any Day by default? =
 The easiest way is to link to that view straight from your navigation. Usually that looks like `/meetings/?tsml-day=any`, but it can vary depending on your settings.
@@ -472,6 +473,9 @@ To apply these changes, you must go to Settings > Permalinks and click "Save Cha
 1. Edit location
 
 == Changelog ==
+
+= 3.3.1 =
+* Group import bug fix (Houston)
 
 = 3.3 =
 * Ability to customize URL address (Western Portland)
