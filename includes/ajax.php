@@ -283,12 +283,15 @@ if (!function_exists('tsml_ajax_csv')) {
 		//do header
 		$return = implode($delimiter, array_values($columns)) . PHP_EOL;
 
+		//get the preferred time format setting
+		$time_format = get_option('time_format');
+
 		//append meetings
 		foreach ($meetings as $meeting) {
 			$line = array();
 			foreach ($columns as $column=>$value) {
 				if (in_array($column, array('time', 'end_time'))) {
-					$line[] = $meeting[$column];
+					$line[] = empty($meeting[$column]) ? null : date($time_format, strtotime($meeting[$column]));
 				} elseif ($column == 'day') {
 					$line[] = $tsml_days[$meeting[$column]];
 				} elseif ($column == 'types') {
