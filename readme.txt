@@ -4,7 +4,7 @@ Donate link: https://meetingguide.org/contribute
 Tags: 12-step, aa, al-anon, coda, meetings, na, oa, saa, slaa
 Requires at least: 3.2
 Tested up to: 5.0
-Stable tag: 3.3.1
+Stable tag: 3.3.2
 
 This plugin helps twelve step recovery programs list their meetings. It standardizes addresses, and displays results in a searchable list and map.
 
@@ -59,6 +59,7 @@ This plugin was originally designed to maintain a list of AA meetings in Santa C
 1. [Elk Grove Village, IL](http://d15aa.org/d15aa.org/?post_type=meetings)
 1. [Elgin, IL](http://dist22.aa-nia.org/meetings/)
 1. [Fargo, ND](http://www.fmmeetinglist.org/meetings/)
+1. [Flagler County, FL](http://aaflagler.org/meetings/)
 1. [Four Corners, NM AZ UT CO](https://aa-fc.org/meetings/)
 1. [Fredericksburg, VA](http://www.aadistrict30va.org/wp/meetings/)
 1. [Fresno, CA](http://www.fresnoaa.org/gfaia/wp/meetings/)
@@ -71,6 +72,7 @@ This plugin was originally designed to maintain a list of AA meetings in Santa C
 1. [Harrisburg, PA](http://www.aaharrisburg.org/meetings/)
 1. [Hernando County, FL](http://www.aahernando.org/meetings/)
 1. [Houston, TX](https://aahouston.org/meetings/)
+1. [Huntsville, AL](http://aahuntsvilleal.com/meetings/)
 1. [Idaho](https://idahoarea18aa.org/meetings)
 1. [Inland Empire, CA](https://aainlandempire.org/meetings)
 1. [Iowa](http://www.aa-iowa.org/meetings/)
@@ -473,6 +475,9 @@ To apply these changes, you must go to Settings > Permalinks and click "Save Cha
 1. Edit location
 
 == Changelog ==
+
+= 3.3.2 =
+* CSV export now uses the time format preference
 
 = 3.3.1 =
 * Group import bug fix (Houston)
