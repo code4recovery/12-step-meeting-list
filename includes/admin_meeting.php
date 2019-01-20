@@ -11,6 +11,27 @@ function tsml_change_default_title($title){
     return $title;
 }
 
+/* archived post status -- code is not ready yet
+add_action('admin_footer-post.php', 'tsml_post_status_list');
+function tsml_post_status_list(){
+	global $post;
+	$complete = '';
+	$label = '';
+	if($post->post_type == 'tsml_meeting'){
+		if($post->post_status == 'archived'){
+			$complete = ' selected="selected"';
+			$label = '<span id="post-status-display"> Archived</span>';
+			wp_add_inline_script('
+				jQuery(function($) {
+					$("select#post_status").append("<option value=\"archived\" ' . $complete . '>Archived</option>");
+					$(".misc-pub-section label").append("' . $label . '");
+				});
+			');
+		}
+	}
+}
+*/
+
 //move author meta box to right side
 add_action('do_meta_boxes', 'tsml_move_author_meta_box');
 function tsml_move_author_meta_box(){

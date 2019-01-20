@@ -194,6 +194,14 @@ $tsml_google_overrides = array(
 		'longitude' => -105.88777240000002,
 	),
 
+	//racine wi
+	'N3155 County Rd H, Lake Geneva, WI 53147' => array(
+		'formatted_address' => 'N3155 County Rd H, Lake Geneva, WI 53147, USA',
+		'city' => 'Lake Geneva',
+		'latitude' => 42.606220,
+		'longitude' => -88.446960,
+	),
+
 	//regina canada
 	'Kwakiutl Totem Pole, Regina, SK S4S, Canada' => array(
 		'formatted_address' => 'Kwakiutl Totem Pole, Regina, SK S4S, Canada',
