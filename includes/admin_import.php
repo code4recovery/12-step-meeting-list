@@ -155,7 +155,7 @@ function tmsl_import_page() {
 	if (!empty($_POST['tsml_add_data_source']) && isset($_POST['tsml_nonce']) && wp_verify_nonce($_POST['tsml_nonce'], $tsml_nonce)) {
 		
 		//sanitize URL
-		$_POST['tsml_add_data_source'] = esc_url_raw($_POST['tsml_add_data_source'], array('http', 'https'));
+		$_POST['tsml_add_data_source'] = trim(esc_url_raw($_POST['tsml_add_data_source'], array('http', 'https')));
 		
 		//try fetching	
 		$response = wp_remote_get($_POST['tsml_add_data_source'], array(
@@ -264,6 +264,7 @@ function tmsl_import_page() {
 	if (!empty($_POST['tsml_contact_display']) && isset($_POST['tsml_nonce']) && wp_verify_nonce($_POST['tsml_nonce'], $tsml_nonce)) {
 		$tsml_contact_display = ($_POST['tsml_contact_display'] == 'public') ? 'public' : 'private';
 		update_option('tsml_contact_display', $tsml_contact_display);
+		tsml_rebuild_cache(); //this value affects what's in the cache
 		tsml_alert(__('Contact privacy updated.', '12-step-meeting-list'));
 	}
 		

@@ -7,20 +7,6 @@ function tsml_init() {
 
 	//register post types and taxonomies
 	tsml_custom_post_types();
-
-	//run any necessary upgrades
-	tsml_upgrades();
-
-	/*register "archived" post status for Portland
-	register_post_status('archived', array(
-		'label'                     => __('Archived', '12-step-meeting-list'),
-		'exclude_from_search'       => true,
-		'show_in_admin_all_list'    => true,
-		'show_in_admin_status_list' => true,
-		'internal'					=> false,
-		'label_count'               => _n_noop('Archived <span class="count">(%s)</span>', 'Archived <span class="count">(%s)</span>', '12-step-meeting-list'),
-	));
-	*/
 	
 	//meeting list page
 	add_filter('archive_template', 'tsml_archive_template');

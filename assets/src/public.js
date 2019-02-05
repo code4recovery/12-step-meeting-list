@@ -95,7 +95,7 @@ jQuery(function($){
 	//expand region select
 	$('.panel-expandable').on('click', '.panel-heading', function(e){
 		$(this).closest('.panel-expandable').toggleClass('expanded');
-		if (tsml.debug) console.log('expanding region');
+		if (tsml.debug) console.log('.panel-expandable toggling');
 	})
 	
 	//single meeting page feedback form
@@ -160,14 +160,12 @@ jQuery(function($){
 		//these are live hrefs now
 		e.preventDefault();
 
-		if (tsml.debug) console.log('dropdown click');
-
 		//dropdown menu click
 		var param = $(this).closest('div').attr('id');
 		
 		if (param == 'mode') {
 			
-			if (tsml.debug) console.log('search mode');
+			if (tsml.debug) console.log('dropdown click search mode');
 
 			//only one search mode
 			$('#mode li').removeClass('active');
@@ -194,14 +192,14 @@ jQuery(function($){
 			
 		} else if (param == 'distance') {
 			//distance only one
-			if (tsml.debug) console.log('distance');
+			if (tsml.debug) console.log('dropdown click distance');
 			$('#distance li').removeClass('active');
 			$('#distance span.selected').html($(this).html());
 			trackAnalytics('distance', $(this).text());
 		} else if (param == 'region') {
 			//switch between region and district mode
 			if ($(this).hasClass('switch')) {
-				if (tsml.debug) console.log('switching between region and district');
+				if (tsml.debug) console.log('dropdown click switching between region and district');
 				var mode = $(this).parent().hasClass('region') ? 'district' : 'region';
 				$(this).closest('#meetings').attr('tax-mode', mode);
 				e.stopPropagation();
@@ -209,26 +207,26 @@ jQuery(function($){
 			}
 			
 			//region only one
-			if (tsml.debug) console.log('region or district');
+			if (tsml.debug) console.log('dropdown click region or district');
 			$('#region li').removeClass('active');
 			$('#region span.selected').html($(this).html());
 			trackAnalytics('region', $(this).text());
 			
 		} else if (param == 'day') {
 			//day only one selected
-			if (tsml.debug) console.log('day');
+			if (tsml.debug) console.log('dropdown click day');
 			$('#day li').removeClass('active');
 			$('#day span.selected').html($(this).html());
 			trackAnalytics('day', $(this).text());
 		} else if (param == 'time') {
 			//time only one
-			if (tsml.debug) console.log('time');
+			if (tsml.debug) console.log('dropdown click time');
 			$('#time li').removeClass('active');
 			$('#time span.selected').html($(this).html());
 			trackAnalytics('time', $(this).text());
 		} else if (param == 'type') {
 			//type can be multiple
-			if (tsml.debug) console.log('type');
+			if (tsml.debug) console.log('dropdown click type');
 			if (!e.metaKey) $('#type li').removeClass('active');
 			trackAnalytics('type', $(this).text());
 		}
@@ -238,14 +236,14 @@ jQuery(function($){
 		//wait to set label on type until we have a complete count
 		if (param == 'type') {
 			if ($('#type li.active a[data-id]').size()) {
-				if (tsml.debug) console.log($('#type li.active a[data-id]').size() + ' types selected');
+				if (tsml.debug) console.log('dropdown click ' + $('#type li.active a[data-id]').size() + ' types selected');
 				var types = [];
 				$('#type li.active a[data-id]').each(function(){
 					types.push($(this).text());
 				});
 				$('#type span.selected').html(types.join(' + '));
 			} else {
-				if (tsml.debug) console.log('no types selected');
+				if (tsml.debug) console.log('dropdown click no types selected');
 				$('#type span.selected').html($(this).text());
 			}
 		}
@@ -349,9 +347,6 @@ jQuery(function($){
 
 		//reset search location
 		searchLocation = null;
-
-		if (tsml.debug) console.log('doing search');
-		if (tsml.debug) console.log(controls);
 		
 		//get current query string for history and appending to links
 		var query_string = {};
@@ -404,7 +399,7 @@ jQuery(function($){
 					address: controls.query, 
 					nonce: tsml.nonce,
 				}, function(geocoded) {
-					if (tsml.debug) console.log('geocoded', geocoded);
+					if (tsml.debug) console.log('doSearch() location geocoded', geocoded);
 					$('#search button i').removeClass().addClass('glyphicon glyphicon-map-marker');
 					if (geocoded.status == 'error') {
 						//show error message
@@ -447,6 +442,7 @@ jQuery(function($){
 					getMeetings(controls);
 				}, function() {
 					//browser supports but can't get geolocation
+					if (tsml.debug) console.log('doSearch() didnt get location');
 					$('#search button i').removeClass().addClass('glyphicon glyphicon-user'); //todo switch to location
 					removeSearchMarker();
 					setAlert('geo_error');
@@ -457,6 +453,7 @@ jQuery(function($){
 				});
 			} else {
 				//browser doesn't support geolocation
+				if (tsml.debug) console.log('doSearch() no browser support for geo');
 				$('#search button i').removeClass().addClass('glyphicon glyphicon-user'); //todo switch to location
 				removeSearchMarker();
 				setAlert('geo_error_browser');
@@ -470,10 +467,21 @@ jQuery(function($){
 		//request new meetings result
 		controls.distance_units = tsml.distance_units;
 		controls.nonce = tsml.nonce;
+
+		//make url more readable
+		for (var property in controls) { 
+			if (controls[property] === null || controls[property] === undefined || !controls[property].toString().length) {
+				delete controls[property];
+			}
+		}
+
+		if (tsml.debug) console.log('getMeetings()', tsml.ajaxurl + '?' + $.param(controls));
 				
 		$.post(tsml.ajaxurl, controls, function(response){
 
-			if (typeof response != 'object') {
+			if (tsml.debug) console.log('getMeetings() received', response);
+
+			if (typeof response != 'object' || response == null) {
 								
 				//there was a problem with the data source
 				$('#meetings').addClass('empty');
@@ -551,7 +559,7 @@ jQuery(function($){
 					
 					//add new table row
 					var string = '<tr';
-					if (obj.notes.length) string += ' class="notes"'
+					if (obj.notes && obj.notes.length) string += ' class="notes"'
 					string += '>';
 					for (var i = 0; i < tsml.columns.length; i++) {
 						switch (tsml.columns[i])	 {
@@ -680,7 +688,7 @@ jQuery(function($){
 	//send event to google analytics, if loaded
 	function trackAnalytics(action, label) {
 		if (typeof ga === 'function') {
-			if (tsml.debug) console.log('sending ' + action + ': ' + label + ' to google analytics');
+			if (tsml.debug) console.log('trackAnalytics() sending ' + action + ': ' + label + ' to google analytics');
 			ga('send', 'event', '12 Step Meeting List', action, label);
 		}
 	}
@@ -695,7 +703,7 @@ jQuery(function($){
 	//enable the typeahead (if you switch back to search)
 	function typeaheadEnable() {
 		if (typeaheadEnabled) return;
-		if (tsml.debug) console.log('enabling typeahead');
+		if (tsml.debug) console.log('typeaheadEnable()');
 		typeaheadEnabled = true;
 		$('#meetings #search input[name="query"]').typeahead({
 			highlight: true

@@ -173,7 +173,7 @@ function setMapMarker(title, position, content) {
 			google.maps.event.addListener(marker, 'click', (function(marker) {
 				return function() {
 					infowindow.setContent('<div class="tsml_infowindow">' + content + '</div>');
-					infowindow.open(map, marker);
+					infowindow.open(tsmlmap, marker);
 				}
 			})(marker));
 		} else {
@@ -221,6 +221,7 @@ function setMapMarkers(locations, searchLocation) {
 	//set search location?
 	removeSearchMarker();
 	if (searchLocation) {
+		if (tsml.debug) console.log('setMapMarker() searchLocation', searchLocation);
 		setSearchMarker(searchLocation);
 	}
 
@@ -307,7 +308,7 @@ function setSearchMarker(data) {
 				scale: .6
 			},
 			position: new google.maps.LatLng(data.latitude, data.longitude),
-			map: map,
+			map: tsmlmap,
 		});
 
 		bounds.extend(searchMarker.position);

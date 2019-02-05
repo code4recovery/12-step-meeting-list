@@ -4,7 +4,7 @@ Donate link: https://meetingguide.org/contribute
 Tags: 12-step, aa, al-anon, coda, meetings, na, oa, saa, slaa
 Requires at least: 3.2
 Tested up to: 5.0
-Stable tag: 3.3.3
+Stable tag: 3.4
 
 This plugin helps twelve step recovery programs list their meetings. It standardizes addresses, and displays results in a searchable list and map.
 
@@ -41,6 +41,7 @@ This plugin was originally designed to maintain a list of AA meetings in Santa C
 1. [Charlotte, NC](http://charlotteaa.org/meetings/)
 1. [Chico, CA](http://www.aabutte-glenn.org/meetings/)
 1. [Cincinnati, OH](http://aacincinnati.org/meetings/)
+1. [Clarksburg, WV](http://www.wvaadistrict7.org/meetings/)
 1. [Continental Europe](http://alcoholics-anonymous.eu/meetings/)
 1. [Colorado Springs, CO](http://www.coloradospringsaa.org/meetings/)
 1. [Columbus, OH](https://aacentralohio.org/meetings/)
@@ -180,6 +181,7 @@ This plugin was originally designed to maintain a list of AA meetings in Santa C
 1. [St. Lucie, FL](http://aastlucieintergroup.com/meetings/)
 1. [St. Peters, MO](https://tricountyaa.org/meetings/)
 1. [State College, PA](http://www.district43.com/meetings/)
+1. [Staten Island, NY](https://statenislandaa.org/meetings/?tsml-day=any)
 1. [Streamwood, IL](http://dist23.aa-nia.org/meetings)
 1. [Syracuse, NY](http://www.aasyracuse.org/meetings/)
 1. [Tampa, FL](http://www.meetings.aatampa-area.org/meetings/)
@@ -476,6 +478,11 @@ To apply these changes, you must go to Settings > Permalinks and click "Save Cha
 1. Edit location
 
 == Changelog ==
+
+= 3.4 =
+* Major rewrite to make plugin more CPU-efficient (Ventura)
+* Fixed bug where leaving a space at the end of a data source would cause an error
+* Fixed bug where filters wouldn't work after switching to Google Map view (SCA)
 
 = 3.3.3 =
 * Address fix (Racine)

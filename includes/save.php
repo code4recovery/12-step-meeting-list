@@ -421,6 +421,9 @@ function tsml_save_post($post_id, $post, $update) {
 
 	//update bounds for geocoding
 	tsml_bounds();
+
+	//try to rebuild cache
+	tsml_cache_rebuild();
 	
 	//remove self
 	$user = wp_get_current_user();

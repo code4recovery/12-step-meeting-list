@@ -7,6 +7,12 @@ for updates / questions, please contact wordpress@meetingguide.org
 //get the current boundaries of the coverage map
 $tsml_bounds = get_option('tsml_bounds');
 
+//get the secret cache location
+if (!$tsml_cache = get_option('tsml_cache')) {
+	$tsml_cache = '/tsml-cache-' . substr(str_shuffle(md5(microtime())), 0, 10) . '.json';
+	update_option('tsml_cache', $tsml_cache);
+}
+
 //load the set of columns that should be present in the list (not sure why this shouldn't go after plugins_loaded below)
 $tsml_columns = array(
 	'time' => 'Time',
