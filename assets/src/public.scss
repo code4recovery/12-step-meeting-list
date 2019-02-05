@@ -62,8 +62,8 @@ $height: 550px; //height of map and min-height of list
 
 		.mapboxgl-popup-content {
 			border-radius: 5px;
-			width: 260px;
 			overflow: auto;
+			width: 260px;
 		}
 
 		.mapboxgl-ctrl-attrib {
@@ -91,14 +91,14 @@ $height: 550px; //height of map and min-height of list
 		.tsml_infowindow, .mapboxgl-popup-content {
 			max-height: 250px;
 			h3 {
-				margin: 0 0 20px 0;
 				font-size: 20px;
 				font-weight: 600;
+				margin: 0 0 20px 0;
 			}
 			h5 {
-				margin: $margin 0 0 0;
 				font-size: 14px;
 				font-weight: bold;
+				margin: $margin 0 0 0;
 			}
 			address {
 				font-style: normal;
@@ -120,24 +120,24 @@ $height: 550px; //height of map and min-height of list
 				}
 			}
 			dl {
-				overflow: auto;
 				margin: 0;
+				overflow: auto;
 				dt, dd {
 					float: left;
 					margin: 0;
 					padding: 0;
 				}
 				dt {
-					color: $color_gray;
-					font-weight: normal;
-					width: 62px;
 					clear: left;
-					margin-right: 6px;
-					text-align: right;
-					overflow: hidden;
-					text-overflow: ellipsis;
-					word-wrap: nowrap;
+					color: $color_gray;
 					font-size: 12px;
+					font-weight: normal;
+					margin-right: 6px;
+					overflow: hidden;
+					text-align: right;
+					text-overflow: ellipsis;
+					width: 62px;
+					word-wrap: nowrap;
 				}
 				dd {
 					width: 132px;
@@ -153,9 +153,9 @@ $height: 550px; //height of map and min-height of list
 	
 	/* meetings */
 	#meetings {
+		clear: both;
 		min-height: $height;
 		padding: $margin;
-		clear: both;
 		
 		.row.title {
 			display: none; 
@@ -164,32 +164,32 @@ $height: 550px; //height of map and min-height of list
 		.controls {
 			min-height: 34px;
 			form, .dropdown, .btn-group {
-				margin-bottom: $margin;
 				height: 34px;
+				margin-bottom: $margin;
 			}
 			/* need to have this button, and display: none will not work */
 			input[type=submit] {
-				visibility: hidden;
-				position: absolute;
 				left: -1000px;
+				position: absolute;
+				visibility: hidden;
 			}
 			input, .btn {
 				height: 34px;
-				padding: 6px 12px;
 				margin: 0;
+				padding: 6px 12px;
 				text-transform: none;
 			}
 			input {
-				margin: 0;
 				border-radius: 4px 0 0 4px;
 				font-size: 16px; //this might seem big, but it prevents zooming on focus
-				padding-right: 0;
+				margin: 0;
 				min-height: 0;
+				padding-right: 0;
 			}
-			.input-group-btn:last-child > .btn { 
+			.input-group-btn:last-child > .btn {
+				border-radius: 0 4px 4px 0; 
 				margin-left: -1px; 
 				position: static;
-				border-radius: 0 4px 4px 0;
 				&:after { display: none; }
 			}
 			.tt-menu {
@@ -200,35 +200,35 @@ $height: 550px; //height of map and min-height of list
 				}
 				h3 {
 					border-bottom: 1px solid #ccc;
-					font-weight: bold;
 					font-size: .8em;
-					padding: 6px 20px;
+					font-weight: bold;
 					margin: 0;
+					padding: 6px 20px;
 					text-transform: uppercase;
 				}
 			}
 			ul { 
-				min-width: 100%; 
-				max-width: 100%;
+				max-width: 100%; 
+				min-width: 100%;
 				li {
-					position: relative;
 					margin: 2px 0 0;
+					position: relative;
 					&.divider { margin: 9px 0; }
 					a {
 						display: block;
-						padding-top: 5px;
 						padding-bottom: 5px;
+						padding-top: 5px;
 					}
 					div.expand {
-						position: absolute;
-						cursor: pointer;
-						top: 0;
-						right: 0;
-						width: 40px;
-						height: 100%;
 						background: url(../img/ionicons-plus.svg) no-repeat center 4px;
 						background-size: 24px 24px;
 						box-sizing: content-box;
+						cursor: pointer;
+						height: 100%;
+						position: absolute;
+						right: 0;
+						top: 0;
+						width: 40px;
 						&.expanded {
 							background-image: url(../img/ionicons-minus.svg);
 						}
@@ -238,31 +238,31 @@ $height: 550px; //height of map and min-height of list
 					max-width: none;
 				}
 				&.children {
-					overflow: hidden;
 					height: 0;
-					padding: 0;
-					margin: 0;
 					list-style-type: none;
+					margin: 0;
+					overflow: hidden;
+					padding: 0;
 					li {
 						a {
-							display: block;
-							padding-left: 35px;
-							padding-right: 35px;
 							clear: both;
+							color: $color_black;
+							display: block;
 							font-weight: 400;
 							line-height: 1.42857143;
-							color: $color_black;
+							padding-left: 35px;
+							padding-right: 35px;
 							&:hover {
+								background-color: #f5f5f5;
 								color: #262626;
-								text-decoration: none;
-								background-color: #f5f5f5;							
+								text-decoration: none;							
 							}
 						}
 						.children li a { padding-left: 50px; }
 						.children li .children li a { padding-left: 65px; }
 						&.active > a { 
-							color: #fff; 
-							background-color: #337ab7;
+							background-color: #337ab7; 
+							color: #fff;
 						}
 					}
 					&.expanded {
@@ -288,36 +288,36 @@ $height: 550px; //height of map and min-height of list
 			#table-wrapper table { margin: 0; }
 			
 			table {
-				display: none;
 				border: 0;
+				display: none;
 				thead { display: none; }
 				tbody {
 					tr {
+						border-top: 1px solid #ddd;
 						display: block;
 						padding: 10px $margin 10px 110px;
-						border-top: 1px solid #ddd;
 						position: relative;
-						td { 
-							display: inline; 
+						td {
+							border: 0; 
+							display: inline;
+							overflow: hidden; 
 							padding: 0;
-							border: 0;
-							overflow: hidden;
 							text-align: left;
 							&.time {
-								position: absolute;
 								left: $margin;
+								overflow: hidden;
+								position: absolute;
 								top: 10px;
 								width: 90px;
-								overflow: hidden;
 								span { display: block; }
 							}
 							&.distance {
-								position: absolute;
-								left: $margin;
 								bottom: 10px;
 								font-size: 22px;
 								font-weight: bold;
+								left: $margin;
 								line-height: 1.2;
+								position: absolute;
 							}
 							&.name, &.location, &.address, &.region, &.district {
 								display: block;
@@ -327,10 +327,10 @@ $height: 550px; //height of map and min-height of list
 							&.name {
 								width: 175px;
 								small {
-									position: absolute;
-									right: $margin;
 									color: $color_black;
 									font-size: 11px;
+									position: absolute;
+									right: $margin;
 									top: 13px;
 								}
 							}
@@ -346,8 +346,8 @@ $height: 550px; //height of map and min-height of list
 			}
 				
 			#map {
-				height: $height;
 				display: none;
+				height: $height;
 			}
 		}
 		
@@ -419,10 +419,10 @@ $height: 550px; //height of map and min-height of list
 				background-color: white;
 				border-color: transparent;
 				border-radius: 3px;
-				transition: all .1s;
 				color: inherit;
 				display: block;
 				text-decoration: none !important;
+				transition: all .1s;
 				.panel-title {
 					padding-right: 40px;
 					position: relative;
@@ -443,59 +443,59 @@ $height: 550px; //height of map and min-height of list
 				.list-group-item {
 					margin: 0; 
 					* {
-						margin: 0 0 8px 0;
 						background-color: transparent;
+						margin: 0 0 8px 0;
 						&:last-child { margin-bottom: 0; }
 					}
 					h3.list-group-item-heading {
 						font-size: 107%;
-						margin-bottom: 4px;
 						font-weight: bold;
 						line-height: inherit;
+						margin-bottom: 4px;
 						&:last-child { margin-bottom: 0; }
 					}
 					ul { 
 						list-style-type: none;
 						li { 
-							margin: 0; 
-							list-style-type: none;
+							list-style-type: none; 
+							margin: 0;
 						}
 					}
 					#card-element { margin-bottom: 0; }
 					&.has-error {
+						background-color: $state-danger-bg;
 						border-color: $state-danger-border;
 						color: $state-danger-text;
-						background-color: $state-danger-bg;
 					}
 					&.has-info {
+						background-color: $state-warning-bg;
 						border-color: $state-warning-border;
 						color: $state-warning-text;
-						background-color: $state-warning-bg;
 					}
 					&.list-group-item-form {
 						padding: 0;
 						input, textarea, button {
-							font-size: inherit;
 							border: 0;
 							border-radius: 0;
-							width: 100%;
+							font-size: inherit;
 							text-transform: none;
+							width: 100%;
 						}
 						input, textarea {
 							padding: 10px $margin;
 						}
 						button {
 							background-color: #eaeaea;
-							text-align: center;
-							width: 100%;
-							padding: 7px;
-							text-transform: uppercase;
 							font-size: 85%;
 							font-weight: bold;
+							padding: 7px;
+							text-align: center;
+							text-transform: uppercase;
+							width: 100%;
 						}
 						textarea {
-							resize: none;
-							height: 250px;							
+							height: 250px;
+							resize: none;							
 						}
 						#amount {
 							font-size: 24px;
@@ -507,8 +507,8 @@ $height: 550px; //height of map and min-height of list
 					}
 					&.list-group-item-meetings {
 						h4 { 
-							font-weight: bold; 
-							font-size: 85%;
+							font-size: 85%; 
+							font-weight: bold;
 							margin: $margin 0 5px;
 							&:first-child { margin-top: 3px; }
 						}
@@ -518,12 +518,12 @@ $height: 550px; //height of map and min-height of list
 							li {
 								padding-left: 90px;
 								position: relative;
-								span { 
-									position: absolute; 
+								span {
+									color: #999; 
 									left: 0; 
+									position: absolute;
+									text-align: right; 
 									width: 80px;
-									text-align: right;
-									color: #999;
 								}
 							}
 							&:last-child { margin-bottom: 0; }
@@ -542,9 +542,9 @@ $height: 550px; //height of map and min-height of list
 					transition: max-height .25s;  
 				}
 				&.expanded {
-					.panel-heading { 
+					.panel-heading {
+						background-color: #eee; 
 						border-color: #ddd;
-						background-color: #eee;
 						border-radius: 3px 3px 0 0;
 					}
 					.panel-title span.glyphicon {
@@ -560,16 +560,16 @@ $height: 550px; //height of map and min-height of list
 		
 	body.tsml_fullscreen {
 		#meetings {
-		    position: fixed;
-		    top: 0;
-		    left: 0;
-		    right: 0;
-		    bottom: 0;
-		    width: 100%;
-		    height: 100%;
-		    z-index: 9999;
 			background-color: $color_white;
+		    bottom: 0;
+		    height: 100%;
+		    left: 0;
 			max-width: none;
+		    position: fixed;
+		    right: 0;
+		    top: 0;
+		    width: 100%;
+		    z-index: 9999;
 		}
 		&.admin-bar {
 			#meetings {
@@ -589,8 +589,8 @@ $height: 550px; //height of map and min-height of list
 					overflow: auto;
 					li {
 						& > a, div.expand {
-							line-height: 18px;
 							background-size: 21px 21px;
+							line-height: 18px;
 						}
 					}
 				}
@@ -600,29 +600,30 @@ $height: 550px; //height of map and min-height of list
 				thead {
 					display: table-header-group;
 					th {
-						line-height: 1;
-						padding-top: 0;
-						text-transform: none;
-						cursor: pointer;
-						position: relative;
-						padding: $margin / 2 $margin ;
 						border: 0;
+						cursor: pointer;
+						line-height: 1;
+						padding: $margin / 2 $margin ;
+						padding-top: 0;
+						position: relative;
+						text-transform: none;
+						white-space: nowrap;
 						&[data-sort="asc"]:after, &[data-sort="desc"]:after {
-							content: "";
 							border-style: solid;
-							width: 0;
+							content: "";
 							height: 0;
 							position: absolute;
 							right: 0px;
 							top: 12px;
+							width: 0;
 						}
 						&[data-sort="asc"]:after {
-							border-width: 0 4px 8px;
 							border-color: transparent transparent $color_gray transparent;
+							border-width: 0 4px 8px;
 						}
 						&[data-sort="desc"]:after {
-							border-width: 8px 4px 0;
 							border-color: $color_gray transparent transparent;
+							border-width: 8px 4px 0;
 						}
 						&.address, &.types, &.district { 
 							display: none;
@@ -642,10 +643,10 @@ $height: 550px; //height of map and min-height of list
 					display: table-row;
 					td {
 						&.name, &.location, &.time, &.distance, &.address, &.region, &.district, &.types {
-							white-space: normal;
 							display: table-cell; 
 							padding: 8px 8px 8px $margin;
 							position: static;
+							white-space: normal;
 						} 
 						&.time {
 							white-space: nowrap;
@@ -656,10 +657,10 @@ $height: 550px; //height of map and min-height of list
 							}
 						}
 						&.distance {
-							text-align: right;
-							font-weight: inherit;
 							font-size: inherit;
+							font-weight: inherit;
 							line-height: inherit;
+							text-align: right;
 						}
 						&.name {
 							width: 35%;
@@ -723,17 +724,17 @@ $height: 550px; //height of map and min-height of list
 		#meetings .results table {
 			tr {
 				display: block;
-				width: 50%;
 				float: left;
 				min-height: 170px;
+				width: 50%;
 			}
 			@-moz-document url-prefix() { 
 				tr { float: none; }
 			}
 			td {
 				&.name, &.location, &.address, &.region, &.district, &.types {
-					width: auto !important;
 					white-space: normal;
+					width: auto !important;
 				}
 				&.types {
 					display: block !important;
@@ -763,7 +764,7 @@ body {
 		}
 	}
 	&.twentyten {
-		#main { padding-top: 5px; font-size: 14px; }
+		#main { font-size: 14px; padding-top: 5px; }
 	}
 	&.catch-box {
 		#primary {

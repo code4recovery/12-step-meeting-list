@@ -141,73 +141,6 @@ if (!function_exists('tsml_admin_ajax_address')) {
 	}
 }
 
-//ajax part of closest meetings widget
-add_action('wp_ajax_nopriv_display_closest_meetings', 'tsml_ajax_closest_meetings');
-add_action('wp_ajax_display_closest_meetings', 'tsml_ajax_closest_meetings'); 
-if (!function_exists('tsml_ajax_closest_meetings')) {
-	function tsml_ajax_closest_meetings($content) {
-
-		//security
-		if (!defined('DOING_AJAX' ) && !DOING_AJAX) return;
-
-		//sanitize inputs
-		$lat = floatval($_GET['lat']);
-		$long = floatval($_GET['long']);
-		$day = sanitize_text_field($_GET['today']);
-		
-		$today = ($_GET['today'] == 'today') ? current_time('w') : intval($day);
-
-		//get meetings for today
-		$meetings = tsml_get_meetings(array('day' => intval($today)));
-
-		//set distances on all $meetings in day (todo use tsml_get_meetings())
-		$countMeetings = count($meetings);
-		for ($i = 0; $i < $countMeetings; $i++) {
-			$meetings[$i]['distance'] = sqrt(pow(abs(floatval($meetings[$i]['latitude'])) - abs($lat),2) + 
-				pow(abs(floatval($meetings[$i]['longitude'])) - abs(floatval($long)),2));
-		}
-
-		//re-set distances on all meetings?
-		$dist = array();
-		foreach ($meetings as $key => $row) {
-			if ($row['day'] == $today) {
-				$dist[$key] = array(
-					'distance' => tsml_distance($lat, $long, $row['latitude'], $row['longitude']),
-					'name' => $row['name'], 
-					'time_formatted' => $row['time_formatted'], 
-					'location' => $row['location'],
-					'formatted_address' => $row['formatted_address'],
-					'url' => $row['url'],
-					'location_url' => $row['location_url'],
-					'latitude' => $row['latitude'],
-					'longitude' => $row['longitude'],
-					'time' => $row['time']
-				);
-			} 
-		}
-
-		//sort meetings
-		array_multisort($dist, SORT_ASC, $meetings); 
-
-		//don't see where this option is getting set
-		$widget_options = get_option('widget_tsml_widget_closest');
-		function empty_sort($a, $b) {
-			if ($a == '' && $b != '') return 1;
-			if ($b == '' && $a != '') return -1;
-			return 0; 
-	    }
-
-	    usort($widget_options, 'empty_sort');
-	    
-		if (isset($widget_options[ 0 ]['count'] ) ) {
-			$count_val = intval($widget_options[ 0 ]['count']);
-			wp_send_json(array_slice($dist, 0, $count_val));
-	    } else {
-			wp_send_json(array_slice($dist, 0, 5));
-	    }
-	}
-}
-
 //get all contact email addresses (for europe)
 //linked from admin_import.php
 add_action('wp_ajax_contacts', 'tsml_ajax_contacts');
@@ -632,20 +565,18 @@ if (!function_exists('tsml_ajax_meetings')) {
 	function tsml_ajax_meetings() {
 		global $tsml_sharing, $tsml_sharing_keys, $tsml_nonce;
 
-		//works over GET or POST
+		//accepts GET or POST
 		$input = empty($_POST) ? $_GET : $_POST;
-
-		$valid = false;
 		
 		if ($tsml_sharing == 'open') {
-			$valid = true; //sharing is open
+			//sharing is open
 		} elseif (!empty($input['nonce']) && wp_verify_nonce($input['nonce'], $tsml_nonce)) {
-			$valid = true; //nonce checks out
+			//nonce checks out
 		} elseif (!empty($input['key']) && array_key_exists($input['key'], $tsml_sharing_keys)) {
-			$valid = true; //key checks out
+			//key checks out
+		} else {
+			tsml_ajax_unauthorized();
 		}
-
-		if (!$valid) tsml_ajax_unauthorized();
 
 		if (!headers_sent()) header('Access-Control-Allow-Origin: *');
 		wp_send_json(tsml_get_meetings($input));
