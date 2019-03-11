@@ -876,9 +876,6 @@ function tsml_get_meetings($arguments=array(), $from_cache=true) {
 			'numberposts'		=> -1,
 		));
 
-		write_log(__LINE__);
-		write_log('nubmer of $posts:' . sizeof($posts));
-
 		$meeting_meta = tsml_get_meta('tsml_meeting');
 		$groups = tsml_get_groups();	
 		$locations = tsml_get_locations();
