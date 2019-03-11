@@ -862,10 +862,22 @@ function tsml_get_meetings($arguments=array(), $from_cache=true) {
 		//from database
 		$meetings = array();
 
+		if (empty($arguments['post_status'])) {
+			$post_search_status = null;
+		}elseif (is_array($arguments['post_status'])) {
+			$post_search_status =  implode(',', $arguments['post_status']);
+		} else{
+			$post_search_status =  $arguments['post_status'];
+		}
+
 		$posts = get_posts(array(
 			'post_type'			=> 'tsml_meeting',
+			'post_status'   => $post_search_status,
 			'numberposts'		=> -1,
 		));
+
+		write_log(__LINE__);
+		write_log('nubmer of $posts:' . sizeof($posts));
 
 		$meeting_meta = tsml_get_meta('tsml_meeting');
 		$groups = tsml_get_groups();	
