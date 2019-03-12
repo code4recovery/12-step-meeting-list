@@ -1408,8 +1408,8 @@ function tsml_sort_meetings($a, $b) {
 	}
 
 	//get the user-settable order of days
-	$a_day_index = strlen($a['day']) ? array_search($a['day'], $tsml_days_order) : false;
-	$b_day_index = strlen($b['day']) ? array_search($b['day'], $tsml_days_order) : false;
+	$a_day_index = isset($a['day']) && strlen($a['day']) ? array_search($a['day'], $tsml_days_order) : false;
+	$b_day_index = isset($b['day']) && strlen($b['day']) ? array_search($b['day'], $tsml_days_order) : false;
 	if ($a_day_index === false && $b_day_index !== false) {
 		return 1;
 	} elseif ($a_day_index !== false && $b_day_index === false) {
