@@ -231,6 +231,14 @@ $tsml_google_overrides = array(
 		'latitude' => 37.7009164,
 		'longitude' => -122.08583,
 	),
+
+	//missouri
+    '1845 State Hwy V, Mansfield, MO 65704, USA' => array(
+        'formatted_address' => '1845 State Hwy V, Mansfield, MO 65704, USA',
+        'city' => 'Mansfield',
+        'latitude' => 37.114508,
+        'longitude' => -92.619343,
+    ),	
 );
 
 //get the blog's language (used as a parameter when geocoding)

@@ -1,1418 +1,261 @@
-# Copyright (C) 2018 12 Step Meeting List
-# This file is distributed under the same license as the 12 Step Meeting List package.
+#, fuzzy
 msgid ""
 msgstr ""
-"Project-Id-Version: 12 Step Meeting List 2.9.4\n"
-"Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/12-step-meeting-list"
-"POT-Creation-Date: 2018-01-12 18:52+0000\n"
-"PO-Revision-Date: 2018-MO-DA HO:MI+ZONE\n"
-"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
-"Language-Team: LANGUAGE <LL@li.org>\n"
 "Plural-Forms: nplurals=INTEGER; plural=EXPRESSION;\n"
+"Project-Id-Version: 12 Step Meeting List\n"
+"POT-Creation-Date: 2019-02-19 16:19-0500\n"
+"PO-Revision-Date: 2019-02-19 16:19-0500\n"
+"Last-Translator: \n"
+"Language-Team: \n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-
-#: templates/archive-meetings.php:8
-msgid "Search"
-msgstr ""
-
-#: templates/archive-meetings.php:9
-msgid "Near Location"
-msgstr ""
-
-#: templates/archive-meetings.php:12
-msgid "Near Me"
-msgstr ""
-
-#: templates/archive-meetings.php:18
-#, php-format
-msgid "Within %d Mile"
-msgid_plural "Within %d Miles"
-msgstr[0] ""
-msgstr[1] ""
-
-#: templates/archive-meetings.php:20
-#, php-format
-msgid "Within %d Kilometer"
-msgid_plural "Within %d Kilometers"
-msgstr[0] ""
-msgstr[1] ""
-
-#: templates/archive-meetings.php:26
-msgid "Morning"
-msgstr ""
-
-#: templates/archive-meetings.php:27
-msgid "Midday"
-msgstr ""
-
-#: templates/archive-meetings.php:28
-msgid "Evening"
-msgstr ""
-
-#: templates/archive-meetings.php:29
-msgid "Night"
-msgstr ""
-
-#: templates/archive-meetings.php:68
-msgid "Any Day"
-msgstr ""
-
-#: templates/archive-meetings.php:70
-msgid "Any Time"
-msgstr ""
-
-#: templates/archive-meetings.php:72 templates/archive-meetings.php:295
-msgid "Upcoming"
-msgstr ""
-
-#: templates/archive-meetings.php:76
-msgid "Everywhere"
-msgstr ""
-
-#: templates/archive-meetings.php:84
-msgid "Any Type"
-msgstr ""
-
-#: templates/archive-meetings.php:92
-msgid "Today's"
-msgstr ""
-
-#: templates/archive-meetings.php:97 templates/archive-meetings.php:107
-#: includes/variables.php:692 includes/admin_import.php:504
-#: includes/admin_meeting.php:123 includes/functions.php:182
-msgid "Meetings"
-msgstr ""
-
-#: templates/archive-meetings.php:98
-msgid "in"
-msgstr ""
-
-#: templates/archive-meetings.php:231
-msgid "List"
-msgstr ""
-
-#: templates/archive-meetings.php:234 includes/admin_meeting.php:118
-msgid "Map"
-msgstr ""
-
-#: templates/archive-meetings.php:249
-msgid "Switch to Districts"
-msgstr ""
-
-#: templates/archive-meetings.php:250
-msgid "Switch to Regions"
-msgstr ""
-
-#: templates/single-meetings.php:14 templates/single-locations.php:13
-msgid "Directions"
-msgstr ""
-
-#: templates/single-meetings.php:37 templates/single-locations.php:33
-msgid "Back to Meetings"
-msgstr ""
-
-#: templates/single-meetings.php:46
-msgid "Get Directions"
-msgstr ""
-
-#: templates/single-meetings.php:64
-msgid "Make a Contribution"
-msgstr ""
-
-#: templates/single-meetings.php:70
-msgid ""
-"Donations go to the group treasurer. For a receipt, enter your email address."
-" It will be kept confidential."
-msgstr ""
-
-#: templates/single-meetings.php:73
-msgid "Name (optional)"
-msgstr ""
-
-#: templates/single-meetings.php:76
-msgid "Email (optional)"
-msgstr ""
-
-#: templates/single-meetings.php:86
-msgid "Pay with Credit Card"
-msgstr ""
-
-#: templates/single-meetings.php:100 includes/admin_meeting.php:20
-msgid "Meeting Information"
-msgstr ""
-
-#. until
-#: templates/single-meetings.php:106
-msgid " to "
-msgstr ""
-
-#: templates/single-meetings.php:131
-#, php-format
-msgid "%d other meeting at this location"
-msgid_plural "%d other meetings at this location"
-msgstr[0] ""
-msgstr[1] ""
-
-#: templates/single-meetings.php:187 templates/single-locations.php:68
-msgid "Updated"
-msgstr ""
-
-#: templates/single-meetings.php:220
-msgid "Request an Update"
-msgstr ""
-
-#: templates/single-meetings.php:228
-msgid "Use this form to submit a change to the meeting information above."
-msgstr ""
-
-#: templates/single-meetings.php:231
-msgid "Your Name"
-msgstr ""
-
-#: templates/single-meetings.php:234
-msgid "Email Address"
-msgstr ""
-
-#: templates/single-meetings.php:237
-msgid "Message"
-msgstr ""
-
-#: templates/single-meetings.php:240
-msgid "Submit"
-msgstr ""
-
-#: includes/shortcodes.php:19 includes/variables.php:230
-#: includes/variables.php:259 includes/variables.php:307
-#: includes/variables.php:351 includes/variables.php:409
-#: includes/variables.php:438 includes/variables.php:468
-#: includes/variables.php:503 includes/variables.php:593
-#: includes/variables.php:609 includes/variables.php:624
-#: includes/variables.php:663 includes/variables.php:693
-#: includes/functions.php:387
-msgid "Men"
-msgstr ""
-
-#: includes/shortcodes.php:21 includes/variables.php:236
-#: includes/variables.php:266 includes/variables.php:324
-#: includes/variables.php:366 includes/variables.php:425
-#: includes/variables.php:448 includes/variables.php:482
-#: includes/variables.php:517 includes/variables.php:601
-#: includes/variables.php:613 includes/variables.php:630
-#: includes/variables.php:672 includes/variables.php:696
-#: includes/functions.php:389
-msgid "Women"
-msgstr ""
-
-#: includes/shortcodes.php:33 includes/variables.php:444
-#: includes/admin_meeting.php:45 includes/admin_lists.php:48
-#: includes/widgets.php:234
-msgid "Time"
-msgstr ""
-
-#: includes/shortcodes.php:34 includes/ajax.php:292 includes/functions.php:183
-#: includes/admin_lists.php:46 includes/widgets.php:235
-msgid "Meeting"
-msgstr ""
-
-#: includes/shortcodes.php:35 includes/ajax.php:305
-#: includes/admin_meeting.php:89
-msgid "Location"
-msgstr ""
-
-#: includes/shortcodes.php:36 includes/ajax.php:317
-#: includes/admin_meeting.php:105 includes/admin_meeting.php:113
-#: includes/functions.php:142
-msgid "Region"
-msgstr ""
-
-#: includes/variables.php:195 includes/functions.php:66
-msgid "Sunday"
-msgstr ""
-
-#: includes/variables.php:196 includes/functions.php:67
-msgid "Monday"
-msgstr ""
-
-#: includes/variables.php:197 includes/functions.php:68
-msgid "Tuesday"
-msgstr ""
-
-#: includes/variables.php:198 includes/functions.php:69
-msgid "Wednesday"
-msgstr ""
-
-#: includes/variables.php:199 includes/functions.php:70
-msgid "Thursday"
-msgstr ""
-
-#: includes/variables.php:200 includes/functions.php:71
-msgid "Friday"
-msgstr ""
-
-#: includes/variables.php:201 includes/functions.php:72
-msgid "Saturday"
-msgstr ""
-
-#: includes/variables.php:216
-msgid "ACA"
-msgstr ""
-
-#: includes/variables.php:217
-msgid "Adult Children of Alcoholics"
-msgstr ""
-
-#: includes/variables.php:219
-msgid ""
-"This meeting is closed; only those who have a desire to recover from the "
-"effects of growing up in an alcoholic or otherwise dysfunctional family may "
-"attend."
-msgstr ""
-
-#: includes/variables.php:220 includes/variables.php:274
-#: includes/variables.php:376
-msgid "This meeting is open and anyone may attend."
-msgstr ""
-
-#: includes/variables.php:223
-msgid "Age Restricted 18+"
-msgstr ""
-
-#: includes/variables.php:224
-msgid "Audio / Visual"
-msgstr ""
-
-#: includes/variables.php:225 includes/variables.php:335
-#: includes/variables.php:579 includes/variables.php:621
-#: includes/variables.php:653
-msgid "Book Study"
-msgstr ""
-
-#: includes/variables.php:226 includes/variables.php:578
-msgid "Beginners"
-msgstr ""
-
-#: includes/variables.php:227 includes/variables.php:253
-#: includes/variables.php:287 includes/variables.php:338
-#: includes/variables.php:389 includes/variables.php:436
-#: includes/variables.php:460 includes/variables.php:495
-#: includes/variables.php:565 includes/variables.php:581
-#: includes/variables.php:608 includes/variables.php:622
-#: includes/variables.php:639 includes/variables.php:656
-msgid "Closed"
-msgstr ""
-
-#: includes/variables.php:228 includes/variables.php:293
-#: includes/variables.php:395 includes/variables.php:641
-msgid "Discussion"
-msgstr ""
-
-#: includes/variables.php:229 includes/variables.php:462
-#: includes/variables.php:497
-msgid "Gay/Lesbian"
-msgstr ""
-
-#: includes/variables.php:231 includes/variables.php:260
-#: includes/variables.php:310 includes/variables.php:352
-#: includes/variables.php:412 includes/variables.php:440
-#: includes/variables.php:471 includes/variables.php:506
-#: includes/variables.php:566 includes/variables.php:595
-#: includes/variables.php:610 includes/variables.php:626
-#: includes/variables.php:643 includes/variables.php:665
-#: includes/admin_import.php:657
-msgid "Open"
-msgstr ""
-
-#: includes/variables.php:232 includes/variables.php:262
-#: includes/variables.php:319 includes/variables.php:359
-#: includes/variables.php:420 includes/variables.php:442
-#: includes/variables.php:475 includes/variables.php:510
-#: includes/variables.php:544 includes/variables.php:567
-#: includes/variables.php:628 includes/variables.php:644
-#: includes/variables.php:668
-msgid "Speaker"
-msgstr ""
-
-#: includes/variables.php:233 includes/variables.php:261
-#: includes/variables.php:318 includes/variables.php:358
-#: includes/variables.php:419 includes/variables.php:597
-#: includes/variables.php:667
-msgid "Spanish"
-msgstr ""
-
-#: includes/variables.php:234
-msgid "Steps"
-msgstr ""
-
-#: includes/variables.php:235
-msgid "Fellowship Text"
-msgstr ""
-
-#: includes/variables.php:237
-msgid "Yellow Workbook Study"
-msgstr ""
-
-#: includes/variables.php:241 includes/variables.php:242
-msgid "Al-Anon"
-msgstr ""
-
-#: includes/variables.php:244
-msgid ""
-"Closed Meetings are limited to members and prospective members. These are "
-"persons who feel their lives have been or are being affected by alcoholism "
-"in a family member or friend."
-msgstr ""
-
-#: includes/variables.php:245
-msgid ""
-"Open to anyone interested in the family disease of alcoholism. Some groups "
-"invite members of the professional community to hear how the Al-Anon program "
-"aids in recovery."
-msgstr ""
-
-#: includes/variables.php:248
-msgid "Adult Child Focus"
-msgstr ""
-
-#: includes/variables.php:249
-msgid "Alateen"
-msgstr ""
-
-#: includes/variables.php:250 includes/variables.php:280
-#: includes/variables.php:332 includes/variables.php:382
-msgid "Atheist / Agnostic"
-msgstr ""
-
-#: includes/variables.php:251 includes/variables.php:281
-#: includes/variables.php:333 includes/variables.php:383
-msgid "Babysitting Available"
-msgstr ""
-
-#: includes/variables.php:252 includes/variables.php:334
-#: includes/variables.php:620 includes/variables.php:637
-msgid "Beginner"
-msgstr ""
-
-#: includes/variables.php:254
-msgid "Concurrent with AA Meeting"
-msgstr ""
-
-#: includes/variables.php:255
-msgid "Concurrent with Alateen Meeting"
-msgstr ""
-
-#: includes/variables.php:256 includes/variables.php:296
-#: includes/variables.php:344 includes/variables.php:398
-#: includes/variables.php:657
-msgid "Fragrance Free"
-msgstr ""
-
-#: includes/variables.php:257 includes/variables.php:298
-#: includes/variables.php:345 includes/variables.php:400
-msgid "Gay"
-msgstr ""
-
-#: includes/variables.php:258 includes/variables.php:302
-#: includes/variables.php:347 includes/variables.php:404
-msgid "Lesbian"
-msgstr ""
-
-#: includes/variables.php:263 includes/variables.php:320
-#: includes/variables.php:360 includes/variables.php:421
-#: includes/variables.php:611
-msgid "Step Meeting"
-msgstr ""
-
-#: includes/variables.php:264 includes/variables.php:322
-#: includes/variables.php:364 includes/variables.php:423
-msgid "Transgender"
-msgstr ""
-
-#: includes/variables.php:265 includes/variables.php:365
-#: includes/variables.php:447 includes/variables.php:481
-#: includes/variables.php:516
-msgid "Wheelchair Accessible"
-msgstr ""
-
-#: includes/variables.php:270
-msgid "AA"
-msgstr ""
-
-#: includes/variables.php:271
-msgid "Alcoholics Anonymous"
-msgstr ""
-
-#: includes/variables.php:273
-msgid ""
-"This meeting is closed; only those who have a desire to stop drinking may "
-"attend."
-msgstr ""
-
-#: includes/variables.php:277 includes/variables.php:379
-msgid "11th Step Meditation"
-msgstr ""
-
-#: includes/variables.php:278 includes/variables.php:380
-msgid "12 Steps & 12 Traditions"
-msgstr ""
-
-#: includes/variables.php:279 includes/variables.php:381
-msgid "As Bill Sees It"
-msgstr ""
-
-#: includes/variables.php:282 includes/variables.php:384
-#: includes/variables.php:529
-msgid "Big Book"
-msgstr ""
-
-#: includes/variables.php:283 includes/variables.php:385
-msgid "Birthday"
-msgstr ""
-
-#: includes/variables.php:284 includes/variables.php:386
-msgid "Breakfast"
-msgstr ""
-
-#: includes/variables.php:285 includes/variables.php:387
-msgid "Business"
-msgstr ""
-
-#: includes/variables.php:286 includes/variables.php:336
-#: includes/variables.php:388
-msgid "Child-Friendly"
-msgstr ""
-
-#: includes/variables.php:288 includes/variables.php:339
-#: includes/variables.php:390 includes/variables.php:458
-#: includes/variables.php:493
-msgid "Candlelight"
-msgstr ""
-
-#: includes/variables.php:289 includes/variables.php:340
-#: includes/variables.php:391
-msgid "Concurrent with Al-Anon"
-msgstr ""
-
-#: includes/variables.php:290 includes/variables.php:341
-#: includes/variables.php:392
-msgid "Concurrent with Alateen"
-msgstr ""
-
-#: includes/variables.php:291 includes/variables.php:342
-#: includes/variables.php:393
-msgid "Cross Talk Permitted"
-msgstr ""
-
-#: includes/variables.php:292 includes/variables.php:394
-msgid "Daily Reflections"
-msgstr ""
-
-#: includes/variables.php:294 includes/variables.php:396
-msgid "Dual Diagnosis"
-msgstr ""
-
-#: includes/variables.php:295 includes/variables.php:397
-#: includes/variables.php:586
-msgid "English"
-msgstr ""
-
-#: includes/variables.php:297 includes/variables.php:399
-#: includes/variables.php:588
-msgid "French"
-msgstr ""
-
-#: includes/variables.php:299 includes/variables.php:346
-#: includes/variables.php:401
-msgid "Grapevine"
-msgstr ""
-
-#: includes/variables.php:300 includes/variables.php:402
-msgid "Italian"
-msgstr ""
-
-#: includes/variables.php:301 includes/variables.php:403
-msgid "Korean"
-msgstr ""
-
-#: includes/variables.php:303 includes/variables.php:348
-#: includes/variables.php:405
-msgid "Literature"
-msgstr ""
-
-#: includes/variables.php:304 includes/variables.php:406
-msgid "Living Sober"
-msgstr ""
-
-#: includes/variables.php:305 includes/variables.php:349
-#: includes/variables.php:407 includes/variables.php:592
-#: includes/variables.php:612
-msgid "LGBTQ"
-msgstr ""
-
-#: includes/variables.php:306 includes/variables.php:350
-#: includes/variables.php:408 includes/variables.php:469
-#: includes/variables.php:504 includes/variables.php:536
-#: includes/variables.php:623 includes/variables.php:662
-msgid "Meditation"
-msgstr ""
-
-#: includes/variables.php:308 includes/variables.php:410
-msgid "Native American"
-msgstr ""
-
-#: includes/variables.php:309 includes/variables.php:411
-#: includes/variables.php:538
-msgid "Newcomer"
-msgstr ""
-
-#: includes/variables.php:311
-msgid "Professionals"
-msgstr ""
-
-#: includes/variables.php:312 includes/variables.php:413
-msgid "Polish"
-msgstr ""
-
-#: includes/variables.php:313 includes/variables.php:414
-msgid "Portuguese"
-msgstr ""
-
-#: includes/variables.php:314 includes/variables.php:415
-msgid "Punjabi"
-msgstr ""
-
-#: includes/variables.php:315 includes/variables.php:416
-msgid "Russian"
-msgstr ""
-
-#: includes/variables.php:316 includes/variables.php:356
-#: includes/variables.php:417
-msgid "Sign Language"
-msgstr ""
-
-#: includes/variables.php:317 includes/variables.php:357
-#: includes/variables.php:418
-msgid "Smoking Permitted"
-msgstr ""
-
-#: includes/variables.php:321 includes/variables.php:422
-#: includes/variables.php:671
-msgid "Tradition Study"
-msgstr ""
-
-#: includes/variables.php:323 includes/variables.php:424
-#: includes/variables.php:600
-msgid "Wheelchair Access"
-msgstr ""
-
-#: includes/variables.php:325 includes/variables.php:368
-#: includes/variables.php:426 includes/variables.php:483
-#: includes/variables.php:518
-msgid "Young People"
-msgstr ""
-
-#: includes/variables.php:329
-msgid "CoDA"
-msgstr ""
-
-#: includes/variables.php:330
-msgid "Co-Dependents Anonymous"
-msgstr ""
-
-#: includes/variables.php:337 includes/variables.php:654
-msgid "Chips"
-msgstr ""
-
-#: includes/variables.php:343
-msgid "Daily"
-msgstr ""
-
-#: includes/variables.php:353
-msgid "Q & A"
-msgstr ""
-
-#: includes/variables.php:354
-msgid "Reading"
-msgstr ""
-
-#: includes/variables.php:355 includes/admin_import.php:650
-msgid "Sharing"
-msgstr ""
-
-#: includes/variables.php:361
-msgid "Teens"
-msgstr ""
-
-#: includes/variables.php:362 includes/variables.php:670
-msgid "Topic Discussion"
-msgstr ""
-
-#: includes/variables.php:363 includes/variables.php:479
-#: includes/variables.php:514
-msgid "Tradition"
-msgstr ""
-
-#: includes/variables.php:367 includes/variables.php:554
-msgid "Writing"
-msgstr ""
-
-#: includes/variables.php:372
-msgid "CA"
-msgstr ""
-
-#: includes/variables.php:373
-msgid "Cocaine Anonymous"
-msgstr ""
-
-#: includes/variables.php:375
-msgid ""
-"This meeting is closed; only those who have a desire to stop using may "
-"attend."
-msgstr ""
-
-#: includes/variables.php:430
-msgid "DA"
-msgstr ""
-
-#: includes/variables.php:431
-msgid "Debtors Anonymous"
-msgstr ""
-
-#: includes/variables.php:433
-msgid "Abundance"
-msgstr ""
-
-#: includes/variables.php:434
-msgid "Artist"
-msgstr ""
-
-#: includes/variables.php:435
-msgid "Business Owner"
-msgstr ""
-
-#: includes/variables.php:437
-msgid "Clutter"
-msgstr ""
-
-#: includes/variables.php:439
-msgid "Numbers"
-msgstr ""
-
-#: includes/variables.php:441
-msgid "Prosperity"
-msgstr ""
-
-#: includes/variables.php:443 includes/variables.php:629
-#: includes/variables.php:669
-msgid "Step Study"
-msgstr ""
-
-#: includes/variables.php:445
-msgid "Toolkit"
-msgstr ""
-
-#: includes/variables.php:446
-msgid "Vision"
-msgstr ""
-
-#: includes/variables.php:452
-msgid "HA"
-msgstr ""
-
-#: includes/variables.php:453
-msgid "Heroin Anonymous"
-msgstr ""
-
-#: includes/variables.php:455 includes/variables.php:490
-msgid "12 Concepts"
-msgstr ""
-
-#: includes/variables.php:456 includes/variables.php:491
-msgid "Basic Text"
-msgstr ""
-
-#: includes/variables.php:457 includes/variables.php:492
-msgid "Beginner/Newcomer"
-msgstr ""
-
-#: includes/variables.php:459 includes/variables.php:494
-msgid "Children Welcome"
-msgstr ""
-
-#: includes/variables.php:461 includes/variables.php:496
-msgid "Discussion/Participation"
-msgstr ""
-
-#: includes/variables.php:463 includes/variables.php:498
-msgid "IP Study"
-msgstr ""
-
-#: includes/variables.php:464 includes/variables.php:499
-msgid "It Works Study"
-msgstr ""
-
-#: includes/variables.php:465 includes/variables.php:500
-msgid "Just For Today Study"
-msgstr ""
-
-#: includes/variables.php:466 includes/variables.php:501
-#: includes/variables.php:534
-msgid "Literature Study"
-msgstr ""
-
-#: includes/variables.php:467 includes/variables.php:502
-msgid "Living Clean"
-msgstr ""
-
-#: includes/variables.php:470 includes/variables.php:505
-msgid "Non-Smoking"
-msgstr ""
-
-#: includes/variables.php:472 includes/variables.php:507
-msgid "Questions & Answers"
-msgstr ""
-
-#: includes/variables.php:473 includes/variables.php:508
-msgid "Restricted Access"
-msgstr ""
-
-#: includes/variables.php:474 includes/variables.php:509
-msgid "Smoking"
-msgstr ""
-
-#: includes/variables.php:476 includes/variables.php:511
-#: includes/variables.php:645
-msgid "Step"
-msgstr ""
-
-#: includes/variables.php:477 includes/variables.php:512
-msgid "Step Working Guide Study"
-msgstr ""
-
-#: includes/variables.php:478 includes/variables.php:513
-#: includes/variables.php:550
-msgid "Topic"
-msgstr ""
-
-#: includes/variables.php:480 includes/variables.php:515
-msgid "Format Varies"
-msgstr ""
-
-#: includes/variables.php:487
-msgid "NA"
-msgstr ""
-
-#: includes/variables.php:488
-msgid "Narcotics Anonymous"
-msgstr ""
-
-#: includes/variables.php:522
-msgid "OA"
-msgstr ""
-
-#: includes/variables.php:523
-msgid "Overeaters Anonymous"
-msgstr ""
-
-#: includes/variables.php:525
-msgid "11th Step"
-msgstr ""
-
-#: includes/variables.php:526
-msgid "90 Day"
-msgstr ""
-
-#: includes/variables.php:527
-msgid "AA 12/12"
-msgstr ""
-
-#: includes/variables.php:528
-msgid "Ask-It-Basket"
-msgstr ""
-
-#: includes/variables.php:530
-msgid "Dignity of Choice"
-msgstr ""
-
-#: includes/variables.php:531
-msgid "For Today"
-msgstr ""
-
-#: includes/variables.php:532
-msgid "Lifeline"
-msgstr ""
-
-#: includes/variables.php:533
-msgid "Lifeline Sampler"
-msgstr ""
-
-#: includes/variables.php:535
-msgid "Maintenance"
-msgstr ""
-
-#: includes/variables.php:537
-msgid "New Beginnings"
-msgstr ""
-
-#: includes/variables.php:539
-msgid "OA H.O.W."
-msgstr ""
-
-#: includes/variables.php:540
-msgid "OA Second and/or Third Edition"
-msgstr ""
-
-#: includes/variables.php:541
-msgid "OA Steps and/or Traditions Study"
-msgstr ""
-
-#: includes/variables.php:542
-msgid "Relapse/12th Step Within"
-msgstr ""
-
-#: includes/variables.php:543
-msgid "Seeking the Spiritual Path"
-msgstr ""
-
-#: includes/variables.php:545
-msgid "Speaker/Discussion"
-msgstr ""
-
-#: includes/variables.php:546
-msgid "Spirituality"
-msgstr ""
-
-#: includes/variables.php:547
-msgid "Teen Friendly"
-msgstr ""
-
-#: includes/variables.php:548
-msgid "The Promises"
-msgstr ""
-
-#: includes/variables.php:549
-msgid "Tools"
-msgstr ""
-
-#: includes/variables.php:551
-msgid "Varies"
-msgstr ""
-
-#: includes/variables.php:552
-msgid "Voices of Recovery"
-msgstr ""
-
-#: includes/variables.php:553
-msgid "Work Book Study"
-msgstr ""
-
-#: includes/variables.php:562
-msgid "RCA"
-msgstr ""
-
-#: includes/variables.php:563
-msgid "Recovering Couples Anonymous"
-msgstr ""
-
-#: includes/variables.php:571 includes/variables.php:572
-msgid "Refuge Recovery"
-msgstr ""
-
-#: includes/variables.php:574
-msgid "Men’s meetings are for anyone who identifies as male."
-msgstr ""
-
-#: includes/variables.php:575
-msgid "Women’s meetings are for anyone who identifies as female."
-msgstr ""
-
-#: includes/variables.php:580 includes/variables.php:655
-msgid "Child Care Available"
-msgstr ""
-
-#: includes/variables.php:582
-msgid "Danish"
-msgstr ""
-
-#: includes/variables.php:583
-msgid "Dog Friendly"
-msgstr ""
-
-#: includes/variables.php:584
-msgid "Dutch"
-msgstr ""
-
-#: includes/variables.php:585
-msgid "Eightfold Path Study"
-msgstr ""
-
-#: includes/variables.php:587
-msgid "Finnish"
-msgstr ""
-
-#: includes/variables.php:589
-msgid "German"
-msgstr ""
-
-#: includes/variables.php:590
-msgid "Inventory Study"
-msgstr ""
-
-#: includes/variables.php:591
-msgid "Inventory Writing"
-msgstr ""
-
-#: includes/variables.php:594
-msgid "Mindfulness Practice"
-msgstr ""
-
-#: includes/variables.php:596
-msgid "Process Addictions"
-msgstr ""
-
-#: includes/variables.php:598
-msgid "Swedish"
-msgstr ""
-
-#: includes/variables.php:599
-msgid "Thai"
-msgstr ""
-
-#: includes/variables.php:605
-msgid "SAA"
-msgstr ""
-
-#: includes/variables.php:606
-msgid "Sex Addicts Anonymous"
-msgstr ""
-
-#: includes/variables.php:617
-msgid "SA"
-msgstr ""
-
-#: includes/variables.php:618
-msgid "Sexaholics Anonymous"
-msgstr ""
-
-#: includes/variables.php:625
-msgid "Mixed"
-msgstr ""
-
-#: includes/variables.php:627
-msgid "Primary Purpose"
-msgstr ""
-
-#: includes/variables.php:634
-msgid "SCA"
-msgstr ""
-
-#: includes/variables.php:635
-msgid "Sexual Compulsives Anonymous"
-msgstr ""
-
-#: includes/variables.php:638
-msgid "Chip"
-msgstr ""
-
-#: includes/variables.php:640
-msgid "Court"
-msgstr ""
-
-#: includes/variables.php:642
-msgid "Graphic Language"
-msgstr ""
-
-#: includes/variables.php:649
-msgid "SLAA"
-msgstr ""
-
-#: includes/variables.php:650
-msgid "Sex and Love Addicts Anonymous"
-msgstr ""
-
-#: includes/variables.php:652
-msgid "Anorexia Focus"
-msgstr ""
-
-#: includes/variables.php:658
-msgid "Getting Current"
-msgstr ""
-
-#: includes/variables.php:659
-msgid "Handicapped Accessible"
-msgstr ""
-
-#: includes/variables.php:660
-msgid "Healthy Relationships"
-msgstr ""
-
-#: includes/variables.php:661
-msgid "Literature Reading"
-msgstr ""
-
-#: includes/variables.php:664
-msgid "Newcomers"
-msgstr ""
-
-#: includes/variables.php:666
-msgid "Prison"
-msgstr ""
-
-#: includes/variables.php:682
-msgid "Got an improper response from the server, try refreshing the page."
-msgstr ""
-
-#: includes/variables.php:683
-msgid "Email was not sent."
-msgstr ""
-
-#: includes/variables.php:684
-msgid "Enter a location in the field above."
-msgstr ""
-
-#: includes/variables.php:685
-msgid "Google could not find that location."
-msgstr ""
-
-#: includes/variables.php:686
-msgid "Looking up address…"
-msgstr ""
-
-#: includes/variables.php:687
-msgid "There was an error getting your location."
-msgstr ""
-
-#: includes/variables.php:688
-msgid "Your browser does not appear to support geolocation."
-msgstr ""
-
-#: includes/variables.php:689
-msgid "Finding you…"
-msgstr ""
-
-#: includes/variables.php:690
-msgid "Groups"
-msgstr ""
-
-#: includes/variables.php:691
-msgid "Locations"
-msgstr ""
-
-#: includes/variables.php:694
-msgid "No meetings were found matching the selected criteria."
-msgstr ""
-
-#: includes/variables.php:695 includes/admin_menu.php:8
-#: includes/admin_menu.php:8 includes/functions.php:141
-#: includes/functions.php:143
-msgid "Regions"
-msgstr ""
-
-#: includes/admin_menu.php:9 includes/admin_menu.php:9
-msgid "Districts"
-msgstr ""
-
-#: includes/admin_menu.php:10 includes/admin_menu.php:10
-#: includes/admin_import.php:409
-msgid "Import & Settings"
-msgstr ""
-
-#: includes/ajax.php:291
-msgid "Requested By"
-msgstr ""
-
-#: includes/ajax.php:293
-msgid "When"
-msgstr ""
-
-#: includes/ajax.php:297 includes/ajax.php:309 includes/admin_meeting.php:51
-msgid "Types"
-msgstr ""
-
-#: includes/ajax.php:301 includes/admin_meeting.php:72
-#: includes/admin_meeting.php:134 includes/admin_meeting.php:193
-msgid "Notes"
-msgstr ""
-
-#: includes/ajax.php:313 includes/admin_meeting.php:93
-msgid "Address"
-msgstr ""
-
-#: includes/ajax.php:321
-msgid "Location Notes"
-msgstr ""
-
-#: includes/ajax.php:330
-msgid "Error: nonce value not set correctly. Email was not sent."
-msgstr ""
-
-#: includes/ajax.php:332
-msgid "Error: required form value missing. Email was not sent."
-msgstr ""
-
-#: includes/ajax.php:336
-msgid "Thank you for your feedback."
-msgstr ""
-
-#: includes/ajax.php:340
-#, php-format
-msgid "Error: %s"
-msgstr ""
-
-#: includes/ajax.php:342
-msgid "An error occurred while sending email!"
-msgstr ""
-
-#: includes/ajax.php:398
-#, php-format
-msgid "No location information provided for <code>%s</code>."
-msgstr ""
-
-#: includes/ajax.php:638 includes/admin_import.php:584
-#, php-format
-msgid "%s meeting"
-msgid_plural "%s meetings"
-msgstr[0] ""
-msgstr[1] ""
-
-#: includes/ajax.php:639 includes/admin_import.php:587
-#, php-format
-msgid "%s location"
-msgid_plural "%s locations"
-msgstr[0] ""
-msgstr[1] ""
-
-#: includes/ajax.php:640 includes/admin_import.php:590
-#, php-format
-msgid "%s group"
-msgid_plural "%s groups"
-msgstr[0] ""
-msgstr[1] ""
-
-#: includes/ajax.php:641 includes/admin_import.php:593
-#, php-format
-msgid "%s region"
-msgid_plural "%s regions"
-msgstr[0] ""
-msgstr[1] ""
-
-#: includes/admin_import.php:16
+"X-Generator: Poedit 2.2.1\n"
+"X-Poedit-Basepath: ..\n"
+"X-Poedit-Flags-xgettext: --add-comments=translators:\n"
+"X-Poedit-WPHeader: 12-step-meeting-list.php\n"
+"X-Poedit-SourceCharset: UTF-8\n"
+"X-Poedit-KeywordsList: __;_e;_n:1,2;_x:1,2c;_ex:1,2c;_nx:4c,1,2;esc_attr__;"
+"esc_attr_e;esc_attr_x:1,2c;esc_html__;esc_html_e;esc_html_x:1,2c;_n_noop:1,2;"
+"_nx_noop:3c,1,2;__ngettext_noop:1,2\n"
+"X-Poedit-SearchPath-0: .\n"
+"X-Poedit-SearchPathExcluded-0: *.js\n"
+
+#: includes/admin_import.php:18
 msgid ""
 "The uploaded file exceeds the <code>upload_max_filesize</code> directive in "
 "php.ini."
 msgstr ""
 
-#: includes/admin_import.php:18
+#: includes/admin_import.php:20
 msgid ""
 "The uploaded file exceeds the <code>MAX_FILE_SIZE</code> directive that was "
 "specified in the HTML form."
 msgstr ""
 
-#: includes/admin_import.php:20
+#: includes/admin_import.php:22
 msgid "The uploaded file was only partially uploaded."
 msgstr ""
 
-#: includes/admin_import.php:22
+#: includes/admin_import.php:24
 msgid "No file was uploaded."
 msgstr ""
 
-#: includes/admin_import.php:24
+#: includes/admin_import.php:26
 msgid "Missing a temporary folder."
 msgstr ""
 
-#: includes/admin_import.php:26
+#: includes/admin_import.php:28
 msgid "Failed to write file to disk."
 msgstr ""
 
-#: includes/admin_import.php:28
+#: includes/admin_import.php:30
 msgid "A PHP extension stopped the file upload."
 msgstr ""
 
-#: includes/admin_import.php:30
+#: includes/admin_import.php:32
 #, php-format
 msgid "File upload error #%d"
 msgstr ""
 
-#: includes/admin_import.php:33
+#: includes/admin_import.php:35
 msgid ""
 "Uploaded file did not have a file extension. Please add .csv to the end of "
 "the file name."
 msgstr ""
 
-#: includes/admin_import.php:35
+#: includes/admin_import.php:37
 #, php-format
 msgid "Please upload a csv file. Your file ended in .%s."
 msgstr ""
 
-#: includes/admin_import.php:37
+#: includes/admin_import.php:39
 msgid "Error opening CSV file"
 msgstr ""
 
-#: includes/admin_import.php:61
+#: includes/admin_import.php:63
 msgid "Nothing was imported because no data rows were found."
 msgstr ""
 
-#: includes/admin_import.php:71
+#: includes/admin_import.php:73
 msgid "Either Address or City is required."
 msgstr ""
 
-#: includes/admin_import.php:203
-msgid "</pre>."
+#: includes/admin_import.php:189
+msgid "Invalid response, <pre>"
 msgstr ""
 
-#: includes/admin_import.php:207
+#: includes/admin_import.php:193
 msgid "Data source gave an empty response, you might need to try again."
 msgstr ""
 
-#: includes/admin_import.php:213
+#: includes/admin_import.php:199
 msgid "JSON: no errors."
 msgstr ""
 
-#: includes/admin_import.php:216
+#: includes/admin_import.php:202
 msgid "JSON: Maximum stack depth exceeded."
 msgstr ""
 
-#: includes/admin_import.php:219
+#: includes/admin_import.php:205
 msgid "JSON: Underflow or the modes mismatch."
 msgstr ""
 
-#: includes/admin_import.php:222
+#: includes/admin_import.php:208
 msgid "JSON: Unexpected control character found."
 msgstr ""
 
-#: includes/admin_import.php:225
+#: includes/admin_import.php:211
 msgid "JSON: Syntax error, malformed JSON."
 msgstr ""
 
-#: includes/admin_import.php:228
+#: includes/admin_import.php:214
 msgid "JSON: Malformed UTF-8 characters, possibly incorrectly encoded."
 msgstr ""
 
-#: includes/admin_import.php:231
+#: includes/admin_import.php:217
 msgid "JSON: Unknown error."
 msgstr ""
 
-#: includes/admin_import.php:275
+#: includes/admin_import.php:245
 msgid "Data source removed."
 msgstr ""
 
-#: includes/admin_import.php:283
+#: includes/admin_import.php:253
 msgid "Program setting updated."
 msgstr ""
 
-#: includes/admin_import.php:290
+#: includes/admin_import.php:260
 msgid "Distance units updated."
 msgstr ""
 
-#: includes/admin_import.php:297
+#: includes/admin_import.php:267
 msgid "Contact privacy updated."
 msgstr ""
 
-#: includes/admin_import.php:304
+#: includes/admin_import.php:274
 msgid "Sharing setting updated."
 msgstr ""
 
-#: includes/admin_import.php:314
+#: includes/admin_import.php:284
 msgid "Sharing key added."
 msgstr ""
 
-#: includes/admin_import.php:337
+#: includes/admin_import.php:307
 msgid "Sharing key removed."
 msgstr ""
 
-#: includes/admin_import.php:340
+#: includes/admin_import.php:310
 #, php-format
 msgid ""
 "<p><code>%s</code> was not found in the list of sharing keys. Please try "
 "again.</p>"
 msgstr ""
 
-#: includes/admin_import.php:349
+#: includes/admin_import.php:319
 #, php-format
 msgid "<code>%s</code> is not a valid email address. Please try again."
 msgstr ""
 
-#: includes/admin_import.php:355
+#: includes/admin_import.php:325
 msgid "Feedback address added."
 msgstr ""
 
-#: includes/admin_import.php:369
+#: includes/admin_import.php:339
 msgid "Feedback address removed."
 msgstr ""
 
-#: includes/admin_import.php:372 includes/admin_import.php:404
+#: includes/admin_import.php:342 includes/admin_import.php:374
 #, php-format
 msgid ""
 "<p><code>%s</code> was not found in the list of addresses. Please try again."
 "</p>"
 msgstr ""
 
-#: includes/admin_import.php:381
+#: includes/admin_import.php:351
 #, php-format
 msgid "<p><code>%s</code> is not a valid email address. Please try again.</p>"
 msgstr ""
 
-#: includes/admin_import.php:387
+#: includes/admin_import.php:357
 msgid "Notification address added."
 msgstr ""
 
-#: includes/admin_import.php:401
+#: includes/admin_import.php:371
 msgid "Notification address removed."
 msgstr ""
 
-#: includes/admin_import.php:428
+#: includes/admin_import.php:383 includes/admin_import.php:399
+msgid "API key removed."
+msgstr ""
+
+#: includes/admin_import.php:386 includes/admin_import.php:403
+msgid "API key saved."
+msgstr ""
+
+#: includes/admin_import.php:418 includes/admin_menu.php:17
+msgid "Import & Settings"
+msgstr ""
+
+#: includes/admin_import.php:456 includes/admin_import.php:480
+#: includes/admin_import.php:760 includes/admin_import.php:791
+#: includes/admin_import.php:821 includes/admin_import.php:836
+#: includes/admin_import.php:854
+msgid "Add"
+msgstr ""
+
+#: includes/admin_import.php:490
 msgid "Import CSV"
 msgstr ""
 
-#: includes/admin_import.php:433
+#: includes/admin_import.php:495
 msgid "When importing..."
 msgstr ""
 
-#: includes/admin_import.php:436
+#: includes/admin_import.php:498
 msgid "don't delete anything"
 msgstr ""
 
-#: includes/admin_import.php:437
+#: includes/admin_import.php:499
 msgid ""
 "delete only the meetings, locations, and groups for the regions present in "
 "this CSV"
 msgstr ""
 
-#: includes/admin_import.php:438
+#: includes/admin_import.php:500
 msgid "delete all meetings, locations, groups, districts, and regions"
 msgstr ""
 
-#: includes/admin_import.php:441
+#: includes/admin_import.php:503
 msgid "delete all meetings, locations, and groups not from a data source"
 msgstr ""
 
-#: includes/admin_import.php:448
+#: includes/admin_import.php:510
 msgid "Begin"
 msgstr ""
 
-#: includes/admin_import.php:451
+#: includes/admin_import.php:513
 msgid "Spreadsheet Example & Specs"
 msgstr ""
 
-#: includes/admin_import.php:453
+#: includes/admin_import.php:515
 msgid "Example spreadsheet"
 msgstr ""
 
-#: includes/admin_import.php:455
+#: includes/admin_import.php:517
 msgid ""
 "<strong>Time</strong>, if present, should be in a standard date format such "
 "as 6:00 AM or 06:00. Non-standard or empty dates will be imported as \"by "
 "appointment.\""
 msgstr ""
 
-#: includes/admin_import.php:456
+#: includes/admin_import.php:518
 msgid ""
 "<strong>End Time</strong>, if present, should be in a standard date format "
 "such as 6:00 AM or 06:00."
 msgstr ""
 
-#: includes/admin_import.php:457
+#: includes/admin_import.php:519
 msgid ""
 "<strong>Day</strong> if present, should either Sunday, Monday, Tuesday, "
 "Wednesday, Thursday, Friday, or Saturday. Meetings that occur on multiple "
@@ -1420,21 +263,21 @@ msgid ""
 "standard days will be imported as \"by appointment.\""
 msgstr ""
 
-#: includes/admin_import.php:458
+#: includes/admin_import.php:520
 msgid ""
 "<strong>Name</strong> is the name of the meeting, and is optional, although "
 "it's valuable information for the user. If it's missing, a name will be "
 "created by combining the location, day, and time."
 msgstr ""
 
-#: includes/admin_import.php:459
+#: includes/admin_import.php:521
 msgid ""
 "<strong>Slug</strong> optional, and sets the meeting post's \"slug\" or "
 "unique string, which is used in the URL. This should be unique to the "
 "meeting. Setting this helps preserve user bookmarks."
 msgstr ""
 
-#: includes/admin_import.php:460
+#: includes/admin_import.php:522
 msgid ""
 "<strong>Location</strong> is the name of the location, and is optional. "
 "Generally it's the group or building name. If it's missing, the address will "
@@ -1442,7 +285,7 @@ msgid ""
 "address, the first location name will be used."
 msgstr ""
 
-#: includes/admin_import.php:461
+#: includes/admin_import.php:523
 msgid ""
 "<strong>Address</strong> is strongly encouraged and will be corrected by "
 "Google, so it may look different afterward. Ideally, every address for the "
@@ -1451,7 +294,7 @@ msgid ""
 "back.\""
 msgstr ""
 
-#: includes/admin_import.php:462
+#: includes/admin_import.php:524
 msgid ""
 "If <strong>Address</strong> is specified, then <strong>City</strong>, "
 "<strong>State</strong>, and <strong>Country</strong> are optional, but they "
@@ -1459,176 +302,217 @@ msgid ""
 "not specified, then these fields are required."
 msgstr ""
 
-#: includes/admin_import.php:463
+#: includes/admin_import.php:525
 msgid ""
 "<strong>Notes</strong> are freeform notes that are specific to the meeting. "
 "For example, \"last Saturday is birthday night.\""
 msgstr ""
 
-#: includes/admin_import.php:464
+#: includes/admin_import.php:526
 msgid ""
 "<strong>Region</strong> is user-defined and can be anything. Often this is a "
 "small municipality or neighborhood. Since these go in a dropdown, ideally "
 "you would have 10 to 20 regions, although it's ok to be over or under."
 msgstr ""
 
-#: includes/admin_import.php:465
+#: includes/admin_import.php:527
 msgid ""
 "<strong>Sub Region</strong> makes the Region hierarchical; in San Jose we "
 "have sub regions for East San Jose, West San Jose, etc. New York City might "
 "have Manhattan be a Region, and Greenwich Village be a Sub Region."
 msgstr ""
 
-#: includes/admin_import.php:466
+#: includes/admin_import.php:528
 msgid ""
 "<strong>Location Notes</strong> are freeform notes that will show up on "
 "every meeting that this location. For example, \"Enter from the side.\""
 msgstr ""
 
-#: includes/admin_import.php:467
+#: includes/admin_import.php:529
 msgid ""
 "<strong>Group</strong> is a way of grouping contacts. Meetings with the same "
 "group name will be linked and share contact information."
 msgstr ""
 
-#: includes/admin_import.php:468
+#: includes/admin_import.php:530
 msgid ""
 "<strong>District</strong> is user-defined and can be anything, but should be "
 "a string rather than an integer, e.g. 'District 01' rather than '1.' A group "
 "name must also be specified."
 msgstr ""
 
-#: includes/admin_import.php:469
+#: includes/admin_import.php:531
 msgid "<strong>Sub District</strong> makes the District hierachical."
 msgstr ""
 
-#: includes/admin_import.php:470
+#: includes/admin_import.php:532
 msgid ""
 "<strong>Group Notes</strong> is for stuff like a short group history, or "
 "when the business meeting meets."
 msgstr ""
 
-#: includes/admin_import.php:471
+#: includes/admin_import.php:533
 msgid "<strong>Website</strong> and <strong>Website 2</strong> are optional."
 msgstr ""
 
-#: includes/admin_import.php:472
+#: includes/admin_import.php:534
 msgid "<strong>Email</strong> is optional. This is a public email address."
 msgstr ""
 
-#: includes/admin_import.php:473
+#: includes/admin_import.php:535
 msgid "<strong>Phone</strong> is optional. This is a public phone number."
 msgstr ""
 
-#: includes/admin_import.php:474
+#: includes/admin_import.php:536
 msgid ""
 "<strong>Contact 1/2/3 Name/Email/Phone</strong> (nine fields in total) are "
 "all optional. By default, contact information is only visible inside the "
 "WordPress dashboard."
 msgstr ""
 
-#: includes/admin_import.php:475
+#: includes/admin_import.php:537
 msgid "<strong>Last Contact</strong> is an optional date."
 msgstr ""
 
-#: includes/admin_import.php:477
+#: includes/admin_import.php:539
 msgid ""
 "<strong>Types</strong> should be a comma-separated list of the following "
 "options. This list is determined by which program is selected at right."
 msgstr ""
 
-#: includes/admin_import.php:487
+#: includes/admin_import.php:549
 msgid ""
 "Additionally, you may import spreadsheets that are in the General Service "
 "Office's FNV database \"Group Search Results\" format. This format has 162 "
 "columns, the first column is <code>ServiceNumber</code>."
 msgstr ""
 
-#: includes/admin_import.php:495
+#: includes/admin_import.php:557
 msgid "Data Sources"
 msgstr ""
 
-#: includes/admin_import.php:496
+#: includes/admin_import.php:558
 #, php-format
 msgid ""
 "Data sources are JSON feeds that contain a website's public meeting data. "
 "They can be used to aggregate meetings from different sites into a single "
 "master list. \n"
-"\t\t\t\t\t\t\t\tThe data source for this website is <a href=\"%s\" "
-"target=\"_blank\">right here</a>. More information is available at the <a "
-"href=\"%s\" target=\"_blank\">Meeting Guide API Specification</a>."
-msgstr ""
-
-#: includes/admin_import.php:503
-msgid "Feed"
-msgstr ""
-
-#: includes/admin_import.php:505
-msgid "Last Update"
-msgstr ""
-
-#: includes/admin_import.php:521
-msgid "Unnamed Feed"
-msgstr ""
-
-#: includes/admin_import.php:543
-msgid "District 02"
-msgstr ""
-
-#: includes/admin_import.php:549
-msgid "Add Data Source"
-msgstr ""
-
-#: includes/admin_import.php:559
-#, php-format
-msgid ""
-"You are running PHP <strong>%s</strong>, while <a href=\"%s\" "
-"target=\"_blank\">WordPress recommends</a> PHP %s or above. This can cause "
-"unexpected errors. Please contact your host and upgrade!"
+"\t\t\t\t\t\t\t\tThe data source for this website is <a href=\"%s\" target="
+"\"_blank\">right here</a>. More information is available at the <a href=\"%s"
+"\" target=\"_blank\">Meeting Guide API Specification</a>."
 msgstr ""
 
 #: includes/admin_import.php:565
+msgid "Feed"
+msgstr ""
+
+#: includes/admin_import.php:566 includes/admin_meeting.php:157
+#: includes/functions.php:231 includes/variables.php:860
+#: templates/archive-meetings.php:139 templates/archive-meetings.php:149
+msgid "Meetings"
+msgstr ""
+
+#: includes/admin_import.php:567
+msgid "Last Update"
+msgstr ""
+
+#: includes/admin_import.php:583
+msgid "Unnamed Feed"
+msgstr ""
+
+#: includes/admin_import.php:605
+msgid "District 02"
+msgstr ""
+
+#: includes/admin_import.php:611
+msgid "Add Data Source"
+msgstr ""
+
+#: includes/admin_import.php:621
+#, php-format
+msgid ""
+"You are running PHP <strong>%s</strong>, while <a href=\"%s\" target=\"_blank"
+"\">WordPress recommends</a> PHP %s or above. This can cause unexpected "
+"errors. Please contact your host and upgrade!"
+msgstr ""
+
+#: includes/admin_import.php:627
 msgid ""
 "If you enable SSL (https), your users will be able to search near their "
 "location."
 msgstr ""
 
-#: includes/admin_import.php:571
+#: includes/admin_import.php:633
 msgid "Where's My Info?"
 msgstr ""
 
-#: includes/admin_import.php:572
+#: includes/admin_import.php:634
 #, php-format
 msgid ""
 "Your public meetings page is <a href=\"%s\">right here</a>. Link that page "
 "from your site's nav menu to make it visible to the public."
 msgstr ""
 
-#: includes/admin_import.php:573
+#: includes/admin_import.php:635
 #, php-format
 msgid "You can also download your meetings in <a href=\"%s\">CSV format</a>."
 msgstr ""
 
-#: includes/admin_import.php:581
+#: includes/admin_import.php:636
+#, php-format
+msgid ""
+"A very basic PDF schedule is available in two sizes: <a href=\"%s\">half "
+"page</a> and <a href=\"%s\">full page</a>."
+msgstr ""
+
+#: includes/admin_import.php:644
 msgid "You have:"
 msgstr ""
 
-#: includes/admin_import.php:597
+#: includes/admin_import.php:647 includes/ajax.php:618
+#, php-format
+msgid "%s meeting"
+msgid_plural "%s meetings"
+msgstr[0] ""
+msgstr[1] ""
+
+#: includes/admin_import.php:650 includes/ajax.php:619
+#, php-format
+msgid "%s location"
+msgid_plural "%s locations"
+msgstr[0] ""
+msgstr[1] ""
+
+#: includes/admin_import.php:653 includes/ajax.php:620
+#, php-format
+msgid "%s group"
+msgid_plural "%s groups"
+msgstr[0] ""
+msgstr[1] ""
+
+#: includes/admin_import.php:656 includes/ajax.php:621
+#, php-format
+msgid "%s region"
+msgid_plural "%s regions"
+msgstr[0] ""
+msgstr[1] ""
+
+#: includes/admin_import.php:660
 #, php-format
 msgid ""
-"Want to send a mass email to your contacts? <a href=\"%s\" target=\"_blank\">"
-"Click here</a> to see their email addresses."
+"Want to send a mass email to your contacts? <a href=\"%s\" target=\"_blank"
+"\">Click here</a> to see their email addresses."
 msgstr ""
 
-#: includes/admin_import.php:603
+#: includes/admin_import.php:666
 msgid "Settings"
 msgstr ""
 
-#: includes/admin_import.php:606
+#: includes/admin_import.php:669
 msgid "Program"
 msgstr ""
 
-#: includes/admin_import.php:607
+#: includes/admin_import.php:670
 #, php-format
 msgid ""
 "This determines which meeting types are available. If your program isn't not "
@@ -1636,372 +520,305 @@ msgid ""
 "meetings it has (Open, Closed, Topic Discussion, etc)."
 msgstr ""
 
-#: includes/admin_import.php:618
+#: includes/admin_import.php:681
 msgid "Distance Units"
 msgstr ""
 
-#: includes/admin_import.php:619
+#: includes/admin_import.php:682
 msgid "This determines which units are used on the meeting list page."
 msgstr ""
 
-#: includes/admin_import.php:625
+#: includes/admin_import.php:688
 msgid "Kilometers"
 msgstr ""
 
-#: includes/admin_import.php:626
+#: includes/admin_import.php:689
 msgid "Miles"
 msgstr ""
 
-#: includes/admin_import.php:634
+#: includes/admin_import.php:697
 msgid "Meeting/Group Contacts Are"
 msgstr ""
 
-#: includes/admin_import.php:635
+#: includes/admin_import.php:698
 msgid ""
 "This determines whether contacts are displayed publicly on meeting detail "
 "pages."
 msgstr ""
 
-#: includes/admin_import.php:641 includes/admin_meeting.php:216
+#: includes/admin_import.php:704 includes/admin_meeting.php:259
 msgid "Public"
 msgstr ""
 
-#: includes/admin_import.php:642 includes/admin_meeting.php:218
+#: includes/admin_import.php:705 includes/admin_meeting.php:261
 msgid "Private"
 msgstr ""
 
-#: includes/admin_import.php:651
+#: includes/admin_import.php:713 includes/variables.php:454
+msgid "Sharing"
+msgstr ""
+
+#: includes/admin_import.php:714
 #, php-format
 msgid ""
 "You can share your meeting information with other websites and apps via your "
 "<a href=\"%s\" target=\"_blank\">meetings feed</a>."
 msgstr ""
 
-#: includes/admin_import.php:658
+#: includes/admin_import.php:720 includes/variables.php:320
+#: includes/variables.php:351 includes/variables.php:405
+#: includes/variables.php:451 includes/variables.php:512
+#: includes/variables.php:541 includes/variables.php:581
+#: includes/variables.php:620 includes/variables.php:656
+#: includes/variables.php:716 includes/variables.php:746
+#: includes/variables.php:762 includes/variables.php:779
+#: includes/variables.php:796 includes/variables.php:819
+#: includes/variables.php:840
+msgid "Open"
+msgstr ""
+
+#: includes/admin_import.php:721
 msgid "Restricted"
 msgstr ""
 
-#: includes/admin_import.php:667
+#: includes/admin_import.php:730
 msgid "Authorized Apps"
 msgstr ""
 
-#: includes/admin_import.php:697 includes/admin_import.php:728
-#: includes/admin_import.php:758
-msgid "Add"
+#: includes/admin_import.php:731
+msgid ""
+"You may allow access to your meeting data for specific purposes, such as the "
+"<a target=\"_blank\" href=\"https://meetingguide.org/\">Meeting Guide App</"
+"a>."
 msgstr ""
 
-#: includes/admin_import.php:703
-msgid "User Feedback Emails"
-msgstr ""
-
-#: includes/admin_import.php:704
-msgid "Enable a meeting info feedback form by adding email addresses here."
-msgstr ""
-
-#: includes/admin_import.php:733
-msgid "Change Notification Emails"
-msgstr ""
-
-#: includes/admin_import.php:734
-msgid "Receive notifications of meeting changes at the email addresses below."
-msgstr ""
-
-#: includes/admin_import.php:765
-msgid "About this Plugin"
+#. Author of the plugin/theme
+#: includes/admin_import.php:757
+msgid "Meeting Guide"
 msgstr ""
 
 #: includes/admin_import.php:766
-#, php-format
-msgid ""
-"This plugin was developed by AA volunteers in <a href=\"%s\" "
-"target=\"_blank\">Santa Clara County</a> to help provide accessible, "
-"accurate information about meetings to those who need it."
+msgid "User Feedback Emails"
 msgstr ""
 
 #: includes/admin_import.php:767
-#, php-format
-msgid ""
-"If you would like to help out with development, <a href=\"%s\" "
-"target=\"_blank\">visit us on GitHub</a>."
+msgid "Enable a meeting info feedback form by adding email addresses here."
 msgstr ""
 
-#: includes/save.php:397
-#, php-format
-msgid ""
-"This is to notify you that %s updated a <a href=\"%s\">meeting</a> on the %s "
-"site."
+#: includes/admin_import.php:796
+msgid "Change Notification Emails"
 msgstr ""
 
-#: includes/save.php:399
-#, php-format
-msgid ""
-"This is to notify you that %s created a <a href=\"%s\">new meeting</a> on "
-"the %s site."
+#: includes/admin_import.php:797
+msgid "Receive notifications of meeting changes at the email addresses below."
 msgstr ""
 
-#: includes/save.php:416 includes/save.php:417 includes/admin_meeting.php:41
-#: includes/functions.php:377 includes/admin_lists.php:67
+#: includes/admin_import.php:826
+msgid "Mapbox Access Token"
+msgstr ""
+
+#: includes/admin_import.php:827
+msgid "Key that Mapbox uses to authorize usage of its services"
+msgstr ""
+
+#: includes/admin_import.php:838 includes/admin_import.php:856
+msgid "Update"
+msgstr ""
+
+#: includes/admin_import.php:844
+msgid "Google Maps API Key"
+msgstr ""
+
+#: includes/admin_import.php:845
+msgid "Key that Google uses to authorize usage of its Maps services"
+msgstr ""
+
+#: includes/admin_import.php:864
+msgid "About this Plugin"
+msgstr ""
+
+#: includes/admin_import.php:865
+#, php-format
+msgid ""
+"This plugin was developed by AA volunteers in <a href=\"%s\" target=\"_blank"
+"\">Santa Clara County</a> to help provide accessible, accurate information "
+"about meetings to those who need it."
+msgstr ""
+
+#: includes/admin_import.php:866
+#, php-format
+msgid ""
+"If you would like to help out with development, <a href=\"%s\" target="
+"\"_blank\">visit us on GitHub</a>."
+msgstr ""
+
+#: includes/admin_lists.php:46 includes/ajax.php:338 includes/functions.php:232
+#: includes/shortcodes.php:35 includes/widgets.php:235
+msgid "Meeting"
+msgstr ""
+
+#: includes/admin_lists.php:47 includes/admin_meeting.php:63
+msgid "Day"
+msgstr ""
+
+#: includes/admin_lists.php:48 includes/admin_meeting.php:73
+#: includes/shortcodes.php:34 includes/variables.php:545
+#: includes/widgets.php:234
+msgid "Time"
+msgstr ""
+
+#: includes/admin_lists.php:49 includes/admin_meeting.php:133
+#: includes/admin_meeting.php:141 includes/ajax.php:359
+#: includes/functions.php:191 includes/shortcodes.php:37
+msgid "Region"
+msgstr ""
+
+#: includes/admin_lists.php:50
+msgid "Date"
+msgstr ""
+
+#: includes/admin_lists.php:67 includes/admin_meeting.php:69
+#: includes/functions.php:435 includes/save.php:459 includes/save.php:460
 msgid "Appointment"
-msgstr ""
-
-#: includes/save.php:450
-msgid "Meeting Change Notification"
-msgstr ""
-
-#: includes/save.php:450
-msgid "New Meeting Notification"
 msgstr ""
 
 #: includes/admin_meeting.php:9
 msgid "Enter meeting name"
 msgstr ""
 
-#: includes/admin_meeting.php:28
+#: includes/admin_meeting.php:39
+msgid "Editor"
+msgstr ""
+
+#: includes/admin_meeting.php:48 templates/single-meetings.php:57
+msgid "Meeting Information"
+msgstr ""
+
+#: includes/admin_meeting.php:56
 msgid ""
 "This meeting was imported from an external data source. Any changes you make "
 "here will be overwritten when you refresh the data."
 msgstr ""
 
-#: includes/admin_meeting.php:35 includes/admin_lists.php:47
-msgid "Day"
+#: includes/admin_meeting.php:79 includes/ajax.php:343
+msgid "Types"
 msgstr ""
 
-#: includes/admin_meeting.php:62
-msgid "More"
+#: includes/admin_meeting.php:90
+msgid "View all"
 msgstr ""
 
-#: includes/admin_meeting.php:65
-msgid "Fewer"
+#: includes/admin_meeting.php:93
+msgid "Hide types not in use"
 msgstr ""
 
-#: includes/admin_meeting.php:78
+#: includes/admin_meeting.php:100 includes/admin_meeting.php:168
+#: includes/admin_meeting.php:228 includes/ajax.php:347
+msgid "Notes"
+msgstr ""
+
+#: includes/admin_meeting.php:101
+msgid "eg. Birthday speaker meeting last Saturday of the month"
+msgstr ""
+
+#: includes/admin_meeting.php:106
 msgid "Location Information"
 msgstr ""
 
-#: includes/admin_meeting.php:100
+#: includes/admin_meeting.php:117 includes/ajax.php:351
+#: includes/shortcodes.php:36
+msgid "Location"
+msgstr ""
+
+#: includes/admin_meeting.php:121 includes/ajax.php:355
+msgid "Address"
+msgstr ""
+
+#: includes/admin_meeting.php:128
 msgid "Apply this updated address to all meetings at this location"
 msgstr ""
 
-#: includes/admin_meeting.php:135
+#: includes/admin_meeting.php:147 templates/archive-meetings.php:280
+msgid "Map"
+msgstr ""
+
+#: includes/admin_meeting.php:169
 msgid "eg. Around back, basement, ring buzzer"
 msgstr ""
 
-#: includes/admin_meeting.php:140
+#: includes/admin_meeting.php:174
 msgid "Contact Information <small>Optional</small>"
 msgstr ""
 
-#: includes/admin_meeting.php:156
+#: includes/admin_meeting.php:191
 msgid "Individual meeting"
 msgstr ""
 
-#: includes/admin_meeting.php:157
+#: includes/admin_meeting.php:192
 msgid "Part of a group"
 msgstr ""
 
-#: includes/admin_meeting.php:160
+#: includes/admin_meeting.php:195
 msgid "Group"
 msgstr ""
 
-#: includes/admin_meeting.php:164
+#: includes/admin_meeting.php:199
 msgid "Apply this group to all meetings at this location"
 msgstr ""
 
-#: includes/admin_meeting.php:180 includes/admin_meeting.php:188
-#: includes/functions.php:161 includes/functions.php:162
-#: includes/functions.php:163
+#: includes/admin_meeting.php:215 includes/admin_meeting.php:223
+#: includes/functions.php:210 includes/functions.php:211
+#: includes/functions.php:212
 msgid "District"
 msgstr ""
 
-#: includes/admin_meeting.php:194
+#: includes/admin_meeting.php:229
 msgid "eg. Group history, when the business meeting is, etc."
 msgstr ""
 
-#: includes/admin_meeting.php:197
+#: includes/admin_meeting.php:232
 msgid "Website"
 msgstr ""
 
-#: includes/admin_meeting.php:201
+#: includes/admin_meeting.php:236
 msgid "Website 2"
 msgstr ""
 
-#: includes/admin_meeting.php:205 includes/admin_meeting.php:225
+#: includes/admin_meeting.php:240 includes/admin_meeting.php:268
 msgid "Email"
 msgstr ""
 
-#: includes/admin_meeting.php:209 includes/admin_meeting.php:226
+#: includes/admin_meeting.php:244 includes/admin_meeting.php:269
 msgid "Phone"
 msgstr ""
 
-#: includes/admin_meeting.php:214
+#: includes/admin_meeting.php:248
+msgid "Mailing Address"
+msgstr ""
+
+#: includes/admin_meeting.php:252
+msgid "Venmo"
+msgstr ""
+
+#: includes/admin_meeting.php:257
 msgid "Contacts"
 msgstr ""
 
-#: includes/admin_meeting.php:224
+#: includes/admin_meeting.php:267
 msgid "Name"
 msgstr ""
 
-#: includes/admin_meeting.php:232
+#: includes/admin_meeting.php:275
 msgid "Last Contact"
 msgstr ""
 
-#: includes/admin_meeting.php:237
-msgid "Stripe API Key"
+#: includes/admin_menu.php:15 includes/functions.php:190
+#: includes/functions.php:192 includes/variables.php:863
+msgid "Regions"
 msgstr ""
 
-#: includes/widgets_init.php:7
-msgid "Meetings Top"
-msgstr ""
-
-#: includes/widgets_init.php:8
-msgid "Meetings Bottom"
-msgstr ""
-
-#: includes/widgets_init.php:9
-msgid "Meeting Detail Bottom"
-msgstr ""
-
-#: includes/widgets_init.php:10
-msgid "Location Detail Bottom"
-msgstr ""
-
-#: includes/functions.php:144
-msgid "All Regions"
-msgstr ""
-
-#: includes/functions.php:145
-msgid "Edit Region"
-msgstr ""
-
-#: includes/functions.php:146
-msgid "View Region"
-msgstr ""
-
-#: includes/functions.php:147
-msgid "Update Region"
-msgstr ""
-
-#: includes/functions.php:148
-msgid "Add New Region"
-msgstr ""
-
-#: includes/functions.php:149
-msgid "New Region"
-msgstr ""
-
-#: includes/functions.php:150
-msgid "Parent Region"
-msgstr ""
-
-#: includes/functions.php:151
-msgid "Parent Region:"
-msgstr ""
-
-#: includes/functions.php:152
-msgid "Search Regions"
-msgstr ""
-
-#: includes/functions.php:153
-msgid "Popular Regions"
-msgstr ""
-
-#: includes/functions.php:154
-msgid "No regions found."
-msgstr ""
-
-#: includes/functions.php:164
-msgid "All Districts"
-msgstr ""
-
-#: includes/functions.php:165
-msgid "Edit District"
-msgstr ""
-
-#: includes/functions.php:166
-msgid "View District"
-msgstr ""
-
-#: includes/functions.php:167
-msgid "Update District"
-msgstr ""
-
-#: includes/functions.php:168
-msgid "Add New District"
-msgstr ""
-
-#: includes/functions.php:169
-msgid "New District"
-msgstr ""
-
-#: includes/functions.php:170
-msgid "Parent Area"
-msgstr ""
-
-#: includes/functions.php:171
-msgid "Parent Area:"
-msgstr ""
-
-#: includes/functions.php:172
-msgid "Search Districts"
-msgstr ""
-
-#: includes/functions.php:173
-msgid "Popular Districts"
-msgstr ""
-
-#: includes/functions.php:174
-msgid "No districts found."
-msgstr ""
-
-#: includes/functions.php:184
-msgid "No meetings added yet."
-msgstr ""
-
-#: includes/functions.php:185
-msgid "Add New Meeting"
-msgstr ""
-
-#: includes/functions.php:186
-msgid "Search Meetings"
-msgstr ""
-
-#: includes/functions.php:187
-msgid "Edit Meeting"
-msgstr ""
-
-#: includes/functions.php:188
-msgid "View Meeting"
-msgstr ""
-
-#. Appt is abbreviation for Appointment
-#: includes/functions.php:377
-msgid "Appt"
-msgstr ""
-
-#: includes/functions.php:420
-msgid "Noon"
-msgstr ""
-
-#: includes/functions.php:421
-msgid "Midnight"
-msgstr ""
-
-#: includes/functions.php:1145
-msgid "Meeting Location"
-msgstr ""
-
-#: includes/functions.php:1158
-#, php-format
-msgid "%s by Appointment"
-msgstr ""
-
-#: includes/functions.php:1162
-#, php-format
-msgid "%s %ss at %s"
-msgstr ""
-
-#: includes/functions.php:1330
-#, php-format
-msgid "District %s"
+#: includes/admin_menu.php:16
+msgid "Districts"
 msgstr ""
 
 #: includes/admin_region.php:9
@@ -2012,8 +829,1184 @@ msgstr ""
 msgid "Delete this region and reassign its locations to another region."
 msgstr ""
 
-#: includes/admin_lists.php:50
-msgid "Date"
+#: includes/ajax.php:337
+msgid "Requested By"
+msgstr ""
+
+#: includes/ajax.php:339
+msgid "When"
+msgstr ""
+
+#: includes/ajax.php:363
+msgid "Location Notes"
+msgstr ""
+
+#: includes/ajax.php:372
+msgid "Error: nonce value not set correctly. Email was not sent."
+msgstr ""
+
+#: includes/ajax.php:374
+msgid "Error: required form value missing. Email was not sent."
+msgstr ""
+
+#: includes/ajax.php:377
+msgid "Meeting Feedback Form"
+msgstr ""
+
+#: includes/ajax.php:379
+msgid "Thank you for your feedback."
+msgstr ""
+
+#: includes/ajax.php:383
+#, php-format
+msgid "Error: %s"
+msgstr ""
+
+#: includes/ajax.php:385
+msgid "An error occurred while sending email!"
+msgstr ""
+
+#: includes/ajax.php:445
+#, php-format
+msgid "No location information provided for <code>%s</code>."
+msgstr ""
+
+#: includes/functions.php:61 includes/variables.php:283
+msgid "Sunday"
+msgstr ""
+
+#: includes/functions.php:62 includes/variables.php:284
+msgid "Monday"
+msgstr ""
+
+#: includes/functions.php:63 includes/variables.php:285
+msgid "Tuesday"
+msgstr ""
+
+#: includes/functions.php:64 includes/variables.php:286
+msgid "Wednesday"
+msgstr ""
+
+#: includes/functions.php:65 includes/variables.php:287
+msgid "Thursday"
+msgstr ""
+
+#: includes/functions.php:66 includes/variables.php:288
+msgid "Friday"
+msgstr ""
+
+#: includes/functions.php:67 includes/variables.php:289
+msgid "Saturday"
+msgstr ""
+
+#: includes/functions.php:193
+msgid "All Regions"
+msgstr ""
+
+#: includes/functions.php:194
+msgid "Edit Region"
+msgstr ""
+
+#: includes/functions.php:195
+msgid "View Region"
+msgstr ""
+
+#: includes/functions.php:196
+msgid "Update Region"
+msgstr ""
+
+#: includes/functions.php:197
+msgid "Add New Region"
+msgstr ""
+
+#: includes/functions.php:198
+msgid "New Region"
+msgstr ""
+
+#: includes/functions.php:199
+msgid "Parent Region"
+msgstr ""
+
+#: includes/functions.php:200
+msgid "Parent Region:"
+msgstr ""
+
+#: includes/functions.php:201
+msgid "Search Regions"
+msgstr ""
+
+#: includes/functions.php:202
+msgid "Popular Regions"
+msgstr ""
+
+#: includes/functions.php:203
+msgid "No regions found."
+msgstr ""
+
+#: includes/functions.php:213
+msgid "All Districts"
+msgstr ""
+
+#: includes/functions.php:214
+msgid "Edit District"
+msgstr ""
+
+#: includes/functions.php:215
+msgid "View District"
+msgstr ""
+
+#: includes/functions.php:216
+msgid "Update District"
+msgstr ""
+
+#: includes/functions.php:217
+msgid "Add New District"
+msgstr ""
+
+#: includes/functions.php:218
+msgid "New District"
+msgstr ""
+
+#: includes/functions.php:219
+msgid "Parent Area"
+msgstr ""
+
+#: includes/functions.php:220
+msgid "Parent Area:"
+msgstr ""
+
+#: includes/functions.php:221
+msgid "Search Districts"
+msgstr ""
+
+#: includes/functions.php:222
+msgid "Popular Districts"
+msgstr ""
+
+#: includes/functions.php:223
+msgid "No districts found."
+msgstr ""
+
+#: includes/functions.php:233
+msgid "No meetings added yet."
+msgstr ""
+
+#: includes/functions.php:234
+msgid "Add New Meeting"
+msgstr ""
+
+#: includes/functions.php:235
+msgid "Search Meetings"
+msgstr ""
+
+#: includes/functions.php:236
+msgid "Edit Meeting"
+msgstr ""
+
+#: includes/functions.php:237
+msgid "View Meeting"
+msgstr ""
+
+#. translators: Appt is abbreviation for Appointment
+#: includes/functions.php:435
+msgid "Appt"
+msgstr ""
+
+#: includes/functions.php:481
+msgid "Noon"
+msgstr ""
+
+#: includes/functions.php:482
+msgid "Midnight"
+msgstr ""
+
+#: includes/functions.php:1391
+msgid "Meeting Location"
+msgstr ""
+
+#: includes/functions.php:1404
+#, php-format
+msgid "%s by Appointment"
+msgstr ""
+
+#: includes/functions.php:1408
+#, php-format
+msgid "%s %ss at %s"
+msgstr ""
+
+#: includes/functions.php:1583
+#, php-format
+msgid "District %s"
+msgstr ""
+
+#: includes/save.php:435
+#, php-format
+msgid ""
+"This is to notify you that %s updated a <a href=\"%s\">meeting</a> on the %s "
+"site."
+msgstr ""
+
+#: includes/save.php:437
+#, php-format
+msgid ""
+"This is to notify you that %s created a <a href=\"%s\">new meeting</a> on "
+"the %s site."
+msgstr ""
+
+#: includes/save.php:493
+msgid "Meeting Change Notification"
+msgstr ""
+
+#: includes/save.php:493
+msgid "New Meeting Notification"
+msgstr ""
+
+#: includes/shortcodes.php:20 includes/variables.php:319
+#: includes/variables.php:350 includes/variables.php:402
+#: includes/variables.php:450 includes/variables.php:509
+#: includes/variables.php:539 includes/variables.php:579
+#: includes/variables.php:617 includes/variables.php:653
+#: includes/variables.php:744 includes/variables.php:761
+#: includes/variables.php:777 includes/variables.php:817
+#: includes/variables.php:861
+msgid "Men"
+msgstr ""
+
+#: includes/shortcodes.php:22 includes/variables.php:325
+#: includes/variables.php:358 includes/variables.php:422
+#: includes/variables.php:465 includes/variables.php:525
+#: includes/variables.php:549 includes/variables.php:595
+#: includes/variables.php:631 includes/variables.php:667
+#: includes/variables.php:752 includes/variables.php:765
+#: includes/variables.php:783 includes/variables.php:826
+#: includes/variables.php:864
+msgid "Women"
+msgstr ""
+
+#: includes/variables.php:304
+msgid "ACA"
+msgstr ""
+
+#: includes/variables.php:306
+msgid "Adult Children of Alcoholics"
+msgstr ""
+
+#: includes/variables.php:308
+msgid ""
+"This meeting is closed; only those who have a desire to recover from the "
+"effects of growing up in an alcoholic or otherwise dysfunctional family may "
+"attend."
+msgstr ""
+
+#: includes/variables.php:309 includes/variables.php:367
+#: includes/variables.php:476
+msgid "This meeting is open and anyone may attend."
+msgstr ""
+
+#: includes/variables.php:312
+msgid "Age Restricted 18+"
+msgstr ""
+
+#: includes/variables.php:313
+msgid "Audio / Visual"
+msgstr ""
+
+#: includes/variables.php:314 includes/variables.php:434
+#: includes/variables.php:730 includes/variables.php:774
+#: includes/variables.php:807
+msgid "Book Study"
+msgstr ""
+
+#: includes/variables.php:315 includes/variables.php:729
+msgid "Beginners"
+msgstr ""
+
+#: includes/variables.php:316 includes/variables.php:343
+#: includes/variables.php:379 includes/variables.php:437
+#: includes/variables.php:489 includes/variables.php:537
+#: includes/variables.php:565 includes/variables.php:609
+#: includes/variables.php:645 includes/variables.php:715
+#: includes/variables.php:732 includes/variables.php:760
+#: includes/variables.php:775 includes/variables.php:792
+#: includes/variables.php:810 includes/variables.php:838
+msgid "Closed"
+msgstr ""
+
+#: includes/variables.php:317 includes/variables.php:385
+#: includes/variables.php:495 includes/variables.php:570
+#: includes/variables.php:794
+msgid "Discussion"
+msgstr ""
+
+#: includes/variables.php:318 includes/variables.php:611
+#: includes/variables.php:647
+msgid "Gay/Lesbian"
+msgstr ""
+
+#: includes/variables.php:321 includes/variables.php:354
+#: includes/variables.php:416 includes/variables.php:458
+#: includes/variables.php:520 includes/variables.php:543
+#: includes/variables.php:590 includes/variables.php:624
+#: includes/variables.php:660 includes/variables.php:694
+#: includes/variables.php:717 includes/variables.php:781
+#: includes/variables.php:797 includes/variables.php:822
+msgid "Speaker"
+msgstr ""
+
+#: includes/variables.php:322 includes/variables.php:353
+#: includes/variables.php:415 includes/variables.php:457
+#: includes/variables.php:519 includes/variables.php:589
+#: includes/variables.php:748 includes/variables.php:821
+msgid "Spanish"
+msgstr ""
+
+#: includes/variables.php:323
+msgid "Steps"
+msgstr ""
+
+#: includes/variables.php:324
+msgid "Fellowship Text"
+msgstr ""
+
+#: includes/variables.php:326
+msgid "Yellow Workbook Study"
+msgstr ""
+
+#: includes/variables.php:330 includes/variables.php:332
+msgid "Al-Anon"
+msgstr ""
+
+#: includes/variables.php:334
+msgid ""
+"Closed Meetings are limited to members and prospective members. These are "
+"persons who feel their lives have been or are being affected by alcoholism "
+"in a family member or friend."
+msgstr ""
+
+#: includes/variables.php:335
+msgid ""
+"Open to anyone interested in the family disease of alcoholism. Some groups "
+"invite members of the professional community to hear how the Al-Anon program "
+"aids in recovery."
+msgstr ""
+
+#: includes/variables.php:338
+msgid "Adult Child Focus"
+msgstr ""
+
+#: includes/variables.php:339
+msgid "Alateen"
+msgstr ""
+
+#: includes/variables.php:340 includes/variables.php:431
+#: includes/variables.php:482
+msgid "Atheist / Agnostic"
+msgstr ""
+
+#: includes/variables.php:341 includes/variables.php:373
+#: includes/variables.php:432 includes/variables.php:483
+#: includes/variables.php:561
+msgid "Babysitting Available"
+msgstr ""
+
+#: includes/variables.php:342 includes/variables.php:433
+#: includes/variables.php:773 includes/variables.php:790
+msgid "Beginner"
+msgstr ""
+
+#: includes/variables.php:344
+msgid "Concurrent with AA Meeting"
+msgstr ""
+
+#: includes/variables.php:345
+msgid "Concurrent with Alateen Meeting"
+msgstr ""
+
+#: includes/variables.php:346 includes/variables.php:387
+#: includes/variables.php:497 includes/variables.php:571
+#: includes/variables.php:737
+msgid "English"
+msgstr ""
+
+#: includes/variables.php:347 includes/variables.php:388
+#: includes/variables.php:443 includes/variables.php:498
+#: includes/variables.php:811
+msgid "Fragrance Free"
+msgstr ""
+
+#: includes/variables.php:348 includes/variables.php:390
+#: includes/variables.php:444 includes/variables.php:500
+msgid "Gay"
+msgstr ""
+
+#: includes/variables.php:349 includes/variables.php:397
+#: includes/variables.php:446 includes/variables.php:504
+msgid "Lesbian"
+msgstr ""
+
+#: includes/variables.php:352 includes/variables.php:414
+#: includes/variables.php:456 includes/variables.php:518
+#: includes/variables.php:588
+msgid "Smoking Permitted"
+msgstr ""
+
+#: includes/variables.php:355 includes/variables.php:417
+#: includes/variables.php:459 includes/variables.php:521
+#: includes/variables.php:591 includes/variables.php:763
+msgid "Step Meeting"
+msgstr ""
+
+#: includes/variables.php:356 includes/variables.php:419
+#: includes/variables.php:463 includes/variables.php:523
+msgid "Transgender"
+msgstr ""
+
+#: includes/variables.php:357 includes/variables.php:464
+#: includes/variables.php:548 includes/variables.php:630
+#: includes/variables.php:666
+msgid "Wheelchair Accessible"
+msgstr ""
+
+#: includes/variables.php:362
+msgid "AA"
+msgstr ""
+
+#: includes/variables.php:364
+msgid "Alcoholics Anonymous"
+msgstr ""
+
+#: includes/variables.php:366
+msgid ""
+"This meeting is closed; only those who have a desire to stop drinking may "
+"attend."
+msgstr ""
+
+#: includes/variables.php:370 includes/variables.php:479
+msgid "11th Step Meditation"
+msgstr ""
+
+#: includes/variables.php:371 includes/variables.php:480
+#: includes/variables.php:837
+msgid "12 Steps & 12 Traditions"
+msgstr ""
+
+#: includes/variables.php:372 includes/variables.php:481
+msgid "As Bill Sees It"
+msgstr ""
+
+#: includes/variables.php:374 includes/variables.php:484
+#: includes/variables.php:562 includes/variables.php:679
+msgid "Big Book"
+msgstr ""
+
+#: includes/variables.php:375 includes/variables.php:485
+msgid "Birthday"
+msgstr ""
+
+#: includes/variables.php:376 includes/variables.php:486
+msgid "Breakfast"
+msgstr ""
+
+#: includes/variables.php:377 includes/variables.php:438
+#: includes/variables.php:490 includes/variables.php:563
+#: includes/variables.php:607 includes/variables.php:643
+msgid "Candlelight"
+msgstr ""
+
+#: includes/variables.php:378 includes/variables.php:435
+#: includes/variables.php:488 includes/variables.php:564
+msgid "Child-Friendly"
+msgstr ""
+
+#: includes/variables.php:380 includes/variables.php:439
+#: includes/variables.php:491
+msgid "Concurrent with Al-Anon"
+msgstr ""
+
+#: includes/variables.php:381 includes/variables.php:440
+#: includes/variables.php:492
+msgid "Concurrent with Alateen"
+msgstr ""
+
+#: includes/variables.php:382 includes/variables.php:441
+#: includes/variables.php:493
+msgid "Cross Talk Permitted"
+msgstr ""
+
+#: includes/variables.php:383 includes/variables.php:494
+#: includes/variables.php:569
+msgid "Daily Reflections"
+msgstr ""
+
+#: includes/variables.php:384
+msgid "Digital Basket"
+msgstr ""
+
+#: includes/variables.php:386 includes/variables.php:496
+msgid "Dual Diagnosis"
+msgstr ""
+
+#: includes/variables.php:389 includes/variables.php:499
+#: includes/variables.php:572 includes/variables.php:739
+msgid "French"
+msgstr ""
+
+#: includes/variables.php:391 includes/variables.php:445
+#: includes/variables.php:501
+msgid "Grapevine"
+msgstr ""
+
+#: includes/variables.php:392
+msgid "Hebrew"
+msgstr ""
+
+#: includes/variables.php:393
+msgid "Indigenous"
+msgstr ""
+
+#: includes/variables.php:394 includes/variables.php:502
+#: includes/variables.php:574
+msgid "Italian"
+msgstr ""
+
+#: includes/variables.php:395
+msgid "Japanese"
+msgstr ""
+
+#: includes/variables.php:396 includes/variables.php:503
+#: includes/variables.php:575
+msgid "Korean"
+msgstr ""
+
+#: includes/variables.php:398 includes/variables.php:447
+#: includes/variables.php:505 includes/variables.php:576
+msgid "Literature"
+msgstr ""
+
+#: includes/variables.php:399 includes/variables.php:506
+msgid "Living Sober"
+msgstr ""
+
+#: includes/variables.php:400 includes/variables.php:448
+#: includes/variables.php:507 includes/variables.php:577
+#: includes/variables.php:743 includes/variables.php:764
+msgid "LGBTQ"
+msgstr ""
+
+#: includes/variables.php:401 includes/variables.php:449
+#: includes/variables.php:508 includes/variables.php:578
+#: includes/variables.php:618 includes/variables.php:654
+#: includes/variables.php:686 includes/variables.php:776
+#: includes/variables.php:816
+msgid "Meditation"
+msgstr ""
+
+#: includes/variables.php:403 includes/variables.php:510
+msgid "Native American"
+msgstr ""
+
+#: includes/variables.php:404 includes/variables.php:511
+#: includes/variables.php:580 includes/variables.php:688
+#: includes/variables.php:839
+msgid "Newcomer"
+msgstr ""
+
+#: includes/variables.php:406
+msgid "People of Color"
+msgstr ""
+
+#: includes/variables.php:407 includes/variables.php:513
+#: includes/variables.php:583
+msgid "Polish"
+msgstr ""
+
+#: includes/variables.php:408 includes/variables.php:514
+#: includes/variables.php:584
+msgid "Portuguese"
+msgstr ""
+
+#: includes/variables.php:409
+msgid "Professionals"
+msgstr ""
+
+#: includes/variables.php:410 includes/variables.php:515
+#: includes/variables.php:585
+msgid "Punjabi"
+msgstr ""
+
+#: includes/variables.php:411 includes/variables.php:516
+#: includes/variables.php:586
+msgid "Russian"
+msgstr ""
+
+#: includes/variables.php:412
+msgid "Secular"
+msgstr ""
+
+#: includes/variables.php:413 includes/variables.php:455
+#: includes/variables.php:517 includes/variables.php:587
+msgid "Sign Language"
+msgstr ""
+
+#: includes/variables.php:418 includes/variables.php:522
+#: includes/variables.php:593 includes/variables.php:825
+msgid "Tradition Study"
+msgstr ""
+
+#: includes/variables.php:420 includes/variables.php:524
+#: includes/variables.php:594 includes/variables.php:751
+msgid "Wheelchair Access"
+msgstr ""
+
+#: includes/variables.php:421
+msgid "Wheelchair-Accessible Bathroom"
+msgstr ""
+
+#: includes/variables.php:423 includes/variables.php:467
+#: includes/variables.php:526 includes/variables.php:596
+#: includes/variables.php:632 includes/variables.php:668
+msgid "Young People"
+msgstr ""
+
+#: includes/variables.php:427
+msgid "CoDA"
+msgstr ""
+
+#: includes/variables.php:429
+msgid "Co-Dependents Anonymous"
+msgstr ""
+
+#: includes/variables.php:436 includes/variables.php:808
+msgid "Chips"
+msgstr ""
+
+#: includes/variables.php:442
+msgid "Daily"
+msgstr ""
+
+#: includes/variables.php:452
+msgid "Q & A"
+msgstr ""
+
+#: includes/variables.php:453
+msgid "Reading"
+msgstr ""
+
+#: includes/variables.php:460
+msgid "Teens"
+msgstr ""
+
+#: includes/variables.php:461 includes/variables.php:824
+msgid "Topic Discussion"
+msgstr ""
+
+#: includes/variables.php:462 includes/variables.php:628
+#: includes/variables.php:664
+msgid "Tradition"
+msgstr ""
+
+#: includes/variables.php:466 includes/variables.php:704
+msgid "Writing"
+msgstr ""
+
+#: includes/variables.php:471
+msgid "CA"
+msgstr ""
+
+#: includes/variables.php:473
+msgid "Cocaine Anonymous"
+msgstr ""
+
+#: includes/variables.php:475
+msgid ""
+"This meeting is closed; only those who have a desire to stop using may "
+"attend."
+msgstr ""
+
+#: includes/variables.php:487
+msgid "Business"
+msgstr ""
+
+#: includes/variables.php:530
+msgid "DA"
+msgstr ""
+
+#: includes/variables.php:532
+msgid "Debtors Anonymous"
+msgstr ""
+
+#: includes/variables.php:534
+msgid "Abundance"
+msgstr ""
+
+#: includes/variables.php:535
+msgid "Artist"
+msgstr ""
+
+#: includes/variables.php:536
+msgid "Business Owner"
+msgstr ""
+
+#: includes/variables.php:538
+msgid "Clutter"
+msgstr ""
+
+#: includes/variables.php:540
+msgid "Numbers"
+msgstr ""
+
+#: includes/variables.php:542
+msgid "Prosperity"
+msgstr ""
+
+#: includes/variables.php:544 includes/variables.php:782
+#: includes/variables.php:823
+msgid "Step Study"
+msgstr ""
+
+#: includes/variables.php:546
+msgid "Toolkit"
+msgstr ""
+
+#: includes/variables.php:547
+msgid "Vision"
+msgstr ""
+
+#: includes/variables.php:553
+msgid "GA"
+msgstr ""
+
+#: includes/variables.php:555
+msgid "Gamblers Anonymous"
+msgstr ""
+
+#: includes/variables.php:557
+msgid ""
+"This meeting is closed; only those who have a desire to stop gambling may "
+"attend."
+msgstr ""
+
+#: includes/variables.php:560
+msgid "20 Questions/Beginner Focus"
+msgstr ""
+
+#: includes/variables.php:566
+msgid "Combined GA/Gam Anon"
+msgstr ""
+
+#: includes/variables.php:567
+msgid "Comment"
+msgstr ""
+
+#: includes/variables.php:568
+msgid "Cross Comment"
+msgstr ""
+
+#: includes/variables.php:573
+msgid "Gam Anon"
+msgstr ""
+
+#: includes/variables.php:582
+msgid "Parking Meters Available"
+msgstr ""
+
+#: includes/variables.php:592 includes/variables.php:627
+#: includes/variables.php:663 includes/variables.php:700
+msgid "Topic"
+msgstr ""
+
+#: includes/variables.php:600
+msgid "HA"
+msgstr ""
+
+#: includes/variables.php:602
+msgid "Heroin Anonymous"
+msgstr ""
+
+#: includes/variables.php:604 includes/variables.php:640
+msgid "12 Concepts"
+msgstr ""
+
+#: includes/variables.php:605 includes/variables.php:641
+msgid "Basic Text"
+msgstr ""
+
+#: includes/variables.php:606 includes/variables.php:642
+msgid "Beginner/Newcomer"
+msgstr ""
+
+#: includes/variables.php:608 includes/variables.php:644
+msgid "Children Welcome"
+msgstr ""
+
+#: includes/variables.php:610 includes/variables.php:646
+msgid "Discussion/Participation"
+msgstr ""
+
+#: includes/variables.php:612 includes/variables.php:648
+msgid "IP Study"
+msgstr ""
+
+#: includes/variables.php:613 includes/variables.php:649
+msgid "It Works Study"
+msgstr ""
+
+#: includes/variables.php:614 includes/variables.php:650
+msgid "Just For Today Study"
+msgstr ""
+
+#: includes/variables.php:615 includes/variables.php:651
+#: includes/variables.php:684
+msgid "Literature Study"
+msgstr ""
+
+#: includes/variables.php:616 includes/variables.php:652
+msgid "Living Clean"
+msgstr ""
+
+#: includes/variables.php:619 includes/variables.php:655
+msgid "Non-Smoking"
+msgstr ""
+
+#: includes/variables.php:621 includes/variables.php:657
+msgid "Questions & Answers"
+msgstr ""
+
+#: includes/variables.php:622 includes/variables.php:658
+msgid "Restricted Access"
+msgstr ""
+
+#: includes/variables.php:623 includes/variables.php:659
+msgid "Smoking"
+msgstr ""
+
+#: includes/variables.php:625 includes/variables.php:661
+#: includes/variables.php:798
+msgid "Step"
+msgstr ""
+
+#: includes/variables.php:626 includes/variables.php:662
+msgid "Step Working Guide Study"
+msgstr ""
+
+#: includes/variables.php:629 includes/variables.php:665
+msgid "Format Varies"
+msgstr ""
+
+#: includes/variables.php:636
+msgid "NA"
+msgstr ""
+
+#: includes/variables.php:638
+msgid "Narcotics Anonymous"
+msgstr ""
+
+#: includes/variables.php:672
+msgid "OA"
+msgstr ""
+
+#: includes/variables.php:673
+msgid "Overeaters Anonymous"
+msgstr ""
+
+#: includes/variables.php:675
+msgid "11th Step"
+msgstr ""
+
+#: includes/variables.php:676
+msgid "90 Day"
+msgstr ""
+
+#: includes/variables.php:677
+msgid "AA 12/12"
+msgstr ""
+
+#: includes/variables.php:678
+msgid "Ask-It-Basket"
+msgstr ""
+
+#: includes/variables.php:680
+msgid "Dignity of Choice"
+msgstr ""
+
+#: includes/variables.php:681
+msgid "For Today"
+msgstr ""
+
+#: includes/variables.php:682
+msgid "Lifeline"
+msgstr ""
+
+#: includes/variables.php:683
+msgid "Lifeline Sampler"
+msgstr ""
+
+#: includes/variables.php:685
+msgid "Maintenance"
+msgstr ""
+
+#: includes/variables.php:687
+msgid "New Beginnings"
+msgstr ""
+
+#: includes/variables.php:689
+msgid "OA H.O.W."
+msgstr ""
+
+#: includes/variables.php:690
+msgid "OA Second and/or Third Edition"
+msgstr ""
+
+#: includes/variables.php:691
+msgid "OA Steps and/or Traditions Study"
+msgstr ""
+
+#: includes/variables.php:692
+msgid "Relapse/12th Step Within"
+msgstr ""
+
+#: includes/variables.php:693
+msgid "Seeking the Spiritual Path"
+msgstr ""
+
+#: includes/variables.php:695
+msgid "Speaker/Discussion"
+msgstr ""
+
+#: includes/variables.php:696
+msgid "Spirituality"
+msgstr ""
+
+#: includes/variables.php:697
+msgid "Teen Friendly"
+msgstr ""
+
+#: includes/variables.php:698
+msgid "The Promises"
+msgstr ""
+
+#: includes/variables.php:699
+msgid "Tools"
+msgstr ""
+
+#: includes/variables.php:701
+msgid "Varies"
+msgstr ""
+
+#: includes/variables.php:702
+msgid "Voices of Recovery"
+msgstr ""
+
+#: includes/variables.php:703
+msgid "Work Book Study"
+msgstr ""
+
+#: includes/variables.php:712
+msgid "RCA"
+msgstr ""
+
+#: includes/variables.php:713
+msgid "Recovering Couples Anonymous"
+msgstr ""
+
+#: includes/variables.php:721 includes/variables.php:723
+msgid "Refuge Recovery"
+msgstr ""
+
+#: includes/variables.php:725
+msgid "Men’s meetings are for anyone who identifies as male."
+msgstr ""
+
+#: includes/variables.php:726
+msgid "Women’s meetings are for anyone who identifies as female."
+msgstr ""
+
+#: includes/variables.php:731 includes/variables.php:809
+msgid "Child Care Available"
+msgstr ""
+
+#: includes/variables.php:733
+msgid "Danish"
+msgstr ""
+
+#: includes/variables.php:734
+msgid "Dog Friendly"
+msgstr ""
+
+#: includes/variables.php:735
+msgid "Dutch"
+msgstr ""
+
+#: includes/variables.php:736
+msgid "Eightfold Path Study"
+msgstr ""
+
+#: includes/variables.php:738
+msgid "Finnish"
+msgstr ""
+
+#: includes/variables.php:740
+msgid "German"
+msgstr ""
+
+#: includes/variables.php:741
+msgid "Inventory Study"
+msgstr ""
+
+#: includes/variables.php:742
+msgid "Inventory Writing"
+msgstr ""
+
+#: includes/variables.php:745
+msgid "Mindfulness Practice"
+msgstr ""
+
+#: includes/variables.php:747
+msgid "Process Addictions"
+msgstr ""
+
+#: includes/variables.php:749
+msgid "Swedish"
+msgstr ""
+
+#: includes/variables.php:750
+msgid "Thai"
+msgstr ""
+
+#: includes/variables.php:756
+msgid "SAA"
+msgstr ""
+
+#: includes/variables.php:758
+msgid "Sex Addicts Anonymous"
+msgstr ""
+
+#: includes/variables.php:769
+msgid "SA"
+msgstr ""
+
+#: includes/variables.php:771
+msgid "Sexaholics Anonymous"
+msgstr ""
+
+#: includes/variables.php:778
+msgid "Mixed"
+msgstr ""
+
+#: includes/variables.php:780
+msgid "Primary Purpose"
+msgstr ""
+
+#: includes/variables.php:787
+msgid "SCA"
+msgstr ""
+
+#: includes/variables.php:788
+msgid "Sexual Compulsives Anonymous"
+msgstr ""
+
+#: includes/variables.php:791
+msgid "Chip"
+msgstr ""
+
+#: includes/variables.php:793
+msgid "Court"
+msgstr ""
+
+#: includes/variables.php:795
+msgid "Graphic Language"
+msgstr ""
+
+#: includes/variables.php:802
+msgid "SLAA"
+msgstr ""
+
+#: includes/variables.php:804
+msgid "Sex and Love Addicts Anonymous"
+msgstr ""
+
+#: includes/variables.php:806
+msgid "Anorexia Focus"
+msgstr ""
+
+#: includes/variables.php:812
+msgid "Getting Current"
+msgstr ""
+
+#: includes/variables.php:813
+msgid "Handicapped Accessible"
+msgstr ""
+
+#: includes/variables.php:814
+msgid "Healthy Relationships"
+msgstr ""
+
+#: includes/variables.php:815
+msgid "Literature Reading"
+msgstr ""
+
+#: includes/variables.php:818
+msgid "Newcomers"
+msgstr ""
+
+#: includes/variables.php:820
+msgid "Prison"
+msgstr ""
+
+#: includes/variables.php:833
+msgid "VA"
+msgstr ""
+
+#: includes/variables.php:835
+msgid "Violence Anonymous"
+msgstr ""
+
+#: includes/variables.php:846
+msgid "meetings"
+msgstr ""
+
+#: includes/variables.php:850
+msgid "Got an improper response from the server, try refreshing the page."
+msgstr ""
+
+#: includes/variables.php:851
+msgid "Email was not sent."
+msgstr ""
+
+#: includes/variables.php:852
+msgid "Enter a location in the field above."
+msgstr ""
+
+#: includes/variables.php:853
+msgid "Google could not find that location."
+msgstr ""
+
+#: includes/variables.php:854
+msgid "Looking up address…"
+msgstr ""
+
+#: includes/variables.php:855
+msgid "There was an error getting your location."
+msgstr ""
+
+#: includes/variables.php:856
+msgid "Your browser does not appear to support geolocation."
+msgstr ""
+
+#: includes/variables.php:857
+msgid "Finding you…"
+msgstr ""
+
+#: includes/variables.php:858
+msgid "Groups"
+msgstr ""
+
+#: includes/variables.php:859
+msgid "Locations"
+msgstr ""
+
+#: includes/variables.php:862
+msgid "No meetings were found matching the selected criteria."
 msgstr ""
 
 #: includes/widgets.php:8 includes/widgets.php:82
@@ -2073,22 +2066,168 @@ msgstr ""
 msgid "View More&hellip;"
 msgstr ""
 
-#. Name of the plugin
+#: includes/widgets_init.php:7
+msgid "Meetings Top"
+msgstr ""
+
+#: includes/widgets_init.php:8
+msgid "Meetings Bottom"
+msgstr ""
+
+#: includes/widgets_init.php:9
+msgid "Meeting Detail Bottom"
+msgstr ""
+
+#: includes/widgets_init.php:10
+msgid "Location Detail Bottom"
+msgstr ""
+
+#: templates/archive-meetings.php:8
+msgid "Search"
+msgstr ""
+
+#: templates/archive-meetings.php:9
+msgid "Near Location"
+msgstr ""
+
+#: templates/archive-meetings.php:12
+msgid "Near Me"
+msgstr ""
+
+#: templates/archive-meetings.php:18
+#, php-format
+msgid "Within %d Mile"
+msgid_plural "Within %d Miles"
+msgstr[0] ""
+msgstr[1] ""
+
+#: templates/archive-meetings.php:20
+#, php-format
+msgid "Within %d Kilometer"
+msgid_plural "Within %d Kilometers"
+msgstr[0] ""
+msgstr[1] ""
+
+#: templates/archive-meetings.php:26
+msgid "Morning"
+msgstr ""
+
+#: templates/archive-meetings.php:27
+msgid "Midday"
+msgstr ""
+
+#: templates/archive-meetings.php:28
+msgid "Evening"
+msgstr ""
+
+#: templates/archive-meetings.php:29
+msgid "Night"
+msgstr ""
+
+#: templates/archive-meetings.php:100
+msgid "Any Day"
+msgstr ""
+
+#: templates/archive-meetings.php:102
+msgid "Any Time"
+msgstr ""
+
+#: templates/archive-meetings.php:104 templates/archive-meetings.php:342
+msgid "Upcoming"
+msgstr ""
+
+#: templates/archive-meetings.php:108
+msgid "Everywhere"
+msgstr ""
+
+#: templates/archive-meetings.php:116
+msgid "Any Type"
+msgstr ""
+
+#: templates/archive-meetings.php:134
+msgid "Today's"
+msgstr ""
+
+#: templates/archive-meetings.php:140
+msgid "in"
+msgstr ""
+
+#: templates/archive-meetings.php:277
+msgid "List"
+msgstr ""
+
+#: templates/archive-meetings.php:296
+msgid "Switch to Districts"
+msgstr ""
+
+#: templates/archive-meetings.php:297
+msgid "Switch to Regions"
+msgstr ""
+
+#: templates/single-locations.php:9 templates/single-meetings.php:8
+msgid "Directions"
+msgstr ""
+
+#: templates/single-locations.php:35 templates/single-meetings.php:37
+msgid "Back to Meetings"
+msgstr ""
+
+#: templates/single-locations.php:43 templates/single-meetings.php:46
+msgid "Get Directions"
+msgstr ""
+
+#: templates/single-locations.php:81 templates/single-meetings.php:149
+msgid "Updated"
+msgstr ""
+
+#. translators: until
+#: templates/single-meetings.php:63
+msgid " to "
+msgstr ""
+
+#: templates/single-meetings.php:87
+#, php-format
+msgid "%d other meeting at this location"
+msgid_plural "%d other meetings at this location"
+msgstr[0] ""
+msgstr[1] ""
+
+#: templates/single-meetings.php:182
+msgid "Request a change to this listing"
+msgstr ""
+
+#: templates/single-meetings.php:190
+msgid "Use this form to submit a change to the meeting information above."
+msgstr ""
+
+#: templates/single-meetings.php:193
+msgid "Your Name"
+msgstr ""
+
+#: templates/single-meetings.php:196
+msgid "Email Address"
+msgstr ""
+
+#: templates/single-meetings.php:199
+msgid "Message"
+msgstr ""
+
+#: templates/single-meetings.php:202
+msgid "Submit"
+msgstr ""
+
+#. Plugin Name of the plugin/theme
 msgid "12 Step Meeting List"
 msgstr ""
 
-#. Description of the plugin
-msgid "CMS for maintaining database of 12-step meetings and locations"
-msgstr ""
-
-#. URI of the plugin
+#. Plugin URI of the plugin/theme
 msgid "https://wordpress.org/plugins/12-step-meeting-list/"
 msgstr ""
 
-#. Author of the plugin
-msgid "Meeting Guide"
+#. Description of the plugin/theme
+msgid "Manage a list of recovery meetings"
 msgstr ""
 
-#. Author URI of the plugin
+#. Author URI of the plugin/theme
 msgid "https://meetingguide.org"
 msgstr ""

@@ -862,9 +862,19 @@ function tsml_get_meetings($arguments=array(), $from_cache=true) {
 		//from database
 		$meetings = array();
 
+		//can specify post_status (for PR #33)
+		if (empty($arguments['post_status'])) {
+			$arguments['post_status'] = 'publish';
+		} elseif (is_array($arguments['post_status'])) {
+			$arguments['post_status'] = array_map('sanitize_title', $arguments['post_status']);
+		} else {
+			$arguments['post_status'] = sanitize_title($arguments['post_status']);
+		}
+
 		$posts = get_posts(array(
 			'post_type'			=> 'tsml_meeting',
 			'numberposts'		=> -1,
+			'post_status'		=> $arguments['post_status'],
 		));
 
 		$meeting_meta = tsml_get_meta('tsml_meeting');
@@ -1155,6 +1165,11 @@ function tsml_import_buffer_set($meetings, $data_source=null) {
 		//preserve row number for errors later
 		$meeting['row'] = $row_counter;
 		
+	}
+
+	//allow user-defined function to filter the meetings (for gal-aa.org)
+	if (function_exists('tsml_import_filter')) {
+		$meetings = array_filter($meetings, 'tsml_import_filter');
 	}
 	
 	//dd($meetings);
