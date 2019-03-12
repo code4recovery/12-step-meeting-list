@@ -3,7 +3,7 @@ Contributors: meetingguide, aasanjose
 Donate link: https://meetingguide.org/contribute
 Tags: 12-step, aa, al-anon, coda, meetings, na, oa, saa, slaa
 Requires at least: 3.2
-Tested up to: 5.0
+Tested up to: 5.1
 Stable tag: 3.4
 
 This plugin helps twelve step recovery programs list their meetings. It standardizes addresses, and displays results in a searchable list and map.
@@ -18,6 +18,7 @@ This plugin was originally designed to maintain a list of AA meetings in Santa C
 
 **Alcoholics Anonymous**
 
+1. [Albuquerque, NM](https://www.albuquerqueaa.org/meetings/)
 1. [Alexandria, LA](http://www.aa-cenla.org/meetings/?tsml-day=any)
 1. [Arkansas](http://arkansascentraloffice.org/meetings/)
 1. [Aspen, CO](http://www.coaadistrict14.org/)
@@ -79,6 +80,7 @@ This plugin was originally designed to maintain a list of AA meetings in Santa C
 1. [Iowa](http://www.aa-iowa.org/meetings/)
 1. [Israel](http://aa-israel.online/meetings/)
 1. [Jacksonville, FL](https://neflaa.org/meetings/)
+1. [Jacksonville, IL](http://jacksonvilleaa.org/wp/meetings/?tsml-day=any)
 1. [Joliet, IL](http://aadistrict51.org/meetings/)
 1. [Kansas](https://ks-aa.org/meetings/)
 1. [Kansas City](https://kc-aa.org/meetings/)
@@ -112,6 +114,7 @@ This plugin was originally designed to maintain a list of AA meetings in Santa C
 1. [Modesto, CA](http://wp.cviaa.org/meetings/)
 1. [Monterey, CA](http://www.aamonterey.org/meetings/)
 1. [Montreal, Canada](http://aa87.org/meetings/)
+1. [Moore County, NC](https://moorecountyaa.org/index.php/meetings/)
 1. [Morganton, NC](http://ncd12aa.org/meetings/)
 1. [Myrtle Beach, SC](http://aamyrtlebeach.org/meetings/)
 1. [Napa, CA](http://www.aanapa.org/meetings)
@@ -132,6 +135,7 @@ This plugin was originally designed to maintain a list of AA meetings in Santa C
 1. [Oahu, HI](http://oahucentraloffice.com/meetings/)
 1. [Ogden, UT](https://northernutahaa.org/meetings/)
 1. [Oklahoma](http://aaoklahoma.org/meetings)
+1. [Oklahoma City, OK](http://okcintergroup.org/meetings/)
 1. [Orlando, FL](http://cflintergroup.org/meetings/)
 1. [Oshawa, Canada](http://www.aadurham.org/meetings/)
 1. [Palm Beach County, FL](http://aa-palmbeachcounty.org/new/meetings)
@@ -177,6 +181,7 @@ This plugin was originally designed to maintain a list of AA meetings in Santa C
 1. [Southern New Jersey](http://aasj.org/meetings/)
 1. [Southwestern Missouri](https://aaswmo.org/meetings)
 1. [Spokane, WA](http://aaspokane.org/meetings/)
+1. [Springfield, IL](http://aaspringfield.org/?post_type=tsml_meeting)
 1. [St. Louis, MO](https://aastl.org/meetings/)
 1. [St. Lucie, FL](http://aastlucieintergroup.com/meetings/)
 1. [St. Peters, MO](https://tricountyaa.org/meetings/)
@@ -196,6 +201,7 @@ This plugin was originally designed to maintain a list of AA meetings in Santa C
 1. [Vacaville, CA](http://aasolanonorth.org/meetings/)
 1. [Vancouver, Canada](http://www.vancouveraa.ca/meetings/)
 1. [Ventura County, CA](https://aaventuracounty.org/meetings)
+1. [Victoria, BC, Canada](https://aavictoria.ca/meetings/)
 1. [Vienna, Austria](https://www.aavienna.com/meetings/?tsml-day=any)
 1. [Virginia](https://aavirginia.org/meetings/)
 1. [Virginia Peninsula](http://vapsc.org/meetings)
@@ -392,7 +398,7 @@ Copy the files from the plugin's templates directory into your theme's root dire
 To see types in the meeting list, one way to do it is to add some CSS to your theme which will make a types column visible.
 
 	@media screen and (min-width: 768px) {
-	  #tsml #meetings .types { display: table-cell !important; }
+		#tsml #meetings .types { display: table-cell !important; }
 	}
 
 One drawback of this approach is that it shows all the meeting types, and you might not want all of them to be displayed over and over in the meeting list.
@@ -483,6 +489,7 @@ To apply these changes, you must go to Settings > Permalinks and click "Save Cha
 * Major rewrite to make plugin more CPU-efficient (Ventura)
 * Fixed bug where leaving a space at the end of a data source would cause an error
 * Fixed bug where filters wouldn't work after switching to Google Map view (SCA)
+* Added post_status to params for tsml_get_meetings() (New England SLAA)
 
 = 3.3.3 =
 * Address fix (Racine)
