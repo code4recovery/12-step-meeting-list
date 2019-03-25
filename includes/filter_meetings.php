@@ -21,7 +21,7 @@ class tsml_filter_meetings {
 	//sanitize and save arguments (won't be passed to a database)
 	function __construct($arguments) {
 
-		if (!empty($arguments['day'])) {
+		if (!empty($arguments['day']) || (isset($arguments['day']) && $arguments['day'] == 0)) {
 			$this->day = is_array($arguments['day']) ? array_map('intval', $arguments['day']) : array(intval($arguments['day']));
 		}
 

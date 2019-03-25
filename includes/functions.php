@@ -1020,8 +1020,6 @@ function tsml_import_buffer_set($meetings, $data_source=null) {
 	$upper_types = array_map('strtoupper', $tsml_programs[$tsml_program]['types']);
 	$upper_days = array_map('strtoupper', $tsml_days);
 
-	$row_counter = 1;
-
 	//get users, keyed by username
 	$users = tsml_get_users(false);
 	$user_id = get_current_user_id();
@@ -1033,138 +1031,140 @@ function tsml_import_buffer_set($meetings, $data_source=null) {
 	array_walk_recursive($meetings, 'tsml_import_sanitize_field');
 	
 	//prepare array for import buffer
-	foreach ($meetings as &$meeting) {
-		$row_counter++;
+	$count_meetings = count($meetings);
+	for ($i = 0; $i < $count_meetings; $i++) {
 		
-		$meeting['data_source'] = $data_source;
+		$meetings[$i]['data_source'] = $data_source;
 
 		//do wordpress sanitization
-		foreach ($meeting as $key => $value) {
+		foreach ($meetings[$i] as $key => $value) {
 			
 			//have to compress types down real quick (only happens with json)
 			if (is_array($value)) $value = implode(',', $value);
 			
 			if (in_array($key, array('notes', 'location_notes', 'group_notes'))) {
-				$meeting[$key] = sanitize_text_area($value);
+				$meetings[$i][$key] = sanitize_text_area($value);
 			} else {
-				$meeting[$key] = sanitize_text_field($value);
+				$meetings[$i][$key] = sanitize_text_field($value);
 			}
 		}
 
 		//column aliases
-		if (empty($meeting['postal_code']) && !empty($meeting['zip'])) {
-			$meeting['postal_code'] = $meeting['zip'];
+		if (empty($meetings[$i]['postal_code']) && !empty($meetings[$i]['zip'])) {
+			$meetings[$i]['postal_code'] = $meetings[$i]['zip'];
 		}
-		if (empty($meeting['name']) && !empty($meeting['meeting'])) {
-			$meeting['name'] = $meeting['meeting'];
+		if (empty($meetings[$i]['name']) && !empty($meetings[$i]['meeting'])) {
+			$meetings[$i]['name'] = $meetings[$i]['meeting'];
 		}
-		if (empty($meeting['location']) && !empty($meeting['location_name'])) {
-			$meeting['location'] = $meeting['location_name'];
+		if (empty($meetings[$i]['location']) && !empty($meetings[$i]['location_name'])) {
+			$meetings[$i]['location'] = $meetings[$i]['location_name'];
 		}
-		if (empty($meeting['time']) && !empty($meeting['start_time'])) {
-			$meeting['time'] = $meeting['start_time'];
+		if (empty($meetings[$i]['time']) && !empty($meetings[$i]['start_time'])) {
+			$meetings[$i]['time'] = $meetings[$i]['start_time'];
 		}
 
 		//if '@' is in address, remove it and everything after
-		if (!empty($meeting['address']) && $pos = strpos($meeting['address'], '@')) $meeting['address'] = trim(substr($meeting['address'], 0, $pos));
+		if (!empty($meetings[$i]['address']) && $pos = strpos($meetings[$i]['address'], '@')) $meetings[$i]['address'] = trim(substr($meetings[$i]['address'], 0, $pos));
 		
 		//if location name is missing, use address
-		if (empty($meeting['location'])) {
-			$meeting['location'] = empty($meeting['address']) ? __('Meeting Location', '12-step-meeting-list') : $meeting['address'];
+		if (empty($meetings[$i]['location'])) {
+			$meetings[$i]['location'] = empty($meetings[$i]['address']) ? __('Meeting Location', '12-step-meeting-list') : $meetings[$i]['address'];
 		}
 		
 		//day can either be 0, 1, 2, 3 or Sunday, Monday, or empty
-		if (isset($meeting['day']) && !array_key_exists($meeting['day'], $upper_days)) {
-			$meeting['day'] = array_search(strtoupper($meeting['day']), $upper_days);
+		if (isset($meetings[$i]['day']) && !array_key_exists($meetings[$i]['day'], $upper_days)) {
+			$meetings[$i]['day'] = array_search(strtoupper($meetings[$i]['day']), $upper_days);
 		}
 
 		//sanitize time & day
-		if (empty($meeting['time']) || ($meeting['day'] === false)) {
-			$meeting['time'] = $meeting['end_time'] = $meeting['day'] = false; //by appointment
+		if (empty($meetings[$i]['time']) || ($meetings[$i]['day'] === false)) {
+			$meetings[$i]['time'] = $meetings[$i]['end_time'] = $meetings[$i]['day'] = false; //by appointment
 
 			//if meeting name missing, use location
-			if (empty($meeting['name'])) $meeting['name'] = sprintf(__('%s by Appointment', '12-step-meeting-list'), $meeting['location']);
+			if (empty($meetings[$i]['name'])) $meetings[$i]['name'] = sprintf(__('%s by Appointment', '12-step-meeting-list'), $meetings[$i]['location']);
 		} else {
 			//if meeting name missing, use location, day, and time
-			if (empty($meeting['name'])) {
-				$meeting['name'] = sprintf(__('%s %ss at %s', '12-step-meeting-list'), $meeting['location'], $tsml_days[$meeting['day']], $meeting['time']);
+			if (empty($meetings[$i]['name'])) {
+				$meetings[$i]['name'] = sprintf(__('%s %ss at %s', '12-step-meeting-list'), $meetings[$i]['location'], $tsml_days[$meetings[$i]['day']], $meetings[$i]['time']);
 			}
 
-			$meeting['time'] = tsml_format_time_reverse($meeting['time']);
-			if (!empty($meeting['end_time'])) $meeting['end_time'] = tsml_format_time_reverse($meeting['end_time']);
+			$meetings[$i]['time'] = tsml_format_time_reverse($meetings[$i]['time']);
+			if (!empty($meetings[$i]['end_time'])) $meetings[$i]['end_time'] = tsml_format_time_reverse($meetings[$i]['end_time']);
 		}
 
 		//google prefers USA for geocoding
-		if (!empty($meeting['country']) && $meeting['country'] == 'US') $meeting['country'] = 'USA'; 
+		if (!empty($meetings[$i]['country']) && $meetings[$i]['country'] == 'US') $meetings[$i]['country'] = 'USA'; 
 		
 		//build address
-		if (empty($meeting['formatted_address'])) {
+		if (empty($meetings[$i]['formatted_address'])) {
 			$address = array();
-			if (!empty($meeting['address'])) $address[] = $meeting['address'];
-			if (!empty($meeting['city'])) $address[] = $meeting['city'];
-			if (!empty($meeting['state'])) $address[] = $meeting['state'];
-			if (!empty($meeting['postal_code'])) {
-				if ((strlen($meeting['postal_code']) < 5) && ($meeting['country'] == 'USA')) $meeting['postal_code'] = str_pad($meeting['postal_code'], 5, '0', STR_PAD_LEFT);
-				$address[] = $meeting['postal_code'];	
+			if (!empty($meetings[$i]['address'])) $address[] = $meetings[$i]['address'];
+			if (!empty($meetings[$i]['city'])) $address[] = $meetings[$i]['city'];
+			if (!empty($meetings[$i]['state'])) $address[] = $meetings[$i]['state'];
+			if (!empty($meetings[$i]['postal_code'])) {
+				if ((strlen($meetings[$i]['postal_code']) < 5) && ($meetings[$i]['country'] == 'USA')) $meetings[$i]['postal_code'] = str_pad($meetings[$i]['postal_code'], 5, '0', STR_PAD_LEFT);
+				$address[] = $meetings[$i]['postal_code'];	
 			}
-			if (!empty($meeting['country'])) $address[] = $meeting['country'];
-			$meeting['formatted_address'] = implode(', ', $address);
+			if (!empty($meetings[$i]['country'])) $address[] = $meetings[$i]['country'];
+			$meetings[$i]['formatted_address'] = implode(', ', $address);
 		}
 
 		//notes
-		if (empty($meeting['notes'])) $meeting['notes'] = '';
-		if (empty($meeting['location_notes'])) $meeting['location_notes'] = '';
-		if (empty($meeting['group_notes'])) $meeting['group_notes'] = '';
+		if (empty($meetings[$i]['notes'])) $meetings[$i]['notes'] = '';
+		if (empty($meetings[$i]['location_notes'])) $meetings[$i]['location_notes'] = '';
+		if (empty($meetings[$i]['group_notes'])) $meetings[$i]['group_notes'] = '';
 
 		//updated
-		if (empty($meeting['updated']) || (!$meeting['updated'] = strtotime($meeting['updated']))) $meeting['updated'] = time();
-		$meeting['post_modified'] = date('Y-m-d H:i:s', $meeting['updated']);
-		$meeting['post_modified_gmt'] = get_gmt_from_date($meeting['post_modified']);
+		if (empty($meetings[$i]['updated']) || (!$meetings[$i]['updated'] = strtotime($meetings[$i]['updated']))) $meetings[$i]['updated'] = time();
+		$meetings[$i]['post_modified'] = date('Y-m-d H:i:s', $meetings[$i]['updated']);
+		$meetings[$i]['post_modified_gmt'] = get_gmt_from_date($meetings[$i]['post_modified']);
 		
 		//author
-		if (!empty($meeting['author']) && array_key_exists($meeting['author'], $users)) {
-			$meeting['post_author'] = $users[$meeting['author']];
+		if (!empty($meetings[$i]['author']) && array_key_exists($meetings[$i]['author'], $users)) {
+			$meetings[$i]['post_author'] = $users[$meetings[$i]['author']];
 		} else {
-			$meeting['post_author'] = $user_id;
+			$meetings[$i]['post_author'] = $user_id;
 		}
 
 		//default region to city if not specified
-		if (empty($meeting['region']) && !empty($meeting['city'])) $meeting['region'] = $meeting['city'];
+		if (empty($meetings[$i]['region']) && !empty($meetings[$i]['city'])) $meetings[$i]['region'] = $meetings[$i]['city'];
 
 		//sanitize types (they can be Closed or C)
-		if (empty($meeting['types'])) $meeting['types'] = '';
-		$types = explode(',', $meeting['types']);
-		$meeting['types'] = $unused_types = array();
+		if (empty($meetings[$i]['types'])) $meetings[$i]['types'] = '';
+		$types = explode(',', $meetings[$i]['types']);
+		$meetings[$i]['types'] = $unused_types = array();
 		foreach ($types as $type) {
 			$upper_type = trim(strtoupper($type));
 			if (array_key_exists($upper_type, $upper_types)) {
-				$meeting['types'][] = $upper_type;
+				$meetings[$i]['types'][] = $upper_type;
 			} elseif (in_array($upper_type, array_values($upper_types))) {
-				$meeting['types'][] = array_search($upper_type, $upper_types);
+				$meetings[$i]['types'][] = array_search($upper_type, $upper_types);
 			} else {
 				$unused_types[] = $type;
 			}
 		}
 		
 		//if a meeting is both open and closed, make it closed
-		if (in_array('C', $meeting['types']) && in_array('O', $meeting['types'])) {
-			$meeting['types'] = array_diff($meeting['types'], array('O'));
+		if (in_array('C', $meetings[$i]['types']) && in_array('O', $meetings[$i]['types'])) {
+			$meetings[$i]['types'] = array_diff($meetings[$i]['types'], array('O'));
 		}
 		
 		//append unused types to notes
 		if (count($unused_types)) {
-			if (!empty($meeting['notes'])) $meeting['notes'] .= str_repeat(PHP_EOL, 2);
-			$meeting['notes'] .= implode(', ', $unused_types);
+			if (!empty($meetings[$i]['notes'])) $meetings[$i]['notes'] .= str_repeat(PHP_EOL, 2);
+			$meetings[$i]['notes'] .= implode(', ', $unused_types);
 		}
+
+		//make sure we're not double-listing types
+		$meetings[$i]['types'] = array_unique($meetings[$i]['types']);
 
 		//clean up
 		foreach(array('address', 'city', 'state', 'postal_code', 'country', 'updated') as $key) {
-			if (isset($meeting[$key])) unset($meeting[$key]);
+			if (isset($meetings[$i][$key])) unset($meetings[$i][$key]);
 		}
 		
 		//preserve row number for errors later
-		$meeting['row'] = $row_counter;
-		
+		$meetings[$i]['row'] = $i + 2;		
 	}
 
 	//allow user-defined function to filter the meetings (for gal-aa.org)

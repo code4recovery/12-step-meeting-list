@@ -25,7 +25,7 @@ if (!function_exists('tsml_next_meetings')) {
 				<td class="time">' . tsml_format_time($meeting['time']) . '</td>
 				<td class="name"><a href="' . $meeting['url'] . '">' . $meeting['name'] . '</a></td>
 				<td class="location">' . $meeting['location'] . '</td>
-				<td class="region">' . ($meeting['sub_region'] ? $meeting['sub_region'] : $meeting['region']) . '</td>
+				<td class="region">' . (@$meeting['sub_region'] ? @$meeting['sub_region'] : @$meeting['region']) . '</td>
 			</tr>';
 		}
 		return '<table class="tsml_next_meetings table table-striped">
