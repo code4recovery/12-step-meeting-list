@@ -412,13 +412,13 @@ get_header();
 										
 								$locations[$meeting['location_id']]['meetings'][] = array(
 									'time' => $meeting['time_formatted'],
-									'day' => $meeting['day'],
+									'day' => @$meeting['day'],
 									'name' => $meeting['name'],
 									'url' => $meeting['url'], //can't use link here, unfortunately
 									'types' => $meeting['types'],
 								);
 								
-								$sort_time = $meeting['day'] . '-' . ($meeting['time'] == '00:00' ? '23:59' : $meeting['time']);
+								$sort_time = @$meeting['day'] . '-' . (@$meeting['time'] == '00:00' ? '23:59' : @$meeting['time']);
 								?>
 							<tr <?php if (!empty($meeting['notes'])) {?> class="notes"<?php }?>>
 								<?php foreach ($tsml_columns as $key => $column) {

@@ -264,7 +264,7 @@ function tmsl_import_page() {
 	if (!empty($_POST['tsml_contact_display']) && isset($_POST['tsml_nonce']) && wp_verify_nonce($_POST['tsml_nonce'], $tsml_nonce)) {
 		$tsml_contact_display = ($_POST['tsml_contact_display'] == 'public') ? 'public' : 'private';
 		update_option('tsml_contact_display', $tsml_contact_display);
-		tsml_rebuild_cache(); //this value affects what's in the cache
+		tsml_cache_rebuild(); //this value affects what's in the cache
 		tsml_alert(__('Contact privacy updated.', '12-step-meeting-list'));
 	}
 		

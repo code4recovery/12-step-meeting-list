@@ -515,7 +515,7 @@ jQuery(function($){
 				locations = [];
 	
 				var tbody = $('#meetings_tbody').html('');
-	
+
 				//loop through JSON meetings
 				$.each(response, function(index, obj){
 	
@@ -562,9 +562,9 @@ jQuery(function($){
 					if (obj.notes && obj.notes.length) string += ' class="notes"'
 					string += '>';
 					for (var i = 0; i < tsml.columns.length; i++) {
-						switch (tsml.columns[i])	 {
+						switch (tsml.columns[i]) {
 							case 'time':
-							string += '<td class="time" data-sort="' + sort_time + '-' + sanitizeTitle(obj.location) + '"><span>' + (controls.day || !obj.day ? obj.time_formatted : tsml.days[obj.day] + '</span><span>' + obj.time_formatted) + '</span></td>';
+							string += '<td class="time" data-sort="' + sort_time + '-' + sanitizeTitle(obj.location) + '"><span>' + (typeof controls.day !== 'undefined' ? obj.time_formatted : tsml.days[obj.day] + '</span><span>' + obj.time_formatted) + '</span></td>';
 							break;
 							
 							case 'distance':
