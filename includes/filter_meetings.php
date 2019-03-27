@@ -57,6 +57,12 @@ class tsml_filter_meetings {
 			$this->region_id = is_array($arguments['region']) ? array_map('sanitize_title', $arguments['region']) : array(sanitize_title($arguments['region']));
 			//we are recieving region slugs, need to convert to IDs (todo save this in the cache)
 			$this->region_id = array_map(array($this, 'get_region_id'), $this->region_id);
+			//region_id is now an array of arrays because regions can have children
+			$return = array();
+			foreach ($this->region_id as $region_id_array) {
+				$return = array_merge($return, $region_id_array);
+			}
+			$this->region_id = $return;
 		}
 
 		if (!empty($arguments['time'])) {
@@ -185,10 +191,11 @@ class tsml_filter_meetings {
 		return $term->term_id;
 	}
 
-	//function to get region id from slug
+	//function to get region id from slug, as well as child region ids
 	function get_region_id($slug) {
 		$term = get_term_by('slug', $slug, 'tsml_region');
-		return $term->term_id;
+		$children = get_term_children($term->term_id, 'tsml_region');
+		return array_merge(array($term->term_id), $children);
 	}
 
 }

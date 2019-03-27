@@ -1,6 +1,16 @@
 <?php
 //ajax functions
 
+//delete all meetings and locations
+add_action('wp_ajax_tsml_delete', 'tsml_ajax_delete');
+if (!function_exists('tsml_ajax_delete')) {
+	function tsml_ajax_delete() {
+		tsml_delete('everything');
+		tsml_cache_rebuild();
+		die('deleted');
+	}
+}
+
 //ajax for the search typeahead and the location typeahead on the meeting edit page
 add_action('wp_ajax_tsml_locations', 'tsml_ajax_locations');
 add_action('wp_ajax_nopriv_tsml_locations', 'tsml_ajax_locations');
@@ -515,6 +525,9 @@ if (!function_exists('function_name')) {
 			}
 
 		}
+
+		//have to update the cache of types in use
+		tsml_cache_rebuild();
 
 		//have to update the cache of types in use
 		tsml_update_types_in_use();

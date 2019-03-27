@@ -4,7 +4,7 @@ Donate link: https://meetingguide.org/contribute
 Tags: 12-step, aa, al-anon, coda, meetings, na, oa, saa, slaa
 Requires at least: 3.2
 Tested up to: 5.1
-Stable tag: 3.4.2
+Stable tag: 3.4.3
 
 This plugin helps twelve step recovery programs list their meetings. It standardizes addresses, and displays results in a searchable list and map.
 
@@ -484,6 +484,11 @@ To apply these changes, you must go to Settings > Permalinks and click "Save Cha
 1. Edit location
 
 == Changelog ==
+
+= 3.4.3 =
+* Fixing filter for parent regions (PA Al Anon)
+* Adding 'delete all' AJAX route
+* Fixing JSON Import (San Francisco)
 
 = 3.4.2 =
 * Adding Non-Binary meeting type (Los Angeles)
