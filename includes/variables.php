@@ -121,6 +121,12 @@ $tsml_google_overrides = array(
 		'latitude' => 44.597699,
 		'longitude' => -69.599635,
 	),
+	'45 Main St, Goshen, MA 01032, USA' => array(
+		'formatted_address' => '45 Main St, Goshen, MA 01032, USA',
+		'city' => 'Goshen',
+		'latitude' => 42.441700,
+		'longitude' => -72.800560,
+	),
 	'457 Main St, Melrose, MA 02176, USA' => array(
 		'formatted_address' => '457 Main St, Stoneham, MA 02180, USA',
 		'city' => 'Stoneham',
@@ -408,6 +414,7 @@ function tsml_define_strings() {
 				'M' => __('Men', '12-step-meeting-list'),
 				'N' => __('Native American', '12-step-meeting-list'),
 				'BE' => __('Newcomer', '12-step-meeting-list'),
+				'NB' => __('Non-Binary', '12-step-meeting-list'),
 				'O' => __('Open', '12-step-meeting-list'),
 				'POC' => __('People of Color', '12-step-meeting-list'),
 				'POL' => __('Polish', '12-step-meeting-list'),
