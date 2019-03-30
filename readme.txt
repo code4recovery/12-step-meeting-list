@@ -4,7 +4,7 @@ Donate link: https://meetingguide.org/contribute
 Tags: 12-step, aa, al-anon, coda, meetings, na, oa, saa, slaa
 Requires at least: 3.2
 Tested up to: 5.1
-Stable tag: 3.4.3
+Stable tag: 3.4.4
 
 This plugin helps twelve step recovery programs list their meetings. It standardizes addresses, and displays results in a searchable list and map.
 
@@ -132,6 +132,7 @@ This plugin was originally designed to maintain a list of AA meetings in Santa C
 1. [North Idaho](http://northidahoaa.org/meetings/)
 1. [North Port, FL](http://aanorthport.org/meetings/)
 1. [Northern Indiana](http://www.area22indiana.org/meetings/)
+1. [Northern Nevada](http://nnig.org/meetings/)
 1. [Oahu, HI](http://oahucentraloffice.com/meetings/)
 1. [Ogden, UT](https://northernutahaa.org/meetings/)
 1. [Oklahoma](http://aaoklahoma.org/meetings)
@@ -485,6 +486,11 @@ To apply these changes, you must go to Settings > Permalinks and click "Save Cha
 
 == Changelog ==
 
+= 3.4.4 =
+* Syntax error on PHP < 5.4 (Palm Springs)
+* FNV Import Location Field (Minnesota)
+* District filtering working again
+
 = 3.4.3 =
 * Fixing filter for parent regions (PA Al Anon)
 * Adding 'delete all' AJAX route
@@ -503,68 +509,3 @@ To apply these changes, you must go to Settings > Permalinks and click "Save Cha
 * Fixed bug where filters wouldn't work after switching to Google Map view (SCA)
 * Added post_status to params for tsml_get_meetings() (New England SLAA)
 * Some new geocode overrides
-
-= 3.3.3 =
-* Address fix (Racine)
-
-= 3.3.2 =
-* CSV export now uses the time format preference
-
-= 3.3.1 =
-* Group import bug fix (Houston)
-
-= 3.3 =
-* Ability to customize URL address (Western Portland)
-
-= 3.2.15 =
-* Hiding the empty slashes introducted in 3.2.14
-
-= 3.2.14 =
-* Added ability to adjust which types are flagged (Edinburgh)
-* CSS fix on search field (Kauai)
-* Fixing improper JSON import counts (Area 72 District 32)
-
-= 3.2.13 =
-* Address fix (East Bay)
-
-= 3.2.12 =
-* Biasing geocoding results to service area (Connecticut)
-
-= 3.2.11 =
-* Adding Violence Anonymous (Poland)
-
-= 3.2.10 =
-* CSS tweak (Gloucester, VA)
-
-= 3.2.9 =
-* Removing Schema.org markup (CAUK)
-* Updating admin address AJAX hook name (Secular AA)
-
-= 3.2.8 =
-* Fixing undefined types bug (Minneapolis)
-
-= 3.2.7 =
-* Fixing region typeahead (Dallas)
-
-= 3.2.6 =
-* Fixing sort by distance bug (Connecticut)
-* Adding group address field (New Mexico)
-* Change notification and feedback email subject tweaks (Washington, DC)
-
-= 3.2.5 =
-* Null address bug fix (San Francisco)
-
-= 3.2.4 =
-* LGBTQ meeting type was not importing properly (Seattle)
-
-= 3.2.3 =
-* Address fix for Maine
-
-= 3.2.2 =
-* Add custom address overrides for your location (CAUK)
-
-= 3.2.1 =
-* Adding English meeting type for Al-Anon (South Florida)
-
-= 3.2 =
-* URLs now use region and district slugs, rather than IDs, for more readable URLs (Area 22)

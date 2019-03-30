@@ -47,21 +47,22 @@ function tmsl_import_page() {
 				}
 			}
 
-			//do import reformatting
-			$required_fnv_columns = array('ServiceNumber', 'GroupName', 'CountryCode', 'City', 'District', 'Website', 'DateChanged', 'PrimaryFirstName', 'SecondaryPrimaryEmail', 'Meeting1Addr1', 'Meeting1SUNTimes');
-			$missing_fnv_columns = array_diff($required_fnv_columns, $meetings[0]);
-			if (count($meetings) && is_array($meetings[0]) && empty($missing_fnv_columns))  {
-				//this is FNV data, reformat it automatically
-				$meetings = tsml_import_reformat_fnv($meetings);
-			} elseif (function_exists('tsml_import_reformat')) {
-				//allow theme-defined function to reformat CSV prior to import (for New Hampshire)
-				$meetings = tsml_import_reformat($meetings);
-			}
-			
+			//remove any rows that aren't arrays
+			$meetings = array_filter($meetings, 'is_array');
+
 			//crash if no data
 			if (count($meetings) < 2) {
 				$error = __('Nothing was imported because no data rows were found.', '12-step-meeting-list');
 			} else {
+
+				//allow theme-defined function to reformat CSV prior to import (New Hampshire, Ventura)
+				if (function_exists('tsml_import_reformat')) {
+					$meetings = tsml_import_reformat($meetings);
+				}
+
+				//if it's FNV data, reformat it
+				$meetings = tsml_import_reformat_fnv($meetings);
+
 				//get header
 				$header = array_shift($meetings);
 				$header = array_map('sanitize_title_with_dashes', $header);

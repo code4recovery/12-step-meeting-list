@@ -138,7 +138,7 @@ function tsml_admin_init() {
 				<?php foreach ($meetings as $meeting) {
 					if ($meeting['id'] != $post->ID) $meeting['name'] = '<a href="' . get_edit_post_link($meeting['id']) . '">' . $meeting['name'] . '</a>';
 				?>
-				<li><span><?php echo tsml_format_day_and_time($meeting['day'], $meeting['time'], ' ', true)?></span> <?php echo $meeting['name']?></li>
+				<li><span><?php echo tsml_format_day_and_time(@$meeting['day'], @$meeting['time'], ' ', true)?></span> <?php echo $meeting['name']?></li>
 				<?php }?>
 			</ol>
 		</div>
