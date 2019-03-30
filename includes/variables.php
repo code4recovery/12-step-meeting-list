@@ -152,12 +152,12 @@ $tsml_google_overrides = array(
 		'latitude' => 44.794759,
 		'longitude' => -68.761303,
 	),
-	'67 Rue du Couvent, Gatineau, QC J9H, Canada' => [
+	'67 Rue du Couvent, Gatineau, QC J9H, Canada' => array(
 		'city' => 'Gatineau',
 		'formatted_address' => '67 Rue du Couvent, Gatineau, QC J9H 6A2, Canada',
 		'latitude' => 45.3975067,
 		'longitude' => 45.3975067,
-	],
+	),
 	'Advent Lutheran Church, 2504 Broadway, New York, NY 10025, USA' => array(
 		'formatted_address' => '2504 Broadway, New York, NY 10025, USA',
 		'city' => 'New York',

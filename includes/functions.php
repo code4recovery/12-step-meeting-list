@@ -119,7 +119,7 @@ function tsml_bounds() {
 function tsml_cache_rebuild() {
 	global $tsml_cache;
 
-	$numeric_fields = array('id', 'day', 'latitude', 'longitude', 'location_id', 'group_id', 'region_id');
+	$numeric_fields = array('id', 'day', 'latitude', 'longitude', 'location_id', 'group_id', 'region_id', 'district_id');
 
 	//strip empty, null values from array to save 12% space
 	$meetings = array_map(function($meeting) use ($numeric_fields) {
@@ -413,8 +413,9 @@ function tsml_format_day_and_time($day, $time, $separator=', ', $short=false) {
 
 //function:	appends men or women (or custom flags) if type present
 //used:		archive-meetings.php
-function tsml_format_name($name, $types=array()) {
+function tsml_format_name($name, $types=null) {
 	global $tsml_program, $tsml_programs;
+	if (!is_array($types)) $types = array();
 	if (empty($tsml_programs[$tsml_program]['flags']) || !is_array($tsml_programs[$tsml_program]['flags'])) return $name;
 	$append = array();
 	foreach ($types as $type) {
@@ -663,6 +664,7 @@ function tsml_get_groups() {
 			'group_id' => $post->ID, //so as not to conflict with another id when combined
 			'group' => $post->post_title,
 			'district' => $district,
+			'district_id' => $district_id,
 			'sub_district' => $sub_district,
 			'group_notes' => $post->post_content,
 			'website' => empty($group_meta[$post->ID]['website']) ? null : $group_meta[$post->ID]['website'],
@@ -878,7 +880,7 @@ function tsml_get_meetings($arguments=array(), $from_cache=true) {
 		));
 
 		$meeting_meta = tsml_get_meta('tsml_meeting');
-		$groups = tsml_get_groups();	
+		$groups = tsml_get_groups();
 		$locations = tsml_get_locations();
 		$users = tsml_get_users();
 
@@ -1198,8 +1200,12 @@ function tsml_import_reformat_fnv($rows) {
 	
 	$header = array_shift($rows);
 
-	//dd($header);
-	
+	//check if it's a FNV file
+	$required_fnv_columns = array('ServiceNumber', 'GroupName', 'CountryCode', 'City', 'District', 'Website', 'DateChanged', 'PrimaryFirstName', 'SecondaryPrimaryEmail', 'Meeting1Addr1', 'Meeting1SUNTimes');
+	$missing_fnv_columns = array_diff($required_fnv_columns, $header);
+	//dd($missing_fnv_columns);
+	if (!empty($missing_fnv_columns)) return $rows;
+
 	$short_days = array('SUN', 'MON', 'TUE', 'WED', 'THU', 'FRI', 'SAT');
 	$days = array('Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday');
 	$all_types = array();
@@ -1253,6 +1259,7 @@ function tsml_import_reformat_fnv($rows) {
 							'Name' => $row['GroupName'],
 							'Day' => $days[$index],
 							'Time' => $time,
+							'Location' => $row['Meeting' . $number . 'Location'],
 							'Address' => $row['Meeting' . $number . 'Addr1'],
 							'City' => $row['Meeting' . $number . 'City'],
 							'State' => $row['Meeting' . $number . 'StateCode'],
@@ -1418,10 +1425,11 @@ function tsml_sort_meetings($a, $b) {
 		return $a_day_index - $b_day_index;
 	} else {
 		//days are the same or both null
-		if ($a['time'] != $b['time']) {
-			$a_time = ($a['time'] == '00:00') ? '23:59' : $a['time'];
-			$b_time = ($b['time'] == '00:00') ? '23:59' : $b['time'];
-			return strcmp($a_time, $b_time);
+		$a_time = empty($a['time']) ? '' : (($a['time'] == '00:00') ? '23:59' : $a['time']);
+		$b_time = empty($b['time']) ? '' : (($b['time'] == '00:00') ? '23:59' : $b['time']);
+		$time_diff = strcmp($a_time, $b_time);
+		if ($time_diff) {
+			return $time_diff;
 		} else {
 			if ($a['location'] != $b['location']) {
 				return strcmp($a['location'], $b['location']);
