@@ -1204,7 +1204,10 @@ function tsml_import_reformat_fnv($rows) {
 	$required_fnv_columns = array('ServiceNumber', 'GroupName', 'CountryCode', 'City', 'District', 'Website', 'DateChanged', 'PrimaryFirstName', 'SecondaryPrimaryEmail', 'Meeting1Addr1', 'Meeting1SUNTimes');
 	$missing_fnv_columns = array_diff($required_fnv_columns, $header);
 	//dd($missing_fnv_columns);
-	if (!empty($missing_fnv_columns)) return $rows;
+	if (!empty($missing_fnv_columns)) {
+		array_unshift($rows, $header);
+		return $rows;
+	}
 
 	$short_days = array('SUN', 'MON', 'TUE', 'WED', 'THU', 'FRI', 'SAT');
 	$days = array('Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday');
