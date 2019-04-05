@@ -1,10 +1,9 @@
 === 12 Step Meeting List ===
 Contributors: meetingguide, aasanjose
 Donate link: https://meetingguide.org/contribute
-Tags: 12-step, aa, al-anon, coda, meetings, na, oa, saa, slaa
 Requires at least: 3.2
 Tested up to: 5.1
-Stable tag: 3.4.5
+Stable tag: 3.4.6
 
 This plugin helps twelve step recovery programs list their meetings. It standardizes addresses, and displays results in a searchable list and map.
 
@@ -221,79 +220,6 @@ This plugin was originally designed to maintain a list of AA meetings in Santa C
 1. [Wilmington, DE](http://ndiaa.org/meetings/)
 1. [Woodstock, IL](http://aa-nia-dist11.org/meetings/)
 
-**Adult Children of Alcoholics**
-
-1. [Arizona](http://aca-arizona.org/meetings/?tsml-day=any)
-1. [Southern California](http://www.socalaca.org/meetings/?d=any)
-1. [Texas](http://lonestaraca.org/meetings/)
-
-**Al-Anon**
-
-1. [Dayton, OH](https://www.al-anondaytonoh.org/meetings)
-1. [Lancaster, PA](https://lanclebalanon.org/meetings/?tsml-day=any)
-1. [Naples, FL](http://naplesal-anon.org/meetings)
-1. [Pennsylvania](http://pa-al-anon.org/meetings/)
-1. [South Florida](http://alanonsofla.org/meetings/?tsml-day=any)
-1. [Washington](http://wa-al-anon.org/meetings/)
-
-**Co-Dependents Anonymous**
-
-1. [Canada](http://codacanada.ca/?tsml-day=any&post_type=tsml_meeting)
-1. [Los Angeles, CA](http://www.lacodapreview.lacoda.org/wp/index.php/meetings/?d=any)
-1. [South SF Bay Area, CA](http://www.sbcoda.org/meetings/?d=any&v=list)
-
-**Cocaine Anonymous**
-
-1. [England + Wales](https://cocaineanonymous.org.uk/)
-1. [Illinois](http://illinoisareaca.org/meetings)
-1. [Los Angeles, CA](http://ca4la.org/meetings/)
-
-**Debtors Anonymous**
-
-1. [Southern California](http://socalda.org/meetings/)
-
-**Gamblers Anonymous**
-
-1. [Australia](http://gaaustralia.org.au/meetings/?d=any&v=list)
-1. [Los Angeles, CA](https://www.laintergroup.com/meetings/)
-
-**Heroin Anonymous**
-
-1. [Arizona](https://meetings.haazarea.org/meetings/)
-
-**Narcotics Anonymous**
-
-1. [Chinook, CA](http://chinookna.org/meetings/)
-1. [Lancaster, PA](http://lancasterpana.org/meetings/)
-1. [Maine](http://www.namaine.org/meetings/)
-1. [Martha's Vineyard, MA](http://www.mvana.org/meetings/?tsml-day=any)
-1. [Marysville, CA](https://middlemountainarea.com/meetings/)
-1. [Poland](http://anonimowinarkomani.org/meetings/)
-1. [Roseville, CA](https://sfana.org/meetings/)
-1. [Sacramento, CA](https://sacramentona.org/meetings/)
-1. [Toledo, OH](https://toledonameetings.com/meetings/)
-1. [Vienna, Austria](https://www.navienna.com/meetings/?tsml-day=any)
-1. [Western Oklahoma](https://wascokna.org/meetings/)
-
-**Recovering Couples Anonymous**
-
-1. [Main Website](http://recovering-couples.org/meetings/)
-
-**Refuge Recovery**
-
-1. [Main Website](https://refugerecovery.org/meetings/)
-1. [Oakland, CA](http://refugerecoveryoakland.org/meetings/)
-
-**Sex Addicts Anonymous**
-
-1. [Indiana](http://indiana-saa.org/meetings/)
-
-**Sexaholics Anonymous**
-
-1. [Main Website](http://ws.sexaholics.org/meetings/)
-1. [St. Louis, MO](http://www.sastl.net/meetings/?tsml-day=any)
-1. [Triad, NC](https://www.triadsa.org/meetings/)
-
 [Let us know](mailto:info@meetingguide.org) if you're using this plugin and would like to be listed here.
 
 = Notes =
@@ -352,8 +278,8 @@ Note you can add multiple entries to the array below.
 = How can I make the Region dropdown not be collapsible? =
 No problem, just add this CSS to your theme:
 
-	#tsml #meetings .controls ul.dropdown-menu div.expand { display: none; }
-	#tsml #meetings .controls ul.dropdown-menu ul.children { height: auto; }
+	div#tsml #meetings .controls ul.dropdown-menu div.expand { display: none; }
+	div#tsml #meetings .controls ul.dropdown-menu ul.children { height: auto; }
 
 = How can I show Any Day by default? =
 The easiest way is to link to that view straight from your navigation. Usually that looks like `/meetings/?tsml-day=any`, but it can vary depending on your settings.
@@ -399,7 +325,7 @@ Copy the files from the plugin's templates directory into your theme's root dire
 To see types in the meeting list, one way to do it is to add some CSS to your theme which will make a types column visible.
 
 	@media screen and (min-width: 768px) {
-		#tsml #meetings .types { display: table-cell !important; }
+		div#tsml #meetings .types { display: table-cell !important; }
 	}
 
 One drawback of this approach is that it shows all the meeting types, and you might not want all of them to be displayed over and over in the meeting list.
@@ -485,6 +411,13 @@ To apply these changes, you must go to Settings > Permalinks and click "Save Cha
 1. Edit location
 
 == Changelog ==
+
+= 3.4.6 =
+* Fixing error message in upcoming meetings widget (Inland Empire)
+* Including slug in export CSV (Northern IL)
+* Update cache when deleting meetings (Southern IL)
+* Removing mention of non-AA programs from readme (San Diego)
+* Fixing code formatting in FAQ
 
 = 3.4.5 =
 * Importing fix

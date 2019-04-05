@@ -6,7 +6,6 @@ add_action('wp_ajax_tsml_delete', 'tsml_ajax_delete');
 if (!function_exists('tsml_ajax_delete')) {
 	function tsml_ajax_delete() {
 		tsml_delete('everything');
-		tsml_cache_rebuild();
 		die('deleted');
 	}
 }
@@ -216,6 +215,7 @@ if (!function_exists('tsml_ajax_csv')) {
 			'contact_3_phone' =>	'Contact 3 Phone',
 			'last_contact' => 		'Last Contact',
 			'author' => 			'Author',
+			'slug' => 				'Slug',
 			'updated' =>			'Updated',
 		);
 		

@@ -16,15 +16,17 @@ if (!function_exists('tsml_next_meetings')) {
 		$meetings = array_slice($meetings, 0, $arguments['count']);
 		$rows = '';
 		foreach ($meetings as $meeting) {
-			if (in_array('M', $meeting['types'])) {
-				$meeting['name'] .= '<small>' . __('Men', '12-step-meeting-list') . '</small>';
-			} elseif (in_array('W', $meeting['types'])) {
-				$meeting['name'] .= '<small>' . __('Women', '12-step-meeting-list') . '</small>';
+			if (is_array($meeting['types'])) {
+				if (in_array('M', $meeting['types'])) {
+					$meeting['name'] .= '<small>' . __('Men', '12-step-meeting-list') . '</small>';
+				} elseif (in_array('W', $meeting['types'])) {
+					$meeting['name'] .= '<small>' . __('Women', '12-step-meeting-list') . '</small>';
+				}
 			}
 			$rows .= '<tr>
 				<td class="time">' . tsml_format_time($meeting['time']) . '</td>
-				<td class="name"><a href="' . $meeting['url'] . '">' . $meeting['name'] . '</a></td>
-				<td class="location">' . $meeting['location'] . '</td>
+				<td class="name"><a href="' . $meeting['url'] . '">' . @$meeting['name'] . '</a></td>
+				<td class="location">' . @$meeting['location'] . '</td>
 				<td class="region">' . (@$meeting['sub_region'] ? @$meeting['sub_region'] : @$meeting['region']) . '</td>
 			</tr>';
 		}

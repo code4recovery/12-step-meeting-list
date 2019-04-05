@@ -45,11 +45,14 @@ function tsml_init() {
 }
 
 if (is_admin()) {
-	//delete orphans when trashing posts
+	//delete orphans and rebuild cache when trashing posts
 	add_action('trashed_post', 'tsml_trashed_post');
 	function tsml_trashed_post($post_id) {
 	    if (get_post_type($post_id) !== 'tsml_meeting') return;
 	    tsml_delete_orphans();
+
+		//rebuild cache
+		tsml_cache_rebuild();
 	}
 } else {
 	//add plugin version number to header on public site
