@@ -321,6 +321,9 @@ function tsml_delete($post_ids) {
 	$wpdb->query('DELETE FROM ' . $wpdb->posts . ' WHERE ID IN (' . $post_ids . ')');
 	$wpdb->query('DELETE FROM ' . $wpdb->postmeta . ' WHERE post_id IN (' . $post_ids . ')');
 	$wpdb->query('DELETE FROM ' . $wpdb->term_relationships . ' WHERE object_id IN (' . $post_ids . ')');
+
+	//rebuild cache
+	tsml_cache_rebuild();
 }
 
 //function: efficiently deletes all orphaned locations and groups (have no meetings associated)
