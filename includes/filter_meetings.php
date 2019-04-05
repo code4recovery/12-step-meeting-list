@@ -172,7 +172,7 @@ class tsml_filter_meetings {
 			} elseif ($time == 'evening') {
 				return (strcmp('16:00', $meeting['time']) <= 0 && strcmp('20:59', $meeting['time']) >= 0);
 			} elseif ($time == 'night') {
-				return (strcmp('20:00', $meeting['time']) <= 0 && strcmp('04:59', $meeting['time']) >= 0);
+				return (strcmp('20:00', $meeting['time']) <= 0 || strcmp('04:59', $meeting['time']) >= 0);
 			} elseif ($time == 'upcoming') {
 				return (strcmp($this->now, $meeting['time']) <= 0);
 			}
