@@ -520,10 +520,10 @@ jQuery(function($){
 				$.each(response, function(index, obj){
 	
 					//add gender designation
-					if ($.inArray('M', obj.types) != -1) {
-						obj.name += ' <small>' + tsml.strings.men + '</small>';
-					} else if ($.inArray('W', obj.types) != -1) {
-						obj.name += ' <small>' + tsml.strings.women + '</small>';
+					for (var i = 0; i < tsml.flags.length; i++) {
+						if (obj.types.indexOf(tsml.flags[i]) !== -1) {
+							obj.name += ' <small>' + tsml.types[tsml.flags[i]] + '</small>';
+						}
 					}
 	
 					//save location info

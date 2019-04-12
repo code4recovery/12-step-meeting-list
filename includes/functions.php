@@ -66,6 +66,7 @@ function tsml_assets() {
 			'debug' => WP_DEBUG,
 			'defaults' => $tsml_defaults,
 			'distance_units' => $tsml_distance_units,
+			'flags' => $tsml_programs[$tsml_program]['flags'],
 			'google_maps_key' => $tsml_google_maps_key, //to see if map should have been called
 			'mapbox_key' => $tsml_mapbox_key,
 			'nonce' => wp_create_nonce($tsml_nonce),
@@ -843,14 +844,13 @@ function tsml_get_meeting($meeting_id=false) {
 	
 	//expand and alphabetize types
 	array_map('trim', $meeting->types);
-	$types = array();
+	$meeting->types_expanded = array();
 	foreach ($meeting->types as $type) {
 		if (!empty($tsml_programs[$tsml_program]['types'][$type])) {
-			$types[] = $tsml_programs[$tsml_program]['types'][$type];
+			$meeting->types_expanded[] = $tsml_programs[$tsml_program]['types'][$type];
 		}
 	}
-	sort($types);
-	$meeting->types = $types;
+	sort($meeting->types_expanded);
 	
 	return $meeting;
 }
