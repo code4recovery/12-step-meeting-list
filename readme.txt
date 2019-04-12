@@ -3,7 +3,7 @@ Contributors: meetingguide, aasanjose
 Donate link: https://meetingguide.org/contribute
 Requires at least: 3.2
 Tested up to: 5.1
-Stable tag: 3.4.8
+Stable tag: 3.4.9
 
 This plugin helps twelve step recovery programs list their meetings. It standardizes addresses, and displays results in a searchable list and map.
 
@@ -85,6 +85,7 @@ This plugin was originally designed to maintain a list of AA meetings in Santa C
 1. [Kansas City](https://kc-aa.org/meetings/)
 1. [Kauai, HI](http://kauaimeetings.com/meetings/)
 1. [Kentucky](http://www.area26.net/wp/?post_type=tsml_meeting)
+1. [Krakow, Poland](https://www.aakrakow.pl/meetings/)
 1. [Lafayette, LA](http://aa-acadiana.org/site/meetings/)
 1. [Lakeland, FL](https://www.heartlandintergroup.org/meetings/)
 1. [Lancaster, PA](http://www.lancasteraa.org/meetings/)
@@ -111,6 +112,7 @@ This plugin was originally designed to maintain a list of AA meetings in Santa C
 1. [Minnesota](https://aaminnesota.org/meetings/)
 1. [Mississippi](http://www.aa-mississippi.org/meetings/)
 1. [Modesto, CA](http://wp.cviaa.org/meetings/)
+1. [Monroe, LA](https://ladistrict4.org/?post_type=tsml_meeting)
 1. [Monterey, CA](http://www.aamonterey.org/meetings/)
 1. [Montreal, Canada](http://aa87.org/meetings/)
 1. [Moore County, NC](https://moorecountyaa.org/index.php/meetings/)
@@ -219,6 +221,7 @@ This plugin was originally designed to maintain a list of AA meetings in Santa C
 1. [Wheaton, IL](http://aa-nia-dist40.org/meetings/)
 1. [Wilmington, DE](http://ndiaa.org/meetings/)
 1. [Woodstock, IL](http://aa-nia-dist11.org/meetings/)
+1. [Zurich, Switzerland](https://aazurich.org/meetings/)
 
 [Let us know](mailto:info@meetingguide.org) if you're using this plugin and would like to be listed here.
 
@@ -411,6 +414,9 @@ To apply these changes, you must go to Settings > Permalinks and click "Save Cha
 1. Edit location
 
 == Changelog ==
+
+= 3.4.9 =
+* PHP 5.2 compatibility (Hanover PA)
 
 = 3.4.8 =
 * Geocodes (Bolivia)
