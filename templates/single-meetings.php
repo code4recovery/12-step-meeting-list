@@ -63,9 +63,9 @@ get_header();
 										echo __(' to ', '12-step-meeting-list'), tsml_format_time($meeting->end_time);
 									}
 									echo '</p>';
-									if (count($meeting->types)) {?>
+									if (count($meeting->types_expanded)) {?>
 										<ul class="meeting-types">
-										<?php foreach ($meeting->types as $type) {?>
+										<?php foreach ($meeting->types_expanded as $type) {?>
 											<li><i class="glyphicon glyphicon-ok"></i> <?php _e($type, '12-step-meeting-list')?></li>
 										<?php }?>
 										</ul>

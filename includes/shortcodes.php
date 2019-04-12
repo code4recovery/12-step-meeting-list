@@ -9,6 +9,7 @@ add_shortcode('tsml_region_count', 'tsml_count_regions');
 //function for shortcode: get a table of the next $count meetings
 if (!function_exists('tsml_next_meetings')) {
 	function tsml_next_meetings($arguments) {
+		global $tsml_program, $tsml_programs;
 		$arguments = shortcode_atts(array('count' => 5), $arguments, 'tsml_next_meetings');
 		$meetings = tsml_get_meetings(array('day' => intval(current_time('w')), 'time' => 'upcoming'));
 		if (!count($meetings)) return false;
@@ -17,10 +18,15 @@ if (!function_exists('tsml_next_meetings')) {
 		$rows = '';
 		foreach ($meetings as $meeting) {
 			if (is_array($meeting['types'])) {
-				if (in_array('M', $meeting['types'])) {
-					$meeting['name'] .= '<small>' . __('Men', '12-step-meeting-list') . '</small>';
-				} elseif (in_array('W', $meeting['types'])) {
-					$meeting['name'] .= '<small>' . __('Women', '12-step-meeting-list') . '</small>';
+				$flags = array();
+				foreach ($tsml_programs[$tsml_program]['flags'] as $flag) {
+					if (in_array($flag, $meeting['types'])) {
+						$flags[] = $tsml_programs[$tsml_program]['types'][$flag];
+					}
+				}
+				if (count($flags)) {
+					sort($flags);
+					$meeting['name'] .= '<small>' . implode(', ', $flags) . '</small>';
 				}
 			}
 			$rows .= '<tr>

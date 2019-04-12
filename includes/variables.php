@@ -833,6 +833,7 @@ function tsml_define_strings() {
 		),
 		'oa' => array(
 			'abbr' => __('OA', '12-step-meeting-list'),
+			'flags' => array(),
 			'name' => __('Overeaters Anonymous', '12-step-meeting-list'),
 			'types' => array(
 				'11TH' => __('11th Step', '12-step-meeting-list'),
@@ -869,10 +870,13 @@ function tsml_define_strings() {
 		),
 		'pal' => array(
 			'abbr' => 'PAL',
+			'flags' => array(),
 			'name' => 'Parents of Addicted Loved Ones',
+			'types' => array(),
 		),
 		'rca' => array(
 			'abbr' => __('RCA', '12-step-meeting-list'),
+			'flags' => array(),
 			'name' => __('Recovering Couples Anonymous', '12-step-meeting-list'),
 			'types' => array(
 				'C' => __('Closed', '12-step-meeting-list'),
@@ -948,6 +952,7 @@ function tsml_define_strings() {
 		),
 		'sca' => array(
 			'abbr' => __('SCA', '12-step-meeting-list'),
+			'flags' => array(),
 			'name' => __('Sexual Compulsives Anonymous', '12-step-meeting-list'),
 			'types' => array(
 				'BE' => __('Beginner', '12-step-meeting-list'),
@@ -990,7 +995,9 @@ function tsml_define_strings() {
 			),
 		),
 		'sg' => array(
+			'flags' => array(),
 			'name' => 'Support Groups',
+			'types' => array(),
 		),
 		'va' => array(
 			'abbr' => __('VA', '12-step-meeting-list'),
