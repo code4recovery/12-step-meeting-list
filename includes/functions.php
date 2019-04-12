@@ -115,23 +115,24 @@ function tsml_bounds() {
 	}
 }
 
+//function used by array_map in tsml_cache_rebuild()
+function tsml_cache_clean($meeting) {
+	foreach ($meeting as $key => $value) {
+		if (empty($meeting[$key]) && $meeting[$key] !== '0') {
+			unset($meeting[$key]);
+		} elseif (in_array($key, array('id', 'day', 'latitude', 'longitude', 'location_id', 'group_id', 'region_id', 'district_id'))) {
+			$meeting[$key] -= 0;
+		}
+	}
+	return $meeting;
+}
+
 //try to build a cache of meetings to help with CPU load
 function tsml_cache_rebuild() {
 	global $tsml_cache;
 
-	$numeric_fields = array('id', 'day', 'latitude', 'longitude', 'location_id', 'group_id', 'region_id', 'district_id');
-
 	//strip empty, null values from array to save 12% space
-	$meetings = array_map(function($meeting) use ($numeric_fields) {
-		foreach ($meeting as $key => $value) {
-			if (empty($meeting[$key]) && $meeting[$key] !== '0') {
-				unset($meeting[$key]);
-			} elseif (in_array($key, $numeric_fields)) {
-				$meeting[$key] -= 0;
-			}
-		}
-		return $meeting;
-	}, tsml_get_meetings(array(), false));
+	$meetings = array_map('tsml_cache_clean', tsml_get_meetings(array(), false));
 
 	//save to file
 	file_put_contents(WP_CONTENT_DIR . $tsml_cache, json_encode($meetings));
