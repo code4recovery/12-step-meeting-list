@@ -365,7 +365,7 @@ jQuery(function($){
 		}
 		if (controls.time && (controls.time != tsml.defaults.time)) query_string['tsml-time'] = controls.time;
 		if (controls.type && (controls.type != tsml.defaults.type)) query_string['tsml-type'] = controls.type;
-		if (controls.view != tsml.defaults.view) query_string['tsml-view'] = controls.view;
+		if (controls.view && (controls.view != tsml.defaults.view)) query_string['tsml-view'] = controls.view;
 		query_string = $.param(query_string);
 		
 		//save the query in the query string, if the browser is up to it
@@ -519,14 +519,26 @@ jQuery(function($){
 				//loop through JSON meetings
 				$.each(response, function(index, obj){
 	
-					//add gender designation
-					for (var i = 0; i < tsml.flags.length; i++) {
-						if (obj.types.indexOf(tsml.flags[i]) !== -1) {
-							obj.name += ' <small>' + tsml.types[tsml.flags[i]] + '</small>';
+					//types could be undefined
+					if (!obj.types) obj.types = [];
+
+					//add type 'flags'
+					if (typeof tsml.flags == 'object') {
+						for (var i = 0; i < tsml.flags.length; i++) {
+							if (obj.types.indexOf(tsml.flags[i]) !== -1) {
+								obj.name += ' <small>' + tsml.types[tsml.flags[i]] + '</small>';
+							}
 						}
 					}
-	
-					//save location info
+
+					//decode types (for hidden type column)
+					for (var i = 0; i < obj.types.length; i++) {
+						obj.types[i] = tsml.types[obj.types[i]];
+					}
+					obj.types.sort();
+					obj.types = obj.types.join(', ');
+
+					//save location info for map view
 					if (!locations[obj.location_id]) {
 						locations[obj.location_id] = {
 							name: obj.location,
@@ -546,63 +558,58 @@ jQuery(function($){
 						notes : obj.notes,
 						url : obj.url
 					};
-	
-					var sort_time = obj.day + '-' + (obj.time == '00:00' ? '23:59' : obj.time);
-	
-					//decode types (for hidden type column)
-					if (!obj.types) obj.types = [];
-					for (var i = 0; i < obj.types.length; i++) {
-						obj.types[i] = tsml.types[obj.types[i]];
-					}
-					obj.types.sort();
-					obj.types = obj.types.join(', ');
-					
+							
 					//add new table row
-					var string = '<tr';
-					if (obj.notes && obj.notes.length) string += ' class="notes"'
-					string += '>';
+					var row = '<tr';
+					if (obj.notes && obj.notes.length) row += ' class="notes"'
+					row += '>';
 					for (var i = 0; i < tsml.columns.length; i++) {
 						switch (tsml.columns[i]) {
 							case 'time':
-							string += '<td class="time" data-sort="' + sort_time + '-' + sanitizeTitle(obj.location) + '"><span>' + (typeof controls.day !== 'undefined' ? obj.time_formatted : tsml.days[obj.day] + '</span><span>' + obj.time_formatted) + '</span></td>';
+							var sort_time = (typeof obj.day === 'undefined' ? 7 : obj.day) + '-' + (obj.time == '00:00' ? '23:59' : obj.time);
+							row += '<td class="time" data-sort="' + sort_time + '-' + sanitizeTitle(obj.location) + '"><span>' + (typeof controls.day !== 'undefined' || typeof obj.day === 'undefined' ? obj.time_formatted : tsml.days[obj.day] + '</span><span>' + obj.time_formatted) + '</span></td>';
 							break;
 							
 							case 'distance':
-							string += '<td class="distance" data-sort="' + obj.distance + '">' + obj.distance + ' ' + tsml.distance_units + '</td>';
+							row += '<td class="distance" data-sort="' + obj.distance + '">' + obj.distance + ' ' + tsml.distance_units + '</td>';
 							break;
 							
 							case 'name':
-							string += '<td class="name" data-sort="' + sanitizeTitle(obj.name) + '-' + sort_time + '">' + formatLink(obj.url, obj.name, 'post_type') + '</td>';
+							row += '<td class="name" data-sort="' + sanitizeTitle(obj.name) + '-' + sort_time + '">' + formatLink(obj.url, obj.name, 'post_type') + '</td>';
 							break;
 							
 							case 'location':
-							string += '<td class="location" data-sort="' + sanitizeTitle(obj.location) + '-' + sort_time + '">' + obj.location + '</td>';
+							row += '<td class="location" data-sort="' + sanitizeTitle(obj.location) + '-' + sort_time + '">' + obj.location + '</td>';
 							break;
 							
 							case 'address':
-							string += '<td class="address" data-sort="' + sanitizeTitle(obj.formatted_address) + '-' + sort_time + '">' + formatAddress(obj.formatted_address, tsml.street_only) + '</td>';
+							row += '<td class="address" data-sort="' + sanitizeTitle(obj.formatted_address) + '-' + sort_time + '">' + formatAddress(obj.formatted_address, tsml.street_only) + '</td>';
 							break;
 							
 							case 'region':
-							string += '<td class="region" data-sort="' + sanitizeTitle((obj.sub_region || obj.region || '')) + '-' + sort_time + '">' + (obj.sub_region || obj.region || '') + '</td>';
+							row += '<td class="region" data-sort="' + sanitizeTitle((obj.sub_region || obj.region || '')) + '-' + sort_time + '">' + (obj.sub_region || obj.region || '') + '</td>';
 							break;
 							
 							case 'district':
-							string += '<td class="district" data-sort="' + sanitizeTitle((obj.sub_district || obj.district || '')) + '-' + sort_time + '">' + (obj.sub_district || obj.district || '') + '</td>';
+							row += '<td class="district" data-sort="' + sanitizeTitle((obj.sub_district || obj.district || '')) + '-' + sort_time + '">' + (obj.sub_district || obj.district || '') + '</td>';
 							break;
 							
 							case 'types':
-							string += '<td class="types" data-sort="' + sanitizeTitle(obj.types) + '-' + sort_time + '">' + obj.types + '</td>';
+							row += '<td class="types" data-sort="' + sanitizeTitle(obj.types) + '-' + sort_time + '">' + obj.types + '</td>';
 							break;
 						}
 					}
-					tbody.append(string + '</tr>');
+					tbody.append(row + '</tr>');
 				});
 				
 				sortMeetings();
 				
-				if ((controls.mode == 'search') && controls.query) $('#tsml td').not('.time').mark(controls.query);
+				//highlight search results
+				if (controls.query && controls.mode == 'search') {
+					$('#tsml td').not('.time').mark(controls.query);
+				}
 	
+				//build map
 				if (controls.view == 'map') {
 					createMap(true, locations, searchLocation);
 				}
