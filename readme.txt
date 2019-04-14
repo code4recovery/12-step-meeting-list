@@ -3,7 +3,7 @@ Contributors: meetingguide, aasanjose
 Donate link: https://meetingguide.org/contribute
 Requires at least: 3.2
 Tested up to: 5.1
-Stable tag: 3.4.10
+Stable tag: 3.4.11
 
 This plugin helps twelve step recovery programs list their meetings. It standardizes addresses, and displays results in a searchable list and map.
 
@@ -414,6 +414,9 @@ To apply these changes, you must go to Settings > Permalinks and click "Save Cha
 1. Edit location
 
 == Changelog ==
+
+= 3.4.11 =
+* Fixing meeting types bug introduced in earlier commit
 
 = 3.4.10 =
 * Bugfixes relating to meeting type "flag" customization (Akron)
