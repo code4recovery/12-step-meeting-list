@@ -1,9 +1,9 @@
 === 12 Step Meeting List ===
-Contributors: meetingguide, aasanjose
+Contributors: aasanjose
 Donate link: https://meetingguide.org/contribute
 Requires at least: 3.2
 Tested up to: 5.1
-Stable tag: 3.4.12
+Stable tag: 3.4.13
 
 This plugin helps twelve step recovery programs list their meetings. It standardizes addresses, and displays results in a searchable list and map.
 
@@ -11,7 +11,7 @@ This plugin helps twelve step recovery programs list their meetings. It standard
 
 This plugin helps twelve step recovery programs list their meetings. It standardizes addresses, and displays results in a searchable list and map.
 
-It's also the easiest way to have your area's meetings listed in the [Meeting Guide mobile app](https://meetingguide.org/) for iOS and Android devices.
+It's also the easiest way for AA service entities to get listed in the [Meeting Guide mobile app](https://meetingguide.org/) for iOS and Android devices.
 
 This plugin was originally designed to maintain a list of AA meetings in Santa Clara County, CA. It's now in use in the following areas:
 
@@ -414,6 +414,9 @@ To apply these changes, you must go to Settings > Permalinks and click "Save Cha
 1. Edit location
 
 == Changelog ==
+
+= 3.4.13 =
+* Hiding PHP notices for empty locations (Ft Worth)
 
 = 3.4.12 =
 * Fixing javascript bug when meeting has no types

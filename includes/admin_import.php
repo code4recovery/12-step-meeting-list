@@ -861,13 +861,6 @@ function tmsl_import_page() {
 							</form>
 						</div>
 					</div>
-					<div class="postbox">
-						<div class="inside">
-							<h3><?php _e('About this Plugin', '12-step-meeting-list')?></h3>
-							<p><?php printf(__('This plugin was developed by AA volunteers in <a href="%s" target="_blank">Santa Clara County</a> to help provide accessible, accurate information about meetings to those who need it.', '12-step-meeting-list'), 'https://aasanjose.org/central-office/technology')?></p>
-							<p><?php printf(__('If you would like to help out with development, <a href="%s" target="_blank">visit us on GitHub</a>.', '12-step-meeting-list'), 'https://github.com/meeting-guide/12-step-meeting-list')?></p>
-						</div>
-					</div>
 				</div>
 			</div>
 		</div>
