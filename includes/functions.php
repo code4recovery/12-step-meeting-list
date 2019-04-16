@@ -1438,10 +1438,15 @@ function tsml_sort_meetings($a, $b) {
 		if ($time_diff) {
 			return $time_diff;
 		} else {
-			if ($a['location'] != $b['location']) {
-				return strcmp($a['location'], $b['location']);
+			$a_location = empty($a['location']) ? '' : $a['location'];
+			$b_location = empty($b['location']) ? '' : $b['location'];
+			$location_diff = strcmp($a_location, $b_location);
+			if ($location_diff) {
+				return $location_diff;
 			} else {
-				return strcmp($a['name'], $b['name']);
+				$a_name = empty($a['name']) ? '' : $a['name'];
+				$b_name = empty($b['name']) ? '' : $b['name'];
+				return strcmp($a_name, $b_name);
 			}
 		}
 	}
