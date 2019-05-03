@@ -127,12 +127,17 @@ $tsml_google_overrides = array(
 		'latitude' => 42.441700,
 		'longitude' => -72.800560,
 	),
-	'457 Main St, Melrose, MA 02176, USA' => array(
-		'formatted_address' => '457 Main St, Stoneham, MA 02180, USA',
-		'city' => 'Stoneham',
-		'postal_code' => '02180',
-		'latitude' => 42.476460,
-		'longitude' => -71.100520,
+	'45 Main St, Goshen, MA 01032, USA' => array(
+		'formatted_address' => '45 Main St, Goshen, MA 01032, USA',
+		'city' => 'Goshen',
+		'latitude' => 42.441700,
+		'longitude' => -72.800560,
+	),
+	'4125 Cedar Run Rd, Traverse City, MI 49684, USA' => array(
+		'formatted_address' => '4125 Cedar Run Rd, Traverse City, MI 49684, USA',
+		'city' => 'Traverse City',
+		'latitude' => 44.758770,
+		'longitude' => -85.657300,
 	),
 	'519 Church St, Toronto, ON M4Y 2C9, Canada' => array(
 		'formatted_address' => '519 Church St, Toronto, ON M4Y 2C9, Canada',

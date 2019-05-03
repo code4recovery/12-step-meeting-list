@@ -3,7 +3,7 @@ Contributors: aasanjose
 Donate link: https://meetingguide.org/contribute
 Requires at least: 3.2
 Tested up to: 5.1
-Stable tag: 3.4.13
+Stable tag: 3.4.14
 
 This plugin helps twelve step recovery programs list their meetings. It standardizes addresses, and displays results in a searchable list and map.
 
@@ -54,6 +54,7 @@ This plugin was originally designed to maintain a list of AA meetings in Santa C
 1. [Daytona, FL](http://aadaytona.org/meetings/)
 1. [DuPage County, IL](http://dupage41aa.org/meetings/)
 1. [East Bay, CA](http://eastbayaa.org/meetings)
+1. [East Hawaii](http://easthawaiiaa.org/meetings/)
 1. [East Tennessee](http://www.etiaa.org/meetings/)
 1. [Eastern Washington](http://area92aa.org/meetings/)
 1. [Edinburgh, UK](https://aa-edinburgh.org.uk/meetings/)
@@ -65,6 +66,7 @@ This plugin was originally designed to maintain a list of AA meetings in Santa C
 1. [Fredericksburg, VA](http://www.aadistrict30va.org/wp/meetings/)
 1. [Fresno, CA](http://www.fresnoaa.org/gfaia/wp/meetings/)
 1. [Ft. Worth, TX](http://fortworthaa.org/?post_type=tsml_meeting)
+1. [Gettysburg, PA](http://www.d35pa-aa.org/?post_type=tsml_meeting)
 1. [Gloucester, VA](http://vadist15aa.org/meetings/)
 1. [Greensboro, NC](http://nc23.org/meetings/)
 1. [Greenville, SC](https://ggig.org/meetings/)
@@ -103,6 +105,7 @@ This plugin was originally designed to maintain a list of AA meetings in Santa C
 1. [Mansfield, OH](https://mansfieldaa.org/?post_type=tsml_meeting)
 1. [Martin County, FL](http://martincountyaa.org/meetings/)
 1. [Maui, HI](http://aamaui.org/meetings)
+1. [Medford, OR](http://medfordareaaa.org/meetings/)
 1. [Memphis, TN](http://www.memphis-aa.org/meetings)
 1. [Mercer County, PA](http://www.wpadistrict52aa.org/meetings/)
 1. [Mesa, AZ](http://aamesaaz.org/meetings/)
@@ -138,6 +141,7 @@ This plugin was originally designed to maintain a list of AA meetings in Santa C
 1. [Ogden, UT](https://northernutahaa.org/meetings/)
 1. [Oklahoma](http://aaoklahoma.org/meetings)
 1. [Oklahoma City, OK](http://okcintergroup.org/meetings/)
+1. [Olean, NY](https://nypennintergroup.org/meetings/)
 1. [Orlando, FL](http://cflintergroup.org/meetings/)
 1. [Oshawa, Canada](http://www.aadurham.org/meetings/)
 1. [Palm Beach County, FL](http://aa-palmbeachcounty.org/new/meetings)
@@ -414,6 +418,9 @@ To apply these changes, you must go to Settings > Permalinks and click "Save Cha
 1. Edit location
 
 == Changelog ==
+
+= 3.4.14 =
+* Geocode (Western MA, Traverse City)
 
 = 3.4.13 =
 * Hiding PHP notices for empty locations (Ft Worth)
