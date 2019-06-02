@@ -164,7 +164,7 @@ if (!class_exists('TSMLPDF')) {
 		//sort by region, then sub-region, then day, then time, then meeting name, then location
 		function SortMeetings($a, $b) {
 			if ($a['region'] != $b['region']) return strcmp($a['region'], $b['region']);
-			if ($a['sub_region'] != $b['sub_region']) return strcmp($a['sub_region'], $b['sub_region']);
+			if (@$a['sub_region'] != @$b['sub_region']) return strcmp(@$a['sub_region'], @$b['sub_region']);
 			if ($a['day'] != $b['day']) return strcmp($a['day'], $b['day']);
 			if ($a['time'] != $b['time']) return strcmp($a['time'], $b['time']);
 			if ($a['name'] != $b['name']) return strcmp($a['name'], $b['name']);

@@ -1,7 +1,8 @@
 <?php
 /*	
-don't make changes! it'll make staying updated much harder.
-for updates / questions, please contact wordpress@meetingguide.org
+Don't make changes to this file! You'll have to reapply them every time you update the plugin.
+if you need to customize your site, please follow the instructions on our FAQ:
+👉 https://wordpress.org/plugins/12-step-meeting-list/
 */
 
 //get the current boundaries of the coverage map

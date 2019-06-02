@@ -3,7 +3,7 @@
 Plugin Name: 12 Step Meeting List
 Plugin URI: https://wordpress.org/plugins/12-step-meeting-list/
 Description: Manage a list of recovery meetings
-Version: 3.4.14
+Version: 3.4.15
 Author: AA Web Servant
 Author URI: https://github.com/meeting-guide/12-step-meeting-list
 Text Domain: 12-step-meeting-list
@@ -11,9 +11,9 @@ Text Domain: 12-step-meeting-list
 
 //define constants
 if (!defined('GROUP_CONTACT_COUNT')) define('GROUP_CONTACT_COUNT', 3);
-if (!defined('TSML_CONTACT_EMAIL')) define('TSML_CONTACT_EMAIL', 'info@meetingguide.org');
+if (!defined('TSML_CONTACT_EMAIL')) define('TSML_CONTACT_EMAIL', 'meetingguide@aa.org');
 if (!defined('TSML_PATH')) define('TSML_PATH', plugin_dir_path(__FILE__));
-if (!defined('TSML_VERSION')) define('TSML_VERSION', '3.4.14');
+if (!defined('TSML_VERSION')) define('TSML_VERSION', '3.4.15');
 
 //include these files first
 include(TSML_PATH . '/includes/filter_meetings.php');

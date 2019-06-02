@@ -1,9 +1,8 @@
 === 12 Step Meeting List ===
 Contributors: aasanjose
-Donate link: https://meetingguide.org/contribute
 Requires at least: 3.2
 Tested up to: 5.1
-Stable tag: 3.4.14
+Stable tag: 3.4.15
 
 This plugin helps twelve step recovery programs list their meetings. It standardizes addresses, and displays results in a searchable list and map.
 
@@ -39,6 +38,7 @@ This plugin was originally designed to maintain a list of AA meetings in Santa C
 1. [Charleston, SC](http://tcio.org/meetings)
 1. [Charleston, WV](http://aawvdist1.org/wordpress/?post_type=tsml_meeting)
 1. [Charlotte, NC](http://charlotteaa.org/meetings/)
+1. [Chicago, IL](https://www.chicagoaa.org/meetings/)
 1. [Chico, CA](http://www.aabutte-glenn.org/meetings/)
 1. [Cincinnati, OH](http://aacincinnati.org/meetings/)
 1. [Clarksburg, WV](http://www.wvaadistrict7.org/meetings/)
@@ -135,6 +135,7 @@ This plugin was originally designed to maintain a list of AA meetings in Santa C
 1. [North Dakota](https://aanorthdakota.org/meetings)
 1. [North Idaho](http://northidahoaa.org/meetings/)
 1. [North Port, FL](http://aanorthport.org/meetings/)
+1. [Northeastern New York](https://aahmbny.org/meetings/)
 1. [Northern Indiana](http://www.area22indiana.org/meetings/)
 1. [Northern Nevada](http://nnig.org/meetings/)
 1. [Oahu, HI](http://oahucentraloffice.com/meetings/)
@@ -418,6 +419,9 @@ To apply these changes, you must go to Settings > Permalinks and click "Save Cha
 1. Edit location
 
 == Changelog ==
+
+= 3.4.15 =
+* Fixing PDF error (Ft Worth)
 
 = 3.4.14 =
 * Geocode (Western MA, Traverse City)
