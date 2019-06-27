@@ -1035,7 +1035,29 @@ function tsml_import_buffer_set($meetings, $data_source=null) {
 
 	//trim everything
 	array_walk_recursive($meetings, 'tsml_import_sanitize_field');
-	
+
+	//check for any meetings with arrays of days and creates an individual meeting for each day in array
+	$meetings_to_add = [];
+	$indexes_to_remove = [];
+
+	for ($i = 0; $i < count($meetings); $i++) {
+		if (isset($meetings[$i]['day']) && is_array($meetings[$i]['day'])) {
+			array_push($indexes_to_remove, $i);
+			foreach ($meetings[$i]['day'] as $single_day) {
+				$temp_meeting = $meetings[$i];
+				$temp_meeting['day'] = $single_day;
+				$temp_meeting['slug'] = $meetings[$i]['slug'] . "-" . $single_day;
+				array_push($meetings_to_add, $temp_meeting);
+			}
+		}
+	}
+
+	for ($i = 0; $i < count($indexes_to_remove); $i++) {
+		unset($meetings[$indexes_to_remove[$i]]);
+	}
+
+	$meetings = array_merge($meetings, $meetings_to_add);
+
 	//prepare array for import buffer
 	$count_meetings = count($meetings);
 	for ($i = 0; $i < $count_meetings; $i++) {
