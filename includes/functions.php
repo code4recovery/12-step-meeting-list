@@ -1021,6 +1021,10 @@ function tsml_meeting_types($types) {
 //called from admin_import.php (both CSV and JSON)
 function tsml_import_buffer_set($meetings, $data_source=null) {
 	global $tsml_programs, $tsml_program, $tsml_days;
+
+	if (strpos($data_source, "spreadsheets.google.com") !== false){
+		$meetings = tsml_import_reformat_googlesheet($meetings);
+	}
 	
 	//uppercasing for value matching later
 	$upper_types = array_map('strtoupper', $tsml_programs[$tsml_program]['types']);
@@ -1302,6 +1306,28 @@ function tsml_import_reformat_fnv($rows) {
 		$return[] = array_values($meeting);
 	}
 	return $return;
+}
+
+//function: translates a Meeting Guide format Google Sheet to proper format for import
+//used: tsml_import_buffer_set
+function tsml_import_reformat_googlesheet($data) {
+	$meetings = [];
+
+	for ($i=0; $i < count($data['feed']['entry']); $i++) {
+
+		//creates a meeting array with elements corresponding to each column header of the Google Sheet
+		$meeting = [];
+		$meetingKeys = array_keys($data['feed']['entry'][$i]);
+		for ($j=0; $j < count($meetingKeys); $j++) {
+			if (substr($meetingKeys[$j], 0, 4) == "gsx$") {
+				$meeting[substr($meetingKeys[$j], 4)] = $data['feed']['entry'][$i][$meetingKeys[$j]]['$t'];
+			}
+		}
+
+		array_push($meetings, $meeting);
+	}
+
+	return $meetings;
 }
 
 //function: turn "string" into string
