@@ -582,8 +582,9 @@ function tmsl_import_page() {
 											</form>
 										</td>
 										<td>
-											<a href="<?php echo $feed?>" target="_blank"><?php echo !empty($properties['name']) ? $properties['name'] : __('Unnamed Feed', '12-step-meeting-list')?></a>
-											&bull; <?php echo !empty($properties['type']) ? $properties['type'] : 'JSON'?>
+											<a href="<?php echo $feed?>" target="_blank">
+												<?php echo !empty($properties['name']) ? $properties['name'] : __('Unnamed Feed', '12-step-meeting-list')?>
+											</a>
 										</td>
 										<td class="align-center count_meetings"><?php echo number_format($properties['count_meetings'])?></td>
 										<td class="align-right">
@@ -632,16 +633,18 @@ function tmsl_import_page() {
 
 					<div class="postbox" id="wheres_my_info">
 						<div class="inside">
-							<h3><?php _e('Where\'s My Info?', '12-step-meeting-list')?></h3>
-							<p><?php printf(__('Your public meetings page is <a href="%s">right here</a>. Link that page from your site\'s nav menu to make it visible to the public.', '12-step-meeting-list'), get_post_type_archive_link('tsml_meeting'))?></p>
-							<p><?php printf(__('You can also download your meetings in <a href="%s">CSV format</a>.', '12-step-meeting-list'), admin_url('admin-ajax.php') . '?action=csv')?></p>
-							<p><?php printf(__('A very basic PDF schedule is available in two sizes: <a href="%s">half page</a> and <a href="%s">full page</a>.', '12-step-meeting-list'), admin_url('admin-ajax.php') . '?action=tsml_pdf', admin_url('admin-ajax.php') . '?action=tsml_pdf&width=8.5')?></p>
 							<?php
 							$meetings = tsml_count_meetings();
 							$locations = tsml_count_locations();
 							$regions = tsml_count_regions();
 							$groups = tsml_count_groups();
 							?>
+							<h3><?php _e('Where\'s My Info?', '12-step-meeting-list')?></h3>
+							<p><?php printf(__('Your public meetings page is <a href="%s">right here</a>. Link that page from your site\'s nav menu to make it visible to the public.', '12-step-meeting-list'), get_post_type_archive_link('tsml_meeting'))?></p>
+							<?php if ($meetings) {?>
+							<p><?php printf(__('You can also download your meetings in <a href="%s">CSV format</a>.', '12-step-meeting-list'), admin_url('admin-ajax.php') . '?action=csv')?></p>
+							<p><?php printf(__('A very basic PDF schedule is available in two sizes: <a href="%s">half page</a> and <a href="%s">full page</a>.', '12-step-meeting-list'), admin_url('admin-ajax.php') . '?action=tsml_pdf', admin_url('admin-ajax.php') . '?action=tsml_pdf&width=8.5')?></p>
+							<?php }?>
 							<div id="tsml_counts"<?php if (($meetings + $locations + $groups + $regions) == 0) {?> class="hidden"<?php }?>>
 								<p><?php _e('You have:', '12-step-meeting-list')?></p>
 								<ul class="ul-disc">
@@ -669,7 +672,7 @@ function tmsl_import_page() {
 							<form method="post" action="<?php echo $_SERVER['REQUEST_URI']?>">
 								<details>
 									<summary><strong><?php _e('Program', '12-step-meeting-list')?></strong></summary>
-									<p><?php printf(__('This determines which meeting types are available. If your program isn\'t not listed, <a href="mailto:%s?subject=%s">let us know</a> what types of meetings it has (Open, Closed, Topic Discussion, etc).', '12-step-meeting-list'), TSML_CONTACT_EMAIL, rawurlencode('WordPress New Program Request'))?></p>
+									<p><?php _e('This determines which meeting types are available.', '12-step-meeting-list')?></p>
 								</details>
 								<?php wp_nonce_field($tsml_nonce, 'tsml_nonce', false)?>
 								<select name="tsml_program" onchange="this.form.submit()">

@@ -2,7 +2,7 @@
 Contributors: aasanjose
 Requires at least: 3.2
 Tested up to: 5.1
-Stable tag: 3.4.15
+Stable tag: 3.4.16
 
 This plugin helps twelve step recovery programs list their meetings. It standardizes addresses, and displays results in a searchable list and map.
 
@@ -10,11 +10,9 @@ This plugin helps twelve step recovery programs list their meetings. It standard
 
 This plugin helps twelve step recovery programs list their meetings. It standardizes addresses, and displays results in a searchable list and map.
 
-It's also the easiest way for AA service entities to get listed in the [Meeting Guide mobile app](https://meetingguide.org/) for iOS and Android devices.
+It's also the easiest way for Alcoholics Anonymous service entities to get listed in the [Meeting Guide mobile app](https://meetingguide.org/) for iOS and Android devices.
 
-This plugin was originally designed to maintain a list of AA meetings in Santa Clara County, CA. It's now in use in the following areas:
-
-**Alcoholics Anonymous**
+This plugin was originally designed to maintain a list of A.A. meetings in Santa Clara County, CA. It's now in use on the following A.A. websites:
 
 1. [Albuquerque, NM](https://www.albuquerqueaa.org/meetings/)
 1. [Alexandria, LA](http://www.aa-cenla.org/meetings/?tsml-day=any)
@@ -226,9 +224,10 @@ This plugin was originally designed to maintain a list of AA meetings in Santa C
 1. [Wheaton, IL](http://aa-nia-dist40.org/meetings/)
 1. [Wilmington, DE](http://ndiaa.org/meetings/)
 1. [Woodstock, IL](http://aa-nia-dist11.org/meetings/)
+1. [Yuma, AZ](http://aayuma.com/meetings/)
 1. [Zurich, Switzerland](https://aazurich.org/meetings/)
 
-[Let us know](mailto:info@meetingguide.org) if you're using this plugin and would like to be listed here.
+Additionally, this plugin is in use on several other 12 step program websites as well.
 
 = Notes =
 
@@ -246,7 +245,7 @@ Basically you can just install it and you should be good to go. For a quick walk
 == Frequently Asked Questions ==
 
 = My meeting type isn't listed! =
-If it's a broadly-applicable meeting type, please [contact us](mailto:wordpress@meetingguide.org) so we can include it for you. We want to maintain consistency for the [mobile apps](https://meetingguide.org/), so not all proposals are included.
+If it's a broadly-applicable meeting type, please ask us in the [support forum](https://wordpress.org/support/plugin/12-step-meeting-list/). We must maintain consistency for the [mobile apps](https://meetingguide.org/), so not all proposals are accepted.
 
 If you have access to your theme's functions.php, you may add additional meeting types or rename existing ones. Simply adapt the following example to your purposes:
 
@@ -419,6 +418,9 @@ To apply these changes, you must go to Settings > Permalinks and click "Save Cha
 1. Edit location
 
 == Changelog ==
+
+= 3.4.16 =
+* Further attempts to fix PDF errors (Ft Worth)
 
 = 3.4.15 =
 * Fixing PDF error (Ft Worth)

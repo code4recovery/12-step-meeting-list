@@ -128,12 +128,6 @@ $tsml_google_overrides = array(
 		'latitude' => 42.441700,
 		'longitude' => -72.800560,
 	),
-	'45 Main St, Goshen, MA 01032, USA' => array(
-		'formatted_address' => '45 Main St, Goshen, MA 01032, USA',
-		'city' => 'Goshen',
-		'latitude' => 42.441700,
-		'longitude' => -72.800560,
-	),
 	'4125 Cedar Run Rd, Traverse City, MI 49684, USA' => array(
 		'formatted_address' => '4125 Cedar Run Rd, Traverse City, MI 49684, USA',
 		'city' => 'Traverse City',
@@ -357,8 +351,8 @@ $tsml_google_overrides = array(
 		'longitude' => -73.9509674,
 	),
 	'Sagarnaga 60, La Paz, Bolivia' => array(
-		'formatted_address' => 'La Paz',
-		'city' => 'Fairfield',
+		'formatted_address' => 'Sagarnaga 60, La Paz, Bolivia',
+		'city' => 'La Paz',
 		'latitude' => -16.49674,
 		'longitude' => -68.13742,
 	),
@@ -367,12 +361,6 @@ $tsml_google_overrides = array(
 		'city' => 'Fairfield',
 		'latitude' => 44.597699,
 		'longitude' => -69.599635,
-	),
-	'St. Andrew\'s Church, 20 Cardinal Hayes Pl, New York, NY 10007, USA' => array(
-		'formatted_address' => '519 Church St, Toronto, ON M4Y 2C9, Canada',
-		'city' => 'Toronto',
-		'latitude' => 40.7133468,
-		'longitude' => -74.0025814,
 	),
 	'St. Catherine of Siena\'s Church, 411 E 68th St, New York, NY 10065, USA' => array(
 		'formatted_address' => '411 E 68th St, New York, NY 10065, USA',
