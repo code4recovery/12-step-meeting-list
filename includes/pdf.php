@@ -93,12 +93,12 @@ if (!class_exists('TSMLPDF')) {
 				$types = implode($this->options['types_separator'], $types);
 
 				//format region
-				$region = $meeting['region'];
+				$region = @$meeting['region'];
 				if (!empty($meeting['sub_region'])) $region .= ': ' . $meeting['sub_region'];
 
 				//format location
-				$location = $meeting['location'];
-				if (!empty($meeting['location_notes'])) $meeting['location'] .= ' (' . $meeting['location_notes'] . ')';
+				$location = @$meeting['location'];
+				if (!empty($meeting['location_notes'])) $location .= ' (' . $meeting['location_notes'] . ')';
 
 				//header for the region
 				if ($region != $this->current_region) {
@@ -107,21 +107,21 @@ if (!class_exists('TSMLPDF')) {
 
 				//line one
 				$this->SetFontNormal();
-				if ($meeting['day'] != $last_day) {
-					$this->Cell($day_width, .1, $days[$meeting['day']]);
-					$last_day = $meeting['day'];
+				if (@$meeting['day'] != $last_day) {
+					$this->Cell($day_width, .1, $days[@$meeting['day']]);
+					$last_day = @$meeting['day'];
 				} else {
 					$this->Cell($day_width, .1, '', 0, 0);
 				}
 				$this->SetFont(PDF_FONT_NAME_MAIN, 'B', 7);
-				$this->Cell($time_width, .1, $meeting['time_formatted']);
+				$this->Cell($time_width, .1, @$meeting['time_formatted']);
 				$this->MultiCell($right_width, .1, $meeting_name, 0, 'L');
 				$this->SetFontNormal();
 
 				//line two
 				$this->Cell($day_width, .1, '', 0, 0);
 				$this->Cell($time_width, .1, $types);
-				$this->MultiCell($right_width, .1, $location . ' ' . tsml_format_address($meeting['formatted_address'], true), 0, 'L');
+				$this->MultiCell($right_width, .1, $location . ' ' . tsml_format_address(@$meeting['formatted_address'], true), 0, 'L');
 				$this->Ln(.1);
 
 			}
@@ -163,12 +163,12 @@ if (!class_exists('TSMLPDF')) {
 
 		//sort by region, then sub-region, then day, then time, then meeting name, then location
 		function SortMeetings($a, $b) {
-			if ($a['region'] != $b['region']) return strcmp($a['region'], $b['region']);
+			if (@$a['region'] != @$b['region']) return strcmp(@$a['region'], @$b['region']);
 			if (@$a['sub_region'] != @$b['sub_region']) return strcmp(@$a['sub_region'], @$b['sub_region']);
-			if ($a['day'] != $b['day']) return strcmp($a['day'], $b['day']);
-			if ($a['time'] != $b['time']) return strcmp($a['time'], $b['time']);
-			if ($a['name'] != $b['name']) return strcmp($a['name'], $b['name']);
-			return strcmp($a['location'], $b['location']);
+			if (@$a['day'] != @$b['day']) return strcmp(@$a['day'], @$b['day']);
+			if (@$a['time'] != @$b['time']) return strcmp(@$a['time'], @$b['time']);
+			if (@$a['name'] != @$b['name']) return strcmp(@$a['name'], @$b['name']);
+			return strcmp(@$a['location'], @$b['location']);
 		}
 
 		//replace types with local ones
