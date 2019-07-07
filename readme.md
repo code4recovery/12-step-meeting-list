@@ -5,6 +5,8 @@ This plugin is designed to help 12 step programs (AA, NA, Al-Anon, etc) list the
 
 The best way to install this plugin is via [its home page](https://wordpress.org/plugins/12-step-meeting-list/) in the WordPress Plugin Directory.
 
+Do you have a support issue? Please let us know on the [12 Step Meeting List support forum](https://wordpress.org/support/plugin/12-step-meeting-list/).
+
 ## Helping With Development
 
 Do you want to help develop the plugin? We welcome pull requests! To get started:
