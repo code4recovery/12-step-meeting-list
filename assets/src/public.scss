@@ -23,18 +23,12 @@ $height: 550px; //height of map and min-height of list
 	}
 	
 	.spinning {
-	    -animation: spin .7s infinite linear;
-	    -webkit-animation: spin_webkit .7s infinite linear;
-	}
-
-	@-webkit-keyframes spin_webkit {
-	    from { -webkit-transform: rotate(0deg);}
-	    to { -webkit-transform: rotate(360deg);}
+		animation: spin .7s infinite linear;
 	}
 	
 	@keyframes spin {
-	    from { transform: scale(1) rotate(0deg);}
-	    to { transform: scale(1) rotate(360deg);}
+		from { transform: scale(1) rotate(0deg);}
+		to { transform: scale(1) rotate(360deg);}
 	}
 
 	#map {
@@ -93,7 +87,8 @@ $height: 550px; //height of map and min-height of list
 			h3 {
 				font-size: 20px;
 				font-weight: 600;
-				margin: 0 0 20px 0;
+				margin: 5px 0 15px 0;
+				padding: 0;
 			}
 			h5 {
 				font-size: 14px;
@@ -107,7 +102,7 @@ $height: 550px; //height of map and min-height of list
 			a {
 				color: inherit;
 				&.btn {
-					margin-bottom: 5px;
+					margin-bottom: 0;
 				}
 				small::before {
 					content: " / "
@@ -436,12 +431,14 @@ $height: 550px; //height of map and min-height of list
 						}
 					}
 				}
+				&:hover {
+					background-color: #f5f5f5;
+				}
 			}
 			ul.list-group { 
 				margin: 0; 
 				padding: 0; 
 				.list-group-item {
-					margin: 0; 
 					* {
 						background-color: transparent;
 						line-height: 1.3;

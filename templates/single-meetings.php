@@ -41,7 +41,7 @@ get_header();
 					<div class="col-md-4">
 
 						<div class="panel panel-default">
-							<a class="panel-heading tsml-directions" data-latitude="<?php echo $meeting->latitude?>" data-longitude="<?php echo $meeting->longitude?>" data-location="<?php echo $meeting->location?>">
+							<a class="panel-heading tsml-directions" href="#" data-latitude="<?php echo $meeting->latitude?>" data-longitude="<?php echo $meeting->longitude?>" data-location="<?php echo $meeting->location?>">
 								<h3 class="panel-title">
 									<?php _e('Get Directions', '12-step-meeting-list')?>
 									<span class="panel-title-buttons">
