@@ -67,7 +67,7 @@ if (!class_exists('TSMLPDF')) {
 			usort($meetings, array($this, 'SortMeetings'));
 
 			//get current region
-			$this->current_region = $meetings[0]['region'];
+			$this->current_region = @$meetings[0]['region'];
 
 			//get output started
 			$this->SetCellPadding(0);
@@ -89,8 +89,11 @@ if (!class_exists('TSMLPDF')) {
 				if (!empty($meeting['group'])) $meeting_name .= ' ' . $meeting['group'];
 
 				//format types
-				$types = array_map(array($this, 'FormatTypes'), $meeting['types']);
-				$types = implode($this->options['types_separator'], $types);
+				$types = '';
+				if (!empty($meeting['types']) && is_array($meeting['types'])) {
+					$types = array_map(array($this, 'FormatTypes'), $meeting['types']);
+					$types = implode($this->options['types_separator'], $types);
+				}
 
 				//format region
 				$region = @$meeting['region'];
