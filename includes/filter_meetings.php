@@ -50,7 +50,7 @@ class tsml_filter_meetings {
 
 		if (!empty($arguments['query'])) {
 			$this->searchable_keys = array('name', 'notes', 'location', 'location_notes', 'formatted_address', 'group', 'group_notes');
-			$this->query = array_map('sanitize_text_field', array_filter(array_unique(explode(' ', $arguments['query']))));
+			$this->query = array_map('sanitize_text_field', array_filter(array_unique(explode(' ', stripslashes($arguments['query'])))));
 		}
 
 		if (!empty($arguments['region'])) {

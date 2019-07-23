@@ -421,6 +421,8 @@ To apply these changes, you must go to Settings > Permalinks and click "Save Cha
 
 = 3.4.17 =
 * Importing Google Sheets (via Puget Sound)
+* Fixing search with apostrophes (Houston)
+* Further attempts to fix PDF errors (Ft Worth)
 
 = 3.4.16 =
 * Further attempts to fix PDF errors (Ft Worth)
