@@ -2,7 +2,7 @@
 Contributors: aasanjose
 Requires at least: 3.2
 Tested up to: 5.1
-Stable tag: 3.4.17
+Stable tag: 3.4.18
 
 This plugin helps twelve step recovery programs list their meetings. It standardizes addresses, and displays results in a searchable list and map.
 
@@ -31,6 +31,7 @@ This plugin was originally designed to maintain a list of A.A. meetings in Santa
 1. [Bowling Green, KY](http://bowlinggreenaa.org/meetings/)
 1. [Brainerd, MN](http://aacentrallakes.org/meetings/)
 1. [Breckenridge, CO](http://district17coloradoaa.org/meetings/)
+1. [Buffalo, NY](https://buffaloaany.org/meetings/)
 1. [Burlington, NC](http://www.aanc33.org/meetings/)
 1. [Cancún, Mexico](http://aacancun.org/meetings/)
 1. [Charleston, SC](http://tcio.org/meetings)
@@ -418,6 +419,9 @@ To apply these changes, you must go to Settings > Permalinks and click "Save Cha
 1. Edit location
 
 == Changelog ==
+
+= 3.4.18 =
+* Adding two new programs
 
 = 3.4.17 =
 * Importing Google Sheets (via Puget Sound)
