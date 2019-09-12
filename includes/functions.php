@@ -1041,8 +1041,8 @@ function tsml_import_buffer_set($meetings, $data_source=null) {
 	array_walk_recursive($meetings, 'tsml_import_sanitize_field');
 
 	//check for any meetings with arrays of days and creates an individual meeting for each day in array
-	$meetings_to_add = [];
-	$indexes_to_remove = [];
+	$meetings_to_add = array();
+	$indexes_to_remove = array();
 
 	for ($i = 0; $i < count($meetings); $i++) {
 		if (isset($meetings[$i]['day']) && is_array($meetings[$i]['day'])) {
@@ -1333,12 +1333,12 @@ function tsml_import_reformat_fnv($rows) {
 //function: translates a Meeting Guide format Google Sheet to proper format for import
 //used: tsml_import_buffer_set
 function tsml_import_reformat_googlesheet($data) {
-	$meetings = [];
+	$meetings = array();
 
 	for ($i=0; $i < count($data['feed']['entry']); $i++) {
 
 		//creates a meeting array with elements corresponding to each column header of the Google Sheet
-		$meeting = [];
+		$meeting = array();
 		$meetingKeys = array_keys($data['feed']['entry'][$i]);
 		for ($j=0; $j < count($meetingKeys); $j++) {
 			if (substr($meetingKeys[$j], 0, 4) == "gsx$") {
