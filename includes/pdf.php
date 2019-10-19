@@ -129,7 +129,7 @@ if (!class_exists('TSMLPDF')) {
                 //line two
                 $this->Cell($day_width, .1, '', 0, 0);
                 $this->Cell($time_width, .1, $types);
-                $this->MultiCell($right_width, .1, $location . ' ' . tsml_format_address(@$meeting['formatted_address'], false), 0, 'L');
+                $this->MultiCell($right_width, .1, $location . ', ' . @$meeting['formatted_address'], 0, 'L');
                 $this->Ln(.1);
 
             }
