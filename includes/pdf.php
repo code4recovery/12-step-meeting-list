@@ -88,6 +88,9 @@ if (!class_exists('TSMLPDF')) {
 
                 //format meeting name and group
                 $meeting_name = strtoupper($meeting['name']);
+                if (!empty($meeting['group']) && $meeting['name'] != $meeting['group']) {
+                    $meeting_name .= ' ' . $meeting['group'];
+                }
 
                 //format types
                 $types = '';
