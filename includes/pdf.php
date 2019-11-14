@@ -88,7 +88,7 @@ if (!class_exists('TSMLPDF')) {
 
                 //format meeting name and group
                 $meeting_name = strtoupper($meeting['name']);
-                if (!empty($meeting['group'])) {
+                if (!empty($meeting['group']) && $meeting['name'] != $meeting['group']) {
                     $meeting_name .= ' ' . $meeting['group'];
                 }
 
@@ -132,7 +132,7 @@ if (!class_exists('TSMLPDF')) {
                 //line two
                 $this->Cell($day_width, .1, '', 0, 0);
                 $this->Cell($time_width, .1, $types);
-                $this->MultiCell($right_width, .1, $location . ' ' . tsml_format_address(@$meeting['formatted_address'], true), 0, 'L');
+                $this->MultiCell($right_width, .1, $location . ', ' . @$meeting['formatted_address'], 0, 'L');
                 $this->Ln(.1);
 
             }
