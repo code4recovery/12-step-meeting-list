@@ -7,6 +7,12 @@ The best way to install this plugin is via [its home page](https://wordpress.org
 
 Do you have a support issue? Please let us know on the [12 Step Meeting List support forum](https://wordpress.org/support/plugin/12-step-meeting-list/).
 
+## Developer Issues
+
+The GitHub Issues feature is available for development-specific issues, confirmed bug reports, or feature requests.
+
+If you have a general support request, or want to ask about a possible bug, please visit the [12 Step Meeting List support forum](https://wordpress.org/support/plugin/12-step-meeting-list/).
+
 ## Helping With Development
 
 Do you want to help develop the plugin? We welcome pull requests! To get started:
@@ -25,7 +31,7 @@ cd 12-step-meeting-list
 * Add an upstream feed, so you can pull in changes from the root repository:
 
 ```
-git remote add upstream https://github.com/meeting-guide/12-step-meeting-list.git
+git remote add upstream https://github.com/code4recovery/12-step-meeting-list.git
 ````
 
 * You should update your copy from the upstream repository frequently, especially before starting work on a new feature or issuing a pull request. Here is how:
