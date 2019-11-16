@@ -733,7 +733,7 @@ function tmsl_import_page() {
 							<?php if ($tsml_sharing == 'restricted') {?>
 								<details>
 									<summary><strong><?php _e('Authorized Apps', '12-step-meeting-list')?></strong></summary>
-									<p><?php _e('You may allow access to your meeting data for specific purposes, such as the <a target="_blank" href="https://meetingguide.org/">Meeting Guide App</a>.')?>
+									<p><?php _e('You may allow access to your meeting data for specific purposes, such as the <a target="_blank" href="https://meetingguide.org/">Meeting Guide App</a>.')?></p>
 								</details>
 								<?php if (count($tsml_sharing_keys)) {?>
 									<table class="tsml_sharing_list">
@@ -744,7 +744,7 @@ function tmsl_import_page() {
 											));
 										?>
 										<tr>
-											<td><a href="<?php echo $address?>" target="_blank"><?php echo $name?></td>
+											<td><a href="<?php echo $address?>" target="_blank"><?php echo $name?></a></td>
 											<td>
 												<form method="post" action="<?php echo $_SERVER['REQUEST_URI']?>">
 													<?php wp_nonce_field($tsml_nonce, 'tsml_nonce', false)?>
