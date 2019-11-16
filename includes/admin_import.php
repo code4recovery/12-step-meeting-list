@@ -716,7 +716,7 @@ function tmsl_import_page() {
 							<form method="post" action="<?php echo $_SERVER['REQUEST_URI']?>">
 								<details>
 									<summary><strong><?php _e('Sharing', '12-step-meeting-list')?></strong></summary>
-									<p><?php printf(__('You can share your meeting information with other websites and apps via your <a href="%s" target="_blank">meetings feed</a>.', '12-step-meeting-list'), admin_url('admin-ajax.php?action=meetings'))?></p>
+									<p><?php printf(__('Open means your feeds are available publicly. Restricted means people need a key or to be logged in to get the feed.'))?></p>
 								</details>
 								<?php wp_nonce_field($tsml_nonce, 'tsml_nonce', false)?>
 								<select name="tsml_sharing" onchange="this.form.submit()">
@@ -770,7 +770,7 @@ function tmsl_import_page() {
 									<summary><strong><?php _e('Public Feed', '12-step-meeting-list')?></strong></summary>
 									<p><?php _e('The following feed contains your publicly available meeting information.')?></p>
 								</details>
-								<?php printf(__('<a class="public_feed" href="%s" target="_blank">Public Data Source</a>.', '12-step-meeting-list'), admin_url('admin-ajax.php?action=meetings'))?>
+								<?php printf(__('<a class="public_feed" href="%s" target="_blank">Public Data Source</a>', '12-step-meeting-list'), admin_url('admin-ajax.php?action=meetings'))?>
 							<?php }?>
 
 							<details>
