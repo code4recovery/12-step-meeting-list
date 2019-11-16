@@ -322,7 +322,7 @@ Add this to your theme's functions.php. Feel free to change the order or column 
 = Can I change the default sort order on the meeting list page? =
 By default, the plugin sorts by day, then time, then location name. To set your own sort index, add this to your functions.php:
 
-	$tsml_sort_order = 'region'; //options are name, location, address, time, or region
+	$tsml_sort_by = 'region'; //options are name, location, address, time, or region
 
 = How can I override the meeting list or detail pages? =
 Copy the files from the plugin's templates directory into your theme's root directory. If you're using a theme from the Theme Directory, you may be better off creating a [Child Theme](https://codex.wordpress.org/Child_Themes). Now, you may override those pages. The archive-meetings.php file controls the meeting list page, single-meetings.php controls the meetings detail, and single-locations.php controls the location detail.
