@@ -25,7 +25,7 @@ cd 12-step-meeting-list
 * Add an upstream feed, so you can pull in changes from the root repository:
 
 ```
-git remote add upstream https://github.com/meeting-guide/12-step-meeting-list.git
+git remote add upstream https://github.com/code4recovery/12-step-meeting-list.git
 ````
 
 * You should update your copy from the upstream repository frequently, especially before starting work on a new feature or issuing a pull request. Here is how:

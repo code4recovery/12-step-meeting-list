@@ -395,7 +395,7 @@ Sure. Try adding this code to your theme's functions.php:
 
 	add_action('pre_get_posts', 'tsml_front_page');
 	
-Also check out our [One Page Meeting List](https://github.com/meeting-guide/one-page-meeting-list) theme.
+Also check out our [One Page Meeting List](https://github.com/code4recovery/one-page-meeting-list) theme.
 	
 = Can I use this plugin to list telephone meetings or other meetings without a fixed location? =
 No, there's not a good way to do this at this time. All meetings currently need to have a geographic location.
