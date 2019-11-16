@@ -558,7 +558,7 @@ function tmsl_import_page() {
 						<div class="inside">
 							<h3><?php _e('Data Sources', '12-step-meeting-list')?></h3>
 							<p><?php printf(__('Data sources are JSON feeds that contain a website\'s public meeting data. They can be used to aggregate meetings from different sites into a single master list. 
-								The data source for this website is <a href="%s" target="_blank">right here</a>. More information is available at the <a href="%s" target="_blank">Meeting Guide API Specification</a>.', '12-step-meeting-list'), admin_url('admin-ajax.php') . '?action=meetings', 'https://github.com/meeting-guide/spec')?></p>
+								Data sources listed below will pull meeting information into this website. More information is available at the <a href="%s" target="_blank">Meeting Guide API Specification</a>.', '12-step-meeting-list'), 'https://github.com/code4recovery/spec')?></p>
 							<?php if (!empty($tsml_data_sources)) {?>
 							<table>
 								<thead>
