@@ -716,7 +716,7 @@ function tmsl_import_page() {
 							<form method="post" action="<?php echo $_SERVER['REQUEST_URI']?>">
 								<details>
 									<summary><strong><?php _e('Sharing', '12-step-meeting-list')?></strong></summary>
-									<p><?php printf(__('Open means your feeds are available publicly. Restricted means people need a key or to be logged in to get the feed.'))?></p>
+									<p><?php printf(__('Open means your feeds are available publicly. Restricted means people need a key or to be logged in to get the feed.', '12-step-meeting-list'))?></p>
 								</details>
 								<?php wp_nonce_field($tsml_nonce, 'tsml_nonce', false)?>
 								<select name="tsml_sharing" onchange="this.form.submit()">
@@ -733,7 +733,7 @@ function tmsl_import_page() {
 							<?php if ($tsml_sharing == 'restricted') {?>
 								<details>
 									<summary><strong><?php _e('Authorized Apps', '12-step-meeting-list')?></strong></summary>
-									<p><?php _e('You may allow access to your meeting data for specific purposes, such as the <a target="_blank" href="https://meetingguide.org/">Meeting Guide App</a>.')?></p>
+									<p><?php _e('You may allow access to your meeting data for specific purposes, such as the <a target="_blank" href="https://meetingguide.org/">Meeting Guide App</a>.', '12-step-meeting-list')?></p>
 								</details>
 								<?php if (count($tsml_sharing_keys)) {?>
 									<table class="tsml_sharing_list">
@@ -759,7 +759,7 @@ function tmsl_import_page() {
 								<form class="columns" method="post" action="<?php echo $_SERVER['REQUEST_URI']?>">
 									<?php wp_nonce_field($tsml_nonce, 'tsml_nonce', false)?>
 									<div class="input">
-										<input type="text" name="tsml_add_sharing_key" placeholder="<?php _e('Meeting Guide')?>">
+										<input type="text" name="tsml_add_sharing_key" placeholder="<?php _e('Meeting Guide', '12-step-meeting-list')?>">
 									</div>
 									<div class="btn">
 										<input type="submit" class="button" value="<?php _e('Add', '12-step-meeting-list')?>">
