@@ -469,7 +469,7 @@ function tsml_format_utf8(&$item, $key) {
 }
 
 //function: display meeting list on home page (must be set to a static page)
-//used:		by themes that want it, such as https://github.com/meeting-guide/one-page-meeting-list
+//used:		by themes that want it, such as https://github.com/code4recovery/one-page-meeting-list
 function tsml_front_page($wp_query){
 	if (is_admin()) return; //don't do this to inside pages
 	if ($wp_query->get('page_id') == get_option('page_on_front')) {
