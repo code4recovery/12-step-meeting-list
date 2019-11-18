@@ -768,7 +768,7 @@ function tmsl_import_page() {
 							<?php } else {?>
 								<details>
 									<summary><strong><?php _e('Public Feed', '12-step-meeting-list')?></strong></summary>
-									<p><?php _e('The following feed contains your publicly available meeting information.')?></p>
+									<p><?php _e('The following feed contains your publicly available meeting information.', '12-step-meeting-list')?></p>
 								</details>
 								<?php printf(__('<a class="public_feed" href="%s" target="_blank">Public Data Source</a>', '12-step-meeting-list'), admin_url('admin-ajax.php?action=meetings'))?>
 							<?php }?>
