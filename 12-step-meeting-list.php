@@ -5,7 +5,7 @@ Plugin URI: https://wordpress.org/plugins/12-step-meeting-list/
 Description: Manage a list of recovery meetings
 Version: 3.4.20
 Author: AA Web Servant
-Author URI: https://github.com/meeting-guide/12-step-meeting-list
+Author URI: https://github.com/code4recovery/12-step-meeting-list
 Text Domain: 12-step-meeting-list
  */
 

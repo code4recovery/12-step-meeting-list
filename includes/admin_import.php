@@ -558,7 +558,7 @@ function tmsl_import_page() {
 						<div class="inside">
 							<h3><?php _e('Data Sources', '12-step-meeting-list')?></h3>
 							<p><?php printf(__('Data sources are JSON feeds that contain a website\'s public meeting data. They can be used to aggregate meetings from different sites into a single master list. 
-								The data source for this website is <a href="%s" target="_blank">right here</a>. More information is available at the <a href="%s" target="_blank">Meeting Guide API Specification</a>.', '12-step-meeting-list'), admin_url('admin-ajax.php') . '?action=meetings', 'https://github.com/meeting-guide/spec')?></p>
+								Data sources listed below will pull meeting information into this website. More information is available at the <a href="%s" target="_blank">Meeting Guide API Specification</a>.', '12-step-meeting-list'), 'https://github.com/code4recovery/spec')?></p>
 							<?php if (!empty($tsml_data_sources)) {?>
 							<table>
 								<thead>
@@ -716,7 +716,7 @@ function tmsl_import_page() {
 							<form method="post" action="<?php echo $_SERVER['REQUEST_URI']?>">
 								<details>
 									<summary><strong><?php _e('Sharing', '12-step-meeting-list')?></strong></summary>
-									<p><?php printf(__('You can share your meeting information with other websites and apps via your <a href="%s" target="_blank">meetings feed</a>.', '12-step-meeting-list'), admin_url('admin-ajax.php?action=meetings'))?></p>
+									<p><?php printf(__('Open means your feeds are available publicly. Restricted means people need a key or to be logged in to get the feed.', '12-step-meeting-list'))?></p>
 								</details>
 								<?php wp_nonce_field($tsml_nonce, 'tsml_nonce', false)?>
 								<select name="tsml_sharing" onchange="this.form.submit()">
@@ -733,7 +733,7 @@ function tmsl_import_page() {
 							<?php if ($tsml_sharing == 'restricted') {?>
 								<details>
 									<summary><strong><?php _e('Authorized Apps', '12-step-meeting-list')?></strong></summary>
-									<p><?php _e('You may allow access to your meeting data for specific purposes, such as the <a target="_blank" href="https://meetingguide.org/">Meeting Guide App</a>.')?>
+									<p><?php _e('You may allow access to your meeting data for specific purposes, such as the <a target="_blank" href="https://meetingguide.org/">Meeting Guide App</a>.', '12-step-meeting-list')?></p>
 								</details>
 								<?php if (count($tsml_sharing_keys)) {?>
 									<table class="tsml_sharing_list">
@@ -744,7 +744,7 @@ function tmsl_import_page() {
 											));
 										?>
 										<tr>
-											<td><a href="<?php echo $address?>" target="_blank"><?php echo $name?></td>
+											<td><a href="<?php echo $address?>" target="_blank"><?php echo $name?></a></td>
 											<td>
 												<form method="post" action="<?php echo $_SERVER['REQUEST_URI']?>">
 													<?php wp_nonce_field($tsml_nonce, 'tsml_nonce', false)?>
@@ -759,12 +759,18 @@ function tmsl_import_page() {
 								<form class="columns" method="post" action="<?php echo $_SERVER['REQUEST_URI']?>">
 									<?php wp_nonce_field($tsml_nonce, 'tsml_nonce', false)?>
 									<div class="input">
-										<input type="text" name="tsml_add_sharing_key" placeholder="<?php _e('Meeting Guide')?>">
+										<input type="text" name="tsml_add_sharing_key" placeholder="<?php _e('Meeting Guide', '12-step-meeting-list')?>">
 									</div>
 									<div class="btn">
 										<input type="submit" class="button" value="<?php _e('Add', '12-step-meeting-list')?>">
 									</div>
 								</form>
+							<?php } else {?>
+								<details>
+									<summary><strong><?php _e('Public Feed', '12-step-meeting-list')?></strong></summary>
+									<p><?php _e('The following feed contains your publicly available meeting information.', '12-step-meeting-list')?></p>
+								</details>
+								<?php printf(__('<a class="public_feed" href="%s" target="_blank">Public Data Source</a>', '12-step-meeting-list'), admin_url('admin-ajax.php?action=meetings'))?>
 							<?php }?>
 
 							<details>
