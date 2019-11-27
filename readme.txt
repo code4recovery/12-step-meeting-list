@@ -2,7 +2,7 @@
 Contributors: aasanjose
 Requires at least: 3.2
 Tested up to: 5.3
-Stable tag: 3.4.21
+Stable tag: 3.4.22
 
 This plugin helps twelve step recovery programs list their meetings. It standardizes addresses, and displays results in a searchable list and map.
 
@@ -419,6 +419,9 @@ To apply these changes, you must go to Settings > Permalinks and click "Save Cha
 1. Edit location
 
 == Changelog ==
+
+= 3.4.22 =
+* Fixing bug in geocode caching (Ogden)
 
 = 3.4.21 =
 * Updating how PDF displays groups (hmbrecords)

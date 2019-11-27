@@ -494,6 +494,13 @@ function tsml_geocode($address) {
 
 	//check cache
 	$addresses	= get_option('tsml_addresses', array());
+
+	//filter out any empty addresses that got added due to a bug
+	$addresses = array_filter($addresses, function($address) {
+		return !empty($address['formatted_address']);
+	});	
+
+	//if key exists, return it
 	if (array_key_exists($address, $addresses)) {
 		$addresses[$address]['status'] = 'cache';
 		return $addresses[$address];
@@ -524,11 +531,12 @@ function tsml_geocode($address) {
 
 	//send request to google
 	curl_setopt($tsml_curl_handle, CURLOPT_URL, 'https://maps.googleapis.com/maps/api/geocode/json?' . http_build_query($options));
+	curl_setopt($tsml_curl_handle, CURLOPT_RETURNTRANSFER, true);
 
 	$result = curl_exec($tsml_curl_handle);
 	
 	//could not connect error
-	if (empty($result)) {
+	if ($result === false) {
 		return array(
 			'status' => 'error', 
 			'reason' => 'Google could not validate the address <code>' . $address . '</code>. Response was <code>' . curl_error($tsml_curl_handle) . '</code>',
@@ -538,27 +546,43 @@ function tsml_geocode($address) {
 	//decode result
 	$data = json_decode($result);
 
-	if ($data->status == 'OK') {
-		//ok great
-	} elseif ($data->status == 'OVER_QUERY_LIMIT') {
-		//if over query limit, wait two seconds and retry, or then exit
-		//this isn't structured well. what if there are zero_results on the second attempt?
+	//if over query limit, wait two seconds and retry, or then exit
+	if ($data->status === 'OVER_QUERY_LIMIT') {
 		sleep(2);
-		$data = json_decode(curl_exec($ch));
-		if ($data->status == 'OVER_QUERY_LIMIT') {
+		$result = curl_exec($tsml_curl_handle);
+
+		//could not connect error
+		if ($result === false) {
+			return array(
+				'status' => 'error', 
+				'reason' => 'Google could not validate the address <code>' . $address . '</code>. Response was <code>' . curl_error($tsml_curl_handle) . '</code>',
+			);
+		}
+		
+		//decode result
+		$data = json_decode($result);
+
+		//if we're still over the limit, stop
+		if ($data->status === 'OVER_QUERY_LIMIT') {
 			return array(
 				'status' => 'error', 
 				'reason' => 'We are over the rate limit for the Google Geocoding API.'
 			);
 		}
-	} elseif ($data->status == 'ZERO_RESULTS') {
+	} 
+
+	//if there are no results report it
+	if ($data->status === 'ZERO_RESULTS') {
 		if (empty($result)) {
 			return array(
 				'status' => 'error', 
 				'reason' => 'Google could not validate the address <code>' . $address . '</code>',
 			);
 		}
-	} else {
+	} 
+	
+	//if result is otherwise bad, stop
+	if (($data->status !== 'OK') || empty($data->results[0]->formatted_address)) {
 		return array(
 			'status' => 'error', 
 			'reason' => 'Google gave an unexpected response for address <code>' . $address . '</code>. Response was <pre>' . var_export($data, true) . '</pre>',
