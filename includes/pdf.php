@@ -25,10 +25,11 @@ if (!class_exists('TSMLPDF')) {
         protected $current_region;
 
         protected $last_region;
+        
+        protected $thisIsA4x7Booklet;
 
         public function __construct($options = array())
         {
-
             //mix options with defaults
             $this->options = array_merge(array(
                 'author' => get_bloginfo('name'),
@@ -48,6 +49,8 @@ if (!class_exists('TSMLPDF')) {
                 'width' => 8.5,
             ), $options);
 
+            $thisIsA4x7Booklet = $this->options['width'] == 4 && $this->options['height'] == 7;
+            
             $this->content_width = $this->options['width'] - ($this->options['margin'] * 2);
 
             //call TCPDF
@@ -124,7 +127,7 @@ if (!class_exists('TSMLPDF')) {
                 } else {
                     $this->Cell($day_width, .1, '', 0, 0);
                 }
-                $this->SetFont(PDF_FONT_NAME_MAIN, 'B', 7);
+                $this->SetFont(PDF_FONT_NAME_MAIN, 'B', $thisIsA4x7Booklet ? 5 : 7);
                 $this->Cell($time_width, .1, @$meeting['time_formatted']);
                 $this->MultiCell($right_width, .1, $meeting_name, 0, 'L');
                 $this->SetFontNormal();
@@ -168,12 +171,14 @@ if (!class_exists('TSMLPDF')) {
 
         public function SetFontHeading()
         {
-            $this->SetFont(PDF_FONT_NAME_MAIN, 'B', 8);
+            $thisIsA4x7Booklet = $this->options['width'] == 4 && $this->options['height'] == 7;
+            $this->SetFont(PDF_FONT_NAME_MAIN, 'B', $thisIsA4x7Booklet ? 6 : 8);
         }
 
         public function SetFontNormal()
         {
-            $this->SetFont(PDF_FONT_NAME_MAIN, '', 7);
+            $thisIsA4x7Booklet = $this->options['width'] == 4 && $this->options['height'] == 7;
+            $this->SetFont(PDF_FONT_NAME_MAIN, '', $thisIsA4x7Booklet ? 5 : 7);
         }
 
         //sort by region, then sub-region, then day, then time, then meeting name, then location
