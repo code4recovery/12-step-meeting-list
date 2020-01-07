@@ -80,8 +80,8 @@ if (!function_exists('tsml_ajax_pdf')) {
 		//create new PDF document
 		$pdf = new TSMLPDF(array(
 			'margin' => !empty($_GET['margin']) ? floatval($_GET['margin']) : .25, 
-			'width' => !empty($_GET['width']) ? floatval($_GET['width']) : 4.25,
-			'height' => !empty($_GET['height']) ? floatval($_GET['height']) : 11,
+			'width' => !empty($_GET['width']) ? floatval($_GET['width']) : 4,
+			'height' => !empty($_GET['height']) ? floatval($_GET['height']) : 7,
 		));
 
 		//send to browser
