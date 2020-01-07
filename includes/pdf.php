@@ -34,7 +34,7 @@ if (!class_exists('TSMLPDF')) {
                 'author' => get_bloginfo('name'),
                 'continued' => ' (contd.)',
                 'creator' => get_home_url(),
-                'height' => 7,
+                'height' => 11,
                 'keywords' => 'Meetings',
                 'margin' => 1,
                 'orientation' => 'p',
@@ -45,7 +45,7 @@ if (!class_exists('TSMLPDF')) {
                 ),
                 'types_separator' => ' ',
                 'units' => 'in',
-                'width' => 4,
+                'width' => 8.5,
             ), $options);
 
             $this->content_width = $this->options['width'] - ($this->options['margin'] * 2);
