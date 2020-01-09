@@ -26,14 +26,25 @@ if (!class_exists('TSMLPDF')) {
 
         protected $last_region;
 
+        protected $font_sizes = array(
+            'small' => array(
+                'heading' => 6,
+                'body' => 5,
+            ),
+            'normal' => array(
+                'heading' => 8,
+                'body' => 7,
+            ),
+        );
+        
         public function __construct($options = array())
         {
-
             //mix options with defaults
             $this->options = array_merge(array(
                 'author' => get_bloginfo('name'),
                 'continued' => ' (contd.)',
                 'creator' => get_home_url(),
+                'font_size' => 'normal',
                 'height' => 11,
                 'keywords' => 'Meetings',
                 'margin' => 1,
@@ -48,6 +59,13 @@ if (!class_exists('TSMLPDF')) {
                 'width' => 8.5,
             ), $options);
 
+            //todo create form with independent page + font sizes
+            if ($this->options['width'] == 4 && $this->options['height'] == 7) {
+                $this->options = array_merge($this->options, array(
+                    'font_size' => 'small'
+                ));
+            }
+            
             $this->content_width = $this->options['width'] - ($this->options['margin'] * 2);
 
             //call TCPDF
@@ -117,17 +135,17 @@ if (!class_exists('TSMLPDF')) {
                 }
 
                 //line one
-                $this->SetFontNormal();
+                $this->SetFontRegular();
                 if (@$meeting['day'] != $last_day) {
                     $this->Cell($day_width, .1, $days[@$meeting['day']]);
                     $last_day = @$meeting['day'];
                 } else {
                     $this->Cell($day_width, .1, '', 0, 0);
                 }
-                $this->SetFont(PDF_FONT_NAME_MAIN, 'B', 7);
+                $this->SetFontBold();
                 $this->Cell($time_width, .1, @$meeting['time_formatted']);
                 $this->MultiCell($right_width, .1, $meeting_name, 0, 'L');
-                $this->SetFontNormal();
+                $this->SetFontRegular();
 
                 //line two
                 $this->Cell($day_width, .1, '', 0, 0);
@@ -154,7 +172,7 @@ if (!class_exists('TSMLPDF')) {
             $this->SetFontHeading();
             $this->Cell($this->content_width, .1, $this->current_region . $contd, 'B');
             $this->Ln(.2);
-            $this->SetFontNormal();
+            $this->SetFontRegular();
 
             $this->last_region = $this->current_region;
         }
@@ -162,18 +180,23 @@ if (!class_exists('TSMLPDF')) {
         public function Footer()
         {
             $this->SetXY($this->options['margin'], 0 - $this->options['margin']);
-            $this->SetFontNormal();
+            $this->SetFontRegular();
             $this->Cell($this->content_width, 0, $this->PageNo(), 0, 0, 'C');
+        }
+
+        public function SetFontBold()
+        {
+            $this->SetFont(PDF_FONT_NAME_MAIN, 'B', $this->font_sizes[$this->options['font_size']]['body']);
         }
 
         public function SetFontHeading()
         {
-            $this->SetFont(PDF_FONT_NAME_MAIN, 'B', 8);
+            $this->SetFont(PDF_FONT_NAME_MAIN, 'B', $this->font_sizes[$this->options['font_size']]['heading']);
         }
 
-        public function SetFontNormal()
+        public function SetFontRegular()
         {
-            $this->SetFont(PDF_FONT_NAME_MAIN, '', 7);
+            $this->SetFont(PDF_FONT_NAME_MAIN, '', $this->font_sizes[$this->options['font_size']]['body']);
         }
 
         //sort by region, then sub-region, then day, then time, then meeting name, then location
