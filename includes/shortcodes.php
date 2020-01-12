@@ -13,6 +13,12 @@ if (!function_exists('tsml_next_meetings')) {
         global $tsml_program, $tsml_programs;
         $arguments = shortcode_atts(array('count' => 5), $arguments, 'tsml_next_meetings');
         $meetings = tsml_get_meetings(array('day' => intval(current_time('w')), 'time' => 'upcoming'));
+        $next_day = date('w', strtotime('+1 day', current_time('timestamp')));
+        if (count($meetings) < $arguments['count']) {
+            $added_meetings = tsml_get_meetings(array('day' => $next_day));
+            $added_meetings = array_slice($added_meetings, 0, $arguments['count']);
+            $meetings = array_merge($meetings, $added_meetings);
+        }
         if (!count($meetings)) {
             return false;
         }
@@ -20,6 +26,7 @@ if (!function_exists('tsml_next_meetings')) {
         //usort($meetings, 'tsml_next_meetings_sort');
         $meetings = array_slice($meetings, 0, $arguments['count']);
         $rows = '';
+        $ret = '';
         foreach ($meetings as $meeting) {
             if (is_array($meeting['types'])) {
                 $flags = array();
@@ -36,21 +43,26 @@ if (!function_exists('tsml_next_meetings')) {
             $rows .= '<tr>
 				<td class="time">' . tsml_format_time($meeting['time']) . '</td>
 				<td class="name"><a href="' . $meeting['url'] . '">' . @$meeting['name'] . '</a></td>
-				<td class="location">' . @$meeting['location'] . '</td>
-				<td class="region">' . (@$meeting['sub_region'] ? @$meeting['sub_region'] : @$meeting['region']) . '</td>
-			</tr>';
+				<td class="location">' . @$meeting['location'] . '</td>';
+            if (isset($meeting['region']) && $meeting['region'] != null) {
+                $rows .= '<td class="region">' . (@$meeting['sub_region'] ? @$meeting['sub_region'] : @$meeting['region']) . '</td>';
+            }
+            $rows .= '</tr>';
         }
-        return '<table class="tsml_next_meetings table table-striped">
+        $ret .= '<table class="tsml_next_meetings table table-striped">
 			<thead>
 				<tr>
 					<th class="time">' . __('Time', '12-step-meeting-list') . '</th>
 					<th class="name">' . __('Meeting', '12-step-meeting-list') . '</th>
-					<th class="location">' . __('Location', '12-step-meeting-list') . '</th>
-					<th class="region">' . __('Region', '12-step-meeting-list') . '</th>
-				</tr>
+					<th class="location">' . __('Location', '12-step-meeting-list') . '</th>';
+        if (isset($meeting['region']) && $meeting['region'] != null) {
+            $ret .= '<th class="region">' . __('Region', '12-step-meeting-list') . '</th>';
+        }
+        $ret .= '</tr>
 			</thead>
 			<tbody>' . $rows . '</tbody>
 		</table>';
+        return $ret;
     }
 }
 add_shortcode('tsml_next_meetings', 'tsml_next_meetings');
