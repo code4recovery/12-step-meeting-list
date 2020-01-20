@@ -58,18 +58,14 @@ function tsml_init()
 }
 
 if (is_admin()) {
-    //delete orphans and rebuild cache when trashing posts
-    add_action('trashed_post', 'tsml_trashed_post');
-    function tsml_trashed_post($post_id)
+    //rebuild cache when trashing or untrashing posts
+    add_action('trashed_post', 'tsml_trash_change');
+    add_action('untrashed_post', 'tsml_trash_change');
+    function tsml_trash_change($post_id)
     {
-        if (get_post_type($post_id) !== 'tsml_meeting') {
-            return;
+        if (get_post_type($post_id) === 'tsml_meeting') {
+            tsml_cache_rebuild();
         }
-
-        tsml_delete_orphans();
-
-        //rebuild cache
-        tsml_cache_rebuild();
     }
 } else {
     //add plugin version number to header on public site
