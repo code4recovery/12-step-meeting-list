@@ -17,7 +17,7 @@ if (!function_exists('tsml_next_meetings')) {
             return false;
         }
         if (!count($meetings) && !empty($arguments['message'])) {
-            return '<div class="message">' . $arguments['message'] . '</div>';
+            return '<div class="tsml-no-upcoming-meetings">' . $arguments['message'] . '</div>';
         }
 
         //usort($meetings, 'tsml_next_meetings_sort');

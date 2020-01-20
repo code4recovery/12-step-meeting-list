@@ -66,6 +66,14 @@ class TSML_Widget_Upcoming extends WP_Widget
 					font-size: 15px;
 					font-weight: 700;
 				}
+				.tsml-widget-upcoming .tsml-no-upcoming-meetings {
+					background-color: #f4f4f4;
+					border: 1px solid #eee;
+					border-radius: .25rem;
+					color: #818182;
+					margin: 0 0 1rem;
+					padding: .75rem 1.25rem;
+				}
 				.widgets-meetings-top .tsml-widget-upcoming {
 					margin: 0 0 15px;
 				}
@@ -110,10 +118,10 @@ class TSML_Widget_Upcoming extends WP_Widget
 				<?php }?>
 			</select>
 		</p>
-        <p>
-            <label for="<?php echo esc_attr($this->get_field_id('message')) ?>"><?php _e('Message: (Displayed if no upcoming meetings, Optional)', '12-step-meeting-list')?></label>
-            <input class="widefat" id="<?php echo esc_attr($this->get_field_id('message')) ?>" name="<?php echo esc_attr($this->get_field_name('message')) ?>" type="text" value="<?php echo esc_attr($message) ?>">
-        </p>
+		<p>
+			<label for="<?php echo esc_attr($this->get_field_id('message')) ?>"><?php _e('Message:<span class="description">(displayed if no upcoming meetings, optional)</span>', '12-step-meeting-list')?></label>
+			<input class="widefat" id="<?php echo esc_attr($this->get_field_id('message')) ?>" name="<?php echo esc_attr($this->get_field_name('message')) ?>" type="text" value="<?php echo esc_attr($message) ?>">
+		</p>
 		<p>
 			<input id="<?php echo esc_attr($this->get_field_id('css')) ?>" name="<?php echo esc_attr($this->get_field_name('css')) ?>" type="checkbox" <?php checked(!empty($instance['css']))?>>
 			<label for="<?php echo esc_attr($this->get_field_id('css')) ?>"><?php _e('Style with CSS?', '12-step-meeting-list')?></label>
