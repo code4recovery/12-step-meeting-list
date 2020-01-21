@@ -1,8 +1,8 @@
 === 12 Step Meeting List ===
 Contributors: aasanjose
 Requires at least: 3.2
-Tested up to: 5.3
-Stable tag: 3.4.22
+Tested up to: 5.3.2
+Stable tag: 3.4.23
 
 This plugin helps twelve step recovery programs list their meetings. It standardizes addresses, and displays results in a searchable list and map.
 
@@ -203,6 +203,9 @@ To apply these changes, you must go to Settings > Permalinks and click "Save Cha
 1. Edit location
 
 == Changelog ==
+
+= 3.4.23 =
+* Added option for upcoming meetings widget to display message if no further meetings exist for today.
 
 = 3.4.22 =
 * Fixing bug in geocode caching (Ogden)

@@ -11,10 +11,13 @@ if (!function_exists('tsml_next_meetings')) {
     function tsml_next_meetings($arguments)
     {
         global $tsml_program, $tsml_programs;
-        $arguments = shortcode_atts(array('count' => 5), $arguments, 'tsml_next_meetings');
+        $arguments = shortcode_atts(array('count' => 5, 'message' => ''), $arguments, 'tsml_next_meetings');
         $meetings = tsml_get_meetings(array('day' => intval(current_time('w')), 'time' => 'upcoming'));
-        if (!count($meetings)) {
+        if (!count($meetings) && empty($arguments['message'])) {
             return false;
+        }
+        if (!count($meetings) && !empty($arguments['message'])) {
+            return '<div class="tsml-no-upcoming-meetings">' . $arguments['message'] . '</div>';
         }
 
         //usort($meetings, 'tsml_next_meetings_sort');

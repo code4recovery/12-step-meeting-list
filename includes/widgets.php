@@ -66,6 +66,14 @@ class TSML_Widget_Upcoming extends WP_Widget
 					font-size: 15px;
 					font-weight: 700;
 				}
+				.tsml-widget-upcoming .tsml-no-upcoming-meetings {
+					background-color: #f4f4f4;
+					border: 1px solid #eee;
+					border-radius: .25rem;
+					color: #818182;
+					margin: 0 0 1rem;
+					padding: .75rem 1.25rem;
+				}
 				.widgets-meetings-top .tsml-widget-upcoming {
 					margin: 0 0 15px;
 				}
@@ -80,8 +88,13 @@ class TSML_Widget_Upcoming extends WP_Widget
             echo $args['before_title'] . apply_filters('widget_title', $instance['title']) . $args['after_title'];
         }
         echo $table;
-        $link = get_post_type_archive_link('tsml_meeting');
-        $link .= ((strpos($link, '?') === false) ? '?' : '&') . 'tsml-time=upcoming';
+        $meetings = tsml_get_meetings(array('day' => intval(current_time('w')), 'time' => 'upcoming'));
+        $meetings_link = get_post_type_archive_link('tsml_meeting');
+        if (!count($meetings) && !empty($instance['message'])) {
+            $link = $meetings_link;
+        } else {
+            $link = $meetings_link . ((strpos($meetings_link, '?') === false) ? '?' : '&') . 'tsml-time=upcoming';
+        }
         echo '<p><a href="' . $link . '">' . __('View More…', '12-step-meeting-list') . '</a></p>';
         echo $args['after_widget'];
     }
@@ -91,6 +104,7 @@ class TSML_Widget_Upcoming extends WP_Widget
     {
         $title = !empty($instance['title']) ? $instance['title'] : __('Upcoming Meetings', '12-step-meeting-list');
         $count = !empty($instance['count']) ? $instance['count'] : 5;
+        $message = !empty($instance['message']) ? $instance['message'] : '';
         ?>
 		<p>
 			<label for="<?php echo esc_attr($this->get_field_id('title')) ?>"><?php _e('Title:', '12-step-meeting-list')?></label>
@@ -103,6 +117,10 @@ class TSML_Widget_Upcoming extends WP_Widget
 					<option value="<?php echo $i ?>"<?php selected($i, esc_attr($count))?>><?php echo $i ?></option>
 				<?php }?>
 			</select>
+		</p>
+		<p>
+			<label for="<?php echo esc_attr($this->get_field_id('message')) ?>"><?php _e('Message:<span class="description">(displayed if no upcoming meetings, optional)</span>', '12-step-meeting-list')?></label>
+			<input class="widefat" id="<?php echo esc_attr($this->get_field_id('message')) ?>" name="<?php echo esc_attr($this->get_field_name('message')) ?>" type="text" value="<?php echo esc_attr($message) ?>">
 		</p>
 		<p>
 			<input id="<?php echo esc_attr($this->get_field_id('css')) ?>" name="<?php echo esc_attr($this->get_field_name('css')) ?>" type="checkbox" <?php checked(!empty($instance['css']))?>>
@@ -118,6 +136,7 @@ class TSML_Widget_Upcoming extends WP_Widget
         $instance['title'] = (!empty($new_instance['title'])) ? strip_tags($new_instance['title']) : '';
         $instance['count'] = (!empty($new_instance['count'])) ? intval($new_instance['count']) : 5;
         $instance['css'] = !empty($new_instance['css']);
+        $instance['message'] = (!empty($new_instance['message'])) ? strip_tags($new_instance['message']) : '';
         return $instance;
     }
 }
