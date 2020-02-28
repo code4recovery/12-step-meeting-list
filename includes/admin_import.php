@@ -631,6 +631,18 @@ function tmsl_import_page() {
 					</div>
 					<?php }?>
 
+					<div class="postbox">
+						<div class="inside">
+							<h3><?php _e('Need Help?', '12-step-meeting-list')?></h3>
+							<p><?php _e('This plugin is maintained by a group of AA volunteers. To get help, please use the support threads on WordPress.org.', '12-step-meeting-list')?></p>
+							<p>
+								<a href="https://wordpress.org/support/plugin/12-step-meeting-list/" target="_blank" class="button">
+									<?php _e('Get Support', '12-step-meeting-list')?>
+								</a>
+							</p>
+						</div>
+					</div>
+
 					<div class="postbox" id="wheres_my_info">
 						<div class="inside">
 							<?php
