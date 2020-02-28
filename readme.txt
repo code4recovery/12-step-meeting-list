@@ -2,7 +2,7 @@
 Contributors: aasanjose
 Requires at least: 3.2
 Tested up to: 5.3.2
-Stable tag: 3.5.0
+Stable tag: 3.5.1
 
 This plugin helps twelve step recovery programs list their meetings. It standardizes addresses, and displays results in a searchable list and map.
 
@@ -203,6 +203,10 @@ To apply these changes, you must go to Settings > Permalinks and click "Save Cha
 1. Edit location
 
 == Changelog ==
+
+= 3.5.1 =
+* Compatibility for PHP < 5.3
+* "Need help" button on Import & Settings page
 
 = 3.5.0 =
 * Added option for upcoming meetings widget to display message if no further meetings exist for today.
