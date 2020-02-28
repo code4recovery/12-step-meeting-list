@@ -496,9 +496,7 @@ function tsml_geocode($address) {
 	$addresses	= get_option('tsml_addresses', array());
 
 	//filter out any empty addresses that got added due to a bug
-	$addresses = array_filter($addresses, function($address) {
-		return !empty($address['formatted_address']);
-	});	
+	$addresses = array_filter($addresses, 'tsml_has_address');	
 
 	//if key exists, return it
 	if (array_key_exists($address, $addresses)) {
@@ -1232,6 +1230,12 @@ function tsml_import_buffer_set($meetings, $data_source=null) {
 	
 	//prepare import buffer in wp_options
 	update_option('tsml_import_buffer', $meetings, false);
+}
+
+//function: determine whether a geocoded address has a non-empty formatted address
+//used:		tsml_geocode();
+function tsml_has_address($address) {
+	return !empty($address['formatted_address']);
 }
 
 //function:	filter workaround for setting post_modified dates
