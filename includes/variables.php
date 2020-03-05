@@ -547,6 +547,7 @@ function tsml_define_strings() {
 				'GR' => __('Grapevine', '12-step-meeting-list'),
 				'HE' => __('Hebrew', '12-step-meeting-list'),
 				'NDG' => __('Indigenous', '12-step-meeting-list'),
+				'IX' => __('Intersex', '12-step-meeting-list'),
 				'ITA' => __('Italian', '12-step-meeting-list'),
 				'JA' => __('Japanese', '12-step-meeting-list'),
 				'KOR' => __('Korean', '12-step-meeting-list'),
