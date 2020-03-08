@@ -343,6 +343,13 @@ if (!function_exists('function_name')) {
         $groups = $import_result['counts']['groups'];
         $regions = $import_result['counts']['regions'];
 
+        $printable_errors = array();
+        foreach ($import_result['errors'] as $error) {
+            list($row_number, $meeting_name, $error_message) = $error;
+            $printable_errors[] = '<li value="' . $row_number . '">' . sprintf($error_message, $meeting_name) . '</li>';
+        }
+
+        $import_result['errors'] = $printable_errors;
         $import_result['descriptions'] = array(
             'meetings'	=> sprintf(_n('%s meeting', '%s meetings', $meetings, '12-step-meeting-list'), number_format_i18n($meetings)),
             'locations'	=> sprintf(_n('%s location', '%s locations', $locations, '12-step-meeting-list'), number_format_i18n($locations)),
@@ -391,7 +398,12 @@ function tsml_import_next_batch_from_data_sources() {
 
 		//check address
 		if (empty($meeting['formatted_address'])) {
-			$errors[] = '<li value="' . $meeting['row'] . '">' . sprintf(__('No location information provided for <code>%s</code>.', '12-step-meeting-list'), $meeting['name']) . '</li>';
+            $errors[] = array(
+                $meeting['row'],
+                $meeting['name'],
+                __('No location information provided for <code>%s</code>.', '12-step-meeting-list'),
+            );
+
 			continue;
 		}
 
@@ -399,7 +411,12 @@ function tsml_import_next_batch_from_data_sources() {
 		$geocoded = tsml_geocode($meeting['formatted_address']);
 
 		if ($geocoded['status'] == 'error')	{
-			$errors[] = '<li value="' . $meeting['row'] . '">' . $geocoded['reason'] . '</li>';
+			$errors[] = array(
+			    $meeting['row'],
+                $meeting['name'],
+                $geocoded['reason'],
+            );
+
 			continue;
 		}
 
