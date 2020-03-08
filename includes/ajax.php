@@ -336,7 +336,21 @@ if (!function_exists('tsml_ajax_geocode')) {
 add_action('wp_ajax_tsml_import', 'tsml_ajax_import');
 if (!function_exists('function_name')) {
 	function tsml_ajax_import() {
-		tsml_import_next_batch_from_data_sources();
+		$import_result = tsml_import_next_batch_from_data_sources();
+
+        $meetings = $import_result['counts']['meetings'];
+        $locations = $import_result['counts']['locations'];
+        $groups = $import_result['counts']['groups'];
+        $regions = $import_result['counts']['regions'];
+
+        $import_result['descriptions'] = array(
+            'meetings'	=> sprintf(_n('%s meeting', '%s meetings', $meetings, '12-step-meeting-list'), number_format_i18n($meetings)),
+            'locations'	=> sprintf(_n('%s location', '%s locations', $locations, '12-step-meeting-list'), number_format_i18n($locations)),
+            'groups'	=> sprintf(_n('%s group', '%s groups', $groups, '12-step-meeting-list'), number_format_i18n($groups)),
+            'regions'	=> sprintf(_n('%s region', '%s regions', $regions, '12-step-meeting-list'), number_format_i18n($regions)),
+        );
+
+        wp_send_json($import_result);
 	}
 }
 
@@ -547,18 +561,12 @@ function tsml_import_next_batch_from_data_sources() {
 		$tsml_data_sources[$url]['count_meetings'] = number_format($props['count_meetings']);
 	}
 
-	wp_send_json(array(
+	return array(
 		'errors'		=> $errors,
 		'remaining'		=> count($remaining),
 		'counts'		=> compact('meetings', 'locations', 'regions', 'groups'),
 		'data_sources' 	=> $tsml_data_sources,
-		'descriptions'	=> array(
-			'meetings'	=> sprintf(_n('%s meeting', '%s meetings', $meetings, '12-step-meeting-list'), number_format_i18n($meetings)),
-			'locations'	=> sprintf(_n('%s location', '%s locations', $locations, '12-step-meeting-list'), number_format_i18n($locations)),
-			'groups'	=> sprintf(_n('%s group', '%s groups', $groups, '12-step-meeting-list'), number_format_i18n($groups)),
-			'regions'	=> sprintf(_n('%s region', '%s regions', $regions, '12-step-meeting-list'), number_format_i18n($regions)),
-		),
-	));
+	);
 }
 
 //api ajax function
