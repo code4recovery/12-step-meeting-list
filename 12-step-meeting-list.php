@@ -50,4 +50,6 @@ if (is_admin()) {
 
 //these hooks need to be in this file
 register_activation_hook(__FILE__, 'tsml_change_activation_state');
+register_activation_hook(__FILE__, 'tsml_activate_cron_jobs');
 register_deactivation_hook(__FILE__, 'tsml_change_activation_state');
+register_deactivation_hook(__FILE__, 'tsml_deactivate_cron_jobs');

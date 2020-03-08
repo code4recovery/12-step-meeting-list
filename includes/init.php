@@ -2,6 +2,8 @@
 
 //for all users
 add_action('init', 'tsml_init');
+add_action('tsml_cron_refresh_data_sources', 'tsml_cron_refresh_data_sources');
+add_action('tsml_cron_generate_pdf_schedules', 'tsml_cron_generate_pdf_schedules');
 
 function tsml_init()
 {
