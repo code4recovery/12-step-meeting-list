@@ -358,7 +358,9 @@ function tsml_import_next_batch_from_data_sources() {
 		//take them all and remove the option (don't wait, to prevent an endless loop)
 		$remaining = array();
 		delete_option('tsml_import_buffer');
-	}
+	} else {
+        $remaining = array();
+    }
 
 	//get lookups, todo consider adding regions to this
 	$locations = $groups = array();
