@@ -365,6 +365,7 @@ if (!function_exists('function_name')) {
 //imports the next batch of meetings from whatever data-source has been marked for refreshing
 function tsml_import_next_batch_from_data_sources($limit = null) {
 	$errors = array();
+	$start_time_in_ms = microtime(true);
 
 	//we are using the start time of the last import to determine, whether we are running a parallel process.
 	//if the max_execution_time has not yet elapsed, we assume that that import is still running.
@@ -389,36 +390,40 @@ function tsml_import_next_batch_from_data_sources($limit = null) {
 
 	//lock the import process by telling other processes when we started
 	update_option('tsml_import_started_at', $timestamp_now);
+	$tsml_import_started_at = $timestamp_now;
 
-	$meetings	= get_option('tsml_import_buffer', array());
-	$errors		= array();
-
-	//manage import buffer
-	if (count($meetings) > $limit) {
-		//slice off the first batch, save the remaining back to the import buffer
-		$remaining = array_slice($meetings, $limit);
-		update_option('tsml_import_buffer', $remaining);
-		$meetings = array_slice($meetings, 0, $limit);
-	} elseif (count($meetings)) {
-		//take them all and remove the option (don't wait, to prevent an endless loop)
-		$remaining = array();
-		delete_option('tsml_import_buffer');
-	} else {
-		$remaining = array();
-	}
+	$remaining = get_option('tsml_import_buffer', array());
+	$imported_meetings = array();
 
 	//get lookups, todo consider adding regions to this
-	$locations = $groups = array();
+	$locations = array();
 	$all_locations = tsml_get_locations();
-	foreach ($all_locations as $location) $locations[$location['formatted_address']] = $location['location_id'];
+	foreach ($all_locations as $location) {
+		$locations[$location['formatted_address']] = $location['location_id'];
+	}
+	$groups = array();
 	$all_groups = tsml_get_all_groups();
-	foreach ($all_groups as $group)	$groups[$group->post_title] = $group->ID;
+	foreach ($all_groups as $group)	{
+		$groups[$group->post_title] = $group->ID;
+	}
 
 	//passing post_modified and post_modified_gmt to wp_insert_post() below does not seem to work
 	//todo occasionally remove this to see if it is working
 	add_filter('wp_insert_post_data', 'tsml_import_post_modified', 99, 2);
 
-	foreach ($meetings as $meeting) {
+	$may_continue = true;
+	$time_we_should_pack_up_our_things = $tsml_import_started_at + 0.75 * $max_execution_time;
+
+	while ($remaining && $may_continue) {
+		$meeting = array_shift($remaining);
+		$imported_meetings[] = $meeting;
+
+		//we can either try to manage as many inserts time allows, or import in small batches, the ajax-way
+		if ($limit === null) {
+			$may_continue = $time_we_should_pack_up_our_things > time();
+		} else {
+			$may_continue = count($imported_meetings) <= $limit;
+		}
 
 		//check address
 		if (empty($meeting['formatted_address'])) {
@@ -534,20 +539,32 @@ function tsml_import_next_batch_from_data_sources($limit = null) {
 		if (!empty($meeting['time']) && (!empty($meeting['day']) || (string) $meeting['day'] === '0')) {
 			add_post_meta($meeting_id, 'day',  $meeting['day']);
 			add_post_meta($meeting_id, 'time', $meeting['time']);
-			if (!empty($meeting['end_time'])) add_post_meta($meeting_id, 'end_time', $meeting['end_time']);
+
+			if (!empty($meeting['end_time'])) {
+				add_post_meta($meeting_id, 'end_time', $meeting['end_time']);
+			}
 		}
 
 		//add types, group, and data_source if available
-		if (!empty($meeting['types'])) add_post_meta($meeting_id, 'types', $meeting['types']);
-		if (!empty($meeting['group'])) add_post_meta($meeting_id, 'group_id', $groups[$meeting['group']]);
-		if (!empty($meeting['data_source'])) add_post_meta($meeting_id, 'data_source', $meeting['data_source']);
+		if (!empty($meeting['types'])) {
+			add_post_meta($meeting_id, 'types', $meeting['types']);
+		}
+		if (!empty($meeting['group'])) {
+			add_post_meta($meeting_id, 'group_id', $groups[$meeting['group']]);
+		}
+		if (!empty($meeting['data_source'])) {
+			add_post_meta($meeting_id, 'data_source', $meeting['data_source']);
+		}
 
 		//handle contact information (could be meeting or group)
 		$contact_entity_id = empty($group_id) ? $meeting_id : $group_id;
 		for ($i = 1; $i <= GROUP_CONTACT_COUNT; $i++) {
 			foreach (array('name', 'phone', 'email') as $field) {
 				$key = 'contact_' . $i . '_' . $field;
-				if (!empty($meeting[$key])) update_post_meta($contact_entity_id, $key, $meeting[$key]);
+
+				if (!empty($meeting[$key])) {
+					update_post_meta($contact_entity_id, $key, $meeting[$key]);
+				}
 			}
 		}
 
@@ -570,7 +587,6 @@ function tsml_import_next_batch_from_data_sources($limit = null) {
 		if (!empty($meeting['last_contact']) && ($last_contact = strtotime($meeting['last_contact']))) {
 			update_post_meta($contact_entity_id, 'last_contact', date('Y-m-d', $last_contact));
 		}
-
 	}
 
 	//remove post_modified thing added earlier
@@ -590,14 +606,23 @@ function tsml_import_next_batch_from_data_sources($limit = null) {
 		$tsml_data_sources[$url]['count_meetings'] = number_format($data_source['count_meetings']);
 	}
 
+	if ($remaining) {
+		update_option('tsml_import_buffer', $remaining);
+	} else {
+		delete_option('tsml_import_buffer');
+	}
+
 	//releases lock on import
 	update_option('tsml_import_started_at', null);
 
+	$duration_in_ms = microtime(true) - $start_time_in_ms;
+
 	return array(
-		'errors'		=> $errors,
-		'remaining'		=> count($remaining),
-		'counts'		=> compact('meetings', 'locations', 'regions', 'groups'),
-		'data_sources' 	=> $tsml_data_sources,
+		'errors' => $errors,
+		'remaining' => count($remaining),
+		'counts' => compact('meetings', 'locations', 'regions', 'groups'),
+		'data_sources' => $tsml_data_sources,
+		'duration_in_ms' => $duration_in_ms,
 	);
 }
 
