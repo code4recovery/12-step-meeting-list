@@ -149,8 +149,12 @@ function tsml_change_activation_state() {
 //called by register_activation_hook
 //sets up cron-jobs for regular refreshes of import data, generated files, etc.
 function tsml_activate_cron_jobs() {
-	if (!wp_next_scheduled('tsml_cron_refresh_data_sources')) {
-		wp_schedule_event(time(), 'daily', 'tsml_cron_refresh_data_sources');
+	if (!wp_next_scheduled('tsml_cron_invalidate_data_sources')) {
+		wp_schedule_event(time(), 'daily', 'tsml_cron_invalidate_data_sources');
+	}
+
+	if (!wp_next_scheduled('tsml_cron_import_data_source_batch')) {
+		wp_schedule_event(time() + 120, 'hourly', 'tsml_cron_import_data_source_batch');
 	}
 
 	if (!wp_next_scheduled('tsml_cron_generate_pdf_schedules')) {
@@ -163,8 +167,12 @@ function tsml_activate_cron_jobs() {
 //called by register_deactivation_hook
 //removes all cron-jobs set by tsml_activate_cron_jobs()
 function tsml_deactivate_cron_jobs() {
-	if (wp_next_scheduled('tsml_cron_refresh_data_sources')) {
-		wp_clear_scheduled_hook('tsml_cron_refresh_data_sources');
+	if (wp_next_scheduled('tsml_cron_invalidate_data_sources')) {
+		wp_clear_scheduled_hook('tsml_cron_invalidate_data_sources');
+	}
+
+	if (wp_next_scheduled('tsml_cron_import_data_source_batch')) {
+		wp_clear_scheduled_hook('tsml_cron_import_data_source_batch');
 	}
 
 	if (wp_next_scheduled('tsml_cron_generate_pdf_schedules')) {
@@ -172,9 +180,14 @@ function tsml_deactivate_cron_jobs() {
 	}
 }
 
-//does an import for all data-sources that need to be refreshed
-function tsml_cron_refresh_data_sources() {
-	//todo: implement tsml_cron_refresh_data_sources
+//resets data-source state so that they will subsequently be imported for all data-sources that need to be refreshed
+function tsml_cron_invalidate_data_sources() {
+	//todo: implement tsml_cron_invalidate_data_sources
+}
+
+//imports the next batch of data from each data source up for renewal
+function tsml_cron_import_data_source_batch() {
+	//todo: implement tsml_cron_import_data_source_batch
 }
 
 //generates pdf exports of current meeting list
