@@ -182,12 +182,89 @@ function tsml_deactivate_cron_jobs() {
 
 //resets data-source state so that they will subsequently be imported for all data-sources that need to be refreshed
 function tsml_cron_invalidate_data_sources() {
-	//todo: implement tsml_cron_invalidate_data_sources
+    $tsml_data_sources = get_option('tsml_data_sources', array());
+
+    foreach ($tsml_data_sources as $data_source_url => $data_source) {
+        tsml_add_data_source($data_source_url, $data_source['name']);
+    }
+}
+
+function tsml_add_data_source($data_source_url, $data_source_name) {
+    $errors = array();
+    $tsml_data_sources = get_option('tsml_data_sources', array());
+
+    $data_source_name = sanitize_text_field($data_source_name);
+    $data_source_url = trim(esc_url_raw($data_source_url, array('http', 'https')));
+
+    //try fetching
+    $response = wp_remote_get($data_source_url, array(
+        'timeout' => 30,
+        'sslverify' => false,
+    ));
+
+    if (is_array($response) && !empty($response['body']) && ($body = json_decode($response['body'], true))) {
+
+        //if already set, hard refresh
+        if (array_key_exists($data_source_url, $tsml_data_sources)) {
+            tsml_delete(tsml_get_data_source_ids($data_source_url));
+            tsml_delete_orphans();
+        }
+
+        $tsml_data_sources[$data_source_url] = array(
+            'status' => 'OK',
+            'last_import' => current_time('timestamp'),
+            'count_meetings' => 0,
+            'name' => $data_source_name,
+            'type' => 'JSON',
+        );
+
+        //import feed
+        tsml_import_buffer_set($body, $data_source_url);
+
+        //save data source configuration
+        update_option('tsml_data_sources', $tsml_data_sources);
+
+    } elseif (!is_array($response)) {
+
+        $errors[] = __('Invalid response, <pre>' . print_r($response, true) . '</pre>.', '12-step-meeting-list');
+
+    } elseif (empty($response['body'])) {
+
+        $errors[] = __('Data source gave an empty response, you might need to try again.', '12-step-meeting-list');
+
+    } else {
+
+        switch (json_last_error()) {
+            case JSON_ERROR_NONE:
+                $errors[] = __('JSON: no errors.', '12-step-meeting-list');
+                break;
+            case JSON_ERROR_DEPTH:
+                $errors[] = __('JSON: Maximum stack depth exceeded.', '12-step-meeting-list');
+                break;
+            case JSON_ERROR_STATE_MISMATCH:
+                $errors[] = __('JSON: Underflow or the modes mismatch.', '12-step-meeting-list');
+                break;
+            case JSON_ERROR_CTRL_CHAR:
+                $errors[] = __('JSON: Unexpected control character found.', '12-step-meeting-list');
+                break;
+            case JSON_ERROR_SYNTAX:
+                $errors[] = __('JSON: Syntax error, malformed JSON.', '12-step-meeting-list');
+                break;
+            case JSON_ERROR_UTF8:
+                $errors[] = __('JSON: Malformed UTF-8 characters, possibly incorrectly encoded.', '12-step-meeting-list');
+                break;
+            default:
+                $errors[] = __('JSON: Unknown error.', '12-step-meeting-list');
+                break;
+        }
+    }
+
+    return $errors;
 }
 
 //imports the next batch of data from each data source up for renewal
 function tsml_cron_import_data_source_batch() {
-	//todo: implement tsml_cron_import_data_source_batch
+    tsml_import_next_batch_from_data_sources();
 }
 
 //generates pdf exports of current meeting list

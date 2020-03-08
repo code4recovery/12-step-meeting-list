@@ -154,72 +154,11 @@ function tmsl_import_page() {
 		
 	//add data source
 	if (!empty($_POST['tsml_add_data_source']) && isset($_POST['tsml_nonce']) && wp_verify_nonce($_POST['tsml_nonce'], $tsml_nonce)) {
-		
-		//sanitize URL
-		$_POST['tsml_add_data_source'] = trim(esc_url_raw($_POST['tsml_add_data_source'], array('http', 'https')));
-		
-		//try fetching	
-		$response = wp_remote_get($_POST['tsml_add_data_source'], array(
-			'timeout' => 30,
-			'sslverify' => false,
-		));
-		if (is_array($response) && !empty($response['body']) && ($body = json_decode($response['body'], true))) {
+	    $add_data_source_errors = tsml_add_data_source($_POST['tsml_add_data_source'], $_POST['tsml_add_data_source_name']);
 
-			//if already set, hard refresh
-			if (array_key_exists($_POST['tsml_add_data_source'], $tsml_data_sources)) {
-				tsml_delete(tsml_get_data_source_ids($_POST['tsml_add_data_source']));
-				tsml_delete_orphans();
-			}
-			
-			$tsml_data_sources[$_POST['tsml_add_data_source']] = array(
-				'status' => 'OK',
-				'last_import' => current_time('timestamp'),
-				'count_meetings' => 0,
-				'name' => sanitize_text_field($_POST['tsml_add_data_source_name']),
-				'type' => 'JSON',
-			);
-
-			//import feed
-			tsml_import_buffer_set($body, $_POST['tsml_add_data_source']);
-			
-			//save data source configuration
-			update_option('tsml_data_sources', $tsml_data_sources);
-						
-		} elseif (!is_array($response)) {
-			
-			tsml_alert(__('Invalid response, <pre>' . print_r($response, true) . '</pre>.', '12-step-meeting-list'), 'error');
-
-		} elseif (empty($response['body'])) {
-			
-			tsml_alert(__('Data source gave an empty response, you might need to try again.', '12-step-meeting-list'), 'error');
-
-		} else {
-
-			switch (json_last_error()) {
-				case JSON_ERROR_NONE:
-					tsml_alert(__('JSON: no errors.', '12-step-meeting-list'), 'error');
-					break;
-				case JSON_ERROR_DEPTH:
-					tsml_alert(__('JSON: Maximum stack depth exceeded.', '12-step-meeting-list'), 'error');
-					break;
-				case JSON_ERROR_STATE_MISMATCH:
-					tsml_alert(__('JSON: Underflow or the modes mismatch.', '12-step-meeting-list'), 'error');
-					break;
-				case JSON_ERROR_CTRL_CHAR:
-					tsml_alert(__('JSON: Unexpected control character found.', '12-step-meeting-list'), 'error');
-					break;
-				case JSON_ERROR_SYNTAX:
-					tsml_alert(__('JSON: Syntax error, malformed JSON.', '12-step-meeting-list'), 'error');
-					break;
-				case JSON_ERROR_UTF8:
-					tsml_alert(__('JSON: Malformed UTF-8 characters, possibly incorrectly encoded.', '12-step-meeting-list'), 'error');
-					break;
-				default:
-					tsml_alert(__('JSON: Unknown error.', '12-step-meeting-list'), 'error');
-					break;
-			}
-			
-		}
+	    foreach ($add_data_source_errors as $add_data_source_error) {
+	        tsml_alert($add_data_source_error, 'error');
+        }
 	}
 	
 	//check for existing import buffer
