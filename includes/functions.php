@@ -149,37 +149,37 @@ function tsml_change_activation_state() {
 //called by register_activation_hook
 //sets up cron-jobs for regular refreshes of import data, generated files, etc.
 function tsml_activate_cron_jobs() {
-    if (!wp_next_scheduled('tsml_cron_refresh_data_sources')) {
-        wp_schedule_event(time(), 'daily', 'tsml_cron_refresh_data_sources');
-    }
+	if (!wp_next_scheduled('tsml_cron_refresh_data_sources')) {
+		wp_schedule_event(time(), 'daily', 'tsml_cron_refresh_data_sources');
+	}
 
-    if (!wp_next_scheduled('tsml_cron_generate_pdf_schedules')) {
-        //be sure to start pdf cron job a good while later, so that refresh is likely to have run (e.g. if system has
-        //no cron jobs, but wp-cron is doing it on-request), and so that it has finished already
-        wp_schedule_event(time() + 7200, 'daily', 'tsml_cron_generate_pdf_schedules');
-    }
+	if (!wp_next_scheduled('tsml_cron_generate_pdf_schedules')) {
+		//be sure to start pdf cron job a good while later, so that refresh is likely to have run (e.g. if system has
+		//no cron jobs, but wp-cron is doing it on-request), and so that it has finished already
+		wp_schedule_event(time() + 7200, 'daily', 'tsml_cron_generate_pdf_schedules');
+	}
 }
 
 //called by register_deactivation_hook
 //removes all cron-jobs set by tsml_activate_cron_jobs()
 function tsml_deactivate_cron_jobs() {
-    if (wp_next_scheduled('tsml_cron_refresh_data_sources')) {
-        wp_clear_scheduled_hook('tsml_cron_refresh_data_sources');
-    }
+	if (wp_next_scheduled('tsml_cron_refresh_data_sources')) {
+		wp_clear_scheduled_hook('tsml_cron_refresh_data_sources');
+	}
 
-    if (wp_next_scheduled('tsml_cron_generate_pdf_schedules')) {
-        wp_clear_scheduled_hook('tsml_cron_generate_pdf_schedules');
-    }
+	if (wp_next_scheduled('tsml_cron_generate_pdf_schedules')) {
+		wp_clear_scheduled_hook('tsml_cron_generate_pdf_schedules');
+	}
 }
 
 //does an import for all data-sources that need to be refreshed
 function tsml_cron_refresh_data_sources() {
-    //todo: implement tsml_cron_refresh_data_sources
+	//todo: implement tsml_cron_refresh_data_sources
 }
 
 //generates pdf exports of current meeting list
 function tsml_cron_generate_pdf_schedules() {
-    //todo: implement tsml_cron_generate_pdf_schedules
+	//todo: implement tsml_cron_generate_pdf_schedules
 }
 
 //function:	return integer number of live groups
