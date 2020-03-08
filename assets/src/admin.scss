@@ -38,6 +38,10 @@ body {
 				-o-transition: width .6s ease;
 				transition: width .6s ease;
 			}
+
+			&.has_errors .progress-bar {
+				background: #761c19;
+			}
 		}
 		
 		//meeting types legend

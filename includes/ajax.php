@@ -364,6 +364,32 @@ if (!function_exists('function_name')) {
 
 //imports the next batch of meetings from whatever data-source has been marked for refreshing
 function tsml_import_next_batch_from_data_sources($limit = null) {
+	$errors = array();
+
+	//we are using the start time of the last import to determine, whether we are running a parallel process.
+	//if the max_execution_time has not yet elapsed, we assume that that import is still running.
+	//otherwise we can continue, it surely has been killed.
+	$tsml_import_started_at = (int) get_option('tsml_import_started_at', null);
+	$max_execution_time = (int) ini_get('max_execution_time');
+	$timestamp_now = time();
+	$is_import_still_running = $tsml_import_started_at
+		&& ($tsml_import_started_at + $max_execution_time >= $timestamp_now);
+
+	if ($is_import_still_running) {
+		$errors[] = array(
+			null,
+			date('r', $tsml_import_started_at),
+			__('An import has already been started at %s! Doing nothing. Stopping.', '12-step-meeting-list'),
+		);
+
+		return array(
+			'errors' => $errors,
+		);
+	}
+
+	//lock the import process by telling other processes when we started
+	update_option('tsml_import_started_at', $timestamp_now);
+
 	$meetings	= get_option('tsml_import_buffer', array());
 	$errors		= array();
 
@@ -563,6 +589,9 @@ function tsml_import_next_batch_from_data_sources($limit = null) {
 	foreach ($tsml_data_sources as $url => $data_source) {
 		$tsml_data_sources[$url]['count_meetings'] = number_format($data_source['count_meetings']);
 	}
+
+	//releases lock on import
+	update_option('tsml_import_started_at', null);
 
 	return array(
 		'errors'		=> $errors,
