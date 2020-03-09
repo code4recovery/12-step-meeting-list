@@ -180,6 +180,24 @@ function tsml_deactivate_cron_jobs() {
 	}
 }
 
+function tsml_add_cron_schedules($schedules) {
+    if (empty($schedules['five_minutes'])) {
+        $schedules['five_minutes'] = array(
+            'interval' => 300,
+            'display'  => esc_html__('Once Every 5 Minutes', '12-step-meeting-list'),
+        );
+    }
+
+    if (empty($schedules['ten_minutes'])) {
+        $schedules['ten_minutes'] = array(
+            'interval' => 600,
+            'display' => esc_html__('Once Every 10 Minutes', '12-step-meeting-list'),
+        );
+    }
+
+    return $schedules;
+}
+
 //resets data-source state so that they will subsequently be imported for all data-sources that need to be refreshed
 function tsml_cron_invalidate_data_sources() {
     $tsml_data_sources = get_option('tsml_data_sources', array());
