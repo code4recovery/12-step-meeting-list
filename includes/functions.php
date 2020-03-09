@@ -778,10 +778,30 @@ function tsml_get_all_meetings($status='any') {
 	return get_posts('post_type=tsml_meeting&post_status=' . $status . '&numberposts=-1&orderby=name&order=asc');
 }
 
-//function: get all regions in the system
-//used:		tsml_region_count(), tsml_import() and admin_import.php
+/**
+ * Fetches all regions in the system from the db.
+ *
+ * @return WP_Term[]
+ */
 function tsml_get_all_regions() {
-	return get_terms('tsml_region', array('fields'=>'ids', 'hide_empty'=>false));
+	return get_terms(array(
+	    'taxonomy' => 'tsml_region',
+	    'fields' => 'all',
+        'hide_empty' => false,
+    ));
+}
+
+/**
+ * Fetches all districts in the system from the db.
+ *
+ * @return WP_Term[]
+ */
+function tsml_get_all_districts() {
+	return get_terms(array(
+	    'taxonomy' => 'tsml_district',
+	    'fields' => 'all',
+        'hide_empty' => false,
+    ));
 }
 
 //function: get meeting ids for a data source

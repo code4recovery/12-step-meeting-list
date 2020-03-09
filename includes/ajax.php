@@ -395,17 +395,43 @@ function tsml_import_next_batch_from_data_sources($limit = null) {
 	$remaining = get_option('tsml_import_buffer', array());
 	$imported_meetings = array();
 
-	//get lookups, todo consider adding regions to this
 	$locations = array();
 	$all_locations = tsml_get_locations();
 	foreach ($all_locations as $location) {
 		$locations[$location['formatted_address']] = $location['location_id'];
 	}
+    $all_locations = null;
+
 	$groups = array();
 	$all_groups = tsml_get_all_groups();
-	foreach ($all_groups as $group)	{
+	foreach ($all_groups as $group) {
 		$groups[$group->post_title] = $group->ID;
 	}
+    $all_groups = null;
+
+    $regions = array();
+    $all_regions = tsml_get_all_regions();
+    foreach ($all_regions as $region) {
+        if (!isset($regions[$region->name])) {
+            $regions[$region->name] = array();
+        }
+
+        // include parent-term as sub-regions will test for that as well
+        $regions[$region->name][$region->parent] = $region->term_id;
+    }
+    $all_regions = null;
+
+    $districts = array();
+    $all_districts = tsml_get_all_districts();
+    foreach ($all_districts as $district) {
+        if (!isset($districts[$district->name])) {
+            $districts[$district->name] = array();
+        }
+
+        // include parent-term as sub-districts will test for that as well
+        $districts[$district->name][$district->parent] = $district->term_id;
+    }
+    $all_districts = null;
 
 	//passing post_modified and post_modified_gmt to wp_insert_post() below does not seem to work
 	//todo occasionally remove this to see if it is working
@@ -417,6 +443,9 @@ function tsml_import_next_batch_from_data_sources($limit = null) {
 	while ($remaining && $may_continue) {
 		$meeting = array_shift($remaining);
 		$imported_meetings[] = $meeting;
+        $region_id = null;
+        $district_id = null;
+        $group_id = null;
 
 		//we can either try to manage as many inserts time allows, or import in small batches, the ajax-way
 		if ($limit === null) {
@@ -454,24 +483,28 @@ function tsml_import_next_batch_from_data_sources($limit = null) {
 
 		//add region to taxonomy if it doesn't exist yet
 		if (!empty($meeting['region'])) {
-			if (!$term = term_exists($meeting['region'], 'tsml_region', 0)) {
+			if (isset($regions[$meeting['region']][0])) {
+                $region_id = $regions[$meeting['region']][0];
+            } else {
 				$term = wp_insert_term($meeting['region'], 'tsml_region', 0);
+                $regions[$meeting['region']][0] = $term['term_id'];
+                $region_id = intval($term['term_id']);
 			}
-			$region_id = intval($term['term_id']);
 
 			//can only have a subregion if you already have a region
 			if (!empty($meeting['sub_region'])) {
-				if (!$term = term_exists($meeting['sub_region'], 'tsml_region', $region_id)) {
+                if (isset($regions[$meeting['sub_region']][$region_id])) {
+                    $region_id = $regions[$meeting['sub_region']][$region_id];
+                } else {
 					$term = wp_insert_term($meeting['sub_region'], 'tsml_region', array('parent'=>$region_id));
-				}
-				$region_id = intval($term['term_id']);
+                    $regions[$meeting['sub_region']][$region_id] = $term['term_id'];
+                    $region_id = intval($term['term_id']);
+                }
 			}
 		}
 
 		//handle group (can't have a group if group name not specified)
-		if (empty($meeting['group'])) {
-			$group_id = null;
-		} else {
+		if (!empty($meeting['group'])) {
 			if (!array_key_exists($meeting['group'], $groups)) {
 				$group_id = wp_insert_post(array(
 					'post_type'		=> 'tsml_group',
@@ -482,17 +515,23 @@ function tsml_import_next_batch_from_data_sources($limit = null) {
 
 				//add district to taxonomy if it doesn't exist yet
 				if (!empty($meeting['district'])) {
-					if (!$term = term_exists($meeting['district'], 'tsml_district', 0)) {
-						$term = wp_insert_term($meeting['district'], 'tsml_district', 0);
-					}
-					$district_id = intval($term['term_id']);
+                    if (isset($districts[$meeting['district']][0])) {
+                        $district_id = $districts[$meeting['district']][0];
+                    } else {
+                        $term = wp_insert_term($meeting['district'], 'tsml_district', 0);
+                        $districts[$meeting['district']][0] = $term['term_id'];
+                        $district_id = intval($term['term_id']);
+                    }
 
-					//can only have a subregion if you already have a region
+					//can only have a subdistrict if you already have a region
 					if (!empty($meeting['sub_district'])) {
-						if (!$term = term_exists($meeting['sub_district'], 'tsml_district', $district_id)) {
-							$term = wp_insert_term($meeting['sub_district'], 'tsml_district', array('parent'=>$district_id));
-						}
-						$district_id = intval($term['term_id']);
+                        if (isset($districts[$meeting['sub_district']][$district_id])) {
+                            $district_id = $districts[$meeting['sub_district']][$district_id];
+                        } else {
+                            $term = wp_insert_term($meeting['sub_district'], 'tsml_district', array('parent'=>$district_id));
+                            $districts[$meeting['sub_district']][$district_id] = $term['term_id'];
+                            $district_id = intval($term['term_id']);
+                        }
 					}
 
 					wp_set_object_terms($group_id, $district_id, 'tsml_district');
@@ -515,9 +554,9 @@ function tsml_import_next_batch_from_data_sources($limit = null) {
 				'post_status'	=> 'publish',
 			));
 			$locations[$geocoded['formatted_address']] = $location_id;
-			add_post_meta($location_id, 'formatted_address',	$geocoded['formatted_address']);
-			add_post_meta($location_id, 'latitude',				$geocoded['latitude']);
-			add_post_meta($location_id, 'longitude',			$geocoded['longitude']);
+			add_post_meta($location_id, 'formatted_address', $geocoded['formatted_address']);
+			add_post_meta($location_id, 'latitude', $geocoded['latitude']);
+			add_post_meta($location_id, 'longitude', $geocoded['longitude']);
 			wp_set_object_terms($location_id, $region_id, 'tsml_region');
 		}
 
