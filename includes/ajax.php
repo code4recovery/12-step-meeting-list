@@ -400,38 +400,38 @@ function tsml_import_next_batch_from_data_sources($limit = null) {
 	foreach ($all_locations as $location) {
 		$locations[$location['formatted_address']] = $location['location_id'];
 	}
-    $all_locations = null;
+	$all_locations = null;
 
 	$groups = array();
 	$all_groups = tsml_get_all_groups();
 	foreach ($all_groups as $group) {
 		$groups[$group->post_title] = $group->ID;
 	}
-    $all_groups = null;
+	$all_groups = null;
 
-    $regions = array();
-    $all_regions = tsml_get_all_regions();
-    foreach ($all_regions as $region) {
-        if (!isset($regions[$region->name])) {
-            $regions[$region->name] = array();
-        }
+	$regions = array();
+	$all_regions = tsml_get_all_regions();
+	foreach ($all_regions as $region) {
+		if (!isset($regions[$region->name])) {
+			$regions[$region->name] = array();
+		}
 
-        // include parent-term as sub-regions will test for that as well
-        $regions[$region->name][$region->parent] = $region->term_id;
-    }
-    $all_regions = null;
+		// include parent-term as sub-regions will test for that as well
+		$regions[$region->name][$region->parent] = $region->term_id;
+	}
+	$all_regions = null;
 
-    $districts = array();
-    $all_districts = tsml_get_all_districts();
-    foreach ($all_districts as $district) {
-        if (!isset($districts[$district->name])) {
-            $districts[$district->name] = array();
-        }
+	$districts = array();
+	$all_districts = tsml_get_all_districts();
+	foreach ($all_districts as $district) {
+		if (!isset($districts[$district->name])) {
+			$districts[$district->name] = array();
+		}
 
-        // include parent-term as sub-districts will test for that as well
-        $districts[$district->name][$district->parent] = $district->term_id;
-    }
-    $all_districts = null;
+		// include parent-term as sub-districts will test for that as well
+		$districts[$district->name][$district->parent] = $district->term_id;
+	}
+	$all_districts = null;
 
 	//passing post_modified and post_modified_gmt to wp_insert_post() below does not seem to work
 	//todo occasionally remove this to see if it is working
@@ -443,9 +443,9 @@ function tsml_import_next_batch_from_data_sources($limit = null) {
 	while ($remaining && $may_continue) {
 		$meeting = array_shift($remaining);
 		$imported_meetings[] = $meeting;
-        $region_id = null;
-        $district_id = null;
-        $group_id = null;
+		$region_id = null;
+		$district_id = null;
+		$group_id = null;
 
 		//we can either try to manage as many inserts time allows, or import in small batches, the ajax-way
 		if ($limit === null) {
@@ -484,22 +484,22 @@ function tsml_import_next_batch_from_data_sources($limit = null) {
 		//add region to taxonomy if it doesn't exist yet
 		if (!empty($meeting['region'])) {
 			if (isset($regions[$meeting['region']][0])) {
-                $region_id = $regions[$meeting['region']][0];
-            } else {
+				$region_id = $regions[$meeting['region']][0];
+			} else {
 				$term = wp_insert_term($meeting['region'], 'tsml_region', 0);
-                $regions[$meeting['region']][0] = $term['term_id'];
-                $region_id = intval($term['term_id']);
+				$regions[$meeting['region']][0] = $term['term_id'];
+				$region_id = intval($term['term_id']);
 			}
 
 			//can only have a subregion if you already have a region
 			if (!empty($meeting['sub_region'])) {
-                if (isset($regions[$meeting['sub_region']][$region_id])) {
-                    $region_id = $regions[$meeting['sub_region']][$region_id];
-                } else {
+				if (isset($regions[$meeting['sub_region']][$region_id])) {
+					$region_id = $regions[$meeting['sub_region']][$region_id];
+				} else {
 					$term = wp_insert_term($meeting['sub_region'], 'tsml_region', array('parent'=>$region_id));
-                    $regions[$meeting['sub_region']][$region_id] = $term['term_id'];
-                    $region_id = intval($term['term_id']);
-                }
+					$regions[$meeting['sub_region']][$region_id] = $term['term_id'];
+					$region_id = intval($term['term_id']);
+				}
 			}
 		}
 
@@ -515,23 +515,23 @@ function tsml_import_next_batch_from_data_sources($limit = null) {
 
 				//add district to taxonomy if it doesn't exist yet
 				if (!empty($meeting['district'])) {
-                    if (isset($districts[$meeting['district']][0])) {
-                        $district_id = $districts[$meeting['district']][0];
-                    } else {
-                        $term = wp_insert_term($meeting['district'], 'tsml_district', 0);
-                        $districts[$meeting['district']][0] = $term['term_id'];
-                        $district_id = intval($term['term_id']);
-                    }
+					if (isset($districts[$meeting['district']][0])) {
+						$district_id = $districts[$meeting['district']][0];
+					} else {
+						$term = wp_insert_term($meeting['district'], 'tsml_district', 0);
+						$districts[$meeting['district']][0] = $term['term_id'];
+						$district_id = intval($term['term_id']);
+					}
 
 					//can only have a subdistrict if you already have a region
 					if (!empty($meeting['sub_district'])) {
-                        if (isset($districts[$meeting['sub_district']][$district_id])) {
-                            $district_id = $districts[$meeting['sub_district']][$district_id];
-                        } else {
-                            $term = wp_insert_term($meeting['sub_district'], 'tsml_district', array('parent'=>$district_id));
-                            $districts[$meeting['sub_district']][$district_id] = $term['term_id'];
-                            $district_id = intval($term['term_id']);
-                        }
+						if (isset($districts[$meeting['sub_district']][$district_id])) {
+							$district_id = $districts[$meeting['sub_district']][$district_id];
+						} else {
+							$term = wp_insert_term($meeting['sub_district'], 'tsml_district', array('parent'=>$district_id));
+							$districts[$meeting['sub_district']][$district_id] = $term['term_id'];
+							$district_id = intval($term['term_id']);
+						}
 					}
 
 					wp_set_object_terms($group_id, $district_id, 'tsml_district');
@@ -573,7 +573,7 @@ function tsml_import_next_batch_from_data_sources($limit = null) {
 		);
 		if (!empty($meeting['slug'])) $options['post_name'] = $meeting['slug'];
 		$meeting_id = wp_insert_post($options);
-        add_post_meta($meeting_id, 'data_source_id', $meeting['id']);
+		add_post_meta($meeting_id, 'data_source_id', $meeting['id']);
 
 		//add day and time(s) if not appointment meeting
 		if (!empty($meeting['time']) && (!empty($meeting['day']) || (string) $meeting['day'] === '0')) {
