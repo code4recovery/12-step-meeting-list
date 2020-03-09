@@ -573,6 +573,7 @@ function tsml_import_next_batch_from_data_sources($limit = null) {
 		);
 		if (!empty($meeting['slug'])) $options['post_name'] = $meeting['slug'];
 		$meeting_id = wp_insert_post($options);
+        add_post_meta($meeting_id, 'data_source_id', $meeting['id']);
 
 		//add day and time(s) if not appointment meeting
 		if (!empty($meeting['time']) && (!empty($meeting['day']) || (string) $meeting['day'] === '0')) {
