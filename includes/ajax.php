@@ -560,8 +560,10 @@ function tsml_import_next_batch_from_data_sources($limit = null) {
 			wp_set_object_terms($location_id, $region_id, 'tsml_region');
 		}
 
+        $existing_meeting_id = isset($meeting['existing_meeting_id']) ? $meeting['existing_meeting_id'] : null;
+
 		//save meeting to this location
-		$options = array(
+		$meeting_post = array(
 			'post_title'		=> $meeting['name'],
 			'post_type'			=> 'tsml_meeting',
 			'post_status'		=> 'publish',
@@ -571,30 +573,38 @@ function tsml_import_next_batch_from_data_sources($limit = null) {
 			'post_modified_gmt'	=> $meeting['post_modified_gmt'],
 			'post_author'		=> $meeting['post_author'],
 		);
-		if (!empty($meeting['slug'])) $options['post_name'] = $meeting['slug'];
-		$meeting_id = wp_insert_post($options);
-		add_post_meta($meeting_id, 'data_source_id', $meeting['id']);
+        if (!empty($meeting['slug'])) {
+            $meeting_post['post_name'] = $meeting['slug'];
+        }
+		if ($existing_meeting_id) {
+            $meeting_post['ID'] = $existing_meeting_id;
+            $meeting_id = $existing_meeting_id;
+            tsml_import_mark_meeting_as_not_stale($existing_meeting_id);
+            wp_update_post($meeting_post);
+        } else {
+            $meeting_id = wp_insert_post($meeting_post);
+        }
 
 		//add day and time(s) if not appointment meeting
 		if (!empty($meeting['time']) && (!empty($meeting['day']) || (string) $meeting['day'] === '0')) {
-			add_post_meta($meeting_id, 'day',  $meeting['day']);
-			add_post_meta($meeting_id, 'time', $meeting['time']);
+            update_post_meta($meeting_id, 'day',  $meeting['day']);
+            update_post_meta($meeting_id, 'time', $meeting['time']);
 
-			if (!empty($meeting['end_time'])) {
-				add_post_meta($meeting_id, 'end_time', $meeting['end_time']);
-			}
-		}
+            if (!empty($meeting['end_time'])) {
+                update_post_meta($meeting_id, 'end_time', $meeting['end_time']);
+            } elseif ($existing_meeting_id) {
+                delete_post_meta($meeting_id, 'end_time');
+            }
+		} elseif ($existing_meeting_id) {
+            delete_post_meta($meeting_id, 'day');
+            delete_post_meta($meeting_id, 'time');
+            delete_post_meta($meeting_id, 'end_time');
+        }
 
-		//add types, group, and data_source if available
-		if (!empty($meeting['types'])) {
-			add_post_meta($meeting_id, 'types', $meeting['types']);
-		}
-		if (!empty($meeting['group'])) {
-			add_post_meta($meeting_id, 'group_id', $groups[$meeting['group']]);
-		}
-		if (!empty($meeting['data_source'])) {
-			add_post_meta($meeting_id, 'data_source', $meeting['data_source']);
-		}
+        update_post_meta($meeting_id, 'types', $meeting['types']);
+        update_post_meta($meeting_id, 'group_id', $group_id);
+		update_post_meta($meeting_id, 'data_source', $meeting['data_source']);
+        update_post_meta($meeting_id, 'data_source_id', $meeting['id']);
 
 		//handle contact information (could be meeting or group)
 		$contact_entity_id = empty($group_id) ? $meeting_id : $group_id;
@@ -649,6 +659,10 @@ function tsml_import_next_batch_from_data_sources($limit = null) {
 	if ($remaining) {
 		update_option('tsml_import_buffer', $remaining);
 	} else {
+        foreach ($tsml_data_sources as $data_source_url => $data_source) {
+            tsml_import_delete_stale_meetings_after_update($data_source_url);
+        }
+
 		delete_option('tsml_import_buffer');
 	}
 
