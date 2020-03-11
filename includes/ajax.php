@@ -362,6 +362,14 @@ if (!function_exists('function_name')) {
 	}
 }
 
+add_action('wp_ajax_tsml_break_import_lock', 'tsml_ajax_break_import_lock');
+function tsml_ajax_break_import_lock() {
+    wp_send_json(array(
+        'value_before' => get_option('tsml_import_started_at', null),
+        'success' => update_option('tsml_import_started_at', null),
+    ));
+}
+
 //imports the next batch of meetings from whatever data-source has been marked for refreshing
 function tsml_import_next_batch_from_data_sources($limit = null) {
 	$errors = array();
