@@ -532,11 +532,12 @@ jQuery(function($){
 					}
 
 					//decode types (for hidden type column)
+					var types = [];
 					for (var i = 0; i < obj.types.length; i++) {
-						obj.types[i] = tsml.types[obj.types[i]];
+						types.push(tsml.types[obj.types[i]]);
 					}
-					obj.types.sort();
-					obj.types = obj.types.join(', ');
+					types.sort();
+					types = types.join(', ')
 
 					//save location info for map view
 					if (!locations[obj.location_id]) {
@@ -558,11 +559,18 @@ jQuery(function($){
 						notes : obj.notes,
 						url : obj.url
 					};
-							
+					
+					//classes for table row
+					var classes = [];
+					if (obj.notes && obj.notes.length) {
+						classes.push('notes');
+					}
+					for (var i = 0; i < obj.types.length; i++) {
+						classes.push('type-' + sanitizeTitle(obj.types[i]));
+					}
+
 					//add new table row
-					var row = '<tr';
-					if (obj.notes && obj.notes.length) row += ' class="notes"'
-					row += '>';
+					var row = '<tr class="' + classes.join(' ') + '">';
 					for (var i = 0; i < tsml.columns.length; i++) {
 						switch (tsml.columns[i]) {
 							case 'time':
@@ -595,7 +603,7 @@ jQuery(function($){
 							break;
 							
 							case 'types':
-							row += '<td class="types" data-sort="' + sanitizeTitle(obj.types) + '-' + sort_time + '">' + obj.types + '</td>';
+							row += '<td class="types" data-sort="' + sanitizeTitle(types) + '-' + sort_time + '">' + types + '</td>';
 							break;
 						}
 					}

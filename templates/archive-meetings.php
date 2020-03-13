@@ -519,8 +519,16 @@ foreach ($meetings as $meeting) {
     );
 
     $sort_time = @$meeting['day'] . '-' . (@$meeting['time'] == '00:00' ? '23:59' : @$meeting['time']);
+
+    $classes = array();
+    if (!empty($meeting['notes'])) {
+        $classes[] = 'notes';
+    }
+    foreach ($meeting['types'] as $type) {
+        $classes[] = 'type-' . sanitize_title($type);
+    }
     ?>
-							<tr <?php if (!empty($meeting['notes'])) {?> class="notes"<?php }?>>
+							<tr class="<?php echo join($classes, ' ')?>">
 								<?php foreach ($tsml_columns as $key => $column) {
         switch ($key) {
             case 'time': ?>
