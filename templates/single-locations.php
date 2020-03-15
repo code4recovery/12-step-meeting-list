@@ -53,35 +53,39 @@ get_header();
 							<ul class="list-group">
 								<li class="list-group-item list-group-item-address">
 									<p><?php echo tsml_format_address($location->formatted_address) ?></p>
-									<?php if ($location->region && !strpos($location->formatted_address, $location->region)) {?>
-									<p><?php echo $location->region ?></p>
+
+                                    <?php if ($location->region && !strpos($location->formatted_address, $location->region)) {?>
+									    <p><?php echo $location->region ?></p>
 									<?php }
-if ($location->notes) {?>
-									<p><?php echo $location->notes ?></p>
+
+									if ($location->notes) {?>
+									    <p><?php echo $location->notes ?></p>
 									<?php }?>
 								</li>
 
 								<?php
-$meetings = tsml_get_meetings(array('location_id' => $location->ID));
-$location_days = array();
-foreach ($meetings as $meeting) {
-    if (!isset($location_days[$meeting['day']])) {
-        $location_days[$meeting['day']] = array();
-    }
+                                $meetings = tsml_get_meetings(array('location_id' => $location->ID));
+                                $location_days = array();
+                                foreach ($meetings as $meeting) {
+                                    if (!isset($location_days[$meeting['day']])) {
+                                        $location_days[$meeting['day']] = array();
+                                    }
 
-    $location_days[$meeting['day']][] = '<li><span>' . $meeting['time_formatted'] . '</span> ' . tsml_link($meeting['url'], tsml_format_name($meeting['name'], $meeting['types']), 'tsml_location') . '</li>';
-}
-ksort($location_days);
-if (count($location_days)) {?>
-								<li class="list-group-item list-group-item-meetings">
-								<?php foreach ($location_days as $day => $meetings) {?>
-									<h4><?php if (!empty($tsml_days[$day])) {
-    echo $tsml_days[$day];
-}
-    ?></h4>
-									<ul><?php echo implode($meetings) ?></ul>
-								<?php }?>
-								</li>
+                                    $location_days[$meeting['day']][] = '<li><span>' . $meeting['time_formatted'] . '</span> ' . tsml_link($meeting['url'], tsml_format_name($meeting['name'], $meeting['types']), 'tsml_location') . '</li>';
+                                }
+                                ksort($location_days);
+
+                                if (count($location_days)) {?>
+                                    <li class="list-group-item list-group-item-meetings">
+                                    <?php foreach ($location_days as $day => $meetings) {?>
+                                        <h4><?php
+                                            if (!empty($tsml_days[$day])) {
+                                                echo $tsml_days[$day];
+                                            }
+                                        ?></h4>
+                                        <ul><?php echo implode($meetings) ?></ul>
+                                    <?php }?>
+                                    </li>
 								<?php }?>
 
 								<li class="list-group-item list-group-item-updated">
