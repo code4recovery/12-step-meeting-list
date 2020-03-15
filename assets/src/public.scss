@@ -422,7 +422,20 @@ $height: 550px; //height of map and min-height of list
 			th.distance, td.distance { display: none !important; }
 		}
 	}
-	
+
+	#meeting {
+
+		.tsml-type-tc & {
+			.page-header {
+
+				small {
+					color: $color_alert;
+					font-weight: bold;
+				}
+			}
+		}
+	}
+
 	#meeting, #location {
 		.page-header {
 			background-color: transparent;
