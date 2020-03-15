@@ -19,9 +19,15 @@ $startDate = tsml_format_next_start($meeting);
 
 //adding custom body classes
 add_filter('body_class', 'tsml_body_class');
-function tsml_body_class($classes)
-{
+function tsml_body_class($classes) {
+    global $meeting;
+
     $classes[] = 'tsml tsml-detail tsml-meeting';
+
+    if ($type_classes = tsml_to_css_classes($meeting->types, 'tsml-type-')) {
+        $classes[] = $type_classes;
+    }
+
     return $classes;
 }
 
