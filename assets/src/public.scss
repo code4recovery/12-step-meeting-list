@@ -564,15 +564,26 @@ $height: 550px; //height of map and min-height of list
 						ul {
 							list-style-type: none;
 							padding: 0;
+
 							li {
 								padding-left: 90px;
 								position: relative;
+
 								span {
 									color: #999; 
 									left: 0; 
 									position: absolute;
 									text-align: right; 
 									width: 80px;
+								}
+
+								&.type-tc {
+									opacity: .5;
+
+									small {
+										color: $color_alert;
+										font-weight: bold;
+									}
 								}
 							}
 							&:last-child { margin-bottom: 0; }
