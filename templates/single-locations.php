@@ -71,7 +71,9 @@ get_header();
                                         $location_days[$meeting['day']] = array();
                                     }
 
-                                    $location_days[$meeting['day']][] = '<li><span>' . $meeting['time_formatted'] . '</span> ' . tsml_link($meeting['url'], tsml_format_name($meeting['name'], $meeting['types']), 'tsml_location') . '</li>';
+                                    $type_classes = tsml_to_css_classes($meeting['types']);
+
+                                    $location_days[$meeting['day']][] = '<li class="meeting ' . $type_classes . '"><span>' . $meeting['time_formatted'] . '</span> ' . tsml_link($meeting['url'], tsml_format_name($meeting['name'], $meeting['types']), 'tsml_location') . '</li>';
                                 }
                                 ksort($location_days);
 
