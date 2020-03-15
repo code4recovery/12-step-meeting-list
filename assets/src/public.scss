@@ -316,25 +316,42 @@ $height: 550px; //height of map and min-height of list
 								line-height: 1.2;
 								position: absolute;
 							}
+
 							&.name, &.location, &.address, &.region, &.district {
 								display: block;
 								text-overflow: ellipsis;
 								white-space: nowrap;
 							}
+
 							&.name {
-								width: 175px;
+								width: auto;
+								white-space: normal;
+
+								@include breakpoint-768() {
+									width: 175px;
+									white-space: nowrap;
+								}
 
 								small {
+									display: inline-block;
 									color: $color_black;
 									font-size: 11px;
-									position: absolute;
-									right: $margin;
-									top: 13px;
+									white-space: nowrap;
+
+									&:before {
+										content: " / ";
+									}
 								}
 							}
+
 							&.location, &.address, &.region, &.district {
-								width: 220px;
+								width: auto;
+
+								@include breakpoint-768() {
+									width: 220px;
+								}
 							}
+
 							&.types, &.district {
 								display: none;
 							}
@@ -667,10 +684,6 @@ $height: 550px; //height of map and min-height of list
 						}
 						&.name {
 							width: 35%;
-							small {
-								position: static;
-								&:before { content: " / "; }
-							}
 						}
 						&.location {
 							width: 35%;
