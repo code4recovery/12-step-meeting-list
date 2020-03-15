@@ -15,9 +15,10 @@
     "laravel-mix": "^4.0.15",
     "mapbox-gl": "^0.46.0",
     "mark.js": "^8.11.1",
-    "sass": "^1.26.2",
+    "sass": "^1.26.3",
     "sass-loader": "^7.3.1",
     "timepicker": "^1.11.14",
     "typeahead.js": "^0.11.1"
-  }
+  },
+  "dependencies": {}
 }
