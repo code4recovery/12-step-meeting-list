@@ -622,15 +622,15 @@ $height: 550px; //height of map and min-height of list
 	body.tsml_fullscreen {
 		#meetings {
 			background-color: $color_white;
-		    bottom: 0;
-		    height: 100%;
-		    left: 0;
+			bottom: 0;
+			height: 100%;
+			left: 0;
 			max-width: none;
-		    position: fixed;
-		    right: 0;
-		    top: 0;
-		    width: 100%;
-		    z-index: 9999;
+			position: fixed;
+			right: 0;
+			top: 0;
+			width: 100%;
+			z-index: 9999;
 		}
 		&.admin-bar {
 			#meetings {
@@ -836,11 +836,11 @@ body {
 	}
 	&.lovecraft #tsml #meetings {
 		background-color: white;
-	    border: 1px solid #ddd;
-	    margin-top: -60px;
+		border: 1px solid #ddd;
+		margin-top: -60px;
 
 		@include breakpoint-768() {
 			margin-bottom: 35px;
-		}	    
+		}
 	}
 }
