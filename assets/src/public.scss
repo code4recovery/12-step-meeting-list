@@ -287,7 +287,11 @@ $height: 550px; //height of map and min-height of list
 			table {
 				border: 0;
 				display: none;
-				thead { display: none; }
+
+				thead {
+					display: none;
+				}
+
 				tbody {
 					tr {
 						border-top: 1px solid #ddd;
@@ -355,6 +359,10 @@ $height: 550px; //height of map and min-height of list
 							&.types, &.district {
 								display: none;
 							}
+						}
+
+						&.type-tc {
+							opacity: .5;
 						}
 					}
 				}
@@ -691,9 +699,6 @@ $height: 550px; //height of map and min-height of list
 						&.address, &.types, &.district { 
 							display: none;
 						}
-					}
-					&.type-tc {
-						opacity: .5;
 					}
 				}
 			}
