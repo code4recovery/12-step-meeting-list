@@ -1,3 +1,5 @@
+@import 'mixins/breakpoints';
+
 $icon_font_path: '../fonts/'; //bootstrap
 $color_gray: #aaa;
 $color_highlight: #ff6; //for searching
@@ -281,7 +283,7 @@ $height: 550px; //height of map and min-height of list
 	
 			#table-wrapper { margin: 0 -#{$margin}; overflow: hidden; }
 			#table-wrapper table { margin: 0; }
-			
+
 			table {
 				border: 0;
 				display: none;
@@ -321,6 +323,7 @@ $height: 550px; //height of map and min-height of list
 							}
 							&.name {
 								width: 175px;
+
 								small {
 									color: $color_black;
 									font-size: 11px;
@@ -578,7 +581,7 @@ $height: 550px; //height of map and min-height of list
 	}
 	
 	/* Small devices (tablets, 768px and up) */
-	@media screen and (min-width: 768px) {
+	@include breakpoint-768() {
 		#meetings {
 			.controls {
 				margin-bottom: 0;
@@ -694,7 +697,7 @@ $height: 550px; //height of map and min-height of list
 	
 	
 	/* Medium devices (desktops, 992px and up) */
-	@media screen and (min-width: 992px) {
+	@include breakpoint-992() {
 		#meetings .results table {
 			thead tr th.address, tbody tr td.address { 
 				display: table-cell;
@@ -709,7 +712,7 @@ $height: 550px; //height of map and min-height of list
 	}
 	
 	/* Large devices (large desktops, 1200px and up) */
-	@media screen and (min-width: 1200px) {
+	@include breakpoint-1200() {
 		#meetings .results {
 			table .address {
 				display: table-cell;
@@ -783,7 +786,8 @@ body {
 		background-color: white;
 	    border: 1px solid #ddd;
 	    margin-top: -60px;
-		@media screen and (min-width: 768px) {
+
+		@include breakpoint-768() {
 			margin-bottom: 35px;
 		}	    
 	}
