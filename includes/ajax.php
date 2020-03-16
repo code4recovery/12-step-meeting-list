@@ -622,29 +622,41 @@ function tsml_import_next_batch_from_data_sources($limit = null) {
 
 				if (!empty($meeting[$key])) {
 					update_post_meta($contact_entity_id, $key, $meeting[$key]);
-				}
+				} else {
+                    delete_post_meta($contact_entity_id, $key);
+                }
 			}
 		}
 
 		if (!empty($meeting['website'])) {
 			update_post_meta($contact_entity_id, 'website', esc_url_raw($meeting['website'], array('http', 'https')));
-		}
+		} else {
+            delete_post_meta($contact_entity_id, 'website');
+        }
 
 		if (!empty($meeting['website_2'])) {
 			update_post_meta($contact_entity_id, 'website_2', esc_url_raw($meeting['website_2'], array('http', 'https')));
-		}
+		} else {
+            delete_post_meta($contact_entity_id, 'website_2');
+        }
 
 		if (!empty($meeting['email'])) {
 			update_post_meta($contact_entity_id, 'email', $meeting['email']);
-		}
+		} else {
+            delete_post_meta($contact_entity_id, 'email');
+        }
 
 		if (!empty($meeting['phone'])) {
 			update_post_meta($contact_entity_id, 'phone', $meeting['phone']);
-		}
+		} else {
+            delete_post_meta($contact_entity_id, 'phone');
+        }
 
 		if (!empty($meeting['last_contact']) && ($last_contact = strtotime($meeting['last_contact']))) {
 			update_post_meta($contact_entity_id, 'last_contact', date('Y-m-d', $last_contact));
-		}
+		} else {
+            delete_post_meta($contact_entity_id, 'last_contact');
+        }
 	}
 
 	//remove post_modified thing added earlier
