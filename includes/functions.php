@@ -1543,3 +1543,20 @@ function tsml_string_tokens($string) {
 	//return array
 	return array_values(array_unique(array_filter(explode(' ', $string))));
 }
+
+/**
+ * Implodes given array $types into lower-cased class names, prefixing each with $prefix
+ *
+ * @param string[] $types
+ * @param string $prefix
+ * @return string
+ */
+function tsml_to_css_classes($types, $prefix = 'type-') {
+    if (!$types) {
+        return '';
+    }
+
+    $types = array_map('strtolower', $types);
+
+    return $prefix . implode(' ' . $prefix, $types);
+}
