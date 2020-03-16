@@ -1,0 +1,17 @@
+@mixin breakpoint-768() {
+  @media screen and (min-width: 768px) {
+    @content;
+  }
+}
+
+@mixin breakpoint-992() {
+  @media screen and (min-width: 992px) {
+    @content;
+  }
+}
+
+@mixin breakpoint-1200() {
+  @media screen and (min-width: 1200px) {
+    @content;
+  }
+}
