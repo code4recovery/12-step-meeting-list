@@ -652,6 +652,18 @@ function tsml_import_next_batch_from_data_sources($limit = null) {
             delete_post_meta($contact_entity_id, 'phone');
         }
 
+		if (!empty($meeting['mailing_address'])) {
+			update_post_meta($contact_entity_id, 'mailing_address', $meeting['mailing_address']);
+		} else {
+            delete_post_meta($contact_entity_id, 'mailing_address');
+        }
+
+		if (!empty($meeting['venmo'])) {
+			update_post_meta($contact_entity_id, 'venmo', $meeting['venmo']);
+		} else {
+            delete_post_meta($contact_entity_id, 'venmo');
+        }
+
 		if (!empty($meeting['last_contact']) && ($last_contact = strtotime($meeting['last_contact']))) {
 			update_post_meta($contact_entity_id, 'last_contact', date('Y-m-d', $last_contact));
 		} else {
