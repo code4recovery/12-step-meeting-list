@@ -5,22 +5,22 @@ $location = tsml_get_location();
 
 //define some vars for the map
 wp_localize_script('tsml_public', 'tsml_map', array(
-    'formatted_address' => $location->formatted_address,
-    'directions' => __('Directions', '12-step-meeting-list'),
-    'directions_url' => $location->directions,
-    'latitude' => $location->latitude,
-    'location' => get_the_title(),
-    'location_id' => $location->ID,
-    'location_url' => get_permalink($location->ID),
-    'longitude' => $location->longitude,
+	'formatted_address' => $location->formatted_address,
+	'directions' => __('Directions', '12-step-meeting-list'),
+	'directions_url' => $location->directions,
+	'latitude' => $location->latitude,
+	'location' => get_the_title(),
+	'location_id' => $location->ID,
+	'location_url' => get_permalink($location->ID),
+	'longitude' => $location->longitude,
 ));
 
 //adding custom body classes
 add_filter('body_class', 'tsml_body_class');
 function tsml_body_class($classes)
 {
-    $classes[] = 'tsml tsml-detail tsml-location';
-    return $classes;
+	$classes[] = 'tsml tsml-detail tsml-location';
+	return $classes;
 }
 
 get_header();
@@ -53,35 +53,41 @@ get_header();
 							<ul class="list-group">
 								<li class="list-group-item list-group-item-address">
 									<p><?php echo tsml_format_address($location->formatted_address) ?></p>
+
 									<?php if ($location->region && !strpos($location->formatted_address, $location->region)) {?>
-									<p><?php echo $location->region ?></p>
+										<p><?php echo $location->region ?></p>
 									<?php }
-if ($location->notes) {?>
-									<p><?php echo $location->notes ?></p>
+
+									if ($location->notes) {?>
+										<p><?php echo $location->notes ?></p>
 									<?php }?>
 								</li>
 
 								<?php
-$meetings = tsml_get_meetings(array('location_id' => $location->ID));
-$location_days = array();
-foreach ($meetings as $meeting) {
-    if (!isset($location_days[$meeting['day']])) {
-        $location_days[$meeting['day']] = array();
-    }
+								$meetings = tsml_get_meetings(array('location_id' => $location->ID));
+								$location_days = array();
+								foreach ($meetings as $meeting) {
+									if (!isset($location_days[$meeting['day']])) {
+										$location_days[$meeting['day']] = array();
+									}
 
-    $location_days[$meeting['day']][] = '<li><span>' . $meeting['time_formatted'] . '</span> ' . tsml_link($meeting['url'], tsml_format_name($meeting['name'], $meeting['types']), 'tsml_location') . '</li>';
-}
-ksort($location_days);
-if (count($location_days)) {?>
-								<li class="list-group-item list-group-item-meetings">
-								<?php foreach ($location_days as $day => $meetings) {?>
-									<h4><?php if (!empty($tsml_days[$day])) {
-    echo $tsml_days[$day];
-}
-    ?></h4>
-									<ul><?php echo implode($meetings) ?></ul>
-								<?php }?>
-								</li>
+									$type_classes = tsml_to_css_classes($meeting['types']);
+
+									$location_days[$meeting['day']][] = '<li class="meeting ' . $type_classes . '"><span>' . $meeting['time_formatted'] . '</span> ' . tsml_link($meeting['url'], tsml_format_name($meeting['name'], $meeting['types']), 'tsml_location') . '</li>';
+								}
+								ksort($location_days);
+
+								if (count($location_days)) {?>
+									<li class="list-group-item list-group-item-meetings">
+									<?php foreach ($location_days as $day => $meetings) {?>
+										<h4><?php
+											if (!empty($tsml_days[$day])) {
+												echo $tsml_days[$day];
+											}
+										?></h4>
+										<ul><?php echo implode($meetings) ?></ul>
+									<?php }?>
+									</li>
 								<?php }?>
 
 								<li class="list-group-item list-group-item-updated">
