@@ -448,12 +448,16 @@ function tsml_import_next_batch_from_data_sources($limit = null) {
 	$may_continue = true;
 	$time_we_should_pack_up_our_things = $tsml_import_started_at + 0.75 * $max_execution_time;
 
+	//we are collecting updates to the group/meetings contacts and sending them afterwards to save db requests
+	$contact_entity_updates = array();
+
 	while ($remaining && $may_continue) {
 		$meeting = array_shift($remaining);
 		$imported_meetings[] = $meeting;
 		$region_id = null;
 		$district_id = null;
 		$group_id = null;
+        $contact_entity_update = array();
 
 		//we can either try to manage as many inserts time allows, or import in small batches, the ajax-way
 		if ($limit === null) {
@@ -616,60 +620,55 @@ function tsml_import_next_batch_from_data_sources($limit = null) {
 
 		//handle contact information (could be meeting or group)
 		$contact_entity_id = empty($group_id) ? $meeting_id : $group_id;
+
 		for ($i = 1; $i <= GROUP_CONTACT_COUNT; $i++) {
 			foreach (array('name', 'phone', 'email') as $field) {
 				$key = 'contact_' . $i . '_' . $field;
 
 				if (!empty($meeting[$key])) {
-					update_post_meta($contact_entity_id, $key, $meeting[$key]);
+                    $contact_entity_update[$key] = $meeting[$key];
 				} else {
-                    delete_post_meta($contact_entity_id, $key);
+                    $contact_entity_update[$key] = null;
                 }
 			}
 		}
 
-		if (!empty($meeting['website'])) {
-			update_post_meta($contact_entity_id, 'website', esc_url_raw($meeting['website'], array('http', 'https')));
-		} else {
-            delete_post_meta($contact_entity_id, 'website');
+		foreach (array('website', 'website_2') as $key) {
+            if (!empty($meeting[$key])) {
+                $contact_entity_update[$key] = esc_url_raw($meeting[$key], array('http', 'https'));
+            } else {
+                $contact_entity_update[$key] = null;
+            }
         }
 
-		if (!empty($meeting['website_2'])) {
-			update_post_meta($contact_entity_id, 'website_2', esc_url_raw($meeting['website_2'], array('http', 'https')));
-		} else {
-            delete_post_meta($contact_entity_id, 'website_2');
-        }
-
-		if (!empty($meeting['email'])) {
-			update_post_meta($contact_entity_id, 'email', $meeting['email']);
-		} else {
-            delete_post_meta($contact_entity_id, 'email');
-        }
-
-		if (!empty($meeting['phone'])) {
-			update_post_meta($contact_entity_id, 'phone', $meeting['phone']);
-		} else {
-            delete_post_meta($contact_entity_id, 'phone');
-        }
-
-		if (!empty($meeting['mailing_address'])) {
-			update_post_meta($contact_entity_id, 'mailing_address', $meeting['mailing_address']);
-		} else {
-            delete_post_meta($contact_entity_id, 'mailing_address');
-        }
-
-		if (!empty($meeting['venmo'])) {
-			update_post_meta($contact_entity_id, 'venmo', $meeting['venmo']);
-		} else {
-            delete_post_meta($contact_entity_id, 'venmo');
+        foreach (array('email', 'phone', 'mailing_address', 'venmo') as $key) {
+            if (!empty($meeting[$key])) {
+                $contact_entity_update[$key] = $meeting[$key];
+            } else {
+                $contact_entity_update[$key] = null;
+            }
         }
 
 		if (!empty($meeting['last_contact']) && ($last_contact = strtotime($meeting['last_contact']))) {
-			update_post_meta($contact_entity_id, 'last_contact', date('Y-m-d', $last_contact));
+            $contact_entity_update['last_contact'] = date('Y-m-d', $last_contact);
 		} else {
-            delete_post_meta($contact_entity_id, 'last_contact');
+            $contact_entity_update['last_contact'] = null;
         }
+
+        $contact_entity_updates[$contact_entity_id] = $contact_entity_update;
 	}
+
+	//now quickly update collected contact entities
+	foreach ($contact_entity_updates as $contact_entity_id => $contact_entity_update) {
+	    foreach ($contact_entity_update as $key => $value) {
+	        if ($value === null) {
+                delete_post_meta($contact_entity_id, $key);
+            } else {
+	            update_post_meta($contact_entity_id, $key, $value);
+            }
+        }
+    }
+    $contact_entity_updates = null;
 
 	//remove post_modified thing added earlier
 	remove_filter('wp_insert_post_data', 'tsml_import_post_modified', 99);
