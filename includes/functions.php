@@ -445,9 +445,28 @@ function tsml_format_time($string, $empty='Appointment') {
 //used:		single-meeting.php
 if (!function_exists('tsml_format_next_start')) {
 	function tsml_format_next_start($meeting) {
-		if (empty($meeting->time)) return null;
+		if (empty($meeting->time)) {
+		    return null;
+        }
+
 		$days = array('sunday', 'monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday');
 		$string = 'next ' . $days[$meeting->day] . ' ' . $meeting->time . ' ' . get_option('timezone_string');
+
+		return date('c', strtotime($string));
+	}
+}
+
+//get the next meeting end datetime for schema.org microdata
+//used:		single-meeting.php
+if (!function_exists('tsml_format_next_end')) {
+	function tsml_format_next_end($meeting) {
+		if (empty($meeting->end_time)) {
+		    return null;
+        }
+
+		$days = array('sunday', 'monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday');
+		$string = 'next ' . $days[$meeting->day] . ' ' . $meeting->end_time . ' ' . get_option('timezone_string');
+
 		return date('c', strtotime($string));
 	}
 }
