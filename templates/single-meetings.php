@@ -5,14 +5,14 @@ $meeting = tsml_get_meeting();
 
 //define some vars for the map
 wp_localize_script('tsml_public', 'tsml_map', array(
-    'directions' => __('Directions', '12-step-meeting-list'),
-    'directions_url' => $meeting->directions,
-    'formatted_address' => $meeting->formatted_address,
-    'latitude' => $meeting->latitude,
-    'location' => get_the_title($meeting->post_parent),
-    'location_id' => $meeting->post_parent,
-    'location_url' => get_permalink($meeting->post_parent),
-    'longitude' => $meeting->longitude,
+	'directions' => __('Directions', '12-step-meeting-list'),
+	'directions_url' => $meeting->directions,
+	'formatted_address' => $meeting->formatted_address,
+	'latitude' => $meeting->latitude,
+	'location' => get_the_title($meeting->post_parent),
+	'location_id' => $meeting->post_parent,
+	'location_url' => get_permalink($meeting->post_parent),
+	'longitude' => $meeting->longitude,
 ));
 
 $startDate = tsml_format_next_start($meeting);
@@ -20,10 +20,16 @@ $endDate = tsml_format_next_end($meeting);
 
 //adding custom body classes
 add_filter('body_class', 'tsml_body_class');
-function tsml_body_class($classes)
-{
-    $classes[] = 'tsml tsml-detail tsml-meeting';
-    return $classes;
+function tsml_body_class($classes) {
+	global $meeting;
+
+	$classes[] = 'tsml tsml-detail tsml-meeting';
+
+	if ($type_classes = tsml_to_css_classes($meeting->types, 'tsml-type-')) {
+		$classes[] = $type_classes;
+	}
+
+	return $classes;
 }
 
 get_header();
@@ -61,8 +67,8 @@ get_header();
 echo '<p class="meeting-time"' . ($startDate ? ' content="' . $startDate . '"' : '') . ($endDate ? ' data-end-date="' . $endDate . '"' : '') . '>';
 echo tsml_format_day_and_time($meeting->day, $meeting->time);
 if (!empty($meeting->end_time)) {
-    /* translators: until */
-    echo __(' to ', '12-step-meeting-list'), tsml_format_time($meeting->end_time);
+	/* translators: until */
+	echo __(' to ', '12-step-meeting-list'), tsml_format_time($meeting->end_time);
 }
 echo '</p>';
 if (count($meeting->types_expanded)) { ?>
@@ -82,31 +88,31 @@ if (!empty($meeting->notes)) {?>
 								</li>
 								<?php
 if (!empty($meeting->location_id)) {
-    $location_info = '<div>
+	$location_info = '<div>
 										<h3 class="list-group-item-heading">' . $meeting->location . '</h3>';
 
-    if ($other_meetings = count($meeting->location_meetings) - 1) {
-        $location_info .= '<p class="location-other-meetings">' . sprintf(_n('%d other meeting at this location', '%d other meetings at this location', $other_meetings, '12-step-meeting-list'), $other_meetings) . '</p>';
-    }
+	if ($other_meetings = count($meeting->location_meetings) - 1) {
+		$location_info .= '<p class="location-other-meetings">' . sprintf(_n('%d other meeting at this location', '%d other meetings at this location', $other_meetings, '12-step-meeting-list'), $other_meetings) . '</p>';
+	}
 
-    $location_info .= '<p class="location-address">' . tsml_format_address($meeting->formatted_address) . '</p>';
+	$location_info .= '<p class="location-address">' . tsml_format_address($meeting->formatted_address) . '</p>';
 
-    if (!empty($meeting->location_notes)) {
-        $location_info .= '<section class="location-notes">' . wpautop($meeting->location_notes) . '</section>';
-    }
+	if (!empty($meeting->location_notes)) {
+		$location_info .= '<section class="location-notes">' . wpautop($meeting->location_notes) . '</section>';
+	}
 
-    if (!empty($meeting->region) && !strpos($meeting->formatted_address, $meeting->region)) {
-        $location_info .= '<p class="location-region">' . $meeting->region . '</p>';
-    }
+	if (!empty($meeting->region) && !strpos($meeting->formatted_address, $meeting->region)) {
+		$location_info .= '<p class="location-region">' . $meeting->region . '</p>';
+	}
 
-    $location_info .= '</div>';
+	$location_info .= '</div>';
 
-    echo tsml_link(
-        get_permalink($meeting->post_parent),
-        $location_info,
-        'tsml_meeting',
-        'list-group-item list-group-item-location'
-    );
+	echo tsml_link(
+		get_permalink($meeting->post_parent),
+		$location_info,
+		'tsml_meeting',
+		'list-group-item list-group-item-location'
+	);
 }
 
 if (!empty($meeting->group) || !empty($meeting->website) || !empty($meeting->website_2) || !empty($meeting->email) || !empty($meeting->phone)) {?>
@@ -115,31 +121,31 @@ if (!empty($meeting->group) || !empty($meeting->website) || !empty($meeting->web
 										<?php if (!empty($meeting->group_notes)) {?>
 											<section class="group-notes"><?php echo wpautop($meeting->group_notes) ?></section>
 										<?php }
-    if (!empty($meeting->district)) {?>
+	if (!empty($meeting->district)) {?>
 											<section class="group-district"><?php echo $meeting->district ?></section>
 										<?php }
-    if (!empty($meeting->website)) {?>
+	if (!empty($meeting->website)) {?>
 											<p class="group-website">
 												<a href="<?php echo $meeting->website ?>" target="_blank"><?php echo $meeting->website ?></a>
 											</p>
 										<?php }
-    if (!empty($meeting->website_2)) {?>
+	if (!empty($meeting->website_2)) {?>
 											<p class="group-website_2">
 												<a href="<?php echo $meeting->website_2 ?>" target="_blank"><?php echo $meeting->website_2 ?></a>
 											</p>
 										<?php }
-    if (!empty($meeting->email)) {?>
+	if (!empty($meeting->email)) {?>
 											<p class="group-email">
 												<a href="mailto:<?php echo $meeting->email ?>"><?php echo $meeting->email ?></a>
 											</p>
 											<?php }
-    if (!empty($meeting->phone)) {?>
+	if (!empty($meeting->phone)) {?>
 											<p class="group-phone">
 												<a href="tel:<?php echo $meeting->phone ?>"><?php echo $meeting->phone ?></a>
 											</p>
 										</a>
 										<?php }
-    if (!empty($meeting->venmo)) {?>
+	if (!empty($meeting->venmo)) {?>
 											<p class="group-venmo">
 												Venmo: <a href="https://venmo.com/<?php echo substr($meeting->venmo, 1) ?>" target="_blank"><?php echo $meeting->venmo ?></a>
 											</p>
@@ -156,15 +162,15 @@ if (!empty($meeting->group) || !empty($meeting->website) || !empty($meeting->web
 
 						<?php
 if ($tsml_contact_display == 'public') {
-    for ($i = 1; $i <= GROUP_CONTACT_COUNT; $i++) {
-        if (!empty($meeting->{'contact_' . $i . '_name'}) || !empty($meeting->{'contact_' . $i . '_email'}) || !empty($meeting->{'contact_' . $i . '_phone'})) {?>
+	for ($i = 1; $i <= GROUP_CONTACT_COUNT; $i++) {
+		if (!empty($meeting->{'contact_' . $i . '_name'}) || !empty($meeting->{'contact_' . $i . '_email'}) || !empty($meeting->{'contact_' . $i . '_phone'})) {?>
 								<div class="panel panel-default">
 									<div class="panel-heading">
 										<h3 class="panel-title">
 											<?php if (!empty($meeting->{'contact_' . $i . '_name'})) {
-            echo $meeting->{'contact_' . $i . '_name'};
-        }
-            ?>
+			echo $meeting->{'contact_' . $i . '_name'};
+		}
+			?>
 											<span class="panel-title-buttons">
 												<?php if (!empty($meeting->{'contact_' . $i . '_email'})) {?><a href="mailto:<?php echo $meeting->{'contact_' . $i . '_email'} ?>"><span class="glyphicon glyphicon-envelope"></span></a><?php }?>
 												<?php if (!empty($meeting->{'contact_' . $i . '_phone'})) {?><a href="tel:<?php echo preg_replace('~\D~', '', $meeting->{'contact_' . $i . '_phone'}) ?>"><span class="glyphicon glyphicon-earphone"></span></a><?php }?>
@@ -173,7 +179,7 @@ if ($tsml_contact_display == 'public') {
 									</div>
 								</div>
 								<?php }
-    }
+	}
 }
 
 if (!empty($tsml_feedback_addresses)) {?>
