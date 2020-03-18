@@ -1,6 +1,9 @@
+@import 'mixins/breakpoints';
+
 $icon_font_path: '../fonts/'; //bootstrap
 $color_gray: #aaa;
 $color_highlight: #ff6; //for searching
+$color_alert: #d40047; //for pointing ou problematic data like meeting type TC
 $color_black: #333;
 $color_white: #fdfdfc;
 $margin: 15px; //spacing between elements
@@ -281,11 +284,15 @@ $height: 550px; //height of map and min-height of list
 	
 			#table-wrapper { margin: 0 -#{$margin}; overflow: hidden; }
 			#table-wrapper table { margin: 0; }
-			
+
 			table {
 				border: 0;
 				display: none;
-				thead { display: none; }
+
+				thead {
+					display: none;
+				}
+
 				tbody {
 					tr {
 						border-top: 1px solid #ddd;
@@ -314,26 +321,56 @@ $height: 550px; //height of map and min-height of list
 								line-height: 1.2;
 								position: absolute;
 							}
+
 							&.name, &.location, &.address, &.region, &.district {
 								display: block;
 								text-overflow: ellipsis;
 								white-space: nowrap;
 							}
+
 							&.name {
-								width: 175px;
+								width: auto;
+								white-space: normal;
+
+								@include breakpoint-768() {
+									width: 175px;
+									white-space: nowrap;
+								}
+
 								small {
+									display: inline-block;
 									color: $color_black;
 									font-size: 11px;
-									position: absolute;
-									right: $margin;
-									top: 13px;
+									white-space: nowrap;
+
+									&:before {
+										content: " / ";
+									}
 								}
 							}
+
 							&.location, &.address, &.region, &.district {
-								width: 220px;
+								width: auto;
+
+								@include breakpoint-768() {
+									width: 220px;
+								}
 							}
+
 							&.types, &.district {
 								display: none;
+							}
+						}
+
+						&.type-tc {
+							opacity: .5;
+
+							.name {
+
+								small {
+									color: $color_alert;
+									font-weight: bold;
+								}
 							}
 						}
 					}
@@ -385,7 +422,21 @@ $height: 550px; //height of map and min-height of list
 			th.distance, td.distance { display: none !important; }
 		}
 	}
-	
+
+	#meeting {
+
+		.tsml-type-tc & {
+
+			.page-header {
+
+				small {
+					color: $color_alert;
+					font-weight: bold;
+				}
+			}
+		}
+	}
+
 	#meeting, #location {
 		.page-header {
 			background-color: transparent;
@@ -514,15 +565,26 @@ $height: 550px; //height of map and min-height of list
 						ul {
 							list-style-type: none;
 							padding: 0;
+
 							li {
 								padding-left: 90px;
 								position: relative;
+
 								span {
 									color: #999; 
 									left: 0; 
 									position: absolute;
 									text-align: right; 
 									width: 80px;
+								}
+
+								&.type-tc {
+									opacity: .5;
+
+									small {
+										color: $color_alert;
+										font-weight: bold;
+									}
 								}
 							}
 							&:last-child { margin-bottom: 0; }
@@ -560,15 +622,15 @@ $height: 550px; //height of map and min-height of list
 	body.tsml_fullscreen {
 		#meetings {
 			background-color: $color_white;
-		    bottom: 0;
-		    height: 100%;
-		    left: 0;
+			bottom: 0;
+			height: 100%;
+			left: 0;
 			max-width: none;
-		    position: fixed;
-		    right: 0;
-		    top: 0;
-		    width: 100%;
-		    z-index: 9999;
+			position: fixed;
+			right: 0;
+			top: 0;
+			width: 100%;
+			z-index: 9999;
 		}
 		&.admin-bar {
 			#meetings {
@@ -578,7 +640,7 @@ $height: 550px; //height of map and min-height of list
 	}
 	
 	/* Small devices (tablets, 768px and up) */
-	@media screen and (min-width: 768px) {
+	@include breakpoint-768() {
 		#meetings {
 			.controls {
 				margin-bottom: 0;
@@ -664,10 +726,6 @@ $height: 550px; //height of map and min-height of list
 						}
 						&.name {
 							width: 35%;
-							small {
-								position: static;
-								&:before { content: " / "; }
-							}
 						}
 						&.location {
 							width: 35%;
@@ -675,9 +733,6 @@ $height: 550px; //height of map and min-height of list
 						&.address, &.types, &.district { 
 							display: none;
 						}
-					}
-					&.type-tc {
-						opacity: .5;
 					}
 				}
 			}
@@ -694,7 +749,7 @@ $height: 550px; //height of map and min-height of list
 	
 	
 	/* Medium devices (desktops, 992px and up) */
-	@media screen and (min-width: 992px) {
+	@include breakpoint-992() {
 		#meetings .results table {
 			thead tr th.address, tbody tr td.address { 
 				display: table-cell;
@@ -709,7 +764,7 @@ $height: 550px; //height of map and min-height of list
 	}
 	
 	/* Large devices (large desktops, 1200px and up) */
-	@media screen and (min-width: 1200px) {
+	@include breakpoint-1200() {
 		#meetings .results {
 			table .address {
 				display: table-cell;
@@ -781,10 +836,11 @@ body {
 	}
 	&.lovecraft #tsml #meetings {
 		background-color: white;
-	    border: 1px solid #ddd;
-	    margin-top: -60px;
-		@media screen and (min-width: 768px) {
+		border: 1px solid #ddd;
+		margin-top: -60px;
+
+		@include breakpoint-768() {
 			margin-bottom: 35px;
-		}	    
+		}
 	}
 }
