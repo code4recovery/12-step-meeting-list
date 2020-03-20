@@ -39,7 +39,7 @@ if (!function_exists('tsml_next_meetings')) {
 
 			$classes = tsml_to_css_classes($meeting['types']);
 
-			if (@$meeting['notes']) {
+			if (!empty($meeting['notes'])) {
 				$classes .= ' notes';
 			}
 
