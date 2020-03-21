@@ -16,6 +16,7 @@ wp_localize_script('tsml_public', 'tsml_map', array(
 ));
 
 $startDate = tsml_format_next_start($meeting);
+$endDate = tsml_format_next_end($meeting);
 
 //adding custom body classes
 add_filter('body_class', 'tsml_body_class');
@@ -63,7 +64,7 @@ get_header();
 								<li class="list-group-item meeting-info">
 									<h3 class="list-group-item-heading"><?php _e('Meeting Information', '12-step-meeting-list')?></h3>
 									<?php
-echo '<p class="meeting-time"' . ($startDate ? ' content="' . $startDate . '"' : '') . '>';
+echo '<p class="meeting-time"' . ($startDate ? ' content="' . $startDate . '"' : '') . ($endDate ? ' data-end-date="' . $endDate . '"' : '') . '>';
 echo tsml_format_day_and_time($meeting->day, $meeting->time);
 if (!empty($meeting->end_time)) {
 	/* translators: until */
