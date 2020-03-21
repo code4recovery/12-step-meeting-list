@@ -2,7 +2,7 @@
 Contributors: aasanjose
 Requires at least: 3.2
 Tested up to: 5.3.2
-Stable tag: 3.5.3
+Stable tag: 3.5.4
 
 This plugin helps twelve step recovery programs list their meetings. It standardizes addresses, and displays results in a searchable list and map.
 
@@ -204,6 +204,9 @@ To apply these changes, you must go to Settings > Permalinks and click "Save Cha
 
 == Changelog ==
 
+= 3.5.4 =
+* Added temporary closure styling to widget
+ 
 = 3.5.3 =
 * Changes to front end display supporting temporary closure tag
 
