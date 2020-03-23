@@ -622,6 +622,10 @@ jQuery(function($){
 					createMap(true, locations, searchLocation);
 				}
 
+				tbody.trigger('tsml_meetings_updated', {
+					meetings: response,
+					tbody: tbody,
+				});
 			}
 		}, 'json');	
 	}
