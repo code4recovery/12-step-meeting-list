@@ -28,7 +28,7 @@ function tsml_save_post($post_id, $post, $update) {
 	$update = ($post->post_date !== $post->post_modified);
 	
 	//sanitize strings
-	$strings = array('post_title', 'location', 'formatted_address', 'post_status', 'group', 'last_contact');
+	$strings = array('post_title', 'location', 'formatted_address', 'post_status', 'group', 'last_contact', 'video_conference_phone');
 	foreach ($strings as $string) {
 		$_POST[$string] = stripslashes(sanitize_text_field($_POST[$string]));
 	}
@@ -70,6 +70,23 @@ function tsml_save_post($post_id, $post, $update) {
 	//don't allow it to be both men and women
 	if (in_array('M', $_POST['types']) && in_array('W', $_POST['types'])) {
 		$_POST['types'] = array_values(array_diff($_POST['types'], array('W')));
+	}
+
+	//video conference information (doing this here because it affects types)
+	$valid_conference_url = null;
+	$authorized_providers = array('zoom.us', 'meet.google.com');
+	$_POST['types'] = array_values(array_diff($_POST['types'], array('ONL')));
+	if (!empty($_POST['video_conference_url'])) {
+		$url = esc_url_raw($_POST['video_conference_url'], array('http', 'https'));
+		$url_parts = parse_url($url);
+		foreach ($authorized_providers as $provider) {
+			if (strpos($url_parts['host'], $provider) !== false) {
+				$valid_conference_url = $url;
+			}
+		}
+		if ($valid_conference_url) {
+			array_push($_POST['types'], 'ONL');
+		}
 	}
 
 	//compare types
@@ -276,6 +293,25 @@ function tsml_save_post($post_id, $post, $update) {
 				update_post_meta($post->ID, 'last_contact', date('Y-m-d', strtotime($_POST['last_contact'])));
 			}
 		}
+
+		//video conferencing info
+		if (!$update || strcmp($old_meeting->video_conference_url, $valid_conference_url) !== 0) {
+			$changes[] = 'video_conference_url';
+			if (empty($valid_conference_url)) {
+				delete_post_meta($post->ID, 'video_conference_url');
+			} else {
+				update_post_meta($post->ID, 'video_conference_url', $valid_conference_url);
+			}
+		}
+		
+		if (!$update || strcmp($old_meeting->video_conference_phone, $_POST['video_conference_phone']) !== 0) {
+			$changes[] = 'video_conference_phone';
+			if (empty($valid_conference_url)) {
+				delete_post_meta($post->ID, 'video_conference_phone');
+			} else {
+				update_post_meta($post->ID, 'video_conference_phone', $_POST['video_conference_phone']);
+			}
+		}
 		
 		//switching from group to no group
 		if (!empty($old_meeting->group)) {
@@ -410,7 +446,26 @@ function tsml_save_post($post_id, $post, $update) {
 			update_post_meta($group_id, 'last_contact', date('Y-m-d', strtotime($_POST['last_contact'])));
 		} else {
 			delete_post_meta($group_id, 'last_contact');
-		}	
+		}
+
+		//video conferencing info
+		if (!$update || strcmp($old_meeting->video_conference_url, $valid_conference_url) !== 0) {
+			$changes[] = 'video_conference_url';
+			if (empty($valid_conference_url)) {
+				delete_post_meta($group_id, 'video_conference_url');
+			} else {
+				update_post_meta($group_id, 'video_conference_url', $valid_conference_url);
+			}
+		}
+		
+		if (!$update || strcmp($old_meeting->video_conference_phone, $_POST['video_conference_phone']) !== 0) {
+			$changes[] = 'video_conference_phone';
+			if (empty($valid_conference_url)) {
+				delete_post_meta($group_id, 'video_conference_phone');
+			} else {
+				update_post_meta($group_id, 'video_conference_phone', $_POST['video_conference_phone']);
+			}
+		}
 	}
 
 	//deleted orphaned locations and groups

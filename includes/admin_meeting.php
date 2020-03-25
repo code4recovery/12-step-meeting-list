@@ -172,7 +172,7 @@ foreach ($tsml_programs[$tsml_program]['types'] as $key => $type) {?>
 		</div>
 		<?php }?>
 		<div class="meta_form_row">
-			<label><?php _e('Notes', '12-step-meeting-list')?></label>
+			<label><?php _e('Location Notes', '12-step-meeting-list')?></label>
 			<textarea name="location_notes" placeholder="<?php _e('eg. Around back, basement, ring buzzer', '12-step-meeting-list')?>"><?php if (!empty($location->post_content)) {
             echo $location->post_content;
         }
@@ -239,7 +239,7 @@ foreach ($tsml_programs[$tsml_program]['types'] as $key => $type) {?>
 			</div>
 			<?php }?>
 			<div class="meta_form_row group-visible">
-				<label for="group_notes"><?php _e('Notes', '12-step-meeting-list')?></label>
+				<label for="group_notes"><?php _e('Group Notes', '12-step-meeting-list')?></label>
 				<textarea name="group_notes" id="group_notes" placeholder="<?php _e('eg. Group history, when the business meeting is, etc.', '12-step-meeting-list')?>"><?php echo @$meeting->group_notes ?></textarea>
 			</div>
 			<div class="meta_form_row">
@@ -288,6 +288,18 @@ foreach ($tsml_programs[$tsml_program]['types'] as $key => $type) {?>
 			<div class="meta_form_row">
 				<label for="last_contact"><?php _e('Last Contact', '12-step-meeting-list')?></label>
 				<input type="date" name="last_contact" value="<?php echo @$meeting->last_contact ?>">
+			</div>
+			<div class="meta_form_separator">
+				<h4><?php _e('Video Conference Details', '12-step-meeting-list')?></h4>
+				<p><?php _e('If this meeting has videoconference information, please enter it here. Currently supported providers: Zoom, Google Hangouts. If other details are required, such as a password, they should be included in the Meeting Notes field above.', '12-step-meeting-list')?></p>
+			</div>
+			<div class="meta_form_row">
+				<label for="video_conference_url"><?php _e('URL', '12-step-meeting-list')?></label>
+				<input type="url" name="video_conference_url" id="video_conference_url" placeholder="https://zoom.us/j/123456789" value="<?php echo $meeting->video_conference_url ?>">
+			</div>
+			<div class="meta_form_row">
+				<label for="content"><?php _e('Phone', '12-step-meeting-list')?></label>
+				<input type="text" name="video_conference_phone" id="video_conference_phone" placeholder="(202) 555-1212" value="<?php echo $meeting->video_conference_phone ?>">
 			</div>
 		</div>
 		<?php
