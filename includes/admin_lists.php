@@ -166,7 +166,11 @@ function tsml_bulk_action_handler($redirect, $doaction, $object_ids)
             $types = get_post_meta($post_id, 'types', false)[0];
             if (in_array('TC', array_values($types))) {
                 $types = array_diff($types, array('TC'));
-                update_post_meta($post_id, 'types', $types);
+                if (empty($types)) {
+                    delete_post_meta($post_id, 'types');
+                } else {
+                    update_post_meta($post_id, 'types', array_map('esc_attr', $types));
+                }
                 $count++;
             }
         }
