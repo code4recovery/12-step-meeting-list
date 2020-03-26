@@ -148,3 +148,47 @@ function tsml_my_bulk_actions($bulk_array)
     $bulk_array['tsml_remove_tc'] = __('Remove Temporary Closure');
     return $bulk_array;
 }
+
+# Handle removing Temporary Closures
+add_filter('handle_bulk_actions-edit-tsml_meeting', 'tsml_bulk_action_handler', 10, 3);
+
+function tsml_bulk_action_handler($redirect, $doaction, $object_ids)
+{
+
+    // let's remove query args first
+    $redirect = remove_query_arg(array('tsml_remove_tc'), $redirect);
+
+    // do something for "Remove Temporary Closure" bulk action
+    if ($doaction == 'tsml_remove_tc') {
+        $count = 0;
+        foreach ($object_ids as $post_id) {
+            // For each select post, remove TC if it's selected in "types"
+            $types = get_post_meta($post_id, 'types', false)[0];
+            if (in_array('TC', array_values($types))) {
+                $types = array_diff($types, array('TC'));
+                update_post_meta($post_id, 'types', $types);
+                $count++;
+            }
+        }
+
+        // add number of meetings changed to query args
+        $redirect = add_query_arg('tsml_remove_tc', $count, $redirect);
+    }
+
+    return $redirect;
+}
+
+// Notify how many Temporary Closures where removed
+add_action('admin_notices', 'tsml_bulk_action_notices');
+
+function tsml_bulk_action_notices () {
+    if (!empty($_REQUEST['tsml_remove_tc'])){
+        // depending on how many posts were changed, make the message different
+        printf('<div id="message" class="updated notice is-dismissible"><p>' .
+            _n(
+                'Temporary Closure removed from %s meeting',
+                'Temporary Closure removed from %s meetings',
+                intval($_REQUEST['tsml_remove_tc'])
+            ) . '</p></div>', intval($_REQUEST['tsml_remove_tc']));
+    }
+}
