@@ -291,15 +291,15 @@ foreach ($tsml_programs[$tsml_program]['types'] as $key => $type) {?>
 			</div>
 			<div class="meta_form_separator">
 				<h4><?php _e('Video Conference Details', '12-step-meeting-list')?></h4>
-				<p><?php _e('If this meeting has videoconference information, please enter it here. Currently supported providers: Zoom, Google Hangouts. If other details are required, such as a password, they should be included in the Meeting Notes field above.', '12-step-meeting-list')?></p>
+				<p><?php _e('If this meeting has videoconference information, please enter it here. Currently supported providers: Zoom, Google Hangouts, WebEx. If other details are required, such as a password, they should be included in the Meeting Notes field above.', '12-step-meeting-list')?></p>
 			</div>
 			<div class="meta_form_row">
-				<label for="video_conference_url"><?php _e('URL', '12-step-meeting-list')?></label>
-				<input type="url" name="video_conference_url" id="video_conference_url" placeholder="https://zoom.us/j/123456789" value="<?php echo $meeting->video_conference_url ?>">
+				<label for="conference_url"><?php _e('URL', '12-step-meeting-list')?></label>
+				<input type="url" name="conference_url" id="conference_url" placeholder="https://" value="<?php echo $meeting->conference_url ?>">
 			</div>
 			<div class="meta_form_row">
 				<label for="content"><?php _e('Phone', '12-step-meeting-list')?></label>
-				<input type="text" name="video_conference_phone" id="video_conference_phone" placeholder="(202) 555-1212" value="<?php echo $meeting->video_conference_phone ?>">
+				<input type="text" name="conference_phone" id="conference_phone" placeholder="(800) 555-1212" value="<?php echo $meeting->conference_phone ?>">
 			</div>
 		</div>
 		<?php
