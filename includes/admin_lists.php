@@ -139,3 +139,12 @@ function tsml_post_row_actions($actions)
     }
     return $actions;
 }
+
+# Adding "Remove Temporary Closure" to Bulk Actions dropdown
+add_filter('bulk_actions-edit-tsml_meeting', 'tsml_my_bulk_actions');
+
+function tsml_my_bulk_actions($bulk_array)
+{
+    $bulk_array['tsml_remove_tc'] = __('Remove Temporary Closure');
+    return $bulk_array;
+}
