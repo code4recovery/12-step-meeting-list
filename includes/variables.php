@@ -523,7 +523,7 @@ function tsml_define_strings() {
 			'type_descriptions' => array(
 				'C' => __('This meeting is closed; only those who have a desire to stop drinking may attend.', '12-step-meeting-list'),
 				'O' => __('This meeting is open and anyone may attend.', '12-step-meeting-list'),
-				'TC' => __('This meeting is temporarily not meeting.', '12-step-meeting-list'),
+				'TC' => __('This meeting is temporarily not meeting in-person.', '12-step-meeting-list'),
 			),
 			'types' => array(
 				'11' => __('11th Step Meditation', '12-step-meeting-list'),
@@ -562,6 +562,7 @@ function tsml_define_strings() {
 				'N' => __('Native American', '12-step-meeting-list'),
 				'BE' => __('Newcomer', '12-step-meeting-list'),
 				'NB' => __('Non-Binary', '12-step-meeting-list'),
+				'ONL' => __('Online Meeting', '12-step-meeting-list'),
 				'O' => __('Open', '12-step-meeting-list'),
 				'POC' => __('People of Color', '12-step-meeting-list'),
 				'POL' => __('Polish', '12-step-meeting-list'),
