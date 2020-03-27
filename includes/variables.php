@@ -523,7 +523,7 @@ function tsml_define_strings() {
 			'type_descriptions' => array(
 				'C' => __('This meeting is closed; only those who have a desire to stop drinking may attend.', '12-step-meeting-list'),
 				'O' => __('This meeting is open and anyone may attend.', '12-step-meeting-list'),
-				'TC' => __('This meeting is temporarily not meeting.', '12-step-meeting-list'),
+				'TC' => __('This meeting is temporarily not meeting in-person.', '12-step-meeting-list'),
 			),
 			'types' => array(
 				'11' => __('11th Step Meditation', '12-step-meeting-list'),
