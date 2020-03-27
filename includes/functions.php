@@ -719,6 +719,8 @@ function tsml_get_groups() {
 			'phone' => empty($group_meta[$post->ID]['phone']) ? null : $group_meta[$post->ID]['phone'],
 			'venmo' => empty($group_meta[$post->ID]['venmo']) ? null : $group_meta[$post->ID]['venmo'],
 			'last_contact' => empty($group_meta[$post->ID]['last_contact']) ? null : $group_meta[$post->ID]['last_contact'],
+			'conference_url' => empty($group_meta[$post->ID]['conference_url']) ? null : $group_meta[$post->ID]['conference_url'],
+			'conference_phone' => empty($group_meta[$post->ID]['conference_phone']) ? null : $group_meta[$post->ID]['conference_phone'],
 		);
 		
 		if (current_user_can('edit_posts')) {
@@ -903,7 +905,7 @@ function tsml_get_meetings($arguments=array(), $from_cache=true) {
 	global $tsml_cache;
 
 	//start by grabbing all meetings
-	if ($from_cache && file_exists(WP_CONTENT_DIR . $tsml_cache) && $meetings = file_get_contents(WP_CONTENT_DIR . $tsml_cache)) {
+	if (false && $from_cache && file_exists(WP_CONTENT_DIR . $tsml_cache) && $meetings = file_get_contents(WP_CONTENT_DIR . $tsml_cache)) {
 		$meetings = json_decode($meetings, true);
 	} else {
 		//from database
@@ -951,6 +953,8 @@ function tsml_get_meetings($arguments=array(), $from_cache=true) {
 				'website'			=> @$meeting_meta[$post->ID]['website'],
 				'website_2'			=> @$meeting_meta[$post->ID]['website_2'],
 				'phone'				=> @$meeting_meta[$post->ID]['phone'],
+				'conference_url'	=> @$meeting_meta[$post->ID]['conference_url'],
+				'conference_phone'	=> @$meeting_meta[$post->ID]['conference_phone'],
 				'types'				=> empty($meeting_meta[$post->ID]['types']) ? array() : array_values(unserialize($meeting_meta[$post->ID]['types'])),
 			), $locations[$post->post_parent]);
 
@@ -984,9 +988,9 @@ function tsml_get_meta($type, $id=null) {
 	//don't show contact information if user is not logged in
 	//contact info still available on an individual meeting basis via tsml_get_meeting()
 	$keys = array(
-		'tsml_group' => '"website", "website_2", "email", "phone", "venmo", "last_contact"' . (current_user_can('edit_posts') ? ', "contact_1_name", "contact_1_email", "contact_1_phone", "contact_2_name", "contact_2_email", "contact_2_phone", "contact_3_name", "contact_3_email", "contact_3_phone"' : ''),
+		'tsml_group' => '"website", "website_2", "email", "phone", "venmo", "last_contact", "conference_url", "conference_phone"' . (current_user_can('edit_posts') ? ', "contact_1_name", "contact_1_email", "contact_1_phone", "contact_2_name", "contact_2_email", "contact_2_phone", "contact_3_name", "contact_3_email", "contact_3_phone"' : ''),
 		'tsml_location' => '"formatted_address", "latitude", "longitude"',
-		'tsml_meeting' => '"day", "time", "end_time", "types", "group_id", "website", "website_2", "email", "phone", "last_contact"' . (current_user_can('edit_posts') ? ', "contact_1_name", "contact_1_email", "contact_1_phone", "contact_2_name", "contact_2_email", "contact_2_phone", "contact_3_name", "contact_3_email", "contact_3_phone"' : ''),
+		'tsml_meeting' => '"day", "time", "end_time", "types", "group_id", "website", "website_2", "email", "phone", "last_contact", "conference_url", "conference_phone"' . (current_user_can('edit_posts') ? ', "contact_1_name", "contact_1_email", "contact_1_phone", "contact_2_name", "contact_2_email", "contact_2_phone", "contact_3_name", "contact_3_email", "contact_3_phone"' : ''),
 	);
 	if (!array_key_exists($type, $keys)) return trigger_error('tsml_get_meta for unexpected type ' . $type);
 	$meta = array();
@@ -1244,9 +1248,7 @@ function tsml_import_buffer_set($meetings, $data_source=null) {
 	if (function_exists('tsml_import_filter')) {
 		$meetings = array_filter($meetings, 'tsml_import_filter');
 	}
-	
-	//dd($meetings);
-	
+		
 	//prepare import buffer in wp_options
 	update_option('tsml_import_buffer', $meetings, false);
 }
@@ -1545,6 +1547,14 @@ function tsml_sort_meetings($a, $b) {
 			}
 		}
 	}
+}
+
+//function:	does a string end with another string
+//used:		save.php
+function tsml_string_ends($string, $end) {
+    $length = strlen($end); 
+    if (!$length) return true; 
+    return (substr($string, -$length) === $end); 	
 }
 
 //function:	tokenize string for the typeaheads
