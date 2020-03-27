@@ -168,6 +168,11 @@ function tsml_bulk_action_handler($redirect, $doaction, $object_ids)
             if (!in_array('TC', array_values($types))) {
                 $types[] = 'TC';
                 update_post_meta($post_id, 'types', array_map('esc_attr', $types));
+
+                //rebuild cache
+                tsml_cache_rebuild();
+                //update types in use
+                tsml_update_types_in_use();
                 $count++;
             }
         }
@@ -193,6 +198,11 @@ function tsml_bulk_action_handler($redirect, $doaction, $object_ids)
                 } else {
                     update_post_meta($post_id, 'types', array_map('esc_attr', $types));
                 }
+
+                //rebuild cache
+                tsml_cache_rebuild();
+                //update types in use
+                tsml_update_types_in_use();
                 $count++;
             }
         }
