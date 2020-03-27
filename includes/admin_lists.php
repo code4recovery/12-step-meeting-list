@@ -145,6 +145,7 @@ add_filter('bulk_actions-edit-tsml_meeting', 'tsml_my_bulk_actions');
 
 function tsml_my_bulk_actions($bulk_array)
 {
+    $bulk_array['tsml_add_tc'] = __('Add Temporary Closure');
     $bulk_array['tsml_remove_tc'] = __('Remove Temporary Closure');
     return $bulk_array;
 }
@@ -154,7 +155,28 @@ add_filter('handle_bulk_actions-edit-tsml_meeting', 'tsml_bulk_action_handler', 
 
 function tsml_bulk_action_handler($redirect, $doaction, $object_ids)
 {
+    // Handle tsml_add_tc
+    // let's remove query args first
+    $redirect = remove_query_arg(array('tsml_add_tc'), $redirect);
 
+    // do something for "Remove Temporary Closure" bulk action
+    if ($doaction == 'tsml_add_tc') {
+        $count = 0;
+        foreach ($object_ids as $post_id) {
+            // For each select post, add TC if it's not selected in "types"
+            $types = get_post_meta($post_id, 'types', false)[0];
+            if (!in_array('TC', array_values($types))) {
+                $types[] = 'TC';
+                update_post_meta($post_id, 'types', array_map('esc_attr', $types));
+                $count++;
+            }
+        }
+
+        // add number of meetings changed to query args
+        $redirect = add_query_arg('tsml_add_tc', $count, $redirect);
+    }
+
+    // Handle tsml_remove_tc
     // let's remove query args first
     $redirect = remove_query_arg(array('tsml_remove_tc'), $redirect);
 
@@ -186,6 +208,15 @@ function tsml_bulk_action_handler($redirect, $doaction, $object_ids)
 add_action('admin_notices', 'tsml_bulk_action_notices');
 
 function tsml_bulk_action_notices () {
+    if (!empty($_REQUEST['tsml_add_tc'])){
+        // depending on how many posts were changed, make the message different
+        printf('<div id="message" class="updated notice is-dismissible"><p>' .
+            _n(
+                'Temporary Closure added to %s meeting',
+                'Temporary Closure added to %s meetings',
+                intval($_REQUEST['tsml_add_tc'])
+            ) . '</p></div>', intval($_REQUEST['tsml_add_tc']));
+    }
     if (!empty($_REQUEST['tsml_remove_tc'])){
         // depending on how many posts were changed, make the message different
         printf('<div id="message" class="updated notice is-dismissible"><p>' .
