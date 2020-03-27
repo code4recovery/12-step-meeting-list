@@ -13,6 +13,11 @@ $height: 550px; //height of map and min-height of list
 	@import '../../node_modules/bootstrap-sass/assets/stylesheets/_bootstrap.scss';
 	@import 'typeahead-bootstrap.scss';
 	
+	a.btn {
+		overflow: hidden;
+		text-overflow: ellipsis;
+	}
+
 	mark {
 		background-color: $color_highlight;
 	}
