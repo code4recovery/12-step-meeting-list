@@ -291,7 +291,7 @@ foreach ($tsml_programs[$tsml_program]['types'] as $key => $type) {?>
 			</div>
 			<div class="meta_form_separator">
 				<h4><?php _e('Video Conference Details', '12-step-meeting-list')?></h4>
-				<p><?php _e('If this meeting has videoconference information, please enter it here. Currently supported providers: Zoom, Google Hangouts, WebEx. If other details are required, such as a password, they should be included in the Meeting Notes field above.', '12-step-meeting-list')?></p>
+				<p><?php _e('If this meeting has videoconference information, please enter the full valid URL here. Currently supported providers: Zoom, Google Hangouts, WebEx. If other details are required, such as a password, they should be included in the Meeting Notes field above.', '12-step-meeting-list')?></p>
 			</div>
 			<div class="meta_form_row">
 				<label for="conference_url"><?php _e('URL', '12-step-meeting-list')?></label>
