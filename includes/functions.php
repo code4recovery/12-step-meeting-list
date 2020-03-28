@@ -892,9 +892,9 @@ function tsml_get_meeting($meeting_id=false) {
 		$group = get_post($meeting->group_id);
 		$meeting->group = htmlentities($group->post_title, ENT_QUOTES);
 		$meeting->group_notes = esc_html($group->post_content);
-		$group_custom = get_post_meta($meeting->group_id);
+		$group_custom = tsml_get_meta('tsml_group', $meeting->group_id);
 		foreach ($group_custom as $key=>$value) {
-			$meeting->{$key} = $value[0];
+			$meeting->{$key} = $value;
 		}
 		
 		if ($district = get_the_terms($group, 'tsml_district')) {
@@ -1023,7 +1023,7 @@ function tsml_get_meta($type, $id=null) {
 		$meta[$value->post_id][$value->meta_key] = $value->meta_value;
 	}
 	
-	//if location, get region
+	//get taxonomy
 	if ($type == 'tsml_location') {
 		$regions = $wpdb->get_results('SELECT 
 				r.`object_id` location_id,
@@ -1052,7 +1052,7 @@ function tsml_get_meta($type, $id=null) {
 		}
 	}
 	
-	if ($id) return $meta[$id];
+	if ($id) return array_key_exists($id, $meta) ? $meta[$id] : array();
 	return $meta;
 }
 

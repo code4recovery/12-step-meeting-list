@@ -95,7 +95,7 @@ function tsml_save_post($post_id, $post, $update) {
 	
 	if (!$update || strcmp($old_meeting->conference_phone, $_POST['conference_phone']) !== 0) {
 		$changes[] = 'conference_phone';
-		if (empty($valid_conference_url)) {
+		if (empty($_POST['conference_phone'])) {
 			delete_post_meta($post->ID, 'conference_phone');
 		} else {
 			update_post_meta($post->ID, 'conference_phone', $_POST['conference_phone']);
