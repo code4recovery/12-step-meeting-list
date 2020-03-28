@@ -386,6 +386,7 @@ $height: 550px; //height of map and min-height of list
 						}
 						
 						&.type-onl {
+							opacity: 1 !important;
 
 							.name {
 
@@ -621,9 +622,10 @@ $height: 550px; //height of map and min-height of list
 								}
 
 								&.type-onl {
+									opacity: 1 !important;
 
 									small {
-										color: $color_online;
+										color: $color_online !important;
 										font-weight: bold;
 									}
 								}

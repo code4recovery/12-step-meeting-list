@@ -69,11 +69,21 @@ class TSML_Widget_Upcoming extends WP_Widget
 				.tsml-widget-upcoming .type-tc {
 					opacity: .5;
 				}
+
+				.tsml-widget-upcoming .type-onl {
+					opacity: 1 !important;
+				}
 	
 				.tsml-widget-upcoming .type-tc small {
 					/* $color_alert */
 					color: #d40047;
 				}
+
+				.tsml-widget-upcoming .type-onl small {
+					color: green !important;
+					opacity: 1 !important;
+				}
+
 				.tsml-widget-upcoming .tsml-no-upcoming-meetings {
 					background-color: #f4f4f4;
 					border: 1px solid #eee;

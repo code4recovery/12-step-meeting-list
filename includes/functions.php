@@ -423,10 +423,19 @@ function tsml_format_name($name, $types=null) {
 	if (!is_array($types)) $types = array();
 	if (empty($tsml_programs[$tsml_program]['flags']) || !is_array($tsml_programs[$tsml_program]['flags'])) return $name;
 	$append = array();
+	$is_meeting_online = in_array("ONL", $types, TRUE);
 	foreach ($types as $type) {
-		if (in_array($type, $tsml_programs[$tsml_program]['flags'])) {
-			$append[] = $tsml_programs[$tsml_program]['types'][$type];
+		$should_add_type = true;
+		if ($type === "TC") {
+			if ($is_meeting_online == true) {
+				$should_add_type = false;
+			}
 		}
+		if ($should_add_type == true) {
+			if (in_array($type, $tsml_programs[$tsml_program]['flags'])) {
+				$append[] = $tsml_programs[$tsml_program]['types'][$type];
+			}
+		}	
 	}
 	return count($append) ? $name . ' <small>' . implode(', ', $append) . '</small>' : $name;
 }

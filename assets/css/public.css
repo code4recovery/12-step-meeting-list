@@ -6900,6 +6900,9 @@ fieldset[disabled] #tsml .checkbox-inline {
   color: #d40047;
   font-weight: bold;
 }
+#tsml #meetings .results table tbody tr.type-onl {
+  opacity: 1 !important;
+}
 #tsml #meetings .results table tbody tr.type-onl .name small {
   color: green;
   font-weight: bold;
@@ -7116,8 +7119,11 @@ fieldset[disabled] #tsml .checkbox-inline {
   color: #d40047;
   font-weight: bold;
 }
+#tsml #meeting .panel ul.list-group .list-group-item.list-group-item-meetings ul li.type-onl, #tsml #location .panel ul.list-group .list-group-item.list-group-item-meetings ul li.type-onl {
+  opacity: 1 !important;
+}
 #tsml #meeting .panel ul.list-group .list-group-item.list-group-item-meetings ul li.type-onl small, #tsml #location .panel ul.list-group .list-group-item.list-group-item-meetings ul li.type-onl small {
-  color: green;
+  color: green !important;
   font-weight: bold;
 }
 #tsml #meeting .panel ul.list-group .list-group-item.list-group-item-meetings ul:last-child, #tsml #location .panel ul.list-group .list-group-item.list-group-item-meetings ul:last-child {
