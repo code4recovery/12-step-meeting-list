@@ -60,7 +60,7 @@ function tsml_save_post($post_id, $post, $update) {
 	}
 
 	//check types for not-array-ness
-	if (empty($_POST['types']) || !is_array($_POST['types'])) $_POST['types'] = array(); //not sure if this actually happens
+	if (empty($_POST['types']) || !is_array($_POST['types'])) $_POST['types'] = array(); //happens if program doesn't have types
 	
 	//don't allow it to be both open and closed
 	if (in_array('C', $_POST['types']) && in_array('O', $_POST['types'])) {
@@ -74,23 +74,36 @@ function tsml_save_post($post_id, $post, $update) {
 
 	//video conference information (doing this here because it affects types)
 	$valid_conference_url = null;
-	$authorized_providers = array('zoom.us', 'meet.google.com', 'webex.com');
 	$_POST['types'] = array_values(array_diff($_POST['types'], array('ONL')));
 	if (!empty($_POST['conference_url'])) {
 		$url = esc_url_raw($_POST['conference_url'], array('http', 'https'));
-		$url_parts = parse_url($url);
-		foreach ($authorized_providers as $provider) {
-			if (tsml_string_ends($url_parts['host'], $provider)) {
-				$valid_conference_url = $url;
-			}
-		}
-		if ($valid_conference_url) {
+		if (tsml_conference_provider($url)) {
+			$valid_conference_url = $url;
 			array_push($_POST['types'], 'ONL');
-		}
+		} 
 	}
 
+	//video conferencing info
+	if (!$update || strcmp($old_meeting->conference_url, $valid_conference_url) !== 0) {
+		$changes[] = 'conference_url';
+		if (empty($valid_conference_url)) {
+			delete_post_meta($post->ID, 'conference_url');
+		} else {
+			update_post_meta($post->ID, 'conference_url', $valid_conference_url);
+		}
+	}
+	
+	if (!$update || strcmp($old_meeting->conference_phone, $_POST['conference_phone']) !== 0) {
+		$changes[] = 'conference_phone';
+		if (empty($valid_conference_url)) {
+			delete_post_meta($post->ID, 'conference_phone');
+		} else {
+			update_post_meta($post->ID, 'conference_phone', $_POST['conference_phone']);
+		}
+	}
+	
 	//compare types
-	if (!$update || implode(', ', $old_meeting->types) != tsml_meeting_types($_POST['types'])) {
+	if (tsml_program_has_types() && (!$update || implode(', ', $old_meeting->types) != tsml_meeting_types($_POST['types']))) {
 		$changes[] = 'types';
 		if (empty($_POST['types'])) {
 			delete_post_meta($post->ID, 'types');
@@ -98,7 +111,7 @@ function tsml_save_post($post_id, $post, $update) {
 			update_post_meta($post->ID, 'types', array_map('esc_attr', $_POST['types']));
 		}
 	}
-
+	
 	//day could be null for appointment meeting
 	if (in_array($_POST['day'], array('0', '1', '2', '3', '4', '5', '6'))) {
 		if (!$update || !isset($old_meeting->day) || $old_meeting->day != intval($_POST['day'])) {
@@ -293,25 +306,6 @@ function tsml_save_post($post_id, $post, $update) {
 				update_post_meta($post->ID, 'last_contact', date('Y-m-d', strtotime($_POST['last_contact'])));
 			}
 		}
-
-		//video conferencing info
-		if (!$update || strcmp($old_meeting->conference_url, $valid_conference_url) !== 0) {
-			$changes[] = 'conference_url';
-			if (empty($valid_conference_url)) {
-				delete_post_meta($post->ID, 'conference_url');
-			} else {
-				update_post_meta($post->ID, 'conference_url', $valid_conference_url);
-			}
-		}
-		
-		if (!$update || strcmp($old_meeting->conference_phone, $_POST['conference_phone']) !== 0) {
-			$changes[] = 'conference_phone';
-			if (empty($valid_conference_url)) {
-				delete_post_meta($post->ID, 'conference_phone');
-			} else {
-				update_post_meta($post->ID, 'conference_phone', $_POST['conference_phone']);
-			}
-		}
 		
 		//switching from group to no group
 		if (!empty($old_meeting->group)) {
@@ -448,24 +442,6 @@ function tsml_save_post($post_id, $post, $update) {
 			delete_post_meta($group_id, 'last_contact');
 		}
 
-		//video conferencing info
-		if (!$update || strcmp($old_meeting->conference_url, $valid_conference_url) !== 0) {
-			$changes[] = 'conference_url';
-			if (empty($valid_conference_url)) {
-				delete_post_meta($group_id, 'conference_url');
-			} else {
-				update_post_meta($group_id, 'conference_url', $valid_conference_url);
-			}
-		}
-		
-		if (!$update || strcmp($old_meeting->conference_phone, $_POST['conference_phone']) !== 0) {
-			$changes[] = 'conference_phone';
-			if (empty($valid_conference_url)) {
-				delete_post_meta($group_id, 'conference_phone');
-			} else {
-				update_post_meta($group_id, 'conference_phone', $_POST['conference_phone']);
-			}
-		}
 	}
 
 	//deleted orphaned locations and groups
