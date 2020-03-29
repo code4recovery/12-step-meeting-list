@@ -446,10 +446,16 @@ function tsml_format_name($name, $types=null) {
 	if (!is_array($types)) $types = array();
 	if (empty($tsml_programs[$tsml_program]['flags']) || !is_array($tsml_programs[$tsml_program]['flags'])) return $name;
 	$append = array();
+	$meeting_is_online = in_array('ONL', $types);
+	// Types assigned to the meeting passed to the function
 	foreach ($types as $type) {
-		if (in_array($type, $tsml_programs[$tsml_program]['flags'])) {
+		// True if the type for the meeting exists in one of the predetermined flags
+		$type_is_flagged = in_array($type, $tsml_programs[$tsml_program]['flags']);
+		$type_not_tc_and_online = !($type === 'TC' && $meeting_is_online);
+
+		if ($type_is_flagged && $type_not_tc_and_online) {
 			$append[] = $tsml_programs[$tsml_program]['types'][$type];
-		}
+		}	
 	}
 	return count($append) ? $name . ' <small>' . implode(', ', $append) . '</small>' : $name;
 }
