@@ -423,7 +423,7 @@ function tsml_format_name($name, $types=null) {
 	if (!is_array($types)) $types = array();
 	if (empty($tsml_programs[$tsml_program]['flags']) || !is_array($tsml_programs[$tsml_program]['flags'])) return $name;
 	$append = array();
-	$meeting_is_online = in_array("ONL", $types, TRUE);
+	$meeting_is_online = in_array('ONL', $types);
 	// Types assigned to the meeting passed to the function
 	foreach ($types as $type) {
 		// True if the type for the meeting exists in one of the predetermined flags
