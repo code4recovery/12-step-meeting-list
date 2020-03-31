@@ -28,9 +28,9 @@ $tsml_columns = array(
 
 //list of valid conference providers (matches Meeting Guide app). set this to null in your theme if you don't want to validate
 $tsml_conference_providers = array(
-	'meet.google.com' => 'Google Hangouts',
+	'google.com' => 'Google Hangouts',
 	'gotomeeting.com' => 'GoToMeeting',
-	'join.skype.com' => 'Skype',
+	'skype.com' => 'Skype',
 	'webex.com' => 'WebEx',
 	'zoom.us' => 'Zoom',
 );
