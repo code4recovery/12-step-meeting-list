@@ -30,6 +30,7 @@ $tsml_columns = array(
 $tsml_conference_providers = array(
 	'meet.google.com' => 'Google Hangouts',
 	'gotomeeting.com' => 'GoToMeeting',
+	'join.skype.com' => 'Skype',
 	'webex.com' => 'WebEx',
 	'zoom.us' => 'Zoom',
 );
