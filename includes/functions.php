@@ -164,6 +164,7 @@ function tsml_conference_provider($url) {
 //used:		meeting edit screen
 function tsml_conference_providers() {
 	global $tsml_conference_providers;
+	if (empty($tsml_conference_providers)) return array();
 	$providers = array_unique(array_values($tsml_conference_providers));
 	natcasesort($providers);
 	return $providers;
