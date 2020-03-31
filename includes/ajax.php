@@ -355,7 +355,7 @@ if (!function_exists('function_name')) {
 			$remaining = array();
 			delete_option('tsml_import_buffer');
 		}
-		
+
 		//get lookups, todo consider adding regions to this
 		$locations = $groups = array();
 		$all_locations = tsml_get_locations();
@@ -368,7 +368,6 @@ if (!function_exists('function_name')) {
 		add_filter('wp_insert_post_data', 'tsml_import_post_modified', 99, 2);
 
 		foreach ($meetings as $meeting) {
-			
 			//check address
 			if (empty($meeting['formatted_address'])) {
 				$errors[] = '<li value="' . $meeting['row'] . '">' . sprintf(__('No location information provided for <code>%s</code>.', '12-step-meeting-list'), $meeting['name']) . '</li>';
@@ -476,10 +475,10 @@ if (!function_exists('function_name')) {
 				if (!empty($meeting['end_time'])) add_post_meta($meeting_id, 'end_time', $meeting['end_time']);
 			}
 			
-			//add types, group, and data_source if available
-			if (!empty($meeting['types'])) add_post_meta($meeting_id, 'types', $meeting['types']);
-			if (!empty($meeting['group'])) add_post_meta($meeting_id, 'group_id', $groups[$meeting['group']]);
-			if (!empty($meeting['data_source'])) add_post_meta($meeting_id, 'data_source', $meeting['data_source']);
+			//add custom meeting fields if available
+			foreach (array('types', 'group', 'data_source', 'venmo', 'conference_url', 'conference_phone') as $key) {
+				if (!empty($meeting[$key])) add_post_meta($meeting_id, $key, $meeting[$key]);
+			}
 
 			//handle contact information (could be meeting or group)
 			$contact_entity_id = empty($group_id) ? $meeting_id : $group_id;

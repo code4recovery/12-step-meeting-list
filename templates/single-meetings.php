@@ -98,7 +98,7 @@ get_header();
 										<a class="btn btn-default btn-block" href="<?php echo $meeting->conference_url?>" target="_blank"><i class="glyphicon glyphicon-facetime-video"></i> <?php echo $provider === true ? $meeting->conference_url : $provider?></a>
 									<?php }
 									if (!empty($meeting->conference_phone)) {?>
-										<a class="btn btn-default btn-block" href="tel:<?php echo intval(preg_replace("/[^0-9]/", '', $meeting->conference_phone))?>" target="_blank"><i class="glyphicon glyphicon-headphones"></i> <?php echo $meeting->conference_phone?></a>
+										<a class="btn btn-default btn-block" href="tel:<?php echo preg_replace("/[^0-9,#+]/", '', $meeting->conference_phone)?>" target="_blank"><i class="glyphicon glyphicon-headphones"></i> <?php echo $meeting->conference_phone?></a>
 									<?php }?>
 								</li>
 								<?php }?>
