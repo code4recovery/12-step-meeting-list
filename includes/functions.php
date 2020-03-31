@@ -1137,7 +1137,7 @@ function tsml_import_buffer_set($meetings, $data_source=null) {
 	//prepare array for import buffer
 	$count_meetings = count($meetings);
 	for ($i = 0; $i < $count_meetings; $i++) {
-		
+
 		$meetings[$i]['data_source'] = $data_source;
 
 		//do wordpress sanitization
@@ -1289,6 +1289,7 @@ function tsml_has_address($address) {
 //function:	filter workaround for setting post_modified dates
 //used:		tsml_ajax_import()
 function tsml_import_post_modified($data, $postarr) {
+	
 	if (!empty($postarr['post_modified'])) {
 		$data['post_modified'] = $postarr['post_modified'];
 	}
