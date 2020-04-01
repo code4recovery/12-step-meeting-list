@@ -147,7 +147,9 @@ function tsml_my_bulk_actions($bulk_array)
 {
     $bulk_array['tsml_add_tc'] = __('Add Temporary Closure', '12-step-meeting-list');
     $bulk_array['tsml_remove_tc'] = __('Remove Temporary Closure', '12-step-meeting-list');
+    /*
     $bulk_array['tsml_remove_onl'] = __('Remove Online Meeting', '12-step-meeting-list');
+    */
     return $bulk_array;
 }
 
@@ -212,6 +214,7 @@ function tsml_bulk_action_handler($redirect, $doaction, $object_ids)
         $redirect = add_query_arg('tsml_remove_tc', $count, $redirect);
     }
 
+    /*
     // Handle tsml_remove_onl
     // let's remove query args first
     $redirect = remove_query_arg(array('tsml_remove_onl'), $redirect);
@@ -249,6 +252,7 @@ function tsml_bulk_action_handler($redirect, $doaction, $object_ids)
         // add number of meetings changed to query args
         $redirect = add_query_arg('tsml_remove_onl', $count, $redirect);
     }
+    */
 
     return $redirect;
 }
@@ -275,6 +279,7 @@ function tsml_bulk_action_notices () {
                 intval($_REQUEST['tsml_remove_tc'])
             ) . '</p></div>', intval($_REQUEST['tsml_remove_tc']));
     }
+    /*
     if (!empty($_REQUEST['tsml_remove_onl'])){
         // depending on how many posts were changed, make the message different
         printf('<div id="message" class="updated notice is-dismissible"><p>' .
@@ -284,4 +289,5 @@ function tsml_bulk_action_notices () {
                 intval($_REQUEST['tsml_remove_onl'])
             ) . '</p></div>', intval($_REQUEST['tsml_remove_onl']));
     }
+    */
 }
