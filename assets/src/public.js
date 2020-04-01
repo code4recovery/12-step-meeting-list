@@ -521,11 +521,16 @@ jQuery(function($){
 	
 					//types could be undefined
 					if (!obj.types) obj.types = [];
-
 					//add type 'flags'
 					if (typeof tsml.flags == 'object') {
+						// True if the meeting is temporarily closed, but online option available
+						var meetingIsOnlineAndTC = (obj.types.indexOf('TC') !== -1) && (obj.types.indexOf('ONL') !== -1)
 						for (var i = 0; i < tsml.flags.length; i++) {
-							if (obj.types.indexOf(tsml.flags[i]) !== -1) {
+							var flagIsTempClosed = tsml.flags[i] === 'TC'
+							// True if the type for the meeting obj matches one of the predetermined flags being looped
+							var typeIsFlagged = obj.types.indexOf(tsml.flags[i]) !== -1;
+							//  Add flag, except TC when meeting is also online
+							if (typeIsFlagged && !(meetingIsOnlineAndTC && flagIsTempClosed)) {
 								obj.name += ' <small>' + tsml.types[tsml.flags[i]] + '</small>';
 							}
 						}

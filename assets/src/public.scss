@@ -4,6 +4,7 @@ $icon_font_path: '../fonts/'; //bootstrap
 $color_gray: #aaa;
 $color_highlight: #ff6; //for searching
 $color_alert: #d40047; //for pointing ou problematic data like meeting type TC
+$color_online: green; // Basic hightlighting for online meeting type
 $color_black: #333;
 $color_white: #fdfdfc;
 $margin: 15px; //spacing between elements
@@ -383,6 +384,18 @@ $height: 550px; //height of map and min-height of list
 								}
 							}
 						}
+						
+						&.type-onl {
+							opacity: 1 !important;
+
+							.name {
+
+								small {
+									color: $color_online;
+									font-weight: bold;
+								}
+							}
+						}
 					}
 				}
 			}
@@ -441,6 +454,17 @@ $height: 550px; //height of map and min-height of list
 
 				small {
 					color: $color_alert;
+					font-weight: bold;
+				}
+			}
+		}
+
+		.tsml-type-onl & {
+
+			.page-header {
+
+				small {
+					color: $color_online;
 					font-weight: bold;
 				}
 			}
@@ -593,6 +617,15 @@ $height: 550px; //height of map and min-height of list
 
 									small {
 										color: $color_alert;
+										font-weight: bold;
+									}
+								}
+
+								&.type-onl {
+									opacity: 1 !important;
+
+									small {
+										color: $color_online !important;
 										font-weight: bold;
 									}
 								}

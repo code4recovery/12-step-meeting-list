@@ -146,6 +146,30 @@ function tsml_change_activation_state() {
 	flush_rewrite_rules();
 }
 
+//validate conference provider and return name
+function tsml_conference_provider($url) {
+	global $tsml_conference_providers;
+	if (empty($tsml_conference_providers)) return true; //don't provide validation
+	$domains = array_keys($tsml_conference_providers);
+	$url_parts = parse_url($url);
+	foreach ($domains as $domain) {
+		if (tsml_string_ends($url_parts['host'], $domain)) {
+			return $tsml_conference_providers[$domain];
+		}
+	}
+	return false;
+}
+
+//function: get an array of conference provider names
+//used:		meeting edit screen
+function tsml_conference_providers() {
+	global $tsml_conference_providers;
+	if (empty($tsml_conference_providers)) return array();
+	$providers = array_unique(array_values($tsml_conference_providers));
+	natcasesort($providers);
+	return $providers;
+}
+
 //function:	return integer number of live groups
 //used:		shortcode, admin-import.php, tsml_ajax_import()
 function tsml_count_groups() {
@@ -423,10 +447,16 @@ function tsml_format_name($name, $types=null) {
 	if (!is_array($types)) $types = array();
 	if (empty($tsml_programs[$tsml_program]['flags']) || !is_array($tsml_programs[$tsml_program]['flags'])) return $name;
 	$append = array();
+	$meeting_is_online = in_array('ONL', $types);
+	// Types assigned to the meeting passed to the function
 	foreach ($types as $type) {
-		if (in_array($type, $tsml_programs[$tsml_program]['flags'])) {
+		// True if the type for the meeting exists in one of the predetermined flags
+		$type_is_flagged = in_array($type, $tsml_programs[$tsml_program]['flags']);
+		$type_not_tc_and_online = !($type === 'TC' && $meeting_is_online);
+
+		if ($type_is_flagged && $type_not_tc_and_online) {
 			$append[] = $tsml_programs[$tsml_program]['types'][$type];
-		}
+		}	
 	}
 	return count($append) ? $name . ' <small>' . implode(', ', $append) . '</small>' : $name;
 }
@@ -719,8 +749,6 @@ function tsml_get_groups() {
 			'phone' => empty($group_meta[$post->ID]['phone']) ? null : $group_meta[$post->ID]['phone'],
 			'venmo' => empty($group_meta[$post->ID]['venmo']) ? null : $group_meta[$post->ID]['venmo'],
 			'last_contact' => empty($group_meta[$post->ID]['last_contact']) ? null : $group_meta[$post->ID]['last_contact'],
-			'conference_url' => empty($group_meta[$post->ID]['conference_url']) ? null : $group_meta[$post->ID]['conference_url'],
-			'conference_phone' => empty($group_meta[$post->ID]['conference_phone']) ? null : $group_meta[$post->ID]['conference_phone'],
 		);
 		
 		if (current_user_can('edit_posts')) {
@@ -871,9 +899,9 @@ function tsml_get_meeting($meeting_id=false) {
 		$group = get_post($meeting->group_id);
 		$meeting->group = htmlentities($group->post_title, ENT_QUOTES);
 		$meeting->group_notes = esc_html($group->post_content);
-		$group_custom = get_post_meta($meeting->group_id);
+		$group_custom = tsml_get_meta('tsml_group', $meeting->group_id);
 		foreach ($group_custom as $key=>$value) {
-			$meeting->{$key} = $value[0];
+			$meeting->{$key} = $value;
 		}
 		
 		if ($district = get_the_terms($group, 'tsml_district')) {
@@ -988,7 +1016,7 @@ function tsml_get_meta($type, $id=null) {
 	//don't show contact information if user is not logged in
 	//contact info still available on an individual meeting basis via tsml_get_meeting()
 	$keys = array(
-		'tsml_group' => '"website", "website_2", "email", "phone", "venmo", "last_contact", "conference_url", "conference_phone"' . (current_user_can('edit_posts') ? ', "contact_1_name", "contact_1_email", "contact_1_phone", "contact_2_name", "contact_2_email", "contact_2_phone", "contact_3_name", "contact_3_email", "contact_3_phone"' : ''),
+		'tsml_group' => '"website", "website_2", "email", "phone", "venmo", "last_contact"' . (current_user_can('edit_posts') ? ', "contact_1_name", "contact_1_email", "contact_1_phone", "contact_2_name", "contact_2_email", "contact_2_phone", "contact_3_name", "contact_3_email", "contact_3_phone"' : ''),
 		'tsml_location' => '"formatted_address", "latitude", "longitude"',
 		'tsml_meeting' => '"day", "time", "end_time", "types", "group_id", "website", "website_2", "email", "phone", "last_contact", "conference_url", "conference_phone"' . (current_user_can('edit_posts') ? ', "contact_1_name", "contact_1_email", "contact_1_phone", "contact_2_name", "contact_2_email", "contact_2_phone", "contact_3_name", "contact_3_email", "contact_3_phone"' : ''),
 	);
@@ -1002,7 +1030,7 @@ function tsml_get_meta($type, $id=null) {
 		$meta[$value->post_id][$value->meta_key] = $value->meta_value;
 	}
 	
-	//if location, get region
+	//get taxonomy
 	if ($type == 'tsml_location') {
 		$regions = $wpdb->get_results('SELECT 
 				r.`object_id` location_id,
@@ -1031,7 +1059,7 @@ function tsml_get_meta($type, $id=null) {
 		}
 	}
 	
-	if ($id) return $meta[$id];
+	if ($id) return array_key_exists($id, $meta) ? $meta[$id] : array();
 	return $meta;
 }
 
@@ -1110,7 +1138,7 @@ function tsml_import_buffer_set($meetings, $data_source=null) {
 	//prepare array for import buffer
 	$count_meetings = count($meetings);
 	for ($i = 0; $i < $count_meetings; $i++) {
-		
+
 		$meetings[$i]['data_source'] = $data_source;
 
 		//do wordpress sanitization
@@ -1262,6 +1290,7 @@ function tsml_has_address($address) {
 //function:	filter workaround for setting post_modified dates
 //used:		tsml_ajax_import()
 function tsml_import_post_modified($data, $postarr) {
+	
 	if (!empty($postarr['post_modified'])) {
 		$data['post_modified'] = $postarr['post_modified'];
 	}
@@ -1451,6 +1480,13 @@ function tsml_paragraphs($string) {
 		}
 	}
 	return $paragraphs;
+}
+
+//function: boolean whether current program has types
+//used:		meeting edit screen, meeting save
+function tsml_program_has_types() {
+	global $tsml_programs, $tsml_program;
+	return !empty($tsml_programs[$tsml_program]['types']);
 }
 
 //function: set an option with the currently-used types

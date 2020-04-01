@@ -2,7 +2,7 @@
 Contributors: aasanjose
 Requires at least: 3.2
 Tested up to: 5.3.2
-Stable tag: 3.6.1
+Stable tag: 3.6.3
 
 This plugin helps twelve step recovery programs list their meetings. It standardizes addresses, and displays results in a searchable list and map.
 
@@ -203,6 +203,15 @@ To apply these changes, you must go to Settings > Permalinks and click "Save Cha
 1. Edit location
 
 == Changelog ==
+
+= 3.6.3 = 
+* Fixed issue with setting null for conference types.
+* Fixed JSON feed not importing online conference info, and Venmo info.
+* Added Skype conference type.
+
+= 3.6.2 = 
+* Changes online meeting information from group to individual meeting (Issue #82).
+* Adds front end styling for online meetings.
 
 = 3.6.1 =
 * Maintenance release
