@@ -145,8 +145,9 @@ add_filter('bulk_actions-edit-tsml_meeting', 'tsml_my_bulk_actions');
 
 function tsml_my_bulk_actions($bulk_array)
 {
-    $bulk_array['tsml_add_tc'] = __('Add Temporary Closure');
-    $bulk_array['tsml_remove_tc'] = __('Remove Temporary Closure');
+    $bulk_array['tsml_add_tc'] = __('Add Temporary Closure', '12-step-meeting-list');
+    $bulk_array['tsml_remove_tc'] = __('Remove Temporary Closure', '12-step-meeting-list');
+    $bulk_array['tsml_remove_onl'] = __('Remove Online Meeting', '12-step-meeting-list');
     return $bulk_array;
 }
 
@@ -211,6 +212,44 @@ function tsml_bulk_action_handler($redirect, $doaction, $object_ids)
         $redirect = add_query_arg('tsml_remove_tc', $count, $redirect);
     }
 
+    // Handle tsml_remove_onl
+    // let's remove query args first
+    $redirect = remove_query_arg(array('tsml_remove_onl'), $redirect);
+
+    // do something for "Remove Online Meeting" bulk action
+    if ($doaction == 'tsml_remove_onl') {
+        $count = 0;
+        foreach ($object_ids as $post_id) {
+            // For each select post, remove TC if it's selected in "types"
+            $types = get_post_meta($post_id, 'types', false)[0];
+            if (in_array('ONL', array_values($types))) {
+                $types = array_diff($types, array('ONL'));
+                if (empty($types)) {
+                    delete_post_meta($post_id, 'types');
+                } else {
+                    update_post_meta($post_id, 'types', array_map('esc_attr', $types));
+                }
+
+                // Delete conference URL and phone if they exist
+                if (!empty(get_post_meta($post_id, 'conference_url'))) {
+                    delete_post_meta($post_id, 'conference_url');
+                }
+                if (!empty(get_post_meta($post_id, 'conference_phone'))) {
+                    delete_post_meta($post_id, 'conference_phone');
+                }
+
+                //rebuild cache
+                tsml_cache_rebuild();
+                //update types in use
+                tsml_update_types_in_use();
+                $count++;
+            }
+        }
+
+        // add number of meetings changed to query args
+        $redirect = add_query_arg('tsml_remove_onl', $count, $redirect);
+    }
+
     return $redirect;
 }
 
@@ -235,5 +274,14 @@ function tsml_bulk_action_notices () {
                 'Temporary Closure removed from %s meetings',
                 intval($_REQUEST['tsml_remove_tc'])
             ) . '</p></div>', intval($_REQUEST['tsml_remove_tc']));
+    }
+    if (!empty($_REQUEST['tsml_remove_onl'])){
+        // depending on how many posts were changed, make the message different
+        printf('<div id="message" class="updated notice is-dismissible"><p>' .
+            _n(
+                'Online Meeting removed from %s meeting',
+                'Online Meeting removed from %s meetings',
+                intval($_REQUEST['tsml_remove_onl'])
+            ) . '</p></div>', intval($_REQUEST['tsml_remove_onl']));
     }
 }
