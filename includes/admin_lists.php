@@ -161,8 +161,10 @@ function tsml_bulk_action_handler($redirect, $doaction, $object_ids)
     // Handle tsml_add_tc
     // let's remove query args first
     $redirect = remove_query_arg(array('tsml_add_tc'), $redirect);
+    $redirect = remove_query_arg(array('tsml_remove_tc'), $redirect);
+    //$redirect = remove_query_arg(array('tsml_remove_onl'), $redirect);
 
-    // do something for "Remove Temporary Closure" bulk action
+    // do something for "Add Temporary Closure" bulk action
     if ($doaction == 'tsml_add_tc') {
         $count = 0;
         foreach ($object_ids as $post_id) {
@@ -184,17 +186,13 @@ function tsml_bulk_action_handler($redirect, $doaction, $object_ids)
         $redirect = add_query_arg('tsml_add_tc', $count, $redirect);
     }
 
-    // Handle tsml_remove_tc
-    // let's remove query args first
-    $redirect = remove_query_arg(array('tsml_remove_tc'), $redirect);
-
     // do something for "Remove Temporary Closure" bulk action
     if ($doaction == 'tsml_remove_tc') {
         $count = 0;
         foreach ($object_ids as $post_id) {
             // For each select post, remove TC if it's selected in "types"
             $types = get_post_meta($post_id, 'types', false)[0];
-            if (in_array('TC', array_values($types))) {
+            if (!empty($types) && in_array('TC', array_values($types))) {
                 $types = array_diff($types, array('TC'));
                 if (empty($types)) {
                     delete_post_meta($post_id, 'types');
@@ -215,17 +213,13 @@ function tsml_bulk_action_handler($redirect, $doaction, $object_ids)
     }
 
     /*
-    // Handle tsml_remove_onl
-    // let's remove query args first
-    $redirect = remove_query_arg(array('tsml_remove_onl'), $redirect);
-
     // do something for "Remove Online Meeting" bulk action
     if ($doaction == 'tsml_remove_onl') {
         $count = 0;
         foreach ($object_ids as $post_id) {
             // For each select post, remove TC if it's selected in "types"
             $types = get_post_meta($post_id, 'types', false)[0];
-            if (in_array('ONL', array_values($types))) {
+            if (!empty($types) && in_array('ONL', array_values($types))) {
                 $types = array_diff($types, array('ONL'));
                 if (empty($types)) {
                     delete_post_meta($post_id, 'types');
