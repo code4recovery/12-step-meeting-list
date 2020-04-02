@@ -174,16 +174,18 @@ function tsml_bulk_action_handler($redirect, $doaction, $object_ids)
                 $types[] = 'TC';
                 update_post_meta($post_id, 'types', array_map('esc_attr', $types));
 
-                //rebuild cache
-                tsml_cache_rebuild();
-                //update types in use
-                tsml_update_types_in_use();
                 $count++;
             }
         }
 
-        // add number of meetings changed to query args
-        $redirect = add_query_arg('tsml_add_tc', $count, $redirect);
+        if ($count > 0) {
+            //rebuild cache
+            tsml_cache_rebuild();
+            //update types in use
+            tsml_update_types_in_use();
+            // add number of meetings changed to query args
+            $redirect = add_query_arg('tsml_add_tc', $count, $redirect);
+        }
     }
 
     // do something for "Remove Temporary Closure" bulk action
@@ -200,16 +202,18 @@ function tsml_bulk_action_handler($redirect, $doaction, $object_ids)
                     update_post_meta($post_id, 'types', array_map('esc_attr', $types));
                 }
 
-                //rebuild cache
-                tsml_cache_rebuild();
-                //update types in use
-                tsml_update_types_in_use();
                 $count++;
             }
         }
 
-        // add number of meetings changed to query args
-        $redirect = add_query_arg('tsml_remove_tc', $count, $redirect);
+        if ($count > 0) {
+            //rebuild cache
+            tsml_cache_rebuild();
+            //update types in use
+            tsml_update_types_in_use();
+            // add number of meetings changed to query args
+            $redirect = add_query_arg('tsml_remove_tc', $count, $redirect);
+        }
     }
 
     /*
@@ -235,16 +239,18 @@ function tsml_bulk_action_handler($redirect, $doaction, $object_ids)
                     delete_post_meta($post_id, 'conference_phone');
                 }
 
-                //rebuild cache
-                tsml_cache_rebuild();
-                //update types in use
-                tsml_update_types_in_use();
                 $count++;
             }
         }
 
-        // add number of meetings changed to query args
-        $redirect = add_query_arg('tsml_remove_onl', $count, $redirect);
+        if ($count > 0) {
+            //rebuild cache
+            tsml_cache_rebuild();
+            //update types in use
+            tsml_update_types_in_use();
+            // add number of meetings changed to query args
+            $redirect = add_query_arg('tsml_remove_onl', $count, $redirect);
+        }
     }
     */
 
