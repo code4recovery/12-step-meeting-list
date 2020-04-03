@@ -478,8 +478,14 @@ if (!function_exists('function_name')) {
 			}
 			
 			//add custom meeting fields if available
-			foreach (array('types', 'group', 'data_source', 'mailing_address', 'venmo', 'conference_url', 'conference_phone') as $key) {
+			foreach (array('types', 'data_source', 'conference_url', 'conference_phone') as $key) {
 				if (!empty($meeting[$key])) add_post_meta($meeting_id, $key, $meeting[$key]);
+			}
+
+			// Add Group Id if applicable
+			if (!empty($meeting['group'])) {
+				$group_id = $groups[$meeting['group']];
+				if (!empty(group_id)) add_post_meta($meeting_id, 'group_id', $group_id);
 			}
 
 			//handle contact information (could be meeting or group)
@@ -505,6 +511,14 @@ if (!function_exists('function_name')) {
 			
 			if (!empty($meeting['phone'])) {
 				update_post_meta($contact_entity_id, 'phone', $meeting['phone']);
+			}
+
+			if (!empty($meeting['mailing_address'])) {
+				update_post_meta($contact_entity_id, 'mailing_address', $meeting['mailing_address']);
+			}
+
+			if (!empty($meeting['venmo'])) {
+				update_post_meta($contact_entity_id, 'venmo', $meeting['venmo']);
 			}
 			
 			if (!empty($meeting['last_contact']) && ($last_contact = strtotime($meeting['last_contact']))) {
@@ -554,6 +568,7 @@ if (!function_exists('function_name')) {
 				'regions'	=> sprintf(_n('%s region', '%s regions', $regions, '12-step-meeting-list'), number_format_i18n($regions)),
 			),
 		));
+		dd($meetings);
 	}
 }
 

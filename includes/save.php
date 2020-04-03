@@ -40,6 +40,7 @@ function tsml_save_post($post_id, $post, $update) {
 	}
 
 	//get current meeting state to compare against
+	$old_meeting = null;
 	if ($update) {
 		$old_meeting = tsml_get_meeting($post_id);
 		$decode_keys = array('post_title', 'post_content', 'location', 'location_notes', 'group', 'group_notes');
