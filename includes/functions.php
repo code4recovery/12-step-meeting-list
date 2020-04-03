@@ -1005,7 +1005,6 @@ function tsml_get_meetings($arguments=array(), $from_cache=true) {
 
 	usort($meetings, 'tsml_sort_meetings');
 
-	//dd($meetings);
 	return $meetings;
 
 }
