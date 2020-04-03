@@ -28,7 +28,7 @@ function tsml_save_post($post_id, $post, $update) {
 	$update = ($post->post_date !== $post->post_modified);
 	
 	//sanitize strings
-	$strings = array('post_title', 'location', 'formatted_address', 'post_status', 'group', 'last_contact', 'conference_phone');
+	$strings = array('post_title', 'location', 'formatted_address', 'mailing_address', 'venmo', 'post_status', 'group', 'last_contact', 'conference_phone');
 	foreach ($strings as $string) {
 		$_POST[$string] = stripslashes(sanitize_text_field($_POST[$string]));
 	}
