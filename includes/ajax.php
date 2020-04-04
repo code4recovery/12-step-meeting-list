@@ -482,10 +482,17 @@ if (!function_exists('function_name')) {
 				if (!empty($meeting[$key])) add_post_meta($meeting_id, $key, $meeting[$key]);
 			}
 
-			// Add Group Id if applicable
-			if (!empty($meeting['group'])) {
-				$group_id = $groups[$meeting['group']];
-				if (!empty(group_id)) add_post_meta($meeting_id, 'group_id', $group_id);
+			// Add Group Id and group specific info if applicable
+			if (!empty($group_id)) {
+				//link group to meeting
+				add_post_meta($meeting_id, 'group_id', $group_id);
+				//add special group metadata
+				if (!empty($meeting['mailing_address'])) {
+					update_post_meta($group_id, 'mailing_address', $meeting['mailing_address']);
+				}
+				if (!empty($meeting['venmo'])) {
+					update_post_meta($group_id, 'venmo', $meeting['venmo']);
+				}	
 			}
 
 			//handle contact information (could be meeting or group)
@@ -568,7 +575,6 @@ if (!function_exists('function_name')) {
 				'regions'	=> sprintf(_n('%s region', '%s regions', $regions, '12-step-meeting-list'), number_format_i18n($regions)),
 			),
 		));
-		dd($meetings);
 	}
 }
 
