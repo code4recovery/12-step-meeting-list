@@ -33,6 +33,8 @@ $tsml_conference_providers = array(
 	'skype.com' => 'Skype',
 	'webex.com' => 'WebEx',
 	'zoom.us' => 'Zoom',
+	'freeconference.com' => 'Free Conference',
+	'freeconferencecall.com' => 'FreeConferenceCall'
 );
 
 //whether contacts are displayed publicly (defaults to no)

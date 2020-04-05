@@ -204,6 +204,13 @@ To apply these changes, you must go to Settings > Permalinks and click "Save Cha
 
 == Changelog ==
 
+= 3.6.4 = 
+* Updated CSV import/export and template to reflect added fields.
+* Added abiility to bulk add/remove Temporary Closure type.
+* Add two additional online conference types.
+* Updated online phone button.
+* Other bug fixes.
+
 = 3.6.3 = 
 * Fixed issue with setting null for conference types.
 * Fixed JSON feed not importing online conference info, and Venmo info.
