@@ -49,6 +49,7 @@ if (!function_exists('tsml_ajax_groups')) {
 				'website_2'			=> @$group_custom['website_2'][0],
 				'email'				=> @$group_custom['email'][0],
 				'phone'				=> @$group_custom['phone'][0],
+				'mailing_address'	=> @$group_custom['mailing_address'][0],
 				'contact_1_name'	=> @$group_custom['contact_1_name'][0],
 				'contact_1_email'	=> @$group_custom['contact_1_email'][0],
 				'contact_1_phone'	=> @$group_custom['contact_1_phone'][0],
@@ -184,6 +185,7 @@ if (!function_exists('tsml_ajax_csv')) {
 			'sub_district' => 		'Sub District',
 			'website' => 			'Website',
 			'website_2' => 			'Website 2',
+			'mailing_address' =>	'Mailing Address',
 			'venmo' => 				'Venmo',
 			'email' => 				'Email',
 			'phone' => 				'Phone',
@@ -476,8 +478,21 @@ if (!function_exists('function_name')) {
 			}
 			
 			//add custom meeting fields if available
-			foreach (array('types', 'group', 'data_source', 'venmo', 'conference_url', 'conference_phone') as $key) {
+			foreach (array('types', 'data_source', 'conference_url', 'conference_phone') as $key) {
 				if (!empty($meeting[$key])) add_post_meta($meeting_id, $key, $meeting[$key]);
+			}
+
+			// Add Group Id and group specific info if applicable
+			if (!empty($group_id)) {
+				//link group to meeting
+				add_post_meta($meeting_id, 'group_id', $group_id);
+				//add special group metadata
+				if (!empty($meeting['mailing_address'])) {
+					update_post_meta($group_id, 'mailing_address', $meeting['mailing_address']);
+				}
+				if (!empty($meeting['venmo'])) {
+					update_post_meta($group_id, 'venmo', $meeting['venmo']);
+				}	
 			}
 
 			//handle contact information (could be meeting or group)
@@ -503,6 +518,14 @@ if (!function_exists('function_name')) {
 			
 			if (!empty($meeting['phone'])) {
 				update_post_meta($contact_entity_id, 'phone', $meeting['phone']);
+			}
+
+			if (!empty($meeting['mailing_address'])) {
+				update_post_meta($contact_entity_id, 'mailing_address', $meeting['mailing_address']);
+			}
+
+			if (!empty($meeting['venmo'])) {
+				update_post_meta($contact_entity_id, 'venmo', $meeting['venmo']);
 			}
 			
 			if (!empty($meeting['last_contact']) && ($last_contact = strtotime($meeting['last_contact']))) {

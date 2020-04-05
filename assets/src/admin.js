@@ -191,6 +191,8 @@ jQuery(function($){
 			$('input[name=contact_3_name]').val(group.contact_3_name);
 			$('input[name=contact_3_email]').val(group.contact_3_email);
 			$('input[name=contact_3_phone]').val(group.contact_3_phone);
+			$('input[name=mailing_address]').val(group.mailing_address);
+			$('input[name=venmo]').val(group.venmo);
 			$('input[name=last_contact]').val(group.last_contact);
 			$('textarea[name=group_notes]').val(group.notes);
 		});

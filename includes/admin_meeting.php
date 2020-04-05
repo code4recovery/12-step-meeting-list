@@ -196,12 +196,12 @@ function tsml_admin_init() {
         $meetings = array();
         $district = 0;
         if (!empty($meeting->group_id)) {
-            $meetings = tsml_get_meetings(array('group_id' => $meeting->group_id));
+			$meetings = tsml_get_meetings(array('group_id' => $meeting->group_id));
             $district = wp_get_post_terms($meeting->group_id, 'tsml_district', array('fields' => 'ids'));
             if (is_array($district)) {
                 $district = empty($district) ? 0 : $district[0];
             }
-        }
+		}
         ?>
 		<div id="contact-type" data-type="<?php echo empty($meeting->group) ? 'meeting' : 'group' ?>">
 			<div class="meta_form_row radio">
