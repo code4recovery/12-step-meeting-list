@@ -647,4 +647,51 @@ if (!function_exists('tsml_ajax_meeting_guide')) {
 function tsml_ajax_unauthorized() {
 	if (!headers_sent()) header('HTTP/1.1 401 Unauthorized', true, 401);
 	wp_send_json(array('error' => 'HTTP/1.1 401 Unauthorized'));
+}}
+
+add_action( 'wp_ajax_meeting_link', 'tsml_ajax_meeting_link' );
+add_action( 'wp_ajax_nopriv_meeting_link', 'tsml_ajax_meeting_link' );
+/**
+ * Ajax function to return Conference URL
+ *
+ * @return void
+ * @since 3.6.4
+ *
+ */
+function tsml_ajax_meeting_link() {
+
+	if ( ! isset( $_POST['post_id'] ) ) {
+		wp_send_json_error();
+	}
+	$post_id = intval( $_POST['post_id'] );
+	$url = get_post_meta( $post_id, 'conference_url', true );
+	if ( $url ) {
+		wp_send_json_success( ['meeting' => $url]);
+	} else {
+		wp_send_json_error();
+	}
+}
+
+add_action( 'wp_ajax_phone_link', 'tsml_ajax_phone_link' );
+add_action( 'wp_ajax_nopriv_phone_link', 'tsml_ajax_phone_link' );
+/**
+ * Ajax function to return Conference phone
+ *
+ * @return void
+ * @since 1.0.0
+ *
+ */
+function tsml_ajax_phone_link() {
+
+	if ( ! isset( $_POST['post_id'] ) ) {
+		wp_send_json_error();
+	}
+	$post_id = intval( $_POST['post_id'] );
+	$phone = get_post_meta( $post_id, 'conference_phone', true );
+	if ( $phone ) {
+		wp_send_json_success( ['phone' => 'tel:' . $phone]);
+	} else {
+		wp_send_json_error();
+	}
+
 }
