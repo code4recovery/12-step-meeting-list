@@ -48,6 +48,8 @@ function tsml_assets() {
 		));
 	} else {
 		//public page assets
+		global $post;
+
 		wp_enqueue_style('tsml_public', plugins_url('../assets/css/public.min.css', __FILE__), array(), TSML_VERSION);
 		wp_enqueue_script('jquery_validate', plugins_url('../assets/js/jquery.validate.min.js', __FILE__), array('jquery'), TSML_VERSION, true);
 		wp_enqueue_script('tsml_public', plugins_url('../assets/js/public.min.js', __FILE__), array('jquery'), TSML_VERSION, true);
@@ -74,6 +76,7 @@ function tsml_assets() {
 			'street_only' => $tsml_street_only,
 			'strings' => $tsml_strings,
 			'types' => empty($tsml_programs[$tsml_program]['types']) ? array() : $tsml_programs[$tsml_program]['types'],
+			'post_id' => isset( $post->ID ) ? $post->ID : '',
 		));
 	}
 }
