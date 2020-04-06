@@ -137,6 +137,30 @@ if (!function_exists('tsml_admin_ajax_address')) {
 
 //get all contact email addresses (for europe)
 //linked from admin_import.php
+add_action('wp_ajax_conference_info', 'tsml_ajax_conference_info');
+add_action('wp_ajax_nopriv_conference_info', 'tsml_ajax_csv');
+if (!function_exists('tsml_ajax_conference_info')) {
+	function tsml_ajax_conference_info() {
+		global $tsml_nonce;
+
+		//security
+		if (empty($_GET['nonce']) || !wp_verify_nonce($_GET['nonce'], $tsml_nonce)) {
+			die('nonce not set properly');
+		}
+
+		//filter input
+		$postmeta = get_post_meta(intval($_GET['meeting_id']));
+
+		//return values in JSON
+		wp_send_json(array(
+			'conference_url' => empty($postmeta['conference_url'][0]) ? null : $postmeta['conference_url'][0],
+			'conference_phone' => empty($postmeta['conference_phone'][0]) ? null : $postmeta['conference_phone'][0],
+		));
+	}
+}
+
+//get all contact email addresses (for europe)
+//linked from admin_import.php
 add_action('wp_ajax_contacts', 'tsml_ajax_contacts');
 if (!function_exists('tsml_ajax_contacts')) {
 	function tsml_ajax_contacts() {
