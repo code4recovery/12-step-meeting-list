@@ -102,7 +102,6 @@ jQuery(function($){
 		if ( phone_el ) {
 			phone_el.addEventListener( 'click', function( e ) {
 				e.preventDefault();
-				console.log('after');
 				$.post( tsml.ajaxurl, {
 					action: 'phone_link',
 					post_id: tsml.post_id
