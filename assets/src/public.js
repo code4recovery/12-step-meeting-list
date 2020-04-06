@@ -76,6 +76,48 @@ jQuery(function($){
 			url: tsml_map.location_url,
 		};
 		createMap(false, locations);
+
+		// Grab meeting and phone if they exist.
+		var meeting_el = document.getElementById( 'meeting-link' ),
+		    phone_el   = document.getElementById( 'phone-link' );
+		// If Meeting URL exists, grab it from meta and send user on their way
+		if ( meeting_el ) {
+			meeting_el.addEventListener( 'click', function( e ) {
+				e.preventDefault();
+				$.post( tsml.ajaxurl, {
+					action: 'meeting_link',
+					post_id: tsml.post_id
+				} )
+				 .done( function( result ) {
+					 if ( result.success ) {
+						 window.location.assign( result.data.meeting );
+					 }
+				 } )
+				 .fail( function( err ) {// TODO: improve
+					 console.log( 'FAIL' );
+				 } );
+			} );
+		}
+		// If Phone Number exists grab it from meta and send user on their way
+		if ( phone_el ) {
+			phone_el.addEventListener( 'click', function( e ) {
+				e.preventDefault();
+				console.log('after');
+				$.post( tsml.ajaxurl, {
+					action: 'phone_link',
+					post_id: tsml.post_id
+				} )
+				 .done( function( result ) {
+					 if ( result.success ) {
+						 window.location.assign( result.data.phone );
+					 }
+				 } )
+				 .fail( function(err ) {// TODO: improve
+					 console.log('FAIL');
+				 });
+			} );
+		}
+
 	}
 		
 	//b) jQuery event handlers
