@@ -659,8 +659,9 @@ add_action( 'wp_ajax_nopriv_meeting_link', 'tsml_ajax_meeting_link' );
  *
  */
 function tsml_ajax_meeting_link() {
+	global $tsml_nonce;
 
-	if ( ! isset( $_POST['post_id'] ) ) {
+	if ( ! isset( $_POST['post_id'] ) || ! isset( $_POST['nonce'] ) || ! wp_verify_nonce( $_POST['nonce'], $tsml_nonce ) ) {
 		wp_send_json_error();
 	}
 	$post_id = intval( $_POST['post_id'] );
@@ -682,8 +683,9 @@ add_action( 'wp_ajax_nopriv_phone_link', 'tsml_ajax_phone_link' );
  *
  */
 function tsml_ajax_phone_link() {
+	global $tsml_nonce;
 
-	if ( ! isset( $_POST['post_id'] ) ) {
+	if ( ! isset( $_POST['post_id'] ) || ! isset( $_POST['nonce'] ) || ! wp_verify_nonce( $_POST['nonce'], $tsml_nonce ) ) {
 		wp_send_json_error();
 	}
 	$post_id = intval( $_POST['post_id'] );
