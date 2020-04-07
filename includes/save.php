@@ -74,6 +74,7 @@ function tsml_save_post($post_id, $post, $update) {
 	}
 
 	//video conference information (doing this here because it affects types)
+	// If either Conference URL or phone have values, we allow/set type ONL
 	$valid_conference_url = null;
 	$_POST['types'] = array_values(array_diff($_POST['types'], array('ONL')));
 	if (!empty($_POST['conference_url'])) {
@@ -82,7 +83,7 @@ function tsml_save_post($post_id, $post, $update) {
 			$valid_conference_url = $url;
 			array_push($_POST['types'], 'ONL');
 		} 
-	}
+	} elseif (!empty($_POST['conference_phone'])) array_push($_POST['types'], 'ONL');
 
 	//video conferencing info
 	if (!$update || strcmp($old_meeting->conference_url, $valid_conference_url) !== 0) {
