@@ -469,7 +469,7 @@ function tsml_define_strings() {
 	$tsml_programs = array(
 		'aca' => array(
 			'abbr' => __('ACA', '12-step-meeting-list'),
-			'flags' => array('M', 'W'), //for /men and /women at end of meeting name (used in tsml_format_name())
+			'flags' => array('M', 'W', 'TC', 'ONL'), //for /men and /women at end of meeting name (used in tsml_format_name())
 			'name' => __('Adult Children of Alcoholics', '12-step-meeting-list'),
 			'type_descriptions' => array(
 				'C' => __('This meeting is closed; only those who have a desire to recover from the effects of growing up in an alcoholic or otherwise dysfunctional family may attend.', '12-step-meeting-list'),
@@ -601,7 +601,7 @@ function tsml_define_strings() {
 		),
 		'coda' => array(
 			'abbr' => __('CoDA', '12-step-meeting-list'),
-			'flags' => array('M', 'W'), //for /men and /women at end of meeting name (used in tsml_format_name())
+			'flags' => array('M', 'W', 'TC', 'ONL'), //for /men and /women at end of meeting name (used in tsml_format_name())
 			'name' => __('Co-Dependents Anonymous', '12-step-meeting-list'),
 			'types' => array(
 				'A' => __('Atheist / Agnostic', '12-step-meeting-list'),
@@ -647,7 +647,7 @@ function tsml_define_strings() {
 		),
 		'ca' => array(
 			'abbr' => __('CA', '12-step-meeting-list'),
-			'flags' => array('M', 'W'), //for /men and /women at end of meeting name (used in tsml_format_name())
+			'flags' => array('M', 'W', 'TC', 'ONL'), //for /men and /women at end of meeting name (used in tsml_format_name())
 			'name' => __('Cocaine Anonymous', '12-step-meeting-list'),
 			'type_descriptions' => array(
 				'C' => __('This meeting is closed; only those who have a desire to stop using may attend.', '12-step-meeting-list'),
@@ -708,7 +708,7 @@ function tsml_define_strings() {
 		),
 		'da' => array(
 			'abbr' => __('DA', '12-step-meeting-list'),
-			'flags' => array('M', 'W'), //for /men and /women at end of meeting name (used in tsml_format_name())
+			'flags' => array('M', 'W', 'TC', 'ONL'), //for /men and /women at end of meeting name (used in tsml_format_name())
 			'name' => __('Debtors Anonymous', '12-step-meeting-list'),
 			'types' => array(
 				'AB' => __('Abundance', '12-step-meeting-list'),
@@ -733,7 +733,7 @@ function tsml_define_strings() {
 		),
 		'daa' => array(
 			'abbr' => __('DAA', '12-step-meeting-list'),
-			'flags' => array('M', 'W'), //for /men and /women at end of meeting name (used in tsml_format_name())
+			'flags' => array('M', 'W','TC', 'ONL'), //for /men and /women at end of meeting name (used in tsml_format_name())
 			'name' => __('Drug Addicts Anonymous', '12-step-meeting-list'),
 			'types' => array(
 				'12x12' => __('12 Steps & 12 Traditions', '12-step-meeting-list'),
@@ -753,7 +753,7 @@ function tsml_define_strings() {
 		),
 		'ga' => array(
 			'abbr' => __('GA', '12-step-meeting-list'),
-			'flags' => array('M', 'W'), //for /men and /women at end of meeting name (used in tsml_format_name())
+			'flags' => array('M', 'W', 'TC', 'ONL'), //for /men and /women at end of meeting name (used in tsml_format_name())
 			'name' => __('Gamblers Anonymous', '12-step-meeting-list'),
 			'type_descriptions' => array(
 				'C' => __('This meeting is closed; only those who have a desire to stop gambling may attend.', '12-step-meeting-list'),
@@ -802,7 +802,7 @@ function tsml_define_strings() {
 		),
 		'ha' => array(
 			'abbr' => __('HA', '12-step-meeting-list'),
-			'flags' => array('M', 'W'), //for /men and /women at end of meeting name (used in tsml_format_name())
+			'flags' => array('M', 'W', 'TC', 'ONL'), //for /men and /women at end of meeting name (used in tsml_format_name())
 			'name' => __('Heroin Anonymous', '12-step-meeting-list'),
 			'types' => array(
 				'CPT' => __('12 Concepts', '12-step-meeting-list'),
@@ -840,7 +840,7 @@ function tsml_define_strings() {
 		),
 		'na' => array(
 			'abbr' => __('NA', '12-step-meeting-list'),
-			'flags' => array('M', 'W'), //for /men and /women at end of meeting name (used in tsml_format_name())
+			'flags' => array('M', 'W', 'TC', 'ONL'), //for /men and /women at end of meeting name (used in tsml_format_name())
 			'name' => __('Narcotics Anonymous', '12-step-meeting-list'),
 			'types' => array(
 				'CPT' => __('12 Concepts', '12-step-meeting-list'),
@@ -935,7 +935,7 @@ function tsml_define_strings() {
 		),
 		'rd' => array(
 			'abbr' => __('Recovery Dharma', '12-step-meeting-list'),
-			'flags' => array('M', 'W'), //for /men and /women at end of meeting name (used in tsml_format_name())
+			'flags' => array('M', 'W', 'TC', 'ONL'), //for /men and /women at end of meeting name (used in tsml_format_name())
 			'name' => __('Recovery Dharma', '12-step-meeting-list'),
 			'type_descriptions' => array(
 				'M' => __('Men’s meetings are for anyone who identifies as male.', '12-step-meeting-list'),
@@ -972,7 +972,7 @@ function tsml_define_strings() {
 		),
 		'rr' => array(
 			'abbr' => __('Refuge Recovery', '12-step-meeting-list'),
-			'flags' => array('M', 'W'), //for /men and /women at end of meeting name (used in tsml_format_name())
+			'flags' => array('M', 'W', 'TC', 'ONL'), //for /men and /women at end of meeting name (used in tsml_format_name())
 			'name' => __('Refuge Recovery', '12-step-meeting-list'),
 			'type_descriptions' => array(
 				'M' => __('Men’s meetings are for anyone who identifies as male.', '12-step-meeting-list'),
@@ -1009,7 +1009,7 @@ function tsml_define_strings() {
 		),
 		'saa' => array(
 			'abbr' => __('SAA', '12-step-meeting-list'),
-			'flags' => array('M', 'W'), //for /men and /women at end of meeting name (used in tsml_format_name())
+			'flags' => array('M', 'W', 'TC', 'ONL'), //for /men and /women at end of meeting name (used in tsml_format_name())
 			'name' => __('Sex Addicts Anonymous', '12-step-meeting-list'),
 			'types' => array(
 				'C' => __('Closed', '12-step-meeting-list'),
@@ -1024,7 +1024,7 @@ function tsml_define_strings() {
 		),
 		'sa' => array(
 			'abbr' => __('SA', '12-step-meeting-list'),
-			'flags' => array('M', 'W'), //for /men and /women at end of meeting name (used in tsml_format_name())
+			'flags' => array('M', 'W', 'TC', 'ONL'), //for /men and /women at end of meeting name (used in tsml_format_name())
 			'name' => __('Sexaholics Anonymous', '12-step-meeting-list'),
 			'types' => array(
 				'BE' => __('Beginner', '12-step-meeting-list'),
@@ -1062,7 +1062,7 @@ function tsml_define_strings() {
 		),
 		'slaa' => array(
 			'abbr' => __('SLAA', '12-step-meeting-list'),
-			'flags' => array('M', 'W'), //for /men and /women at end of meeting name (used in tsml_format_name())
+			'flags' => array('M', 'W', 'TC', 'ONL'), //for /men and /women at end of meeting name (used in tsml_format_name())
 			'name' => __('Sex and Love Addicts Anonymous', '12-step-meeting-list'),
 			'types' => array(
 				'AN' => __('Anorexia Focus', '12-step-meeting-list'),
@@ -1097,7 +1097,7 @@ function tsml_define_strings() {
 		),
 		'va' => array(
 			'abbr' => __('VA', '12-step-meeting-list'),
-			'flags' => array('M', 'W'), //for /men and /women at end of meeting name (used in tsml_format_name())
+			'flags' => array('M', 'W', 'TC', 'ONL'), //for /men and /women at end of meeting name (used in tsml_format_name())
 			'name' => __('Violence Anonymous', '12-step-meeting-list'),
 			'types' => array(
 				'12x12' => __('12 Steps & 12 Traditions', '12-step-meeting-list'),
