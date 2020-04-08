@@ -84,7 +84,7 @@ jQuery(function($){
 		if ( meeting_el ) {
 			meeting_el.addEventListener( 'click', function( e ) {
 				e.preventDefault();
-				$.post( tsml.ajaxurl, {
+				$.get( tsml.ajaxurl, {
 					action: 'meeting_link',
 					post_id: tsml.post_id,
 					nonce: tsml.nonce
@@ -103,7 +103,7 @@ jQuery(function($){
 		if ( phone_el ) {
 			phone_el.addEventListener( 'click', function( e ) {
 				e.preventDefault();
-				$.post( tsml.ajaxurl, {
+				$.get( tsml.ajaxurl, {
 					action: 'phone_link',
 					post_id: tsml.post_id,
 					nonce: tsml.nonce
