@@ -86,7 +86,7 @@ jQuery(function($){
 				e.preventDefault();
 				$.get( tsml.ajaxurl, {
 					action: 'meeting_link',
-					post_id: tsml.post_id,
+					meeting_id: tsml.meeting_id,
 					nonce: tsml.nonce
 				} )
 				 .done( function( result ) {
@@ -105,7 +105,7 @@ jQuery(function($){
 				e.preventDefault();
 				$.get( tsml.ajaxurl, {
 					action: 'phone_link',
-					post_id: tsml.post_id,
+					meeting_id: tsml.meeting_id,
 					nonce: tsml.nonce
 				} )
 				 .done( function( result ) {

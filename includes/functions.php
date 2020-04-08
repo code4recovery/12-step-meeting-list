@@ -76,7 +76,7 @@ function tsml_assets() {
 			'street_only' => $tsml_street_only,
 			'strings' => $tsml_strings,
 			'types' => empty($tsml_programs[$tsml_program]['types']) ? array() : $tsml_programs[$tsml_program]['types'],
-			'post_id' => isset( $post->ID ) ? $post->ID : '',
+			'meeting_id' => isset( $post->ID ) ? $post->ID : '',
 		));
 	}
 }

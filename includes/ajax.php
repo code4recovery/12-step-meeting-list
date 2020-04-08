@@ -661,11 +661,11 @@ add_action( 'wp_ajax_nopriv_meeting_link', 'tsml_ajax_meeting_link' );
 function tsml_ajax_meeting_link() {
 	global $tsml_nonce;
 
-	if ( ! isset( $_GET['post_id'] ) || ! isset( $_GET['nonce'] ) || ! wp_verify_nonce( $_GET['nonce'], $tsml_nonce ) ) {
+	if ( ! isset( $_GET['meeting_id'] ) || ! isset( $_GET['nonce'] ) || ! wp_verify_nonce( $_GET['nonce'], $tsml_nonce ) ) {
 		wp_send_json_error();
 	}
-	$post_id = intval( $_GET['post_id'] );
-	$url = get_post_meta( $post_id, 'conference_url', true );
+	$meeting_id = intval( $_GET['meeting_id'] );
+	$url = get_post_meta( $meeting_id, 'conference_url', true );
 	if ( $url ) {
 		wp_send_json_success( ['meeting' => $url]);
 	} else {
@@ -685,11 +685,11 @@ add_action( 'wp_ajax_nopriv_phone_link', 'tsml_ajax_phone_link' );
 function tsml_ajax_phone_link() {
 	global $tsml_nonce;
 
-	if ( ! isset( $_GET['post_id'] ) || ! isset( $_GET['nonce'] ) || ! wp_verify_nonce( $_GET['nonce'], $tsml_nonce ) ) {
+	if ( ! isset( $_GET['meeting_id'] ) || ! isset( $_GET['nonce'] ) || ! wp_verify_nonce( $_GET['nonce'], $tsml_nonce ) ) {
 		wp_send_json_error();
 	}
-	$post_id = intval( $_GET['post_id'] );
-	$phone = get_post_meta( $post_id, 'conference_phone', true );
+	$meeting_id = intval( $_GET['meeting_id'] );
+	$phone = get_post_meta( $meeting_id, 'conference_phone', true );
 	if ( $phone ) {
 		wp_send_json_success( ['phone' => 'tel:' . $phone]);
 	} else {
