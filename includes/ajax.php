@@ -693,7 +693,12 @@ function tsml_ajax_phone_link() {
 	$meeting_id = intval( $_GET['meeting_id'] );
 	$phone      = get_post_meta( $meeting_id, 'conference_phone', true );
 	if ( $phone ) {
-		wp_send_json_success( ['phone' => 'tel:' . $phone]);
+		if ( false === strpos( $phone, 'tel:' ) ) {
+			wp_send_json_success( [ 'phone' => 'tel:' . esc_attr( $phone ) ] );
+		} else {
+			wp_send_json_success( [ 'phone' => esc_attr( $phone ) ] );
+		}
+
 	} else {
 		wp_send_json_error();
 	}
