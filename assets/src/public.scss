@@ -383,6 +383,9 @@ $height: 550px; //height of map and min-height of list
 									font-weight: bold;
 								}
 							}
+							.address, .region, .location {
+								opacity: .5;
+							}
 						}
 						
 						&.type-onl {
