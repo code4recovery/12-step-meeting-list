@@ -1260,6 +1260,17 @@ function tsml_import_buffer_set($meetings, $data_source=null) {
 			$meetings[$i]['notes'] .= implode(', ', $unused_types);
 		}
 
+		// If Conference URL, validate; or if phone, force 'ONL' type, else remove 'ONL'
+		$meetings[$i]['types'] = array_values(array_diff($meetings[$i]['types'], array('ONL')));
+		if (!empty($meetings[$i]['conference_url'])) {
+			$url = esc_url_raw($meetings[$i]['conference_url'], array('http', 'https'));
+			if (tsml_conference_provider($url)) {
+				$meetings[$i]['conference_url'] = $url;
+				$meetings[$i]['types'][] = 'ONL';
+			} else $meetings[$i]['conference_url'] = null;
+		}
+		if (!empty($meetings[$i]['conference_phone'])) $meetings[$i]['types'][] = 'ONL'; 
+
 		//make sure we're not double-listing types
 		$meetings[$i]['types'] = array_unique($meetings[$i]['types']);
 
