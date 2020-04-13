@@ -1267,9 +1267,13 @@ function tsml_import_buffer_set($meetings, $data_source=null) {
 			if (tsml_conference_provider($url)) {
 				$meetings[$i]['conference_url'] = $url;
 				$meetings[$i]['types'][] = 'ONL';
-			} else $meetings[$i]['conference_url'] = null;
+			} else {
+				$meetings[$i]['conference_url'] = null;
+			}
 		}
-		if (!empty($meetings[$i]['conference_phone'])) $meetings[$i]['types'][] = 'ONL'; 
+		if (!empty($meetings[$i]['conference_phone']) && empty($meetings[$i]['conference_url'])) {
+			$meetings[$i]['types'][] = 'ONL'; 
+		}
 
 		//make sure we're not double-listing types
 		$meetings[$i]['types'] = array_unique($meetings[$i]['types']);

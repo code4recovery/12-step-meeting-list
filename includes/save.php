@@ -84,7 +84,9 @@ function tsml_save_post($post_id, $post, $update) {
 			array_push($_POST['types'], 'ONL');
 		} 
 	}
-	if (!empty($_POST['conference_phone'])) array_push($_POST['types'], 'ONL');
+	if (!empty($_POST['conference_phone']) && empty($valid_conference_url)) {
+		array_push($_POST['types'], 'ONL');
+	}
 
 	//video conferencing info
 	if (!$update || strcmp($old_meeting->conference_url, $valid_conference_url) !== 0) {
