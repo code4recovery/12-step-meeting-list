@@ -2,7 +2,7 @@
 Contributors: aasanjose
 Requires at least: 3.2
 Tested up to: 5.3.2
-Stable tag: 3.6.4
+Stable tag: 3.6.5
 
 This plugin helps twelve step recovery programs list their meetings. It standardizes addresses, and displays results in a searchable list and map.
 
@@ -203,6 +203,13 @@ To apply these changes, you must go to Settings > Permalinks and click "Save Cha
 1. Edit location
 
 == Changelog ==
+
+= 3.6.5 =
+* Added hiding of conference phone numbers.
+* Changed Temporary Closure to Location Temporary Closed.
+* Changed online meeting to be accepted if dial-in only.
+* Improved URL screening for csv/json imports.
+* Improved front end styling for meetings.
 
 = 3.6.4 = 
 * Updated CSV import/export and template to reflect added fields.
