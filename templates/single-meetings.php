@@ -93,12 +93,12 @@ get_header();
 									<h3 class="list-group-item-heading">
 										<?php _e('Online Meeting', '12-step-meeting-list')?>
 									</h3>
-									<?php 
+									<?php
 									if (!empty($meeting->conference_url) && $provider = tsml_conference_provider($meeting->conference_url)) {?>
-										<a class="btn btn-default btn-block" href="<?php echo $meeting->conference_url?>" target="_blank"><i class="glyphicon glyphicon-facetime-video"></i> <?php echo $provider === true ? $meeting->conference_url : $provider?></a>
+										<a id="meeting-link" class="btn btn-default btn-block" href="#"><i class="glyphicon glyphicon-facetime-video"></i> <?php echo $provider === true ? $meeting->conference_url : $provider?></a>
 									<?php }
 									if (!empty($meeting->conference_phone)) {?>
-										<a class="btn btn-default btn-block" href="tel:<?php echo preg_replace("/[^0-9,#+]/", '', $meeting->conference_phone)?>" target="_blank"><i class="glyphicon glyphicon-earphone"></i> <?php echo "Join by phone"?></a>
+										<a id="phone-link" class="btn btn-default btn-block" href="#"><i class="glyphicon glyphicon-earphone"></i> <?php echo "Join by phone"?></a>
 									<?php }?>
 								</li>
 								<?php }?>
