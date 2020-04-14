@@ -28,13 +28,16 @@ $tsml_columns = array(
 
 //list of valid conference providers (matches Meeting Guide app). set this to null in your theme if you don't want to validate
 $tsml_conference_providers = array(
+	'bluejeans.com' => 'Bluejeans',
+	'freeconference.com' => 'Free Conference',
+	'freeconferencecall.com' => 'FreeConferenceCall',
 	'meet.google.com' => 'Google Hangouts',
+	'gotomeet.me' => 'GoToMeeting',
 	'gotomeeting.com' => 'GoToMeeting',
 	'skype.com' => 'Skype',
 	'webex.com' => 'WebEx',
+	'zoho.com' => 'Zoho',
 	'zoom.us' => 'Zoom',
-	'freeconference.com' => 'Free Conference',
-	'freeconferencecall.com' => 'FreeConferenceCall'
 );
 
 //whether contacts are displayed publicly (defaults to no)
@@ -469,7 +472,7 @@ function tsml_define_strings() {
 	$tsml_programs = array(
 		'aca' => array(
 			'abbr' => __('ACA', '12-step-meeting-list'),
-			'flags' => array('M', 'W'), //for /men and /women at end of meeting name (used in tsml_format_name())
+			'flags' => array('M', 'W', 'TC', 'ONL'), //for /men and /women at end of meeting name (used in tsml_format_name())
 			'name' => __('Adult Children of Alcoholics', '12-step-meeting-list'),
 			'type_descriptions' => array(
 				'C' => __('This meeting is closed; only those who have a desire to recover from the effects of growing up in an alcoholic or otherwise dysfunctional family may attend.', '12-step-meeting-list'),
@@ -484,13 +487,13 @@ function tsml_define_strings() {
 				'D' => __('Discussion', '12-step-meeting-list'),
 				'T' => __('Fellowship Text', '12-step-meeting-list'),
 				'G' => __('Gay/Lesbian', '12-step-meeting-list'),
+				'TC' => __('Location Temporarily Closed', '12-step-meeting-list'),
 				'M' => __('Men', '12-step-meeting-list'),
 				'ONL' => __('Online Meeting', '12-step-meeting-list'),
 				'O' => __('Open', '12-step-meeting-list'),
 				'S' => __('Speaker', '12-step-meeting-list'),
 				'SP' => __('Spanish', '12-step-meeting-list'),
 				'ST' => __('Steps', '12-step-meeting-list'),
-				'TC' => __('Temporary Closure', '12-step-meeting-list'),
 				'W' => __('Women', '12-step-meeting-list'),
 				'Y' => __('Yellow Workbook Study', '12-step-meeting-list'),
 			),
@@ -517,13 +520,13 @@ function tsml_define_strings() {
 				'FF' => __('Fragrance Free', '12-step-meeting-list'),
 				'G' => __('Gay', '12-step-meeting-list'),
 				'L' => __('Lesbian', '12-step-meeting-list'),
+				'TC' => __('Location Temporarily Closed', '12-step-meeting-list'),
 				'M' => __('Men', '12-step-meeting-list'),
 				'ONL' => __('Online Meeting', '12-step-meeting-list'),
 				'SM' => __('Smoking Permitted', '12-step-meeting-list'),
 				'S' => __('Spanish', '12-step-meeting-list'),
 				'SP' => __('Speaker', '12-step-meeting-list'),
-				'ST' => __('Step Meeting', '12-step-meeting-list'),
-				'TC' => __('Temporary Closure', '12-step-meeting-list'),				
+				'ST' => __('Step Meeting', '12-step-meeting-list'),				
 				'T' => __('Transgender', '12-step-meeting-list'),
 				'X' => __('Wheelchair Accessible', '12-step-meeting-list'),
 				'W' => __('Women', '12-step-meeting-list'),
@@ -571,6 +574,7 @@ function tsml_define_strings() {
 				'LIT' => __('Literature', '12-step-meeting-list'),
 				'LS' => __('Living Sober', '12-step-meeting-list'),
 				'LGBTQ' => __('LGBTQ', '12-step-meeting-list'),
+				'TC' => __('Location Temporarily Closed', '12-step-meeting-list'),
 				'MED' => __('Meditation', '12-step-meeting-list'),
 				'M' => __('Men', '12-step-meeting-list'),
 				'N' => __('Native American', '12-step-meeting-list'),
@@ -589,8 +593,7 @@ function tsml_define_strings() {
 				'SM' => __('Smoking Permitted', '12-step-meeting-list'),
 				'S' => __('Spanish', '12-step-meeting-list'),
 				'SP' => __('Speaker', '12-step-meeting-list'),
-				'ST' => __('Step Meeting', '12-step-meeting-list'),
-				'TC' => __('Temporary Closure', '12-step-meeting-list'),				
+				'ST' => __('Step Meeting', '12-step-meeting-list'),				
 				'TR' => __('Tradition Study', '12-step-meeting-list'),
 				'T' => __('Transgender', '12-step-meeting-list'),
 				'X' => __('Wheelchair Access', '12-step-meeting-list'),
@@ -601,7 +604,7 @@ function tsml_define_strings() {
 		),
 		'coda' => array(
 			'abbr' => __('CoDA', '12-step-meeting-list'),
-			'flags' => array('M', 'W'), //for /men and /women at end of meeting name (used in tsml_format_name())
+			'flags' => array('M', 'W', 'TC', 'ONL'), //for /men and /women at end of meeting name (used in tsml_format_name())
 			'name' => __('Co-Dependents Anonymous', '12-step-meeting-list'),
 			'types' => array(
 				'A' => __('Atheist / Agnostic', '12-step-meeting-list'),
@@ -622,6 +625,7 @@ function tsml_define_strings() {
 				'L' => __('Lesbian', '12-step-meeting-list'),
 				'LIT' => __('Literature', '12-step-meeting-list'),
 				'LGBTQ' => __('LGBTQ', '12-step-meeting-list'),
+				'TC' => __('Location Temporarily Closed', '12-step-meeting-list'),
 				'MED' => __('Meditation', '12-step-meeting-list'),
 				'M' => __('Men', '12-step-meeting-list'),
 				'ONL' => __('Online Meeting', '12-step-meeting-list'),
@@ -634,8 +638,7 @@ function tsml_define_strings() {
 				'S' => __('Spanish', '12-step-meeting-list'),
 				'SP' => __('Speaker', '12-step-meeting-list'),
 				'ST' => __('Step Meeting', '12-step-meeting-list'),
-				'TEEN' => __('Teens', '12-step-meeting-list'),
-				'TC' => __('Temporary Closure', '12-step-meeting-list'),				
+				'TEEN' => __('Teens', '12-step-meeting-list'),				
 				'D' => __('Topic Discussion', '12-step-meeting-list'),
 				'TR' => __('Tradition', '12-step-meeting-list'),
 				'T' => __('Transgender', '12-step-meeting-list'),
@@ -647,7 +650,7 @@ function tsml_define_strings() {
 		),
 		'ca' => array(
 			'abbr' => __('CA', '12-step-meeting-list'),
-			'flags' => array('M', 'W'), //for /men and /women at end of meeting name (used in tsml_format_name())
+			'flags' => array('M', 'W', 'TC', 'ONL'), //for /men and /women at end of meeting name (used in tsml_format_name())
 			'name' => __('Cocaine Anonymous', '12-step-meeting-list'),
 			'type_descriptions' => array(
 				'C' => __('This meeting is closed; only those who have a desire to stop using may attend.', '12-step-meeting-list'),
@@ -683,6 +686,7 @@ function tsml_define_strings() {
 				'LIT' => __('Literature', '12-step-meeting-list'),
 				'LS' => __('Living Sober', '12-step-meeting-list'),
 				'LGBTQ' => __('LGBTQ', '12-step-meeting-list'),
+				'TC' => __('Location Temporarily Closed', '12-step-meeting-list'),
 				'MED' => __('Meditation', '12-step-meeting-list'),
 				'M' => __('Men', '12-step-meeting-list'),
 				'N' => __('Native American', '12-step-meeting-list'),
@@ -697,8 +701,7 @@ function tsml_define_strings() {
 				'SM' => __('Smoking Permitted', '12-step-meeting-list'),
 				'S' => __('Spanish', '12-step-meeting-list'),
 				'SP' => __('Speaker', '12-step-meeting-list'),
-				'ST' => __('Step Meeting', '12-step-meeting-list'),
-				'TC' => __('Temporary Closure', '12-step-meeting-list'),				
+				'ST' => __('Step Meeting', '12-step-meeting-list'),			
 				'TR' => __('Tradition Study', '12-step-meeting-list'),
 				'T' => __('Transgender', '12-step-meeting-list'),
 				'X' => __('Wheelchair Access', '12-step-meeting-list'),
@@ -708,7 +711,7 @@ function tsml_define_strings() {
 		),
 		'da' => array(
 			'abbr' => __('DA', '12-step-meeting-list'),
-			'flags' => array('M', 'W'), //for /men and /women at end of meeting name (used in tsml_format_name())
+			'flags' => array('M', 'W', 'TC', 'ONL'), //for /men and /women at end of meeting name (used in tsml_format_name())
 			'name' => __('Debtors Anonymous', '12-step-meeting-list'),
 			'types' => array(
 				'AB' => __('Abundance', '12-step-meeting-list'),
@@ -716,14 +719,14 @@ function tsml_define_strings() {
 				'B' => __('Business Owner', '12-step-meeting-list'),
 				'C' => __('Closed', '12-step-meeting-list'),
 				'CL' => __('Clutter', '12-step-meeting-list'),
+				'TC' => __('Location Temporarily Closed', '12-step-meeting-list'),
 				'M' => __('Men', '12-step-meeting-list'),
 				'N' => __('Numbers', '12-step-meeting-list'),
 				'ONL' => __('Online Meeting', '12-step-meeting-list'),
 				'O' => __('Open', '12-step-meeting-list'),
 				'P' => __('Prosperity', '12-step-meeting-list'),
 				'SP' => __('Speaker', '12-step-meeting-list'),
-				'ST' => __('Step Study', '12-step-meeting-list'),
-				'TC' => __('Temporary Closure', '12-step-meeting-list'),				
+				'ST' => __('Step Study', '12-step-meeting-list'),				
 				'TI' => __('Time', '12-step-meeting-list'),
 				'TO' => __('Toolkit', '12-step-meeting-list'),
 				'V' => __('Vision', '12-step-meeting-list'),
@@ -733,7 +736,7 @@ function tsml_define_strings() {
 		),
 		'daa' => array(
 			'abbr' => __('DAA', '12-step-meeting-list'),
-			'flags' => array('M', 'W'), //for /men and /women at end of meeting name (used in tsml_format_name())
+			'flags' => array('M', 'W','TC', 'ONL'), //for /men and /women at end of meeting name (used in tsml_format_name())
 			'name' => __('Drug Addicts Anonymous', '12-step-meeting-list'),
 			'types' => array(
 				'12x12' => __('12 Steps & 12 Traditions', '12-step-meeting-list'),
@@ -741,19 +744,19 @@ function tsml_define_strings() {
 				'B' => __('Big Book Study', '12-step-meeting-list'),
 				'C' => __('Closed', '12-step-meeting-list'),
 				'D' => __('Discussion', '12-step-meeting-list'),
+				'TC' => __('Location Temporarily Closed', '12-step-meeting-list'),
 				'M' => __('Men', '12-step-meeting-list'),
 				'ONL' => __('Online Meeting', '12-step-meeting-list'),
 				'O' => __('Open', '12-step-meeting-list'),
 				'ST' => __('Step Meeting', '12-step-meeting-list'),
-				'SS' => __('Step Speaker', '12-step-meeting-list'),
-				'TC' => __('Temporary Closure', '12-step-meeting-list'),				
+				'SS' => __('Step Speaker', '12-step-meeting-list'),			
 				'W' => __('Women', '12-step-meeting-list'),
 				'YP' => __('Young People', '12-step-meeting-list'),
 			),
 		),
 		'ga' => array(
 			'abbr' => __('GA', '12-step-meeting-list'),
-			'flags' => array('M', 'W'), //for /men and /women at end of meeting name (used in tsml_format_name())
+			'flags' => array('M', 'W', 'TC', 'ONL'), //for /men and /women at end of meeting name (used in tsml_format_name())
 			'name' => __('Gamblers Anonymous', '12-step-meeting-list'),
 			'type_descriptions' => array(
 				'C' => __('This meeting is closed; only those who have a desire to stop gambling may attend.', '12-step-meeting-list'),
@@ -777,6 +780,7 @@ function tsml_define_strings() {
 				'KOR' => __('Korean', '12-step-meeting-list'),
 				'LIT' => __('Literature', '12-step-meeting-list'),
 				'LGBTQ' => __('LGBTQ', '12-step-meeting-list'),
+				'TC' => __('Location Temporarily Closed', '12-step-meeting-list'),
 				'MED' => __('Meditation', '12-step-meeting-list'),
 				'M' => __('Men', '12-step-meeting-list'),
 				'BE' => __('Newcomer', '12-step-meeting-list'),
@@ -791,8 +795,7 @@ function tsml_define_strings() {
 				'SM' => __('Smoking Permitted', '12-step-meeting-list'),
 				'S' => __('Spanish', '12-step-meeting-list'),
 				'SP' => __('Speaker', '12-step-meeting-list'),
-				'ST' => __('Step Meeting', '12-step-meeting-list'),
-				'TC' => __('Temporary Closure', '12-step-meeting-list'),				
+				'ST' => __('Step Meeting', '12-step-meeting-list'),				
 				'TOP' => __('Topic', '12-step-meeting-list'),
 				'TR' => __('Tradition Study', '12-step-meeting-list'),
 				'X' => __('Wheelchair Access', '12-step-meeting-list'),
@@ -802,7 +805,7 @@ function tsml_define_strings() {
 		),
 		'ha' => array(
 			'abbr' => __('HA', '12-step-meeting-list'),
-			'flags' => array('M', 'W'), //for /men and /women at end of meeting name (used in tsml_format_name())
+			'flags' => array('M', 'W', 'TC', 'ONL'), //for /men and /women at end of meeting name (used in tsml_format_name())
 			'name' => __('Heroin Anonymous', '12-step-meeting-list'),
 			'types' => array(
 				'CPT' => __('12 Concepts', '12-step-meeting-list'),
@@ -818,6 +821,7 @@ function tsml_define_strings() {
 				'JFT' => __('Just For Today Study', '12-step-meeting-list'),
 				'LIT' => __('Literature Study', '12-step-meeting-list'),
 				'LC' => __('Living Clean', '12-step-meeting-list'),
+				'TC' => __('Location Temporarily Closed', '12-step-meeting-list'),
 				'M' => __('Men', '12-step-meeting-list'),
 				'MED' => __('Meditation', '12-step-meeting-list'),
 				'NS' => __('Non-Smoking', '12-step-meeting-list'),
@@ -828,8 +832,7 @@ function tsml_define_strings() {
 				'SMOK' => __('Smoking', '12-step-meeting-list'),
 				'SPK' => __('Speaker', '12-step-meeting-list'),
 				'STEP' => __('Step', '12-step-meeting-list'),
-				'SWG' => __('Step Working Guide Study', '12-step-meeting-list'),
-				'TC' => __('Temporary Closure', '12-step-meeting-list'),				
+				'SWG' => __('Step Working Guide Study', '12-step-meeting-list'),				
 				'TOP' => __('Topic', '12-step-meeting-list'),
 				'TRAD' => __('Tradition', '12-step-meeting-list'),
 				'VAR' => __('Format Varies', '12-step-meeting-list'),
@@ -840,7 +843,7 @@ function tsml_define_strings() {
 		),
 		'na' => array(
 			'abbr' => __('NA', '12-step-meeting-list'),
-			'flags' => array('M', 'W'), //for /men and /women at end of meeting name (used in tsml_format_name())
+			'flags' => array('M', 'W', 'TC', 'ONL'), //for /men and /women at end of meeting name (used in tsml_format_name())
 			'name' => __('Narcotics Anonymous', '12-step-meeting-list'),
 			'types' => array(
 				'CPT' => __('12 Concepts', '12-step-meeting-list'),
@@ -856,6 +859,7 @@ function tsml_define_strings() {
 				'JFT' => __('Just For Today Study', '12-step-meeting-list'),
 				'LIT' => __('Literature Study', '12-step-meeting-list'),
 				'LC' => __('Living Clean', '12-step-meeting-list'),
+				'TC' => __('Location Temporarily Closed', '12-step-meeting-list'),
 				'M' => __('Men', '12-step-meeting-list'),
 				'MED' => __('Meditation', '12-step-meeting-list'),
 				'NS' => __('Non-Smoking', '12-step-meeting-list'),
@@ -866,8 +870,7 @@ function tsml_define_strings() {
 				'SMOK' => __('Smoking', '12-step-meeting-list'),
 				'SPK' => __('Speaker', '12-step-meeting-list'),
 				'STEP' => __('Step', '12-step-meeting-list'),
-				'SWG' => __('Step Working Guide Study', '12-step-meeting-list'),
-				'TC' => __('Temporary Closure', '12-step-meeting-list'),				
+				'SWG' => __('Step Working Guide Study', '12-step-meeting-list'),				
 				'TOP' => __('Topic', '12-step-meeting-list'),
 				'TRAD' => __('Tradition', '12-step-meeting-list'),
 				'VAR' => __('Format Varies', '12-step-meeting-list'),
@@ -891,6 +894,7 @@ function tsml_define_strings() {
 				'LI' => __('Lifeline', '12-step-meeting-list'),
 				'LIS' => __('Lifeline Sampler', '12-step-meeting-list'),
 				'LIT' => __('Literature Study', '12-step-meeting-list'),
+				'TC' => __('Location Temporarily Closed', '12-step-meeting-list'),
 				'MAIN' => __('Maintenance', '12-step-meeting-list'),
 				'MED' => __('Meditation', '12-step-meeting-list'),
 				'NEWB' => __('New Beginnings', '12-step-meeting-list'),
@@ -904,8 +908,7 @@ function tsml_define_strings() {
 				'SP' => __('Speaker', '12-step-meeting-list'),
 				'SD' => __('Speaker/Discussion', '12-step-meeting-list'),
 				'SPIR' => __('Spirituality', '12-step-meeting-list'),
-				'TEEN' => __('Teen Friendly', '12-step-meeting-list'),
-				'TC' => __('Temporary Closure', '12-step-meeting-list'),				
+				'TEEN' => __('Teen Friendly', '12-step-meeting-list'),			
 				'PROM' => __('The Promises', '12-step-meeting-list'),
 				'TOOL' => __('Tools', '12-step-meeting-list'),
 				'D' => __('Topic', '12-step-meeting-list'),
@@ -927,15 +930,15 @@ function tsml_define_strings() {
 			'name' => __('Recovering Couples Anonymous', '12-step-meeting-list'),
 			'types' => array(
 				'C' => __('Closed', '12-step-meeting-list'),
+				'TC' => __('Location Temporarily Closed', '12-step-meeting-list'),
 				'ONL' => __('Online Meeting', '12-step-meeting-list'),
 				'O' => __('Open', '12-step-meeting-list'),
-				'SP' => __('Speaker', '12-step-meeting-list'),
-				'TC' => __('Temporary Closure', '12-step-meeting-list'),				
+				'SP' => __('Speaker', '12-step-meeting-list'),				
 			),
 		),
 		'rd' => array(
 			'abbr' => __('Recovery Dharma', '12-step-meeting-list'),
-			'flags' => array('M', 'W'), //for /men and /women at end of meeting name (used in tsml_format_name())
+			'flags' => array('M', 'W', 'TC', 'ONL'), //for /men and /women at end of meeting name (used in tsml_format_name())
 			'name' => __('Recovery Dharma', '12-step-meeting-list'),
 			'type_descriptions' => array(
 				'M' => __('Men’s meetings are for anyone who identifies as male.', '12-step-meeting-list'),
@@ -957,14 +960,14 @@ function tsml_define_strings() {
 				'IS' => __('Inquiry Study', '12-step-meeting-list'),
 				'IW' => __('Inquiry Writing', '12-step-meeting-list'),
 				'LGBTQ' => __('LGBTQ', '12-step-meeting-list'),
+				'TC' => __('Location Temporarily Closed', '12-step-meeting-list'),
 				'M' => __('Men', '12-step-meeting-list'),
 				'MI' => __('Mindfulness Practice', '12-step-meeting-list'),
 				'ONL' => __('Online Meeting', '12-step-meeting-list'),
 				'O' => __('Open', '12-step-meeting-list'),
 				'PR' => __('Process Addictions', '12-step-meeting-list'),
 				'ES' => __('Spanish', '12-step-meeting-list'),
-				'SV' => __('Swedish', '12-step-meeting-list'),
-				'TC' => __('Temporary Closure', '12-step-meeting-list'),				
+				'SV' => __('Swedish', '12-step-meeting-list'),				
 				'TH' => __('Thai', '12-step-meeting-list'),
 				'WA' => __('Wheelchair Access', '12-step-meeting-list'),
 				'W' => __('Women', '12-step-meeting-list'),
@@ -972,7 +975,7 @@ function tsml_define_strings() {
 		),
 		'rr' => array(
 			'abbr' => __('Refuge Recovery', '12-step-meeting-list'),
-			'flags' => array('M', 'W'), //for /men and /women at end of meeting name (used in tsml_format_name())
+			'flags' => array('M', 'W', 'TC', 'ONL'), //for /men and /women at end of meeting name (used in tsml_format_name())
 			'name' => __('Refuge Recovery', '12-step-meeting-list'),
 			'type_descriptions' => array(
 				'M' => __('Men’s meetings are for anyone who identifies as male.', '12-step-meeting-list'),
@@ -994,14 +997,14 @@ function tsml_define_strings() {
 				'IS' => __('Inventory Study', '12-step-meeting-list'),
 				'IW' => __('Inventory Writing', '12-step-meeting-list'),
 				'LGBTQ' => __('LGBTQ', '12-step-meeting-list'),
+				'TC' => __('Location Temporarily Closed', '12-step-meeting-list'),
 				'M' => __('Men', '12-step-meeting-list'),
 				'MI' => __('Mindfulness Practice', '12-step-meeting-list'),
 				'ONL' => __('Online Meeting', '12-step-meeting-list'),
 				'O' => __('Open', '12-step-meeting-list'),
 				'PR' => __('Process Addictions', '12-step-meeting-list'),
 				'ES' => __('Spanish', '12-step-meeting-list'),
-				'SV' => __('Swedish', '12-step-meeting-list'),
-				'TC' => __('Temporary Closure', '12-step-meeting-list'),				
+				'SV' => __('Swedish', '12-step-meeting-list'),			
 				'TH' => __('Thai', '12-step-meeting-list'),
 				'WA' => __('Wheelchair Access', '12-step-meeting-list'),
 				'W' => __('Women', '12-step-meeting-list'),
@@ -1009,7 +1012,7 @@ function tsml_define_strings() {
 		),
 		'saa' => array(
 			'abbr' => __('SAA', '12-step-meeting-list'),
-			'flags' => array('M', 'W'), //for /men and /women at end of meeting name (used in tsml_format_name())
+			'flags' => array('M', 'W', 'TC', 'ONL'), //for /men and /women at end of meeting name (used in tsml_format_name())
 			'name' => __('Sex Addicts Anonymous', '12-step-meeting-list'),
 			'types' => array(
 				'C' => __('Closed', '12-step-meeting-list'),
@@ -1018,18 +1021,19 @@ function tsml_define_strings() {
 				'O' => __('Open', '12-step-meeting-list'),
 				'ST' => __('Step Meeting', '12-step-meeting-list'),
 				'LGBTQ' => __('LGBTQ', '12-step-meeting-list'),
-				'TC' => __('Temporary Closure', '12-step-meeting-list'),				
+				'TC' => __('Location Temporarily Closed', '12-step-meeting-list'),				
 				'W' => __('Women', '12-step-meeting-list'),
 			),
 		),
 		'sa' => array(
 			'abbr' => __('SA', '12-step-meeting-list'),
-			'flags' => array('M', 'W'), //for /men and /women at end of meeting name (used in tsml_format_name())
+			'flags' => array('M', 'W', 'TC', 'ONL'), //for /men and /women at end of meeting name (used in tsml_format_name())
 			'name' => __('Sexaholics Anonymous', '12-step-meeting-list'),
 			'types' => array(
 				'BE' => __('Beginner', '12-step-meeting-list'),
 				'B' => __('Book Study', '12-step-meeting-list'),
 				'C' => __('Closed', '12-step-meeting-list'),
+				'TC' => __('Location Temporarily Closed', '12-step-meeting-list'),
 				'MED' => __('Meditation', '12-step-meeting-list'),
 				'M' => __('Men', '12-step-meeting-list'),
 				'MI' => __('Mixed', '12-step-meeting-list'),
@@ -1037,8 +1041,7 @@ function tsml_define_strings() {
 				'O' => __('Open', '12-step-meeting-list'),
 				'PP' => __('Primary Purpose', '12-step-meeting-list'),
 				'SP' => __('Speaker', '12-step-meeting-list'),
-				'ST' => __('Step Study', '12-step-meeting-list'),
-				'TC' => __('Temporary Closure', '12-step-meeting-list'),				
+				'ST' => __('Step Study', '12-step-meeting-list'),			
 				'W' => __('Women', '12-step-meeting-list'),
 			),
 		),
@@ -1053,16 +1056,16 @@ function tsml_define_strings() {
 				'COURT' => __('Court', '12-step-meeting-list'),
 				'D' => __('Discussion', '12-step-meeting-list'),
 				'GL' => __('Graphic Language', '12-step-meeting-list'),
+				'TC' => __('Location Temporarily Closed', '12-step-meeting-list'),
 				'ONL' => __('Online Meeting', '12-step-meeting-list'),
 				'O' => __('Open', '12-step-meeting-list'),
 				'SP' => __('Speaker', '12-step-meeting-list'),
-				'ST' => __('Step', '12-step-meeting-list'),
-				'TC' => __('Temporary Closure', '12-step-meeting-list'),				
+				'ST' => __('Step', '12-step-meeting-list'),				
 			),
 		),
 		'slaa' => array(
 			'abbr' => __('SLAA', '12-step-meeting-list'),
-			'flags' => array('M', 'W'), //for /men and /women at end of meeting name (used in tsml_format_name())
+			'flags' => array('M', 'W', 'TC', 'ONL'), //for /men and /women at end of meeting name (used in tsml_format_name())
 			'name' => __('Sex and Love Addicts Anonymous', '12-step-meeting-list'),
 			'types' => array(
 				'AN' => __('Anorexia Focus', '12-step-meeting-list'),
@@ -1075,6 +1078,7 @@ function tsml_define_strings() {
 				'X' => __('Handicapped Accessible', '12-step-meeting-list'),
 				'HR' => __('Healthy Relationships', '12-step-meeting-list'),
 				'LIT' => __('Literature Reading', '12-step-meeting-list'),
+				'TC' => __('Location Temporarily Closed', '12-step-meeting-list'),
 				'MED' => __('Meditation', '12-step-meeting-list'),
 				'M' => __('Men', '12-step-meeting-list'),
 				'NC' => __('Newcomers', '12-step-meeting-list'),
@@ -1084,8 +1088,7 @@ function tsml_define_strings() {
 				'S' => __('Spanish', '12-step-meeting-list'),
 				'SP' => __('Speaker', '12-step-meeting-list'),
 				'ST' => __('Step Study', '12-step-meeting-list'),
-				'D' => __('Topic Discussion', '12-step-meeting-list'),
-				'TC' => __('Temporary Closure', '12-step-meeting-list'),				
+				'D' => __('Topic Discussion', '12-step-meeting-list'),			
 				'TR' => __('Tradition Study', '12-step-meeting-list'),
 				'W' => __('Women', '12-step-meeting-list'),
 			),
@@ -1097,15 +1100,15 @@ function tsml_define_strings() {
 		),
 		'va' => array(
 			'abbr' => __('VA', '12-step-meeting-list'),
-			'flags' => array('M', 'W'), //for /men and /women at end of meeting name (used in tsml_format_name())
+			'flags' => array('M', 'W', 'TC', 'ONL'), //for /men and /women at end of meeting name (used in tsml_format_name())
 			'name' => __('Violence Anonymous', '12-step-meeting-list'),
 			'types' => array(
 				'12x12' => __('12 Steps & 12 Traditions', '12-step-meeting-list'),
 				'C' => __('Closed', '12-step-meeting-list'),
 				'BE' => __('Newcomer', '12-step-meeting-list'),
+				'TC' => __('Location Temporarily Closed', '12-step-meeting-list'),
 				'ONL' => __('Online Meeting', '12-step-meeting-list'),
-				'O' => __('Open', '12-step-meeting-list'),
-				'TC' => __('Temporary Closure', '12-step-meeting-list'),				
+				'O' => __('Open', '12-step-meeting-list'),				
 			),
 		),
 	);
