@@ -28,13 +28,16 @@ $tsml_columns = array(
 
 //list of valid conference providers (matches Meeting Guide app). set this to null in your theme if you don't want to validate
 $tsml_conference_providers = array(
+	'bluejeans.com' => 'Bluejeans',
+	'freeconference.com' => 'Free Conference',
+	'freeconferencecall.com' => 'FreeConferenceCall',
 	'meet.google.com' => 'Google Hangouts',
+	'gotomeet.me' => 'GoToMeeting',
 	'gotomeeting.com' => 'GoToMeeting',
 	'skype.com' => 'Skype',
 	'webex.com' => 'WebEx',
+	'zoho.com' => 'Zoho',
 	'zoom.us' => 'Zoom',
-	'freeconference.com' => 'Free Conference',
-	'freeconferencecall.com' => 'FreeConferenceCall'
 );
 
 //whether contacts are displayed publicly (defaults to no)
