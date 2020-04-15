@@ -500,7 +500,7 @@ function tsml_define_strings() {
 		),
 		'al-anon' => array(
 			'abbr' => __('Al-Anon', '12-step-meeting-list'),
-			'flags' => array('M', 'W'), //for /men and /women at end of meeting name (used in tsml_format_name())
+			'flags' => array('M', 'W', 'TC', 'ONL'), //for /men and /women at end of meeting name (used in tsml_format_name())
 			'name' => __('Al-Anon', '12-step-meeting-list'),
 			'type_descriptions' => array(
 				'C' => __('Closed Meetings are limited to members and prospective members. These are persons who feel their lives have been or are being affected by alcoholism in a family member or friend.', '12-step-meeting-list'),
@@ -736,7 +736,7 @@ function tsml_define_strings() {
 		),
 		'daa' => array(
 			'abbr' => __('DAA', '12-step-meeting-list'),
-			'flags' => array('M', 'W','TC', 'ONL'), //for /men and /women at end of meeting name (used in tsml_format_name())
+			'flags' => array('M', 'W', 'TC', 'ONL'), //for /men and /women at end of meeting name (used in tsml_format_name())
 			'name' => __('Drug Addicts Anonymous', '12-step-meeting-list'),
 			'types' => array(
 				'12x12' => __('12 Steps & 12 Traditions', '12-step-meeting-list'),
@@ -881,7 +881,7 @@ function tsml_define_strings() {
 		),
 		'oa' => array(
 			'abbr' => __('OA', '12-step-meeting-list'),
-			'flags' => array(),
+			'flags' => array('TC', 'ONL'),
 			'name' => __('Overeaters Anonymous', '12-step-meeting-list'),
 			'types' => array(
 				'11TH' => __('11th Step', '12-step-meeting-list'),
@@ -926,7 +926,7 @@ function tsml_define_strings() {
 		),
 		'rca' => array(
 			'abbr' => __('RCA', '12-step-meeting-list'),
-			'flags' => array(),
+			'flags' => array('TC', 'ONL'),
 			'name' => __('Recovering Couples Anonymous', '12-step-meeting-list'),
 			'types' => array(
 				'C' => __('Closed', '12-step-meeting-list'),
@@ -1047,7 +1047,7 @@ function tsml_define_strings() {
 		),
 		'sca' => array(
 			'abbr' => __('SCA', '12-step-meeting-list'),
-			'flags' => array(),
+			'flags' => array('TC', 'ONL'),
 			'name' => __('Sexual Compulsives Anonymous', '12-step-meeting-list'),
 			'types' => array(
 				'BE' => __('Beginner', '12-step-meeting-list'),
