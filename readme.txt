@@ -2,7 +2,7 @@
 Contributors: aasanjose
 Requires at least: 3.2
 Tested up to: 5.3.2
-Stable tag: 3.6.5
+Stable tag: 3.6.6
 
 This plugin helps twelve step recovery programs list their meetings. It standardizes addresses, and displays results in a searchable list and map.
 
@@ -203,6 +203,9 @@ To apply these changes, you must go to Settings > Permalinks and click "Save Cha
 1. Edit location
 
 == Changelog ==
+
+= 3.6.6 =
+* Added TC and ONL flags for Al-Anon and other programs.
 
 = 3.6.5 =
 * Added hiding of conference phone numbers.
