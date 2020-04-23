@@ -31,7 +31,7 @@ function tsml_assets() {
 	global $post_type, $tsml_street_only, $tsml_programs, $tsml_strings, $tsml_program, $tsml_google_maps_key, $tsml_mapbox_key, $tsml_google_overrides, $tsml_distance_units, $tsml_defaults, $tsml_language, $tsml_columns, $tsml_nonce;
 
 	// TODO: verify this doesn't cause any other issues
-	if ( 'tsml_meeting' !== $post_type ) {
+	if ( isset( $post_type ) && 'tsml_meeting' !== $post_type ) {
 		return;
 	}
 	//google maps api
