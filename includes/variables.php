@@ -428,6 +428,9 @@ $tsml_sharing = get_option('tsml_sharing', 'restricted');
 //get the sharing policy
 $tsml_sharing_keys = get_option('tsml_sharing_keys', array());
 
+//cron schedule for automatic refreshes of all data sources
+$tsml_auto_import_schedule = get_option('tsml_auto_import_schedule', 'disabled');
+
 //the default meetings sort order
 $tsml_sort_by = 'time';
 

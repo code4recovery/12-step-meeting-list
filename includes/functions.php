@@ -176,13 +176,25 @@ function tsml_conference_providers() {
 //called by register_activation_hook
 //sets up cron-jobs for regular refreshes of import data, generated files, etc.
 function tsml_activate_cron_jobs() {
-	if (!wp_next_scheduled('tsml_cron_invalidate_data_sources')) {
-		wp_schedule_event(time(), 'daily', 'tsml_cron_invalidate_data_sources');
-	}
+    global $tsml_auto_import_schedule;
 
-	if (!wp_next_scheduled('tsml_cron_import_data_source_batch')) {
-		wp_schedule_event(time() + 120, 'hourly', 'tsml_cron_import_data_source_batch');
-	}
+    $batch_schedule = 'ten_minutes';
+    if (defined('DISABLE_WP_CRON') && DISABLE_WP_CRON) {
+        $batch_schedule = 'one_minute';
+    }
+
+	if ($tsml_auto_import_schedule != 'disabled') {
+		wp_schedule_event(time() + 3600, $tsml_auto_import_schedule, 'tsml_cron_invalidate_data_sources');
+	} else {
+        $batch_schedule = null;
+        wp_clear_scheduled_hook('tsml_cron_invalidate_data_sources');
+    }
+
+	if ($batch_schedule) {
+        wp_schedule_event(time() + 60, $batch_schedule, 'tsml_cron_import_data_source_batch');
+    } else {
+        wp_clear_scheduled_hook('tsml_cron_import_data_source_batch');
+    }
 
 	if (!wp_next_scheduled('tsml_cron_generate_pdf_schedules')) {
 		//be sure to start pdf cron job a good while later, so that refresh is likely to have run (e.g. if system has
@@ -208,6 +220,13 @@ function tsml_deactivate_cron_jobs() {
 }
 
 function tsml_add_cron_schedules($schedules) {
+	if (empty($schedules['every_minute'])) {
+		$schedules['one_minute'] = array(
+			'interval' => 60,
+			'display'  => esc_html__('EVERY MINUTE', '12-step-meeting-list'),
+		);
+	}
+
 	if (empty($schedules['five_minutes'])) {
 		$schedules['five_minutes'] = array(
 			'interval' => 300,

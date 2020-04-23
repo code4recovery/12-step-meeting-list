@@ -4,7 +4,7 @@
 function tmsl_import_page() {
 	global $wpdb, $tsml_data_sources, $tsml_programs, $tsml_program, $tsml_nonce, $tsml_days, $tsml_feedback_addresses, 
 	$tsml_notification_addresses, $tsml_distance_units, $tsml_sharing, $tsml_sharing_keys, $tsml_contact_display,
-	$tsml_google_maps_key, $tsml_mapbox_key;
+	$tsml_google_maps_key, $tsml_mapbox_key, $tsml_auto_import_schedule;
 
 	$error = false;
 	
@@ -348,6 +348,24 @@ function tmsl_import_page() {
 		$tsml_mapbox_key = null;
 		delete_option('tsml_mapbox_key');
 	}
+
+    $auto_import_options = [
+        'disabled' => __('Disabled', '12-step-meeting-list'),
+    ];
+    foreach (wp_get_schedules() as $schedule_name => $schedule_description) {
+        if (stripos($schedule_name, 'minute') !== false) {
+            continue;
+        }
+        $auto_import_options[$schedule_name] = $schedule_description['display'];
+    }
+
+    //change auto_import_schedule setting
+    if (!empty($_POST['tsml_auto_import_schedule']) && isset($_POST['tsml_nonce']) && wp_verify_nonce($_POST['tsml_nonce'], $tsml_nonce)) {
+        $tsml_auto_import_schedule = isset($auto_import_options[$_POST['tsml_auto_import_schedule']]) ? $_POST['tsml_auto_import_schedule'] : 'disabled';
+        update_option('tsml_auto_import_schedule', $tsml_auto_import_schedule);
+        tsml_activate_cron_jobs();
+        tsml_alert(__('Automatic Import Schedule setting updated.', '12-step-meeting-list'));
+    }
 
 	/*debugging
 	delete_option('tsml_data_sources');
@@ -819,6 +837,19 @@ function tmsl_import_page() {
 									<?php }?>
 								</div>
 							</form>
+
+                            <form method="post" action="<?php echo $_SERVER['REQUEST_URI']?>">
+                                <details>
+                                    <summary><strong><?php _e('Automatic Import Schedule', '12-step-meeting-list')?></strong></summary>
+                                    <p><?php printf(__('Choose the interval with which to reimport all meetings from all data sources. This can create a lot of load for your server, if you run it too often.', '12-step-meeting-list'))?></p>
+                                </details>
+                                <?php wp_nonce_field($tsml_nonce, 'tsml_nonce', false)?>
+                                <select name="tsml_auto_import_schedule" onchange="this.form.submit()">
+                                    <?php foreach ($auto_import_options as $key => $value) {?>
+                                        <option value="<?php echo $key?>"<?php selected($tsml_auto_import_schedule, $key)?>><?php echo $value?></option>
+                                    <?php }?>
+                                </select>
+                            </form>
 						</div>
 					</div>
 				</div>
