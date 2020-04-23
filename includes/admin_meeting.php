@@ -3,8 +3,7 @@
 
 //custom title
 add_filter('enter_title_here', 'tsml_change_default_title');
-function tsml_change_default_title($title)
-{
+function tsml_change_default_title($title) {
     $screen = get_current_screen();
     if ($screen->post_type == 'tsml_meeting') {
         $title = __('Enter meeting name', '12-step-meeting-list');
@@ -14,23 +13,20 @@ function tsml_change_default_title($title)
 
 //move author meta box to right side
 add_action('do_meta_boxes', 'tsml_move_author_meta_box');
-function tsml_move_author_meta_box()
-{
+function tsml_move_author_meta_box() {
     remove_meta_box('authordiv', 'tsml_meeting', 'normal');
     add_meta_box('authordiv', __('Editor', '12-step-meeting-list'), 'post_author_meta_box', 'tsml_meeting', 'side', 'default');
 }
 
 //edit page
 add_action('admin_init', 'tsml_admin_init');
-function tsml_admin_init()
-{
+function tsml_admin_init() {
 
     tsml_assets();
 
     add_meta_box('info', __('Meeting Information', '12-step-meeting-list'), 'tsml_meeting_box', 'tsml_meeting', 'normal', 'low');
 
-    function tsml_meeting_box()
-    {
+    function tsml_meeting_box() {
         global $post, $tsml_days, $tsml_programs, $tsml_program, $tsml_nonce, $tsml_types_in_use;
 
 		$meeting = tsml_get_meeting();
@@ -62,12 +58,12 @@ function tsml_admin_init()
 			<input type="text" class="time" name="time" id="time" value="<?php echo $meeting->time ?>"<?php disabled(!strlen(@$meeting->day))?> data-time-format="<?php echo get_option('time_format') ?>">
 			<input type="text" class="time" name="end_time" id="end_time" value="<?php echo $meeting->end_time ?>"<?php disabled(!strlen(@$meeting->day))?> data-time-format="<?php echo get_option('time_format') ?>">
 		</div>
-		<?php if (!empty($tsml_programs[$tsml_program]['types'])) {?>
+		<?php if (tsml_program_has_types()) {?>
 		<div class="meta_form_row">
 			<label for="tags"><?php _e('Types', '12-step-meeting-list')?></label>
 			<div class="checkboxes<?php if (!empty($tsml_types_in_use) && count($tsml_types_in_use) !== count($tsml_programs[$tsml_program]['types'])) {?> has_more<?php }?>">
 			<?php
-foreach ($tsml_programs[$tsml_program]['types'] as $key => $type) {?>
+			foreach ($tsml_programs[$tsml_program]['types'] as $key => $type) {?>
 				<label <?php if (!empty($tsml_types_in_use) && !in_array($key, $tsml_types_in_use)) {echo ' class="not_in_use"';}?>>
 					<input type="checkbox" name="types[]" value="<?php echo $key ?>" <?php checked(in_array($key, @$meeting->types))?>>
 					<?php echo $type ?>
@@ -88,13 +84,24 @@ foreach ($tsml_programs[$tsml_program]['types'] as $key => $type) {?>
 			<label for="content"><?php _e('Notes', '12-step-meeting-list')?></label>
 			<textarea name="content" id="content" placeholder="<?php _e('eg. Birthday speaker meeting last Saturday of the month', '12-step-meeting-list')?>"><?php echo $meeting->post_content ?></textarea>
 		</div>
-		<?php
-}
+		<div class="meta_form_separator">
+			<h4><?php _e('Video Conference Details', '12-step-meeting-list')?></h4>
+			<p><?php echo sprintf(__('If this meeting has videoconference information, please enter the full valid URL here. Currently supported providers: %s. If other details are required, such as a password, they should be included in the Notes field above.', '12-step-meeting-list'), implode(', ', tsml_conference_providers()))?></p>
+		</div>
+		<div class="meta_form_row">
+			<label for="conference_url"><?php _e('URL', '12-step-meeting-list')?></label>
+			<input type="url" name="conference_url" id="conference_url" placeholder="https://" value="<?php echo $meeting->conference_url ?>">
+		</div>
+		<div class="meta_form_row">
+			<label for="content"><?php _e('Phone', '12-step-meeting-list')?></label>
+			<input type="text" name="conference_phone" id="conference_phone" placeholder="(800) 555-1212" value="<?php echo $meeting->conference_phone ?>">
+		</div>
+	<?php
+	}
 
     add_meta_box('location', __('Location Information', '12-step-meeting-list'), 'tsml_location_box', 'tsml_meeting', 'normal', 'low');
 
-    function tsml_location_box()
-    {
+    function tsml_location_box() {
         global $post, $tsml_days, $tsml_mapbox_key, $tsml_google_maps_key;
         $meetings = array();
         if ($post->post_parent) {
@@ -172,30 +179,29 @@ foreach ($tsml_programs[$tsml_program]['types'] as $key => $type) {?>
 		</div>
 		<?php }?>
 		<div class="meta_form_row">
-			<label><?php _e('Notes', '12-step-meeting-list')?></label>
+			<label><?php _e('Location Notes', '12-step-meeting-list')?></label>
 			<textarea name="location_notes" placeholder="<?php _e('eg. Around back, basement, ring buzzer', '12-step-meeting-list')?>"><?php if (!empty($location->post_content)) {
             echo $location->post_content;
         }
         ?></textarea>
 		</div>
-		<?php
-}
+	<?php
+	}
 
     add_meta_box('group', __('Contact Information <small>Optional</small>', '12-step-meeting-list'), 'tsml_group_box', 'tsml_meeting', 'normal', 'low');
 
-    function tsml_group_box()
-    {
+    function tsml_group_box() {
         global $tsml_contact_display;
         $meeting = tsml_get_meeting();
         $meetings = array();
         $district = 0;
         if (!empty($meeting->group_id)) {
-            $meetings = tsml_get_meetings(array('group_id' => $meeting->group_id));
+			$meetings = tsml_get_meetings(array('group_id' => $meeting->group_id));
             $district = wp_get_post_terms($meeting->group_id, 'tsml_district', array('fields' => 'ids'));
             if (is_array($district)) {
                 $district = empty($district) ? 0 : $district[0];
             }
-        }
+		}
         ?>
 		<div id="contact-type" data-type="<?php echo empty($meeting->group) ? 'meeting' : 'group' ?>">
 			<div class="meta_form_row radio">
@@ -239,7 +245,7 @@ foreach ($tsml_programs[$tsml_program]['types'] as $key => $type) {?>
 			</div>
 			<?php }?>
 			<div class="meta_form_row group-visible">
-				<label for="group_notes"><?php _e('Notes', '12-step-meeting-list')?></label>
+				<label for="group_notes"><?php _e('Group Notes', '12-step-meeting-list')?></label>
 				<textarea name="group_notes" id="group_notes" placeholder="<?php _e('eg. Group history, when the business meeting is, etc.', '12-step-meeting-list')?>"><?php echo @$meeting->group_notes ?></textarea>
 			</div>
 			<div class="meta_form_row">
@@ -290,6 +296,6 @@ foreach ($tsml_programs[$tsml_program]['types'] as $key => $type) {?>
 				<input type="date" name="last_contact" value="<?php echo @$meeting->last_contact ?>">
 			</div>
 		</div>
-		<?php
-}
+	<?php
+	}
 }

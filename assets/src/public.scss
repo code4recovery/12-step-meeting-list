@@ -4,6 +4,7 @@ $icon_font_path: '../fonts/'; //bootstrap
 $color_gray: #aaa;
 $color_highlight: #ff6; //for searching
 $color_alert: #d40047; //for pointing ou problematic data like meeting type TC
+$color_online: green; // Basic hightlighting for online meeting type
 $color_black: #333;
 $color_white: #fdfdfc;
 $margin: 15px; //spacing between elements
@@ -13,6 +14,11 @@ $height: 550px; //height of map and min-height of list
 	@import '../../node_modules/bootstrap-sass/assets/stylesheets/_bootstrap.scss';
 	@import 'typeahead-bootstrap.scss';
 	
+	a.btn {
+		overflow: hidden;
+		text-overflow: ellipsis;
+	}
+
 	mark {
 		background-color: $color_highlight;
 	}
@@ -69,6 +75,7 @@ $height: 550px; //height of map and min-height of list
 		}
 		
 		button.mapboxgl-popup-close-button {
+			background-color: transparent;
 			color: #c3c3c3;
 			font-size: 1.5rem;
 			padding: 4px 8px;
@@ -77,6 +84,10 @@ $height: 550px; //height of map and min-height of list
 				color: #777;
 				text-decoration: none;
 			}
+		}
+
+		.mapboxgl-ctrl-group > button {
+			background-color: transparent;
 		}
 		
 		.marker { cursor: pointer; }
@@ -100,12 +111,12 @@ $height: 550px; //height of map and min-height of list
 			}
 			address {
 				font-style: normal;
-				margin: 0 0 $margin 0;
+				margin: 0;
 			}
 			a {
 				color: inherit;
 				&.btn {
-					margin-bottom: 0;
+					margin: $margin 0 0;
 				}
 				small::before {
 					content: " / "
@@ -372,6 +383,21 @@ $height: 550px; //height of map and min-height of list
 									font-weight: bold;
 								}
 							}
+							.address, .region, .location {
+								opacity: .5;
+							}
+						}
+						
+						&.type-onl {
+							opacity: 1 !important;
+
+							.name {
+
+								small {
+									color: $color_online;
+									font-weight: bold;
+								}
+							}
 						}
 					}
 				}
@@ -431,6 +457,17 @@ $height: 550px; //height of map and min-height of list
 
 				small {
 					color: $color_alert;
+					font-weight: bold;
+				}
+			}
+		}
+
+		.tsml-type-onl & {
+
+			.page-header {
+
+				small {
+					color: $color_online;
 					font-weight: bold;
 				}
 			}
@@ -583,6 +620,15 @@ $height: 550px; //height of map and min-height of list
 
 									small {
 										color: $color_alert;
+										font-weight: bold;
+									}
+								}
+
+								&.type-onl {
+									opacity: 1 !important;
+
+									small {
+										color: $color_online !important;
 										font-weight: bold;
 									}
 								}
@@ -806,8 +852,15 @@ $height: 550px; //height of map and min-height of list
 	}
 }
 
-/* Special per-theme fixes */
 body {
+	/* temporary closure meetings */
+	&.tsml-meeting.tsml-type-tc {
+		p.location-address, address {
+			color: #999;
+			text-decoration: line-through;
+		}
+	}
+	/* Special per-theme fixes */
 	&.twentyfourteen {
 		#page::before { display: none; }
 		#tsml { 

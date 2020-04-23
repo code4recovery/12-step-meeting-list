@@ -10,7 +10,7 @@ jQuery(function($){
 	//a) procedural logic
 	var $body = $('body');
 	var typeaheadEnabled = false;
-	
+
 	if (typeof tsml_map !== 'object')  { //main meetings page
 
 		//search typeahead
@@ -41,13 +41,13 @@ jQuery(function($){
 
 		//show/hide upcoming menu option
 		toggleUpcoming();
-				
+
 		//if already searching, mark results
 		var $search_field = $('#meetings #search input[name=query]');
 		if ($search_field.size() && $search_field.val().length) {
 			$('#tsml td').not('.time').mark($search_field.val());
 		}
-		
+
 		var mode = $('#search li.active a').attr('data-id');
 		if (mode == 'search') {
 			typeaheadEnable();
@@ -62,7 +62,7 @@ jQuery(function($){
 		}
 
 	} else { //meeting or location detail page
-		
+
 		var location_link = (typeof tsml_map.location_url === 'undefined') ? tsml_map.location : formatLink(tsml_map.location_url, tsml_map.location, 'tsml_meeting');
 		locations = {};
 		locations[tsml_map.location_id] = {
@@ -76,8 +76,51 @@ jQuery(function($){
 			url: tsml_map.location_url,
 		};
 		createMap(false, locations);
+
+		// Grab meeting and phone if they exist.
+		var meeting_el = document.getElementById( 'meeting-link' ),
+		    phone_el   = document.getElementById( 'phone-link' );
+		// If Meeting URL exists, grab it from meta and send user on their way
+		if ( meeting_el ) {
+			meeting_el.addEventListener( 'click', function( e ) {
+				e.preventDefault();
+				$.get( tsml.ajaxurl, {
+					action: 'meeting_link',
+					meeting_id: tsml.meeting_id,
+					nonce: tsml.nonce
+				} )
+				 .done( function( result ) {
+					 if ( result.success ) {
+						 window.location.assign( result.data.meeting );
+					 }
+				 } )
+				 .fail( function( err ) {// TODO: improve
+					 console.log( 'FAIL' );
+				 } );
+			} );
+		}
+		// If Phone Number exists grab it from meta and send user on their way
+		if ( phone_el ) {
+			phone_el.addEventListener( 'click', function( e ) {
+				e.preventDefault();
+				$.get( tsml.ajaxurl, {
+					action: 'phone_link',
+					meeting_id: tsml.meeting_id,
+					nonce: tsml.nonce
+				} )
+				 .done( function( result ) {
+					 if ( result.success ) {
+						 window.location.assign( result.data.phone );
+					 }
+				 } )
+				 .fail( function(err ) {// TODO: improve
+					 console.log('FAIL');
+				 });
+			} );
+		}
+
 	}
-		
+
 	//b) jQuery event handlers
 
 	//handle directions links; send to Apple Maps (iOS), or Google Maps (everything else)
@@ -97,7 +140,7 @@ jQuery(function($){
 		$(this).closest('.panel-expandable').toggleClass('expanded');
 		if (tsml.debug) console.log('.panel-expandable toggling');
 	})
-	
+
 	//single meeting page feedback form
 	$('#meeting #feedback').validate({
 		onfocusout: false,
@@ -110,7 +153,7 @@ jQuery(function($){
 		},
 		errorPlacement: function(error, element) {
 			return; //don't show message on page, simply highlight
-		}, 
+		},
 		submitHandler: function(form){
 			var $form = $(form),
 				$feedback = $form.closest('#feedback');
@@ -126,7 +169,7 @@ jQuery(function($){
 			return false;
 		}
 	});
-	
+
 	//table sorting
 	$('#meetings table thead').on('click', 'th', function(){
 		var sort = $(this).attr('class');
@@ -142,7 +185,7 @@ jQuery(function($){
 		$('#meetings table thead th.' + sort).attr('data-sort', order);
 		sortMeetings();
 	});
-	
+
 	//controls changes
 	$('#meetings .controls').on('submit', '#search', function(){
 		//capture submit event
@@ -156,23 +199,23 @@ jQuery(function($){
 		$(this).next('ul.children').toggleClass('expanded');
 		$(this).toggleClass('expanded');
 	}).on('click', '.dropdown-menu a', function(e){
-		
+
 		//these are live hrefs now
 		e.preventDefault();
 
 		//dropdown menu click
 		var param = $(this).closest('div').attr('id');
-		
+
 		if (param == 'mode') {
-			
+
 			if (tsml.debug) console.log('dropdown click search mode');
 
 			//only one search mode
 			$('#mode li').removeClass('active');
-			
+
 			//remove meeting results
 			$('#meetings').addClass('empty');
-			
+
 			//change icon & enable or disable
 			if ($(this).attr('data-id') == 'search') {
 				$search_field.prop('disabled', false);
@@ -186,10 +229,10 @@ jQuery(function($){
 				$('#search button i').removeClass().addClass('glyphicon glyphicon-user');
 				setAlert('geo_thinking');
 			}
-			
+
 			//change placeholder text
 			$search_field.attr('placeholder', $(this).text());
-			
+
 		} else if (param == 'distance') {
 			//distance only one
 			if (tsml.debug) console.log('dropdown click distance');
@@ -205,13 +248,13 @@ jQuery(function($){
 				e.stopPropagation();
 				return;
 			}
-			
+
 			//region only one
 			if (tsml.debug) console.log('dropdown click region or district');
 			$('#region li').removeClass('active');
 			$('#region span.selected').html($(this).html());
 			trackAnalytics('region', $(this).text());
-			
+
 		} else if (param == 'day') {
 			//day only one selected
 			if (tsml.debug) console.log('dropdown click day');
@@ -268,16 +311,16 @@ jQuery(function($){
 
 		//show/hide upcoming menu option
 		toggleUpcoming();
-		
+
 		doSearch();
 	});
 
 	//toggle between list and map
 	$('#meetings #action .toggle-view').click(function(e){
-		
+
 		//these are live hrefs now
 		e.preventDefault();
-		
+
 		//what's going on
 		var action = $(this).attr('data-id');
 		var previous = $('#meetings').attr('data-view');
@@ -303,7 +346,7 @@ jQuery(function($){
 			}
 			window.history.pushState({path:url}, '', url);
 		}
-		
+
 	});
 
 	//resize fullscreen on resize
@@ -319,10 +362,10 @@ jQuery(function($){
 	});
 
 	//c) functions
-	
+
 	//run search (triggered by dropdown toggle or form submit)
 	function doSearch() {
-	
+
 		//types can be multiple
 		var types = [];
 		$('#type li.active a').each(function(){
@@ -332,7 +375,7 @@ jQuery(function($){
 		});
 
 		//prepare query for ajax
-		var controls = { 
+		var controls = {
 			action: 'meetings',
 			query: $('#meetings #search input[name=query]').val().trim(),
 			mode: $('#search li.active a').attr('data-id'),
@@ -347,7 +390,7 @@ jQuery(function($){
 
 		//reset search location
 		searchLocation = null;
-		
+
 		//get current query string for history and appending to links
 		var query_string = {};
 		query_string['tsml-day'] = controls.day ? controls.day : 'any';
@@ -367,7 +410,7 @@ jQuery(function($){
 		if (controls.type && (controls.type != tsml.defaults.type)) query_string['tsml-type'] = controls.type;
 		if (controls.view && (controls.view != tsml.defaults.view)) query_string['tsml-view'] = controls.view;
 		query_string = $.param(query_string);
-		
+
 		//save the query in the query string, if the browser is up to it
 		if (history.pushState) {
 			var url = window.location.protocol + '//' + window.location.host + window.location.pathname;
@@ -377,26 +420,26 @@ jQuery(function($){
 			}
 			window.history.pushState({path:url}, '', url);
 		}
-	
+
 		//set the mode on the parent object
 		$('#meetings').attr('data-mode', controls.mode);
-		
+
 		if (controls.mode == 'search') {
 			typeaheadEnable();
 			removeSearchMarker(); //clear search marker if it exists
 			getMeetings(controls);
 		} else if (controls.mode == 'location') {
 			typeaheadDisable();
-	
+
 			if (controls.query) {
-				
+
 				//start spinner
 				$('#search button i').removeClass().addClass('glyphicon glyphicon-refresh spinning');
-	
+
 				//geocode the address
-				$.getJSON(tsml.ajaxurl, { 
+				$.getJSON(tsml.ajaxurl, {
 					action: 'tsml_geocode',
-					address: controls.query, 
+					address: controls.query,
 					nonce: tsml.nonce,
 				}, function(geocoded) {
 					if (tsml.debug) console.log('doSearch() location geocoded', geocoded);
@@ -426,10 +469,10 @@ jQuery(function($){
 				$('#meetings #search input[name=query]').val('');
 				controls.query = '';
 			}
-	
+
 			//start spinner
 			$('#search button i').removeClass().addClass('glyphicon glyphicon-refresh spinning');
-			
+
 			if (navigator.geolocation) {
 				navigator.geolocation.getCurrentPosition(function(pos) {
 					$('#search button i').removeClass().addClass('glyphicon glyphicon-user');
@@ -459,9 +502,9 @@ jQuery(function($){
 				setAlert('geo_error_browser');
 			}
 		}
-		
+
 	}
-	
+
 	//actually get the meetings from the JSON resource and output them
 	function getMeetings(controls) {
 		//request new meetings result
@@ -469,33 +512,33 @@ jQuery(function($){
 		controls.nonce = tsml.nonce;
 
 		//make url more readable
-		for (var property in controls) { 
+		for (var property in controls) {
 			if (controls[property] === null || controls[property] === undefined || !controls[property].toString().length) {
 				delete controls[property];
 			}
 		}
 
 		if (tsml.debug) console.log('getMeetings()', tsml.ajaxurl + '?' + $.param(controls));
-				
+
 		$.post(tsml.ajaxurl, controls, function(response){
 
 			if (tsml.debug) console.log('getMeetings() received', response);
 
 			if (typeof response != 'object' || response == null) {
-								
+
 				//there was a problem with the data source
 				$('#meetings').addClass('empty');
-				setAlert('data_error');				
-				
+				setAlert('data_error');
+
 			} else if (!response.length) {
-	
+
 				//if keyword and no results, clear other parameters and search again
 				if (controls.query && (typeof controls.day !== 'undefined' || typeof controls.region !== 'undefined' || typeof controls.time !== 'undefined' || typeof controls.type !== 'undefined')) {
 					$('#day li').removeClass('active').first().addClass('active');
 					$('#time li').removeClass('active').first().addClass('active');
 					$('#region li').removeClass('active').first().addClass('active');
 					$('#type li').removeClass('active').first().addClass('active');
-	
+
 					//set selected text
 					$('#day span.selected').html($('#day li:first-child a').html());
 					$('#time span.selected').html($('#time li:first-child a').html());
@@ -504,28 +547,33 @@ jQuery(function($){
 
 					return doSearch();
 				}
-	
+
 				$('#meetings').addClass('empty');
 				setAlert('no_meetings');
 			} else {
 				$('#meetings').removeClass('empty');
-	
+
 				setAlert();
-	
+
 				locations = [];
-	
+
 				var tbody = $('#meetings_tbody').html('');
 
 				//loop through JSON meetings
 				$.each(response, function(index, obj){
-	
+
 					//types could be undefined
 					if (!obj.types) obj.types = [];
-
 					//add type 'flags'
 					if (typeof tsml.flags == 'object') {
+						// True if the meeting is temporarily closed, but online option available
+						var meetingIsOnlineAndTC = (obj.types.indexOf('TC') !== -1) && (obj.types.indexOf('ONL') !== -1)
 						for (var i = 0; i < tsml.flags.length; i++) {
-							if (obj.types.indexOf(tsml.flags[i]) !== -1) {
+							var flagIsTempClosed = tsml.flags[i] === 'TC'
+							// True if the type for the meeting obj matches one of the predetermined flags being looped
+							var typeIsFlagged = obj.types.indexOf(tsml.flags[i]) !== -1;
+							//  Add flag, except TC when meeting is also online
+							if (typeIsFlagged && !(meetingIsOnlineAndTC && flagIsTempClosed)) {
 								obj.name += ' <small>' + tsml.types[tsml.flags[i]] + '</small>';
 							}
 						}
@@ -550,7 +598,7 @@ jQuery(function($){
 							meetings: []
 						};
 					}
-	
+
 					//push meeting on to location
 					locations[obj.location_id].meetings[locations[obj.location_id].meetings.length] = {
 						name : obj.name,
@@ -559,7 +607,7 @@ jQuery(function($){
 						notes : obj.notes,
 						url : obj.url
 					};
-					
+
 					//classes for table row
 					var classes = [];
 					if (obj.notes && obj.notes.length) {
@@ -577,31 +625,31 @@ jQuery(function($){
 							var sort_time = (typeof obj.day === 'undefined' ? 7 : obj.day) + '-' + (obj.time == '00:00' ? '23:59' : obj.time);
 							row += '<td class="time" data-sort="' + sort_time + '-' + sanitizeTitle(obj.location) + '"><span>' + (typeof controls.day !== 'undefined' || typeof obj.day === 'undefined' ? obj.time_formatted : tsml.days[obj.day] + '</span><span>' + obj.time_formatted) + '</span></td>';
 							break;
-							
+
 							case 'distance':
 							row += '<td class="distance" data-sort="' + obj.distance + '">' + obj.distance + ' ' + tsml.distance_units + '</td>';
 							break;
-							
+
 							case 'name':
 							row += '<td class="name" data-sort="' + sanitizeTitle(obj.name) + '-' + sort_time + '">' + formatLink(obj.url, obj.name, 'post_type') + '</td>';
 							break;
-							
+
 							case 'location':
 							row += '<td class="location" data-sort="' + sanitizeTitle(obj.location) + '-' + sort_time + '">' + obj.location + '</td>';
 							break;
-							
+
 							case 'address':
 							row += '<td class="address" data-sort="' + sanitizeTitle(obj.formatted_address) + '-' + sort_time + '">' + formatAddress(obj.formatted_address, tsml.street_only) + '</td>';
 							break;
-							
+
 							case 'region':
 							row += '<td class="region" data-sort="' + sanitizeTitle((obj.sub_region || obj.region || '')) + '-' + sort_time + '">' + (obj.sub_region || obj.region || '') + '</td>';
 							break;
-							
+
 							case 'district':
 							row += '<td class="district" data-sort="' + sanitizeTitle((obj.sub_district || obj.district || '')) + '-' + sort_time + '">' + (obj.sub_district || obj.district || '') + '</td>';
 							break;
-							
+
 							case 'types':
 							row += '<td class="types" data-sort="' + sanitizeTitle(types) + '-' + sort_time + '">' + types + '</td>';
 							break;
@@ -609,14 +657,14 @@ jQuery(function($){
 					}
 					tbody.append(row + '</tr>');
 				});
-				
+
 				sortMeetings();
-				
+
 				//highlight search results
 				if (controls.query && controls.mode == 'search') {
 					$('#tsml td').not('.time').mark(controls.query);
 				}
-	
+
 				//build map
 				if (controls.view == 'map') {
 					createMap(true, locations, searchLocation);
@@ -627,31 +675,31 @@ jQuery(function($){
 					tbody: tbody,
 				});
 			}
-		}, 'json');	
+		}, 'json');
 	}
-	
+
 	//slugify a string, like WordPress's sanitize_title()
 	function sanitizeTitle(str) {
 		if (str == null) return '';
 
 		str = str.replace(/^\s+|\s+$/g, ''); // trim
 		str = str.toLowerCase();
-		
+
 		// remove accents, swap ñ for n, etc
 		var from = "àáäâèéëêìíïîòóöôùúüûñç·/_,:;";
 		var to = "aaaaeeeeiiiioooouuuunc------";
-		
+
 		for (var i=0, l=from.length ; i<l ; i++) {
 			str = str.replace(new RegExp(from.charAt(i), 'g'), to.charAt(i));
 		}
-		
+
 		str = str.replace(/[^a-z0-9 -]/g, '') // remove invalid chars
 			.replace(/\s+/g, '-') // collapse whitespace and replace by -
 			.replace(/-+/g, '-'); // collapse dashes
-		
+
 		return str;
 	}
-	
+
 	//set or clear the alert message
 	function setAlert(message_key) {
 		if (typeof message_key == 'undefined') {
@@ -660,7 +708,7 @@ jQuery(function($){
 			$('#alert').html(tsml.strings[message_key]).removeClass('hidden');
 		}
 	}
-		
+
 	//sort the meetings by the current sort criteria after getting ajax
 	function sortMeetings() {
 		var $sorted = $('#meetings table thead th[data-sort]').first();
@@ -669,7 +717,7 @@ jQuery(function($){
 		var tbody = document.getElementById('meetings_tbody');
 		var store = [];
 		var sort_index = $('#meetings table thead th').index($sorted);
-			
+
 		//execute sort
 		for (var i = 0, len = tbody.rows.length; i < len; i++) {
 			var row = tbody.rows[i];
@@ -684,9 +732,9 @@ jQuery(function($){
 		});
 		for (var i = 0, len = store.length; i < len; i++){
 			tbody.appendChild(store[i][1]);
-		}		
+		}
 	}
-	
+
 	//if day is today, show 'upcoming' time option, otherwise hide it
 	function toggleUpcoming() {
 		var current_day = new Date().getDay();
@@ -711,14 +759,14 @@ jQuery(function($){
 			ga('send', 'event', '12 Step Meeting List', action, label);
 		}
 	}
-		
-	//disable the typeahead (if you switched to a different search mode)	
+
+	//disable the typeahead (if you switched to a different search mode)
 	function typeaheadDisable() {
 		if (!typeaheadEnabled) return;
 		typeaheadEnabled = false;
 		$('#meetings #search input[name="query"]').typeahead('destroy');
 	}
-	
+
 	//enable the typeahead (if you switch back to search)
 	function typeaheadEnable() {
 		if (typeaheadEnabled) return;
@@ -765,12 +813,12 @@ jQuery(function($){
 			}
 		});
 	}
-	
+
 	//set a param on the query string
 	function updateQueryString(key, value, url) {
 		if (!url) url = window.location.href;
 		var re = new RegExp("([?&])" + key + "=.*?(&|#|$)(.*)", "gi"), hash;
-	
+
 		if (re.test(url)) {
 			if (typeof value !== 'undefined' && value !== null) {
 				return url.replace(re, '$1' + key + "=" + value + '$2$3');
@@ -791,6 +839,6 @@ jQuery(function($){
 				return url;
 			}
 		}
-	}	
+	}
 
 });

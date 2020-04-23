@@ -28,7 +28,7 @@ function tsml_save_post($post_id, $post, $update) {
 	$update = ($post->post_date !== $post->post_modified);
 	
 	//sanitize strings
-	$strings = array('post_title', 'location', 'formatted_address', 'post_status', 'group', 'last_contact');
+	$strings = array('post_title', 'location', 'formatted_address', 'mailing_address', 'venmo', 'post_status', 'group', 'last_contact', 'conference_phone');
 	foreach ($strings as $string) {
 		$_POST[$string] = stripslashes(sanitize_text_field($_POST[$string]));
 	}
@@ -40,6 +40,7 @@ function tsml_save_post($post_id, $post, $update) {
 	}
 
 	//get current meeting state to compare against
+	$old_meeting = null;
 	if ($update) {
 		$old_meeting = tsml_get_meeting($post_id);
 		$decode_keys = array('post_title', 'post_content', 'location', 'location_notes', 'group', 'group_notes');
@@ -60,7 +61,7 @@ function tsml_save_post($post_id, $post, $update) {
 	}
 
 	//check types for not-array-ness
-	if (empty($_POST['types']) || !is_array($_POST['types'])) $_POST['types'] = array(); //not sure if this actually happens
+	if (empty($_POST['types']) || !is_array($_POST['types'])) $_POST['types'] = array(); //happens if program doesn't have types
 	
 	//don't allow it to be both open and closed
 	if (in_array('C', $_POST['types']) && in_array('O', $_POST['types'])) {
@@ -72,8 +73,42 @@ function tsml_save_post($post_id, $post, $update) {
 		$_POST['types'] = array_values(array_diff($_POST['types'], array('W')));
 	}
 
+	//video conference information (doing this here because it affects types)
+	// If either Conference URL or phone have values, we allow/set type ONL
+	$valid_conference_url = null;
+	$_POST['types'] = array_values(array_diff($_POST['types'], array('ONL')));
+	if (!empty($_POST['conference_url'])) {
+		$url = esc_url_raw($_POST['conference_url'], array('http', 'https'));
+		if (tsml_conference_provider($url)) {
+			$valid_conference_url = $url;
+			array_push($_POST['types'], 'ONL');
+		} 
+	}
+	if (!empty($_POST['conference_phone']) && empty($valid_conference_url)) {
+		array_push($_POST['types'], 'ONL');
+	}
+
+	//video conferencing info
+	if (!$update || strcmp($old_meeting->conference_url, $valid_conference_url) !== 0) {
+		$changes[] = 'conference_url';
+		if (empty($valid_conference_url)) {
+			delete_post_meta($post->ID, 'conference_url');
+		} else {
+			update_post_meta($post->ID, 'conference_url', $valid_conference_url);
+		}
+	}
+	
+	if (!$update || strcmp($old_meeting->conference_phone, $_POST['conference_phone']) !== 0) {
+		$changes[] = 'conference_phone';
+		if (empty($_POST['conference_phone'])) {
+			delete_post_meta($post->ID, 'conference_phone');
+		} else {
+			update_post_meta($post->ID, 'conference_phone', $_POST['conference_phone']);
+		}
+	}
+	
 	//compare types
-	if (!$update || implode(', ', $old_meeting->types) != tsml_meeting_types($_POST['types'])) {
+	if (tsml_program_has_types() && (!$update || implode(', ', $old_meeting->types) != tsml_meeting_types($_POST['types']))) {
 		$changes[] = 'types';
 		if (empty($_POST['types'])) {
 			delete_post_meta($post->ID, 'types');
@@ -81,7 +116,7 @@ function tsml_save_post($post_id, $post, $update) {
 			update_post_meta($post->ID, 'types', array_map('esc_attr', $_POST['types']));
 		}
 	}
-
+	
 	//day could be null for appointment meeting
 	if (in_array($_POST['day'], array('0', '1', '2', '3', '4', '5', '6'))) {
 		if (!$update || !isset($old_meeting->day) || $old_meeting->day != intval($_POST['day'])) {
@@ -410,7 +445,8 @@ function tsml_save_post($post_id, $post, $update) {
 			update_post_meta($group_id, 'last_contact', date('Y-m-d', strtotime($_POST['last_contact'])));
 		} else {
 			delete_post_meta($group_id, 'last_contact');
-		}	
+		}
+
 	}
 
 	//deleted orphaned locations and groups
