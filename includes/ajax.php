@@ -61,7 +61,7 @@ if (!function_exists('tsml_ajax_groups')) {
 				'contact_3_phone'	=> @$group_custom['contact_3_phone'][0],
 				'last_contact'		=> @$group_custom['last_contact'][0],
 				'notes'				=> $group->post_content,
-				'tokens'			=> tsml_string_tokens($title),
+				'tokens'			=> tsml_string_tokens($group->post_title),
 				'type'				=> 'group',
 			);
 		}
