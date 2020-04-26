@@ -176,31 +176,31 @@ function tsml_conference_providers() {
 //called by register_activation_hook
 //sets up cron-jobs for regular refreshes of import data, generated files, etc.
 function tsml_activate_cron_jobs() {
-    global $tsml_auto_import_schedule;
+	global $tsml_auto_import_schedule;
 
-    $batch_schedule = 'ten_minutes';
-    if (defined('DISABLE_WP_CRON') && DISABLE_WP_CRON) {
-        $batch_schedule = 'one_minute';
-    }
+	$batch_schedule = 'ten_minutes';
+	if (defined('DISABLE_WP_CRON') && DISABLE_WP_CRON) {
+		$batch_schedule = 'one_minute';
+	}
 
-    wp_clear_scheduled_hook('tsml_cron_invalidate_data_sources');
+	wp_clear_scheduled_hook('tsml_cron_invalidate_data_sources');
 	if ($tsml_auto_import_schedule != 'disabled') {
 		wp_schedule_event(time() + 3600, $tsml_auto_import_schedule, 'tsml_cron_invalidate_data_sources');
 	} else {
-        $batch_schedule = null;
-    }
+		$batch_schedule = null;
+	}
 
-    wp_clear_scheduled_hook('tsml_cron_import_data_source_batch');
+	wp_clear_scheduled_hook('tsml_cron_import_data_source_batch');
 	if ($batch_schedule) {
-        wp_schedule_event(time() + 60, $batch_schedule, 'tsml_cron_import_data_source_batch');
-    }
+		wp_schedule_event(time() + 60, $batch_schedule, 'tsml_cron_import_data_source_batch');
+	}
 }
 
 //called by register_deactivation_hook
 //removes all cron-jobs set by tsml_activate_cron_jobs()
 function tsml_deactivate_cron_jobs() {
-    wp_clear_scheduled_hook('tsml_cron_invalidate_data_sources');
-    wp_clear_scheduled_hook('tsml_cron_import_data_source_batch');
+	wp_clear_scheduled_hook('tsml_cron_invalidate_data_sources');
+	wp_clear_scheduled_hook('tsml_cron_import_data_source_batch');
 }
 
 function tsml_add_cron_schedules($schedules) {
@@ -233,10 +233,10 @@ function tsml_cron_invalidate_data_sources() {
 	$tsml_data_sources = get_option('tsml_data_sources', array());
 
 	foreach ($tsml_data_sources as $data_source_url => $data_source) {
-	    $parent_region_id = null;
-	    if (isset($data_source['parent_region_id'])) {
-	        $parent_region_id = $data_source['parent_region_id'];
-        }
+		$parent_region_id = null;
+		if (isset($data_source['parent_region_id'])) {
+			$parent_region_id = $data_source['parent_region_id'];
+		}
 
 		tsml_add_data_source($data_source_url, $data_source['name'], $parent_region_id);
 	}
@@ -246,11 +246,11 @@ function tsml_add_data_source($data_source_url, $data_source_name, $data_source_
 	$errors = array();
 	$tsml_data_sources = get_option('tsml_data_sources', array());
 
-    $data_source_name = sanitize_text_field($data_source_name);
-    $data_source_url = trim(esc_url_raw($data_source_url, array('http', 'https')));
-    $data_source_parent_region_id = (int) $data_source_parent_region_id;
+	$data_source_name = sanitize_text_field($data_source_name);
+	$data_source_url = trim(esc_url_raw($data_source_url, array('http', 'https')));
+	$data_source_parent_region_id = (int) $data_source_parent_region_id;
 
-    //try fetching
+	//try fetching
 	$response = wp_remote_get($data_source_url, array(
 		'timeout' => 30,
 		'sslverify' => false,
@@ -268,7 +268,7 @@ function tsml_add_data_source($data_source_url, $data_source_name, $data_source_
 		);
 
 		//import feed
-        tsml_import_mark_meetings_as_stale_before_update($data_source_url);
+		tsml_import_mark_meetings_as_stale_before_update($data_source_url);
 		tsml_import_buffer_set($body, $data_source_url, $data_source_parent_region_id);
 
 		//save data source configuration
@@ -313,61 +313,61 @@ function tsml_add_data_source($data_source_url, $data_source_name, $data_source_
 }
 
 function tsml_import_get_existing_meeting_ids_for_data_source($data_source_url) {
-    global $wpdb;
+	global $wpdb;
 
-    $query = $wpdb->prepare(
-        "SELECT dsid.post_id as meeting_id, dsid.meta_value as data_source_id 
-        FROM {$wpdb->postmeta} dsid JOIN {$wpdb->postmeta} ds ON dsid.post_id = ds.post_id 
-        WHERE dsid.meta_value IS NOT null AND dsid.meta_key = 'data_source_id' 
-        AND ds.meta_key = 'data_source' AND ds.meta_value = %s",
-        $data_source_url
-    );
-    $items = $wpdb->get_results($query, 'ARRAY_A');
+	$query = $wpdb->prepare(
+		"SELECT dsid.post_id as meeting_id, dsid.meta_value as data_source_id 
+		FROM {$wpdb->postmeta} dsid JOIN {$wpdb->postmeta} ds ON dsid.post_id = ds.post_id 
+		WHERE dsid.meta_value IS NOT null AND dsid.meta_key = 'data_source_id' 
+		AND ds.meta_key = 'data_source' AND ds.meta_value = %s",
+		$data_source_url
+	);
+	$items = $wpdb->get_results($query, 'ARRAY_A');
 
-    $existing_meeting_ids = array();
+	$existing_meeting_ids = array();
 
-    foreach ($items as $item) {
-        $existing_meeting_ids[$item['data_source_id']] = $item['meeting_id'];
-    }
+	foreach ($items as $item) {
+		$existing_meeting_ids[$item['data_source_id']] = $item['meeting_id'];
+	}
 
-    return $existing_meeting_ids;
+	return $existing_meeting_ids;
 }
 
 function tsml_import_mark_meetings_as_stale_before_update($data_source_url) {
-    global $wpdb;
+	global $wpdb;
 
-    $query = $wpdb->prepare(
-        "INSERT INTO {$wpdb->postmeta}(meta_key, post_id, meta_value) 
-        SELECT 'data_is_stale', post_id, meta_value 
-        FROM {$wpdb->postmeta} 
-        WHERE meta_key = 'data_source' AND meta_value = %s",
-        $data_source_url
-    );
+	$query = $wpdb->prepare(
+		"INSERT INTO {$wpdb->postmeta}(meta_key, post_id, meta_value) 
+		SELECT 'data_is_stale', post_id, meta_value 
+		FROM {$wpdb->postmeta} 
+		WHERE meta_key = 'data_source' AND meta_value = %s",
+		$data_source_url
+	);
 
-    return $wpdb->query($query);
+	return $wpdb->query($query);
 }
 
 function tsml_import_mark_meeting_as_not_stale($id) {
-    return delete_post_meta($id, 'data_is_stale');
+	return delete_post_meta($id, 'data_is_stale');
 }
 
 function tsml_import_delete_stale_meetings_after_update($data_source_url) {
-    global $wpdb;
+	global $wpdb;
 
-    $query = $wpdb->prepare(
-        "SELECT DISTINCT post_id FROM {$wpdb->postmeta}
-        WHERE meta_key = 'data_is_stale' AND meta_value = %s",
-        $data_source_url
-    );
+	$query = $wpdb->prepare(
+		"SELECT DISTINCT post_id FROM {$wpdb->postmeta}
+		WHERE meta_key = 'data_is_stale' AND meta_value = %s",
+		$data_source_url
+	);
 
-    $items = $wpdb->get_results($query, 'ARRAY_A');
-    $ids = array();
-    foreach ($items as $item) {
-        $ids[] = $item['post_id'];
-    }
+	$items = $wpdb->get_results($query, 'ARRAY_A');
+	$ids = array();
+	foreach ($items as $item) {
+		$ids[] = $item['post_id'];
+	}
 
-    tsml_delete($ids);
-    tsml_delete_orphans();
+	tsml_delete($ids);
+	tsml_delete_orphans();
 }
 
 //imports the next batch of data from each data source up for renewal
@@ -1320,15 +1320,15 @@ function tsml_meeting_types($types) {
 function tsml_import_buffer_set($meetings, $data_source_url = null, $data_source_parent_region_id = -1) {
 	global $tsml_programs, $tsml_program, $tsml_days;
 
-    $existing_meeting_ids = array();
+	$existing_meeting_ids = array();
 
-    $data_source_parent_region_id = $data_source_parent_region_id ? (int) $data_source_parent_region_id : -1;
+	$data_source_parent_region_id = $data_source_parent_region_id ? (int) $data_source_parent_region_id : -1;
 
-    if (strpos($data_source_url, "spreadsheets.google.com") !== false) {
-        $meetings = tsml_import_reformat_googlesheet($meetings);
-    } elseif ($data_source_url) {
-        $existing_meeting_ids = tsml_import_get_existing_meeting_ids_for_data_source($data_source_url);
-    }
+	if (strpos($data_source_url, "spreadsheets.google.com") !== false) {
+		$meetings = tsml_import_reformat_googlesheet($meetings);
+	} elseif ($data_source_url) {
+		$existing_meeting_ids = tsml_import_get_existing_meeting_ids_for_data_source($data_source_url);
+	}
 	
 	//uppercasing for value matching later
 	$upper_types = array_map('strtoupper', $tsml_programs[$tsml_program]['types']);
@@ -1349,9 +1349,9 @@ function tsml_import_buffer_set($meetings, $data_source_url = null, $data_source
 	$indexes_to_remove = array();
 
 	for ($i = 0; $i < count($meetings); $i++) {
-        $meetings[$i]['existing_meeting_id'] = isset($existing_meeting_ids[$meetings[$i]['id']])
-            ? $existing_meeting_ids[$meetings[$i]['id']]
-            : null;
+		$meetings[$i]['existing_meeting_id'] = isset($existing_meeting_ids[$meetings[$i]['id']])
+			? $existing_meeting_ids[$meetings[$i]['id']]
+			: null;
 
 		if (isset($meetings[$i]['day']) && is_array($meetings[$i]['day'])) {
 			array_push($indexes_to_remove, $i);
@@ -1840,9 +1840,9 @@ function tsml_sort_meetings($a, $b) {
 //function:	does a string end with another string
 //used:		save.php
 function tsml_string_ends($string, $end) {
-    $length = strlen($end);
-    if (!$length) return true;
-    return (substr($string, -$length) === $end);
+	$length = strlen($end);
+	if (!$length) return true;
+	return (substr($string, -$length) === $end);
 }
 
 //function:	tokenize string for the typeaheads
