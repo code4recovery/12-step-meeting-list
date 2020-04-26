@@ -154,15 +154,15 @@ function tmsl_import_page() {
 
 	//add data source
 	if (!empty($_POST['tsml_add_data_source']) && isset($_POST['tsml_nonce']) && wp_verify_nonce($_POST['tsml_nonce'], $tsml_nonce)) {
-	    $add_data_source_errors = tsml_add_data_source(
-	            $_POST['tsml_add_data_source'],
-                $_POST['tsml_add_data_source_name'],
-                $_POST['tsml_add_data_source_parent_region_id']
-        );
+		$add_data_source_errors = tsml_add_data_source(
+				$_POST['tsml_add_data_source'],
+				$_POST['tsml_add_data_source_name'],
+				$_POST['tsml_add_data_source_parent_region_id']
+		);
 
-	    foreach ($add_data_source_errors as $add_data_source_error) {
-	        tsml_alert($add_data_source_error, 'error');
-        }
+		foreach ($add_data_source_errors as $add_data_source_error) {
+			tsml_alert($add_data_source_error, 'error');
+		}
 	}
 	
 	//check for existing import buffer
@@ -355,26 +355,26 @@ function tmsl_import_page() {
 
 	$regions = array();
 	foreach (tsml_get_all_regions() as $term) {
-	    $regions[$term->term_id] = $term->name;
-    }
+		$regions[$term->term_id] = $term->name;
+	}
 
-    $auto_import_options = [
-        'disabled' => __('Disabled', '12-step-meeting-list'),
-    ];
-    foreach (wp_get_schedules() as $schedule_name => $schedule_description) {
-        if (stripos($schedule_name, 'minute') !== false) {
-            continue;
-        }
-        $auto_import_options[$schedule_name] = $schedule_description['display'];
-    }
+	$auto_import_options = [
+		'disabled' => __('Disabled', '12-step-meeting-list'),
+	];
+	foreach (wp_get_schedules() as $schedule_name => $schedule_description) {
+		if (stripos($schedule_name, 'minute') !== false) {
+			continue;
+		}
+		$auto_import_options[$schedule_name] = $schedule_description['display'];
+	}
 
-    //change auto_import_schedule setting
-    if (!empty($_POST['tsml_auto_import_schedule']) && isset($_POST['tsml_nonce']) && wp_verify_nonce($_POST['tsml_nonce'], $tsml_nonce)) {
-        $tsml_auto_import_schedule = isset($auto_import_options[$_POST['tsml_auto_import_schedule']]) ? $_POST['tsml_auto_import_schedule'] : 'disabled';
-        update_option('tsml_auto_import_schedule', $tsml_auto_import_schedule);
-        tsml_activate_cron_jobs();
-        tsml_alert(__('Automatic Import Schedule setting updated.', '12-step-meeting-list'));
-    }
+	//change auto_import_schedule setting
+	if (!empty($_POST['tsml_auto_import_schedule']) && isset($_POST['tsml_nonce']) && wp_verify_nonce($_POST['tsml_nonce'], $tsml_nonce)) {
+		$tsml_auto_import_schedule = isset($auto_import_options[$_POST['tsml_auto_import_schedule']]) ? $_POST['tsml_auto_import_schedule'] : 'disabled';
+		update_option('tsml_auto_import_schedule', $tsml_auto_import_schedule);
+		tsml_activate_cron_jobs();
+		tsml_alert(__('Automatic Import Schedule setting updated.', '12-step-meeting-list'));
+	}
 
 	/*debugging
 	delete_option('tsml_data_sources');
@@ -531,8 +531,8 @@ function tmsl_import_page() {
 									<tr>
 										<th class="small"></th>
 										<th><?php _e('Feed', '12-step-meeting-list')?></th>
-                                        <th class="align-left"><?php _e('Parent Region', '12-step-meeting-list')?></th>
-                                        <th class="align-center"><?php _e('Meetings', '12-step-meeting-list')?></th>
+										<th class="align-left"><?php _e('Parent Region', '12-step-meeting-list')?></th>
+										<th class="align-center"><?php _e('Meetings', '12-step-meeting-list')?></th>
 										<th class="align-right"><?php _e('Last Update', '12-step-meeting-list')?></th>
 										<th class="small"></th>
 									</tr>
@@ -557,18 +557,18 @@ function tmsl_import_page() {
 										</td>
 
 										<td>
-                                            <?php
-                                                $parent_region = null;
-                                                if (empty($properties['parent_region_id']) || $properties['parent_region_id'] == -1) {
-                                                    $parent_region = __('Top-level region', '12-step-meeting-list');
-                                                } elseif (empty($regions[$properties['parent_region_id']])) {
-                                                    $parent_region = __('Missing Region!', '12-step-meeting-list');
-                                                } else {
-                                                    $parent_region = $regions[$properties['parent_region_id']];
-                                                }
+											<?php
+												$parent_region = null;
+												if (empty($properties['parent_region_id']) || $properties['parent_region_id'] == -1) {
+													$parent_region = __('Top-level region', '12-step-meeting-list');
+												} elseif (empty($regions[$properties['parent_region_id']])) {
+													$parent_region = __('Missing Region!', '12-step-meeting-list');
+												} else {
+													$parent_region = $regions[$properties['parent_region_id']];
+												}
 
-                                                echo $parent_region;
-                                            ?>
+												echo $parent_region;
+											?>
 										</td>
 
 										<td class="align-center count_meetings"><?php echo number_format($properties['count_meetings'])?></td>
@@ -600,18 +600,18 @@ function tmsl_import_page() {
 									<input type="text" name="tsml_add_data_source" placeholder="https://">
 								</div>
 
-                                <div class="input-data-source input-region">
-                                    <?php wp_dropdown_categories(array(
-                                        'name' => 'tsml_add_data_source_parent_region_id',
-                                        'taxonomy' => 'tsml_region',
-                                        'hierarchical' => true,
-                                        'hide_empty' => false,
-                                        'orderby' => 'name',
-                                        'selected' => null,
-                                        'title' => __('Append regions created by this data source to… (top-level, if none selected)', '12-step-meeting-list'),
-                                        'show_option_none' => __('Parent Region…', '12-step-meeting-list'),
-                                    ))?>
-                                </div>
+								<div class="input-data-source input-region">
+									<?php wp_dropdown_categories(array(
+										'name' => 'tsml_add_data_source_parent_region_id',
+										'taxonomy' => 'tsml_region',
+										'hierarchical' => true,
+										'hide_empty' => false,
+										'orderby' => 'name',
+										'selected' => null,
+										'title' => __('Append regions created by this data source to… (top-level, if none selected)', '12-step-meeting-list'),
+										'show_option_none' => __('Parent Region…', '12-step-meeting-list'),
+									))?>
+								</div>
 
 								<div class="btn">
 									<input type="submit" class="button" value="<?php _e('Add Data Source', '12-step-meeting-list')?>">
@@ -884,18 +884,18 @@ function tmsl_import_page() {
 								</div>
 							</form>
 
-                            <form method="post" action="<?php echo $_SERVER['REQUEST_URI']?>">
-                                <details>
-                                    <summary><strong><?php _e('Automatic Import Schedule', '12-step-meeting-list')?></strong></summary>
-                                    <p><?php printf(__('Choose the interval with which to reimport all meetings from all data sources. This can create a lot of load for your server, if you run it too often.', '12-step-meeting-list'))?></p>
-                                </details>
-                                <?php wp_nonce_field($tsml_nonce, 'tsml_nonce', false)?>
-                                <select name="tsml_auto_import_schedule" onchange="this.form.submit()">
-                                    <?php foreach ($auto_import_options as $key => $value) {?>
-                                        <option value="<?php echo $key?>"<?php selected($tsml_auto_import_schedule, $key)?>><?php echo $value?></option>
-                                    <?php }?>
-                                </select>
-                            </form>
+							<form method="post" action="<?php echo $_SERVER['REQUEST_URI']?>">
+								<details>
+									<summary><strong><?php _e('Automatic Import Schedule', '12-step-meeting-list')?></strong></summary>
+									<p><?php printf(__('Choose the interval with which to reimport all meetings from all data sources. This can create a lot of load for your server, if you run it too often.', '12-step-meeting-list'))?></p>
+								</details>
+								<?php wp_nonce_field($tsml_nonce, 'tsml_nonce', false)?>
+								<select name="tsml_auto_import_schedule" onchange="this.form.submit()">
+									<?php foreach ($auto_import_options as $key => $value) {?>
+										<option value="<?php echo $key?>"<?php selected($tsml_auto_import_schedule, $key)?>><?php echo $value?></option>
+									<?php }?>
+								</select>
+							</form>
 						</div>
 					</div>
 				</div>
