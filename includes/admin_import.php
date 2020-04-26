@@ -151,10 +151,14 @@ function tmsl_import_page() {
 			}
 		}
 	}
-		
+
 	//add data source
 	if (!empty($_POST['tsml_add_data_source']) && isset($_POST['tsml_nonce']) && wp_verify_nonce($_POST['tsml_nonce'], $tsml_nonce)) {
-	    $add_data_source_errors = tsml_add_data_source($_POST['tsml_add_data_source'], $_POST['tsml_add_data_source_name']);
+	    $add_data_source_errors = tsml_add_data_source(
+	            $_POST['tsml_add_data_source'],
+                $_POST['tsml_add_data_source_name'],
+                $_POST['tsml_add_data_source_parent_region_id']
+        );
 
 	    foreach ($add_data_source_errors as $add_data_source_error) {
 	        tsml_alert($add_data_source_error, 'error');
@@ -349,6 +353,11 @@ function tmsl_import_page() {
 		delete_option('tsml_mapbox_key');
 	}
 
+	$regions = array();
+	foreach (tsml_get_all_regions() as $term) {
+	    $regions[$term->term_id] = $term->name;
+    }
+
     $auto_import_options = [
         'disabled' => __('Disabled', '12-step-meeting-list'),
     ];
@@ -522,7 +531,8 @@ function tmsl_import_page() {
 									<tr>
 										<th class="small"></th>
 										<th><?php _e('Feed', '12-step-meeting-list')?></th>
-										<th class="align-center"><?php _e('Meetings', '12-step-meeting-list')?></th>
+                                        <th class="align-left"><?php _e('Parent Region', '12-step-meeting-list')?></th>
+                                        <th class="align-center"><?php _e('Meetings', '12-step-meeting-list')?></th>
 										<th class="align-right"><?php _e('Last Update', '12-step-meeting-list')?></th>
 										<th class="small"></th>
 									</tr>
@@ -535,18 +545,38 @@ function tmsl_import_page() {
 												<?php wp_nonce_field($tsml_nonce, 'tsml_nonce', false)?>
 												<input type="hidden" name="tsml_add_data_source" value="<?php echo $feed?>">
 												<input type="hidden" name="tsml_add_data_source_name" value="<?php echo @$properties['name']?>">
+												<input type="hidden" name="tsml_add_data_source_parent_region_id" value="<?php echo @$properties['parent_region_id']?>">
 												<input type="submit" value="Refresh" class="button button-small">
 											</form>
 										</td>
+
 										<td>
 											<a href="<?php echo $feed?>" target="_blank">
 												<?php echo !empty($properties['name']) ? $properties['name'] : __('Unnamed Feed', '12-step-meeting-list')?>
 											</a>
 										</td>
+
+										<td>
+                                            <?php
+                                                $parent_region = null;
+                                                if (empty($properties['parent_region_id']) || $properties['parent_region_id'] == -1) {
+                                                    $parent_region = __('Top-level region', '12-step-meeting-list');
+                                                } elseif (empty($regions[$properties['parent_region_id']])) {
+                                                    $parent_region = __('Missing Region!', '12-step-meeting-list');
+                                                } else {
+                                                    $parent_region = $regions[$properties['parent_region_id']];
+                                                }
+
+                                                echo $parent_region;
+                                            ?>
+										</td>
+
 										<td class="align-center count_meetings"><?php echo number_format($properties['count_meetings'])?></td>
+
 										<td class="align-right">
 											<?php echo date(get_option('date_format') . ' ' . get_option('time_format'), $properties['last_import'])?>
 										</td>
+
 										<td class="small">
 											<form method="post" action="<?php echo $_SERVER['REQUEST_URI']?>">
 												<?php wp_nonce_field($tsml_nonce, 'tsml_nonce', false)?>
@@ -559,14 +589,30 @@ function tmsl_import_page() {
 								</tbody>
 							</table>
 							<?php }?>
+
 							<form class="columns" method="post" action="<?php echo $_SERVER['REQUEST_URI']?>">
 								<?php wp_nonce_field($tsml_nonce, 'tsml_nonce', false)?>
-								<div class="input-half">
+								<div class="input-data-source input-name">
 									<input type="text" name="tsml_add_data_source_name" placeholder="<?php _e('District 02', '12-step-meeting-list')?>">
 								</div>
-								<div class="input-half">
+
+								<div class="input-data-source input-url">
 									<input type="text" name="tsml_add_data_source" placeholder="https://">
 								</div>
+
+                                <div class="input-data-source input-region">
+                                    <?php wp_dropdown_categories(array(
+                                        'name' => 'tsml_add_data_source_parent_region_id',
+                                        'taxonomy' => 'tsml_region',
+                                        'hierarchical' => true,
+                                        'hide_empty' => false,
+                                        'orderby' => 'name',
+                                        'selected' => null,
+                                        'title' => __('Append regions created by this data source to… (top-level, if none selected)', '12-step-meeting-list'),
+                                        'show_option_none' => __('Parent Region…', '12-step-meeting-list'),
+                                    ))?>
+                                </div>
+
 								<div class="btn">
 									<input type="submit" class="button" value="<?php _e('Add Data Source', '12-step-meeting-list')?>">
 								</div>

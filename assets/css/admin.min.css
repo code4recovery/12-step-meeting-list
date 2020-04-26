@@ -541,6 +541,9 @@ body.tsml_meeting_page_import .progress .progress-bar {
   font-size: 12px;
   transition: width 0.6s ease;
 }
+body.tsml_meeting_page_import .progress.has_errors .progress-bar {
+  background: #761c19;
+}
 body.tsml_meeting_page_import .postbox a.button-large, body.tsml_meeting_page_import .notice-warning a.button-large {
   padding-top: 4px;
   line-height: 1.6;
@@ -628,11 +631,17 @@ body.tsml_meeting_page_import .postbox form.columns > div, body.tsml_meeting_pag
   display: inline-block;
   float: left;
 }
-body.tsml_meeting_page_import .postbox form.columns > div input, body.tsml_meeting_page_import .notice-warning form.columns > div input {
+body.tsml_meeting_page_import .postbox form.columns > div input,
+body.tsml_meeting_page_import .postbox form.columns > div select, body.tsml_meeting_page_import .notice-warning form.columns > div input,
+body.tsml_meeting_page_import .notice-warning form.columns > div select {
   box-shadow: none;
   width: 100%;
 }
-body.tsml_meeting_page_import .postbox form.columns > div input[type=text], body.tsml_meeting_page_import .postbox form.columns > div input[type=email], body.tsml_meeting_page_import .notice-warning form.columns > div input[type=text], body.tsml_meeting_page_import .notice-warning form.columns > div input[type=email] {
+body.tsml_meeting_page_import .postbox form.columns > div input[type=text], body.tsml_meeting_page_import .postbox form.columns > div input[type=email],
+body.tsml_meeting_page_import .postbox form.columns > div select[type=text],
+body.tsml_meeting_page_import .postbox form.columns > div select[type=email], body.tsml_meeting_page_import .notice-warning form.columns > div input[type=text], body.tsml_meeting_page_import .notice-warning form.columns > div input[type=email],
+body.tsml_meeting_page_import .notice-warning form.columns > div select[type=text],
+body.tsml_meeting_page_import .notice-warning form.columns > div select[type=email] {
   border: 1px solid #ccc;
   border-radius: 3px;
   font-family: Consolas, Monaco, monospace;
@@ -644,11 +653,17 @@ body.tsml_meeting_page_import .postbox form.columns > div input[type=text], body
 body.tsml_meeting_page_import .postbox form.columns > div.input, body.tsml_meeting_page_import .notice-warning form.columns > div.input {
   width: 70%;
 }
-body.tsml_meeting_page_import .postbox form.columns > div.input-half, body.tsml_meeting_page_import .notice-warning form.columns > div.input-half {
-  width: 35%;
+body.tsml_meeting_page_import .postbox form.columns > div.input-name, body.tsml_meeting_page_import .notice-warning form.columns > div.input-name {
+  width: 25%;
+}
+body.tsml_meeting_page_import .postbox form.columns > div.input-url, body.tsml_meeting_page_import .notice-warning form.columns > div.input-url {
+  width: 40%;
+}
+body.tsml_meeting_page_import .postbox form.columns > div.input-region, body.tsml_meeting_page_import .notice-warning form.columns > div.input-region {
+  width: 20%;
 }
 body.tsml_meeting_page_import .postbox form.columns > div.btn, body.tsml_meeting_page_import .notice-warning form.columns > div.btn {
-  width: 30%;
+  width: 15%;
 }
 body.tsml_meeting_page_import .postbox#wheres_my_info ul, body.tsml_meeting_page_import .notice-warning#wheres_my_info ul {
   margin-top: -10px;

@@ -183,30 +183,24 @@ function tsml_activate_cron_jobs() {
         $batch_schedule = 'one_minute';
     }
 
+    wp_clear_scheduled_hook('tsml_cron_invalidate_data_sources');
 	if ($tsml_auto_import_schedule != 'disabled') {
 		wp_schedule_event(time() + 3600, $tsml_auto_import_schedule, 'tsml_cron_invalidate_data_sources');
 	} else {
         $batch_schedule = null;
-        wp_clear_scheduled_hook('tsml_cron_invalidate_data_sources');
     }
 
+    wp_clear_scheduled_hook('tsml_cron_import_data_source_batch');
 	if ($batch_schedule) {
         wp_schedule_event(time() + 60, $batch_schedule, 'tsml_cron_import_data_source_batch');
-    } else {
-        wp_clear_scheduled_hook('tsml_cron_import_data_source_batch');
     }
 }
 
 //called by register_deactivation_hook
 //removes all cron-jobs set by tsml_activate_cron_jobs()
 function tsml_deactivate_cron_jobs() {
-	if (wp_next_scheduled('tsml_cron_invalidate_data_sources')) {
-		wp_clear_scheduled_hook('tsml_cron_invalidate_data_sources');
-	}
-
-	if (wp_next_scheduled('tsml_cron_import_data_source_batch')) {
-		wp_clear_scheduled_hook('tsml_cron_import_data_source_batch');
-	}
+    wp_clear_scheduled_hook('tsml_cron_invalidate_data_sources');
+    wp_clear_scheduled_hook('tsml_cron_import_data_source_batch');
 }
 
 function tsml_add_cron_schedules($schedules) {
@@ -239,18 +233,24 @@ function tsml_cron_invalidate_data_sources() {
 	$tsml_data_sources = get_option('tsml_data_sources', array());
 
 	foreach ($tsml_data_sources as $data_source_url => $data_source) {
-		tsml_add_data_source($data_source_url, $data_source['name']);
+	    $parent_region_id = null;
+	    if (isset($data_source['parent_region_id'])) {
+	        $parent_region_id = $data_source['parent_region_id'];
+        }
+
+		tsml_add_data_source($data_source_url, $data_source['name'], $parent_region_id);
 	}
 }
 
-function tsml_add_data_source($data_source_url, $data_source_name) {
+function tsml_add_data_source($data_source_url, $data_source_name, $data_source_parent_region_id = null) {
 	$errors = array();
 	$tsml_data_sources = get_option('tsml_data_sources', array());
 
-	$data_source_name = sanitize_text_field($data_source_name);
-	$data_source_url = trim(esc_url_raw($data_source_url, array('http', 'https')));
+    $data_source_name = sanitize_text_field($data_source_name);
+    $data_source_url = trim(esc_url_raw($data_source_url, array('http', 'https')));
+    $data_source_parent_region_id = (int) $data_source_parent_region_id;
 
-	//try fetching
+    //try fetching
 	$response = wp_remote_get($data_source_url, array(
 		'timeout' => 30,
 		'sslverify' => false,
@@ -263,12 +263,13 @@ function tsml_add_data_source($data_source_url, $data_source_name) {
 			'last_import' => current_time('timestamp'),
 			'count_meetings' => 0,
 			'name' => $data_source_name,
+			'parent_region_id' => $data_source_parent_region_id,
 			'type' => 'JSON',
 		);
 
 		//import feed
         tsml_import_mark_meetings_as_stale_before_update($data_source_url);
-		tsml_import_buffer_set($body, $data_source_url);
+		tsml_import_buffer_set($body, $data_source_url, $data_source_parent_region_id);
 
 		//save data source configuration
 		update_option('tsml_data_sources', $tsml_data_sources);
@@ -1316,10 +1317,12 @@ function tsml_meeting_types($types) {
 
 //sanitize and import an array of meetings to an 'import buffer' (an wp_option that's iterated on progressively)
 //called from admin_import.php (both CSV and JSON)
-function tsml_import_buffer_set($meetings, $data_source_url = null) {
+function tsml_import_buffer_set($meetings, $data_source_url = null, $data_source_parent_region_id = -1) {
 	global $tsml_programs, $tsml_program, $tsml_days;
 
     $existing_meeting_ids = array();
+
+    $data_source_parent_region_id = $data_source_parent_region_id ? (int) $data_source_parent_region_id : -1;
 
     if (strpos($data_source_url, "spreadsheets.google.com") !== false) {
         $meetings = tsml_import_reformat_googlesheet($meetings);
@@ -1373,6 +1376,7 @@ function tsml_import_buffer_set($meetings, $data_source_url = null) {
 	for ($i = 0; $i < $count_meetings; $i++) {
 		
 		$meetings[$i]['data_source'] = $data_source_url;
+		$meetings[$i]['data_source_parent_region_id'] = $data_source_parent_region_id;
 
 		//do wordpress sanitization
 		foreach ($meetings[$i] as $key => $value) {

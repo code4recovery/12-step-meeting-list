@@ -463,11 +463,20 @@ function tsml_import_next_batch_from_data_sources($limit = null) {
         $group_id = null;
         $contact_entity_update = array();
 
+        $data_source_parent_region_id = empty($meeting['data_source_parent_region_id'])
+            ? -1
+            : (int) $meeting['data_source_parent_region_id'];
+
+        if ($data_source_parent_region_id == -1) {
+            //no parent region has been selected, so use root
+            $data_source_parent_region_id = 0;
+        }
+
         //we can either try to manage as many inserts time allows, or import in small batches, the ajax-way
         if ($limit === null) {
             $may_continue = $time_we_should_pack_up_our_things > time();
         } else {
-            $may_continue = count($imported_meetings) <= $limit;
+            $may_continue = count($imported_meetings) < $limit;
         }
 
             //check address
@@ -480,7 +489,7 @@ function tsml_import_next_batch_from_data_sources($limit = null) {
 
                 continue;
             }
-			
+
 			//geocode address
 			$geocoded = tsml_geocode($meeting['formatted_address']);
 
@@ -499,11 +508,26 @@ function tsml_import_next_batch_from_data_sources($limit = null) {
 
 		//add region to taxonomy if it doesn't exist yet
 		if (!empty($meeting['region'])) {
-			if (isset($regions[$meeting['region']][0])) {
-				$region_id = $regions[$meeting['region']][0];
+			if (isset($regions[$meeting['region']][$data_source_parent_region_id])) {
+				$region_id = $regions[$meeting['region']][$data_source_parent_region_id];
 			} else {
-				$term = wp_insert_term($meeting['region'], 'tsml_region', 0);
-				$regions[$meeting['region']][0] = $term['term_id'];
+				$term = wp_insert_term(
+				    $meeting['region'],
+                    'tsml_region',
+                    array(
+                        'parent' => $data_source_parent_region_id,
+                    )
+                );
+				if (is_wp_error($term)) {
+                    $errors[] = array(
+                        $meeting['row'],
+                        $meeting['name'],
+                        $term->get_error_message(),
+                    );
+
+                    continue 1;
+                }
+				$regions[$meeting['region']][$data_source_parent_region_id] = $term['term_id'];
 				$region_id = intval($term['term_id']);
 			}
 
@@ -549,10 +573,10 @@ function tsml_import_next_batch_from_data_sources($limit = null) {
                                 $district_id = intval($term['term_id']);
                             }
                         }
-						
+
 						wp_set_object_terms($group_id, $district_id, 'tsml_district');
 					}
-					
+
 					$groups[$meeting['group']] = $group_id;
 				} else {
 					$group_id = $groups[$meeting['group']];

@@ -131,14 +131,18 @@ body {
 				overflow: auto;
 				margin: 0 -5px;
 				box-sizing: border-box;
+
 				& > div { 
 					box-sizing: border-box;
 					padding: 0 5px; 
 					display: inline-block;
 					float: left;
-					input {
+
+					input,
+					select {
 						box-shadow: none;
 						width: 100%;
+
 						&[type=text], &[type=email] {
 							border: 1px solid #ccc;
 							border-radius: 3px;
@@ -149,14 +153,25 @@ body {
 							margin: 0;
 						}
 					}
+
 					&.input {
 						width: 70%;
 					}
-					&.input-half {
-						width: 35%;
+
+					&.input-name {
+						width: 25%;
 					}
+
+					&.input-url {
+						width: 40%;
+					}
+
+					&.input-region {
+						width: 20%;
+					}
+
 					&.btn {
-						width: 30%;
+						width: 15%;
 					}
 				}
 			}
