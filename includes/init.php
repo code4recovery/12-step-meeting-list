@@ -5,7 +5,6 @@ add_action('init', 'tsml_init');
 add_filter('cron_schedules', 'tsml_add_cron_schedules');
 add_action('tsml_cron_invalidate_data_sources', 'tsml_cron_invalidate_data_sources');
 add_action('tsml_cron_import_data_source_batch', 'tsml_cron_import_data_source_batch');
-add_action('tsml_cron_generate_pdf_schedules', 'tsml_cron_generate_pdf_schedules');
 
 function tsml_init()
 {

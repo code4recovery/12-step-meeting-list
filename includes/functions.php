@@ -195,12 +195,6 @@ function tsml_activate_cron_jobs() {
     } else {
         wp_clear_scheduled_hook('tsml_cron_import_data_source_batch');
     }
-
-	if (!wp_next_scheduled('tsml_cron_generate_pdf_schedules')) {
-		//be sure to start pdf cron job a good while later, so that refresh is likely to have run (e.g. if system has
-		//no cron jobs, but wp-cron is doing it on-request), and so that it has finished already
-		wp_schedule_event(time() + 7200, 'daily', 'tsml_cron_generate_pdf_schedules');
-	}
 }
 
 //called by register_deactivation_hook
@@ -212,10 +206,6 @@ function tsml_deactivate_cron_jobs() {
 
 	if (wp_next_scheduled('tsml_cron_import_data_source_batch')) {
 		wp_clear_scheduled_hook('tsml_cron_import_data_source_batch');
-	}
-
-	if (wp_next_scheduled('tsml_cron_generate_pdf_schedules')) {
-		wp_clear_scheduled_hook('tsml_cron_generate_pdf_schedules');
 	}
 }
 
@@ -382,11 +372,6 @@ function tsml_import_delete_stale_meetings_after_update($data_source_url) {
 //imports the next batch of data from each data source up for renewal
 function tsml_cron_import_data_source_batch() {
 	tsml_import_next_batch_from_data_sources();
-}
-
-//generates pdf exports of current meeting list
-function tsml_cron_generate_pdf_schedules() {
-	//todo: implement tsml_cron_generate_pdf_schedules
 }
 
 //function:	return integer number of live groups
