@@ -369,8 +369,8 @@ if (!function_exists('function_name')) {
 add_action('wp_ajax_tsml_break_import_lock', 'tsml_ajax_break_import_lock');
 function tsml_ajax_break_import_lock() {
 	wp_send_json(array(
-		'value_before' => get_option('tsml_import_started_at', null),
-		'success' => update_option('tsml_import_started_at', null),
+		'value_before' => get_option('tsml_import_locked_until', null),
+		'success' => update_option('tsml_import_locked_until', null),
 	));
 }
 
@@ -379,20 +379,17 @@ function tsml_import_next_batch_from_data_sources($limit = null) {
 	$errors = array();
 	$start_time_in_ms = microtime(true);
 
-	//we are using the start time of the last import to determine, whether we are running a parallel process.
-	//if the max_execution_time has not yet elapsed, we assume that that import is still running.
-	//otherwise we can continue, it surely has been killed.
-	$tsml_import_started_at = (int) get_option('tsml_import_started_at', null);
-	$max_execution_time = (int) ini_get('max_execution_time');
+	//imports are prevented from running in parallel by their projected end timestamp.
+	//if that end has elapsed, though, we can continue, the process surely has been killed/failed some time ago.
+    $tsml_import_locked_until = (int) get_option('tsml_import_locked_until', null);
 	$timestamp_now = time();
-	$is_import_still_running = $tsml_import_started_at
-		&& ($tsml_import_started_at + $max_execution_time >= $timestamp_now);
+	$is_import_still_running = $tsml_import_locked_until && $tsml_import_locked_until >= $timestamp_now;
 
 	if ($is_import_still_running) {
 		$errors[] = array(
 			null,
-			date('r', $tsml_import_started_at),
-			__('An import has already been started at %s! Doing nothing. Stopping.', '12-step-meeting-list'),
+			date('r', $tsml_import_locked_until),
+			__('An import is already running until %s! Doing nothing. Stopping.', '12-step-meeting-list'),
 		);
 
 		return array(
@@ -400,9 +397,12 @@ function tsml_import_next_batch_from_data_sources($limit = null) {
 		);
 	}
 
-	//lock the import process by telling other processes when we started
-	update_option('tsml_import_started_at', $timestamp_now);
-	$tsml_import_started_at = $timestamp_now;
+	//lock the import process by telling other processes what our maximum runtime would be;
+    //in case of script failure and long assumed runtime this may result in long idle times, though
+    $tsml_import_started_at = $timestamp_now;
+    $max_execution_time = (int) ini_get('max_execution_time');
+    $tsml_import_locked_until = $tsml_import_started_at + $max_execution_time;
+	update_option('tsml_import_locked_until', $tsml_import_locked_until);
 
 	$remaining = get_option('tsml_import_buffer', array());
 	$imported_meetings = array();
@@ -730,7 +730,7 @@ function tsml_import_next_batch_from_data_sources($limit = null) {
 	}
 
 	//releases lock on import
-	update_option('tsml_import_started_at', null);
+	update_option('tsml_import_locked_until', null);
 
 	$duration_in_ms = microtime(true) - $start_time_in_ms;
 
