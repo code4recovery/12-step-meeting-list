@@ -450,7 +450,7 @@ function tsml_import_next_batch_from_data_sources($limit = null) {
 		add_filter('wp_insert_post_data', 'tsml_import_post_modified', 99, 2);
 
 	$may_continue = true;
-	$time_we_should_pack_up_our_things = $tsml_import_started_at + 0.75 * $max_execution_time;
+	$time_we_should_pack_up_our_things = $tsml_import_started_at + 0.8 * $max_execution_time;
 
 	//we are collecting updates to the group/meetings contacts and sending them afterwards to save db requests
 	$contact_entity_updates = array();
