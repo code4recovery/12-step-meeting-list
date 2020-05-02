@@ -21,6 +21,7 @@ function tsml_move_author_meta_box() {
 // Hook tsml_assets where we can check $post_type
 add_action( 'admin_print_scripts-post.php', 'tsml_assets' );
 add_action( 'admin_print_scripts-post-new.php', 'tsml_assets' );
+add_action( 'admin_print_scripts-tsml_meeting_page_import', 'tsml_assets' );
 
 //edit page
 add_action('admin_init', 'tsml_admin_init');
