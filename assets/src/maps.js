@@ -77,6 +77,7 @@ function createMap(scrollwheel, locations, searchLocation) {
 
 //format an address: replace commas with breaks
 function formatAddress(address, street_only) {
+  if (!address) return "";
   address = address.split(", ");
   if (street_only) return address[0];
   if (address[address.length - 1] == "USA") {
@@ -136,7 +137,10 @@ function setMapBounds() {
     if (markers.length > 1) {
       //multiple markers
       tsmlmap.fitBounds(
-        [[bounds.west, bounds.south], [bounds.east, bounds.north]],
+        [
+          [bounds.west, bounds.south],
+          [bounds.east, bounds.north]
+        ],
         {
           duration: 0,
           padding: 100
