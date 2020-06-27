@@ -31,6 +31,12 @@ class tsml_filter_meetings
             $this->district_id = is_array($arguments['district']) ? array_map('sanitize_title', $arguments['district']) : array(sanitize_title($arguments['district']));
             //we are recieving district slugs, need to convert to IDs (todo save this in the cache)
             $this->district_id = array_map(array($this, 'get_district_id'), $this->district_id);
+            //district_id is now an array of arrays because districts can have children
+            $return = array();
+            foreach ($this->district_id as $district_id_array) {
+                $return = array_merge($return, $district_id_array);
+            }
+            $this->district_id = $return;
         }
 
         if (!empty($arguments['group_id'])) {
@@ -261,7 +267,8 @@ class tsml_filter_meetings
     public function get_district_id($slug)
     {
         $term = get_term_by('slug', $slug, 'tsml_district');
-        return $term->term_id;
+        $children = get_term_children($term->term_id, 'tsml_district');
+        return array_merge(array($term->term_id), $children);
     }
 
     //function to get region id from slug, as well as child region ids
