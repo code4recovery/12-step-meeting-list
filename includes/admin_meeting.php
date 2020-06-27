@@ -269,13 +269,21 @@ function tsml_admin_init() {
 				<label for="phone"><?php _e('Phone', '12-step-meeting-list')?></label>
 				<input type="text" name="phone" id="phone" value="<?php echo @$meeting->phone ?>" placeholder="(800) 555-1212">
 			</div>
-			<div class="meta_form_row group-visible">
+			<div class="meta_form_row">
 				<label for="mailing_address"><?php _e('Mailing Address', '12-step-meeting-list')?></label>
 				<input type="text" name="mailing_address" id="mailing_address" value="<?php echo @$meeting->mailing_address ?>" placeholder="123 Main St, Anytown OK">
 			</div>
-			<div class="meta_form_row group-visible">
+			<div class="meta_form_row">
 				<label><?php _e('Venmo', '12-step-meeting-list')?></label>
-				<input type="text" name="venmo" placeholder="@group-venmo" value="<?php echo @$meeting->venmo ?>">
+				<input type="text" name="venmo" placeholder="@venmo" value="<?php echo @$meeting->venmo ?>">
+			</div>
+			<div class="meta_form_row">
+				<label><?php _e('Square Cash', '12-step-meeting-list')?></label>
+				<input type="text" name="square" placeholder="$SquareCash" value="<?php echo @$meeting->square ?>">
+			</div>
+			<div class="meta_form_row">
+				<label><?php _e('PayPal', '12-step-meeting-list')?></label>
+				<input type="text" name="paypal" placeholder="https://www.paypal.me/username" value="<?php echo @$meeting->paypal ?>">
 			</div>
 			<div class="meta_form_row">
 				<label>

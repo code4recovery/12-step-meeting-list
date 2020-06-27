@@ -131,7 +131,7 @@ get_header();
 									);
 								}
 
-								if (!empty($meeting->group) || !empty($meeting->website) || !empty($meeting->website_2) || !empty($meeting->email) || !empty($meeting->phone)) {?>
+								if (!empty($meeting->group) || !empty($meeting->website) || !empty($meeting->website_2) || !empty($meeting->email) || !empty($meeting->phone) || !empty($meeting->venmo) || !empty($meeting->square) || !empty($meeting->paypal)) {?>
 									<li class="list-group-item list-group-item-group">
 										<h3 class="list-group-item-heading"><?php echo $meeting->group ?></h3>
 										<?php if (!empty($meeting->group_notes)) {?>
@@ -159,14 +159,23 @@ get_header();
 											<p class="group-phone">
 												<a href="tel:<?php echo $meeting->phone ?>"><?php echo $meeting->phone ?></a>
 											</p>
-										</a>
 										<?php }
 										if (!empty($meeting->venmo)) {?>
-											<p class="group-venmo">
+											<p class="venmo">
 												Venmo: <a href="https://venmo.com/<?php echo substr($meeting->venmo, 1) ?>" target="_blank"><?php echo $meeting->venmo ?></a>
 											</p>
-										</a>
-										<?php }?>
+										<?php }
+										if (!empty($meeting->square)) {?>
+											<p class="square">
+												Square Cash: <a href="https://cash.app/<?php echo $meeting->square ?>" target="_blank"><?php echo $meeting->square ?></a>
+											</p>
+										<?php }
+										if (!empty($meeting->paypal)) {?>
+											<p class="paypal">
+												PayPal: <a href="<?php echo $meeting->paypal ?>" target="_blank"><?php echo substr($meeting->paypal, 22) ?></a>
+											</p>
+										<?php }
+										?>
 									</li>
 								<?php }?>
 								<li class="list-group-item list-group-item-updated">

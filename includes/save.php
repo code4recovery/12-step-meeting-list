@@ -27,8 +27,8 @@ function tsml_save_post($post_id, $post, $update) {
 	//update is always 1, probably because it's actually 'created' when the edit screen first loads (due to autosave)
 	$update = ($post->post_date !== $post->post_modified);
 	
-	//sanitize strings
-	$strings = array('post_title', 'location', 'formatted_address', 'mailing_address', 'venmo', 'post_status', 'group', 'last_contact', 'conference_phone');
+	//sanitize strings (website, website_2, paypal are not included)
+	$strings = array('post_title', 'location', 'formatted_address', 'mailing_address', 'venmo', 'square', 'post_status', 'group', 'last_contact', 'conference_phone');
 	foreach ($strings as $string) {
 		$_POST[$string] = stripslashes(sanitize_text_field($_POST[$string]));
 	}
@@ -286,6 +286,46 @@ function tsml_save_post($post_id, $post, $update) {
 			}
 		}
 
+		//meeting mailing address
+		if (!$update || strcmp($old_meeting->mailing_address, $_POST['mailing_address']) !== 0) {
+			$changes[] = 'mailing_address';
+			if (empty($_POST['mailing_address'])) {
+				delete_post_meta($post->ID, 'mailing_address');
+			} else {
+				update_post_meta($post->ID, 'mailing_address', sanitize_text_field($_POST['mailing_address']));
+			}
+		}
+		
+		//meeting venmo
+		if (!$update || strcmp($old_meeting->venmo, $_POST['venmo']) !== 0) {
+			$changes[] = 'venmo';
+			if (empty($_POST['venmo']) || (substr($_POST['venmo'], 0, 1) != '@')) {
+				delete_post_meta($post->ID, 'venmo');
+			} else {
+				update_post_meta($post->ID, 'venmo', sanitize_text_field($_POST['venmo']));
+			}
+		}
+		
+		//meeting square
+		if (!$update || strcmp($old_meeting->square, $_POST['square']) !== 0) {
+			$changes[] = 'square';
+			if (empty($_POST['square']) || (substr($_POST['square'], 0, 1) != '$')) {
+				delete_post_meta($post->ID, 'square');
+			} else {
+				update_post_meta($post->ID, 'square', sanitize_text_field($_POST['square']));
+			}
+		}
+		
+		//meeting paypal
+		if (!$update || strcmp($old_meeting->paypal, $_POST['paypal']) !== 0) {
+			$changes[] = 'paypal';
+			if (empty($_POST['paypal']) || (substr($_POST['paypal'], 0, 22) != 'https://www.paypal.me/')) {
+				delete_post_meta($post->ID, 'paypal');
+			} else {
+				update_post_meta($post->ID, 'paypal', esc_url_raw($_POST['paypal'], array('https')));
+			}
+		}
+
 		//meeting info
 		for ($i = 1; $i <= GROUP_CONTACT_COUNT; $i++) {
 			foreach (array('name', 'email', 'phone') as $field) {
@@ -424,6 +464,26 @@ function tsml_save_post($post_id, $post, $update) {
 			}
 		}
 		
+		//group square
+		if (!$update || strcmp($old_meeting->square, $_POST['square']) !== 0) {
+			$changes[] = 'square';
+			if (empty($_POST['square']) || (substr($_POST['square'], 0, 1) != '$')) {
+				delete_post_meta($group_id, 'square');
+			} else {
+				update_post_meta($group_id, 'square', sanitize_text_field($_POST['square']));
+			}
+		}
+		
+		//group paypal
+		if (!$update || strcmp($old_meeting->paypal, $_POST['paypal']) !== 0) {
+			$changes[] = 'paypal';
+			if (empty($_POST['paypal']) || (substr($_POST['paypal'], 0, 22) != 'https://www.paypal.me/')) {
+				delete_post_meta($group_id, 'paypal');
+			} else {
+				update_post_meta($group_id, 'paypal', esc_url_raw($_POST['paypal'], array('https')));
+			}
+		}
+		
 		//contact info
 		for ($i = 1; $i <= GROUP_CONTACT_COUNT; $i++) {
 			foreach (array('name', 'email', 'phone') as $field) {
@@ -478,7 +538,7 @@ function tsml_save_post($post_id, $post, $update) {
 		$message .= '</p><table style="font:14px arial;width:100%;border-collapse:collapse;padding:0;">';
 		$fields = array('name', 'day', 'time', 'end_time', 'types', 'notes', 'location', 
 			'formatted_address', 'region', 'location_notes', 'group', 'district', 'group_notes', 
-			'website', 'website_2', 'email', 'phone', 'mailing_address', 'venmo',
+			'website', 'website_2', 'email', 'phone', 'mailing_address', 'venmo', 'square', 'paypal',
 			'contact_1_name', 'contact_1_email', 'contact_1_phone', 
 			'contact_2_name', 'contact_2_email', 'contact_2_phone', 
 			'contact_3_name', 'contact_3_email', 'contact_3_phone', 'last_contact');
