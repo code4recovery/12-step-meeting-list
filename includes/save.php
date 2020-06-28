@@ -244,20 +244,24 @@ function tsml_save_post($post_id, $post, $update) {
 	//save group information (set this value or get caught in a loop)
 	$_POST['post_type'] = 'tsml_group';
 
+	//group name is required for groups, not used for individual meetings
+	if ($_POST['group_status'] == 'meeting') {
+		$_POST['group'] = null;
+	}
+
 	if (empty($_POST['group'])) {
-		//add contact information to individual meeting
+		//individual meeting
 		$contact_entity_id = $post->ID;
-		
-		//switching from group to individual meeting
+
+		delete_post_meta($post->ID, 'group_id');
+
+		//switching from group
 		if (!empty($old_meeting->group)) {
 			$changes[] = 'group';
 			if (!empty($old_meeting->group_notes)) $changes[] = 'group_notes';
-			delete_post_meta($post->ID, 'group_id');
-			if (!empty($_POST['apply_group_to_location'])) {
-				foreach ($old_meeting->location_meetings as $meeting) delete_post_meta($meeting['id'], 'group_id');
-			}
 		}
 	} else {
+		//group
 		if ($groups = $wpdb->get_results($wpdb->prepare('SELECT ID, post_title, post_content FROM ' . $wpdb->posts . ' WHERE post_type = "tsml_group" AND post_title = "%s" ORDER BY id', stripslashes($_POST['group'])))) {
 			$contact_entity_id = $groups[0]->ID;
 			if ($groups[0]->post_title != $_POST['group'] || $groups[0]->post_content != $_POST['group_notes']) {
@@ -300,7 +304,7 @@ function tsml_save_post($post_id, $post, $update) {
 			}
 		}
 
-		//switching from individual meeting to group
+		//switching from individual meeting
 		if ($update && empty($old_meeting->group)) {
 			foreach ($tsml_contact_fields as $field => $type) {
 				//clear out contact information associated with meeting
