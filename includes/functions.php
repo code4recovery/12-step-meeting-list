@@ -863,7 +863,7 @@ function tsml_get_locations() {
 //$meeting_id can be false if there is a global $post object, eg on the single meeting template page
 //used: single-meetings.php
 function tsml_get_meeting($meeting_id=false) {
-	global $tsml_program, $tsml_programs;
+	global $tsml_program, $tsml_programs, $tsml_contact_fields;
 
 	$meeting 		= get_post($meeting_id);
 	$custom 		= get_post_meta($meeting->ID);
@@ -915,8 +915,8 @@ function tsml_get_meeting($meeting_id=false) {
 		$meeting->group = htmlentities($group->post_title, ENT_QUOTES);
 		$meeting->group_notes = esc_html($group->post_content);
 		$group_custom = tsml_get_meta('tsml_group', $meeting->group_id);
-		foreach ($group_custom as $key=>$value) {
-			$meeting->{$key} = $value;
+		foreach ($tsml_contact_fields as $field => $type) {
+			$meeting->{$field} = empty($group_custom[$field]) ? null : $group_custom[$field];
 		}
 
 		if ($district = get_the_terms($group, 'tsml_district')) {
@@ -1557,12 +1557,17 @@ function tsml_report_memory() {
 	die(round($size / pow(1024, ($i = floor(log($size, 1024)))), 2) . $units[$i]);
 }
 
-//function:	sanitize a time field
+//function:	sanitize a value
 //used:		save.php
-function tsml_sanitize_time($string) {
-	$string = sanitize_text_field($string);
-	if ($time = strtotime($string)) return date('H:i', $time);
-	return null;
+function tsml_sanitize($type, $value) {
+	if ($type == 'url') {
+		return esc_url_raw($value, array('http', 'https'));
+	} elseif ($type == 'date') {
+		return date('Y-m-d', strtotime($value));
+	} elseif ($type == 'time') {
+		return date('H:i', strtotime($value));
+	}
+	return sanitize_text_field($value);
 }
 
 //function: sort an array of meetings

@@ -43,6 +43,26 @@ $tsml_conference_providers = array(
 //whether contacts are displayed publicly (defaults to no)
 $tsml_contact_display = get_option('tsml_contact_display', 'private');
 
+//define contact fields 
+$tsml_contact_fields = array(
+	'website' => 'url',
+	'website_2' => 'url',
+	'email' => 'string',
+	'phone' => 'string',
+	'mailing_address' => 'string',
+	'venmo' => 'string',
+	'square' => 'string',
+	'paypal' => 'url',
+	'last_contact' => 'date',
+);
+
+//append to contacts
+for ($i = 1; $i <= GROUP_CONTACT_COUNT; $i++) {
+	foreach (array('name', 'email', 'phone') as $field) {
+		$tsml_contact_fields['contact_' . $i . '_' . $field] = 'string';
+	}
+}
+
 //empty global curl handle in case we need it
 $tsml_curl_handle = null;
 
