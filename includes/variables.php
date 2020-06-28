@@ -52,7 +52,7 @@ $tsml_contact_fields = array(
 	'mailing_address' => 'string',
 	'venmo' => 'string',
 	'square' => 'string',
-	'paypal' => 'url',
+	'paypal' => 'string',
 	'last_contact' => 'date',
 );
 

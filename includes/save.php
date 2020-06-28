@@ -316,8 +316,8 @@ function tsml_save_post($post_id, $post, $update) {
 	if (!empty($_POST['square']) && substr($_POST['square'], 0, 1) != '$') {
 		$_POST['square'] = null;
 	}
-	if (!empty($_POST['paypal']) && substr($_POST['paypal'], 0, 22) != 'https://www.paypal.me/') {
-		$_POST['paypal'] = null;
+	if (!empty($_POST['paypal']) && strpos($_POST['paypal'], '/') !== false) {
+		$_POST['paypal'] = array_pop(explode('/', $_POST['paypal']));
 	}
 
 	//loop through and validate each field

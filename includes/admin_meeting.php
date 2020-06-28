@@ -275,15 +275,15 @@ function tsml_admin_init() {
 			</div>
 			<div class="meta_form_row">
 				<label><?php _e('Venmo', '12-step-meeting-list')?></label>
-				<input type="text" name="venmo" placeholder="@venmo" value="<?php echo @$meeting->venmo ?>">
+				<input type="text" name="venmo" placeholder="@VenmoHandle" value="<?php echo @$meeting->venmo ?>">
 			</div>
 			<div class="meta_form_row">
 				<label><?php _e('Square Cash', '12-step-meeting-list')?></label>
-				<input type="text" name="square" placeholder="$SquareCash" value="<?php echo @$meeting->square ?>">
+				<input type="text" name="square" placeholder="$Cashtag" value="<?php echo @$meeting->square ?>">
 			</div>
 			<div class="meta_form_row">
 				<label><?php _e('PayPal', '12-step-meeting-list')?></label>
-				<input type="text" name="paypal" placeholder="https://www.paypal.me/username" value="<?php echo @$meeting->paypal ?>">
+				<input type="text" name="paypal" placeholder="PayPalUsername" value="<?php echo @$meeting->paypal ?>">
 			</div>
 			<div class="meta_form_row">
 				<label>
