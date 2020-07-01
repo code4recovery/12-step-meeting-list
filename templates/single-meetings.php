@@ -172,7 +172,7 @@ get_header();
 										<?php }
 										if (!empty($meeting->paypal)) {?>
 											<p class="paypal">
-												PayPal: <a href="<?php echo $meeting->paypal ?>" target="_blank"><?php echo substr($meeting->paypal, 22) ?></a>
+												PayPal: <a href="https://www.paypal.me/<?php echo $meeting->paypal ?>" target="_blank"><?php echo $meeting->paypal ?></a>
 											</p>
 										<?php }
 										?>
