@@ -945,7 +945,7 @@ function tsml_get_meeting($meeting_id=false) {
 //$from_cache is only false when calling from tsml_cache_rebuild()
 //used:		tsml_ajax_meetings(), single-locations.php, archive-meetings.php
 function tsml_get_meetings($arguments=array(), $from_cache=true) {
-	global $tsml_cache;
+	global $tsml_cache, $tsml_contact_fields;
 
 	//start by grabbing all meetings
 	if (false && $from_cache && file_exists(WP_CONTENT_DIR . $tsml_cache) && $meetings = file_get_contents(WP_CONTENT_DIR . $tsml_cache)) {
@@ -992,21 +992,18 @@ function tsml_get_meetings($arguments=array(), $from_cache=true) {
 				'time'				=> @$meeting_meta[$post->ID]['time'],
 				'end_time'			=> @$meeting_meta[$post->ID]['end_time'],
 				'time_formatted'	=> tsml_format_time(@$meeting_meta[$post->ID]['time']),
-				'email'				=> @$meeting_meta[$post->ID]['email'],
-				'website'			=> @$meeting_meta[$post->ID]['website'],
-				'website_2'			=> @$meeting_meta[$post->ID]['website_2'],
-				'phone'				=> @$meeting_meta[$post->ID]['phone'],
-				'venmo'				=> @$meeting_meta[$post->ID]['venmo'],
-				'square'				=> @$meeting_meta[$post->ID]['square'],
-				'paypal'				=> @$meeting_meta[$post->ID]['paypal'],
-				'conference_url'	=> @$meeting_meta[$post->ID]['conference_url'],
-				'conference_phone'	=> @$meeting_meta[$post->ID]['conference_phone'],
 				'types'				=> empty($meeting_meta[$post->ID]['types']) ? array() : array_values(unserialize($meeting_meta[$post->ID]['types'])),
 			), $locations[$post->post_parent]);
 
-			//append group info to meeting
+			//append contact info to meeting
 			if (!empty($meeting_meta[$post->ID]['group_id']) && array_key_exists($meeting_meta[$post->ID]['group_id'], $groups)) {
 				$meeting = array_merge($meeting, $groups[$meeting_meta[$post->ID]['group_id']]);
+			} else {
+				foreach ($tsml_contact_fields as $field => $type) {
+					if (!empty($meeting_meta[$post->ID][$field])) {
+						$meeting[$field] = $meeting_meta[$post->ID][$field];
+					}
+				}
 			}
 
 			$meetings[] = $meeting;
