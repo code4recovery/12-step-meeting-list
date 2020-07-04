@@ -65,10 +65,12 @@ function tsml_admin_init() {
 		</div>
 		<?php if (tsml_program_has_types()) {?>
 		<div class="meta_form_row">
-			<label for="tags"><?php _e('Types', '12-step-meeting-list')?></label>
+			<label for="types"><?php _e('Types', '12-step-meeting-list')?></label>
 			<div class="checkboxes<?php if (!empty($tsml_types_in_use) && count($tsml_types_in_use) !== count($tsml_programs[$tsml_program]['types'])) {?> has_more<?php }?>">
 			<?php
-			foreach ($tsml_programs[$tsml_program]['types'] as $key => $type) {?>
+			foreach ($tsml_programs[$tsml_program]['types'] as $key => $type) {
+				if ($key == 'ONL') continue; //hide "Online Meeting" since it's not manually settable
+				?>
 				<label <?php if (!empty($tsml_types_in_use) && !in_array($key, $tsml_types_in_use)) {echo ' class="not_in_use"';}?>>
 					<input type="checkbox" name="types[]" value="<?php echo $key ?>" <?php checked(in_array($key, @$meeting->types))?>>
 					<?php echo $type ?>
@@ -90,8 +92,8 @@ function tsml_admin_init() {
 			<textarea name="content" id="content" placeholder="<?php _e('eg. Birthday speaker meeting last Saturday of the month', '12-step-meeting-list')?>"><?php echo $meeting->post_content ?></textarea>
 		</div>
 		<div class="meta_form_separator">
-			<h4><?php _e('Video Conference Details', '12-step-meeting-list')?></h4>
-			<p><?php echo sprintf(__('If this meeting has videoconference information, please enter the full valid URL here. Currently supported providers: %s. If other details are required, such as a password, they should be included in the Notes field above.', '12-step-meeting-list'), implode(', ', tsml_conference_providers()))?></p>
+			<h4><?php _e('Online Meeting Details', '12-step-meeting-list')?></h4>
+			<p><?php echo sprintf(__('If this meeting has videoconference information, please enter the full valid URL here. Currently supported providers: %s. If other details are required, such as a password, they can be included in the Notes field above, but a ‘one tap’ experience is ideal. Passwords can be appended to phone numbers using this format <code>+12125551212,,123456789#,,#,,444444#</code>', '12-step-meeting-list'), implode(', ', tsml_conference_providers()))?></p>
 		</div>
 		<div class="meta_form_row">
 			<label for="conference_url"><?php _e('URL', '12-step-meeting-list')?></label>
@@ -99,7 +101,7 @@ function tsml_admin_init() {
 		</div>
 		<div class="meta_form_row">
 			<label for="content"><?php _e('Phone', '12-step-meeting-list')?></label>
-			<input type="text" name="conference_phone" id="conference_phone" placeholder="(800) 555-1212" value="<?php echo $meeting->conference_phone ?>">
+			<input type="text" name="conference_phone" id="conference_phone" placeholder="+12125551212,,123456789#,,#,,444444#" value="<?php echo $meeting->conference_phone ?>">
 		</div>
 	<?php
 	}
@@ -267,7 +269,7 @@ function tsml_admin_init() {
 			</div>
 			<div class="meta_form_row">
 				<label for="phone"><?php _e('Phone', '12-step-meeting-list')?></label>
-				<input type="text" name="phone" id="phone" value="<?php echo @$meeting->phone ?>" placeholder="(800) 555-1212">
+				<input type="text" name="phone" id="phone" value="<?php echo @$meeting->phone ?>" placeholder="+18005551212">
 			</div>
 			<div class="meta_form_row">
 				<label for="mailing_address"><?php _e('Mailing Address', '12-step-meeting-list')?></label>

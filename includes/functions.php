@@ -1563,6 +1563,8 @@ function tsml_sanitize($type, $value) {
 		return date('Y-m-d', strtotime($value));
 	} elseif ($type == 'time') {
 		return date('H:i', strtotime($value));
+	} elseif ($type == 'phone') {
+		return preg_replace('/[^0-9,+#]/', '', $value);
 	}
 	return sanitize_text_field($value);
 }

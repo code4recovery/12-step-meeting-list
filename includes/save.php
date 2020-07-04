@@ -78,12 +78,13 @@ function tsml_save_post($post_id, $post, $update) {
 	$valid_conference_url = null;
 	$_POST['types'] = array_values(array_diff($_POST['types'], array('ONL')));
 	if (!empty($_POST['conference_url'])) {
-		$url = esc_url_raw($_POST['conference_url'], array('http', 'https'));
+		$url = tsml_sanitize('url', $_POST['conference_url']);
 		if (tsml_conference_provider($url)) {
 			$valid_conference_url = $url;
 			array_push($_POST['types'], 'ONL');
 		} 
 	}
+	$_POST['conference_phone'] = tsml_sanitize('phone', $_POST['conference_phone']);
 	if (!empty($_POST['conference_phone']) && empty($valid_conference_url)) {
 		array_push($_POST['types'], 'ONL');
 	}
