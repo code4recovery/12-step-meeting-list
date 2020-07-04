@@ -36,6 +36,10 @@ $height: 550px; //height of map and min-height of list
         animation: spin .7s infinite linear;
     }
 
+    svg.icon {
+        margin: 0 3px -2px 0 !important;
+    }
+
     @keyframes spin {
         from {
             transform: scale(1) rotate(0deg);
@@ -534,7 +538,7 @@ $height: 550px; //height of map and min-height of list
             }
         }
 
-        &[data-view=list] {
+        &[data-view="list"] {
             padding-bottom: 0;
 
             table {
@@ -579,26 +583,17 @@ $height: 550px; //height of map and min-height of list
     }
 
     #meeting {
-
         .tsml-type-tc & {
-
-            .page-header {
-
-                small {
-                    color: $color_alert;
-                    font-weight: bold;
-                }
+            .page-header small {
+                color: $color_alert;
+                font-weight: bold;
             }
         }
 
         .tsml-type-onl & {
-
-            .page-header {
-
-                small {
-                    color: $color_online;
-                    font-weight: bold;
-                }
+            .page-header small {
+                color: $color_online;
+                font-weight: bold;
             }
         }
     }
