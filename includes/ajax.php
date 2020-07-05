@@ -187,6 +187,8 @@ if (!function_exists('tsml_ajax_csv')) {
 			'website_2' => 			'Website 2',
 			'mailing_address' =>	'Mailing Address',
 			'venmo' => 				'Venmo',
+			'square' => 			'Square',
+			'paypal' => 			'Paypal',
 			'email' => 				'Email',
 			'phone' => 				'Phone',
 			'group_notes' => 		'Group Notes',
@@ -486,13 +488,6 @@ if (!function_exists('function_name')) {
 			if (!empty($group_id)) {
 				//link group to meeting
 				add_post_meta($meeting_id, 'group_id', $group_id);
-				//add special group metadata
-				if (!empty($meeting['mailing_address'])) {
-					update_post_meta($group_id, 'mailing_address', $meeting['mailing_address']);
-				}
-				if (!empty($meeting['venmo'])) {
-					update_post_meta($group_id, 'venmo', $meeting['venmo']);
-				}
 			}
 
 			//handle contact information (could be meeting or group)
@@ -526,6 +521,14 @@ if (!function_exists('function_name')) {
 
 			if (!empty($meeting['venmo'])) {
 				update_post_meta($contact_entity_id, 'venmo', $meeting['venmo']);
+			}
+
+			if (!empty($meeting['square'])) {
+				update_post_meta($contact_entity_id, 'square', $meeting['square']);
+			}
+
+			if (!empty($meeting['paypal'])) {
+				update_post_meta($contact_entity_id, 'paypal', $meeting['paypal']);
 			}
 
 			if (!empty($meeting['last_contact']) && ($last_contact = strtotime($meeting['last_contact']))) {
