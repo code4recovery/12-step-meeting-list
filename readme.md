@@ -5,13 +5,12 @@ This plugin is designed to help 12 step programs (AA, NA, Al-Anon, etc) list the
 
 The best way to install this plugin is via [its home page](https://wordpress.org/plugins/12-step-meeting-list/) in the WordPress Plugin Directory.
 
-Do you have a support issue? Please let us know on the [12 Step Meeting List support forum](https://wordpress.org/support/plugin/12-step-meeting-list/).
+## Support
 
-## Developer Issues
+We have changed the venue used for obtaining support for TSML to our development site. By using GitHub Issues, you are able to attach screen caps, share more information 
+with the developers, reduce duplicate work in the case of validated bugs. This also helps us as it consolidates support and improves tracking of concerns our users have.
 
-The GitHub Issues feature is available for development-specific issues, confirmed bug reports, or feature requests.
-
-If you have a general support request, or want to ask about a possible bug, please visit the [12 Step Meeting List support forum](https://wordpress.org/support/plugin/12-step-meeting-list/).
+To create a new support ticket, please navigate to [here](https://github.com/code4recovery/12-step-meeting-list/issues) and click on `New issue`. Then select the type of ticket, and complete as much as possible of the information requested. This will help us respond quicker.
 
 ## Helping With Development
 
