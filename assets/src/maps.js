@@ -77,6 +77,7 @@ function createMap(scrollwheel, locations, searchLocation) {
 
 //format an address: replace commas with breaks
 function formatAddress(address, street_only) {
+  if (!address) return "";
   address = address.split(", ");
   if (street_only) return address[0];
   if (address[address.length - 1] == "USA") {
@@ -136,7 +137,10 @@ function setMapBounds() {
     if (markers.length > 1) {
       //multiple markers
       tsmlmap.fitBounds(
-        [[bounds.west, bounds.south], [bounds.east, bounds.north]],
+        [
+          [bounds.west, bounds.south],
+          [bounds.east, bounds.north]
+        ],
         {
           duration: 0,
           padding: 100
@@ -271,6 +275,10 @@ function setMapMarkers(locations, searchLocation) {
           '<a href="' +
           location.directions_url +
           '" class="btn btn-default btn-block">' +
+          '<svg class="icon" width="1em" height="1em" viewBox="0 0 16 16" fill="currentColor" xmlns="http://www.w3.org/2000/svg">' +
+          '<path fill-rule="evenodd" d="M9.896 2.396a.5.5 0 0 0 0 .708l2.647 2.646-2.647 2.646a.5.5 0 1 0 .708.708l3-3a.5.5 0 0 0 0-.708l-3-3a.5.5 0 0 0-.708 0z"/>' +
+          '<path fill-rule="evenodd" d="M13.25 5.75a.5.5 0 0 0-.5-.5h-6.5a2.5 2.5 0 0 0-2.5 2.5v5.5a.5.5 0 0 0 1 0v-5.5a1.5 1.5 0 0 1 1.5-1.5h6.5a.5.5 0 0 0 .5-.5z"/>' +
+          "</svg>" +
           location.directions +
           "</a>";
       }

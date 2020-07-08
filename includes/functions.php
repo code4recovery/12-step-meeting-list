@@ -31,7 +31,12 @@ function tsml_assets() {
 	global $post_type, $tsml_street_only, $tsml_programs, $tsml_strings, $tsml_program, $tsml_google_maps_key, $tsml_mapbox_key, $tsml_google_overrides, $tsml_distance_units, $tsml_defaults, $tsml_language, $tsml_columns, $tsml_nonce;
 
 	// TODO: verify this doesn't cause any other issues
-	if ( isset( $post_type ) && 'tsml_meeting' !== $post_type ) {
+	$types = [
+		'tsml_meeting',
+		'tsml_location',
+		'tsml_group',
+	];
+	if ( isset( $post_type ) && ! in_array( $post_type, $types ) ) {
 		return;
 	}
 	//google maps api
@@ -978,6 +983,8 @@ function tsml_get_groups() {
 			'phone' => empty($group_meta[$post->ID]['phone']) ? null : $group_meta[$post->ID]['phone'],
 			'mailing_address' => empty($group_meta[$post->ID]['mailing_address']) ? null : $group_meta[$post->ID]['mailing_address'],
 			'venmo' => empty($group_meta[$post->ID]['venmo']) ? null : $group_meta[$post->ID]['venmo'],
+			'square' => empty($group_meta[$post->ID]['square']) ? null : $group_meta[$post->ID]['square'],
+			'paypal' => empty($group_meta[$post->ID]['paypal']) ? null : $group_meta[$post->ID]['paypal'],
 			'last_contact' => empty($group_meta[$post->ID]['last_contact']) ? null : $group_meta[$post->ID]['last_contact'],
 		);
 
@@ -1078,7 +1085,7 @@ function tsml_get_locations() {
 //$meeting_id can be false if there is a global $post object, eg on the single meeting template page
 //used: single-meetings.php
 function tsml_get_meeting($meeting_id=false) {
-	global $tsml_program, $tsml_programs;
+	global $tsml_program, $tsml_programs, $tsml_contact_fields;
 
 	$meeting 		= get_post($meeting_id);
 	$custom 		= get_post_meta($meeting->ID);
@@ -1130,8 +1137,8 @@ function tsml_get_meeting($meeting_id=false) {
 		$meeting->group = htmlentities($group->post_title, ENT_QUOTES);
 		$meeting->group_notes = esc_html($group->post_content);
 		$group_custom = tsml_get_meta('tsml_group', $meeting->group_id);
-		foreach ($group_custom as $key=>$value) {
-			$meeting->{$key} = $value;
+		foreach ($tsml_contact_fields as $field => $type) {
+			$meeting->{$field} = empty($group_custom[$field]) ? null : $group_custom[$field];
 		}
 
 		if ($district = get_the_terms($group, 'tsml_district')) {
@@ -1160,7 +1167,7 @@ function tsml_get_meeting($meeting_id=false) {
 //$from_cache is only false when calling from tsml_cache_rebuild()
 //used:		tsml_ajax_meetings(), single-locations.php, archive-meetings.php
 function tsml_get_meetings($arguments=array(), $from_cache=true) {
-	global $tsml_cache;
+	global $tsml_cache, $tsml_contact_fields;
 
 	//start by grabbing all meetings
 	if (false && $from_cache && file_exists(WP_CONTENT_DIR . $tsml_cache) && $meetings = file_get_contents(WP_CONTENT_DIR . $tsml_cache)) {
@@ -1207,18 +1214,20 @@ function tsml_get_meetings($arguments=array(), $from_cache=true) {
 				'time'				=> @$meeting_meta[$post->ID]['time'],
 				'end_time'			=> @$meeting_meta[$post->ID]['end_time'],
 				'time_formatted'	=> tsml_format_time(@$meeting_meta[$post->ID]['time']),
-				'email'				=> @$meeting_meta[$post->ID]['email'],
-				'website'			=> @$meeting_meta[$post->ID]['website'],
-				'website_2'			=> @$meeting_meta[$post->ID]['website_2'],
-				'phone'				=> @$meeting_meta[$post->ID]['phone'],
 				'conference_url'	=> @$meeting_meta[$post->ID]['conference_url'],
 				'conference_phone'	=> @$meeting_meta[$post->ID]['conference_phone'],
 				'types'				=> empty($meeting_meta[$post->ID]['types']) ? array() : array_values(unserialize($meeting_meta[$post->ID]['types'])),
 			), $locations[$post->post_parent]);
 
-			//append group info to meeting
+			//append contact info to meeting
 			if (!empty($meeting_meta[$post->ID]['group_id']) && array_key_exists($meeting_meta[$post->ID]['group_id'], $groups)) {
 				$meeting = array_merge($meeting, $groups[$meeting_meta[$post->ID]['group_id']]);
+			} else {
+				foreach ($tsml_contact_fields as $field => $type) {
+					if (!empty($meeting_meta[$post->ID][$field])) {
+						$meeting[$field] = $meeting_meta[$post->ID][$field];
+					}
+				}
 			}
 
 			$meetings[] = $meeting;
@@ -1245,9 +1254,9 @@ function tsml_get_meta($type, $id=null) {
 	//don't show contact information if user is not logged in
 	//contact info still available on an individual meeting basis via tsml_get_meeting()
 	$keys = array(
-		'tsml_group' => '"website", "website_2", "email", "phone", "mailing_address", "venmo", "last_contact"' . (current_user_can('edit_posts') ? ', "contact_1_name", "contact_1_email", "contact_1_phone", "contact_2_name", "contact_2_email", "contact_2_phone", "contact_3_name", "contact_3_email", "contact_3_phone"' : ''),
+		'tsml_group' => '"website", "website_2", "email", "phone", "mailing_address", "venmo", "square", "paypal", "last_contact"' . (current_user_can('edit_posts') ? ', "contact_1_name", "contact_1_email", "contact_1_phone", "contact_2_name", "contact_2_email", "contact_2_phone", "contact_3_name", "contact_3_email", "contact_3_phone"' : ''),
 		'tsml_location' => '"formatted_address", "latitude", "longitude"',
-		'tsml_meeting' => '"day", "time", "end_time", "types", "group_id", "website", "website_2", "email", "phone", "last_contact", "conference_url", "conference_phone"' . (current_user_can('edit_posts') ? ', "contact_1_name", "contact_1_email", "contact_1_phone", "contact_2_name", "contact_2_email", "contact_2_phone", "contact_3_name", "contact_3_email", "contact_3_phone"' : ''),
+		'tsml_meeting' => '"day", "time", "end_time", "types", "group_id", "website", "website_2", "email", "phone", "mailing_address", "venmo", "square", "paypal", "last_contact", "conference_url", "conference_phone"' . (current_user_can('edit_posts') ? ', "contact_1_name", "contact_1_email", "contact_1_phone", "contact_2_name", "contact_2_email", "contact_2_phone", "contact_3_name", "contact_3_email", "contact_3_phone"' : ''),
 	);
 	if (!array_key_exists($type, $keys)) return trigger_error('tsml_get_meta for unexpected type ' . $type);
 	$meta = array();
@@ -1781,12 +1790,19 @@ function tsml_report_memory() {
 	die(round($size / pow(1024, ($i = floor(log($size, 1024)))), 2) . $units[$i]);
 }
 
-//function:	sanitize a time field
+//function:	sanitize a value
 //used:		save.php
-function tsml_sanitize_time($string) {
-	$string = sanitize_text_field($string);
-	if ($time = strtotime($string)) return date('H:i', $time);
-	return null;
+function tsml_sanitize($type, $value) {
+	if ($type == 'url') {
+		return esc_url_raw($value, array('http', 'https'));
+	} elseif ($type == 'date') {
+		return date('Y-m-d', strtotime($value));
+	} elseif ($type == 'time') {
+		return date('H:i', strtotime($value));
+	} elseif ($type == 'phone') {
+		return preg_replace('/[^0-9,+#]/', '', $value);
+	}
+	return sanitize_text_field($value);
 }
 
 //function: sort an array of meetings

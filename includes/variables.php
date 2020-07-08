@@ -43,6 +43,26 @@ $tsml_conference_providers = array(
 //whether contacts are displayed publicly (defaults to no)
 $tsml_contact_display = get_option('tsml_contact_display', 'private');
 
+//define contact fields 
+$tsml_contact_fields = array(
+	'website' => 'url',
+	'website_2' => 'url',
+	'email' => 'string',
+	'phone' => 'phone',
+	'mailing_address' => 'string',
+	'venmo' => 'string',
+	'square' => 'string',
+	'paypal' => 'string',
+	'last_contact' => 'date',
+);
+
+//append to contacts
+for ($i = 1; $i <= GROUP_CONTACT_COUNT; $i++) {
+	foreach (array('name', 'email', 'phone') as $field) {
+		$tsml_contact_fields['contact_' . $i . '_' . $field] = $field == 'phone' ? 'phone' : 'string';
+	}
+}
+
 //empty global curl handle in case we need it
 $tsml_curl_handle = null;
 
@@ -585,6 +605,7 @@ function tsml_define_strings() {
 				'NB' => __('Non-Binary', '12-step-meeting-list'),
 				'ONL' => __('Online Meeting', '12-step-meeting-list'),
 				'O' => __('Open', '12-step-meeting-list'),
+				'OUT' => __('Outdoor Meeting', '12-step-meeting-list'),
 				'POC' => __('People of Color', '12-step-meeting-list'),
 				'POL' => __('Polish', '12-step-meeting-list'),
 				'POR' => __('Portuguese', '12-step-meeting-list'),
@@ -592,6 +613,7 @@ function tsml_define_strings() {
 				'PUN' => __('Punjabi', '12-step-meeting-list'),
 				'RUS' => __('Russian', '12-step-meeting-list'),
 				'A' => __('Secular', '12-step-meeting-list'),
+				'SEN' => __('Seniors', '12-step-meeting-list'),
 				'ASL' => __('Sign Language', '12-step-meeting-list'),
 				'SM' => __('Smoking Permitted', '12-step-meeting-list'),
 				'S' => __('Spanish', '12-step-meeting-list'),

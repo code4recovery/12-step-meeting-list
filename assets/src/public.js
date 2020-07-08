@@ -92,6 +92,7 @@ jQuery(function($){
 				 .done( function( result ) {
 					 if ( result.success ) {
 						 window.location.assign( result.data.meeting );
+						// window.open( result.data.meeting );
 					 }
 				 } )
 				 .fail( function( err ) {// TODO: improve

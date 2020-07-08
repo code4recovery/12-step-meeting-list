@@ -187,6 +187,8 @@ if (!function_exists('tsml_ajax_csv')) {
 			'website_2' => 			'Website 2',
 			'mailing_address' =>	'Mailing Address',
 			'venmo' => 				'Venmo',
+			'square' => 			'Square',
+			'paypal' => 			'Paypal',
 			'email' => 				'Email',
 			'phone' => 				'Phone',
 			'group_notes' => 		'Group Notes',
@@ -673,7 +675,7 @@ function tsml_import_next_batch_from_data_sources($limit = null) {
 			}
 		}
 
-		foreach (array('email', 'phone', 'mailing_address', 'venmo') as $key) {
+		foreach (array('email', 'phone', 'mailing_address', 'venmo', 'square', 'paypal') as $key) {
 			if (!empty($meeting[$key])) {
 				$contact_entity_update[$key] = $meeting[$key];
 			} else {

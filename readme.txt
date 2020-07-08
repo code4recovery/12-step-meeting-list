@@ -1,8 +1,8 @@
 === 12 Step Meeting List ===
 Contributors: aasanjose
 Requires at least: 3.2
-Tested up to: 5.3.2
-Stable tag: 3.6.6
+Tested up to: 5.4.2
+Stable tag: 3.7.1
 
 This plugin helps twelve step recovery programs list their meetings. It standardizes addresses, and displays results in a searchable list and map.
 
@@ -23,9 +23,8 @@ This plugin was originally designed to maintain a list of A.A. meetings in Santa
 
 == Installation ==
 
-Basically you can just install it and you should be good to go. For a quick walkthrough of the process, check out this screencast video:
-
-[youtube https://www.youtube.com/watch?v=Qqg1RPX-FTQ]
+Basically you can just install the plugin, add a mapping API key from Mapbox (or Google), and start 
+entering your meetings. That is all it takes to get started!
 
 == Frequently Asked Questions ==
 
@@ -203,6 +202,15 @@ To apply these changes, you must go to Settings > Permalinks and click "Save Cha
 1. Edit location
 
 == Changelog ==
+
+= 3.7.1 =
+* Fixed bug introduced in previous version.
+
+= 3.7.0 = 
+* Added additional support for 7th Tradition contributions.
+* Added outdoor and seniors meeting types.
+* Fixed bugs affecting contacts.
+* Tweaked how contacts are displayed.
 
 = 3.6.6 =
 * Added TC and ONL flags for Al-Anon and other programs.
