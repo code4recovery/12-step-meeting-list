@@ -26,6 +26,12 @@ function tsml_save_post($post_id, $post, $update) {
 	
 	//update is always 1, probably because it's actually 'created' when the edit screen first loads (due to autosave)
 	$update = ($post->post_date !== $post->post_modified);
+
+	// Set the meeting's location status to 'publish'
+	// tsml_delete_orphans() will undo this later if necessary
+	if (!empty($post->post_parent)) {
+		wp_update_post(array('ID' => $post->post_parent, 'post_status' => 'publish'));
+	}
 	
 	//sanitize strings (website, website_2, paypal are not included)
 	$strings = array('post_title', 'location', 'formatted_address', 'mailing_address', 'venmo', 'square', 'post_status', 'group', 'last_contact', 'conference_phone');
