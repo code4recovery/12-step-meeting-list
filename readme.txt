@@ -204,7 +204,7 @@ To apply these changes, you must go to Settings > Permalinks and click "Save Cha
 == Changelog ==
 
 = 3.7.2 =
-* Fixed meeting end_time bug.
+* Fixed bug involving end_time for meeting.
 
 = 3.7.1 =
 * Fixed bug introduced in previous version.
