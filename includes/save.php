@@ -190,6 +190,7 @@ function tsml_save_post($post_id, $post, $update) {
 			'order' => 'ASC',
 			'meta_key' => 'formatted_address',
 			'meta_value' => $_POST['formatted_address'],
+			'post_status' => 'any',
 		))) {
 			$location_id = $locations[0]->ID;
 			if ($locations[0]->post_title != $_POST['location'] || $locations[0]->post_content != $_POST['location_notes']) {
