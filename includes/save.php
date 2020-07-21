@@ -195,9 +195,8 @@ function tsml_save_post($post_id, $post, $update) {
 				));
 			}
 
-			// Set the meeting's location status to 'publish'
-			// tsml_delete_orphans() will change it back to draft if necessary
-			if ($locations[0]->post_status != 'publish') {
+			// If the meeting post is published, and the location isn't, then publish the location 
+			if ($_POST['post_status'] == 'publish' && $locations[0]->post_status != 'publish') {
 				wp_update_post(array('ID' => $location_id, 'post_status' => 'publish'));
 			}
 
