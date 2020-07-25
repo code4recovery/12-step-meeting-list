@@ -81,7 +81,7 @@ class tsml_filter_meetings
         }
 
         if (!empty($arguments['type'])) {
-            $this->type = is_array($arguments['type']) ? array_map('trim', $arguments['type']) : array(trim($arguments['type']));
+            $this->type = is_array($arguments['type']) ? array_map('trim', $arguments['type']) : explode(',',trim($arguments['type']));
         }
 
     }
@@ -259,8 +259,7 @@ class tsml_filter_meetings
         if (!isset($meeting['types'])) {
             return false;
         }
-
-        return array_intersect($meeting['types'], $this->type);
+        return !count(array_diff($this->type, $meeting['types']));
     }
 
     //function to get district id from slug
