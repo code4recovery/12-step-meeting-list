@@ -26,7 +26,7 @@ function tsml_save_post($post_id, $post, $update) {
 	
 	//update is always 1, probably because it's actually 'created' when the edit screen first loads (due to autosave)
 	$update = ($post->post_date !== $post->post_modified);
-	
+
 	//sanitize strings (website, website_2, paypal are not included)
 	$strings = array('post_title', 'location', 'formatted_address', 'mailing_address', 'venmo', 'square', 'post_status', 'group', 'last_contact', 'conference_phone');
 	foreach ($strings as $string) {
@@ -125,7 +125,7 @@ function tsml_save_post($post_id, $post, $update) {
 			update_post_meta($post->ID, 'day', intval($_POST['day']));
 		}
 
-		$_POST['time'] = tsml_sanitize('time', $_POST['time']);
+		$_POST['time'] = empty($_POST['time']) ? null : tsml_sanitize('time', $_POST['time']);
 		if (!$update || strcmp($old_meeting->time, $_POST['time']) !== 0) {
 			$changes[] = 'time';
 			if (empty($_POST['time'])) {
@@ -137,7 +137,7 @@ function tsml_save_post($post_id, $post, $update) {
 			}
 		}
 
-		$_POST['end_time'] = tsml_sanitize('time', $_POST['end_time']);
+		$_POST['end_time'] = empty($_POST['end_time']) ? null : tsml_sanitize('time', $_POST['end_time']);
 		if (!$update || $old_meeting->end_time != $_POST['end_time']) {
 			$changes[] = 'end_time';
 			if (empty($_POST['end_time'])) {
@@ -184,6 +184,7 @@ function tsml_save_post($post_id, $post, $update) {
 			'order' => 'ASC',
 			'meta_key' => 'formatted_address',
 			'meta_value' => $_POST['formatted_address'],
+			'post_status' => 'any',
 		))) {
 			$location_id = $locations[0]->ID;
 			if ($locations[0]->post_title != $_POST['location'] || $locations[0]->post_content != $_POST['location_notes']) {
@@ -193,7 +194,12 @@ function tsml_save_post($post_id, $post, $update) {
 					'post_content'  => $_POST['location_notes'],
 				));
 			}
-	
+
+			// If the meeting post is published, and the location isn't, then publish the location 
+			if ($_POST['post_status'] == 'publish' && $locations[0]->post_status != 'publish') {
+				wp_update_post(array('ID' => $location_id, 'post_status' => 'publish'));
+			}
+
 			//latitude longitude only if updated
  			foreach (array('latitude', 'longitude') as $field) {
 				if (!$update || $old_meeting->{$field} != $_POST[$field]) {
