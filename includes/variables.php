@@ -458,7 +458,10 @@ $tsml_street_only = true;
 $tsml_timestamp = microtime(true);
 
 //these are empty now because polylang might change the language. gets set in the plugins_loaded hook
-$tsml_days = $tsml_days_order = $tsml_programs = $tsml_types_in_use = $tsml_slug = null; $tsml_strings = null;
+$tsml_days = $tsml_days_order = $tsml_programs = $tsml_types_in_use = $tsml_strings = null;
+
+//string url for the meeting finder, or false for no automatic archive page
+if (!isset($tsml_slug)) $tsml_slug = null;
 
 add_action('plugins_loaded', 'tsml_define_strings');
 
@@ -1136,7 +1139,9 @@ function tsml_define_strings() {
 	);
 
 	//the location where the list will show up, eg https://intergroup.org/meetings
-	$tsml_slug = sanitize_title(__('meetings', '12-step-meeting-list'));
+	if ($tsml_slug === null) {
+		$tsml_slug = sanitize_title(__('meetings', '12-step-meeting-list'));
+	}
 
 	//strings that must be synced between the javascript and the PHP
 	$tsml_strings = array(
