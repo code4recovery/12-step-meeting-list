@@ -4,7 +4,7 @@
 function tmsl_import_page() {
 	global $wpdb, $tsml_data_sources, $tsml_programs, $tsml_program, $tsml_nonce, $tsml_days, $tsml_feedback_addresses, 
 	$tsml_notification_addresses, $tsml_distance_units, $tsml_sharing, $tsml_sharing_keys, $tsml_contact_display,
-	$tsml_google_maps_key, $tsml_mapbox_key;
+	$tsml_google_maps_key, $tsml_mapbox_key, $tsml_slug;
 
 	$error = false;
 	
@@ -652,9 +652,11 @@ function tmsl_import_page() {
 							$groups = tsml_count_groups();
 							?>
 							<h3><?php _e('Where\'s My Info?', '12-step-meeting-list')?></h3>
+							<?php if ($tsml_slug) {?>
 							<p><?php printf(__('Your public meetings page is <a href="%s">right here</a>. Link that page from your site\'s nav menu to make it visible to the public.', '12-step-meeting-list'), get_post_type_archive_link('tsml_meeting'))?></p>
-							<?php if ($meetings) {?>
-							<p><?php printf(__('You can also download your meetings in <a href="%s">CSV format</a>.', '12-step-meeting-list'), admin_url('admin-ajax.php') . '?action=csv')?></p>
+							<?php }
+							if ($meetings) {?>
+							<p><?php printf(__('You can download your meetings in <a href="%s">CSV format</a>.', '12-step-meeting-list'), admin_url('admin-ajax.php') . '?action=csv')?></p>
 							<p><?php printf(__('A very basic PDF schedule is available in three sizes: <a href="%s">4&times;7</a>, <a href="%s">half page</a> and <a href="%s">full page</a>.', '12-step-meeting-list'), admin_url('admin-ajax.php') . '?action=tsml_pdf&width=4&height=7', admin_url('admin-ajax.php') . '?action=tsml_pdf', admin_url('admin-ajax.php') . '?action=tsml_pdf&width=8.5')?></p>
 							<?php }?>
 							<div id="tsml_counts"<?php if (($meetings + $locations + $groups + $regions) == 0) {?> class="hidden"<?php }?>>
