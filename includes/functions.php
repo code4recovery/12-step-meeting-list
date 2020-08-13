@@ -224,6 +224,9 @@ function tsml_custom_flags($flags) {
 //used: 	init.php on every request, also in change_activation_state() for plugin activation or deactivation
 function tsml_custom_post_types() {
 	global $tsml_slug;
+
+	$is_public = !empty($tsml_slug);
+
 	register_taxonomy('tsml_region', 'tsml_location', array(
 		'labels' => array(
 			'name' => __('Regions', '12-step-meeting-list'),
@@ -278,8 +281,9 @@ function tsml_custom_post_types() {
 			//not sure if we want this on the meeting or on the location
 			//'supports' => array('title', 'thumbnail'),
 			'supports' => array('title', 'author'),
-			'public' => true,
-			'has_archive' => true,
+			'public' => $is_public,
+			'show_ui' => true,
+			'has_archive' => $is_public,
 			'menu_icon' => 'dashicons-groups',
 			'rewrite' => array('slug'=>$tsml_slug),
 		)
@@ -288,9 +292,9 @@ function tsml_custom_post_types() {
 	register_post_type('tsml_location',
 		array(
 			'supports' => array('title'),
-			'public' => true,
+			'public' => $is_public,
 			'show_ui' => false,
-			'has_archive' => true,
+			'has_archive' => $is_public,
 			'capabilities' => array('create_posts' => false),
 			'rewrite' => array('slug'=>'locations'),
 			'taxonomies' => array('tsml_region'),

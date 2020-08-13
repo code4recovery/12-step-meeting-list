@@ -191,6 +191,8 @@ Yes, try setting the $tsml_slug variable in your functions.php.
 
 	$tsml_slug = 'schedule';
 
+You may set it to false to hide the public meeting finder altogether.
+
 To apply these changes, you must go to Settings > Permalinks and click "Save Changes"
 
 == Screenshots ==
