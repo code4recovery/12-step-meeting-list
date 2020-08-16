@@ -85,12 +85,15 @@ add_shortcode('tsml_types_list', 'tsml_types_list');
 //output a react meeting finder widget https://github.com/code4recovery/react
 if (!function_exists('tsml_react')) {
 	function tsml_react() {
-		global $tsml_mapbox_key, $tsml_nonce, $tsml_sharing;
+		global $tsml_mapbox_key, $tsml_nonce, $tsml_sharing, $tsml_conference_providers;
 		$host = 'https://react.' . (tsml_string_ends(get_site_url(), '.test') ? 'test' : 'meetingguide.org');
 		$url = admin_url('admin-ajax.php') . '?action=meetings&nonce=' . wp_create_nonce($tsml_nonce);
 		wp_enqueue_style('tsml_react', $host . '/style.css');
 		wp_enqueue_script('tsml_react', $host . '/app.js');
-		wp_add_inline_script('tsml_react', 'window.config={timezone: "' . get_option('timezone_string') . '"}', 'before');
+		wp_localize_script('tsml_react', 'tsml_react_config', array(
+			'timezone' => get_option('timezone_string'),
+			'conference_providers' => $tsml_conference_providers
+		));
 		return '<meetings src="' . $url . '" mapbox="' . $tsml_mapbox_key . '"/>';
 	}
 }
