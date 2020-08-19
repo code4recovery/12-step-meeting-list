@@ -997,7 +997,9 @@ function tsml_get_meetings($arguments=array(), $from_cache=true) {
 				'end_time'			=> @$meeting_meta[$post->ID]['end_time'],
 				'time_formatted'	=> tsml_format_time(@$meeting_meta[$post->ID]['time']),
 				'conference_url'	=> @$meeting_meta[$post->ID]['conference_url'],
+				'conference_url_notes'	=> @$meeting_meta[$post->ID]['conference_url_notes'],
 				'conference_phone'	=> @$meeting_meta[$post->ID]['conference_phone'],
+				'conference_phone_notes'	=> @$meeting_meta[$post->ID]['conference_phone_notes'],
 				'types'				=> empty($meeting_meta[$post->ID]['types']) ? array() : array_values(unserialize($meeting_meta[$post->ID]['types'])),
 			), $locations[$post->post_parent]);
 
@@ -1038,7 +1040,7 @@ function tsml_get_meta($type, $id=null) {
 	$keys = array(
 		'tsml_group' => '"website", "website_2", "email", "phone", "mailing_address", "venmo", "square", "paypal", "last_contact"' . (current_user_can('edit_posts') ? ', "contact_1_name", "contact_1_email", "contact_1_phone", "contact_2_name", "contact_2_email", "contact_2_phone", "contact_3_name", "contact_3_email", "contact_3_phone"' : ''),
 		'tsml_location' => '"formatted_address", "latitude", "longitude"',
-		'tsml_meeting' => '"day", "time", "end_time", "types", "group_id", "website", "website_2", "email", "phone", "mailing_address", "venmo", "square", "paypal", "last_contact", "conference_url", "conference_phone"' . (current_user_can('edit_posts') ? ', "contact_1_name", "contact_1_email", "contact_1_phone", "contact_2_name", "contact_2_email", "contact_2_phone", "contact_3_name", "contact_3_email", "contact_3_phone"' : ''),
+		'tsml_meeting' => '"day", "time", "end_time", "types", "group_id", "website", "website_2", "email", "phone", "mailing_address", "venmo", "square", "paypal", "last_contact", "conference_url", "conference_url_notes", "conference_phone", "conference_phone_notes"' . (current_user_can('edit_posts') ? ', "contact_1_name", "contact_1_email", "contact_1_phone", "contact_2_name", "contact_2_email", "contact_2_phone", "contact_3_name", "contact_3_email", "contact_3_phone"' : ''),
 	);
 	if (!array_key_exists($type, $keys)) return trigger_error('tsml_get_meta for unexpected type ' . $type);
 	$meta = array();
@@ -1289,10 +1291,14 @@ function tsml_import_buffer_set($meetings, $data_source=null) {
 				$meetings[$i]['types'][] = 'ONL';
 			} else {
 				$meetings[$i]['conference_url'] = null;
+				$meetings[$i]['conference_url_notes'] = null;
 			}
 		}
 		if (!empty($meetings[$i]['conference_phone']) && empty($meetings[$i]['conference_url'])) {
 			$meetings[$i]['types'][] = 'ONL'; 
+		}
+		if (empty($meetings[$i]['conference_phone'])) {
+			$meetings[$i]['conference_phone_notes'] = null;
 		}
 
 		//make sure we're not double-listing types
