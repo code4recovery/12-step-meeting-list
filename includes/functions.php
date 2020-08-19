@@ -1169,7 +1169,7 @@ function tsml_import_buffer_set($meetings, $data_source=null) {
 			//have to compress types down real quick (only happens with json)
 			if (is_array($value)) $value = implode(',', $value);
 
-			if (in_array($key, array('notes', 'location_notes', 'group_notes'))) {
+			if (tsml_string_ends($key, 'notes')) {
 				$meetings[$i][$key] = sanitize_text_area($value);
 			} else {
 				$meetings[$i][$key] = sanitize_text_field($value);
