@@ -169,44 +169,46 @@ if (!function_exists('tsml_ajax_csv')) {
 
 		//define columns to output, always in English for portability (per Poland NA)
 		$columns = array(
-			'time' =>				'Time',
-			'end_time' =>			'End Time',
-			'day' =>				'Day',
-			'name' =>				'Name',
-			'location' =>			'Location',
-			'formatted_address' =>	'Address',
-			'region' =>				'Region',
-			'sub_region' =>			'Sub Region',
-			'types' =>				'Types',
-			'notes' =>				'Notes',
-			'location_notes' =>		'Location Notes',
-			'group' => 				'Group',
-			'district' => 			'District',
-			'sub_district' => 		'Sub District',
-			'website' => 			'Website',
-			'website_2' => 			'Website 2',
-			'mailing_address' =>	'Mailing Address',
-			'venmo' => 				'Venmo',
-			'square' => 			'Square',
-			'paypal' => 			'Paypal',
-			'email' => 				'Email',
-			'phone' => 				'Phone',
-			'group_notes' => 		'Group Notes',
-			'contact_1_name' =>		'Contact 1 Name',
-			'contact_1_email' =>	'Contact 1 Email',
-			'contact_1_phone' =>	'Contact 1 Phone',
-			'contact_2_name' =>		'Contact 2 Name',
-			'contact_2_email' =>	'Contact 2 Email',
-			'contact_2_phone' =>	'Contact 2 Phone',
-			'contact_3_name' =>		'Contact 3 Name',
-			'contact_3_email' =>	'Contact 3 Email',
-			'contact_3_phone' =>	'Contact 3 Phone',
-			'last_contact' => 		'Last Contact',
-			'conference_url' => 	'Conference URL',
-			'conference_phone' => 	'Conference Phone',
-			'author' => 			'Author',
-			'slug' => 				'Slug',
-			'updated' =>			'Updated',
+			'time' =>					'Time',
+			'end_time' =>				'End Time',
+			'day' =>					'Day',
+			'name' =>					'Name',
+			'location' =>				'Location',
+			'formatted_address' =>		'Address',
+			'region' =>					'Region',
+			'sub_region' =>				'Sub Region',
+			'types' =>					'Types',
+			'notes' =>					'Notes',
+			'location_notes' =>			'Location Notes',
+			'group' => 					'Group',
+			'district' => 				'District',
+			'sub_district' => 			'Sub District',
+			'website' => 				'Website',
+			'website_2' => 				'Website 2',
+			'mailing_address' =>		'Mailing Address',
+			'venmo' => 					'Venmo',
+			'square' => 				'Square',
+			'paypal' => 				'Paypal',
+			'email' => 					'Email',
+			'phone' => 					'Phone',
+			'group_notes' => 			'Group Notes',
+			'contact_1_name' =>			'Contact 1 Name',
+			'contact_1_email' =>		'Contact 1 Email',
+			'contact_1_phone' =>		'Contact 1 Phone',
+			'contact_2_name' =>			'Contact 2 Name',
+			'contact_2_email' =>		'Contact 2 Email',
+			'contact_2_phone' =>		'Contact 2 Phone',
+			'contact_3_name' =>			'Contact 3 Name',
+			'contact_3_email' =>		'Contact 3 Email',
+			'contact_3_phone' =>		'Contact 3 Phone',
+			'last_contact' => 			'Last Contact',
+			'conference_url' => 		'Conference URL',
+			'conference_url_notes' => 	'Conference URL Notes',
+			'conference_phone' => 		'Conference Phone',
+			'conference_phone_notes' => 'Conference Phone Notes',
+			'author' => 				'Author',
+			'slug' => 					'Slug',
+			'updated' =>				'Updated',
 		);
 
 		//helper vars
@@ -480,7 +482,7 @@ if (!function_exists('function_name')) {
 			}
 
 			//add custom meeting fields if available
-			foreach (array('types', 'data_source', 'conference_url', 'conference_phone') as $key) {
+			foreach (array('types', 'data_source', 'conference_url', 'conference_url_notes', 'conference_phone', 'conference_phone_notes') as $key) {
 				if (!empty($meeting[$key])) add_post_meta($meeting_id, $key, $meeting[$key]);
 			}
 
@@ -671,7 +673,7 @@ function tsml_ajax_meeting_link() {
 	$meeting_id = intval( $_GET['meeting_id'] );
 	$url        = get_post_meta( $meeting_id, 'conference_url', true );
 	if ( $url ) {
-		wp_send_json_success( [ 'meeting' => $url ] );
+		wp_send_json_success(array('meeting' => $url));
 	} else {
 		wp_send_json_error();
 	}

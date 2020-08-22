@@ -97,7 +97,7 @@ get_header();
 									<?php }?>
 								</li>
 								<?php if (!empty($meeting->conference_url) || !empty($meeting->conference_phone)) {?>
-								<li class="list-group-item">
+								<li class="list-group-item" style="padding-bottom: 0">
 									<h3 class="list-group-item-heading">
 										<?php _e('Online Meeting', '12-step-meeting-list')?>
 									</h3>
@@ -110,6 +110,9 @@ get_header();
 											</svg> 
 											<?php echo $provider === true ? $meeting->conference_url : sprintf(__('Join with %s', '12-step-meeting-list'), $provider)?>
 										</a>
+										<?php if ($meeting->conference_url_notes) {?>
+											<p style="margin: 7.5px 0 15px; color: #777; font-size: 90%;"><?php echo nl2br($meeting->conference_url_notes)?></p>
+										<?php }?>
 									<?php }
 									if (!empty($meeting->conference_phone)) {?>
 										<a id="phone-link" class="btn btn-default btn-block" href="#">
@@ -118,6 +121,9 @@ get_header();
 											</svg>
 											<?php _e('Join by Phone', '12-step-meeting-list')?>
 										</a>
+										<?php if ($meeting->conference_phone_notes) {?>
+											<p style="margin: 7.5px 0 15px; color: #777; font-size: 90%;"><?php echo nl2br($meeting->conference_phone_notes)?></p>
+										<?php }?>
 									<?php }?>
 								</li>
 								<?php }

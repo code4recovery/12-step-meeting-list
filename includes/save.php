@@ -28,7 +28,7 @@ function tsml_save_post($post_id, $post, $update) {
 	$update = ($post->post_date !== $post->post_modified);
 
 	//sanitize strings (website, website_2, paypal are not included)
-	$strings = array('post_title', 'location', 'formatted_address', 'mailing_address', 'venmo', 'square', 'post_status', 'group', 'last_contact', 'conference_phone');
+	$strings = array('post_title', 'location', 'formatted_address', 'mailing_address', 'venmo', 'square', 'post_status', 'group', 'last_contact', 'conference_url_notes', 'conference_phone', 'conference_phone_notes');
 	foreach ($strings as $string) {
 		$_POST[$string] = stripslashes(sanitize_text_field($_POST[$string]));
 	}
@@ -94,8 +94,18 @@ function tsml_save_post($post_id, $post, $update) {
 		$changes[] = 'conference_url';
 		if (empty($valid_conference_url)) {
 			delete_post_meta($post->ID, 'conference_url');
+			delete_post_meta($post->ID, 'conference_url_notes');
 		} else {
 			update_post_meta($post->ID, 'conference_url', $valid_conference_url);
+		}
+	}
+
+	if (!$update || strcmp($old_meeting->conference_url_notes, $_POST['conference_url_notes']) !== 0) {
+		$changes[] = 'conference_url_notes';
+		if (empty($_POST['conference_url_notes'])) {
+			delete_post_meta($post->ID, 'conference_url_notes');
+		} else {
+			update_post_meta($post->ID, 'conference_url_notes', $_POST['conference_url_notes']);
 		}
 	}
 	
@@ -103,8 +113,18 @@ function tsml_save_post($post_id, $post, $update) {
 		$changes[] = 'conference_phone';
 		if (empty($_POST['conference_phone'])) {
 			delete_post_meta($post->ID, 'conference_phone');
+			delete_post_meta($post->ID, 'conference_phone_notes');
 		} else {
 			update_post_meta($post->ID, 'conference_phone', $_POST['conference_phone']);
+		}
+	}
+
+	if (!$update || strcmp($old_meeting->conference_phone_notes, $_POST['conference_phone_notes']) !== 0) {
+		$changes[] = 'conference_phone_notes';
+		if (empty($_POST['conference_phone_notes'])) {
+			delete_post_meta($post->ID, 'conference_phone_notes');
+		} else {
+			update_post_meta($post->ID, 'conference_phone_notes', $_POST['conference_phone_notes']);
 		}
 	}
 	

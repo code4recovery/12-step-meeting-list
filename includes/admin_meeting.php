@@ -100,8 +100,16 @@ function tsml_admin_init() {
 			<input type="url" name="conference_url" id="conference_url" placeholder="https://" value="<?php echo $meeting->conference_url ?>">
 		</div>
 		<div class="meta_form_row">
-			<label for="content"><?php _e('Phone', '12-step-meeting-list')?></label>
+			<label for="conference_url_notes"><?php _e('URL Notes', '12-step-meeting-list')?></label>
+			<input type="text" name="conference_url_notes" id="conference_url_notes" value="<?php echo $meeting->conference_url_notes ?>">
+		</div>
+		<div class="meta_form_row">
+			<label for="conference_phone"><?php _e('Phone', '12-step-meeting-list')?></label>
 			<input type="text" name="conference_phone" id="conference_phone" placeholder="+12125551212,,123456789#,,#,,444444#" value="<?php echo $meeting->conference_phone ?>">
+		</div>
+		<div class="meta_form_row">
+			<label for="conference_phone_notes"><?php _e('Phone Notes', '12-step-meeting-list')?></label>
+			<input type="text" name="conference_phone_notes" id="conference_phone_notes" value="<?php echo $meeting->conference_phone_notes ?>">
 		</div>
 	<?php
 	}
