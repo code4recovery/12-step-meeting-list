@@ -162,6 +162,12 @@ $tsml_google_overrides = array(
 		'latitude' => 42.441700,
 		'longitude' => -72.800560,
 	),
+	'457 Main St, Stoneham, MA 02180, USA' => array(
+		'formatted_address' => '457 Main St, Stoneham, MA 02180, USA',
+		'city' => 'Stoneham',
+		'latitude' => 42.476460,
+		'longitude' => -71.100517,
+	),
 	'4125 Cedar Run Rd, Traverse City, MI 49684, USA' => array(
 		'formatted_address' => '4125 Cedar Run Rd, Traverse City, MI 49684, USA',
 		'city' => 'Traverse City',
