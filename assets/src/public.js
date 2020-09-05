@@ -5,13 +5,13 @@
 	c) functions
 */
 
-jQuery(function($){
-
+jQuery(function($) {
 	//a) procedural logic
 	var $body = $('body');
 	var typeaheadEnabled = false;
 
-	if (typeof tsml_map !== 'object')  { //main meetings page
+	if (typeof tsml_map !== 'object') {
+		//main meetings page
 
 		//search typeahead
 		var tsml_regions = new Bloodhound({
@@ -44,8 +44,10 @@ jQuery(function($){
 
 		//if already searching, mark results
 		var $search_field = $('#meetings #search input[name=query]');
-		if ($search_field.size() && $search_field.val().length) {
-			$('#tsml td').not('.time').mark($search_field.val());
+		if ($search_field.length && $search_field.val().length) {
+			$('#tsml td')
+				.not('.time')
+				.mark($search_field.val());
 		}
 
 		var mode = $('#search li.active a').attr('data-id');
@@ -55,15 +57,18 @@ jQuery(function($){
 			if ($('a.toggle-view[data-id="map"]').hasClass('active')) {
 				createMap(true, locations);
 			}
-		} else if ((mode == 'location') && $search_field.val().length) {
+		} else if (mode == 'location' && $search_field.val().length) {
 			doSearch();
 		} else if (mode == 'me') {
 			doSearch();
 		}
+	} else {
+		//meeting or location detail page
 
-	} else { //meeting or location detail page
-
-		var location_link = (typeof tsml_map.location_url === 'undefined') ? tsml_map.location : formatLink(tsml_map.location_url, tsml_map.location, 'tsml_meeting');
+		var location_link =
+			typeof tsml_map.location_url === 'undefined'
+				? tsml_map.location
+				: formatLink(tsml_map.location_url, tsml_map.location, 'tsml_meeting');
 		locations = {};
 		locations[tsml_map.location_id] = {
 			latitude: tsml_map.latitude,
@@ -73,89 +78,98 @@ jQuery(function($){
 			meetings: [],
 			directions: tsml_map.directions,
 			directions_url: tsml_map.directions_url,
-			url: tsml_map.location_url,
+			url: tsml_map.location_url
 		};
 		createMap(false, locations);
 
 		// Grab meeting and phone if they exist.
-		var meeting_el = document.getElementById( 'meeting-link' ),
-		    phone_el   = document.getElementById( 'phone-link' );
+		var meeting_el = document.getElementById('meeting-link'),
+			phone_el = document.getElementById('phone-link');
 		// If Meeting URL exists, grab it from meta and send user on their way
-		if ( meeting_el ) {
-			meeting_el.addEventListener( 'click', function( e ) {
+		if (meeting_el) {
+			meeting_el.addEventListener('click', function(e) {
 				e.preventDefault();
-				$.get( tsml.ajaxurl, {
+				$.get(tsml.ajaxurl, {
 					action: 'meeting_link',
 					meeting_id: tsml.meeting_id,
 					nonce: tsml.nonce
-				} )
-				 .done( function( result ) {
-					 if ( result.success ) {
-						 window.location.assign( result.data.meeting );
-						// window.open( result.data.meeting );
-					 }
-				 } )
-				 .fail( function( err ) {// TODO: improve
-					 console.log( 'FAIL' );
-				 } );
-			} );
+				})
+					.done(function(result) {
+						if (result.success) {
+							window.location.assign(result.data.meeting);
+							// window.open( result.data.meeting );
+						}
+					})
+					.fail(function(err) {
+						// TODO: improve
+						console.log('FAIL');
+					});
+			});
 		}
 		// If Phone Number exists grab it from meta and send user on their way
-		if ( phone_el ) {
-			phone_el.addEventListener( 'click', function( e ) {
+		if (phone_el) {
+			phone_el.addEventListener('click', function(e) {
 				e.preventDefault();
-				$.get( tsml.ajaxurl, {
+				$.get(tsml.ajaxurl, {
 					action: 'phone_link',
 					meeting_id: tsml.meeting_id,
 					nonce: tsml.nonce
-				} )
-				 .done( function( result ) {
-					 if ( result.success ) {
-						 window.location.assign( result.data.phone );
-					 }
-				 } )
-				 .fail( function(err ) {// TODO: improve
-					 console.log('FAIL');
-				 });
-			} );
+				})
+					.done(function(result) {
+						if (result.success) {
+							window.location.assign(result.data.phone);
+						}
+					})
+					.fail(function(err) {
+						// TODO: improve
+						console.log('FAIL');
+					});
+			});
 		}
-
 	}
 
 	//b) jQuery event handlers
 
 	//handle directions links; send to Apple Maps (iOS), or Google Maps (everything else)
 	var iOS = !!navigator.platform && /iPad|iPhone|iPod/.test(navigator.platform);
-	$body.on('click', 'a.tsml-directions', function(e){
+	$body.on('click', 'a.tsml-directions', function(e) {
 		e.preventDefault();
-		var directions = (iOS ? 'maps://?' : 'https://maps.google.com/?') + $.param({
-			daddr: $(this).attr('data-latitude') + ',' + $(this).attr('data-longitude'),
-			saddr: 'Current Location',
-			q: $(this).attr('data-location')
-		});
+		var directions =
+			(iOS ? 'maps://?' : 'https://maps.google.com/?') +
+			$.param({
+				daddr: $(this).attr('data-latitude') + ',' + $(this).attr('data-longitude'),
+				saddr: 'Current Location',
+				q: $(this).attr('data-location')
+			});
 		window.open(directions);
 	});
 
 	//expand region select
-	$('.panel-expandable').on('click', '.panel-heading', function(e){
-		$(this).closest('.panel-expandable').toggleClass('expanded');
+	$('.panel-expandable').on('click', '.panel-heading', function(e) {
+		$(this)
+			.closest('.panel-expandable')
+			.toggleClass('expanded');
 		if (tsml.debug) console.log('.panel-expandable toggling');
-	})
+	});
 
 	//single meeting page feedback form
 	$('#meeting #feedback').validate({
 		onfocusout: false,
-		onkeyup: function(element) { },
+		onkeyup: function(element) {},
 		highlight: function(element, errorClass, validClass) {
-			$(element).parent().addClass('has-error');
+			$(element)
+				.parent()
+				.addClass('has-error');
 		},
 		unhighlight: function(element, errorClass, validClass) {
-			$(element).parent().removeClass('has-error');
+			$(element)
+				.parent()
+				.removeClass('has-error');
 		},
 		errorPlacement: function(error, element) {
 			return; //don't show message on page, simply highlight
 		},
-		submitHandler: function(form){
+		submitHandler: function(form) {
 			var $form = $(form),
 				$feedback = $form.closest('#feedback');
 			if (!$form.hasClass('running'));
@@ -172,13 +186,13 @@ jQuery(function($){
 	});
 
 	//table sorting
-	$('#meetings table thead').on('click', 'th', function(){
+	$('#meetings table thead').on('click', 'th', function() {
 		var sort = $(this).attr('class');
 		var order;
 
 		//update header
 		if ($(this).attr('data-sort')) {
-			order = ($(this).attr('data-sort') == 'asc') ? 'desc' : 'asc';
+			order = $(this).attr('data-sort') == 'asc' ? 'desc' : 'asc';
 		} else {
 			order = 'asc';
 		}
@@ -188,137 +202,153 @@ jQuery(function($){
 	});
 
 	//controls changes
-	$('#meetings .controls').on('submit', '#search', function(){
-		//capture submit event
-		trackAnalytics('search', $search_field.val())
-		doSearch();
-		return false;
-	}).on('click', 'div.expand', function(e){
-		//expand or contract regions submenu
-		e.preventDefault();
-		e.stopPropagation();
-		$(this).next('ul.children').toggleClass('expanded');
-		$(this).toggleClass('expanded');
-	}).on('click', '.dropdown-menu a', function(e){
+	$('#meetings .controls')
+		.on('submit', '#search', function() {
+			//capture submit event
+			trackAnalytics('search', $search_field.val());
+			doSearch();
+			return false;
+		})
+		.on('click', 'div.expand', function(e) {
+			//expand or contract regions submenu
+			e.preventDefault();
+			e.stopPropagation();
+			$(this)
+				.next('ul.children')
+				.toggleClass('expanded');
+			$(this).toggleClass('expanded');
+		})
+		.on('click', '.dropdown-menu a', function(e) {
+			//these are live hrefs now
+			e.preventDefault();
 
-		//these are live hrefs now
-		e.preventDefault();
+			//dropdown menu click
+			var param = $(this)
+				.closest('div')
+				.attr('id');
 
-		//dropdown menu click
-		var param = $(this).closest('div').attr('id');
+			if (param == 'mode') {
+				if (tsml.debug) console.log('dropdown click search mode');
 
-		if (param == 'mode') {
+				//only one search mode
+				$('#mode li').removeClass('active');
 
-			if (tsml.debug) console.log('dropdown click search mode');
+				//remove meeting results
+				$('#meetings').addClass('empty');
 
-			//only one search mode
-			$('#mode li').removeClass('active');
+				//change icon & enable or disable
+				if ($(this).attr('data-id') == 'search') {
+					$search_field.prop('disabled', false);
+					$('#search button i')
+						.removeClass()
+						.addClass('glyphicon glyphicon-search');
+				} else if ($(this).attr('data-id') == 'location') {
+					$search_field.prop('disabled', false);
+					$('#search button i')
+						.removeClass()
+						.addClass('glyphicon glyphicon-map-marker');
+					setAlert('loc_thinking');
+				} else if ($(this).attr('data-id') == 'me') {
+					$search_field.prop('disabled', true);
+					$('#search button i')
+						.removeClass()
+						.addClass('glyphicon glyphicon-user');
+					setAlert('geo_thinking');
+				}
 
-			//remove meeting results
-			$('#meetings').addClass('empty');
+				//change placeholder text
+				$search_field.attr('placeholder', $(this).text());
+			} else if (param == 'distance') {
+				//distance only one
+				if (tsml.debug) console.log('dropdown click distance');
+				$('#distance li').removeClass('active');
+				$('#distance span.selected').html($(this).html());
+				trackAnalytics('distance', $(this).text());
+			} else if (param == 'region') {
+				//switch between region and district mode
+				if ($(this).hasClass('switch')) {
+					if (tsml.debug) console.log('dropdown click switching between region and district');
+					var mode = $(this)
+						.parent()
+						.hasClass('region')
+						? 'district'
+						: 'region';
+					$(this)
+						.closest('#meetings')
+						.attr('tax-mode', mode);
+					e.stopPropagation();
+					return;
+				}
 
-			//change icon & enable or disable
-			if ($(this).attr('data-id') == 'search') {
-				$search_field.prop('disabled', false);
-				$('#search button i').removeClass().addClass('glyphicon glyphicon-search');
-			} else if ($(this).attr('data-id') == 'location') {
-				$search_field.prop('disabled', false);
-				$('#search button i').removeClass().addClass('glyphicon glyphicon-map-marker');
-				setAlert('loc_thinking');
-			} else if ($(this).attr('data-id') == 'me') {
-				$search_field.prop('disabled', true);
-				$('#search button i').removeClass().addClass('glyphicon glyphicon-user');
-				setAlert('geo_thinking');
+				//region only one
+				if (tsml.debug) console.log('dropdown click region or district');
+				$('#region li').removeClass('active');
+				$('#region span.selected').html($(this).html());
+				trackAnalytics('region', $(this).text());
+			} else if (param == 'day') {
+				//day only one selected
+				if (tsml.debug) console.log('dropdown click day');
+				$('#day li').removeClass('active');
+				$('#day span.selected').html($(this).html());
+				trackAnalytics('day', $(this).text());
+			} else if (param == 'time') {
+				//time only one
+				if (tsml.debug) console.log('dropdown click time');
+				$('#time li').removeClass('active');
+				$('#time span.selected').html($(this).html());
+				trackAnalytics('time', $(this).text());
+			} else if (param == 'type') {
+				//type can be multiple
+				if (tsml.debug) console.log('dropdown click type');
+				if (!e.metaKey) $('#type li').removeClass('active');
+				trackAnalytics('type', $(this).text());
 			}
 
-			//change placeholder text
-			$search_field.attr('placeholder', $(this).text());
+			$(this)
+				.parent()
+				.toggleClass('active');
 
-		} else if (param == 'distance') {
-			//distance only one
-			if (tsml.debug) console.log('dropdown click distance');
-			$('#distance li').removeClass('active');
-			$('#distance span.selected').html($(this).html());
-			trackAnalytics('distance', $(this).text());
-		} else if (param == 'region') {
-			//switch between region and district mode
-			if ($(this).hasClass('switch')) {
-				if (tsml.debug) console.log('dropdown click switching between region and district');
-				var mode = $(this).parent().hasClass('region') ? 'district' : 'region';
-				$(this).closest('#meetings').attr('tax-mode', mode);
-				e.stopPropagation();
-				return;
+			//wait to set label on type until we have a complete count
+			if (param == 'type') {
+				if ($('#type li.active a[data-id]').length) {
+					if (tsml.debug) console.log('dropdown click ' + $('#type li.active a[data-id]').length + ' types selected');
+					var types = [];
+					$('#type li.active a[data-id]').each(function() {
+						types.push($(this).text());
+					});
+					$('#type span.selected').html(types.join(' + '));
+				} else {
+					if (tsml.debug) console.log('dropdown click no types selected');
+					$('#type span.selected').html($(this).text());
+				}
 			}
 
-			//region only one
-			if (tsml.debug) console.log('dropdown click region or district');
-			$('#region li').removeClass('active');
-			$('#region span.selected').html($(this).html());
-			trackAnalytics('region', $(this).text());
-
-		} else if (param == 'day') {
-			//day only one selected
-			if (tsml.debug) console.log('dropdown click day');
-			$('#day li').removeClass('active');
-			$('#day span.selected').html($(this).html());
-			trackAnalytics('day', $(this).text());
-		} else if (param == 'time') {
-			//time only one
-			if (tsml.debug) console.log('dropdown click time');
-			$('#time li').removeClass('active');
-			$('#time span.selected').html($(this).html());
-			trackAnalytics('time', $(this).text());
-		} else if (param == 'type') {
-			//type can be multiple
-			if (tsml.debug) console.log('dropdown click type');
-			if (!e.metaKey) $('#type li').removeClass('active');
-			trackAnalytics('type', $(this).text());
-		}
-
-		$(this).parent().toggleClass('active');
-
-		//wait to set label on type until we have a complete count
-		if (param == 'type') {
-			if ($('#type li.active a[data-id]').size()) {
-				if (tsml.debug) console.log('dropdown click ' + $('#type li.active a[data-id]').size() + ' types selected');
-				var types = [];
-				$('#type li.active a[data-id]').each(function(){
-					types.push($(this).text());
-				});
-				$('#type span.selected').html(types.join(' + '));
-			} else {
-				if (tsml.debug) console.log('dropdown click no types selected');
-				$('#type span.selected').html($(this).text());
+			//set page title
+			var string = '';
+			if ($('#meetings #day li.active').index()) {
+				string += $('#meetings #day span.selected').text();
 			}
-		}
+			if ($('#meetings #time li.active').index()) {
+				string += ' ' + $('#meetings #time span.selected').text();
+			}
+			if ($('#meetings #type li.active').index()) {
+				string += ' ' + $('#meetings #type span.selected').text();
+			}
+			string += ' ' + tsml.program + ' Meetings';
+			if ($('#meetings #region li.active').index()) {
+				string += ' in ' + $('#meetings #region span.selected').text();
+			}
+			document.title = string;
+			$('#tsml #meetings .title h1').text(string);
 
-		//set page title
-		var string = '';
-		if ($('#meetings #day li.active').index()) {
-			string += $('#meetings #day span.selected').text();
-		}
-		if ($('#meetings #time li.active').index()) {
-			string += ' ' + $('#meetings #time span.selected').text();
-		}
-		if ($('#meetings #type li.active').index()) {
-			string += ' ' + $('#meetings #type span.selected').text();
-		}
-		string += ' ' + tsml.program + ' Meetings';
-		if ($('#meetings #region li.active').index()) {
-			string += ' in ' + $('#meetings #region span.selected').text();
-		}
-		document.title = string;
-		$('#tsml #meetings .title h1').text(string);
+			//show/hide upcoming menu option
+			toggleUpcoming();
 
-		//show/hide upcoming menu option
-		toggleUpcoming();
-
-		doSearch();
-	});
+			doSearch();
+		});
 
 	//toggle between list and map
-	$('#meetings #action .toggle-view').click(function(e){
-
+	$('#meetings #action .toggle-view').click(function(e) {
 		//these are live hrefs now
 		e.preventDefault();
 
@@ -345,13 +375,12 @@ jQuery(function($){
 			} else {
 				var url = updateQueryString('tsml-view', action);
 			}
-			window.history.pushState({path:url}, '', url);
+			window.history.pushState({path: url}, '', url);
 		}
-
 	});
 
 	//resize fullscreen on resize
-	$(window).resize(function(e){
+	$(window).resize(function(e) {
 		if ($('#meetings').hasClass('tsml_fullscreen')) {
 			var center = map.getCenter();
 			var height = $(window).height() - 79;
@@ -366,10 +395,9 @@ jQuery(function($){
 
 	//run search (triggered by dropdown toggle or form submit)
 	function doSearch() {
-
 		//types can be multiple
 		var types = [];
-		$('#type li.active a').each(function(){
+		$('#type li.active a').each(function() {
 			if ($(this).attr('data-id')) {
 				types.push($(this).attr('data-id'));
 			}
@@ -378,7 +406,9 @@ jQuery(function($){
 		//prepare query for ajax
 		var controls = {
 			action: 'meetings',
-			query: $('#meetings #search input[name=query]').val().trim(),
+			query: $('#meetings #search input[name=query]')
+				.val()
+				.trim(),
 			mode: $('#search li.active a').attr('data-id'),
 			region: $('#region li.region.active a').attr('data-id'),
 			district: $('#region li.district.active a').attr('data-id'),
@@ -386,8 +416,8 @@ jQuery(function($){
 			time: $('#time li.active a').attr('data-id'),
 			type: types.length ? types.join(',') : undefined,
 			distance: $('#distance li.active a').attr('data-id'),
-			view: $('#meetings .toggle-view.active').attr('data-id'),
-		}
+			view: $('#meetings .toggle-view.active').attr('data-id')
+		};
 
 		//reset search location
 		searchLocation = null;
@@ -395,11 +425,11 @@ jQuery(function($){
 		//get current query string for history and appending to links
 		var query_string = {};
 		query_string['tsml-day'] = controls.day ? controls.day : 'any';
-		if ((controls.mode != 'search') && (controls.distance != tsml.defaults.distance)) {
+		if (controls.mode != 'search' && controls.distance != tsml.defaults.distance) {
 			query_string['tsml-distance'] = controls.distance;
 		}
-		if (controls.mode && (controls.mode != tsml.defaults.mode)) query_string['tsml-mode'] = controls.mode;
-		if (controls.query && (controls.query != tsml.defaults.query)) query_string['tsml-query'] = controls.query;
+		if (controls.mode && controls.mode != tsml.defaults.mode) query_string['tsml-mode'] = controls.mode;
+		if (controls.query && controls.query != tsml.defaults.query) query_string['tsml-query'] = controls.query;
 		if (controls.mode == 'search') {
 			if (controls.region != tsml.defaults.region) {
 				query_string['tsml-region'] = controls.region;
@@ -407,9 +437,9 @@ jQuery(function($){
 				query_string['tsml-district'] = controls.district;
 			}
 		}
-		if (controls.time && (controls.time != tsml.defaults.time)) query_string['tsml-time'] = controls.time;
-		if (controls.type && (controls.type != tsml.defaults.type)) query_string['tsml-type'] = controls.type;
-		if (controls.view && (controls.view != tsml.defaults.view)) query_string['tsml-view'] = controls.view;
+		if (controls.time && controls.time != tsml.defaults.time) query_string['tsml-time'] = controls.time;
+		if (controls.type && controls.type != tsml.defaults.type) query_string['tsml-type'] = controls.type;
+		if (controls.view && controls.view != tsml.defaults.view) query_string['tsml-view'] = controls.view;
 		query_string = $.param(query_string);
 
 		//save the query in the query string, if the browser is up to it
@@ -417,9 +447,9 @@ jQuery(function($){
 			var url = window.location.protocol + '//' + window.location.host + window.location.pathname;
 			if (query_string.length) url = url + '?' + query_string;
 			if (location.search.indexOf('post_type=tsml_meeting') > -1) {
-				url = url + ((url.indexOf('?') > -1) ? '&' : '?') + 'post_type=tsml_meeting';
+				url = url + (url.indexOf('?') > -1 ? '&' : '?') + 'post_type=tsml_meeting';
 			}
-			window.history.pushState({path:url}, '', url);
+			window.history.pushState({path: url}, '', url);
 		}
 
 		//set the mode on the parent object
@@ -433,77 +463,94 @@ jQuery(function($){
 			typeaheadDisable();
 
 			if (controls.query) {
-
 				//start spinner
-				$('#search button i').removeClass().addClass('glyphicon glyphicon-refresh spinning');
+				$('#search button i')
+					.removeClass()
+					.addClass('glyphicon glyphicon-refresh spinning');
 
 				//geocode the address
-				$.getJSON(tsml.ajaxurl, {
-					action: 'tsml_geocode',
-					address: controls.query,
-					nonce: tsml.nonce,
-				}, function(geocoded) {
-					if (tsml.debug) console.log('doSearch() location geocoded', geocoded);
-					$('#search button i').removeClass().addClass('glyphicon glyphicon-map-marker');
-					if (geocoded.status == 'error') {
-						//show error message
-						removeSearchMarker(); //clear marker if it exists
-						setAlert('loc_error');
-					} else {
-						$search_field.val(geocoded.formatted_address);
-						controls.latitude = geocoded.latitude;
-						controls.longitude = geocoded.longitude;
-						controls.query = ''; //don't actually keyword search this
-						searchLocation = {
-							latitude: controls.latitude,
-							longitude: controls.longitude,
-						};
-						getMeetings(controls);
+				$.getJSON(
+					tsml.ajaxurl,
+					{
+						action: 'tsml_geocode',
+						address: controls.query,
+						nonce: tsml.nonce
+					},
+					function(geocoded) {
+						if (tsml.debug) console.log('doSearch() location geocoded', geocoded);
+						$('#search button i')
+							.removeClass()
+							.addClass('glyphicon glyphicon-map-marker');
+						if (geocoded.status == 'error') {
+							//show error message
+							removeSearchMarker(); //clear marker if it exists
+							setAlert('loc_error');
+						} else {
+							$search_field.val(geocoded.formatted_address);
+							controls.latitude = geocoded.latitude;
+							controls.longitude = geocoded.longitude;
+							controls.query = ''; //don't actually keyword search this
+							searchLocation = {
+								latitude: controls.latitude,
+								longitude: controls.longitude
+							};
+							getMeetings(controls);
+						}
 					}
-				});
+				);
 			} else {
 				setAlert('loc_empty');
 			}
 		} else if (controls.mode == 'me') {
-
 			if (controls.query) {
 				$('#meetings #search input[name=query]').val('');
 				controls.query = '';
 			}
 
 			//start spinner
-			$('#search button i').removeClass().addClass('glyphicon glyphicon-refresh spinning');
+			$('#search button i')
+				.removeClass()
+				.addClass('glyphicon glyphicon-refresh spinning');
 
 			if (navigator.geolocation) {
-				navigator.geolocation.getCurrentPosition(function(pos) {
-					$('#search button i').removeClass().addClass('glyphicon glyphicon-user');
-					controls.latitude = pos.coords.latitude;
-					controls.longitude = pos.coords.longitude;
-					searchLocation = {
-						latitude: controls.latitude,
-						longitude: controls.longitude,
-					};
-					getMeetings(controls);
-				}, function() {
-					//browser supports but can't get geolocation
-					if (tsml.debug) console.log('doSearch() didnt get location');
-					$('#search button i').removeClass().addClass('glyphicon glyphicon-user'); //todo switch to location
-					removeSearchMarker();
-					setAlert('geo_error');
-				}, {
-					enableHighAccuracy: true,
-					timeout: 10000, //10 seconds
-					maximumAge: 600000, //10 minutes
-				});
+				navigator.geolocation.getCurrentPosition(
+					function(pos) {
+						$('#search button i')
+							.removeClass()
+							.addClass('glyphicon glyphicon-user');
+						controls.latitude = pos.coords.latitude;
+						controls.longitude = pos.coords.longitude;
+						searchLocation = {
+							latitude: controls.latitude,
+							longitude: controls.longitude
+						};
+						getMeetings(controls);
+					},
+					function() {
+						//browser supports but can't get geolocation
+						if (tsml.debug) console.log('doSearch() didnt get location');
+						$('#search button i')
+							.removeClass()
+							.addClass('glyphicon glyphicon-user'); //todo switch to location
+						removeSearchMarker();
+						setAlert('geo_error');
+					},
+					{
+						enableHighAccuracy: true,
+						timeout: 10000, //10 seconds
+						maximumAge: 600000 //10 minutes
+					}
+				);
 			} else {
 				//browser doesn't support geolocation
 				if (tsml.debug) console.log('doSearch() no browser support for geo');
-				$('#search button i').removeClass().addClass('glyphicon glyphicon-user'); //todo switch to location
+				$('#search button i')
+					.removeClass()
+					.addClass('glyphicon glyphicon-user'); //todo switch to location
 				removeSearchMarker();
 				setAlert('geo_error_browser');
 			}
 		}
-
 	}
 
 	//actually get the meetings from the JSON resource and output them
@@ -521,162 +568,219 @@ jQuery(function($){
 
 		if (tsml.debug) console.log('getMeetings()', tsml.ajaxurl + '?' + $.param(controls));
 
-		$.post(tsml.ajaxurl, controls, function(response){
+		$.post(
+			tsml.ajaxurl,
+			controls,
+			function(response) {
+				if (tsml.debug) console.log('getMeetings() received', response);
 
-			if (tsml.debug) console.log('getMeetings() received', response);
+				if (typeof response != 'object' || response == null) {
+					//there was a problem with the data source
+					$('#meetings').addClass('empty');
+					setAlert('data_error');
+				} else if (!response.length) {
+					//if keyword and no results, clear other parameters and search again
+					if (
+						controls.query &&
+						(typeof controls.day !== 'undefined' ||
+							typeof controls.region !== 'undefined' ||
+							typeof controls.time !== 'undefined' ||
+							typeof controls.type !== 'undefined')
+					) {
+						$('#day li')
+							.removeClass('active')
+							.first()
+							.addClass('active');
+						$('#time li')
+							.removeClass('active')
+							.first()
+							.addClass('active');
+						$('#region li')
+							.removeClass('active')
+							.first()
+							.addClass('active');
+						$('#type li')
+							.removeClass('active')
+							.first()
+							.addClass('active');
 
-			if (typeof response != 'object' || response == null) {
+						//set selected text
+						$('#day span.selected').html($('#day li:first-child a').html());
+						$('#time span.selected').html($('#time li:first-child a').html());
+						$('#region span.selected').html($('#region li:first-child a').html());
+						$('#type span.selected').html($('#type li:first-child a').html());
 
-				//there was a problem with the data source
-				$('#meetings').addClass('empty');
-				setAlert('data_error');
+						return doSearch();
+					}
 
-			} else if (!response.length) {
+					$('#meetings').addClass('empty');
+					setAlert('no_meetings');
+				} else {
+					$('#meetings').removeClass('empty');
 
-				//if keyword and no results, clear other parameters and search again
-				if (controls.query && (typeof controls.day !== 'undefined' || typeof controls.region !== 'undefined' || typeof controls.time !== 'undefined' || typeof controls.type !== 'undefined')) {
-					$('#day li').removeClass('active').first().addClass('active');
-					$('#time li').removeClass('active').first().addClass('active');
-					$('#region li').removeClass('active').first().addClass('active');
-					$('#type li').removeClass('active').first().addClass('active');
+					setAlert();
 
-					//set selected text
-					$('#day span.selected').html($('#day li:first-child a').html());
-					$('#time span.selected').html($('#time li:first-child a').html());
-					$('#region span.selected').html($('#region li:first-child a').html());
-					$('#type span.selected').html($('#type li:first-child a').html());
+					locations = [];
 
-					return doSearch();
-				}
+					var tbody = $('#meetings_tbody').html('');
 
-				$('#meetings').addClass('empty');
-				setAlert('no_meetings');
-			} else {
-				$('#meetings').removeClass('empty');
-
-				setAlert();
-
-				locations = [];
-
-				var tbody = $('#meetings_tbody').html('');
-
-				//loop through JSON meetings
-				$.each(response, function(index, obj){
-
-					//types could be undefined
-					if (!obj.types) obj.types = [];
-					//add type 'flags'
-					if (typeof tsml.flags == 'object') {
-						// True if the meeting is temporarily closed, but online option available
-						var meetingIsOnlineAndTC = (obj.types.indexOf('TC') !== -1) && (obj.types.indexOf('ONL') !== -1)
-						for (var i = 0; i < tsml.flags.length; i++) {
-							var flagIsTempClosed = tsml.flags[i] === 'TC'
-							// True if the type for the meeting obj matches one of the predetermined flags being looped
-							var typeIsFlagged = obj.types.indexOf(tsml.flags[i]) !== -1;
-							//  Add flag, except TC when meeting is also online
-							if (typeIsFlagged && !(meetingIsOnlineAndTC && flagIsTempClosed)) {
-								obj.name += ' <small>' + tsml.types[tsml.flags[i]] + '</small>';
+					//loop through JSON meetings
+					$.each(response, function(index, obj) {
+						//types could be undefined
+						if (!obj.types) obj.types = [];
+						//add type 'flags'
+						if (typeof tsml.flags == 'object') {
+							// True if the meeting is temporarily closed, but online option available
+							var meetingIsOnlineAndTC = obj.types.indexOf('TC') !== -1 && obj.types.indexOf('ONL') !== -1;
+							for (var i = 0; i < tsml.flags.length; i++) {
+								var flagIsTempClosed = tsml.flags[i] === 'TC';
+								// True if the type for the meeting obj matches one of the predetermined flags being looped
+								var typeIsFlagged = obj.types.indexOf(tsml.flags[i]) !== -1;
+								//  Add flag, except TC when meeting is also online
+								if (typeIsFlagged && !(meetingIsOnlineAndTC && flagIsTempClosed)) {
+									obj.name += ' <small>' + tsml.types[tsml.flags[i]] + '</small>';
+								}
 							}
 						}
-					}
 
-					//decode types (for hidden type column)
-					var types = [];
-					for (var i = 0; i < obj.types.length; i++) {
-						types.push(tsml.types[obj.types[i]]);
-					}
-					types.sort();
-					types = types.join(', ')
-
-					//save location info for map view
-					if (!locations[obj.location_id]) {
-						locations[obj.location_id] = {
-							name: obj.location,
-							formatted_address: obj.formatted_address,
-							latitude: obj.latitude,
-							longitude: obj.longitude,
-							url: obj.location_url,
-							meetings: []
-						};
-					}
-
-					//push meeting on to location
-					locations[obj.location_id].meetings[locations[obj.location_id].meetings.length] = {
-						name : obj.name,
-						time : obj.time_formatted,
-						day : obj.day,
-						notes : obj.notes,
-						url : obj.url
-					};
-
-					//classes for table row
-					var classes = [];
-					if (obj.notes && obj.notes.length) {
-						classes.push('notes');
-					}
-					for (var i = 0; i < obj.types.length; i++) {
-						classes.push('type-' + sanitizeTitle(obj.types[i]));
-					}
-
-					//add new table row
-					var row = '<tr class="' + classes.join(' ') + '">';
-					for (var i = 0; i < tsml.columns.length; i++) {
-						switch (tsml.columns[i]) {
-							case 'time':
-							var sort_time = (typeof obj.day === 'undefined' ? 7 : obj.day) + '-' + (obj.time == '00:00' ? '23:59' : obj.time);
-							row += '<td class="time" data-sort="' + sort_time + '-' + sanitizeTitle(obj.location) + '"><span>' + (typeof controls.day !== 'undefined' || typeof obj.day === 'undefined' ? obj.time_formatted : tsml.days[obj.day] + '</span><span>' + obj.time_formatted) + '</span></td>';
-							break;
-
-							case 'distance':
-							row += '<td class="distance" data-sort="' + obj.distance + '">' + obj.distance + ' ' + tsml.distance_units + '</td>';
-							break;
-
-							case 'name':
-							row += '<td class="name" data-sort="' + sanitizeTitle(obj.name) + '-' + sort_time + '">' + formatLink(obj.url, obj.name, 'post_type') + '</td>';
-							break;
-
-							case 'location':
-							row += '<td class="location" data-sort="' + sanitizeTitle(obj.location) + '-' + sort_time + '">' + obj.location + '</td>';
-							break;
-
-							case 'address':
-							row += '<td class="address" data-sort="' + sanitizeTitle(obj.formatted_address) + '-' + sort_time + '">' + formatAddress(obj.formatted_address, tsml.street_only) + '</td>';
-							break;
-
-							case 'region':
-							row += '<td class="region" data-sort="' + sanitizeTitle((obj.sub_region || obj.region || '')) + '-' + sort_time + '">' + (obj.sub_region || obj.region || '') + '</td>';
-							break;
-
-							case 'district':
-							row += '<td class="district" data-sort="' + sanitizeTitle((obj.sub_district || obj.district || '')) + '-' + sort_time + '">' + (obj.sub_district || obj.district || '') + '</td>';
-							break;
-
-							case 'types':
-							row += '<td class="types" data-sort="' + sanitizeTitle(types) + '-' + sort_time + '">' + types + '</td>';
-							break;
+						//decode types (for hidden type column)
+						var types = [];
+						for (var i = 0; i < obj.types.length; i++) {
+							types.push(tsml.types[obj.types[i]]);
 						}
+						types.sort();
+						types = types.join(', ');
+
+						//save location info for map view
+						if (!locations[obj.location_id]) {
+							locations[obj.location_id] = {
+								name: obj.location,
+								formatted_address: obj.formatted_address,
+								latitude: obj.latitude,
+								longitude: obj.longitude,
+								url: obj.location_url,
+								meetings: []
+							};
+						}
+
+						//push meeting on to location
+						locations[obj.location_id].meetings[locations[obj.location_id].meetings.length] = {
+							name: obj.name,
+							time: obj.time_formatted,
+							day: obj.day,
+							notes: obj.notes,
+							url: obj.url
+						};
+
+						//classes for table row
+						var classes = [];
+						if (obj.notes && obj.notes.length) {
+							classes.push('notes');
+						}
+						for (var i = 0; i < obj.types.length; i++) {
+							classes.push('type-' + sanitizeTitle(obj.types[i]));
+						}
+
+						//add new table row
+						var row = '<tr class="' + classes.join(' ') + '">';
+						for (var i = 0; i < tsml.columns.length; i++) {
+							switch (tsml.columns[i]) {
+								case 'time':
+									var sort_time = (typeof obj.day === 'undefined' ? 7 : obj.day) + '-' + (obj.time == '00:00' ? '23:59' : obj.time);
+									row +=
+										'<td class="time" data-sort="' +
+										sort_time +
+										'-' +
+										sanitizeTitle(obj.location) +
+										'"><span>' +
+										(typeof controls.day !== 'undefined' || typeof obj.day === 'undefined'
+											? obj.time_formatted
+											: tsml.days[obj.day] + '</span><span>' + obj.time_formatted) +
+										'</span></td>';
+									break;
+
+								case 'distance':
+									row += '<td class="distance" data-sort="' + obj.distance + '">' + obj.distance + ' ' + tsml.distance_units + '</td>';
+									break;
+
+								case 'name':
+									row +=
+										'<td class="name" data-sort="' +
+										sanitizeTitle(obj.name) +
+										'-' +
+										sort_time +
+										'">' +
+										formatLink(obj.url, obj.name, 'post_type') +
+										'</td>';
+									break;
+
+								case 'location':
+									row += '<td class="location" data-sort="' + sanitizeTitle(obj.location) + '-' + sort_time + '">' + obj.location + '</td>';
+									break;
+
+								case 'address':
+									row +=
+										'<td class="address" data-sort="' +
+										sanitizeTitle(obj.formatted_address) +
+										'-' +
+										sort_time +
+										'">' +
+										formatAddress(obj.formatted_address, tsml.street_only) +
+										'</td>';
+									break;
+
+								case 'region':
+									row +=
+										'<td class="region" data-sort="' +
+										sanitizeTitle(obj.sub_region || obj.region || '') +
+										'-' +
+										sort_time +
+										'">' +
+										(obj.sub_region || obj.region || '') +
+										'</td>';
+									break;
+
+								case 'district':
+									row +=
+										'<td class="district" data-sort="' +
+										sanitizeTitle(obj.sub_district || obj.district || '') +
+										'-' +
+										sort_time +
+										'">' +
+										(obj.sub_district || obj.district || '') +
+										'</td>';
+									break;
+
+								case 'types':
+									row += '<td class="types" data-sort="' + sanitizeTitle(types) + '-' + sort_time + '">' + types + '</td>';
+									break;
+							}
+						}
+						tbody.append(row + '</tr>');
+					});
+
+					sortMeetings();
+
+					//highlight search results
+					if (controls.query && controls.mode == 'search') {
+						$('#tsml td')
+							.not('.time')
+							.mark(controls.query);
 					}
-					tbody.append(row + '</tr>');
-				});
 
-				sortMeetings();
+					//build map
+					if (controls.view == 'map') {
+						createMap(true, locations, searchLocation);
+					}
 
-				//highlight search results
-				if (controls.query && controls.mode == 'search') {
-					$('#tsml td').not('.time').mark(controls.query);
+					tbody.trigger('tsml_meetings_updated', {
+						meetings: response,
+						tbody: tbody
+					});
 				}
-
-				//build map
-				if (controls.view == 'map') {
-					createMap(true, locations, searchLocation);
-				}
-
-				tbody.trigger('tsml_meetings_updated', {
-					meetings: response,
-					tbody: tbody,
-				});
-			}
-		}, 'json');
+			},
+			'json'
+		);
 	}
 
 	//slugify a string, like WordPress's sanitize_title()
@@ -687,14 +791,15 @@ jQuery(function($){
 		str = str.toLowerCase();
 
 		// remove accents, swap ñ for n, etc
-		var from = "àáäâèéëêìíïîòóöôùúüûñç·/_,:;";
-		var to = "aaaaeeeeiiiioooouuuunc------";
+		var from = 'àáäâèéëêìíïîòóöôùúüûñç·/_,:;';
+		var to = 'aaaaeeeeiiiioooouuuunc------';
 
-		for (var i=0, l=from.length ; i<l ; i++) {
+		for (var i = 0, l = from.length; i < l; i++) {
 			str = str.replace(new RegExp(from.charAt(i), 'g'), to.charAt(i));
 		}
 
-		str = str.replace(/[^a-z0-9 -]/g, '') // remove invalid chars
+		str = str
+			.replace(/[^a-z0-9 -]/g, '') // remove invalid chars
 			.replace(/\s+/g, '-') // collapse whitespace and replace by -
 			.replace(/-+/g, '-'); // collapse dashes
 
@@ -704,9 +809,13 @@ jQuery(function($){
 	//set or clear the alert message
 	function setAlert(message_key) {
 		if (typeof message_key == 'undefined') {
-			$('#alert').html('').addClass('hidden');
+			$('#alert')
+				.html('')
+				.addClass('hidden');
 		} else {
-			$('#alert').html(tsml.strings[message_key]).removeClass('hidden');
+			$('#alert')
+				.html(tsml.strings[message_key])
+				.removeClass('hidden');
 		}
 	}
 
@@ -726,12 +835,12 @@ jQuery(function($){
 			if (sort == 'distance') value = parseFloat(value);
 			store.push([value, row]);
 		}
-		store.sort(function(x,y){
-			if (x[0] > y[0]) return (order == 'asc') ? 1 : -1;
-			if (x[0] < y[0]) return (order == 'asc') ? -1 : 1;
+		store.sort(function(x, y) {
+			if (x[0] > y[0]) return order == 'asc' ? 1 : -1;
+			if (x[0] < y[0]) return order == 'asc' ? -1 : 1;
 			return 0;
 		});
-		for (var i = 0, len = store.length; i < len; i++){
+		for (var i = 0, len = store.length; i < len; i++) {
 			tbody.appendChild(store[i][1]);
 		}
 	}
@@ -739,14 +848,24 @@ jQuery(function($){
 	//if day is today, show 'upcoming' time option, otherwise hide it
 	function toggleUpcoming() {
 		var current_day = new Date().getDay();
-		var selected_day = $('#day li.active a').first().attr('data-id');
-		var selected_time = $('#time li.active a').first().attr('data-id');
+		var selected_day = $('#day li.active a')
+			.first()
+			.attr('data-id');
+		var selected_time = $('#time li.active a')
+			.first()
+			.attr('data-id');
 		if (current_day != selected_day) {
 			$('#time li.upcoming').addClass('hidden');
 			if (selected_time == 'upcoming') {
 				$('#time li.active').removeClass('active');
-				$('#time li').first().addClass('active');
-				$('#time span.selected').html($('#time li a').first().text());
+				$('#time li')
+					.first()
+					.addClass('active');
+				$('#time span.selected').html(
+					$('#time li a')
+						.first()
+						.text()
+				);
 			}
 		} else {
 			$('#time li.upcoming').removeClass('hidden');
@@ -773,56 +892,66 @@ jQuery(function($){
 		if (typeaheadEnabled) return;
 		if (tsml.debug) console.log('typeaheadEnable()');
 		typeaheadEnabled = true;
-		$('#meetings #search input[name="query"]').typeahead({
-			highlight: true
-		}, {
-			name: 'tsml_regions',
-			display: 'value',
-			source: tsml_regions,
-			templates: {
-				header: '<h3>' + tsml.strings.regions + '</h3>',
-			}
-		}, {
-			name: 'tsml_groups',
-			display: 'value',
-			source: tsml_groups,
-			templates: {
-				header: '<h3>' + tsml.strings.groups + '</h3>',
-			}
-		}, {
-			name: 'tsml_locations',
-			display: 'value',
-			source: tsml_locations,
-			templates: {
-				header: '<h3>' + tsml.strings.locations + '</h3>',
-			}
-		}).on('typeahead:selected', function($e, item){
-			if (item.type == 'region') {
-				$('#region li').removeClass('active');
-				var active = $('#region li a[data-id="' + item.id + '"]');
-				active.parent().addClass('active');
-				$('#region span.selected').html(active.html());
-				$('#search input[name="query"]').val('').typeahead('val', '');
-				trackAnalytics('region', active.text());
-				doSearch();
-			} else if (item.type == 'location') {
-				trackAnalytics('location', item.value);
-				location.href = item.url;
-			} else if (item.type == 'group') {
-				trackAnalytics('group', item.value);
-				doSearch();
-			}
-		});
+		$('#meetings #search input[name="query"]')
+			.typeahead(
+				{
+					highlight: true
+				},
+				{
+					name: 'tsml_regions',
+					display: 'value',
+					source: tsml_regions,
+					templates: {
+						header: '<h3>' + tsml.strings.regions + '</h3>'
+					}
+				},
+				{
+					name: 'tsml_groups',
+					display: 'value',
+					source: tsml_groups,
+					templates: {
+						header: '<h3>' + tsml.strings.groups + '</h3>'
+					}
+				},
+				{
+					name: 'tsml_locations',
+					display: 'value',
+					source: tsml_locations,
+					templates: {
+						header: '<h3>' + tsml.strings.locations + '</h3>'
+					}
+				}
+			)
+			.on('typeahead:selected', function($e, item) {
+				if (item.type == 'region') {
+					$('#region li').removeClass('active');
+					var active = $('#region li a[data-id="' + item.id + '"]');
+					active.parent().addClass('active');
+					$('#region span.selected').html(active.html());
+					$('#search input[name="query"]')
+						.val('')
+						.typeahead('val', '');
+					trackAnalytics('region', active.text());
+					doSearch();
+				} else if (item.type == 'location') {
+					trackAnalytics('location', item.value);
+					location.href = item.url;
+				} else if (item.type == 'group') {
+					trackAnalytics('group', item.value);
+					doSearch();
+				}
+			});
 	}
 
 	//set a param on the query string
 	function updateQueryString(key, value, url) {
 		if (!url) url = window.location.href;
-		var re = new RegExp("([?&])" + key + "=.*?(&|#|$)(.*)", "gi"), hash;
+		var re = new RegExp('([?&])' + key + '=.*?(&|#|$)(.*)', 'gi'),
+			hash;
 
 		if (re.test(url)) {
 			if (typeof value !== 'undefined' && value !== null) {
-				return url.replace(re, '$1' + key + "=" + value + '$2$3');
+				return url.replace(re, '$1' + key + '=' + value + '$2$3');
 			} else {
 				hash = url.split('#');
 				url = hash[0].replace(re, '$1$3').replace(/(&|\?)$/, '');
@@ -841,5 +970,4 @@ jQuery(function($){
 			}
 		}
 	}
-
 });
