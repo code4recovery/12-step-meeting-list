@@ -740,6 +740,30 @@ function tsml_define_strings() {
 				'Y' => __('Young People', '12-step-meeting-list'),
 			),
 		),
+		'cea-how' => array(
+			'abbr' => __('CEA-HOW', '12-step-meeting-list'),
+			'flags' => array(), //for /men and /women at end of meeting name (used in tsml_format_name())
+			'name' => __('Compulsive Eaters Anonymous-HOW', '12-step-meeting-list'),
+			'types' => array(
+				'12x12' => __('12 Steps & 12 Traditions', '12-step-meeting-list'),
+				'AACOA' => __('AA Comes of Age', '12-step-meeting-list'),
+				'ABSI' => __('As Bill Sees It', '12-step-meeting-list'),
+				'B' => __('Big Book', '12-step-meeting-list'),
+				'BOOK' => __('Book Study', '12-step-meeting-list'),
+				'CTB' => __('Came to Believe', '12-step-meeting-list'),
+				'CEA-HOW' => __('CEA-HOW Concept/Tools', '12-step-meeting-list'),
+				'DR' => __('Daily Reflections', '12-step-meeting-list'),
+				'HJF' => __('Happy Joyous and Free', '12-step-meeting-list'),
+				'LS' => __('Living Sober', '12-step-meeting-list'),
+				'MAINT' => __('Maintenance', '12-step-meeting-list'),
+				'MED' => __('Meditation', '12-step-meeting-list'),
+				'SP' => __('Pitch/Speaker', '12-step-meeting-list'),
+				'PROM' => __('Promises', '12-step-meeting-list'),
+				'RANDR' => __('Relapse and Recovery', '12-step-meeting-list'),
+				'ST' => __('Steps/Traditions', '12-step-meeting-list'),				
+				'D' => __('Topic/Discussion', '12-step-meeting-list'),
+			),
+		),
 		'da' => array(
 			'abbr' => __('DA', '12-step-meeting-list'),
 			'flags' => array('M', 'W', 'TC', 'ONL'), //for /men and /women at end of meeting name (used in tsml_format_name())
