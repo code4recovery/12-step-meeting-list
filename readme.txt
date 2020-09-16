@@ -211,6 +211,8 @@ To apply these changes, you must go to Settings > Permalinks and click "Save Cha
 * Fixes bug preventing customized meeting URL.
 * Fixes bug involving meetings in draft status stripping location.
 * Fixes classname issue with online meeting provider.
+* Adds program type Compulsive Eaters Anonymous-HOW.
+* Fixes JQuery error with Wordpress 5.5.
 
 = 3.7.2 =
 * Fixed bug involving end_time for meeting.
