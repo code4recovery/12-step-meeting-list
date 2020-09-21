@@ -162,6 +162,12 @@ $tsml_google_overrides = array(
 		'latitude' => 42.441700,
 		'longitude' => -72.800560,
 	),
+	'457 Main St, Stoneham, MA 02180, USA' => array(
+		'formatted_address' => '457 Main St, Stoneham, MA 02180, USA',
+		'city' => 'Stoneham',
+		'latitude' => 42.476460,
+		'longitude' => -71.100517,
+	),
 	'4125 Cedar Run Rd, Traverse City, MI 49684, USA' => array(
 		'formatted_address' => '4125 Cedar Run Rd, Traverse City, MI 49684, USA',
 		'city' => 'Traverse City',
@@ -458,7 +464,10 @@ $tsml_street_only = true;
 $tsml_timestamp = microtime(true);
 
 //these are empty now because polylang might change the language. gets set in the plugins_loaded hook
-$tsml_days = $tsml_days_order = $tsml_programs = $tsml_types_in_use = $tsml_slug = null; $tsml_strings = null;
+$tsml_days = $tsml_days_order = $tsml_programs = $tsml_types_in_use = $tsml_strings = null;
+
+//string url for the meeting finder, or false for no automatic archive page
+if (!isset($tsml_slug)) $tsml_slug = null;
 
 add_action('plugins_loaded', 'tsml_define_strings');
 
@@ -729,6 +738,30 @@ function tsml_define_strings() {
 				'X' => __('Wheelchair Access', '12-step-meeting-list'),
 				'W' => __('Women', '12-step-meeting-list'),
 				'Y' => __('Young People', '12-step-meeting-list'),
+			),
+		),
+		'cea-how' => array(
+			'abbr' => __('CEA-HOW', '12-step-meeting-list'),
+			'flags' => array(), //for /men and /women at end of meeting name (used in tsml_format_name())
+			'name' => __('Compulsive Eaters Anonymous-HOW', '12-step-meeting-list'),
+			'types' => array(
+				'12x12' => __('12 Steps & 12 Traditions', '12-step-meeting-list'),
+				'AACOA' => __('AA Comes of Age', '12-step-meeting-list'),
+				'ABSI' => __('As Bill Sees It', '12-step-meeting-list'),
+				'B' => __('Big Book', '12-step-meeting-list'),
+				'BOOK' => __('Book Study', '12-step-meeting-list'),
+				'CTB' => __('Came to Believe', '12-step-meeting-list'),
+				'CEA-HOW' => __('CEA-HOW Concept/Tools', '12-step-meeting-list'),
+				'DR' => __('Daily Reflections', '12-step-meeting-list'),
+				'HJF' => __('Happy Joyous and Free', '12-step-meeting-list'),
+				'LS' => __('Living Sober', '12-step-meeting-list'),
+				'MAINT' => __('Maintenance', '12-step-meeting-list'),
+				'MED' => __('Meditation', '12-step-meeting-list'),
+				'SP' => __('Pitch/Speaker', '12-step-meeting-list'),
+				'PROM' => __('Promises', '12-step-meeting-list'),
+				'RANDR' => __('Relapse and Recovery', '12-step-meeting-list'),
+				'ST' => __('Steps/Traditions', '12-step-meeting-list'),				
+				'D' => __('Topic/Discussion', '12-step-meeting-list'),
 			),
 		),
 		'da' => array(
@@ -1136,7 +1169,9 @@ function tsml_define_strings() {
 	);
 
 	//the location where the list will show up, eg https://intergroup.org/meetings
-	$tsml_slug = sanitize_title(__('meetings', '12-step-meeting-list'));
+	if ($tsml_slug === null) {
+		$tsml_slug = sanitize_title(__('meetings', '12-step-meeting-list'));
+	}
 
 	//strings that must be synced between the javascript and the PHP
 	$tsml_strings = array(

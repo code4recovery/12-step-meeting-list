@@ -97,7 +97,7 @@ get_header();
 									<?php }?>
 								</li>
 								<?php if (!empty($meeting->conference_url) || !empty($meeting->conference_phone)) {?>
-								<li class="list-group-item">
+								<li class="list-group-item" style="padding-bottom: 0">
 									<h3 class="list-group-item-heading">
 										<?php _e('Online Meeting', '12-step-meeting-list')?>
 									</h3>
@@ -110,6 +110,9 @@ get_header();
 											</svg> 
 											<?php echo $provider === true ? $meeting->conference_url : sprintf(__('Join with %s', '12-step-meeting-list'), $provider)?>
 										</a>
+										<?php if ($meeting->conference_url_notes) {?>
+											<p style="margin: 7.5px 0 15px; color: #777; font-size: 90%;"><?php echo nl2br($meeting->conference_url_notes)?></p>
+										<?php }?>
 									<?php }
 									if (!empty($meeting->conference_phone)) {?>
 										<a id="phone-link" class="btn btn-default btn-block" href="#">
@@ -118,6 +121,9 @@ get_header();
 											</svg>
 											<?php _e('Join by Phone', '12-step-meeting-list')?>
 										</a>
+										<?php if ($meeting->conference_phone_notes) {?>
+											<p style="margin: 7.5px 0 15px; color: #777; font-size: 90%;"><?php echo nl2br($meeting->conference_phone_notes)?></p>
+										<?php }?>
 									<?php }?>
 								</li>
 								<?php }
@@ -147,7 +153,7 @@ get_header();
 										foreach ($active_services as $field) {
 											$service = $services[$field];
 											if (!empty($meeting->{$field})) {?>
-												<a id="paypal-link" class="btn btn-default btn-block" href="<?php echo $service['url'] . substr($meeting->{$field}, $service['substr']) ?>" target="_blank">
+												<a id="<?php echo $field?>-link" class="btn btn-default btn-block" href="<?php echo $service['url'] . substr($meeting->{$field}, $service['substr']) ?>" target="_blank">
 													<svg class="icon" width="1em" height="1em" viewBox="0 0 16 16" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
 														<path d="M14 3H1a1 1 0 0 1 1-1h12a1 1 0 0 1 1 1h-1z"/>
 														<path fill-rule="evenodd" d="M15 5H1v8h14V5zM1 4a1 1 0 0 0-1 1v8a1 1 0 0 0 1 1h14a1 1 0 0 0 1-1V5a1 1 0 0 0-1-1H1z"/>

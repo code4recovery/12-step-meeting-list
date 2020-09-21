@@ -2,7 +2,7 @@
 Contributors: aasanjose
 Requires at least: 3.2
 Tested up to: 5.4.2
-Stable tag: 3.7.2
+Stable tag: 3.8.0
 
 This plugin helps twelve step recovery programs list their meetings. It standardizes addresses, and displays results in a searchable list and map.
 
@@ -191,6 +191,8 @@ Yes, try setting the $tsml_slug variable in your functions.php.
 
 	$tsml_slug = 'schedule';
 
+You may set it to false to hide the public meeting finder altogether.
+
 To apply these changes, you must go to Settings > Permalinks and click "Save Changes"
 
 == Screenshots ==
@@ -202,6 +204,15 @@ To apply these changes, you must go to Settings > Permalinks and click "Save Cha
 1. Edit location
 
 == Changelog ==
+
+= 3.8.0 =
+* Adds notes fields for online/phone meetings. 
+* Fixes bug preventing selection of multiple types.
+* Fixes bug preventing customized meeting URL.
+* Fixes bug involving meetings in draft status stripping location.
+* Fixes classname issue with online meeting provider.
+* Adds program type Compulsive Eaters Anonymous-HOW.
+* Fixes JQuery error with Wordpress 5.5.
 
 = 3.7.2 =
 * Fixed bug involving end_time for meeting.

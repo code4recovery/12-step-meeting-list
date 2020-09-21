@@ -224,6 +224,9 @@ function tsml_custom_flags($flags) {
 //used: 	init.php on every request, also in change_activation_state() for plugin activation or deactivation
 function tsml_custom_post_types() {
 	global $tsml_slug;
+
+	$is_public = !empty($tsml_slug);
+
 	register_taxonomy('tsml_region', 'tsml_location', array(
 		'labels' => array(
 			'name' => __('Regions', '12-step-meeting-list'),
@@ -278,8 +281,9 @@ function tsml_custom_post_types() {
 			//not sure if we want this on the meeting or on the location
 			//'supports' => array('title', 'thumbnail'),
 			'supports' => array('title', 'author'),
-			'public' => true,
-			'has_archive' => true,
+			'public' => $is_public,
+			'show_ui' => true,
+			'has_archive' => $is_public,
 			'menu_icon' => 'dashicons-groups',
 			'rewrite' => array('slug'=>$tsml_slug),
 		)
@@ -288,9 +292,9 @@ function tsml_custom_post_types() {
 	register_post_type('tsml_location',
 		array(
 			'supports' => array('title'),
-			'public' => true,
+			'public' => $is_public,
 			'show_ui' => false,
-			'has_archive' => true,
+			'has_archive' => $is_public,
 			'capabilities' => array('create_posts' => false),
 			'rewrite' => array('slug'=>'locations'),
 			'taxonomies' => array('tsml_region'),
@@ -993,7 +997,9 @@ function tsml_get_meetings($arguments=array(), $from_cache=true) {
 				'end_time'			=> @$meeting_meta[$post->ID]['end_time'],
 				'time_formatted'	=> tsml_format_time(@$meeting_meta[$post->ID]['time']),
 				'conference_url'	=> @$meeting_meta[$post->ID]['conference_url'],
+				'conference_url_notes'	=> @$meeting_meta[$post->ID]['conference_url_notes'],
 				'conference_phone'	=> @$meeting_meta[$post->ID]['conference_phone'],
+				'conference_phone_notes'	=> @$meeting_meta[$post->ID]['conference_phone_notes'],
 				'types'				=> empty($meeting_meta[$post->ID]['types']) ? array() : array_values(unserialize($meeting_meta[$post->ID]['types'])),
 			), $locations[$post->post_parent]);
 
@@ -1034,7 +1040,7 @@ function tsml_get_meta($type, $id=null) {
 	$keys = array(
 		'tsml_group' => '"website", "website_2", "email", "phone", "mailing_address", "venmo", "square", "paypal", "last_contact"' . (current_user_can('edit_posts') ? ', "contact_1_name", "contact_1_email", "contact_1_phone", "contact_2_name", "contact_2_email", "contact_2_phone", "contact_3_name", "contact_3_email", "contact_3_phone"' : ''),
 		'tsml_location' => '"formatted_address", "latitude", "longitude"',
-		'tsml_meeting' => '"day", "time", "end_time", "types", "group_id", "website", "website_2", "email", "phone", "mailing_address", "venmo", "square", "paypal", "last_contact", "conference_url", "conference_phone"' . (current_user_can('edit_posts') ? ', "contact_1_name", "contact_1_email", "contact_1_phone", "contact_2_name", "contact_2_email", "contact_2_phone", "contact_3_name", "contact_3_email", "contact_3_phone"' : ''),
+		'tsml_meeting' => '"day", "time", "end_time", "types", "group_id", "website", "website_2", "email", "phone", "mailing_address", "venmo", "square", "paypal", "last_contact", "conference_url", "conference_url_notes", "conference_phone", "conference_phone_notes"' . (current_user_can('edit_posts') ? ', "contact_1_name", "contact_1_email", "contact_1_phone", "contact_2_name", "contact_2_email", "contact_2_phone", "contact_3_name", "contact_3_email", "contact_3_phone"' : ''),
 	);
 	if (!array_key_exists($type, $keys)) return trigger_error('tsml_get_meta for unexpected type ' . $type);
 	$meta = array();
@@ -1163,7 +1169,7 @@ function tsml_import_buffer_set($meetings, $data_source=null) {
 			//have to compress types down real quick (only happens with json)
 			if (is_array($value)) $value = implode(',', $value);
 
-			if (in_array($key, array('notes', 'location_notes', 'group_notes'))) {
+			if (tsml_string_ends($key, 'notes')) {
 				$meetings[$i][$key] = sanitize_text_area($value);
 			} else {
 				$meetings[$i][$key] = sanitize_text_field($value);
@@ -1285,10 +1291,14 @@ function tsml_import_buffer_set($meetings, $data_source=null) {
 				$meetings[$i]['types'][] = 'ONL';
 			} else {
 				$meetings[$i]['conference_url'] = null;
+				$meetings[$i]['conference_url_notes'] = null;
 			}
 		}
 		if (!empty($meetings[$i]['conference_phone']) && empty($meetings[$i]['conference_url'])) {
 			$meetings[$i]['types'][] = 'ONL'; 
+		}
+		if (empty($meetings[$i]['conference_phone'])) {
+			$meetings[$i]['conference_phone_notes'] = null;
 		}
 
 		//make sure we're not double-listing types
