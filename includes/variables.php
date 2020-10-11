@@ -14,6 +14,13 @@ if (!$tsml_cache = get_option('tsml_cache')) {
 	update_option('tsml_cache', $tsml_cache);
 }
 
+// Define attendance options
+$tsml_meeting_attendance_options = array(
+	'in_person' => 'In-person',
+	'online' => 'Online only',
+	'hybrid' => 'In-person and online',
+);
+
 //load the set of columns that should be present in the list (not sure why this shouldn't go after plugins_loaded below)
 $tsml_columns = array(
 	'time' => 'Time',
