@@ -1673,3 +1673,33 @@ function tsml_to_css_classes($types, $prefix = 'type-') {
 
 	return $prefix . implode(' ' . $prefix, $types);
 }
+
+/**
+ * Sanitizes a string for sorting purposes.  Supports mulitple languages via UNICODE
+ *
+ * @param string string
+ * @return string
+ */
+function tsml_sanitize_data_sort($string) {
+	global $tsml_sanitize_data;
+
+	// Populate regex array only once
+	if (!isset($tsml_sanitize_data)) {
+		$tsml_sanitize_data = array(
+			array('/<[^>]+>/', ''), # Strip HTML Tags
+			array('/[&\'"<>]+/', ''), # Strip unsupported chars
+			array('/[\\/\\.\\p{Zs}\\p{Pd}]/u', '-'), # Change forward slashes, periods, spaces and dashes to dash (UNICODE)
+			array('/[^\\p{L}\\p{N}\\p{M}\-]+/u', ''), # Remove any UNICODE char that is not an alpha-numeric, mark character or dash
+			array('/\-+/', '-'), # Convert runs of dashes into a single dash
+			array('/^\-|\-$/', '') # Strip trailing/leading dash
+		);
+	}
+
+	$t = html_entity_decode($string);
+
+	foreach ($tsml_sanitize_data as $a) {
+		$t = preg_replace($a[0], $a[1], $t);
+	}
+
+	return mb_strtolower($t);
+}

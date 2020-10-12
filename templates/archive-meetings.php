@@ -532,7 +532,7 @@ foreach ($meetings as $meeting) {
 								<?php foreach ($tsml_columns as $key => $column) {
         switch ($key) {
             case 'time': ?>
-									<td class="time" data-sort="<?php echo $sort_time . '-' . sanitize_title($meeting['location']) ?>"><span><?php
+									<td class="time" data-sort="<?php echo $sort_time . '-' . tsml_sanitize_data_sort($meeting['location']) ?>"><span><?php
 if (($day === null) && !empty($meeting['time'])) {
                     echo tsml_format_day_and_time($meeting['day'], $meeting['time'], '</span><span>');
                 } else {
@@ -548,36 +548,36 @@ break;
 break;
 
             case 'name': ?>
-									<td class="name" data-sort="<?php echo sanitize_title($meeting['name']) . '-' . $sort_time ?>">
+									<td class="name" data-sort="<?php echo tsml_sanitize_data_sort($meeting['name']) . '-' . $sort_time ?>">
 										<?php echo $meeting['link'] ?>
 									</td>
 									<?php
 break;
 
             case 'location': ?>
-									<td class="location" data-sort="<?php echo sanitize_title($meeting['location']) . '-' . $sort_time ?>">
+									<td class="location" data-sort="<?php echo tsml_sanitize_data_sort($meeting['location']) . '-' . $sort_time ?>">
 										<?php echo $meeting['location'] ?>
 									</td>
 									<?php
 break;
 
             case 'address': ?>
-									<td class="address" data-sort="<?php echo sanitize_title($meeting['formatted_address']) . '-' . $sort_time ?>"><?php echo tsml_format_address($meeting['formatted_address'], $tsml_street_only) ?></td>
+									<td class="address" data-sort="<?php echo tsml_sanitize_data_sort($meeting['formatted_address']) . '-' . $sort_time ?>"><?php echo tsml_format_address($meeting['formatted_address'], $tsml_street_only) ?></td>
 									<?php
 break;
 
             case 'region': ?>
-									<td class="region" data-sort="<?php echo sanitize_title($meeting['region']) . '-' . $sort_time ?>"><?php echo $meeting['region'] ?></td>
+									<td class="region" data-sort="<?php echo tsml_sanitize_data_sort($meeting['region']) . '-' . $sort_time ?>"><?php echo $meeting['region'] ?></td>
 									<?php
 break;
 
             case 'district': ?>
-									<td class="district" data-sort="<?php echo sanitize_title($meeting['district']) . '-' . $sort_time ?>"><?php echo $meeting['district'] ?></td>
+									<td class="district" data-sort="<?php echo tsml_sanitize_data_sort($meeting['district']) . '-' . $sort_time ?>"><?php echo $meeting['district'] ?></td>
 									<?php
 break;
 
             case 'types': ?>
-									<td class="types" data-sort="<?php echo sanitize_title(tsml_meeting_types($meeting['types'])) . '-' . $sort_time ?>"><?php echo tsml_meeting_types($meeting['types']) ?></td>
+									<td class="types" data-sort="<?php echo tsml_sanitize_data_sort(tsml_meeting_types($meeting['types'])) . '-' . $sort_time ?>"><?php echo tsml_meeting_types($meeting['types']) ?></td>
 									<?php
 break;
         }
