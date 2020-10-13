@@ -155,6 +155,8 @@ function tsml_cache_rebuild() {
 //hands off to tsml_custom_post_types
 function tsml_change_activation_state() {
 	tsml_custom_post_types();
+	// Clear tsml_addresses option (geocoding cache)
+	// delete_option('tsml_addresses');
 	flush_rewrite_rules();
 }
 
@@ -662,7 +664,7 @@ function tsml_geocode($address) {
 			'formatted_address' => $data->results[0]->formatted_address,
 			'latitude' => $data->results[0]->geometry->location->lat,
 			'longitude' => $data->results[0]->geometry->location->lng,
-			'types' => $data->results[0]->types[0],
+			'is_approximate_location' => $data->results[0]->geometry->location_type == 'APPROXIMATE',
 			'city' => null,
 		);
 		// $my_results = print_r($response, true);
