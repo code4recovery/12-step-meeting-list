@@ -1675,9 +1675,12 @@ function tsml_to_css_classes($types, $prefix = 'type-') {
 }
 
 /**
- * Sanitizes a string for sorting purposes.  Supports mulitple languages via UNICODE
+ * Sanitizes a string for sorting purposes.  Uses Unicode regular expressions to support multiple languages.
+ * 
+ * NOTE: Requires PHP 5.1.0 or later.  More details here:
+ *   https://www.php.net/manual/en/regexp.reference.unicode.php
  *
- * @param string string
+ * @param string $string
  * @return string
  */
 function tsml_sanitize_data_sort($string) {
@@ -1688,8 +1691,8 @@ function tsml_sanitize_data_sort($string) {
 		$tsml_sanitize_data = array(
 			array('/<[^>]+>/', ''), # Strip HTML Tags
 			array('/[&\'"<>]+/', ''), # Strip unsupported chars
-			array('/[\\/\\.\\p{Zs}\\p{Pd}]/u', '-'), # Change forward slashes, periods, spaces and dashes to dash (UNICODE)
-			array('/[^\\p{L}\\p{N}\\p{M}\-]+/u', ''), # Remove any UNICODE char that is not an alpha-numeric, mark character or dash
+			array('/[\\/\\.\\p{Zs}\\p{Pd}]/u', '-'), # Change forward slashes, periods, spaces and dashes to dash (Unicode)
+			array('/[^\\p{L}\\p{N}\\p{M}\-]+/u', ''), # Remove any Unicode char that is not an alpha-numeric, mark character or dash
 			array('/\-+/', '-'), # Convert runs of dashes into a single dash
 			array('/^\-|\-$/', '') # Strip trailing/leading dash
 		);

@@ -28,7 +28,7 @@ msgstr ""
 #: includes/admin_import.php:22
 msgid "The uploaded file was only partially uploaded."
 msgstr ""
-
+1
 #: includes/admin_import.php:24
 msgid "No file was uploaded."
 msgstr ""
