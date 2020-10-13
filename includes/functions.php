@@ -1675,7 +1675,7 @@ function tsml_to_css_classes($types, $prefix = 'type-') {
 }
 
 /**
- * Sanitizes a string for sorting purposes.  Uses Unicode regular expressions to support multiple languages.
+ * Sanitizes a string for sorting purposes.  Similar to sanitize_title(), but uses Unicode regular expressions to support multiple languages.
  * 
  * NOTE: Requires PHP 5.1.0 or later.  More details here:
  *   https://www.php.net/manual/en/regexp.reference.unicode.php
@@ -1684,11 +1684,11 @@ function tsml_to_css_classes($types, $prefix = 'type-') {
  * @return string
  */
 function tsml_sanitize_data_sort($string) {
-	global $tsml_sanitize_data;
+	global $tsml_sanitize_data_sort_regexps;
 
 	// Populate regex array only once
-	if (!isset($tsml_sanitize_data)) {
-		$tsml_sanitize_data = array(
+	if (!isset($tsml_sanitize_data_sort_regexps)) {
+		$tsml_sanitize_data_sort_regexps = array(
 			array('/<[^>]+>/', ''), # Strip HTML Tags
 			array('/[&\'"<>]+/', ''), # Strip unsupported chars
 			array('/[\\/\\.\\p{Zs}\\p{Pd}]/u', '-'), # Change forward slashes, periods, spaces and dashes to dash (Unicode)
@@ -1698,11 +1698,14 @@ function tsml_sanitize_data_sort($string) {
 		);
 	}
 
+	# Convert all html entities to chars so encodings are uniform
 	$t = html_entity_decode($string);
 
-	foreach ($tsml_sanitize_data as $a) {
+	# Do regex-based sanitization
+	foreach ($tsml_sanitize_data_sort_regexps as $a) {
 		$t = preg_replace($a[0], $a[1], $t);
 	}
 
+	# Unicode-aware lowercase of characters in string
 	return mb_strtolower($t);
 }

@@ -875,7 +875,7 @@ jQuery(function($) {
 		if (window.Intl)
 		{
 			// Do locale-aware sort, falling back on English if needed.
-			// NOTE: The locale follows whatever laguage Wordpress is configured to use
+			// NOTE: The locale follows whatever language Wordpress is configured to use
 			var locales = [document.documentElement.lang];
 			if (!(locales[0].startsWith != 'en')) locales.push('en');
 			var collator = new Intl.Collator(locales, {sensitivity: 'variant'});
