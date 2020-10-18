@@ -657,12 +657,16 @@ function tsml_geocode($address) {
 		$response = $tsml_google_overrides[$data->results[0]->formatted_address];
 	} else {
 		//start building response
+		// $myfile = fopen("./newfile.txt", "a") or die("Unable to open file!");
 		$response = array(
 			'formatted_address' => $data->results[0]->formatted_address,
 			'latitude' => $data->results[0]->geometry->location->lat,
 			'longitude' => $data->results[0]->geometry->location->lng,
+			'types' => $data->results[0]->types[0],
 			'city' => null,
 		);
+		// $my_results = print_r($response, true);
+		// file_put_contents('./newfile.txt', print_r($my_results, true));
 
 		//get city, we might need it for the region, and we are going to cache it
 		foreach ($data->results[0]->address_components as $component) {
