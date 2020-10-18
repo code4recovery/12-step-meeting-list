@@ -27,6 +27,13 @@ add_action( 'admin_print_scripts-tsml_meeting_page_import', 'tsml_assets' );
 add_action('admin_init', 'tsml_admin_init');
 function tsml_admin_init() {
 
+	$tsml_version = get_option('tsml_version');
+	if (!$tsml_version) {
+		db_update_addresses_cache_approximate_location();
+		db_update_tsml_locations_approximate_location();
+		add_option('tsml_version', '3.9.0');
+	};
+
 //    tsml_assets();
 
     add_meta_box('info', __('Meeting Information', '12-step-meeting-list'), 'tsml_meeting_box', 'tsml_meeting', 'normal', 'low');

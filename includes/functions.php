@@ -1,5 +1,7 @@
 <?php
 
+include_once dirname(__FILE__) . '/database_updates.php';
+
 //function: helper for debugging
 //used:		ad-hoc
 if (!function_exists('dd')) {
