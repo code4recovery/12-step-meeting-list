@@ -64,6 +64,8 @@ jQuery(function($) {
 		}
 	} else {
 		//meeting or location detail page
+		if (tsml.debug)
+			console.log("public tsml_map", tsml_map);
 
 		var location_link =
 			typeof tsml_map.location_url === 'undefined'
@@ -74,6 +76,7 @@ jQuery(function($) {
 			latitude: tsml_map.latitude,
 			longitude: tsml_map.longitude,
 			formatted_address: tsml_map.formatted_address,
+			is_approximate_location: tsml_map.is_approximate_location,
 			name: tsml_map.location,
 			meetings: [],
 			directions: tsml_map.directions,

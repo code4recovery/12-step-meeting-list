@@ -13,6 +13,8 @@ var infowindow,
 
 //create an empty map
 function createMap(scrollwheel, locations, searchLocation) {
+  if (tsml.debug)
+    console.log("createMap() locations", locations);
   if (tsml.mapbox_key) {
     mapMode = "mapbox";
 
@@ -256,10 +258,11 @@ function setMapMarkers(locations, searchLocation) {
   //loop through and create new markers
   for (var i = 0; i < location_array.length; i++) {
     var location = location_array[i];
-
+    if (tsml.debug)
+      console.log("setMapMarkers() location", location);
     var content;
 
-    if (location.url && location.formatted_address) {
+    if (location.url && location.formatted_address && !location.is_approximate_location) {
       //create infowindow content
       content =
         "<h3>" +
@@ -314,10 +317,12 @@ function setMapMarkers(locations, searchLocation) {
 
     var marker = setMapMarker(location.name, position, content);
 
-    //manage bounds
+    //manage bounds and set "visibility" if not approximate location
     if (typeof marker == "object" && marker) {
       if (mapMode == "google") {
         bounds.extend(marker.position);
+        if (location.is_approximate_location)
+          marker.setVisible(false);
       } else if (mapMode == "mapbox") {
         if (!bounds.north || position.lat > bounds.north)
           bounds.north = position.lat;
@@ -327,8 +332,13 @@ function setMapMarkers(locations, searchLocation) {
           bounds.east = position.lng;
         if (!bounds.west || position.lng < bounds.west)
           bounds.west = position.lng;
+        if (location.is_approximate_location)
+          marker.remove();
       }
     }
+
+    if (tsml.debug)
+      console.log("setMapMarkers() marker", marker);
 
     markers.push(marker);
   }
