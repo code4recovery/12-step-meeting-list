@@ -28,10 +28,10 @@ add_action('admin_init', 'tsml_admin_init');
 function tsml_admin_init() {
 
 	$tsml_version = get_option('tsml_version');
-	if (!$tsml_version) {
+	if (version_compare($tsml_version, TSML_VERSION, '<')) {
 		db_update_addresses_cache_approximate_location();
 		db_update_tsml_locations_approximate_location();
-		add_option('tsml_version', '3.9.0');
+		add_option('tsml_version', TSML_VERSION);
 	};
 
 //    tsml_assets();
