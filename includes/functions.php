@@ -157,8 +157,6 @@ function tsml_cache_rebuild() {
 //hands off to tsml_custom_post_types
 function tsml_change_activation_state() {
 	tsml_custom_post_types();
-	// Clear tsml_addresses option (geocoding cache)
-	// delete_option('tsml_addresses');
 	flush_rewrite_rules();
 }
 
