@@ -2,7 +2,7 @@
 Contributors: aasanjose
 Requires at least: 3.2
 Tested up to: 5.4.2
-Stable tag: 3.8.0
+Stable tag: 3.9.0rc
 
 This plugin helps twelve step recovery programs list their meetings. It standardizes addresses, and displays results in a searchable list and map.
 
@@ -205,14 +205,21 @@ To apply these changes, you must go to Settings > Permalinks and click "Save Cha
 
 == Changelog ==
 
+= 3.9.0 =
+* Added tracking of approximate location. Markers/Directions are not 
+  provided for approximate locations.
+* Fixed bug leading to incorrect sorting in meetings list.
+* Fixed broken link for support (Need Help?)
+* FAQ moved to Wiki on GitHub.
+
 = 3.8.0 =
-* Adds notes fields for online/phone meetings. 
-* Fixes bug preventing selection of multiple types.
-* Fixes bug preventing customized meeting URL.
-* Fixes bug involving meetings in draft status stripping location.
-* Fixes classname issue with online meeting provider.
-* Adds program type Compulsive Eaters Anonymous-HOW.
-* Fixes JQuery error with Wordpress 5.5.
+* Added notes fields for online/phone meetings. 
+* Fixed bug preventing selection of multiple types.
+* Fixed bug preventing customized meeting URL.
+* Fixed bug involving meetings in draft status stripping location.
+* Fixed classname issue with online meeting provider.
+* Added program type Compulsive Eaters Anonymous-HOW.
+* Fixed JQuery error with Wordpress 5.5.
 
 = 3.7.2 =
 * Fixed bug involving end_time for meeting.
