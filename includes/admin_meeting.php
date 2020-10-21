@@ -32,6 +32,7 @@ function tsml_admin_init() {
 		db_update_addresses_cache_approximate_location();
 		db_update_tsml_locations_approximate_location();
 		add_option('tsml_version', TSML_VERSION);
+		flush_rewrite_rules();
 	};
 
 //    tsml_assets();
