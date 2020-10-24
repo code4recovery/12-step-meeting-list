@@ -948,7 +948,7 @@ function tsml_get_meeting($meeting_id=false) {
 //function: get meetings based on unsanitized $arguments
 //$from_cache is only false when calling from tsml_cache_rebuild()
 //used:		tsml_ajax_meetings(), single-locations.php, archive-meetings.php
-function tsml_get_meetings($arguments=array(), $from_cache=true) {
+function tsml_get_meetings($arguments=array(), $from_cache=true, $return=true) {
 	global $tsml_cache, $tsml_contact_fields;
 
 	//start by grabbing all meetings
@@ -1027,7 +1027,9 @@ function tsml_get_meetings($arguments=array(), $from_cache=true) {
 
 	usort($meetings, 'tsml_sort_meetings');
 
-	return $meetings;
+	if ( $return ) {
+		return $meetings;
+	}
 
 }
 
