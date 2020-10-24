@@ -972,7 +972,6 @@ function tsml_get_meetings($arguments=array(), $from_cache=true, $return=true) {
 		$meeting_meta = tsml_get_meta('tsml_meeting');
 		$groups = tsml_get_groups();
 		$locations = tsml_get_locations();
-		$users = tsml_get_users();
 
 		//make an array of the meetings
 		foreach ($posts as $post) {
