@@ -1011,8 +1011,8 @@ function tsml_get_meetings($arguments=array(), $from_cache=true, $return=true) {
 
 			$meetings[] = $meeting;
 		}
-		$meetings = array_map( 'tsml_cache_clean', $meetings );
-		file_put_contents( WP_CONTENT_DIR . $tsml_cache, json_encode( $meetings ) );
+		$meetings = array_map('tsml_cache_clean', $meetings);
+		file_put_contents(WP_CONTENT_DIR . $tsml_cache, json_encode($meetings));
 	}
 
 	//check if we are filtering
