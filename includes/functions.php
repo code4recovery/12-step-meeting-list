@@ -143,8 +143,8 @@ function tsml_cache_clean($meeting) {
 //try to build a cache of meetings to help with CPU load
 function tsml_cache_rebuild() {
 	// Calling with $from_cache = false forces recreation of cache file
-	// $args, $from_cache, $return
-	tsml_get_meetings(array(), false, false);
+	// $args, $from_cache
+	tsml_get_meetings(array(), false);
 }
 
 //called by register_activation_hook in 12-step-meeting-list.php
@@ -944,7 +944,7 @@ function tsml_get_meeting($meeting_id=false) {
 //function: get meetings based on unsanitized $arguments
 //$from_cache is only false when calling from tsml_cache_rebuild()
 //used:		tsml_ajax_meetings(), single-locations.php, archive-meetings.php
-function tsml_get_meetings($arguments=array(), $from_cache=true, $return=true) {
+function tsml_get_meetings($arguments=array(), $from_cache=true) {
 	global $tsml_cache, $tsml_contact_fields;
 
 	//start by grabbing all meetings
@@ -1024,9 +1024,7 @@ function tsml_get_meetings($arguments=array(), $from_cache=true, $return=true) {
 
 	usort($meetings, 'tsml_sort_meetings');
 
-	if ( $return ) {
-		return $meetings;
-	}
+	return $meetings;
 
 }
 
