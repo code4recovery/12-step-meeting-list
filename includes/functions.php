@@ -130,7 +130,7 @@ function tsml_bounds() {
 	}
 }
 
-//function used by array_map in tsml_cache_rebuild()
+//function used by array_map in tsml_get_meetings()
 function tsml_cache_clean($meeting) {
 	foreach ($meeting as $key => $value) {
 		if (empty($meeting[$key]) && $meeting[$key] !== '0') {
@@ -144,13 +144,9 @@ function tsml_cache_clean($meeting) {
 
 //try to build a cache of meetings to help with CPU load
 function tsml_cache_rebuild() {
-	global $tsml_cache;
-
-	//strip empty, null values from array to save 12% space
-	$meetings = array_map('tsml_cache_clean', tsml_get_meetings(array(), false));
-
-	//save to file
-	file_put_contents(WP_CONTENT_DIR . $tsml_cache, json_encode($meetings));
+	// Calling with $from_cache = false forces recreation of cache file
+	// $args, $from_cache
+	tsml_get_meetings(array(), false);
 }
 
 //called by register_activation_hook in 12-step-meeting-list.php
@@ -958,7 +954,7 @@ function tsml_get_meetings($arguments=array(), $from_cache=true) {
 	global $tsml_cache, $tsml_contact_fields;
 
 	//start by grabbing all meetings
-	if (false && $from_cache && file_exists(WP_CONTENT_DIR . $tsml_cache) && $meetings = file_get_contents(WP_CONTENT_DIR . $tsml_cache)) {
+	if ($from_cache && file_exists(WP_CONTENT_DIR . $tsml_cache) && $meetings = file_get_contents(WP_CONTENT_DIR . $tsml_cache)) {
 		$meetings = json_decode($meetings, true);
 	} else {
 		//from database
@@ -982,7 +978,6 @@ function tsml_get_meetings($arguments=array(), $from_cache=true) {
 		$meeting_meta = tsml_get_meta('tsml_meeting');
 		$groups = tsml_get_groups();
 		$locations = tsml_get_locations();
-		$users = tsml_get_users();
 
 		//make an array of the meetings
 		foreach ($posts as $post) {
@@ -1022,6 +1017,8 @@ function tsml_get_meetings($arguments=array(), $from_cache=true) {
 
 			$meetings[] = $meeting;
 		}
+		$meetings = array_map('tsml_cache_clean', $meetings);
+		file_put_contents(WP_CONTENT_DIR . $tsml_cache, json_encode($meetings));
 	}
 
 	//check if we are filtering
@@ -1301,7 +1298,7 @@ function tsml_import_buffer_set($meetings, $data_source=null) {
 			}
 		}
 		if (!empty($meetings[$i]['conference_phone']) && empty($meetings[$i]['conference_url'])) {
-			$meetings[$i]['types'][] = 'ONL'; 
+			$meetings[$i]['types'][] = 'ONL';
 		}
 		if (empty($meetings[$i]['conference_phone'])) {
 			$meetings[$i]['conference_phone_notes'] = null;

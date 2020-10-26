@@ -528,7 +528,7 @@ foreach ($meetings as $meeting) {
         $classes[] = 'type-' . sanitize_title($type);
     }
     ?>
-							<tr class="<?php echo join($classes, ' ')?>">
+							<tr class="<?php echo join( ' ', $classes )?>">
 								<?php foreach ($tsml_columns as $key => $column) {
         switch ($key) {
             case 'time': ?>

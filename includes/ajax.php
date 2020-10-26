@@ -165,7 +165,7 @@ if (!function_exists('tsml_ajax_csv')) {
 		}
 
 		//get data source
-		$meetings = tsml_get_meetings(array(), true);
+		$meetings = tsml_get_meetings();
 
 		//define columns to output, always in English for portability (per Poland NA)
 		$columns = array(
