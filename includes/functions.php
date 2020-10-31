@@ -1,6 +1,7 @@
 <?php
 
-include_once dirname(__FILE__) . '/database_updates.php';
+// include_once dirname(__FILE__) . '/database_updates.php';
+include_once TSML_PATH . '/includes/database_updates.php';
 
 //function: helper for debugging
 //used:		ad-hoc
