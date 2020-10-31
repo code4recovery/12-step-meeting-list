@@ -23,7 +23,7 @@ if (!defined('TSML_PATH')) {
 }
 
 if (!defined('TSML_VERSION')) {
-    define('TSML_VERSION', '3.9.1-b');
+    define('TSML_VERSION', '3.9.1');
 }
 
 //include these files first

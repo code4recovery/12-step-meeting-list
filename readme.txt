@@ -205,6 +205,9 @@ To apply these changes, you must go to Settings > Permalinks and click "Save Cha
 
 == Changelog ==
 
+= 3.9.1 =
+* Hot fix.
+
 = 3.9.0 =
 * Added tracking of approximate location. Markers/Directions are not 
   provided for approximate locations.
