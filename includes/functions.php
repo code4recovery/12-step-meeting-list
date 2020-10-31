@@ -692,7 +692,15 @@ function tsml_get_all_groups($status='any') {
 //function: get all locations in the system
 //used:		tsml_location_count(), tsml_import(), and admin_import.php
 function tsml_get_all_locations($status='any') {
-	return get_posts('post_type=tsml_location&post_status=' . $status . '&numberposts=-1&orderby=name&order=asc');
+
+	$args = array(
+		'post_type'   => 'tsml_location',
+		'post_status' => $status,
+		'numberposts' => - 1,
+		'orderby'     => 'name',
+		'order'       => 'ASC',
+	);
+	return get_posts( $args );
 }
 
 //function: get all meetings in the system
@@ -1679,7 +1687,7 @@ function tsml_to_css_classes($types, $prefix = 'type-') {
 
 /**
  * Sanitizes a string for sorting purposes.  Similar to sanitize_title(), but uses Unicode regular expressions to support multiple languages.
- * 
+ *
  * NOTE: Requires PHP 5.1.0 or later.  More details here:
  *   https://www.php.net/manual/en/regexp.reference.unicode.php
  *
