@@ -831,7 +831,7 @@ function tsml_get_locations() {
 	}
 
 	# Get all locations
-	$posts = tsml_get_all_locations('publish');
+	$posts = tsml_get_all_locations( array( 'publish', 'draft' ) );
 
 	# Much faster than doing get_post_meta() over and over
 	$location_meta = tsml_get_meta('tsml_location');
