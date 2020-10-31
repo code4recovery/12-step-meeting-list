@@ -2,7 +2,7 @@
 Contributors: aasanjose
 Requires at least: 3.2
 Tested up to: 5.4.2
-Stable tag: 3.9.2
+Stable tag: 3.9.3
 
 This plugin helps twelve step recovery programs list their meetings. It standardizes addresses, and displays results in a searchable list and map.
 
@@ -204,6 +204,9 @@ To apply these changes, you must go to Settings > Permalinks and click "Save Cha
 1. Edit location
 
 == Changelog ==
+
+= 3.9.3 =
+* Fix subversion process.
 
 = 3.9.2 =
 * Fix readme.txt version number. 
