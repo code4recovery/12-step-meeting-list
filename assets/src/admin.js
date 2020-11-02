@@ -156,30 +156,26 @@ jQuery(function($) {
 			}
 		});
 
-		//location typeahead
-		var tsml_locations = new Bloodhound({
-			datumTokenizer: Bloodhound.tokenizers.obj.whitespace('value'),
-			queryTokenizer: Bloodhound.tokenizers.whitespace,
-			prefetch: {
-				url: tsml.ajaxurl + '?action=tsml_locations',
-				cache: false
-			}
-		});
-
-		$('input#location')
-			.typeahead(null, {
-				displayKey: 'value',
-				source: tsml_locations
-			})
-			.on('typeahead:autocompleted typeahead:selected', function($e, location) {
-				$('input[name=formatted_address]')
-					.val(location.formatted_address)
-					.trigger('change');
-				$('input[name=latitude]').val(location.latitude);
-				$('input[name=longitude]').val(location.longitude);
-				$('select[name=region] option[value=' + location.region + ']').prop('selected', true);
-				$('textarea[name=location_notes]').val(location.notes);
-			});
+    //location typeahead
+    $.getJSON(
+      tsml.ajaxurl + "?action=tsml_locations",
+      function (data) {
+        $("input#location").autocomplete({
+          source: data,
+          minLength: 1,
+          select: function ($e, selected) {
+            var location = selected.item;
+            $('input[name=formatted_address]')
+              .val(location.formatted_address)
+              .trigger('change');
+            $('input[name=latitude]').val(location.latitude);
+            $('input[name=longitude]').val(location.longitude);
+            $('select[name=region] option[value=' + location.region + ']').prop('selected', true);
+            $('textarea[name=location_notes]').val(location.notes);        
+          }
+        });
+      }
+    );
 
 		//group typeahead
 		var tsml_groups = new Bloodhound({
