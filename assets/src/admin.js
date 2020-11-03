@@ -156,7 +156,7 @@ jQuery(function($) {
 			}
 		});
 
-    //location typeahead
+    // location typeahead
     $.getJSON(
       tsml.ajaxurl + "?action=tsml_locations",
       function (data) {
@@ -165,6 +165,7 @@ jQuery(function($) {
           minLength: 1,
           select: function ($e, selected) {
             var location = selected.item;
+            console.log("Location: ", location);
             $('input[name=formatted_address]')
               .val(location.formatted_address)
               .trigger('change');
@@ -177,39 +178,36 @@ jQuery(function($) {
       }
     );
 
-		//group typeahead
-		var tsml_groups = new Bloodhound({
-			datumTokenizer: Bloodhound.tokenizers.obj.whitespace('value'),
-			queryTokenizer: Bloodhound.tokenizers.whitespace,
-			prefetch: {
-				url: tsml.ajaxurl + '?action=tsml_groups',
-				ttl: 10
-			}
-		});
-
-		$('input#group')
-			.typeahead(null, {
-				displayKey: 'value',
-				source: tsml_groups
-			})
-			.on('typeahead:autocompleted typeahead:selected', function($e, group) {
-				$('input[name=website]').val(group.website);
-				$('input[name=email]').val(group.email);
-				$('input[name=phone]').val(group.phone);
-				$('input[name=contact_1_name]').val(group.contact_1_name);
-				$('input[name=contact_1_email]').val(group.contact_1_email);
-				$('input[name=contact_1_phone]').val(group.contact_1_phone);
-				$('input[name=contact_2_name]').val(group.contact_2_name);
-				$('input[name=contact_2_email]').val(group.contact_2_email);
-				$('input[name=contact_2_phone]').val(group.contact_2_phone);
-				$('input[name=contact_3_name]').val(group.contact_3_name);
-				$('input[name=contact_3_email]').val(group.contact_3_email);
-				$('input[name=contact_3_phone]').val(group.contact_3_phone);
-				$('input[name=mailing_address]').val(group.mailing_address);
-				$('input[name=venmo]').val(group.venmo);
-				$('input[name=last_contact]').val(group.last_contact);
-				$('textarea[name=group_notes]').val(group.notes);
-			});
+    // group typeahead
+    $.getJSON(
+      tsml.ajaxurl + '?action=tsml_groups',
+      function (data) {
+        $("input#group").autocomplete({
+          source: data,
+          minLength: 1,
+          select: function ($e, selected) {
+            var group = selected.item;
+            console.log('Selected: ', selected);
+            $('input[name=website]').val(group.website);
+            $('input[name=email]').val(group.email);
+            $('input[name=phone]').val(group.phone);
+            $('input[name=contact_1_name]').val(group.contact_1_name);
+            $('input[name=contact_1_email]').val(group.contact_1_email);
+            $('input[name=contact_1_phone]').val(group.contact_1_phone);
+            $('input[name=contact_2_name]').val(group.contact_2_name);
+            $('input[name=contact_2_email]').val(group.contact_2_email);
+            $('input[name=contact_2_phone]').val(group.contact_2_phone);
+            $('input[name=contact_3_name]').val(group.contact_3_name);
+            $('input[name=contact_3_email]').val(group.contact_3_email);
+            $('input[name=contact_3_phone]').val(group.contact_3_phone);
+            $('input[name=mailing_address]').val(group.mailing_address);
+            $('input[name=venmo]').val(group.venmo);
+            $('input[name=last_contact]').val(group.last_contact);
+            $('textarea[name=group_notes]').val(group.notes);
+          }
+        })
+      }
+    );
 
 		$('input[name="group_status"]').change(function() {
 			$('#contact-type').attr('data-type', $(this).val());
@@ -254,6 +252,7 @@ jQuery(function($) {
 						nonce: tsml.nonce
 					},
 					function(geocoded) {
+            console.log('Geocoded: ', geocoded);
 						//check status first, eg REQUEST_DENIED, ZERO_RESULTS
 						if (geocoded.status == 'error') return;
 
