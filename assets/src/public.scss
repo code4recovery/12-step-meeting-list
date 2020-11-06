@@ -13,6 +13,7 @@ $height: 550px; //height of map and min-height of list
 #tsml {
     @import '../../node_modules/bootstrap-sass/assets/stylesheets/_bootstrap.scss';
     @import 'typeahead-bootstrap.scss';
+    @import 'jquery-ui.css';
 
     a.btn {
         overflow: hidden;
@@ -196,6 +197,19 @@ $height: 550px; //height of map and min-height of list
             cursor: pointer;
         }
     }
+  
+    .ui-autocomplete-loading {
+      background-color: red;
+    }
+
+    .ui-autocomplete-category {
+      font-weight: bold;
+      padding: .2em .4em;
+      margin: .8em 0 .2em;
+      line-height: 1.5;
+      background-color: red !important;
+    }
+
 
     /* meetings */
     #meetings {
