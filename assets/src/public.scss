@@ -1,4 +1,5 @@
 @import 'mixins/breakpoints';
+@import 'jquery-ui.css';
 
 $icon_font_path: '../fonts/'; //bootstrap
 $color_gray: #aaa;
@@ -10,10 +11,32 @@ $color_white: #fdfdfc;
 $margin: 15px; //spacing between elements
 $height: 550px; //height of map and min-height of list
 
+.ui-autocomplete {
+  min-width: 270px;
+  font-family: inherit;
+  font-size: .8em;
+}
+
+.ui-autocomplete-category {
+  border-bottom: 1px solid #ccc;
+  font-size: .8em;
+  font-weight: bold;
+  margin: 10px 0px 0px 0px;
+  padding: 6px 20px;
+  text-transform: uppercase;
+}
+
+.ui-autocomplete-highlight {
+  font-weight: bold !important;
+}
+
+.ui-menu-item {
+  padding: 6px 20px !important;
+}
+
 #tsml {
     @import '../../node_modules/bootstrap-sass/assets/stylesheets/_bootstrap.scss';
     @import 'typeahead-bootstrap.scss';
-    @import 'jquery-ui.css';
 
     a.btn {
         overflow: hidden;
@@ -198,19 +221,6 @@ $height: 550px; //height of map and min-height of list
         }
     }
   
-    .ui-autocomplete-loading {
-      background-color: red;
-    }
-
-    .ui-autocomplete-category {
-      font-weight: bold;
-      padding: .2em .4em;
-      margin: .8em 0 .2em;
-      line-height: 1.5;
-      background-color: red !important;
-    }
-
-
     /* meetings */
     #meetings {
         clear: both;
