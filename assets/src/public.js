@@ -962,18 +962,23 @@ jQuery(function($) {
       var search_data = data1[0].concat(data2[0], data3[0]);
   		typeaheadEnabled = true;
       $('#meetings #search input[name="query"]').autocomplete({
-        autoFocus: true,
+        autoFocus: false,
         source: search_data,
         minLength: 1,
-        select: function($e, item) {
+        change: function(event, ui) {
+          console.log("Change! ", event, ui);
+        },
+        select: function(event, ui) {
+          const {item} = ui;
+          console.log('item: ', item);
           if (item.type == 'region') {
             $('#region li').removeClass('active');
             var active = $('#region li a[data-id="' + item.id + '"]');
             active.parent().addClass('active');
+            console.log('Active: ', active);
             $('#region span.selected').html(active.html());
-            $('#search input[name="query"]')
-              .val('')
-              .typeahead('val', '');
+            $('#search input[name="query"]').val('');
+            event.preventDefault();
             trackAnalytics('region', active.text());
             doSearch();
           } else if (item.type == 'location') {
@@ -988,25 +993,9 @@ jQuery(function($) {
     });
   };
 
-			// .on('typeahead:selected', function($e, item) {
-			// 	if (item.type == 'region') {
-			// 		$('#region li').removeClass('active');
-			// 		var active = $('#region li a[data-id="' + item.id + '"]');
-			// 		active.parent().addClass('active');
-			// 		$('#region span.selected').html(active.html());
-			// 		$('#search input[name="query"]')
-			// 			.val('')
-			// 			.typeahead('val', '');
-			// 		trackAnalytics('region', active.text());
-			// 		doSearch();
-			// 	} else if (item.type == 'location') {
-			// 		trackAnalytics('location', item.value);
-			// 		location.href = item.url;
-			// 	} else if (item.type == 'group') {
-			// 		trackAnalytics('group', item.value);
-			// 		doSearch();
-			// 	}
-			// });
+  function showResult(event, ui) { 
+    $('#search input').text(ui.item.label);
+  } 
 
 	//set a param on the query string
 	function updateQueryString(key, value, url) {
