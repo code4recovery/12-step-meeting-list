@@ -30,11 +30,10 @@ if (!function_exists('db_update_tsml_locations_approximate_location')) {
     // dd($locations);
     foreach ($locations_posts as $location_post) {
       $location_custom = get_post_meta($location_post->ID);
-      if (!array_key_exists('is_approximate_location', $location_custom)) {
-        $is_location_approximate = decide_if_location_approximate($location_custom['formatted_address'][0]);
-        if ($is_location_approximate) 
-          add_post_meta($location_post->ID, 'is_approximate_location', $is_location_approximate);				
-      };
+      // if (!array_key_exists('is_approximate_location', $location_custom)) {
+      $is_location_approximate = decide_if_location_approximate($location_custom['formatted_address'][0]);
+      update_post_meta($location_post->ID, 'is_approximate_location', $is_location_approximate);				
+      // };
     }
   };
 };

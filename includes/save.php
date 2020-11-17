@@ -244,7 +244,7 @@ function tsml_save_post($post_id, $post, $update) {
 			//set latitude, longitude, approximate_location and region
 			add_post_meta($location_id, 'latitude', floatval($_POST['latitude']));
 			add_post_meta($location_id, 'longitude', floatval($_POST['longitude']));
-			add_post_meta($location_id, 'is_approximate_location', $_POST['is_approximate_location']);
+			update_post_meta($location_id, 'is_approximate_location', $_POST['is_approximate_location']);
 			wp_set_object_terms($location_id, intval($_POST['region']), 'tsml_region');
 		}
 	
