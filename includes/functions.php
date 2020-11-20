@@ -1713,3 +1713,12 @@ function tsml_sanitize_data_sort($string) {
 	# Unicode-aware lowercase of characters in string
 	return mb_strtolower($t);
 }
+
+// Check if server is secured. Used by tsml_react()
+// https://stackoverflow.com/questions/1175096/how-to-find-out-if-youre-using-https-without-serverhttps
+//
+function isSecure() {
+  return
+    (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off')
+    || $_SERVER['SERVER_PORT'] == 443;
+}
