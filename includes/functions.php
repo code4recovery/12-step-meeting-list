@@ -687,19 +687,40 @@ function tsml_geocode($address) {
 //function: get all locations in the system
 //used:		tsml_group_count()
 function tsml_get_all_groups($status='any') {
-	return get_posts('post_type=tsml_group&post_status=' . $status . '&numberposts=-1&orderby=name&order=asc');
+
+	return get_posts( array(
+		'post_type'   => 'tsml_group',
+		'post_status' => $status,
+		'numberposts' => - 1,
+		'orderby'     => 'name',
+		'order'       => 'ASC',
+	) );
 }
 
 //function: get all locations in the system
 //used:		tsml_location_count(), tsml_import(), and admin_import.php
 function tsml_get_all_locations($status='any') {
-	return get_posts('post_type=tsml_location&post_status=' . $status . '&numberposts=-1&orderby=name&order=asc');
+
+	return get_posts( array(
+		'post_type'   => 'tsml_location',
+		'post_status' => $status,
+		'numberposts' => - 1,
+		'orderby'     => 'name',
+		'order'       => 'ASC',
+	) );
 }
 
 //function: get all meetings in the system
 //used:		tsml_meeting_count(), tsml_import(), and admin_import.php
 function tsml_get_all_meetings($status='any') {
-	return get_posts('post_type=tsml_meeting&post_status=' . $status . '&numberposts=-1&orderby=name&order=asc');
+
+	return get_posts( array(
+		'post_type'   => 'tsml_meeting',
+		'post_status' => $status,
+		'numberposts' => - 1,
+		'orderby'     => 'name',
+		'order'       => 'ASC',
+	) );
 }
 
 //function: get all regions in the system
@@ -832,7 +853,7 @@ function tsml_get_locations() {
 	}
 
 	# Get all locations
-	$posts = tsml_get_all_locations('publish');
+	$posts = tsml_get_all_locations( array( 'publish', 'draft' ) );
 
 	# Much faster than doing get_post_meta() over and over
 	$location_meta = tsml_get_meta('tsml_location');
@@ -1680,7 +1701,7 @@ function tsml_to_css_classes($types, $prefix = 'type-') {
 
 /**
  * Sanitizes a string for sorting purposes.  Similar to sanitize_title(), but uses Unicode regular expressions to support multiple languages.
- * 
+ *
  * NOTE: Requires PHP 5.1.0 or later.  More details here:
  *   https://www.php.net/manual/en/regexp.reference.unicode.php
  *
