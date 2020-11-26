@@ -160,7 +160,14 @@ if (!function_exists('tsml_ajax_csv')) {
 		global $tsml_days, $tsml_programs, $tsml_program, $tsml_sharing;
 
 		//security
-		if (($tsml_sharing != 'open') && !is_user_logged_in()) {
+		if ($tsml_sharing == 'open') {
+ 			//OK - sharing is open
+ 		} elseif (is_user_logged_in()) {
+ 			//OK - user is logged in
+ 		} elseif (function_exists('tsml_debug_ispublic') && tsml_debug_ispublic()) {
+ 			//OK - tsml_debug is installed, set to public and the key matches
+ 		} else {
+			// Didn't pass any of the criteria, so it's unauthorized
 			tsml_ajax_unauthorized();
 		}
 
@@ -600,6 +607,8 @@ if (!function_exists('tsml_ajax_meetings')) {
 			//nonce checks out
 		} elseif (!empty($input['key']) && array_key_exists($input['key'], $tsml_sharing_keys)) {
 			//key checks out
+ 		} elseif (function_exists('tsml_debug_ispublic') && tsml_debug_ispublic()) {
+ 			//OK - tsml_debug is installed, set to public and the key matches
 		} else {
 			tsml_ajax_unauthorized();
 		}
