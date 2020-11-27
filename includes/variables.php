@@ -429,7 +429,36 @@ $tsml_google_overrides = array(
 	),
 
 );
+/*
+With this fonctionnality, you can override your meeting geocoding info by your own without having to add them in the code each time you update. Simply place a file named
+12smlgraylist.json at the root of your upload directory. The json must use the following syntax example:
+[
+{"notfunctionningaddress":"191 Rue de l'Église, Maliotenam, QC G0G, Canada","formatted_address":"191 Rue de l'Église, Maliotenam, QC G0G, Canada","city":"Maliotenam","latitude":50.212551998628896,"longitude":-66.19377659562406},
+{"notfunctionningaddress":"8 rue Cardinal-Bégin,Lévis","formatted_address":"8 rue Cardinal-Bégin,Lévis, QC","city":"Lévis","latitude":52.212551998628896,"longitude":-65.19377659562406}
+]
 
+where notfunctionningaddress is the formatted address of your non functionning meeting and the other fields the wanted informations.
+*/
+$upload_dir = wp_upload_dir();
+$graylistfilename = $upload_dir['basedir']."/12smlgraylist.json";
+if (file_exists($graylistfilename)) {
+  $json = file_get_contents($graylistfilename);
+          $graylist = json_decode($json, true);
+					if(is_null($graylist)) {
+						trigger_error($graylistfilename." badly formated.");
+					}else{
+						for($i=0; $i< count($graylist); $i++)
+						{
+								$myarray =  array(
+										 'formatted_address' => $graylist[$i]["formatted_address"],
+										 'city' => $graylist[$i]["city"],
+										 'latitude' => $graylist[$i]["latitude"],
+										 'longitude' => $graylist[$i]["longitude"],
+									 );
+								$tsml_google_overrides[$graylist[$i]["notfunctionningaddress"]] = $myarray;
+						}
+					}
+}
 //get the blog's language (used as a parameter when geocoding)
 $tsml_language = substr(get_bloginfo('language'), 0, 2);
 
