@@ -1,5 +1,6 @@
 @import 'mixins/breakpoints';
 @import 'jquery-ui.css';
+@import 'tsml-jquery-ui.css';
 
 $icon_font_path: '../fonts/'; //bootstrap
 $color_gray: #aaa;
@@ -11,33 +12,8 @@ $color_white: #fdfdfc;
 $margin: 15px; //spacing between elements
 $height: 550px; //height of map and min-height of list
 
-.ui-autocomplete {
-  min-width: 270px;
-  font-family: inherit;
-  font-size: .8em;
-  border-radius: 4px;
-}
-
-.ui-autocomplete-category {
-  border-bottom: 1px solid #ccc;
-  font-size: .8em;
-  font-weight: bold;
-  margin: 10px 0px 0px 0px;
-  padding: 6px 20px;
-  text-transform: uppercase;
-}
-
-.ui-autocomplete-highlight {
-  font-weight: bold !important;
-}
-
-.ui-menu-item {
-  padding: 6px 20px !important;
-}
-
 #tsml {
     @import '../../node_modules/bootstrap-sass/assets/stylesheets/_bootstrap.scss';
-//    @import 'typeahead-bootstrap.scss';
 
     a.btn {
         overflow: hidden;

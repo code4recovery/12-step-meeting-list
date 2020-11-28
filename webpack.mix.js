@@ -26,14 +26,12 @@ mix.sass('./assets/src/admin.scss', './assets/css/admin.css')
 		processCssUrls: false
   	}).scripts([
 		'./node_modules/timepicker/jquery.timepicker.min.js',
-		'./node_modules/typeahead.js/dist/typeahead.bundle.js',
 		'./node_modules/mapbox-gl/dist/mapbox-gl.js',
 		'./assets/src/maps.js',
 		'./assets/src/admin.js',
 	], './assets/js/admin.min.js')
 	.scripts([
 		'./node_modules/mark.js/dist/jquery.mark.js',
-		'./node_modules/typeahead.js/dist/typeahead.bundle.js',
 		'./node_modules/mapbox-gl/dist/mapbox-gl.js',
 		'./assets/js/bootstrap.dropdown.js',
 		'./assets/src/maps.js',
