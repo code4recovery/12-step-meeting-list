@@ -15,6 +15,7 @@ $height: 550px; //height of map and min-height of list
   min-width: 270px;
   font-family: inherit;
   font-size: .8em;
+  border-radius: 4px;
 }
 
 .ui-autocomplete-category {
@@ -36,7 +37,7 @@ $height: 550px; //height of map and min-height of list
 
 #tsml {
     @import '../../node_modules/bootstrap-sass/assets/stylesheets/_bootstrap.scss';
-    @import 'typeahead-bootstrap.scss';
+//    @import 'typeahead-bootstrap.scss';
 
     a.btn {
         overflow: hidden;
