@@ -1,0 +1,24 @@
+.ui-autocomplete {
+  min-width: 270px;
+  font-family: inherit;
+  font-size: .8em;
+  border-radius: 4px;
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.175);
+}
+
+.ui-autocomplete-category {
+  border-bottom: 1px solid #ccc;
+  font-size: .8em;
+  font-weight: bold;
+  margin: 10px 0px 0px 0px;
+  padding: 6px 20px;
+  text-transform: uppercase;
+}
+
+.ui-autocomplete-highlight {
+  font-weight: bold !important;
+}
+
+.ui-menu-item {
+  padding: 6px 20px !important;
+}

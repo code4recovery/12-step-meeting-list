@@ -64,7 +64,8 @@ function tsml_assets() {
 
 		wp_enqueue_style('tsml_public', plugins_url('../assets/css/public.min.css', __FILE__), array(), TSML_VERSION);
 		wp_enqueue_script('jquery_validate', plugins_url('../assets/js/jquery.validate.min.js', __FILE__), array('jquery'), TSML_VERSION, true);
-		wp_enqueue_script('tsml_public', plugins_url('../assets/js/public.min.js', __FILE__), array('jquery'), TSML_VERSION, true);
+    wp_enqueue_script('tsml_public', plugins_url('../assets/js/public.min.js', __FILE__), array('jquery'), TSML_VERSION, true);
+    wp_enqueue_script('jquery-ui-autocomplete');
 		wp_localize_script('tsml_public', 'tsml', array(
 			'ajaxurl' => admin_url('admin-ajax.php'),
 			'columns' => array_keys($tsml_columns),

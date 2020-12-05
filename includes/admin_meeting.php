@@ -133,7 +133,7 @@ function tsml_admin_init() {
             $meetings = tsml_get_meetings(array('location_id' => $location->ID));
         }
         ?>
-		<div class="meta_form_row typeahead">
+		<div class="meta_form_row">
 			<label for="location"><?php _e('Location', '12-step-meeting-list')?></label>
 			<input type="text" name="location" id="location" value="<?php if (!empty($location->post_title)) {
             echo $location->post_title;
@@ -236,7 +236,7 @@ function tsml_admin_init() {
 				<label><input type="radio" name="group_status" value="meeting"<?php checked(empty($meeting->group))?>> <?php _e('Individual meeting', '12-step-meeting-list')?></label>
 				<label><input type="radio" name="group_status" value="group"<?php checked(!empty($meeting->group))?>> <?php _e('Part of a group', '12-step-meeting-list')?></label>
 			</div>
-			<div class="meta_form_row typeahead group-visible">
+			<div class="meta_form_row group-visible">
 				<label for="group"><?php _e('Group', '12-step-meeting-list')?></label>
 				<input type="text" name="group" id="group" value="<?php echo @$meeting->group ?>">
 			</div>

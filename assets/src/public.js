@@ -11,34 +11,8 @@ jQuery(function($) {
 	var typeaheadEnabled = false;
 
 	if (typeof tsml_map !== 'object') {
-		//main meetings page
-
-		//search typeahead
-		var tsml_regions = new Bloodhound({
-			datumTokenizer: Bloodhound.tokenizers.obj.nonword('value'),
-			queryTokenizer: Bloodhound.tokenizers.whitespace,
-			prefetch: {
-				url: tsml.ajaxurl + '?action=tsml_regions',
-				cache: false
-			}
-		});
-		var tsml_groups = new Bloodhound({
-			datumTokenizer: Bloodhound.tokenizers.obj.whitespace('value'),
-			queryTokenizer: Bloodhound.tokenizers.whitespace,
-			prefetch: {
-				url: tsml.ajaxurl + '?action=tsml_groups',
-				cache: false
-			}
-		});
-		var tsml_locations = new Bloodhound({
-			datumTokenizer: Bloodhound.tokenizers.obj.whitespace('value'),
-			queryTokenizer: Bloodhound.tokenizers.whitespace,
-			prefetch: {
-				url: tsml.ajaxurl + '?action=tsml_locations',
-				cache: false
-			}
-		});
-
+    //main meetings page
+    
 		//show/hide upcoming menu option
 		toggleUpcoming();
 
@@ -935,70 +909,93 @@ jQuery(function($) {
 			if (tsml.debug) console.log('trackAnalytics() sending ' + action + ': ' + label + ' to google analytics');
 			ga('send', 'event', '12 Step Meeting List', action, label);
 		}
-	}
+  }
+  
+  //Create the custom widget for search autocomplete
+  $.widget("custom.autocomplete", $.ui.autocomplete, {
+    _create: function () {
+      this._super();
+      this.widget().menu("option", "items", "> :not(.ui-autocomplete-category)")
+    },
+    _renderItem: function( ul, item ) {
+      var matcher = new RegExp( $.ui.autocomplete.escapeRegex(this.term), "ig" );
+      var output = item.label.replace(matcher, '<strong>' + this.term + '</strong>');
+      return $( "<li>" )
+        .attr( "data-value", item.value )
+        .append( output )
+        .appendTo( ul );
+    },
+    _renderMenu: function (ul, items) {
+      var that = this,
+        currentType = "";
+      $.each(items, function (index, item) {
+        var li;
+        if (item.type != currentType) {
+          const key = `${item.type}s`;
+          ul.append("<li class='ui-autocomplete-category'>" + tsml.strings[key] + "</li>");
+          currentType = item.type;
+        }
+        li = that._renderItemData(ul, item);
+        if (item.type) {
+          li.attr("aria-label", item.type + " : " + item.value);
+        }
+      });
+    }
+  });
 
 	//disable the typeahead (if you switched to a different search mode)
 	function typeaheadDisable() {
 		if (!typeaheadEnabled) return;
 		typeaheadEnabled = false;
-		$('#meetings #search input[name="query"]').typeahead('destroy');
+		$('#meetings #search input[name="query"]').autocomplete('destroy');
 	}
 
 	//enable the typeahead (if you switch back to search)
 	function typeaheadEnable() {
 		if (typeaheadEnabled) return;
-		if (tsml.debug) console.log('typeaheadEnable()');
-		typeaheadEnabled = true;
-		$('#meetings #search input[name="query"]')
-			.typeahead(
-				{
-					highlight: true
-				},
-				{
-					name: 'tsml_regions',
-					display: 'value',
-					source: tsml_regions,
-					templates: {
-						header: '<h3>' + tsml.strings.regions + '</h3>'
-					}
-				},
-				{
-					name: 'tsml_groups',
-					display: 'value',
-					source: tsml_groups,
-					templates: {
-						header: '<h3>' + tsml.strings.groups + '</h3>'
-					}
-				},
-				{
-					name: 'tsml_locations',
-					display: 'value',
-					source: tsml_locations,
-					templates: {
-						header: '<h3>' + tsml.strings.locations + '</h3>'
-					}
-				}
-			)
-			.on('typeahead:selected', function($e, item) {
-				if (item.type == 'region') {
-					$('#region li').removeClass('active');
-					var active = $('#region li a[data-id="' + item.id + '"]');
-					active.parent().addClass('active');
-					$('#region span.selected').html(active.html());
-					$('#search input[name="query"]')
-						.val('')
-						.typeahead('val', '');
-					trackAnalytics('region', active.text());
-					doSearch();
-				} else if (item.type == 'location') {
-					trackAnalytics('location', item.value);
-					location.href = item.url;
-				} else if (item.type == 'group') {
-					trackAnalytics('group', item.value);
-					doSearch();
-				}
-			});
-	}
+    if (tsml.debug) console.log('typeaheadEnable()');
+    $.when(
+      $.getJSON(tsml.ajaxurl + '?action=tsml_regions'),
+      $.getJSON(tsml.ajaxurl + '?action=tsml_groups'),
+      $.getJSON(tsml.ajaxurl + '?action=tsml_locations')
+    ).done(function(data1, data2, data3) {
+      var search_data = data1[0].concat(data2[0], data3[0]);
+  		typeaheadEnabled = true;
+      $('#meetings #search input[name="query"]').autocomplete({
+        autoFocus: false,
+        source: search_data,
+        minLength: 1,
+        change: function(event, ui) {
+          console.log("Change! ", event, ui);
+        },
+        select: function(event, ui) {
+          const {item} = ui;
+          console.log('item: ', item);
+          if (item.type == 'region') {
+            $('#region li').removeClass('active');
+            var active = $('#region li a[data-id="' + item.id + '"]');
+            active.parent().addClass('active');
+            console.log('Active: ', active);
+            $('#region span.selected').html(active.html());
+            $('#search input[name="query"]').val('');
+            event.preventDefault();
+            trackAnalytics('region', active.text());
+            doSearch();
+          } else if (item.type == 'location') {
+            trackAnalytics('location', item.value);
+            location.href = item.url;
+          } else if (item.type == 'group') {
+            trackAnalytics('group', item.value);
+            doSearch();
+          }
+        }
+      })
+    });
+  };
+
+  function showResult(event, ui) { 
+    $('#search input').text(ui.item.label);
+  } 
 
 	//set a param on the query string
 	function updateQueryString(key, value, url) {
