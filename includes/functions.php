@@ -685,6 +685,17 @@ function tsml_geocode($address) {
 	return $response;
 }
 
+//function: Ensure location->approximate set through geocoding and updated
+//used: single-meetings.php, single-locations.php
+function tsml_ensure_location_approximate_set($meeting_location_info) {
+  if (empty($meeting_location_info->approximate)) {
+    $geocoded = tsml_geocode($meeting_location_info->formatted_address);
+    $meeting_location_info->approximate = $geocoded['approximate'];
+    update_post_meta($meeting_location_info->location_id, 'approximate', $geocoded['approximate']);
+  };
+  return $meeting_location_info;
+}
+
 //function: get all locations in the system
 //used:		tsml_group_count()
 function tsml_get_all_groups($status='any') {
@@ -966,6 +977,7 @@ function tsml_get_meeting($meeting_id=false) {
 		}
 	}
 	sort($meeting->types_expanded);
+  $meeting = tsml_ensure_location_approximate_set($meeting); // Can eventually remove this when <3.9 TSMLs no longer used.
 
 	return $meeting;
 }
