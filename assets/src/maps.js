@@ -262,7 +262,7 @@ function setMapMarkers(locations, searchLocation) {
       console.log("setMapMarkers() location", location);
     var content;
 
-    if (location.url && location.formatted_address && !location.is_approximate_location) {
+    if (location.url && location.formatted_address && !location.approximate) {
       //create infowindow content
       content =
         "<h3>" +
@@ -321,7 +321,7 @@ function setMapMarkers(locations, searchLocation) {
     if (typeof marker == "object" && marker) {
       if (mapMode == "google") {
         bounds.extend(marker.position);
-        if (location.is_approximate_location)
+        if (location.approximate==='yes')
           marker.setVisible(false);
       } else if (mapMode == "mapbox") {
         if (!bounds.north || position.lat > bounds.north)
@@ -332,7 +332,7 @@ function setMapMarkers(locations, searchLocation) {
           bounds.east = position.lng;
         if (!bounds.west || position.lng < bounds.west)
           bounds.west = position.lng;
-        if (location.is_approximate_location)
+        if (location.approximate === 'yes')
           marker.remove();
       }
     }

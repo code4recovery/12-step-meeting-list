@@ -662,7 +662,7 @@ function tsml_geocode($address) {
 			'formatted_address' => $data->results[0]->formatted_address,
 			'latitude' => $data->results[0]->geometry->location->lat,
 			'longitude' => $data->results[0]->geometry->location->lng,
-			'is_approximate_location' => $data->results[0]->geometry->location_type == 'APPROXIMATE',
+			'approximate' => ($data->results[0]->geometry->location_type === 'APPROXIMATE') ? 'yes' : 'no',
 			'city' => null,
 		);
 		// $my_results = print_r($response, true);

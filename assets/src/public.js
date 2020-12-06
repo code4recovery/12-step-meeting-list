@@ -50,7 +50,7 @@ jQuery(function($) {
 			latitude: tsml_map.latitude,
 			longitude: tsml_map.longitude,
 			formatted_address: tsml_map.formatted_address,
-			is_approximate_location: tsml_map.is_approximate_location,
+			approximate: tsml_map.approximate,
 			name: tsml_map.location,
 			meetings: [],
 			directions: tsml_map.directions,

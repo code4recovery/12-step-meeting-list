@@ -151,8 +151,8 @@ function tsml_admin_init() {
             echo $location->formatted_address;
         }
 				?>">
-			<input type="hidden" name="is_approximate_location" id="is_approximate_location" value="<?php if(!empty($location->is_approximate_location)) {
-						echo $location->is_approximate_location;
+			<input type="hidden" name="approximate" id="approximate" value="<?php if(!empty($location->approximate)) {
+						echo $location->approximate;
 				}
 				?>">
 			<input type="hidden" name="latitude" id="latitude" value="<?php if (!empty($location->latitude)) {

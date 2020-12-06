@@ -282,8 +282,8 @@ jQuery(function($) {
 							.val(geocoded.formatted_address)
 							.trigger('keyup');
 
-						$('input#is_approximate_location')
-							.val(geocoded.is_approximate_location);
+						$('input#approximate')
+							.val(geocoded.approximate);
 
 						//check if location with same address is already in the system, populate form
 						$.getJSON(

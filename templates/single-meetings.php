@@ -8,7 +8,7 @@ wp_localize_script('tsml_public', 'tsml_map', array(
 	'directions' => __('Directions', '12-step-meeting-list'),
 	'directions_url' => in_array('TC', $meeting->types) ? null : $meeting->directions,
 	'formatted_address' => $meeting->formatted_address,
-	'is_approximate_location' => $meeting->is_approximate_location,
+	'approximate' => $meeting->approximate,
 	'latitude' => $meeting->latitude,
 	'location' => get_the_title($meeting->post_parent),
 	'location_id' => $meeting->post_parent,
@@ -49,7 +49,7 @@ get_header();
 				<div class="row">
 					<div class="col-md-4">
 
-						<?php if (!in_array('TC', $meeting->types) && !($meeting->is_approximate_location)) { ?>
+						<?php if (!in_array('TC', $meeting->types) && ($meeting->approximate !== 'yes')) { ?>
 						<div class="panel panel-default">
 							<a class="panel-heading tsml-directions" href="#" data-latitude="<?php echo $meeting->latitude ?>" data-longitude="<?php echo $meeting->longitude ?>" data-location="<?php echo $meeting->location ?>">
 								<h3 class="panel-title">
