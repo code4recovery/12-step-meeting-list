@@ -563,8 +563,8 @@ function tsml_geocode($address) {
 	//filter out any empty addresses that got added due to a bug
 	$addresses = array_filter($addresses, 'tsml_has_address');
 
-	//if key exists, return it
-	if (array_key_exists($address, $addresses)) {
+	//if key exists && approximate is set for that address, return it
+	if (array_key_exists($address, $addresses) && !empty($addresses[$address]['approximate'])) {
 		$addresses[$address]['status'] = 'cache';
 		return $addresses[$address];
 	}
