@@ -1,8 +1,8 @@
 === 12 Step Meeting List ===
-Contributors: aasanjose
+Contributors: Code for Recovery
 Requires at least: 3.2
-Tested up to: 5.4.2
-Stable tag: 3.9.4-rc.1
+Tested up to: 5.6.0
+Stable tag: 3.9.4
 
 This plugin helps twelve step recovery programs list their meetings. It standardizes addresses, and displays results in a searchable list and map.
 
