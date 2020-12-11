@@ -64,7 +64,8 @@ function tsml_assets() {
 
 		wp_enqueue_style('tsml_public', plugins_url('../assets/css/public.min.css', __FILE__), array(), TSML_VERSION);
 		wp_enqueue_script('jquery_validate', plugins_url('../assets/js/jquery.validate.min.js', __FILE__), array('jquery'), TSML_VERSION, true);
-		wp_enqueue_script('tsml_public', plugins_url('../assets/js/public.min.js', __FILE__), array('jquery'), TSML_VERSION, true);
+    wp_enqueue_script('tsml_public', plugins_url('../assets/js/public.min.js', __FILE__), array('jquery'), TSML_VERSION, true);
+    wp_enqueue_script('jquery-ui-autocomplete');
 		wp_localize_script('tsml_public', 'tsml', array(
 			'ajaxurl' => admin_url('admin-ajax.php'),
 			'columns' => array_keys($tsml_columns),
@@ -562,8 +563,8 @@ function tsml_geocode($address) {
 	//filter out any empty addresses that got added due to a bug
 	$addresses = array_filter($addresses, 'tsml_has_address');
 
-	//if key exists, return it
-	if (array_key_exists($address, $addresses)) {
+	//if key exists && approximate is set for that address, return it
+	if (array_key_exists($address, $addresses) && !empty($addresses[$address]['approximate'])) {
 		$addresses[$address]['status'] = 'cache';
 		return $addresses[$address];
 	}
@@ -661,7 +662,7 @@ function tsml_geocode($address) {
 			'formatted_address' => $data->results[0]->formatted_address,
 			'latitude' => $data->results[0]->geometry->location->lat,
 			'longitude' => $data->results[0]->geometry->location->lng,
-			'is_approximate_location' => $data->results[0]->geometry->location_type == 'APPROXIMATE',
+			'approximate' => ($data->results[0]->geometry->location_type === 'APPROXIMATE') ? 'yes' : 'no',
 			'city' => null,
 		);
 		// $my_results = print_r($response, true);
@@ -684,22 +685,54 @@ function tsml_geocode($address) {
 	return $response;
 }
 
+//function: Ensure location->approximate set through geocoding and updated
+//used: single-meetings.php, single-locations.php
+function tsml_ensure_location_approximate_set($meeting_location_info) {
+  if (empty($meeting_location_info->approximate)) {
+    $geocoded = tsml_geocode($meeting_location_info->formatted_address);
+    $meeting_location_info->approximate = $geocoded['approximate'];
+    update_post_meta($meeting_location_info->location_id, 'approximate', $geocoded['approximate']);
+  };
+  return $meeting_location_info;
+}
+
 //function: get all locations in the system
 //used:		tsml_group_count()
 function tsml_get_all_groups($status='any') {
-	return get_posts('post_type=tsml_group&post_status=' . $status . '&numberposts=-1&orderby=name&order=asc');
+
+	return get_posts( array(
+		'post_type'   => 'tsml_group',
+		'post_status' => $status,
+		'numberposts' => - 1,
+		'orderby'     => 'name',
+		'order'       => 'ASC',
+	) );
 }
 
 //function: get all locations in the system
 //used:		tsml_location_count(), tsml_import(), and admin_import.php
 function tsml_get_all_locations($status='any') {
-	return get_posts('post_type=tsml_location&post_status=' . $status . '&numberposts=-1&orderby=name&order=asc');
+
+	return get_posts( array(
+		'post_type'   => 'tsml_location',
+		'post_status' => $status,
+		'numberposts' => - 1,
+		'orderby'     => 'name',
+		'order'       => 'ASC',
+	) );
 }
 
 //function: get all meetings in the system
 //used:		tsml_meeting_count(), tsml_import(), and admin_import.php
 function tsml_get_all_meetings($status='any') {
-	return get_posts('post_type=tsml_meeting&post_status=' . $status . '&numberposts=-1&orderby=name&order=asc');
+
+	return get_posts( array(
+		'post_type'   => 'tsml_meeting',
+		'post_status' => $status,
+		'numberposts' => - 1,
+		'orderby'     => 'name',
+		'order'       => 'ASC',
+	) );
 }
 
 //function: get all regions in the system
@@ -832,7 +865,7 @@ function tsml_get_locations() {
 	}
 
 	# Get all locations
-	$posts = tsml_get_all_locations('publish');
+	$posts = tsml_get_all_locations( array( 'publish', 'draft' ) );
 
 	# Much faster than doing get_post_meta() over and over
 	$location_meta = tsml_get_meta('tsml_location');
@@ -944,6 +977,7 @@ function tsml_get_meeting($meeting_id=false) {
 		}
 	}
 	sort($meeting->types_expanded);
+  $meeting = tsml_ensure_location_approximate_set($meeting); // Can eventually remove this when <3.9 TSMLs no longer used.
 
 	return $meeting;
 }
@@ -1680,7 +1714,7 @@ function tsml_to_css_classes($types, $prefix = 'type-') {
 
 /**
  * Sanitizes a string for sorting purposes.  Similar to sanitize_title(), but uses Unicode regular expressions to support multiple languages.
- * 
+ *
  * NOTE: Requires PHP 5.1.0 or later.  More details here:
  *   https://www.php.net/manual/en/regexp.reference.unicode.php
  *

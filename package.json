@@ -17,8 +17,7 @@
     "mark.js": "^8.11.1",
     "sass": "^1.27.0",
     "sass-loader": "^7.3.1",
-    "timepicker": "^1.13.15",
-    "typeahead.js": "^0.11.1"
+    "timepicker": "^1.13.15"
   },
   "dependencies": {}
 }

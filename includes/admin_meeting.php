@@ -30,8 +30,10 @@ function tsml_admin_init() {
 	// Compares versions and updates databases as needed for upgrades
 	$tsml_version = get_option('tsml_version');
 	if (version_compare($tsml_version, TSML_VERSION, '<=')) {
-		db_update_addresses_cache_approximate_location();
-		db_update_tsml_locations_approximate_location();
+    db_update_remove_all_approximate_location_cache();
+    db_update_remove_all_is_approximate_location_meta();
+		// db_update_addresses_cache_approximate_location();
+		// db_update_tsml_locations_approximate_location();
 		update_option('tsml_version', TSML_VERSION);
 		flush_rewrite_rules();
 	};
@@ -133,7 +135,7 @@ function tsml_admin_init() {
             $meetings = tsml_get_meetings(array('location_id' => $location->ID));
         }
         ?>
-		<div class="meta_form_row typeahead">
+		<div class="meta_form_row">
 			<label for="location"><?php _e('Location', '12-step-meeting-list')?></label>
 			<input type="text" name="location" id="location" value="<?php if (!empty($location->post_title)) {
             echo $location->post_title;
@@ -149,8 +151,8 @@ function tsml_admin_init() {
             echo $location->formatted_address;
         }
 				?>">
-			<input type="hidden" name="is_approximate_location" id="is_approximate_location" value="<?php if(!empty($location->is_approximate_location)) {
-						echo $location->is_approximate_location;
+			<input type="hidden" name="approximate" id="approximate" value="<?php if(!empty($location->approximate)) {
+						echo $location->approximate;
 				}
 				?>">
 			<input type="hidden" name="latitude" id="latitude" value="<?php if (!empty($location->latitude)) {
@@ -236,7 +238,7 @@ function tsml_admin_init() {
 				<label><input type="radio" name="group_status" value="meeting"<?php checked(empty($meeting->group))?>> <?php _e('Individual meeting', '12-step-meeting-list')?></label>
 				<label><input type="radio" name="group_status" value="group"<?php checked(!empty($meeting->group))?>> <?php _e('Part of a group', '12-step-meeting-list')?></label>
 			</div>
-			<div class="meta_form_row typeahead group-visible">
+			<div class="meta_form_row group-visible">
 				<label for="group"><?php _e('Group', '12-step-meeting-list')?></label>
 				<input type="text" name="group" id="group" value="<?php echo @$meeting->group ?>">
 			</div>

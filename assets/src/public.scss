@@ -1,4 +1,6 @@
 @import 'mixins/breakpoints';
+@import 'jquery-ui.css';
+@import 'tsml-jquery-ui.css';
 
 $icon_font_path: '../fonts/'; //bootstrap
 $color_gray: #aaa;
@@ -12,7 +14,6 @@ $height: 550px; //height of map and min-height of list
 
 #tsml {
     @import '../../node_modules/bootstrap-sass/assets/stylesheets/_bootstrap.scss';
-    @import 'typeahead-bootstrap.scss';
 
     a.btn {
         overflow: hidden;
@@ -196,7 +197,7 @@ $height: 550px; //height of map and min-height of list
             cursor: pointer;
         }
     }
-
+  
     /* meetings */
     #meetings {
         clear: both;

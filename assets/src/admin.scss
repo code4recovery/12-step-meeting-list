@@ -1,4 +1,6 @@
 @import 'mixins/breakpoints';
+@import 'jquery-ui.css';
+@import 'tsml-jquery-ui.css';
 
 body {
 	
@@ -246,16 +248,6 @@ body {
 			}
 			
 			input[disabled] { opacity: .5; cursor: not-allowed; }
-		
-			&.typeahead {
-				overflow: visible;
-	            @import 'typeahead-bootstrap.scss';
-				.twitter-typeahead{
-					 width: 85%;
-					 input { width: 100%; }
-				}
-				.tt-hint { color: #999; }
-			}
 			
 			&.checkbox, &.radio {
 				padding-left: 15%;

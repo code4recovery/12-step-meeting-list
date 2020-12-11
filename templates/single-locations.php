@@ -6,7 +6,7 @@ $location = tsml_get_location();
 //define some vars for the map
 wp_localize_script('tsml_public', 'tsml_map', array(
 	'formatted_address' => $location->formatted_address,
-	'is_approximate_location' => $location->is_approximate_location,
+	'approximate' => $location->approximate,
 	'directions' => __('Directions', '12-step-meeting-list'),
 	'directions_url' => $location->directions,
 	'latitude' => $location->latitude,
@@ -39,7 +39,7 @@ get_header();
 
 				<div class="row location">
 					<div class="col-md-4">
-					<?php if (!($location->is_approximate_location)) { ?>
+          <?php if ($location->approximate !== 'yes') { ?>
 						<div class="panel panel-default">
 							<a class="panel-heading tsml-directions" data-latitude="<?php echo $location->latitude ?>" data-longitude="<?php echo $location->longitude ?>" data-location="<?php echo $location->post_title ?>">
 								<h3 class="panel-title">
