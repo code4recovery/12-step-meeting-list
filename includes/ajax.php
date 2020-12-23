@@ -122,12 +122,14 @@ if (!function_exists('tsml_admin_ajax_address')) {
 			'numberposts'	=> 1,
 			'meta_key'		=> 'formatted_address',
 			'meta_value'	=> sanitize_text_field($_GET['formatted_address']),
-		))) return array();
+		))) {
+			wp_send_json_error( $posts );
+		}
 
 		$region = array_values(get_the_terms($posts[0]->ID, 'tsml_region'));
 
 		//return info to user
-		wp_send_json(array(
+		wp_send_json_success(array(
 			'location' => $posts[0]->post_title,
 			'location_notes' => $posts[0]->post_content,
 			'region' => $region[0]->term_id,
