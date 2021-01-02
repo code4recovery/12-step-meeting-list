@@ -172,7 +172,7 @@ jQuery(function($) {
             $('input[name=latitude]').val(location.latitude);
             $('input[name=longitude]').val(location.longitude);
             $('select[name=region] option[value=' + location.region + ']').prop('selected', true);
-            $('textarea[name=location_notes]').val(location.notes);
+            $('textarea[name=location_notes]').val(location.notes);        
           }
         });
       }
@@ -292,9 +292,8 @@ jQuery(function($) {
 								action: 'tsml_address',
 								formatted_address: geocoded.formatted_address
 							},
-							function(response) {
-								if (response.success) {
-									var data = response.data;
+							function(data) {
+								if (data) {
 									$('input[name=location]').val(data.location);
 									if (data.region != $('select[name=region]').val()) {
 										$('select[name=region] option').prop('selected', false);
