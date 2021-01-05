@@ -655,7 +655,8 @@ jQuery(function($) {
 							classes.push('notes');
 						}
 						for (var i = 0; i < obj.types.length; i++) {
-							classes.push('type-' + sanitizeTitle(obj.types[i]));
+              typeClass = typeof obj.types[i] === 'string' ? obj.types[i] : obj.types[i].toString();
+							classes.push('type-' + sanitizeTitle(typeClass));
 						}
 
 						//add new table row
