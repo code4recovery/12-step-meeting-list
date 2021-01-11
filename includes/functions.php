@@ -550,7 +550,7 @@ function tsml_front_page($wp_query){
 //function: request accurate address information from google
 //used:		tsml_ajax_import(), tsml_ajax_geocode()
 function tsml_geocode($address) {
-	global $tsml_curl_handle, $tsml_language, $tsml_google_overrides, $tsml_bounds;
+	global $tsml_curl_handle, $tsml_language, $tsml_google_overrides, $tsml_bounds, $tsml_google_maps_key, $tsml_geocoding_method;
 
 	//check overrides first before anything
 	if (array_key_exists($address, $tsml_google_overrides)) {
@@ -586,6 +586,10 @@ function tsml_geocode($address) {
 		'address' => $address,
 		'language' => $tsml_language,
 	);
+
+	if ($tsml_geocoding_method == 'google_key' && !empty($tsml_google_maps_key)) {
+		$options['key'] = $tsml_google_maps_key;
+	}
 
 	//bias the viewport if we know the bounds
 	if ($tsml_bounds) {
