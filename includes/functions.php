@@ -587,6 +587,7 @@ function tsml_geocode($address) {
 		'language' => $tsml_language,
 	);
 
+	//Use the site's Google API key if appropriate
 	if ($tsml_geocoding_method == 'google_key' && !empty($tsml_google_maps_key)) {
 		$options['key'] = $tsml_google_maps_key;
 	}
