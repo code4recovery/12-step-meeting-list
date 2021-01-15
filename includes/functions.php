@@ -605,6 +605,14 @@ function tsml_geocode($address) {
 function tsml_geocode_google($address, $tsml_map_key) {
 	global $tsml_curl_handle, $tsml_language, $tsml_google_overrides, $tsml_bounds;
 
+	// Can't Geocode an empty address
+	if (empty($address)) {
+		return array(
+			'status' => 'error',
+			'reason' => 'Addres string was empty',
+		);
+	}
+
 	//initialize curl handle if necessary
 	if (!$tsml_curl_handle) {
 		$tsml_curl_handle = curl_init();
