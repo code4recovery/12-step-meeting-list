@@ -596,6 +596,7 @@ function tsml_geocode($address) {
 
 	//cache result
 	$addresses[$address] = $response;
+	$addresses[$response['formatted_address']] = $response;
 	update_option('tsml_addresses', $addresses);
 
 	return $response;
