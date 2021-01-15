@@ -569,6 +569,42 @@ function tsml_geocode($address) {
 		return $addresses[$address];
 	}
 
+	$tsml_map_key = 'AIzaSyCwIhOSfKs47DOe24JXM8nxfw1gC05BaiU';
+
+	switch ($tsml_geocoding_method) {
+		case 'legacy':
+			$response = tsml_geocode_google($address, $tsml_map_key);
+			break;
+		case 'google_key':
+			// If there is a google maps key, use it
+			if (!empty($tsml_google_maps_key)) {
+				$tsml_map_key = $tsml_google_maps_key;
+			}
+			$response = tsml_geocode_google($address, $tsml_map_key);
+			break;
+		case 'api_gateway':
+			$response = tsml_geocode_google($address, $tsml_map_key);
+			tsml_geocode_api_gateway($address, $tsml_map_key);
+			break;
+		default:
+	}
+
+	//Return if the status is error
+	if ( $response['status'] == 'error' ) {
+		return $response;
+	}
+
+	//cache result
+	$addresses[$address] = $response;
+	update_option('tsml_addresses', $addresses);
+
+	return $response;
+}
+
+//function: Call Google for geocoding of the address
+function tsml_geocode_google($address, $tsml_map_key) {
+	global $tsml_curl_handle, $tsml_language, $tsml_google_overrides, $tsml_bounds;
+
 	//initialize curl handle if necessary
 	if (!$tsml_curl_handle) {
 		$tsml_curl_handle = curl_init();
@@ -582,15 +618,10 @@ function tsml_geocode($address) {
 
 	//start list of options for geocoding request
 	$options = array(
-		'key' => 'AIzaSyCwIhOSfKs47DOe24JXM8nxfw1gC05BaiU',
+		'key' => $tsml_map_key,
 		'address' => $address,
 		'language' => $tsml_language,
 	);
-
-	//Use the site's Google API key if appropriate
-	if ($tsml_geocoding_method == 'google_key' && !empty($tsml_google_maps_key)) {
-		$options['key'] = $tsml_google_maps_key;
-	}
 
 	//bias the viewport if we know the bounds
 	if ($tsml_bounds) {
@@ -669,9 +700,8 @@ function tsml_geocode($address) {
 			'longitude' => $data->results[0]->geometry->location->lng,
 			'approximate' => ($data->results[0]->geometry->location_type === 'APPROXIMATE') ? 'yes' : 'no',
 			'city' => null,
+			'status' => 'geocode', 
 		);
-		// $my_results = print_r($response, true);
-		// file_put_contents('./newfile.txt', print_r($my_results, true));
 
 		//get city, we might need it for the region, and we are going to cache it
 		foreach ($data->results[0]->address_components as $component) {
@@ -681,13 +711,13 @@ function tsml_geocode($address) {
 		}
 	}
 
-	//cache result
-	$addresses[$address] = $response;
-	update_option('tsml_addresses', $addresses);
-
-	//add a status and return it
-	$response['status'] = 'geocode';
 	return $response;
+}
+
+//function: Call the new api gateway to geocode the address
+function tsml_geocode_api_gateway($address) {
+	//TODO: write this function
+	//Don't forget 'status' => 'geocode' in the returned array
 }
 
 //function: Ensure location->approximate set through geocoding and updated
