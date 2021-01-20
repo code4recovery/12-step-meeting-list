@@ -582,7 +582,7 @@ function tsml_geocode($address) {
 
 	//start list of options for geocoding request
 	$options = array(
-		'key' => 'AIzaSyCwIhOSfKs47DOe24JXM8nxfw1gC05BaiU',
+		'key' => 'AIzaSyCXSu5YhUDJ92Di3oQiVvb10TXsXRMtI48',
 		'address' => $address,
 		'language' => $tsml_language,
 	);

@@ -20,7 +20,7 @@ if (!function_exists('db_update_addresses_cache_approximate_location')) {
 				if (!array_key_exists('is_approximate_location', $entry)) {
           $entry['is_approximate_location'] = decide_if_location_approximate($address);					
         };
-        $updated_address_cache[$address] = $entry;
+        $updated_address_cache[$key] = $entry;
       };
       update_option('tsml_addresses', $updated_address_cache);
     };
@@ -49,7 +49,7 @@ if (!function_exists('db_update_remove_all_approximate_location_cache')) {
 				if (array_key_exists('is_approximate_location', $entry)) {
           unset($entry['is_approximate_location']);
         };
-        $updated_address_cache[$address] = $entry;
+        $updated_address_cache[$key] = $entry;
       };
       update_option('tsml_addresses', $updated_address_cache);
     };
