@@ -2,7 +2,7 @@
 Contributors: Code for Recovery
 Requires at least: 3.2
 Tested up to: 5.6.0
-Stable tag: 3.9.4
+Stable tag: 3.9.6
 
 This plugin helps twelve step recovery programs list their meetings. It standardizes addresses, and displays results in a searchable list and map.
 
@@ -204,6 +204,12 @@ To apply these changes, you must go to Settings > Permalinks and click "Save Cha
 1. Edit location
 
 == Changelog ==
+
+= 3.9.6 =
+* Hot-fix to replace API key and correct additional geocode-related bug.
+ 
+= 3.9.5 =
+* Hot-fix to remove geocode error when adding new meeting.
 
 = 3.9.4 =
 * Fix bugs associated with approximate values/display of directions dialogs.

@@ -582,7 +582,7 @@ function tsml_geocode($address) {
 
 	//start list of options for geocoding request
 	$options = array(
-		'key' => 'AIzaSyCwIhOSfKs47DOe24JXM8nxfw1gC05BaiU',
+		'key' => 'AIzaSyCXSu5YhUDJ92Di3oQiVvb10TXsXRMtI48',
 		'address' => $address,
 		'language' => $tsml_language,
 	);
@@ -688,7 +688,7 @@ function tsml_geocode($address) {
 //function: Ensure location->approximate set through geocoding and updated
 //used: single-meetings.php, single-locations.php
 function tsml_ensure_location_approximate_set($meeting_location_info) {
-  if (empty($meeting_location_info->approximate)) {
+  if (empty($meeting_location_info->approximate) && !empty($meeting_location_info->formatted_address)) {
     $geocoded = tsml_geocode($meeting_location_info->formatted_address);
     $meeting_location_info->approximate = $geocoded['approximate'];
     update_post_meta($meeting_location_info->location_id, 'approximate', $geocoded['approximate']);
@@ -976,8 +976,9 @@ function tsml_get_meeting($meeting_id=false) {
 			$meeting->types_expanded[] = $tsml_programs[$tsml_program]['types'][$type];
 		}
 	}
-	sort($meeting->types_expanded);
-  $meeting = tsml_ensure_location_approximate_set($meeting); // Can eventually remove this when <3.9 TSMLs no longer used.
+  sort($meeting->types_expanded);
+  
+  if (!empty($meeting->post_title)) $meeting = tsml_ensure_location_approximate_set($meeting); // Can eventually remove this when <3.9 TSMLs no longer used.
 
 	return $meeting;
 }
