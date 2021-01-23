@@ -98,6 +98,9 @@ $tsml_feedback_addresses = get_option('tsml_feedback_addresses', array());
 //load the API key user saved, if any
 $tsml_google_maps_key = get_option('tsml_google_maps_key');
 
+//load the geocoding method
+$tsml_geocoding_method = get_option('tsml_geocoding_method', 'legacy');
+
 /*
 unfortunately the google geocoding API is not always perfect. used by tsml_import() and admin.js
 find correct coordinates with http://nominatim.openstreetmap.org/ and https://www.latlong.net/
