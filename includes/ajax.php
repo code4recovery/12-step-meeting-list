@@ -640,7 +640,7 @@ if (!function_exists('tsml_ajax_meeting_guide')) {
 		));
 
 		//send email
-		if (tsml_email(TSML_CONTACT_EMAIL, 'Sharing Key', $message)) {
+		if (tsml_email(MEETING_GUIDE_APP_NOTIFY, 'Sharing Key', $message)) {
 			die('sent');
 		}
 

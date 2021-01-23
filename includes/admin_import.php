@@ -292,7 +292,7 @@ function tmsl_import_page() {
 				'action' => 'meetings',
 				'key' => $key,
 			));
-			tsml_email(TSML_CONTACT_EMAIL, 'Sharing Key', $message, $current_user->user_email);
+      tsml_email(MEETING_GUIDE_APP_NOTIFY, 'Sharing Key', $message, $current_user->user_email);
 		}
 	}
 

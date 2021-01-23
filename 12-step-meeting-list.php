@@ -18,6 +18,10 @@ if (!defined('TSML_CONTACT_EMAIL')) {
     define('TSML_CONTACT_EMAIL', 'tsml@code4recovery.org');
 }
 
+if (!defined('MEETING_GUIDE_APP_NOTIFY')) {
+  define('MEETING_GUIDE_APP_NOTIFY', 'appsupport@aa.org');
+}
+
 if (!defined('TSML_PATH')) {
     define('TSML_PATH', plugin_dir_path(__FILE__));
 }
