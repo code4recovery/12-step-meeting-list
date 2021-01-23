@@ -573,7 +573,7 @@ function tsml_geocode($address) {
 	if ($tsml_geocoding_method == 'google_key' && !empty($tsml_google_maps_key)) {
 		$tsml_map_key = $tsml_google_maps_key;
 	} else { 
-		$tsml_map_key = 'AIzaSyCwIhOSfKs47DOe24JXM8nxfw1gC05BaiU';
+		$tsml_map_key = 'AIzaSyCXSu5YhUDJ92Di3oQiVvb10TXsXRMtI48';
 	}
 	$response = tsml_geocode_google($address, $tsml_map_key);
 
