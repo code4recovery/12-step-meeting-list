@@ -627,7 +627,7 @@ function tsml_geocode_google($address, $tsml_map_key) {
 
 	//send request to google
 	if ($tsml_geocoding_method == 'api_gateway') {
-		curl_setopt($tsml_curl_handle, CURLOPT_URL, 'http://api-gateway.apps.itstechnical.net/api/geocode?' . http_build_query($options));
+		curl_setopt($tsml_curl_handle, CURLOPT_URL, 'https://api-gateway.apps.itstechnical.net/api/geocode?' . http_build_query($options));
 	} else {
 		curl_setopt($tsml_curl_handle, CURLOPT_URL, 'https://maps.googleapis.com/maps/api/geocode/json?' . http_build_query($options));
 	}
