@@ -604,7 +604,7 @@ function tsml_geocode($address) {
 
 //function: Call Google for geocoding of the address
 function tsml_geocode_google($address, $tsml_map_key) {
-	global $tsml_curl_handle, $tsml_language, $tsml_google_overrides, $tsml_bounds;
+	global $tsml_curl_handle, $tsml_language, $tsml_google_overrides, $tsml_bounds, $tsml_geocoding_method;
 
 	// Can't Geocode an empty address
 	if (empty($address)) {
@@ -638,7 +638,11 @@ function tsml_geocode_google($address, $tsml_map_key) {
 	}
 
 	//send request to google
-	curl_setopt($tsml_curl_handle, CURLOPT_URL, 'https://maps.googleapis.com/maps/api/geocode/json?' . http_build_query($options));
+	if ($tsml_geocoding_method == 'api_gateway') {
+		curl_setopt($tsml_curl_handle, CURLOPT_URL, 'http://api-gateway.apps.itstechnical.net/api/geocode?' . http_build_query($options));
+	} else {
+		curl_setopt($tsml_curl_handle, CURLOPT_URL, 'https://maps.googleapis.com/maps/api/geocode/json?' . http_build_query($options));
+	}
 	curl_setopt($tsml_curl_handle, CURLOPT_RETURNTRANSFER, true);
 
 	$result = curl_exec($tsml_curl_handle);
