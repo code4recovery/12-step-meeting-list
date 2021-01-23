@@ -569,25 +569,13 @@ function tsml_geocode($address) {
 		return $addresses[$address];
 	}
 
-	$tsml_map_key = 'AIzaSyCwIhOSfKs47DOe24JXM8nxfw1gC05BaiU';
-
-	switch ($tsml_geocoding_method) {
-		case 'legacy':
-			$response = tsml_geocode_google($address, $tsml_map_key);
-			break;
-		case 'google_key':
-			// If there is a google maps key, use it
-			if (!empty($tsml_google_maps_key)) {
-				$tsml_map_key = $tsml_google_maps_key;
-			}
-			$response = tsml_geocode_google($address, $tsml_map_key);
-			break;
-		case 'api_gateway':
-			$response = tsml_geocode_google($address, $tsml_map_key);
-			tsml_geocode_api_gateway($address, $tsml_map_key);
-			break;
-		default:
+	//Set the Google API Key before calling function that finds the address
+	if ($tsml_geocoding_method == 'google_key' && !empty($tsml_google_maps_key)) {
+		$tsml_map_key = $tsml_google_maps_key;
+	} else { 
+		$tsml_map_key = 'AIzaSyCwIhOSfKs47DOe24JXM8nxfw1gC05BaiU';
 	}
+	$response = tsml_geocode_google($address, $tsml_map_key);
 
 	//Return if the status is error
 	if ( $response['status'] == 'error' ) {
@@ -725,12 +713,6 @@ function tsml_geocode_google($address, $tsml_map_key) {
 	}
 
 	return $response;
-}
-
-//function: Call the new api gateway to geocode the address
-function tsml_geocode_api_gateway($address) {
-	//TODO: write this function
-	//Don't forget 'status' => 'geocode' in the returned array
 }
 
 //function: Ensure location->approximate set through geocoding and updated
