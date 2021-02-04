@@ -1088,7 +1088,7 @@ function tsml_get_meetings($arguments=array(), $from_cache=true) {
 	}
 
 	//check if we are filtering
-	$allowed = array('mode', 'day', 'time', 'region', 'district', 'type', 'query', 'group_id', 'location_id', 'latitude', 'longitude', 'distance_units', 'distance');
+	$allowed = array('mode', 'day', 'time', 'region', 'district', 'type', 'query', 'group_id', 'location_id', 'latitude', 'longitude', 'distance_units', 'distance', 'offset');
 	if ($arguments = array_intersect_key($arguments, array_flip($allowed))) {
 		$filter = new tsml_filter_meetings($arguments);
 		$meetings = $filter->apply($meetings);

@@ -76,7 +76,13 @@ class tsml_filter_meetings
         if (!empty($arguments['time'])) {
             $this->time = is_array($arguments['time']) ? array_map('sanitize_title', $arguments['time']) : array(sanitize_title($arguments['time']));
             if (in_array('upcoming', $this->time)) {
-                $this->now = current_time('H:i');
+                if (!empty($arguments['offset'])) {
+                    $timestamp = current_time('timestamp');
+                    $secondsToAdd = $arguments['offset'] * 60;
+                    $this->now =  date("H:i", $timestamp + $secondsToAdd);
+                } else {
+                   $this->now = current_time('H:i');
+                }
             }
         }
 
@@ -237,7 +243,7 @@ class tsml_filter_meetings
         if (!isset($meeting['time'])) {
             return false;
         }
-
+        
         foreach ($this->time as $time) {
             if ($time == 'morning') {
                 return (strcmp('04:00', $meeting['time']) <= 0 && strcmp('11:59', $meeting['time']) >= 0);
