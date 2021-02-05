@@ -445,10 +445,7 @@ function tmsl_import_page() {
 					<div class="notice notice-warning inline" style="margin: 1px 0 22px;">
 						<div class="inside">
 							<h3>Enable Maps on Your Site</h3>
-							<p>Formerly, this plugin came with Google Maps built in, but, due to a change in Google's pricing, that's no 
-								longer possible. Read <a href="https://meetingguide.org/google-api" target="_blank">more 
-								about the price increase here</a>.</p>
-							<p>Now if you want to enable maps on your site you have two options: <strong>Mapbox</strong> or <strong>Google</strong>. 
+							<p>If you want to enable maps on your site you have two options: <strong>Mapbox</strong> or <strong>Google</strong>. 
 								They are both good options! In all likelihood neither one will charge you money. Mapbox gives 
 								<a href="https://www.mapbox.com/pricing/" target="_blank">50,000 free map views</a> / month, Google gives 
 								<a href="https://cloud.google.com/maps-platform/pricing/" target="_blank">28,500 free views</a>. 
@@ -466,7 +463,7 @@ function tmsl_import_page() {
 								</div>
 							</form>
 
-							<p>Alternatively you may still use Google. Their interface is slightly more complex, because they offer more
+							<p>Alternatively you may use Google. Their interface is slightly more complex, because they offer more
 							services. <a href="https://developers.google.com/maps/documentation/javascript/get-api-key" target="_blank">Go here</a> 
 							to get a key from Google. The process should only take a few minutes, although you will have to enter a 
 							credit card. 							
