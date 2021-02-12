@@ -4,7 +4,7 @@
 function tmsl_import_page() {
 	global $wpdb, $tsml_data_sources, $tsml_programs, $tsml_program, $tsml_nonce, $tsml_days, $tsml_feedback_addresses, 
 	$tsml_notification_addresses, $tsml_distance_units, $tsml_sharing, $tsml_sharing_keys, $tsml_contact_display,
-	$tsml_google_maps_key, $tsml_mapbox_key, $tsml_slug;
+	$tsml_google_maps_key, $tsml_mapbox_key, $tsml_geocoding_method, $tsml_slug;
 
 	$error = false;
 	
@@ -292,7 +292,7 @@ function tmsl_import_page() {
 				'action' => 'meetings',
 				'key' => $key,
 			));
-			tsml_email(TSML_CONTACT_EMAIL, 'Sharing Key', $message, $current_user->user_email);
+      tsml_email(MEETING_GUIDE_APP_NOTIFY, 'Sharing Key', $message, $current_user->user_email);
 		}
 	}
 
@@ -408,6 +408,13 @@ function tmsl_import_page() {
 		//there can be only one
 		$tsml_mapbox_key = null;
 		delete_option('tsml_mapbox_key');
+	}
+
+	//change geocoding method
+	if (!empty($_POST['tsml_geocoding_method']) && isset($_POST['tsml_nonce']) && wp_verify_nonce($_POST['tsml_nonce'], $tsml_nonce)) {
+		$tsml_geocoding_method = sanitize_text_field($_POST['tsml_geocoding_method']);
+		update_option('tsml_geocoding_method', $tsml_geocoding_method);
+		tsml_alert(__('Geocoding method updated.', '12-step-meeting-list'));
 	}
 
 	/*debugging
@@ -881,6 +888,24 @@ function tmsl_import_page() {
 									<?php }?>
 								</div>
 							</form>
+
+							<details>
+								<summary><strong><?php _e('Address Geocoding Method', '12-step-meeting-list') ?></strong></summary>
+								<p><?php _e('Code4Recovery is working on a new method for geocoding addresses. You can decide whether to use the old way, or whether to help us test the new way.', '12-step-meeting-list') ?></p>
+							</details>
+							<form method="post" action="<?php echo $_SERVER['REQUEST_URI'] ?>">
+								<?php wp_nonce_field($tsml_nonce, 'tsml_nonce', false) ?>
+								<select name="tsml_geocoding_method" onchange="this.form.submit()">
+									<option value="legacy" <?php selected($tsml_geocoding_method, 'legacy') ?>><?php _e('Legacy Method', '12-step-meeting-list'); ?></option>
+									<?php if (!empty($tsml_google_maps_key)) {?>
+										<option value="google_key" <?php selected($tsml_geocoding_method, 'google_key') ?>><?php _e('Use my Google API Key', '12-step-meeting-list'); ?></option>
+									<?php }?>
+									<option value="api_gateway" <?php selected($tsml_geocoding_method, 'api_gateway') ?>><?php _e('BETA - API Gateway - BETA', '12-step-meeting-list'); ?></option>
+								</select>
+							</form>
+							<?php if (!empty($tsml_google_maps_key)) {?>
+								<p>If you select "Use my Google API Key", then you <strong>must</strong> go into the Google Console and enable the geocode API for your key</p>
+							<?php }?>
 						</div>
 					</div>
 				</div>

@@ -550,7 +550,7 @@ function tsml_front_page($wp_query){
 //function: request accurate address information from google
 //used:		tsml_ajax_import(), tsml_ajax_geocode()
 function tsml_geocode($address) {
-	global $tsml_curl_handle, $tsml_language, $tsml_google_overrides, $tsml_bounds;
+	global $tsml_curl_handle, $tsml_language, $tsml_google_overrides, $tsml_bounds, $tsml_google_maps_key, $tsml_geocoding_method;
 
 	//check overrides first before anything
 	if (array_key_exists($address, $tsml_google_overrides)) {
@@ -569,6 +569,39 @@ function tsml_geocode($address) {
 		return $addresses[$address];
 	}
 
+	//Set the Google API Key before calling function that finds the address
+	if ($tsml_geocoding_method == 'google_key' && !empty($tsml_google_maps_key)) {
+		$tsml_map_key = $tsml_google_maps_key;
+	} else { 
+		$tsml_map_key = 'AIzaSyCXSu5YhUDJ92Di3oQiVvb10TXsXRMtI48';
+	}
+	$response = tsml_geocode_google($address, $tsml_map_key);
+
+	//Return if the status is error
+	if ( $response['status'] == 'error' ) {
+		return $response;
+	}
+
+	//cache result
+	$addresses[$address] = $response;
+	$addresses[$response['formatted_address']] = $response;
+	update_option('tsml_addresses', $addresses);
+
+	return $response;
+}
+
+//function: Call Google for geocoding of the address
+function tsml_geocode_google($address, $tsml_map_key) {
+	global $tsml_curl_handle, $tsml_language, $tsml_google_overrides, $tsml_bounds, $tsml_geocoding_method;
+
+	// Can't Geocode an empty address
+	if (empty($address)) {
+		return array(
+			'status' => 'error',
+			'reason' => 'Addres string was empty',
+		);
+	}
+
 	//initialize curl handle if necessary
 	if (!$tsml_curl_handle) {
 		$tsml_curl_handle = curl_init();
@@ -582,7 +615,7 @@ function tsml_geocode($address) {
 
 	//start list of options for geocoding request
 	$options = array(
-		'key' => 'AIzaSyCwIhOSfKs47DOe24JXM8nxfw1gC05BaiU',
+		'key' => $tsml_map_key,
 		'address' => $address,
 		'language' => $tsml_language,
 	);
@@ -593,7 +626,11 @@ function tsml_geocode($address) {
 	}
 
 	//send request to google
-	curl_setopt($tsml_curl_handle, CURLOPT_URL, 'https://maps.googleapis.com/maps/api/geocode/json?' . http_build_query($options));
+	if ($tsml_geocoding_method == 'api_gateway') {
+		curl_setopt($tsml_curl_handle, CURLOPT_URL, 'https://api-gateway.apps.itstechnical.net/api/geocode?' . http_build_query($options));
+	} else {
+		curl_setopt($tsml_curl_handle, CURLOPT_URL, 'https://maps.googleapis.com/maps/api/geocode/json?' . http_build_query($options));
+	}
 	curl_setopt($tsml_curl_handle, CURLOPT_RETURNTRANSFER, true);
 
 	$result = curl_exec($tsml_curl_handle);
@@ -664,9 +701,8 @@ function tsml_geocode($address) {
 			'longitude' => $data->results[0]->geometry->location->lng,
 			'approximate' => ($data->results[0]->geometry->location_type === 'APPROXIMATE') ? 'yes' : 'no',
 			'city' => null,
+			'status' => 'geocode', 
 		);
-		// $my_results = print_r($response, true);
-		// file_put_contents('./newfile.txt', print_r($my_results, true));
 
 		//get city, we might need it for the region, and we are going to cache it
 		foreach ($data->results[0]->address_components as $component) {
@@ -676,19 +712,13 @@ function tsml_geocode($address) {
 		}
 	}
 
-	//cache result
-	$addresses[$address] = $response;
-	update_option('tsml_addresses', $addresses);
-
-	//add a status and return it
-	$response['status'] = 'geocode';
 	return $response;
 }
 
 //function: Ensure location->approximate set through geocoding and updated
 //used: single-meetings.php, single-locations.php
 function tsml_ensure_location_approximate_set($meeting_location_info) {
-  if (empty($meeting_location_info->approximate)) {
+  if (empty($meeting_location_info->approximate) && !empty($meeting_location_info->formatted_address)) {
     $geocoded = tsml_geocode($meeting_location_info->formatted_address);
     $meeting_location_info->approximate = $geocoded['approximate'];
     update_post_meta($meeting_location_info->location_id, 'approximate', $geocoded['approximate']);
@@ -976,8 +1006,9 @@ function tsml_get_meeting($meeting_id=false) {
 			$meeting->types_expanded[] = $tsml_programs[$tsml_program]['types'][$type];
 		}
 	}
-	sort($meeting->types_expanded);
-  $meeting = tsml_ensure_location_approximate_set($meeting); // Can eventually remove this when <3.9 TSMLs no longer used.
+  sort($meeting->types_expanded);
+  
+  if (!empty($meeting->post_title)) $meeting = tsml_ensure_location_approximate_set($meeting); // Can eventually remove this when <3.9 TSMLs no longer used.
 
 	return $meeting;
 }

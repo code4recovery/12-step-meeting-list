@@ -764,6 +764,9 @@ jQuery(function($) {
 	function sanitizeTitle(str) {
 		if (str == null) return '';
 
+		// Convert "str" to a string (sometimes it can be an int; possibly something else)
+		str = str.toString();
+
 		str = str.replace(/^\s+|\s+$/g, ''); // trim
 		str = str.toLowerCase();
 
@@ -785,7 +788,10 @@ jQuery(function($) {
 
 	function sanitizeDataSort(str) {
 		if (str == null) return '';
-	
+
+		// Convert "str" to a string (sometimes it can be an int; possibly something else)
+		str = str.toString();
+
 		// For efficiency, create all of the regular expressions only once
 		if (typeof tsml_sanitize_data == 'undefined') {
 			tsml_sanitize_data = [
