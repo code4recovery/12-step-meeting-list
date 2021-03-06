@@ -1344,7 +1344,13 @@ function tsml_import_buffer_set($meetings, $data_source=null) {
 		if (in_array('C', $meetings[$i]['types']) && in_array('O', $meetings[$i]['types'])) {
 			$meetings[$i]['types'] = array_diff($meetings[$i]['types'], array('O'));
 		}
-
+		
+		//If the meeting code is "11", it is picked as an int when a string is intended. Cast to String
+		if (in_array(11, $meetings[$i]['types'])) {
+				echo "blou4";
+			$meetings[$i]['types'] = array_diff($meetings[$i]['types'], array(11));
+			$meetings[$i]['types'][] = "11";
+		}
 		//append unused types to notes
 		if (count($unused_types)) {
 			if (!empty($meetings[$i]['notes'])) $meetings[$i]['notes'] .= str_repeat(PHP_EOL, 2);
