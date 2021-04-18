@@ -80,7 +80,7 @@ function tsml_admin_init() {
 			<div class="checkboxes<?php if (!empty($tsml_types_in_use) && count($tsml_types_in_use) !== count($tsml_programs[$tsml_program]['types'])) {?> has_more<?php }?>">
 			<?php
 			foreach ($tsml_programs[$tsml_program]['types'] as $key => $type) {
-				if ($key == 'ONL') continue; //hide "Online Meeting" since it's not manually settable
+				if ($key == 'ONL' || $key == 'TC') continue; //hide "Online Meeting" since it's not manually settable, neither is location Temporarily Closed
 				?>
 				<label <?php if (!empty($tsml_types_in_use) && !in_array($key, $tsml_types_in_use)) {echo ' class="not_in_use"';}?>>
 					<input type="checkbox" name="types[]" value="<?php echo $key ?>" <?php checked(in_array($key, @$meeting->types))?>>
