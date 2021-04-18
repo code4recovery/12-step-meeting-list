@@ -76,18 +76,31 @@ function tsml_save_post($post_id, $post, $update) {
 	//video conference information (doing this here because it affects types)
 	// If either Conference URL or phone have values, we allow/set type ONL
 	$valid_conference_url = null;
+	$meeting_is_online = false;
 	$_POST['types'] = array_values(array_diff($_POST['types'], array('ONL')));
 	if (!empty($_POST['conference_url'])) {
 		$url = tsml_sanitize('url', $_POST['conference_url']);
 		if (tsml_conference_provider($url)) {
 			$valid_conference_url = $url;
 			array_push($_POST['types'], 'ONL');
+			$meeting_is_online = true;
 		} 
 	}
 	$_POST['conference_phone'] = tsml_sanitize('phone', $_POST['conference_phone']);
 	if (!empty($_POST['conference_phone']) && empty($valid_conference_url)) {
 		array_push($_POST['types'], 'ONL');
+		$meeting_is_online = true;
 	}
+
+	// Handle the in_person field (also here because it affects types)
+	$attendance_option = '';
+	if ($_POST['in_person'] == 'yes' ) {
+		$attendance_option = $meeting_is_online ? 'hybrid' : 'in_person';
+	} else {
+		$attendance_option = $meeting_is_online ? 'online' : 'temporarily_closed';
+		if (!$meeting_is_online) { array_push($_POST['types'], 'TC'); }
+	}
+	update_post_meta($post->ID, 'attendance_option', $attendance_option);
 
 	//video conferencing info
 	if (!$update || strcmp($old_meeting->conference_url, $valid_conference_url) !== 0) {
