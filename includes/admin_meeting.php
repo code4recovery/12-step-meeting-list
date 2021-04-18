@@ -129,12 +129,22 @@ function tsml_admin_init() {
 
     function tsml_location_box() {
         global $post, $tsml_days, $tsml_mapbox_key, $tsml_google_maps_key;
+				$meeting = tsml_get_meeting();
         $meetings = array();
         if ($post->post_parent) {
             $location = tsml_get_location($post->post_parent);
             $meetings = tsml_get_meetings(array('location_id' => $location->ID));
         }
         ?>
+		<div class="meta_form_row">
+			<div class="meta_form_row radio">
+				<p><?php _e('Is this meeting in-person?', '12-step-meeting-list')?></p>
+				<label><input type="radio" name="in_person" value="yes"<?php checked(empty($meeting->attendance_option) || $meeting->attendance_option == 'in_person' || $meeting->attendance_option == 'hybrid')?>> <?php _e('Yes (In-person or hybrid)', '12-step-meeting-list')?></label>
+				<label><input type="radio" name="in_person" value="no"<?php checked($meeting->attendance_option == 'online' || $meeting->attendance_option == 'temporarily_closed')?>> <?php _e('No (Online only or temporarily not meeting)', '12-step-meeting-list')?></label>
+				<br/>
+			</div>
+		</div>
+
 		<div class="meta_form_row">
 			<label for="location"><?php _e('Location', '12-step-meeting-list')?></label>
 			<input type="text" name="location" id="location" value="<?php if (!empty($location->post_title)) {
