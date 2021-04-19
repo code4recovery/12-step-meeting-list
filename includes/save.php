@@ -98,7 +98,7 @@ function tsml_save_post($post_id, $post, $update) {
 		$attendance_option = $meeting_is_online ? 'hybrid' : 'in_person';
 	} else {
 		$attendance_option = $meeting_is_online ? 'online' : 'temporarily_closed';
-		if (!$meeting_is_online) { array_push($_POST['types'], 'TC'); }
+		array_push($_POST['types'], 'TC');
 	}
 	update_post_meta($post->ID, 'attendance_option', $attendance_option);
 
