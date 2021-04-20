@@ -483,7 +483,7 @@ if (!function_exists('function_name')) {
 			}
 
 			//add custom meeting fields if available
-			foreach (array('types', 'data_source', 'conference_url', 'conference_url_notes', 'conference_phone', 'conference_phone_notes') as $key) {
+			foreach (array('types', 'data_source', 'attendance_option', 'conference_url', 'conference_url_notes', 'conference_phone', 'conference_phone_notes') as $key) {
 				if (!empty($meeting[$key])) add_post_meta($meeting_id, $key, $meeting[$key]);
 			}
 
@@ -568,6 +568,9 @@ if (!function_exists('function_name')) {
 		foreach ($tsml_data_sources as $url => $props) {
 			$tsml_data_sources[$url]['count_meetings'] = number_format($props['count_meetings']);
 		}
+
+		// Set Attendance option for meetings that don't already have this field
+		db_update_set_attendance_options();
 
 		wp_send_json(array(
 			'errors'		=> $errors,
