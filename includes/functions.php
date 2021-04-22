@@ -1185,7 +1185,7 @@ function tsml_meeting_types($types) {
 //sanitize and import an array of meetings to an 'import buffer' (an wp_option that's iterated on progressively)
 //called from admin_import.php (both CSV and JSON)
 function tsml_import_buffer_set($meetings, $data_source=null) {
-	global $tsml_programs, $tsml_program, $tsml_days;
+	global $tsml_programs, $tsml_program, $tsml_days, $tsml_meeting_attendance_options;
 
 	if (strpos($data_source, "spreadsheets.google.com") !== false){
 		$meetings = tsml_import_reformat_googlesheet($meetings);
@@ -1369,6 +1369,14 @@ function tsml_import_buffer_set($meetings, $data_source=null) {
 		}
 		if (empty($meetings[$i]['conference_phone'])) {
 			$meetings[$i]['conference_phone_notes'] = null;
+		}
+
+		//Clean up attendance options
+		if (!empty($meetings[$i]['attendance_option'])) {
+			$meetings[$i]['attendance_option'] = trim(strtolower($meetings[$i]['attendance_option']));
+			if (!array_key_exists($meetings[$i]['attendance_option'], $tsml_meeting_attendance_options)) {
+				$meetings[$i]['attendance_option'] = '';
+			}
 		}
 
 		//make sure we're not double-listing types
