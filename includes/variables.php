@@ -17,7 +17,7 @@ if (!$tsml_cache = get_option('tsml_cache')) {
 // Define attendance options
 $tsml_meeting_attendance_options = array(
 	'in_person' => 'In-person',
-	'online' => 'Online only',
+	'online' => 'Online',
 	'hybrid' => 'In-person and online',
 	'temporarily_closed' => 'Temporarily closed',
 );

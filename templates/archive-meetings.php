@@ -550,14 +550,38 @@ break;
 
             case 'name': ?>
 									<td class="name" data-sort="<?php echo tsml_sanitize_data_sort($meeting['name']) . '-' . $sort_time ?>">
-										<?php echo $meeting['link'] ?>
+                                        <a href="<?php echo $meeting['url']?>"><?php echo $meeting['name']?></a>
+                                        <?php
+                                            $meeting_types = tsml_format_types($meeting['types']);
+                                            if (!empty($meeting_types)) {
+                                                echo '<br/><small><span class="meeting_types">(' . $meeting_types . ')</span></small>';
+                                            }
+                                        ?>
+
 									</td>
 									<?php
 break;
 
             case 'location': ?>
 									<td class="location" data-sort="<?php echo tsml_sanitize_data_sort($meeting['location']) . '-' . $sort_time ?>">
-										<?php echo $meeting['location'] ?>
+										<?php
+                                            switch ($meeting['attendance_option']) {
+                                                case 'online':
+                                                    echo $tsml_meeting_attendance_options['online'];
+                                                    break;
+                                                case 'temporarily_closed':
+                                                    echo $tsml_meeting_attendance_options['temporarily_closed'];
+                                                    break;
+                                                case 'hybrid':
+                                                    echo $meeting['location'] . '<br/><small>';
+                                                    //echo $tsml_meeting_attendance_options['online'];
+                                                    echo 'Hybrid Meeting</small>';
+                                                    break;
+                                                default:
+                                                    echo $meeting['location'];
+                                                    break;
+                                            }
+                                        ?>
 									</td>
 									<?php
 break;
