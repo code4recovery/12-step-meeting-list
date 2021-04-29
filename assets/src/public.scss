@@ -499,6 +499,10 @@ $height: 550px; //height of map and min-height of list
                             .address {
                                 font-size: 0%;
                             }
+                            .region {
+                                opacity: .5;
+                                text-decoration: line-through;
+                            }
                         }
                         &.attendance-online {
                             .location {
@@ -506,6 +510,10 @@ $height: 550px; //height of map and min-height of list
                             }
                             .address {
                                 font-size: 0%;
+                            }
+                            .region {
+                                opacity: .5;
+                                text-decoration: line-through;
                             }
                         }
                         &.attendance-hybrid {
