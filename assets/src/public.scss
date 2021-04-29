@@ -453,9 +453,6 @@ $height: 550px; //height of map and min-height of list
                                     font-size: 11px;
                                     white-space: nowrap;
 
-                                    &:before {
-                                        content: " / ";
-                                    }
                                 }
                             }
 
@@ -476,6 +473,7 @@ $height: 550px; //height of map and min-height of list
                             }
                         }
 
+/*
                         &.type-tc {
                             opacity: .5;
 
@@ -493,6 +491,30 @@ $height: 550px; //height of map and min-height of list
                                 opacity: .5;
                             }
                         }
+*/
+                        &.attendance-temporarily_closed {
+                            .location {
+                                color: $color_alert;
+                            }
+                            .address {
+                                font-size: 0%;
+                            }
+                        }
+                        &.attendance-online {
+                            .location {
+                                color: $color_online;
+                            }
+                            .address {
+                                font-size: 0%;
+                            }
+                        }
+                        &.attendance-hybrid {
+                            .location {
+                                small {
+                                    color: $color_online;
+                                }
+                            }
+                        }
 
                         &.type-onl {
                             opacity: 1 !important;
@@ -500,8 +522,8 @@ $height: 550px; //height of map and min-height of list
                             .name {
 
                                 small {
-                                    color: $color_online;
-                                    font-weight: bold;
+                                    //color: $color_online;
+                                    //font-weight: bold;
                                 }
                             }
                         }
