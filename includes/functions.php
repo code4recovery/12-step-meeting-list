@@ -477,6 +477,25 @@ function tsml_format_name($name, $types=null) {
 	return count($append) ? $name . ' <small>' . implode(', ', $append) . '</small>' : $name;
 }
 
+//function:	get meeting types
+//used:		archive-meetings.php
+function tsml_format_types($types = array()) {
+	global $tsml_program, $tsml_programs;
+	if (!is_array($types)) $types = array();
+	$append = array();
+	// Types assigned to the meeting passed to the function
+	foreach ($types as $type) {
+		// True if the type for the meeting exists in one of the predetermined flags
+		$type_is_flagged = in_array($type, $tsml_programs[$tsml_program]['flags']);
+
+		if ($type_is_flagged && $type != 'TC' && $type != 'ONL') {
+			$append[] = $tsml_programs[$tsml_program]['types'][$type];
+		}
+	}
+
+	return implode(', ', $append);
+}
+
 //function: takes 18:30 and returns 6:30 pm (depending on your settings)
 //used:		tsml_get_meetings(), single-meetings.php, admin_lists.php
 function tsml_format_time($string, $empty='Appointment') {
