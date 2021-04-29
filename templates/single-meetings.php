@@ -30,6 +30,9 @@ function tsml_body_class($classes) {
 		$classes[] = $type_classes;
 	}
 
+	// Add the attendance option class to the body tag
+	$classes[] = 'attendance-' . sanitize_title($meeting->attendance_option);
+
 	return $classes;
 }
 

@@ -527,6 +527,7 @@ foreach ($meetings as $meeting) {
     foreach ($meeting['types'] as $type) {
         $classes[] = 'type-' . sanitize_title($type);
     }
+    $classes[] = 'attendance-' . sanitize_title($meeting['attendance_option']);
     ?>
 							<tr class="<?php echo join( ' ', $classes )?>">
 								<?php foreach ($tsml_columns as $key => $column) {
