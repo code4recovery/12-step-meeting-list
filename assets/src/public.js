@@ -605,6 +605,9 @@ jQuery(function($) {
 					$.each(response, function(index, obj) {
 						//types could be undefined
 						if (!obj.types) obj.types = [];
+
+						var typeList = [];
+
 						//add type 'flags'
 						if (typeof tsml.flags == 'object') {
 							// True if the meeting is temporarily closed, but online option available
@@ -614,8 +617,11 @@ jQuery(function($) {
 								// True if the type for the meeting obj matches one of the predetermined flags being looped
 								var typeIsFlagged = obj.types.indexOf(tsml.flags[i]) !== -1;
 								//  Add flag, except TC when meeting is also online
-								if (typeIsFlagged && !(meetingIsOnlineAndTC && flagIsTempClosed)) {
-									obj.name += ' <small>' + tsml.types[tsml.flags[i]] + '</small>';
+								//if (typeIsFlagged && !(meetingIsOnlineAndTC && flagIsTempClosed)) {
+									//obj.name += ' <small>' + tsml.types[tsml.flags[i]] + '</small>';
+								//}
+								if (typeIsFlagged && tsml.flags[i] != 'TC' && tsml.flags[i] != 'ONL') {
+									typeList.push(tsml.types[tsml.flags[i]]);
 								}
 							}
 						}
@@ -657,6 +663,7 @@ jQuery(function($) {
 						for (var i = 0; i < obj.types.length; i++) {
 							classes.push('type-' + sanitizeTitle(obj.types[i]));
 						}
+						classes.push('attendance-' + obj.attendance_option);
 
 						//add new table row
 						var row = '<tr class="' + classes.join(' ') + '">';
@@ -687,12 +694,31 @@ jQuery(function($) {
 										'-' +
 										sort_time +
 										'">' +
-										formatLink(obj.url, obj.name, 'post_type') +
-										'</td>';
+										//formatLink(obj.url, obj.name, 'post_type') +
+										'<a href="' + obj.url + '">' + obj.name + '</a>';
+									if (typeList.length > 0) {
+										row += '<br/><small>(' + typeList.join(', ') + ')</small>';
+									}
+									row += '</td>';
 									break;
 
 								case 'location':
-									row += '<td class="location" data-sort="' + sanitizeDataSort(obj.location) + '-' + sort_time + '">' + obj.location + '</td>';
+									row += '<td class="location" data-sort="' + sanitizeDataSort(obj.location) + '-' + sort_time + '">';
+									switch (obj.attendance_option) {
+										case 'online':
+											row += 'Online';
+											break;
+										case 'temporarily_closed':
+											row += 'Temporarily closed';
+											break;
+										case 'hybrid':
+											row += obj.location + '<br/><small>Hybrid meeting</small>';
+											break;
+										default:
+											row += obj.location;
+											break;
+									}
+									row += '</td>';
 									break;
 
 								case 'address':

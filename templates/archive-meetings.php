@@ -573,9 +573,7 @@ break;
                                                     echo $tsml_meeting_attendance_options['temporarily_closed'];
                                                     break;
                                                 case 'hybrid':
-                                                    echo $meeting['location'] . '<br/><small>';
-                                                    //echo $tsml_meeting_attendance_options['online'];
-                                                    echo 'Hybrid Meeting</small>';
+                                                    echo $meeting['location'] . '<br/><small>Hybrid meeting</small>';
                                                     break;
                                                 default:
                                                     echo $meeting['location'];
