@@ -4,8 +4,7 @@
 
 body {
 	// Note box for in-person question
-	div.in_person {float:left; margin-right:10px;}
-	div.location_note {border:solid 2px #0568b0; display:inline-block; padding:0 10px; background:#53BEED; max-width:60%; }
+	div.location_note {padding:10px; border:solid 1px #c3c4c7; border-left:solid 4px #72aEE6;}
 	
 	//group Information (optional) gray
 	h2 small, h3 small { 
