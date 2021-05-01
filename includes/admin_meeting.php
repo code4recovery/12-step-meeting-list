@@ -144,7 +144,7 @@ function tsml_admin_init() {
 				<label><input type="radio" name="in_person" value="no"<?php checked($meeting->attendance_option == 'online' || $meeting->attendance_option == 'temporarily_closed')?>> <?php _e('No (Online only or temporarily not meeting)', '12-step-meeting-list')?></label>
 				<br/>
 			</div>
-			<div class="location_note"><p>Note: Even if this meeting is not currently meeting in-person, we still need a valid address to determine time zone. This does not need to be a specific address, but can be an approximate location. (ie Philadelphia, PA, USA)</p></div>
+			<div class="location_note"><p>Note: Please fill in location information even if your meeting does not meet in-person. A general location works fine (ie. Philadelphia, PA); TSML uses the location to determine time zone.</p></div>
 		</div>
 
 		<div class="meta_form_row">
