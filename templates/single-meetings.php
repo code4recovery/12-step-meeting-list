@@ -45,7 +45,16 @@ get_header();
 			<div class="col-md-10 col-md-offset-1 main">
 
 				<div class="page-header">
-					<h1><?php echo tsml_format_name($meeting->post_title, $meeting->types) ?></h1>
+					<h1><?php echo $meeting->post_title; ?></h1>
+					<?php
+						$meeting_types = tsml_format_types($meeting->types);
+						if (!empty($meeting_types)) {
+							echo '<small><span class="meeting_types">(' . $meeting_types . ')</span></small>';
+						}
+						echo '<div class="attendance-' . $meeting->attendance_option . '">' . $tsml_meeting_attendance_options[$meeting->attendance_option];
+						echo '</div><br/>';
+					?>
+
 					<?php echo tsml_link(get_post_type_archive_link('tsml_meeting'), '<i class="glyphicon glyphicon-chevron-right"></i> ' . __('Back to Meetings', '12-step-meeting-list'), 'tsml_meeting') ?>
 				</div>
 
