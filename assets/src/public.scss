@@ -15,6 +15,9 @@ $height: 550px; //height of map and min-height of list
 #tsml {
     @import '../../node_modules/bootstrap-sass/assets/stylesheets/_bootstrap.scss';
 
+    div.attendance-option {
+        font-weight: bold;
+    }
     a.btn {
         overflow: hidden;
         text-overflow: ellipsis;
@@ -613,7 +616,7 @@ $height: 550px; //height of map and min-height of list
         }
     }
 
-    #meeting {
+    /*#meeting {
         .tsml-type-tc & {
             .page-header small {
                 color: $color_alert;
@@ -627,7 +630,7 @@ $height: 550px; //height of map and min-height of list
                 font-weight: bold;
             }
         }
-    }
+    }*/
 
     #meeting,
     #location {
@@ -652,10 +655,6 @@ $height: 550px; //height of map and min-height of list
 
         small {
             color: $color_black;
-
-            &::before {
-                content: " / ";
-            }
         }
 
         #map {
@@ -1158,6 +1157,18 @@ $height: 550px; //height of map and min-height of list
 }
 
 body {
+    &.attendance-online #map,
+    &.attendance-temporarily_closed  #map{
+        display: none;
+    }
+
+    &.attendance-hybrid div.attendance-option,
+    &.attendance-online div.attendance-option {
+        color: $color_online;
+    }
+    &.attendance-temporarily_closed  div.attendance-option {
+        color: $color_alert;
+    }
 
     /* temporary closure meetings */
     &.tsml-meeting.tsml-type-tc {

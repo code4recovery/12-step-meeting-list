@@ -51,7 +51,7 @@ get_header();
 						if (!empty($meeting_types)) {
 							echo '<small><span class="meeting_types">(' . $meeting_types . ')</span></small>';
 						}
-						echo '<div class="attendance-' . $meeting->attendance_option . '">' . $tsml_meeting_attendance_options[$meeting->attendance_option];
+						echo '<div class="attendance-option">' . $tsml_meeting_attendance_options[$meeting->attendance_option];
 						echo '</div><br/>';
 					?>
 
