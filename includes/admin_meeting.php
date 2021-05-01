@@ -29,7 +29,7 @@ function tsml_admin_init() {
 
 	// Compares versions and updates databases as needed for upgrades
 	$tsml_version = get_option('tsml_version');
-	if (version_compare($tsml_version, TSML_VERSION, '<=')) {
+	if (version_compare($tsml_version, TSML_VERSION, '<')) {
     db_update_remove_all_approximate_location_cache();
     db_update_remove_all_is_approximate_location_meta();
 		// db_update_addresses_cache_approximate_location();
