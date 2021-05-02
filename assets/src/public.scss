@@ -530,6 +530,7 @@ $height: 550px; //height of map and min-height of list
                         &.type-onl {
                             opacity: 1 !important;
 
+/*
                             .name {
 
                                 small {
@@ -537,6 +538,7 @@ $height: 550px; //height of map and min-height of list
                                     //font-weight: bold;
                                 }
                             }
+*/
                         }
                     }
                 }
@@ -1171,14 +1173,15 @@ body {
     }
 
     /* temporary closure meetings */
+/*
     &.tsml-meeting.tsml-type-tc {
-
         p.location-address,
         address {
             color: #999;
             text-decoration: line-through;
         }
     }
+*/
 
     /* Special per-theme fixes */
     &.twentyfourteen {
