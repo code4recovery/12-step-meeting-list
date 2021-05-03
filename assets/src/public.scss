@@ -15,9 +15,19 @@ $height: 550px; //height of map and min-height of list
 #tsml {
     @import '../../node_modules/bootstrap-sass/assets/stylesheets/_bootstrap.scss';
 
+    li.attendance-online div.attendance-option,
+    li.attendance-hybrid div.attendance-option {
+        color: $color_online;
+    }
+
+    li.attendance-temporarily_closed div.attendance-option {
+        color: $color_alert;
+    }
+
     div.attendance-option {
         font-weight: bold;
     }
+
     a.btn {
         overflow: hidden;
         text-overflow: ellipsis;
