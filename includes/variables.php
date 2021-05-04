@@ -88,6 +88,7 @@ $tsml_defaults = array(
 	'mode' => 'search',
 	'query' => null,
 	'view' => 'list',
+  'attendance_option' => null
 );
 
 //load the distance units that we're using (ie miles or kms)

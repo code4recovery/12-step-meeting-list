@@ -18,6 +18,7 @@ class tsml_filter_meetings
     public $searchable_keys;
     public $time;
     public $type;
+    public $attendance_option;
 
     //sanitize and save arguments (won't be passed to a database)
     public function __construct($arguments)
@@ -84,6 +85,15 @@ class tsml_filter_meetings
             $this->type = is_array($arguments['type']) ? array_map('trim', $arguments['type']) : explode(',',trim($arguments['type']));
         }
 
+        if (!empty($arguments['attendance_option'])) {
+            global $tsml_meeting_attendance_options;
+            if (array_key_exists($arguments['attendance_option'], $tsml_meeting_attendance_options)) {
+                $this->attendance_option = [$arguments['attendance_option']];
+            } else {
+                $this->attendance_option = null;
+            }
+        }
+
     }
 
     //run the filters
@@ -130,6 +140,10 @@ class tsml_filter_meetings
                 $meetings = array_filter($meetings, array($this, 'filter_distance'));
             }
 
+        }
+
+        if ($this->attendance_option) {
+          $meetings = array_filter($meetings, array($this, 'filter_attendance_option'));
         }
 
         //return data
@@ -260,6 +274,15 @@ class tsml_filter_meetings
             return false;
         }
         return !count(array_diff($this->type, $meeting['types']));
+    }
+
+    //callback function to pass to array_filter
+    public function filter_attendance_option($meeting)
+    {
+        if (!isset($meeting['attendance_option'])) {
+          return false;
+        }
+        return in_array($meeting['attendance_option'], $this->attendance_option);
     }
 
     //function to get district id from slug

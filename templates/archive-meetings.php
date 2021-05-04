@@ -108,6 +108,10 @@ if (isset($_GET['tsml-mode']) && array_key_exists($_GET['tsml-mode'], $modes)) {
     $mode = $_GET['tsml-mode'];
 }
 
+if (isset($_GET['tsml-attendance_option'])) {
+  $attendance_option = $_GET['tsml-attendance_option'];
+}
+
 if ($tsml_mapbox_key || $tsml_google_maps_key) {
     $maps_enabled = true;
     if (isset($_GET['tsml-view']) && in_array($_GET['tsml-view'], array('list', 'map'))) {
@@ -209,7 +213,7 @@ $message = '';
 //run query
 if ($mode == 'search') {
     $type = implode(',', $types);
-    $meetings = tsml_get_meetings(compact('mode', 'day', 'time', 'region', 'district', 'type', 'query'));
+    $meetings = tsml_get_meetings(compact('mode', 'day', 'time', 'region', 'district', 'type', 'query', 'attendance_option'));
     if (!count($meetings)) {
         $message = $tsml_strings['no_meetings'];
     }
