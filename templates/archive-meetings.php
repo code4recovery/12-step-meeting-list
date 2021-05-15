@@ -455,9 +455,18 @@ foreach ($distances as $key => $value) {
 }
     ?>><a><?php echo $type_default ?></a></li>
 						<li class="divider"></li>
+                        <?php
+                            global $tsml_meeting_attendance_options;
+                            foreach ($tsml_meeting_attendance_options as $key => $value) {
+                                echo '<li><a href="' . tmsl_meetings_url(array('tsml-attendance_option' => $key)) . '" data-id="'. $key . '">' . $value . '</a></li>' . PHP_EOL;
+                            }
+                        ?>
+						<li class="divider"></li>
 						<?php
 $types_to_list = array_intersect_key($tsml_programs[$tsml_program]['types'], array_flip($tsml_types_in_use));
-    foreach ($types_to_list as $key => $thistype) {?>
+    foreach ($types_to_list as $key => $thistype) {
+				if ($key == 'ONL' || $key == 'TC') continue; //hide "Online Meeting" since it's not manually settable, neither is location Temporarily Closed
+        ?>
 						<li<?php if (in_array($key, $types)) {
         echo ' class="active"';
     }
