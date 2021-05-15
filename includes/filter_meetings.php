@@ -88,7 +88,8 @@ class tsml_filter_meetings
         if (!empty($arguments['attendance_option'])) {
             global $tsml_meeting_attendance_options;
             if (array_key_exists($arguments['attendance_option'], $tsml_meeting_attendance_options)) {
-                $this->attendance_option = [$arguments['attendance_option']];
+                $this->attendance_option[] = $arguments['attendance_option'];
+                if ($arguments['attendance_option'] == 'online') $this->attendance_option[] = 'hybrid';
             } else {
                 $this->attendance_option = null;
             }
