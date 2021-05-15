@@ -10,6 +10,9 @@ jQuery(function($) {
 	var $body = $('body');
 	var typeaheadEnabled = false;
 
+  const urlParams = new URLSearchParams(window.location.search);
+  const attendanceOptions = urlParams.has('tsml-attendance_option') ? urlParams.get('tsml-attendance_option').split(',') : [];
+
 	if (typeof tsml_map !== 'object') {
     //main meetings page
     
@@ -393,8 +396,10 @@ jQuery(function($) {
 			time: $('#time li.active a').attr('data-id'),
 			type: types.length ? types.join(',') : undefined,
 			distance: $('#distance li.active a').attr('data-id'),
-			view: $('#meetings .toggle-view.active').attr('data-id')
+			view: $('#meetings .toggle-view.active').attr('data-id'),
+      attendance_option: attendanceOptions.length ? attendanceOptions.join(',') : undefined, 
 		};
+    if (tsml.debug) console.log('doSearch() controls', controls);
 
 		//reset search location
 		searchLocation = null;
@@ -417,6 +422,7 @@ jQuery(function($) {
 		if (controls.time && controls.time != tsml.defaults.time) query_string['tsml-time'] = controls.time;
 		if (controls.type && controls.type != tsml.defaults.type) query_string['tsml-type'] = controls.type;
 		if (controls.view && controls.view != tsml.defaults.view) query_string['tsml-view'] = controls.view;
+    if (controls.attendance_option != null) query_string['tsml-attendance_option'] = controls.attendance_option; 
 		query_string = $.param(query_string);
 
 		//save the query in the query string, if the browser is up to it
