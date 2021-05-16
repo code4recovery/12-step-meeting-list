@@ -160,10 +160,15 @@ if ($region) {
     $region_label = $term->name;
 }
 $type_default = __('Any Type', '12-step-meeting-list');
-if (!count($types)) {
+if (!count($types) && (!count($attendance_options))) {
     $type_label = $type_default;
 } else {
     $type_label = array();
+    foreach ($attendance_options as $attendance_option) {
+        if (array_key_exists($attendance_option, $tsml_meeting_attendance_options)) {
+            $type_label[] = $tsml_meeting_attendance_options[$attendance_option];
+        }
+    }
     foreach ($types as $type) {
         if (array_key_exists($type, $tsml_programs[$tsml_program]['types'])) {
             $type_label[] = $tsml_programs[$tsml_program]['types'][$type];
@@ -458,17 +463,24 @@ foreach ($distances as $key => $value) {
 						<span class="caret"></span>
 					</a>
 					<ul class="dropdown-menu" role="menu">
-						<li<?php if (!count($types)) {
+						<li<?php if (!count($types) && (!count($attendance_options))) {
     echo ' class="active"';
 }
     ?>><a><?php echo $type_default ?></a></li>
 						<li class="divider"></li>
-                        <?php
-                            global $tsml_meeting_attendance_options;
-                            foreach ($tsml_meeting_attendance_options as $key => $value) {
-                                echo '<li><a href="' . tmsl_meetings_url(array('tsml-attendance_option' => $key)) . '" data-id="'. $key . '">' . $value . '</a></li>' . PHP_EOL;
-                            }
-                        ?>
+                <?php
+                    global $tsml_meeting_attendance_options;
+                    foreach ($tsml_meeting_attendance_options as $key => $value) {?>
+                        <li
+                          <?php 
+                              if (in_array($key, $attendance_options)) {
+                                  echo ' class="active"';
+                              }; 
+                          ?>
+                        >
+                        <a href="<?php echo tmsl_meetings_url(array('tsml-attendance_option' => $key)) ?>" data-id="<?php echo $key ?>"><?php echo $value ?></a></li>
+                    <?php }
+                  ?>
 						<li class="divider"></li>
 						<?php
 $types_to_list = array_intersect_key($tsml_programs[$tsml_program]['types'], array_flip($tsml_types_in_use));

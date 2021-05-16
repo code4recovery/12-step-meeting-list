@@ -10,8 +10,6 @@ jQuery(function($) {
 	var $body = $('body');
 	var typeaheadEnabled = false;
 
-  const urlParams = new URLSearchParams(window.location.search);
-  const attendanceOptions = urlParams.has('tsml-attendance_option') ? urlParams.get('tsml-attendance_option').split(',') : [];
 
 	if (typeof tsml_map !== 'object') {
     //main meetings page
@@ -321,6 +319,8 @@ jQuery(function($) {
 			document.title = string;
 			$('#tsml #meetings .title h1').text(string);
 
+      if (tsml.debug) console.log("Page title: ", document.title);
+
 			//show/hide upcoming menu option
 			toggleUpcoming();
 
@@ -375,11 +375,15 @@ jQuery(function($) {
 
 	//run search (triggered by dropdown toggle or form submit)
 	function doSearch() {
-		//types can be multiple
+		//types and attendanceOptions can be multiple
 		var types = [];
+    const attendanceOptions = [];
 		$('#type li.active a').each(function() {
-			if ($(this).attr('data-id')) {
-				types.push($(this).attr('data-id'));
+      let userChoice = $(this).attr('data-id');
+			if (userChoice) {
+        if (['in_person', 'hybrid', 'online', 'temporarily_closed'].indexOf(userChoice) !== -1) {
+          attendanceOptions.push(userChoice);
+        } else types.push(userChoice);
 			}
 		});
 
@@ -568,7 +572,8 @@ jQuery(function($) {
 						(typeof controls.day !== 'undefined' ||
 							typeof controls.region !== 'undefined' ||
 							typeof controls.time !== 'undefined' ||
-							typeof controls.type !== 'undefined')
+							typeof controls.type !== 'undefined') ||
+              typeof controls.attendance_option !== 'undefined'
 					) {
 						$('#day li')
 							.removeClass('active')
@@ -586,12 +591,17 @@ jQuery(function($) {
 							.removeClass('active')
 							.first()
 							.addClass('active');
+            $('#attendance_option li')
+              .removeClass('active')
+              .first()
+              .addClass('active');
 
 						//set selected text
 						$('#day span.selected').html($('#day li:first-child a').html());
 						$('#time span.selected').html($('#time li:first-child a').html());
 						$('#region span.selected').html($('#region li:first-child a').html());
 						$('#type span.selected').html($('#type li:first-child a').html());
+            $('#attendance_option span.selected').html($('#attendance_option li:first-child a').html());
 
 						return doSearch();
 					}
