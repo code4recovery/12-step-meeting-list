@@ -96,6 +96,17 @@ if (!empty($_GET['tsml-type'])) {
         }
     }
 }
+
+$attendance_options = array();
+if (!empty($_GET['tsml-attendance_option'])) {
+    $attendance_option_queries = explode(',', $_GET['tsml-attendance_option']);
+    foreach ($attendance_option_queries as $attendance_option_query) {
+        if (array_key_exists($attendance_option_query, $tsml_meeting_attendance_options)) {
+            $attendance_options[] = $attendance_option_query;
+        }
+    }
+}
+
 if (isset($_GET['tsml-time']) && (($_GET['tsml-time'] == 'upcoming') || array_key_exists($_GET['tsml-time'], $times))) {
     $time = $_GET['tsml-time'];
 }
@@ -106,10 +117,6 @@ if (isset($_GET['tsml-distance']) && intval($_GET['tsml-distance'])) {
 
 if (isset($_GET['tsml-mode']) && array_key_exists($_GET['tsml-mode'], $modes)) {
     $mode = $_GET['tsml-mode'];
-}
-
-if (isset($_GET['tsml-attendance_option'])) {
-  $attendance_option = $_GET['tsml-attendance_option'];
 }
 
 if ($tsml_mapbox_key || $tsml_google_maps_key) {
@@ -213,6 +220,7 @@ $message = '';
 //run query
 if ($mode == 'search') {
     $type = implode(',', $types);
+    $attendance_option = implode(',', $attendance_options);
     $meetings = tsml_get_meetings(compact('mode', 'day', 'time', 'region', 'district', 'type', 'query', 'attendance_option'));
     if (!count($meetings)) {
         $message = $tsml_strings['no_meetings'];

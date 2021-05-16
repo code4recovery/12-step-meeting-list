@@ -86,13 +86,13 @@ class tsml_filter_meetings
         }
 
         if (!empty($arguments['attendance_option'])) {
-            global $tsml_meeting_attendance_options;
-            if (array_key_exists($arguments['attendance_option'], $tsml_meeting_attendance_options)) {
-                $this->attendance_option[] = $arguments['attendance_option'];
-                if ($arguments['attendance_option'] == 'online') $this->attendance_option[] = 'hybrid';
-            } else {
-                $this->attendance_option = null;
+            $this->attendance_option = is_array($arguments['attendance_option']) 
+                ? array_map('trim', $arguments['attendance_option'])
+                : explode(',',trim($arguments['attendance_option']));
+            if (!empty(array_intersect($this->attendance_option, Array('online', 'in_person')))) {
+                $this->attendance_option[] = 'hybrid';
             }
+            $this->attendance_option = array_unique($this->attendance_option);
         }
 
     }
