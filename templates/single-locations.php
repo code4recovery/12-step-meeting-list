@@ -80,9 +80,9 @@ get_header();
 									$meeting_link .= '<a href="' . $meeting['url'] . '">' . $meeting['name'] . '</a>';
 									$meeting_types = tsml_format_types($meeting['types']);
 									if (!empty($meeting_types)) {
-										$meeting_link .= '<div class="meeting_types"><small>(' . $meeting_types . ')</small></div>';
+										$meeting_link .= '<div class="meeting_types"><small>(' . __($meeting_types, "12-step-meeting-list") . ')</small></div>';
 									}
-									$meeting_link .= '<div class="attendance-option">' . $tsml_meeting_attendance_options[$meeting['attendance_option']] . '</div>';
+									$meeting_link .= '<div class="attendance-option">' . __($tsml_meeting_attendance_options[$meeting['attendance_option']], "12-step-meeting-list") . '</div>';
 									$meeting_link .= '</li>';
 									$location_days[$meeting['day']][] = $meeting_link;
 								}

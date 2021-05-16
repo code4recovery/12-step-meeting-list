@@ -49,9 +49,9 @@ get_header();
 					<?php
 						$meeting_types = tsml_format_types($meeting->types);
 						if (!empty($meeting_types)) {
-							echo '<small><span class="meeting_types">(' . $meeting_types . ')</span></small>';
+							echo '<small><span class="meeting_types">(' . __($meeting_types, "12-step-meeting-list") . ')</span></small>';
 						}
-						echo '<div class="attendance-option">' . $tsml_meeting_attendance_options[$meeting->attendance_option];
+						echo '<div class="attendance-option">' . __($tsml_meeting_attendance_options[$meeting->attendance_option], "12-step-meeting-list");
 						echo '</div><br/>';
 					?>
 
