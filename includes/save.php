@@ -459,4 +459,11 @@ function tsml_save_post($post_id, $post, $update) {
 		$subject .= ': ' . sanitize_text_field($_POST['post_title']);
 		tsml_email($tsml_notification_addresses, $subject, $message);
 	}
+
+	// Set Attendance option for meetings that don't already have this field
+	// Having this here gives us an easy way to ensure all meetings have an attendance_option
+	// People can "Update" any existing meeting, and it should run this function.
+	// Can probably delete these lines at some point because all new meetings should get this option already
+	db_update_set_attendance_options();
+
 }
