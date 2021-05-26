@@ -597,22 +597,8 @@ break;
 
             case 'location': ?>
 									<td class="location" data-sort="<?php echo tsml_sanitize_data_sort($meeting['location']) . '-' . $sort_time ?>">
-										<?php
-                                            switch ($meeting['attendance_option']) {
-                                                case 'online':
-                                                    echo $tsml_meeting_attendance_options['online'];
-                                                    break;
-                                                case 'temporarily_closed':
-                                                    echo $tsml_meeting_attendance_options['temporarily_closed'];
-                                                    break;
-                                                case 'hybrid':
-                                                    echo $meeting['location'] . '<br/><small>Hybrid meeting</small>';
-                                                    break;
-                                                default:
-                                                    echo $meeting['location'];
-                                                    break;
-                                            }
-                                        ?>
+										<div class="location-name"><?php echo $meeting['location'];?></div>
+										<div class="attendance-<?php echo $meeting['attendance_option'];?>"><small><?php if ($meeting['attendance_option'] != 'in_person') echo $tsml_meeting_attendance_options[$meeting['attendance_option']];?></small></div>
 									</td>
 									<?php
 break;

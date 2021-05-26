@@ -508,7 +508,12 @@ $height: 550px; //height of map and min-height of list
 */
                         &.attendance-temporarily_closed {
                             .location {
-                                color: $color_alert;
+                                small {
+                                    color: $color_alert;
+                                }
+                                div.location-name {
+                                    opacity: .5;
+                                }
                             }
                             .address {
                                 font-size: 0%;
@@ -520,7 +525,12 @@ $height: 550px; //height of map and min-height of list
                         }
                         &.attendance-online {
                             .location {
-                                color: $color_online;
+                                small {
+                                    color: $color_online;
+                                }
+                                div.location-name {
+                                    opacity: .5;
+                                }
                             }
                             .address {
                                 font-size: 0%;

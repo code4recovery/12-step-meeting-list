@@ -720,6 +720,8 @@ jQuery(function($) {
 
 								case 'location':
 									row += '<td class="location" data-sort="' + sanitizeDataSort(obj.location) + '-' + sort_time + '">';
+									row += '<div class="location-name">' + obj.location + '</div>';
+									row += '<div class="attendance-' + obj.attendance_option + '"><small>';
 									switch (obj.attendance_option) {
 										case 'online':
 											row += 'Online';
@@ -728,12 +730,12 @@ jQuery(function($) {
 											row += 'Temporarily closed';
 											break;
 										case 'hybrid':
-											row += obj.location + '<br/><small>Hybrid meeting</small>';
+											row += 'Hybrid';
 											break;
 										default:
-											row += obj.location;
 											break;
 									}
+									row += '</small></div>';
 									row += '</td>';
 									break;
 
