@@ -31,7 +31,7 @@ function tsml_alert($message, $type='success') {
 //function: enqueue assets for public or admin page
 //used: in templates and on admin_edit.php
 function tsml_assets() {
-	global $post_type, $tsml_street_only, $tsml_programs, $tsml_strings, $tsml_program, $tsml_google_maps_key, $tsml_mapbox_key, $tsml_google_overrides, $tsml_distance_units, $tsml_defaults, $tsml_language, $tsml_columns, $tsml_nonce;
+	global $post_type, $tsml_street_only, $tsml_programs, $tsml_strings, $tsml_program, $tsml_google_maps_key, $tsml_mapbox_key, $tsml_mapbox_theme, $tsml_google_overrides, $tsml_distance_units, $tsml_defaults, $tsml_language, $tsml_columns, $tsml_nonce;
 
 	// TODO: verify this doesn't cause any other issues
 	$types = [
@@ -56,6 +56,7 @@ function tsml_assets() {
 			'debug' => WP_DEBUG,
 			'google_maps_key' => $tsml_google_maps_key, //to see if map should have been called
 			'mapbox_key' => $tsml_mapbox_key,
+			'mapbox_theme' => $tsml_mapbox_theme,
 			'nonce' => wp_create_nonce($tsml_nonce),
 		));
 	} else {
@@ -84,6 +85,7 @@ function tsml_assets() {
 			'flags' => $tsml_programs[$tsml_program]['flags'],
 			'google_maps_key' => $tsml_google_maps_key, //to see if map should have been called
 			'mapbox_key' => $tsml_mapbox_key,
+			'mapbox_theme' => $tsml_mapbox_theme,
 			'nonce' => wp_create_nonce($tsml_nonce),
 			'program' => empty($tsml_programs[$tsml_program]['abbr']) ? $tsml_programs[$tsml_program]['name'] : $tsml_programs[$tsml_program]['abbr'],
 			'street_only' => $tsml_street_only,
@@ -99,7 +101,7 @@ function tsml_bounds() {
 	global $wpdb, $tsml_bounds;
 
 	//get north & south
-	$latitudes = $wpdb->get_row('SELECT 
+	$latitudes = $wpdb->get_row('SELECT
 			MAX(m.meta_value) north,
 			MIN(m.meta_value) south
 		FROM ' . $wpdb->postmeta . ' m
@@ -107,7 +109,7 @@ function tsml_bounds() {
 		WHERE m.meta_key = "latitude" AND p.post_type = "tsml_location"');
 
 	//get east & west
-	$longitudes = $wpdb->get_row('SELECT 
+	$longitudes = $wpdb->get_row('SELECT
 			MAX(m.meta_value) west,
 			MIN(m.meta_value) east
 		FROM ' . $wpdb->postmeta . ' m
@@ -377,9 +379,9 @@ function tsml_delete_orphans() {
 	tsml_delete(array_merge($location_ids, $group_ids));
 
 	//edge case: draft-ify locations with only unpublished meetings
-	$location_ids = $wpdb->get_col('SELECT l.ID FROM ' . $wpdb->posts . ' l 
-		WHERE l.post_type = "tsml_location" AND 
-			(SELECT COUNT(*) FROM ' . $wpdb->posts . ' m 
+	$location_ids = $wpdb->get_col('SELECT l.ID FROM ' . $wpdb->posts . ' l
+		WHERE l.post_type = "tsml_location" AND
+			(SELECT COUNT(*) FROM ' . $wpdb->posts . ' m
 			WHERE m.post_type="tsml_meeting" AND m.post_status="publish" AND m.post_parent = l.id) = 0');
 	if (count($location_ids)) {
 		$wpdb->query('UPDATE ' . $wpdb->posts . ' l SET l.post_status = "draft" WHERE ID IN (' . implode(', ', $location_ids) . ')');
@@ -572,7 +574,7 @@ function tsml_geocode($address) {
 	//Set the Google API Key before calling function that finds the address
 	if ($tsml_geocoding_method == 'google_key' && !empty($tsml_google_maps_key)) {
 		$tsml_map_key = $tsml_google_maps_key;
-	} else { 
+	} else {
 		$tsml_map_key = 'AIzaSyCXSu5YhUDJ92Di3oQiVvb10TXsXRMtI48';
 	}
 	$response = tsml_geocode_google($address, $tsml_map_key);
@@ -701,7 +703,7 @@ function tsml_geocode_google($address, $tsml_map_key) {
 			'longitude' => $data->results[0]->geometry->location->lng,
 			'approximate' => ($data->results[0]->geometry->location_type === 'APPROXIMATE') ? 'yes' : 'no',
 			'city' => null,
-			'status' => 'geocode', 
+			'status' => 'geocode',
 		);
 
 		//get city, we might need it for the region, and we are going to cache it
@@ -1007,7 +1009,7 @@ function tsml_get_meeting($meeting_id=false) {
 		}
 	}
   sort($meeting->types_expanded);
-  
+
   if (!empty($meeting->post_title)) $meeting = tsml_ensure_location_approximate_set($meeting); // Can eventually remove this when <3.9 TSMLs no longer used.
 
 	return $meeting;
@@ -1113,8 +1115,8 @@ function tsml_get_meta($type, $id=null) {
 	);
 	if (!array_key_exists($type, $keys)) return trigger_error('tsml_get_meta for unexpected type ' . $type);
 	$meta = array();
-	$query = 'SELECT post_id, meta_key, meta_value FROM ' . $wpdb->postmeta . ' WHERE 
-		meta_key IN (' . $keys[$type] . ') AND 
+	$query = 'SELECT post_id, meta_key, meta_value FROM ' . $wpdb->postmeta . ' WHERE
+		meta_key IN (' . $keys[$type] . ') AND
 		post_id ' . ($id ? '= ' . $id : 'IN (SELECT id FROM ' . $wpdb->posts . ' WHERE post_type = "' . $type . '")');
 	$values = $wpdb->get_results($query);
 	foreach ($values as $value) {
@@ -1123,7 +1125,7 @@ function tsml_get_meta($type, $id=null) {
 
 	//get taxonomy
 	if ($type == 'tsml_location') {
-		$regions = $wpdb->get_results('SELECT 
+		$regions = $wpdb->get_results('SELECT
 				r.`object_id` location_id,
 				t.`term_id` region_id,
 				t.`name` region
@@ -1136,7 +1138,7 @@ function tsml_get_meta($type, $id=null) {
 			$meta[$region->location_id]['region_id'] = $region->region_id;
 		}
 	} elseif ($type == 'tsml_group') {
-		$districts = $wpdb->get_results('SELECT 
+		$districts = $wpdb->get_results('SELECT
 				r.`object_id` group_id,
 				t.`term_id` district_id,
 				t.`name` district
@@ -1606,7 +1608,7 @@ function tsml_update_types_in_use() {
 
 	//shortcut to getting all meta values without getting all posts first
 	$types = $wpdb->get_col('SELECT
-			m.meta_value 
+			m.meta_value
 		FROM ' . $wpdb->postmeta . ' m
 		JOIN ' . $wpdb->posts . ' p ON m.post_id = p.id
 		WHERE p.post_type = "tsml_meeting" AND m.meta_key = "types" AND p.post_status = "publish"');
