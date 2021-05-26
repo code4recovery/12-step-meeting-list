@@ -5,3 +5,12 @@ node_modules
 Dockerfile
 docker-compose.yml
 .vscode
+/includes/ajax (2).php
+/includes/ajax.php.bak
+/includes/meeting_request.php
+/templates/single-meetings (2).php
+/templates/meeting_request.php
+/includes/functions2.php
+/assets/src/public2.js
+/assets/css/public.min2.css
+/assets/css/admin.min2.css

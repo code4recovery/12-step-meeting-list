@@ -1,7 +1,93 @@
+<script language='javascript'>
+function switchVisible() {
+    if (document.getElementById('map')) {
+
+        if (document.getElementById('map').style.display == 'none') {
+            document.getElementById('map').style.display = 'block';
+            document.getElementById('change').style.display = 'none';
+        }
+        else {
+            document.getElementById('map').style.display = 'none';
+            document.getElementById('change').style.display = 'block';
+        }
+    }
+}
+</script>
+
+<script type='text/javascript'>
+		//day picker
+		$('select#day').change(function() {
+			var val = $(this).val();
+			var $time = $('input#time');
+			var $end_time = $('input#end_time');
+			if (val) {
+				$time.removeAttr('disabled');
+				$end_time.removeAttr('disabled');
+				var newTime = !$time.val() && $time.attr('data-value') ? $time.attr('data-value') : '00:00';
+				var newEndTime = !$end_time.val() && $end_time.attr('data-value') ? $end_time.attr('data-value') : '01:00';
+				$time.val(newTime).timepicker();
+				$end_time.val(newEndTime).timepicker();
+			} else {
+				$time
+					.attr('data-value', $time.val())
+					.val('')
+					.attr('disabled', 'disabled');
+				$end_time
+					.attr('data-value', $end_time.val())
+					.val('')
+					.attr('disabled', 'disabled');
+			}
+		});
+
+		//time picker
+		$('input.time').timepicker();
+
+		//auto-suggest end time (todo maybe think about using moment for this)
+		$('input#time').change(function() {
+			//get time parts
+			var parts = $(this)
+				.val()
+				.split(':');
+			if (parts.length !== 2) return;
+			var hours = parts[0] - 0;
+			var parts = parts[1].split(' ');
+			if (parts.length !== 2) return;
+			var minutes = parts[0];
+			var ampm = parts[1];
+
+			//increment hour
+			if (hours == 12) {
+				hours = 1;
+			} else {
+				hours++;
+				if (hours == 12) {
+					ampm = ampm == 'am' ? 'pm' : 'am';
+				}
+			}
+			hours += '';
+
+			//set field value
+			$('input#end_time').val(hours + ':' + minutes + ' ' + ampm);
+		});
+</script>
+
 <?php
+
 tsml_assets();
 
 $meeting = tsml_get_meeting();
+
+// define local variable and test validity before initializing
+$meeting_name = '';
+if ((!is_null($meeting->group)) && (!empty($meeting->group))) {
+	$meeting_name = $meeting->group;
+} 
+//elseif ((!is_null($meeting['name'])) && (!empty($meeting['name']))) {
+//	$meeting_name = $meeting['name']; }
+else {
+	$meeting_name = $meeting->post_title;
+}
+
 
 //define some vars for the map
 wp_localize_script('tsml_public', 'tsml_map', array(
@@ -39,7 +125,7 @@ get_header();
 <div id="tsml">
 	<div id="meeting" class="container">
 		<div class="row">
-			<div class="col-md-10 col-md-offset-1 main">
+			<div class="col-md-12 main">
 
 				<div class="page-header">
 					<h1><?php echo tsml_format_name($meeting->post_title, $meeting->types) ?></h1>
@@ -47,7 +133,7 @@ get_header();
 				</div>
 
 				<div class="row">
-					<div class="col-md-4">
+					<div id="div_left_col" class="col-md-5">
 
 						<?php if (!in_array('TC', $meeting->types) && ($meeting->approximate !== 'yes')) { ?>
 						<div class="panel panel-default">
@@ -273,61 +359,170 @@ get_header();
 								</li>
 							</ul>
 						</div>
-
-						<?php
-						if (!empty($tsml_feedback_addresses)) {?>
-						<form id="feedback">
-							<input type="hidden" name="action" value="tsml_feedback">
-							<input type="hidden" name="meeting_id" value="<?php echo $meeting->ID ?>">
-							<?php wp_nonce_field($tsml_nonce, 'tsml_nonce', false)?>
-							<div class="panel panel-default panel-expandable">
-								<div class="panel-heading">
-									<h3 class="panel-title">
-										<?php _e('Request a change to this listing', '12-step-meeting-list')?>
-										<span class="panel-title-buttons">
-											<span class="glyphicon glyphicon-chevron-left"></span>
-										</span>
-									</h3>
-								</div>
-								<ul class="list-group">
-									<li class="list-group-item list-group-item-warning">
-										<?php _e('Use this form to submit a change to the meeting information above.', '12-step-meeting-list')?>
-									</li>
-									<li class="list-group-item list-group-item-form">
-										<input type="text" id="tsml_name" name="tsml_name" placeholder="<?php _e('Your Name', '12-step-meeting-list')?>" class="required">
-									</li>
-									<li class="list-group-item list-group-item-form">
-										<input type="email" id="tsml_email" name="tsml_email" placeholder="<?php _e('Email Address', '12-step-meeting-list')?>" class="required email">
-									</li>
-									<li class="list-group-item list-group-item-form">
-										<textarea id="tsml_message" name="tsml_message" placeholder="<?php _e('Message', '12-step-meeting-list')?>" class="required"></textarea>
-									</li>
-									<li class="list-group-item list-group-item-form">
-										<button type="submit"><?php _e('Submit', '12-step-meeting-list')?></button>
-									</li>
-								</ul>
-							</div>
-						</form>
-						<?php }?>
-
 					</div>
-					<div class="col-md-8">
-						<?php /* if (has_post_thumbnail()) { ?>
-						<img src="<?php echo get_the_post_thumbnail_url(); ?>" class="panel panel-default meeting-thumbnail img-responsive">
-						<?php } */?>
+						<!--  *** *** *** *** *** *** *** *** ***  Extension code for TSML Meeting Change Request Feedback *** *** *** *** *** *** *** ***  -->
+					<div id="div_right_col" class="col-md-7">
+						<!-- Make map hideable -->
+						<input id="btnToggleMap" class="btn-block" type="button" onclick="switchVisible();" value="Click here to send us a meeting Change Request" />
 						<?php if (!empty($tsml_mapbox_key) || !empty($tsml_google_maps_key)) {?>
-						<div id="map" class="panel panel-default"></div>
+						<div id="map" class="panel panel-default" ></div>
 						<?php }?>
+						<div id="change" style="float:left; width:100%; display:none;" >
+							<?php
+							if (!empty($tsml_feedback_addresses)) {?>
+								<div class="panel-group"
+									<form id="feedback" class=""> 
+										<! -- customizations for the new/change meeting request screens  --> 
+										<?php
+											global $tsml_days, $tsml_programs, $tsml_program, $tsml_nonce, $tsml_types_in_use;
+											//nonce field
+											wp_nonce_field($tsml_nonce, 'tsml_nonce', false);
+										?>
+										<input type="hidden" name="action" value="tsml_feedback">
+										<input type="hidden" name="meeting_id" value="<?php echo $meeting->ID ?>">
+										<?php wp_nonce_field($tsml_nonce, 'tsml_nonce', false)?>
+
+										<ul class="list-group ">
+											<li class="list-group-item list-group-item-form ">
+												<div class="panel-header panel-default" style="text-align:center;" >
+													<h4>Change Request Form</h4>
+													<?php _e('Use this form to send your meeting changes to our website administrator', '12-step-meeting-list')?>
+												</div>
+											</li>
+											<li class="list-group-item list-group-item-form ">
+												<div class="meta_form_separator row">
+													<div class="col-md-8">
+														<h4><?php _e('Meeting Details', '12-step-meeting-list')?></h4>
+														<p><?php echo '' ?></p>
+													</div>
+												</div>
+												<div class="meta_form_row row">
+													<div class="well well-sm col-md-10 col-md-offset-1 ">
+														<label for="name"><?php _e('Meeting Name', '12-step-meeting-list')?></label>
+														<input type="text" class="required"  name="name" id="name" placeholder="Enter meeting name"  value="<?php echo $meeting_name; ?>" >
+													</div>
+												</div>
+												<div class="meta_form_row row">
+													<div class="well well-sm col-md-10 col-md-offset-1 ">
+														<div class="col-md-6">
+															<label for="day"><?php _e('Day', '12-step-meeting-list')?></label><br />
+															<select name="day" id="day">
+																<?php foreach ($tsml_days as $key => $day) { ?>
+																<option value="<?php echo $key ?>"<?php selected(strcmp(@$meeting->day, $key) == 0)?>><?php echo $day ?></option>
+																<?php } ?>
+															</select>
+														</div>
+														<div class="col-md-3 text-center">
+															<label for="time"><?php _e('Start Time', '12-step-meeting-list') ?></label>
+															<input type="text" class="time text-center" name="time" id="time" value="<?php echo $meeting->time ?>"<?php disabled(!strlen(@$meeting->day))?> data-time-format="<?php echo get_option('time_format') ?>">
+														</div>
+														<div class="col-md-3 text-center" style="display:none;" >
+															<label for="end_time"><?php _e('End Time', '12-step-meeting-list') ?></label>
+															<input type="text" class="time text-center" name="end_time" id="end_time" placeholder="00:00" value="<?php echo $meeting->end_time ?>" >
+														</div>
+													</div>
+												</div>
+												<div class="meta_form_row row">
+													<div class="well well-sm col-md-10 col-md-offset-1 ">
+														<?php if (tsml_program_has_types())	{?>
+
+														<label for="types"><?php _e('Types', '12-step-meeting-list') ?> </label>
+														<div class="checkboxes">
+															<?php
+															foreach ($tsml_programs[$tsml_program]['types'] as $key => $type) {
+																if (!in_array($key, $tsml_types_in_use)) continue; //hide TYPES not used 
+																?>
+																<div class="checkbox col-md-6" >
+																	<label>
+																		<input type="checkbox" name="types[]" value="<?php echo $key ?>" <?php checked(in_array($key, @$meeting->types)) ?> >
+																		<?php echo $type ?>
+																	</label>
+																</div>
+															<?php } ?>
+														</div>
+														<?php } ?>
+													</div>
+												</div>
+												<div class="meta_form_row row">
+													<div class="well well-sm col-md-10 col-md-offset-1 ">
+														<label for="notes"><?php _e('Notes', '12-step-meeting-list')?></label>
+														<textarea name="content" id="content" rows="7" placeholder="<?php _e('eg. Birthday speaker meeting last Saturday of the month', '12-step-meeting-list')?>"><?php echo $meeting->post_content ?></textarea>
+													</div>
+												</div>
+												<div class="meta_form_row row">
+													<div class="well well-sm col-md-10 col-md-offset-1 ">
+														<h4><?php _e('Online Meeting Details', '12-step-meeting-list')?></h4>
+														<p><?php echo sprintf(__('If this meeting has videoconference information, please enter the full valid URL here. Currently Zoom is the only supported providers on this website. If other details are required, such as a password, they can be included in the Notes field above, but a ‘one tap’ experience is ideal. Passwords can be appended to phone numbers using this format <code>+15873281099,,9999999999#,,#,,444444#</code> where the nines are your Zoom PMI and the fours are your password.', '12-step-meeting-list'), implode(', ', tsml_conference_providers()))?></p>
+													</div>
+												</div>
+												<div class="meta_form_row row">
+													<div class="well well-sm col-md-10 col-md-offset-1 ">
+														<label for="conference_url"><?php _e('URL', '12-step-meeting-list')?></label>
+														<input type="url" name="conference_url" id="conference_url" placeholder="https://zoom.us/j/9999999999?pwd=1223456" value="<?php echo $meeting->conference_url ?>">
+													</div>
+												</div>
+												<div class="meta_form_row row">
+													<div class="well well-sm col-md-10 col-md-offset-1 ">
+														<label for="conference_url_notes"><?php _e('URL Notes', '12-step-meeting-list')?></label>
+														<input type="text" name="conference_url_notes" id="conference_url_notes" placeholder="Password if needed or other info related to joining an online meeting..." value="<?php echo $meeting->conference_url_notes ?>">
+													</div>
+												</div>
+												<div class="meta_form_row row">
+													<div class="well well-sm col-md-10 col-md-offset-1 ">
+														<label for="conference_phone"><?php _e('Phone', '12-step-meeting-list')?></label>
+														<input type="text" name="conference_phone" id="conference_phone" placeholder="+15873281099,,9999999999#,,#,,444444#" value="<?php echo $meeting->conference_phone ?>">
+													</div>
+												</div>
+												<div class="meta_form_row row">
+													<div class="col-md-12">
+														<h4><?php _e('Location Details', '12-step-meeting-list')?></h4>
+														<p><?php echo '' ?></p>
+													</div>
+												</div>
+												<div class="meta_form_row row">
+													<div class="well well-sm col-md-10 col-md-offset-1 ">
+														<label for="location"><?php _e('Location', '12-step-meeting-list')?></label>
+														<input type="text" name="location" id="location" placeholder="building name" value="<?php echo $meeting->location ?>">
+													</div>
+												</div>
+												<div class="meta_form_row row">
+													<div class="well well-sm col-md-10 col-md-offset-1 ">
+														<label for="formatted_address"><?php _e('Address', '12-step-meeting-list')?></label>
+														<input type="text" name="formatted_address" id="formatted_address" value="<?php echo $meeting->formatted_address ?>">
+													</div>
+												</div>
+												<div class="meta_form_separator row">
+													<div class="col-md-8">
+														<h4><?php _e('Signature Information', '12-step-meeting-list')?></h4>
+														<p><?php echo '' ?></p>
+													</div>
+												</div>
+												<div class="meta_form_row row">
+													<div class="well well-sm col-md-10 col-md-offset-1 ">
+														<input type="text" id="tsml_name" name="tsml_name" placeholder="<?php _e('Your Name', '12-step-meeting-list')?>" class="required">
+														<input type="email" id="tsml_email" name="tsml_email" placeholder="<?php _e('Your Email Address', '12-step-meeting-list')?>" class="required email">
+														<textarea id="tsml_message" name="tsml_message" rows="4" placeholder="<?php _e('Your message (i.e. Please make these changes effective immediately)', '12-step-meeting-list')?>" class="" ></textarea>
+													</div>
+												</div>
+												<div class="align-items-center" style="text-align:center;" >
+													<button type="submit" class="btn btn-default"><?php _e('Submit', '12-step-meeting-list')?></button>
+												</div>
+											</li>
+										</ul>
+									</form>
+								</div>
+							<?php }?>
+						</div>					
 					</div>
 				</div>
 			</div>
 		</div>
 
-		<?php if (is_active_sidebar('tsml_meeting_bottom')) {?>
+		<!--<?php if (is_active_sidebar('tsml_meeting_bottom')) {?>-->
 			<div class="widgets meeting-widgets meeting-widgets-bottom" role="complementary">
 				<?php dynamic_sidebar('tsml_meeting_bottom')?>
 			</div>
-		<?php }?>
+		<!--<?php }?>-->
 
 	</div>
 </div>

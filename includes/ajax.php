@@ -298,8 +298,61 @@ if (!function_exists('tsml_ajax_feedback')) {
 			$message_lines[__('Location Notes', '12-step-meeting-list')] = $meeting->location_notes;
 		}
 
+		//--------------- Changes ------------------------------------------------------------
+
+		$chg_name = sanitize_text_field($_POST['name']);
+		$chg_day = sanitize_text_field($_POST['day']);
+		$chg_time = sanitize_text_field($_POST['time']);
+		$chg_end_time = sanitize_text_field($_POST['end_time']);
+		$chg_types_string = implode(', ', $_POST['types']);
+		$chg_notes = sanitize_text_field($_POST['content']);
+		$chg_conference_url = sanitize_text_field($_POST['conference_url']);
+		$chg_conference_url_notes = sanitize_text_field($_POST['conference_url_notes']);
+		$chg_conference_phone = sanitize_text_field($_POST['conference_phone']);
+		$chg_location = sanitize_text_field($_POST['location']);
+		$chg_address = sanitize_text_field($_POST['formatted_address']);
+//		$chg_location_notes = sanitize_text_field($_POST['location_notes']);
+//		$chg_region = sanitize_text_field($_POST['region']);
+
+
+		if ((!empty($chg_name)) && ($chg_name !== $meeting->post_title)) {
+			$message_lines[__('Changed Meeting Name', '12-step-meeting-list')] = $chg_name;
+		}
+
+		if ((!empty($chg_day)) && ($chg_day !== $meeting->day)) {
+			$message_lines[__('Changed Meeting Day', '12-step-meeting-list')] = $chg_day;
+		}
+	
+		if ((!empty($chg_time)) && ($chg_time !== $meeting->time)) {
+			$message_lines[__('Changed Meeting Start Time', '12-step-meeting-list')] = $chg_time;
+		}
+	
+		if ((!empty($chg_types_string)) && ($chg_types_string !== implode(', ', $meeting->types))) {
+			$message_lines[__('Changed Types', '12-step-meeting-list')] = $chg_types_string; 
+		}
+
+		if ((!empty($chg_notes)) && ($chg_notes !== $meeting->notes)) {
+			$message_lines[__('Changed Notes', '12-step-meeting-list')] = $chg_notes;
+		}
+	
+		if ((!empty($chg_location)) && ($chg_location !== $meeting->location)) {
+			$message_lines[__('Changed Location', '12-step-meeting-list')] = $chg_location;
+		}
+
+		if ((!empty($chg_address)) && ($chg_address !== $meeting->formatted_address)) {
+			$message_lines[__('Changed Address', '12-step-meeting-list')] = $chg_address;
+		}
+	
 		foreach	($message_lines as $key => $value) {
-			$message .= '<p>' . $key . ': ' . $value . '</p>';
+			if (strpos($key, 'Changed') !== false)
+			{
+				$message .= '<hr>';
+				$message .= '<p style="color:red;">' . $key . ': ' . $value . '</p>';
+			}
+			else
+			{
+				$message .= '<p>' . $key . ': ' . $value . '</p>';
+			}
 		}
 
 		//email vars
@@ -309,7 +362,7 @@ if (!function_exists('tsml_ajax_feedback')) {
 			_e('Error: required form value missing. Email was not sent.', '12-step-meeting-list');
 		} else {
 			//send HTML email
-			$subject = __('Meeting Feedback Form', '12-step-meeting-list') . ': ' . $meeting->post_title;
+			$subject = __('Meeting Change Request', '12-step-meeting-list') . ': ' . $meeting->post_title;
 			if (tsml_email($tsml_feedback_addresses, $subject, $message, $name . ' <' . $email . '>')) {
 				_e('Thank you for your feedback.', '12-step-meeting-list');
 			} else {
