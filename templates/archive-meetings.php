@@ -468,9 +468,11 @@ foreach ($distances as $key => $value) {
 }
     ?>><a><?php echo $type_default ?></a></li>
 						<li class="divider"></li>
+                        <li <?php if (in_array('active', $attendance_options)) echo ' class="active"'; ?> ><a href="<?php echo tmsl_meetings_url(array('tsml-attendance_option' => 'active')) ?>" data-id="active">Active</a></li>
                 <?php
                     global $tsml_meeting_attendance_options;
-                    foreach ($tsml_meeting_attendance_options as $key => $value) {?>
+                    foreach ($tsml_meeting_attendance_options as $key => $value) {
+                        if ($key == 'inactive') continue; ?>
                         <li
                           <?php 
                               if (in_array($key, $attendance_options)) {

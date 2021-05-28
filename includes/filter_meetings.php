@@ -92,6 +92,11 @@ class tsml_filter_meetings
             if (!empty(array_intersect($this->attendance_option, Array('online', 'in_person')))) {
                 $this->attendance_option[] = 'hybrid';
             }
+            if (!empty(array_intersect($this->attendance_option, Array('active')))) {
+                $this->attendance_option[] = 'hybrid';
+                $this->attendance_option[] = 'in_person';
+                $this->attendance_option[] = 'online';
+            }
             $this->attendance_option = array_unique($this->attendance_option);
         }
 

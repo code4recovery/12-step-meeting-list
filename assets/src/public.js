@@ -381,7 +381,7 @@ jQuery(function($) {
 		$('#type li.active a').each(function() {
       let userChoice = $(this).attr('data-id');
 			if (userChoice) {
-        if (['in_person', 'hybrid', 'online', 'inactive'].indexOf(userChoice) !== -1) {
+        if (['active', 'in_person', 'hybrid', 'online', 'inactive'].indexOf(userChoice) !== -1) {
           attendanceOptions.push(userChoice);
         } else types.push(userChoice);
 			}
