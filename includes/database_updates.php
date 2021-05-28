@@ -86,7 +86,7 @@ if (!function_exists('db_update_set_attendance_options')) {
           $meeting['attendance_option'] = 'online';
         } elseif (in_array('TC', $meeting['types'])) {
           // Types has Location Temporarily Closed, but not online, which means it really is temporarily closed
-          $meeting['attendance_option'] = 'temporarily_closed';
+          $meeting['attendance_option'] = 'inactive';
         } elseif (in_array('ONL', $meeting['types'])) {
           // Types has Online, but not Temp closed, which means it's a hybrid
           $meeting['attendance_option'] = 'hybrid';
@@ -97,7 +97,10 @@ if (!function_exists('db_update_set_attendance_options')) {
 
         // Write the option to the database
         update_post_meta($meeting['id'], 'attendance_option', $meeting['attendance_option']);
+      } elseif ($meeting['attendance_option'] == 'temporarily_closed') {
+        update_post_meta($meeting['id'], 'attendance_option', 'inactive');
       }
     }
+    tsml_cache_rebuild();
   }
 }

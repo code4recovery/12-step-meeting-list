@@ -20,7 +20,7 @@ $height: 550px; //height of map and min-height of list
         color: $color_online;
     }
 
-    li.attendance-temporarily_closed div.attendance-option {
+    li.attendance-inactive div.attendance-option {
         color: $color_alert;
     }
 
@@ -506,7 +506,7 @@ $height: 550px; //height of map and min-height of list
                             }
                         }
 */
-                        &.attendance-temporarily_closed {
+                        &.attendance-inactive {
                             .location {
                                 small {
                                     color: $color_alert;
@@ -1184,7 +1184,7 @@ $height: 550px; //height of map and min-height of list
 
 body {
     &.attendance-online #map,
-    &.attendance-temporarily_closed  #map{
+    &.attendance-inactive  #map{
         display: none;
     }
 
@@ -1192,7 +1192,7 @@ body {
     &.attendance-online div.attendance-option {
         color: $color_online;
     }
-    &.attendance-temporarily_closed  div.attendance-option {
+    &.attendance-inactive  div.attendance-option {
         color: $color_alert;
     }
 

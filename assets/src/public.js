@@ -381,7 +381,7 @@ jQuery(function($) {
 		$('#type li.active a').each(function() {
       let userChoice = $(this).attr('data-id');
 			if (userChoice) {
-        if (['in_person', 'hybrid', 'online', 'temporarily_closed'].indexOf(userChoice) !== -1) {
+        if (['in_person', 'hybrid', 'online', 'inactive'].indexOf(userChoice) !== -1) {
           attendanceOptions.push(userChoice);
         } else types.push(userChoice);
 			}
@@ -726,8 +726,8 @@ jQuery(function($) {
 										case 'online':
 											row += 'Online';
 											break;
-										case 'temporarily_closed':
-											row += 'Temporarily closed';
+										case 'inactive':
+											row += 'Temporarily Inactive';
 											break;
 										case 'hybrid':
 											row += 'Hybrid';

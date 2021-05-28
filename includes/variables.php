@@ -19,7 +19,7 @@ $tsml_meeting_attendance_options = array(
 	'in_person' => 'In-person',
 	'hybrid' => 'Hybrid',
 	'online' => 'Online',
-	'temporarily_closed' => 'Temporarily closed',
+	'inactive' => 'Temporarily Inactive',
 );
 
 //load the set of columns that should be present in the list (not sure why this shouldn't go after plugins_loaded below)
