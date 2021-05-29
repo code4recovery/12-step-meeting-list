@@ -472,7 +472,7 @@ foreach ($distances as $key => $value) {
                 <?php
                     global $tsml_meeting_attendance_options;
                     foreach ($tsml_meeting_attendance_options as $key => $value) {
-                        if ($key == 'inactive') continue; ?>
+                        if ($key == 'inactive' || $key == 'hybrid') continue; ?>
                         <li
                           <?php 
                               if (in_array($key, $attendance_options)) {
