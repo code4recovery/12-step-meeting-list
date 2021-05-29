@@ -719,8 +719,17 @@ jQuery(function($) {
 									break;
 
 								case 'location':
+									meeting_location = obj.location;
+									if (obj.attendance_option == 'online' || obj.attendance_option == 'inactive') {
+										if (obj.group !== undefined) {
+											meeting_location = obj.group;
+										} else {
+											meeting_location = '';
+										}
+									}
+
 									row += '<td class="location" data-sort="' + sanitizeDataSort(obj.location) + '-' + sort_time + '">';
-									row += '<div class="location-name">' + obj.location + '</div>';
+									row += '<div class="location-name">' + meeting_location + '</div>';
 									row += '<div class="attendance-' + obj.attendance_option + '"><small>';
 									switch (obj.attendance_option) {
 										case 'online':

@@ -598,8 +598,14 @@ break;
 break;
 
             case 'location': ?>
+                <?php
+                    $meeting_location = $meeting['location'];
+                    if ($meeting['attendance_option'] == 'online' || $meeting['attendance_option'] == 'inactive') {
+                        $meeting_location = !empty($meeting['group']) ? $meeting['group'] : '';
+                    }
+                ?>
 									<td class="location" data-sort="<?php echo tsml_sanitize_data_sort($meeting['location']) . '-' . $sort_time ?>">
-										<div class="location-name"><?php echo $meeting['location'];?></div>
+										<div class="location-name"><?php echo $meeting_location;?></div>
 										<div class="attendance-<?php echo $meeting['attendance_option'];?>"><small><?php if ($meeting['attendance_option'] != 'in_person') echo $tsml_meeting_attendance_options[$meeting['attendance_option']];?></small></div>
 									</td>
 									<?php
