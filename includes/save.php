@@ -93,8 +93,12 @@ function tsml_save_post($post_id, $post, $update) {
 	}
 
 	// Handle the in_person field (also here because it affects types)
+	$approximate = true;
+	if (!empty($_POST['formatted_address']) && tsml_geocode($_POST['formatted_address'])['approximate'] == 'no') {
+			$approximate = false;
+	}
 	$attendance_option = '';
-	if ($_POST['in_person'] == 'yes' ) {
+	if ($_POST['in_person'] == 'yes' && !$approximate) {
 		$attendance_option = $meeting_is_online ? 'hybrid' : 'in_person';
 	} else {
 		$attendance_option = $meeting_is_online ? 'online' : 'inactive';

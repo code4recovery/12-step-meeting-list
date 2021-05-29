@@ -78,6 +78,11 @@ if (!function_exists('db_update_set_attendance_options')) {
     foreach ($meetings as $meeting) {
       // Only make changes if we don't already have something in attendance_option
       if (empty($meeting['attendance_option'])) {
+        $approximate = true;
+        if (!empty($meeting['formatted_address']) && tsml_geocode($meeting['formatted_address'])['approximate'] == 'no') {
+          $approximate = false;
+        }
+
         // Handle when the types list is empty, this prevents PHP warnings
         if (empty($meeting['types'])) $meeting['types'] = array();
 
@@ -88,11 +93,17 @@ if (!function_exists('db_update_set_attendance_options')) {
           // Types has Location Temporarily Closed, but not online, which means it really is temporarily closed
           $meeting['attendance_option'] = 'inactive';
         } elseif (in_array('ONL', $meeting['types'])) {
-          // Types has Online, but not Temp closed, which means it's a hybrid
+          // Types has Online, but not Temp closed, which means it's a hybrid (or online)
           $meeting['attendance_option'] = 'hybrid';
+          if ($approximate) {
+            $meeting['attendance_option'] = 'online';
+          }
         } else {
-          // Neither Online or Temp Closed, which means it's in person
+          // Neither Online or Temp Closed, which means it's in person (or inactive)
           $meeting['attendance_option'] = 'in_person';
+          if ($approximate) {
+            $meeting['attendance_option'] = 'inactive';
+          }
         }
 
         // Write the option to the database
