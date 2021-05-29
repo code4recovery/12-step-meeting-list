@@ -145,8 +145,8 @@ add_filter('bulk_actions-edit-tsml_meeting', 'tsml_my_bulk_actions');
 
 function tsml_my_bulk_actions($bulk_array)
 {
-    $bulk_array['tsml_add_tc'] = __('Add Temporary Closure', '12-step-meeting-list');
-    $bulk_array['tsml_remove_tc'] = __('Remove Temporary Closure', '12-step-meeting-list');
+    //$bulk_array['tsml_add_tc'] = __('Add Temporary Closure', '12-step-meeting-list');
+    //$bulk_array['tsml_remove_tc'] = __('Remove Temporary Closure', '12-step-meeting-list');
     /*
     $bulk_array['tsml_remove_onl'] = __('Remove Online Meeting', '12-step-meeting-list');
     */
