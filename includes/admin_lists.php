@@ -283,7 +283,6 @@ function tsml_bulk_action_handler($redirect, $doaction, $object_ids)
                     update_post_meta($post_id, 'types', array_map('esc_attr', $types));
                 }
             }
-            error_log($meeting->attendance_option . ' - ' . tsml_geocode($meeting->formatted_address)['approximate']);
             $count++;
         }
 
