@@ -194,7 +194,14 @@ get_header();
 									);
 								}
 
-								if (!empty($meeting->group) || !empty($meeting->website) || !empty($meeting->website_2) || !empty($meeting->email) || !empty($meeting->phone || ($tsml_contact_display == 'public'))) {?>
+								//whether this meeting has public contact info to show
+								$hasContactInformation = (($tsml_contact_display == 'public') && (
+									!empty($meeting->contact_1_name) || !empty($meeting->contact_1_email) || !empty($meeting->contact_1_phone) ||
+									!empty($meeting->contact_2_name) || !empty($meeting->contact_2_email) || !empty($meeting->contact_2_phone) ||
+									!empty($meeting->contact_3_name) || !empty($meeting->contact_3_email) || !empty($meeting->contact_3_phone)
+								));
+
+								if (!empty($meeting->group) || !empty($meeting->website) || !empty($meeting->website_2) || !empty($meeting->email) || !empty($meeting->phone) || $hasContactInformation) {?>
 									<li class="list-group-item list-group-item-group">
 										<h3 class="list-group-item-heading"><?php echo empty($meeting->group) ? __('Contact Information', '12-step-meeting-list') : $meeting->group ?></h3>
 										<?php
@@ -242,9 +249,9 @@ get_header();
 												<?php _e('Group Phone', '12-step-meeting-list')?>
 											</a>
 										<?php }
-										if ($tsml_contact_display == 'public') {
+										if ($hasContactInformation) {
 											for ($i = 1; $i <= GROUP_CONTACT_COUNT; $i++) {
-												$name = empty($meeting->{'contact_' . $i . '_name'}) ? sprintf(__('Contact %n', '12-step-meeting-list'), $i) : $meeting->{'contact_' . $i . '_name'};
+												$name = empty($meeting->{'contact_' . $i . '_name'}) ? sprintf(__('Contact %s', '12-step-meeting-list'), $i) : $meeting->{'contact_' . $i . '_name'};
 												if (!empty($meeting->{'contact_' . $i . '_email'})) {?>
 													<a href="mailto:<?php echo $meeting->{'contact_' . $i . '_email'} ?>" class="btn btn-default btn-block contact-email">
 														<svg class="icon" width="1em" height="1em" viewBox="0 0 16 16" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
