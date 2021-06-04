@@ -70,6 +70,9 @@ get_header();
 								$meetings = tsml_get_meetings(array('location_id' => $location->ID));
 								$location_days = array();
 								foreach ($meetings as $meeting) {
+									// Set types to be empty if it's not given, prevents php notices in log
+									if (empty($meeting['types'])) { $meeting['types'] = array(); }
+
 									if (!isset($location_days[$meeting['day']])) {
 										$location_days[$meeting['day']] = array();
 									}
