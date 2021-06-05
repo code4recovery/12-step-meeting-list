@@ -1029,6 +1029,12 @@ function tsml_get_meeting($meeting_id=false) {
   
   if (!empty($meeting->post_title)) $meeting = tsml_ensure_location_approximate_set($meeting); // Can eventually remove this when <3.9 TSMLs no longer used.
 
+	// Ensure we have an attendance option
+	if (empty($meeting->attendance_option)) {
+		$meeting->attendance_option = tsml_calculate_attendance_option($meeting->types, $meeting->formatted_address);
+		tsml_cache_rebuild();
+	}
+
 	return $meeting;
 }
 
@@ -1037,6 +1043,7 @@ function tsml_get_meeting($meeting_id=false) {
 //used:		tsml_ajax_meetings(), single-locations.php, archive-meetings.php
 function tsml_get_meetings($arguments=array(), $from_cache=true) {
 	global $tsml_cache, $tsml_contact_fields;
+	$rebuild_cache = false;
 
 	//start by grabbing all meetings
 	if ($from_cache && file_exists(WP_CONTENT_DIR . $tsml_cache) && $meetings = file_get_contents(WP_CONTENT_DIR . $tsml_cache)) {
@@ -1104,6 +1111,18 @@ function tsml_get_meetings($arguments=array(), $from_cache=true) {
 			$meetings[] = $meeting;
 		}
 		$meetings = array_map('tsml_cache_clean', $meetings);
+		$rebuild_cache = true;
+	}
+
+	for ($i=0; $i < count($meetings); $i++) {
+		if (empty($meetings[$i]['attendance_option'])) {
+			$meetings[$i]['attendance_option'] = tsml_calculate_attendance_option(empty($meetings[$i]['types']) ? array() : $meetings[$i]['types'], $meetings[$i]['formatted_address']);
+			update_post_meta($meetings[$i]['id'], 'attendance_option', $meetings[$i]['attendance_option']);
+			$rebuild_cache = true;
+		}
+	}
+
+	if ($rebuild_cache) {
 		file_put_contents(WP_CONTENT_DIR . $tsml_cache, json_encode($meetings));
 	}
 
@@ -1118,6 +1137,42 @@ function tsml_get_meetings($arguments=array(), $from_cache=true) {
 
 	return $meetings;
 
+}
+
+//function: calculate attendance option given types and address
+// called in tsml_get_meetings()
+function tsml_calculate_attendance_option($types, $address) {
+	$attendance_option = '';
+
+	$approximate = true;
+	if (!empty($address) && tsml_geocode($address)['approximate'] == 'no') {
+		$approximate = false;
+	}
+
+	// Handle when the types list is empty, this prevents PHP warnings
+	if (empty($types)) $types = array();
+
+	if (in_array('TC', $types) && in_array('ONL', $types)) {
+		// Types has both Location Temporarily Closed and Online, which means it should be an online meeting
+		$attendance_option = 'online';
+	} elseif (in_array('TC', $types)) {
+		// Types has Location Temporarily Closed, but not online, which means it really is temporarily closed
+		$attendance_option = 'inactive';
+	} elseif (in_array('ONL', $types)) {
+		// Types has Online, but not Temp closed, which means it's a hybrid (or online)
+		$attendance_option = 'hybrid';
+		if ($approximate) {
+			$attendance_option = 'online';
+		}
+	} else {
+		// Neither Online or Temp Closed, which means it's in person (or inactive)
+		$attendance_option = 'in_person';
+		if ($approximate) {
+			$attendance_option = 'inactive';
+		}
+	}
+
+	return $attendance_option;
 }
 
 //function: get metadata for all meetings very quickly
