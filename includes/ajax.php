@@ -569,9 +569,6 @@ if (!function_exists('function_name')) {
 			$tsml_data_sources[$url]['count_meetings'] = number_format($props['count_meetings']);
 		}
 
-		// Set Attendance option for meetings that don't already have this field
-		db_update_set_attendance_options();
-
 		wp_send_json(array(
 			'errors'		=> $errors,
 			'remaining'		=> count($remaining),
