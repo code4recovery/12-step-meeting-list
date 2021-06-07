@@ -89,23 +89,45 @@ get_header();
 										echo __(' to ', '12-step-meeting-list'), tsml_format_time($meeting->end_time);
 									}
 									echo '</p>';
-									if (count($meeting->types_expanded)) { ?>
+									//if (count($meeting->types_expanded)) { ?>
 										<ul class="meeting-types">
-										<?php foreach ($meeting->types_expanded as $type) {
-											if (!($meeting->attendance_option == 'online' && $type == 'Location Temporarily Closed')) {?>
-											<li>
-												<svg class="icon" width="1em" height="1em" viewBox="0 0 16 16" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+											<?php
+											$li_marker = '<svg class="icon" width="1em" height="1em" viewBox="0 0 16 16" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
 													<path fill-rule="evenodd" d="M10.97 4.97a.75.75 0 0 1 1.071 1.05l-3.992 4.99a.75.75 0 0 1-1.08.02L4.324 8.384a.75.75 0 1 1 1.06-1.06l2.094 2.093 3.473-4.425a.236.236 0 0 1 .02-.022z"/>
-												</svg>
-												<?php _e($type, '12-step-meeting-list')?>
+												</svg>';
+											switch ($meeting->attendance_option) {
+												case 'in_person':
+													echo '<li>' . $li_marker . __('Active', '12-step-meeting-list') . '</li>' . PHP_EOL;
+													echo '<li>' . $li_marker . __('In person', '12-step-meeting-list') . '</li>' . PHP_EOL;
+													break;
+												case 'hybrid':
+													echo '<li>' . $li_marker . __('Active', '12-step-meeting-list') . '</li>' . PHP_EOL;
+													echo '<li>' . $li_marker . __('In person', '12-step-meeting-list') . '</li>' . PHP_EOL;
+													echo '<li>' . $li_marker . __('Online', '12-step-meeting-list') . '</li>' . PHP_EOL;
+													break;
+												case 'online':
+													echo '<li>' . $li_marker . __('Active', '12-step-meeting-list') . '</li>' . PHP_EOL;
+													echo '<li>' . $li_marker . __('Online', '12-step-meeting-list') . '</li>' . PHP_EOL;
+													break;
+												case 'inactive':
+													echo '<li>' . $li_marker . __('Temporarily Inactive', '12-step-meeting-list') . '</li>' . PHP_EOL;
+													break;
+												default:
+													break;
+											}
+													echo '<li><hr style="margin:10px 0;" /></li>' . PHP_EOL;
+											?>
+										<?php foreach ($meeting->types_expanded as $type) { ?>
+											<li>
+												<?php echo $li_marker;
+												_e($type, '12-step-meeting-list');?>
 											</li>
-										<?php }
-									}?>
+										<?php }?>
 										</ul>
 										<?php if (!empty($meeting->type_description)) {?>
 											<p class="meeting-type-description"><?php _e($meeting->type_description, '12-step-meeting-list')?></p>
 										<?php }
-									}
+									//}
 
 									if (!empty($meeting->notes)) {?>
 										<section class="meeting-notes"><?php echo wpautop($meeting->notes) ?></section>

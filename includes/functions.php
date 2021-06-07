@@ -1021,6 +1021,8 @@ function tsml_get_meeting($meeting_id=false) {
 	array_map('trim', $meeting->types);
 	$meeting->types_expanded = array();
 	foreach ($meeting->types as $type) {
+		if ($type == 'ONL' || $type == 'TC') continue;
+
 		if (!empty($tsml_programs[$tsml_program]['types'][$type])) {
 			$meeting->types_expanded[] = $tsml_programs[$tsml_program]['types'][$type];
 		}
@@ -1030,7 +1032,7 @@ function tsml_get_meeting($meeting_id=false) {
   if (!empty($meeting->post_title)) $meeting = tsml_ensure_location_approximate_set($meeting); // Can eventually remove this when <3.9 TSMLs no longer used.
 
 	// Ensure we have an attendance option
-	if (empty($meeting->attendance_option)) {
+	if (empty($meeting->attendance_option) && !empty($meeting->formatted_address)) {
 		$meeting->attendance_option = tsml_calculate_attendance_option($meeting->types, $meeting->formatted_address);
 		tsml_cache_rebuild();
 	}
