@@ -1195,6 +1195,10 @@ body {
     &.attendance-inactive  div.attendance-option {
         color: $color_alert;
     }
+    &.attendance-inactive p.location-address,
+    &.attendance-online p.location-address {
+        text-decoration: line-through;
+    }
 
     /* temporary closure meetings */
 /*
