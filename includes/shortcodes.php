@@ -35,17 +35,33 @@ if (!function_exists('tsml_next_meetings')) {
 				$meeting_types = '<br/><small><span class="meeting_types">(' . $meeting_types . ')</span></small>';
 			}
 
+			$meeting_location = $meeting['location'];
+			if ($meeting['attendance_option'] == 'online' || $meeting['attendance_option'] == 'inactive') {
+				$meeting_location = !empty($meeting['group']) ? $meeting['group'] : '';
+			}
+
 			$rows .= '<tr class="meeting ' . $classes .' attendance-' . $meeting['attendance_option'] .'">
 				<td class="time">' . tsml_format_time($meeting['time']) . '</td>
 				<td class="name"><a href="' . $meeting['url'] . '">' . @$meeting['name'] . '</a>' . $meeting_types . '</td>
 				<td class="location">
-					<div class="location-name">' . $meeting['location'] . '</div>
+					<div class="location-name">' . $meeting_location . '</div>
 					<div class="attendance-option attendance-' . $meeting['attendance_option'] . '"><small>' . ($meeting['attendance_option'] != 'in_person' ? $tsml_meeting_attendance_options[$meeting['attendance_option']] : '')  . '</small></div>
 				</td>
 				<td class="region">' . (@$meeting['sub_region'] ? @$meeting['sub_region'] : @$meeting['region']) . '</td>
 			</tr>';
 		}
 		return '
+
+		<style>
+    table.tsml_next_meetings div.attendance-hybrid small,
+    table.tsml_next_meetings div.attendance-online small {
+        color: green;
+    }
+
+    table.tsml_next_meetings div.attendance-inactive small {
+        color: #d40047;
+    }
+		</style>
 		<table class="tsml_next_meetings table table-striped">
 			<thead>
 				<tr>
