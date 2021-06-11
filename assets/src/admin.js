@@ -307,8 +307,13 @@ jQuery(function($) {
 									$('select[name=region] option[value=' + region_id + ']').prop('selected', true);
 								}
 
-								//form is ok to submit again
-								formIsValid();
+								// In-person meetings can't have approximate addresses
+								if ($('input[name=in_person]:checked').val() == 'yes' && $('input#approximate').val() == 'yes') {
+									formIsNotValid();
+								} else {
+									//form is ok to submit again
+									formIsValid()
+								}
 							}
 						);
 					}
@@ -329,6 +334,12 @@ jQuery(function($) {
 						$('div.apply_address_to_location').addClass('hidden');
 					}
 				}
+			});
+
+		// Verify address when a change to in_person question
+		$('input[name=in_person]')
+			.change(function() {
+				$('input#formatted_address').change();
 			});
 
 		//when page loads, run lookup
