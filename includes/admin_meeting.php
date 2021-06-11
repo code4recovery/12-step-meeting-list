@@ -34,7 +34,6 @@ function tsml_admin_init() {
     db_update_remove_all_is_approximate_location_meta();
 		// db_update_addresses_cache_approximate_location();
 		// db_update_tsml_locations_approximate_location();
-		db_update_set_attendance_options();
 		update_option('tsml_version', TSML_VERSION);
 		flush_rewrite_rules();
 	};
@@ -146,7 +145,12 @@ function tsml_admin_init() {
 			</div>
 			<div class="location_note">
 				<?php _e('Fill in the "Online Meeting Details" above if meeting is online or hybrid.', '12-step-meeting-list'); ?><br/><br/>
-				<?php _e('Use an approximate address for online meetings, example: Philadelphia, PA. It may help to think of it as the meeting\'s origin. The Meeting Guide app uses this information to infer the meeting\'s time zone.', '12-step-meeting-list'); ?></div>
+				<?php _e('Use an approximate address for online meetings, example: Philadelphia, PA. It may help to think of it as the meeting\'s origin. The Meeting Guide app uses this information to infer the meeting\'s time zone.', '12-step-meeting-list'); ?>
+				<div class="form_not_valid">
+					<br/>
+					<?php _e('Notice: In person meetings must have a specific address.', '12-step-meeting-list'); ?>
+				</div>
+			</div>
 		</div>
 
 		<div class="meta_form_row">

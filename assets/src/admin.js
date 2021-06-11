@@ -309,9 +309,11 @@ jQuery(function($) {
 
 								// In-person meetings can't have approximate addresses
 								if ($('input[name=in_person]:checked').val() == 'yes' && $('input#approximate').val() == 'yes') {
+									$('div.form_not_valid').removeClass('hidden');
 									formIsNotValid();
 								} else {
 									//form is ok to submit again
+									$('div.form_not_valid').addClass('hidden');
 									formIsValid()
 								}
 							}
