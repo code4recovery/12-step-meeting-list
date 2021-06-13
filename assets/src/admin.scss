@@ -3,9 +3,6 @@
 @import 'tsml-jquery-ui.css';
 
 body {
-	// Note box for in-person question
-	div.location_note {padding:10px; border:solid 1px #c3c4c7; border-left:solid 4px #72aEE6;}
-	
 	//group Information (optional) gray
 	h2 small, h3 small { 
 		color: #aaa;
@@ -392,4 +389,11 @@ body {
 			&[data-type="group"] .group-visible { display: block; }
 		}
 	}
+
+	// Note box for in-person question
+	div.location_note {padding:10px; border:solid 1px #c3c4c7; border-left:solid 4px #72aEE6; margin-top: 5px;}
+	div.location_warning {padding:10px; border:solid 1px #c3c4c7; border-left:solid 4px #d3a73e; margin-top: 5px;}
+	div.location_error {padding:10px; border:solid 1px #c3c4c7; border-left:solid 4px #d40047; margin-top: 5px;}
+	&.post-type-tsml_meeting .meta_form_row input.error {border:solid 1px #d40047 !important;}
+	&.post-type-tsml_meeting .meta_form_row input.warning {border:solid 1px #d3a73e !important;}
 }

@@ -141,15 +141,19 @@ function tsml_admin_init() {
 				<p><?php _e('Can I attend this meeting in-person?', '12-step-meeting-list')?></p>
 				<label><input type="radio" name="in_person" value="yes"<?php checked(empty($meeting->attendance_option) || $meeting->attendance_option == 'in_person' || $meeting->attendance_option == 'hybrid')?>> <?php _e('Yes (In-person or hybrid)', '12-step-meeting-list')?></label>
 				<label><input type="radio" name="in_person" value="no"<?php checked($meeting->attendance_option == 'online' || $meeting->attendance_option == 'inactive')?>> <?php _e('No (Online only or temporarily not meeting)', '12-step-meeting-list')?></label>
-				<br/>
 			</div>
 			<div class="location_note">
 				<?php _e('Fill in the "Online Meeting Details" above if meeting is online or hybrid.', '12-step-meeting-list'); ?><br/><br/>
-				<?php _e('Use an approximate address for online meetings, example: Philadelphia, PA. It may help to think of it as the meeting\'s origin. The Meeting Guide app uses this information to infer the meeting\'s time zone.', '12-step-meeting-list'); ?>
-				<div class="form_not_valid">
-					<br/>
-					<?php _e('Notice: In person meetings must have a specific address.', '12-step-meeting-list'); ?>
-				</div>
+				<?php _e('Use an approximate address for online meetings, example: Philadelphia, PA, USA. It may help to think of it as the meeting\'s origin. The Meeting Guide app uses this information to infer the meeting\'s time zone.', '12-step-meeting-list'); ?>
+			</div>
+			<div class="location_error form_not_valid hidden">
+				<?php _e('Error: In person meetings must have a specific address.', '12-step-meeting-list'); ?>
+			</div>
+			<div class="location_warning need_approximate_address hidden">
+				<?php _e('Warning: Online meetings with a specific address will appear that the location temporarily closed. Meetings that are Online only should use appoximate addresses.', '12-step-meeting-list'); ?><br/><br/>
+				<?php _e('Example:', '12-step-meeting-list'); ?><br/>
+				<?php _e('Location: Online-Philadelphia', '12-step-meeting-list'); ?><br/>
+				<?php _e('Address: Philadelphia, PA, USA', '12-step-meeting-list'); ?>
 			</div>
 		</div>
 
