@@ -138,13 +138,28 @@ function tsml_admin_init() {
         ?>
 		<div class="meta_form_row radio">
 		<div class="in_person">
-				<p><?php _e('Can I attend this meeting in-person?', '12-step-meeting-list')?></p>
-				<label><input type="radio" name="in_person" value="yes"<?php checked(empty($meeting->attendance_option) || $meeting->attendance_option == 'in_person' || $meeting->attendance_option == 'hybrid')?>> <?php _e('Yes (In-person or hybrid)', '12-step-meeting-list')?></label>
-				<label><input type="radio" name="in_person" value="no"<?php checked($meeting->attendance_option == 'online' || $meeting->attendance_option == 'inactive')?>> <?php _e('No (Online only or temporarily not meeting)', '12-step-meeting-list')?></label>
+				<div><?php _e('Can I currently attend this meeting in-person?', '12-step-meeting-list')?></div>
+				<label><input type="radio" name="in_person" value="yes"<?php checked(empty($meeting->attendance_option) || $meeting->attendance_option == 'in_person' || $meeting->attendance_option == 'hybrid')?> /> <?php _e('Yes (In-person or hybrid)', '12-step-meeting-list')?></label>
+				<label><input type="radio" name="in_person" value="no"<?php checked($meeting->attendance_option == 'online' || $meeting->attendance_option == 'inactive')?> /> <?php _e('No (Online only or temporarily not meeting)', '12-step-meeting-list')?></label>
 			</div>
 			<div class="location_note">
-				<?php _e('Fill in the "Online Meeting Details" above if meeting is online or hybrid.', '12-step-meeting-list'); ?><br/><br/>
-				<?php _e('Use an approximate address for online meetings, example: Philadelphia, PA, USA. It may help to think of it as the meeting\'s origin. The Meeting Guide app uses this information to infer the meeting\'s time zone.', '12-step-meeting-list'); ?>
+				<?php _e('Select Yes for In Person or Hybrid meetings', '12-step-meeting-list'); ?><br/>
+				<?php _e('Select No for Onine only meetings or meetings that are temporarily inactive', '12-step-meeting-list'); ?><br/><br/>
+
+				<?php _e('For meetings I can attend In Person:', '12-step-meeting-list'); ?>
+				<ul>
+					<li><?php _e('A specific address is required', '12-step-meeting-list'); ?></li>
+				</ul>
+
+				<?php _e('For online or hybrid meetings:', '12-step-meeting-list'); ?>
+				<ul>
+					<li><?php _e('Fill in the "Online Meeting Details" above', '12-step-meeting-list'); ?></li>
+				</ul>
+
+				<?php _e('For online only meetings:', '12-step-meeting-list'); ?>
+				<ul>
+					<li><?php _e('Use an approximate address, example: Philadelphia, PA, USA. It may help to think of it as the meeting\'s origin. The Meeting Guide app uses this information to infer the meeting\'s time zone.', '12-step-meeting-list'); ?>/li>
+				</ul>
 			</div>
 			<div class="location_error form_not_valid hidden">
 				<?php _e('Error: In person meetings must have a specific address.', '12-step-meeting-list'); ?>
