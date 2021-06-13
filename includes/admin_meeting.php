@@ -138,7 +138,7 @@ function tsml_admin_init() {
         ?>
 		<div class="meta_form_row radio">
 		<div class="in_person">
-				<p><?php _e('Is this an in-person meeting?', '12-step-meeting-list')?></p>
+				<p><?php _e('Can I attend this meeting in-person?', '12-step-meeting-list')?></p>
 				<label><input type="radio" name="in_person" value="yes"<?php checked(empty($meeting->attendance_option) || $meeting->attendance_option == 'in_person' || $meeting->attendance_option == 'hybrid')?>> <?php _e('Yes (In-person or hybrid)', '12-step-meeting-list')?></label>
 				<label><input type="radio" name="in_person" value="no"<?php checked($meeting->attendance_option == 'online' || $meeting->attendance_option == 'inactive')?>> <?php _e('No (Online only or temporarily not meeting)', '12-step-meeting-list')?></label>
 				<br/>
