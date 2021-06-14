@@ -120,7 +120,7 @@ add_filter('body_class', 'tsml_body_class');
 function tsml_body_class($classes) {
 	global $meeting;
 
-	$classes[] = 'tsml tsml-detail tsml-meeting';
+	$classes[] = 'tsml tsml-detail tsml-meeting ';
 
 	if ($type_classes = tsml_to_css_classes($meeting->types, 'tsml-type-')) {
 		$classes[] = $type_classes;
@@ -374,10 +374,10 @@ get_header();
 							</ul>
 						</div>
 
-						<!--  *** *** *** *** *** *** *** *** ***  Original Feedback Code bypassed here *** *** *** *** *** *** *** *** -->
+						<!--  *** *** *** *** *** *** *** *** ***  Legacy Feedback Code bypassed here *** *** *** *** *** *** *** *** -->
 
 						<?php
-						if ( empty($tsml_feedback_addresses)) {?>
+						if ( (!empty($tsml_feedback_addresses)) && ($tsml_feedback_method == 'legacy')) {?>
 						<form id="feedback">
 							<input type="hidden" name="action" value="tsml_feedback">
 							<input type="hidden" name="meeting_id" value="<?php echo $meeting->ID ?>">
@@ -417,14 +417,14 @@ get_header();
 						<!--  *** *** *** *** *** *** *** *** ***  Extension code for TSML Meeting Change Request Feedback *** *** *** *** *** *** *** ***  -->
 					<div id="div_right_col" class="col-md-7">
 						<!-- Make toggle button & map hideable -->
-							<input id="btnToggleMap" class="btn-block" type="button" onclick="switchVisible();" value="<?php _e('Request a change to this listing', '12-step-meeting-list')?>" style="display:block" > 
+						<input id="btnToggleMap" class="btn-block <?php echo $tsml_feedback_method == "enhanced" ? 'show' : 'hidden';?>" type="button" onclick="switchVisible();" value="<?php _e('Request a change to this listing', '12-step-meeting-list')?>" style="display:block" > 
 						<?php if (!empty($tsml_mapbox_key) || !empty($tsml_google_maps_key)) {?>
 						<div id="map" class="panel panel-default" ></div>
 						<?php }?>
 						<!-- Visibility of Request Forms set with style & js -->
 						<div id="requests" style="float:left; width:100%; display:none;" >
 						<?php
-						if ( !empty($tsml_feedback_addresses)) {?>
+						if ( !empty($tsml_feedback_addresses) && $tsml_feedback_method == 'enhanced') {?>
 							<form id="feedback">
 								<input type="hidden" name="action" value="tsml_feedback">
 								<input type="hidden" name="meeting_id" value="<?php echo $meeting->ID ?>">
@@ -657,19 +657,19 @@ get_header();
 															<div class="meta_form_row row" >
 																<div class="well well-sm col-md-10 col-md-offset-1 ">
 																	<label for="email"><?php _e('Email', '12-step-meeting-list')?></label>
-																	<input type="email" name="email" id="email" placeholder="<?php _e('public.group@email.com', '12-step-meeting-list')?>" value="<?php echo (empty($meeting->email) ) ? '' : substr($meeting->email, 0, 3) .'****@*******.***' ?>" >
+																	<input type="email" name="email" id="email" placeholder="<?php _e('non personal email (i.e. groupName@gmail.com)', '12-step-meeting-list')?>" value="<?php echo (empty($meeting->email) ) ? '' : substr($meeting->email, 0) ?>" >
 																</div>
 															</div>
 															<div class="meta_form_row row">
 																<div class="well well-sm col-md-10 col-md-offset-1 ">
 																	<label for="phone"><?php _e('Phone', '12-step-meeting-list')?></label>
-																	<input type="text" name="phone" id="phone" placeholder="<?php _e('10 digit public number for contacting the group', '12-step-meeting-list')?>" value="<?php echo (empty($meeting->phone) ) ? '' : '(***)***-' . substr($meeting->phone, 6) ?>" > 
+																	<input type="text" name="phone" id="phone" placeholder="<?php _e('10 digit public number for contacting the group', '12-step-meeting-list')?>" value="<?php echo '(' . substr( $meeting->phone, 0, 3) . ') ' . substr($meeting->phone,3,3) . '-' . substr($meeting->phone,6) ?>" >
 																</div>
 															</div>
 															<div class="meta_form_row row">
 																<div class="well well-sm col-md-10 col-md-offset-1 ">
 																	<label for="mailing_address"><?php _e('Mailing Address', '12-step-meeting-list')?></label>
-																	<input type="text" name="mailing_address" id="mailing_address" placeholder="<?php _e('postal address which receives correspondence for the group', '12-step-meeting-list')?>" value="<?php echo (empty($meeting->mailing_address) ) ? '' : substr($meeting->mailing_address, 0, 3) .'************ ***' ?>"> 
+																	<input type="text" name="mailing_address" id="mailing_address" placeholder="<?php _e('postal address which receives correspondence for the group', '12-step-meeting-list')?>" value="<?php echo (empty($meeting->mailing_address) ) ? '' : 'c/o '. substr($meeting->mailing_address, 0) ?>"> 
 																</div>
 															</div>
 															<div class="meta_form_row row">
@@ -693,13 +693,13 @@ get_header();
 															<div class="meta_form_row row" >
 																<div class="well well-sm col-md-10 col-md-offset-1 ">
 																	<label for="contact_1_name"><?php _e('Contact 1 Name', '12-step-meeting-list')?></label>
-																	<input type="text" name="contact_1_name" id="contact_1_name" value="<?php echo (empty($meeting->contact_1_name) ) ? '' : substr($meeting->contact_1_name, 0, 3) .'** ******' ?>" >
+																	<input type="text" name="contact_1_name" id="contact_1_name" placeholder="<?php _e('First Name & Last Initial', '12-step-meeting-list')?>" value="<?php echo (empty($meeting->contact_1_name) ) ? '' : substr($meeting->contact_1_name, 0, 3) .'** ******' ?>" >
 																</div>
 															</div>
 															<div class="meta_form_row row" >
 																<div class="well well-sm col-md-10 col-md-offset-1 ">
 																	<label for="contact_1_email"><?php _e('Contact 1 Email', '12-step-meeting-list')?></label>
-																	<input type="text" name="contact_1_email" id="contact_1_email" value="<?php echo (empty($meeting->contact_1_email) ) ? '' : substr($meeting->contact_1_email, 0, 3) .'****@*******.***' ?>" >
+																	<input type="text" name="contact_1_email" id="contact_1_email" placeholder="<?php _e('No personally identifying email address...', '12-step-meeting-list')?>" value="<?php echo (empty($meeting->contact_1_email) ) ? '' : substr($meeting->contact_1_email, 0, 3) .'****@*******.***' ?>" >
 																</div>
 															</div>
 															<div class="meta_form_row row" >
@@ -711,13 +711,13 @@ get_header();
 															<div class="meta_form_row row" >
 																<div class="well well-sm col-md-10 col-md-offset-1 ">
 																	<label for="contact_2_name"><?php _e('Contact 2 Name', '12-step-meeting-list')?></label>
-																	<input type="text" name="contact_2_name" id="contact_2_name" value="<?php echo (empty($meeting->contact_2_name) ) ? '' :  substr($meeting->contact_2_name, 0, 3) .'** ******' ?>" >
+																	<input type="text" name="contact_2_name" id="contact_2_name" placeholder="<?php _e('First Name & Last Initial', '12-step-meeting-list')?>" value="<?php echo (empty($meeting->contact_2_name) ) ? '' :  substr($meeting->contact_2_name, 0, 3) .'** ******' ?>" >
 																</div>
 															</div>
 															<div class="meta_form_row row" >
 																<div class="well well-sm col-md-10 col-md-offset-1 ">
 																	<label for="contact_2_email"><?php _e('Contact 2 Email', '12-step-meeting-list')?></label>
-																	<input type="text" name="contact_2_email" id="contact_2_email" value="<?php echo (empty($meeting->contact_2_email) ) ? '' : substr($meeting->contact_2_email, 0, 3) .'****@*******.***' ?>" >
+																	<input type="text" name="contact_2_email" id="contact_2_email" placeholder="<?php _e('No personally identifying email address...', '12-step-meeting-list')?>" value="<?php echo (empty($meeting->contact_2_email) ) ? '' : substr($meeting->contact_2_email, 0, 3) .'****@*******.***' ?>" >
 																</div>
 															</div>
 															<div class="meta_form_row row" >
@@ -729,13 +729,13 @@ get_header();
 															<div class="meta_form_row row" >
 																<div class="well well-sm col-md-10 col-md-offset-1 ">
 																	<label for="contact_3_name"><?php _e('Contact 3 Name', '12-step-meeting-list')?></label>
-																	<input type="text" name="contact_3_name" id="contact_3_name" value="<?php echo (empty($meeting->contact_3_name) ) ? '' : substr($meeting->contact_3_name, 0, 3) .'** ******' ?>" >
+																	<input type="text" name="contact_3_name" id="contact_3_name" placeholder="<?php _e('First Name & Last Initial', '12-step-meeting-list')?>" value="<?php echo (empty($meeting->contact_3_name) ) ? '' : substr($meeting->contact_3_name, 0, 3) .'** ******' ?>" >
 																</div>
 															</div>
 															<div class="meta_form_row row" >
 																<div class="well well-sm col-md-10 col-md-offset-1 ">
 																	<label for="contact_3_email"><?php _e('Contact 3 Email', '12-step-meeting-list')?></label>
-																	<input type="text" name="contact_3_email" id="contact_3_email" value="<?php echo (empty($meeting->contact_3_email) ) ? '' : substr($meeting->contact_3_email, 0, 3) .'****@*******.***' ?>" >
+																	<input type="text" name="contact_3_email" id="contact_3_email" placeholder="<?php _e('No personally identifying email address...', '12-step-meeting-list')?>" value="<?php echo (empty($meeting->contact_3_email) ) ? '' : substr($meeting->contact_3_email, 0, 3) .'****@*******.***' ?>" >
 																</div>
 															</div>
 															<div class="meta_form_row row" >
@@ -963,7 +963,7 @@ get_header();
 																	<div class="meta_form_row row" style="display:block;" >
 																		<div class="well well-sm col-md-10 col-md-offset-1 ">
 																			<label for="new_email"><?php _e('Email', '12-step-meeting-list')?></label>
-																			<input type="text" name="new_email" id="new_email" placeholder="group email: group@yourdomain.org" value="<?php echo '' ?>">
+																			<input type="text" name="new_email" id="new_email" placeholder="<?php _e('non personal email (i.e. groupName@gmail.com)', '12-step-meeting-list')?>" value="<?php echo '' ?>">
 																		</div>
 																	</div>
 																	<div class="meta_form_row row">
@@ -1005,13 +1005,13 @@ get_header();
 																	<div class="meta_form_row row" >
 																		<div class="well well-sm col-md-10 col-md-offset-1" >
 																			<label for="new_contact_1_name"><?php _e('Contact 1 Name', '12-step-meeting-list')?></label>
-																			<input type="text" name="new_contact_1_name" id="new_contact_1_name" value="<?php echo '' ?>">
+																			<input type="text" name="new_contact_1_name" id="new_contact_1_name" placeholder="<?php _e('First Name & Last Initial', '12-step-meeting-list')?>" value="<?php echo '' ?>">
 																		</div>
 																	</div>
 																	<div class="meta_form_row row"  >
 																		<div class="well well-sm col-md-10 col-md-offset-1 ">
 																			<label for="new_contact_1_email"><?php _e('Contact 1 Email', '12-step-meeting-list')?></label>
-																			<input type="text" name="new_contact_1_email" id="new_contact_1_email"  value="<?php echo '' ?>">
+																			<input type="text" name="new_contact_1_email" id="new_contact_1_email"  placeholder="<?php _e('No personally identifying email address...', '12-step-meeting-list')?>" value="<?php echo '' ?>">
 																		</div>
 																	</div>
 																	<div class="meta_form_row row" >
@@ -1023,13 +1023,13 @@ get_header();
 																	<div class="meta_form_row row" >
 																		<div class="well well-sm col-md-10 col-md-offset-1 ">
 																			<label for="new_contact_2_name"><?php _e('Contact 2 Name', '12-step-meeting-list')?></label>
-																			<input type="text" name="new_contact_2_name" id="new_contact_2_name" value="<?php echo '' ?>">
+																			<input type="text" name="new_contact_2_name" id="new_contact_2_name" placeholder="<?php _e('First Name & Last Initial', '12-step-meeting-list')?>" value="<?php echo '' ?>">
 																		</div>
 																	</div>
 																	<div class="meta_form_row row" >
 																		<div class="well well-sm col-md-10 col-md-offset-1 ">
 																			<label for="new_contact_2_email"><?php _e('Contact 2 Email', '12-step-meeting-list')?></label>
-																			<input type="text" name="new_contact_2_email" id="new_contact_2_email" value="<?php echo '' ?>">
+																			<input type="text" name="new_contact_2_email" id="new_contact_2_email" placeholder="<?php _e('No personally identifying email address...', '12-step-meeting-list')?>" value="<?php echo '' ?>">
 																		</div>
 																	</div>
 																	<div class="meta_form_row row" >
@@ -1041,13 +1041,13 @@ get_header();
 																	<div class="meta_form_row row" >
 																		<div class="well well-sm col-md-10 col-md-offset-1 ">
 																			<label for="new_contact_3_name"><?php _e('Contact 3 Name', '12-step-meeting-list')?></label>
-																			<input type="text" name="new_contact_3_name" id="new_contact_3_name" value="<?php echo '' ?>">
+																			<input type="text" name="new_contact_3_name" id="new_contact_3_name" placeholder="<?php _e('First Name & Last Initial', '12-step-meeting-list')?>" value="<?php echo '' ?>">
 																		</div>
 																	</div>
 																	<div class="meta_form_row row"  >
 																		<div class="well well-sm col-md-10 col-md-offset-1 ">
 																			<label for="new_contact_3_email"><?php _e('Contact 3 Email', '12-step-meeting-list')?></label>
-																			<input type="text" name="new_contact_3_email" id="new_contact_3_email" value="<?php echo '' ?>">
+																			<input type="text" name="new_contact_3_email" id="new_contact_3_email" placeholder="<?php _e('No personally identifying email address...', '12-step-meeting-list')?>" value="<?php echo '' ?>">
 																		</div>
 																	</div>
 																	<div class="meta_form_row row" >

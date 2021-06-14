@@ -5,6 +5,93 @@ function enqueue_parent_styles() {
    wp_enqueue_style( 'parent-style', get_template_directory_uri().'/style.css' );
 }
 
+function wpbootstrap_enqueue_styles() {
+   wp_enqueue_style( 'bootstrap', '//stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css' );
+   wp_enqueue_style( 'my-style', get_template_directory_uri() . '/style.css');
+}
+add_action('wp_enqueue_scripts', 'wpbootstrap_enqueue_styles');
+
+add_filter('wrap_red', function( $input ) {
+	return "<span style='color: red'>$input</span>";
+});
+
+/* Workaround to prevent logging of Site Health “Scheduled event has failed” */
+add_filter('action_scheduler_run_queue', function($arg) { return 86400; });
+
+add_filter('wpcf7_form_tag_data_option', function($n, $options, $args) {
+   if (in_array('m_times', $options)){
+     $data = array(
+     "12:00 AM",  
+     "12:30 AM",  
+     "1:00 AM",   
+     "1:30 AM",   
+     "2:00 AM",   
+     "2:30 AM",   
+     "3:00 AM",   
+     "3:30 AM",   
+     "4:00 AM",   
+     "4:30 AM",   
+     "5:00 AM",   
+     "5:30 AM",   
+     "6:00 AM",   
+     "6:30 AM",   
+     "7:00 AM",   
+     "7:30 AM",   
+     "8:00 AM",   
+     "8:30 AM",   
+     "9:00 AM",   
+     "9:30 AM",   
+     "10:00 AM",  
+     "10:10 AM",  
+     "10:30 AM",  
+     "11:00 AM",  
+     "11:30 AM",  
+     "12:00 PM",  
+     "12:01 PM",  
+     "12:15 PM",  
+     "12:30 PM",  
+     "1:00 PM",   
+     "1:30 PM",   
+     "2:00 PM",   
+     "2:30 PM",   
+     "3:00 PM",   
+     "3:30 PM",   
+     "4:00 PM",   
+     "4:30 PM",   
+     "5:00 PM",   
+     "5:15 PM",   
+     "5:30 PM",   
+     "6:00 PM",   
+     "6:30 PM",   
+     "7:00 PM",   
+     "7:15 PM",   
+     "7:30 PM",   
+     "8:00 PM",   
+     "8:06 PM",   
+     "8:15 PM",   
+     "8:30 PM",   
+     "9:00 PM",   
+     "9:30 PM",   
+     "10:00 PM",  
+     "10:30 PM",  
+     "11:00 PM",  
+     "11:30 PM",  
+     "11:59 PM" 
+   );
+     return $data;
+   }
+   return $n;
+ }, 10, 55);
+ 
+ function ca_load_jquery_ui() {
+    // first, register the style from the remote official source
+    wp_register_style('jqueryuicss', '//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.min.css', array('jquery-ui-styles'), '1.12.1');
+    wp_enqueue_style('jqueryuicss');
+    // then, register the core file from the remote official source, in footer
+    wp_register_script('jqueryui', '//code.jquery.com/ui/1.12.1/jquery-ui.min.js', array('jquery-ui'), '1.12.1', true);
+    wp_enqueue_script('jqueryui');
+}
+add_action( 'wp_enqueue_scripts', 'ca_load_jquery_ui' );
 
 /* ****************************   12 Step Meeting List Override Code   **************************************** */
  $tsml_columns = array(
@@ -32,6 +119,7 @@ function theme_override_tsml_strings($translated_text, $text, $domain) {
    return $translated_text;
 }
 add_filter('gettext', 'theme_override_tsml_strings', 20, 3);
+
 
 /* ****************************    tsml_ajax_feedback Override    **************************************** */
 remove_action( "wp_ajax_tsml_feedback", "tsml_ajax_feedback");
@@ -292,20 +380,20 @@ if (!function_exists('pcs_tsml_ajax_feedback')) {
 				$chg_website = sanitize_text_field($_POST['website']);
 				$chg_website_2 = sanitize_text_field($_POST['website_2']);
 				$chg_email = sanitize_text_field($_POST['email']);
-				$chg_phone = sanitize_text_field($_POST['phone']);
+				$chg_phone = preg_replace('/[^[:digit:]]/', '', sanitize_text_field($_POST['phone']));
 				$chg_mailing_address = stripslashes(sanitize_text_field($_POST['mailing_address']));
 				$chg_venmo = sanitize_text_field($_POST['venmo']);
 				$chg_square = sanitize_text_field($_POST['square']);
 				$chg_paypal = sanitize_text_field($_POST['paypal']);
 				$chg_contact_1_name = sanitize_text_field($_POST['contact_1_name']);
 				$chg_contact_1_email = sanitize_text_field($_POST['contact_1_email']);
-				$chg_contact_1_phone = sanitize_text_field($_POST['contact_1_phone']);
+				$chg_contact_1_phone = preg_replace('/[^[:digit:]]/', '', sanitize_text_field($_POST['contact_1_phone']));
 				$chg_contact_2_name = sanitize_text_field($_POST['contact_2_name']);
 				$chg_contact_2_email = sanitize_text_field($_POST['contact_2_email']);
-				$chg_contact_2_phone = sanitize_text_field($_POST['contact_2_phone']);
+				$chg_contact_2_phone = preg_replace('/[^[:digit:]]/', '', sanitize_text_field($_POST['contact_2_phone']));
 				$chg_contact_3_name = sanitize_text_field($_POST['contact_3_name']);
 				$chg_contact_3_email = sanitize_text_field($_POST['contact_3_email']);
-				$chg_contact_3_phone = sanitize_text_field($_POST['contact_3_phone']);
+				$chg_contact_3_phone = preg_replace('/[^[:digit:]]/', '', sanitize_text_field($_POST['contact_3_phone']));
 
 				$m_name = str_replace("\'s", "", $meeting->post_title );
 				$c_name = str_replace("\'s", "", $_POST['name']);
@@ -378,16 +466,21 @@ if (!function_exists('pcs_tsml_ajax_feedback')) {
 
 				$old = explode (' ', $meeting->notes);
 				$new = explode (' ', $chg_notes);
-				if ( $old ===  $new )  {
-					$message_lines[__('Notes', '12-step-meeting-list')] = "<tr><td style='color:red;'>Notes</td><td>$chg_notes</td></tr>";  
-					$IsChange = true;
-					if ($host === 'aatemplate-wp.dev.cc') { 
-						$diff = array_diff($old, $new);
-						echo 'Notes Changed' . '<br>'; 
-						echo '1-->[' . $meeting->notes . ']<br>';
-						echo '2-->[' . $chg_notes  . ']<br><br>';
-						$str = implode(' ', $diff);
-						echo 'Text that is changed: <b>' . $str . '</b><br>'; 
+				if ( $old !==  $new )  {
+					// Try a 2nd comparison with white space removed
+					$m_notes = str_replace(' ', '', $meeting->notes);
+					$c_notes = str_replace(' ', '', $chg_notes);
+					if ( ( strcmp( $m_notes, $c_notes ) !== 0) ) {
+						$message_lines[__('Notes', '12-step-meeting-list')] = "<tr><td style='color:red;'>Notes</td><td>$chg_notes</td></tr>";  
+						$IsChange = true;
+						if ($host === 'aatemplate-wp.dev.cc') { 
+							$diff = array_diff($old, $new);
+							echo 'Notes Changed' . '<br>'; 
+							echo '1-->[' . $meeting->notes . ']<br>';
+							echo '2-->[' . $chg_notes  . ']<br><br>';
+							$str = implode(' ', $diff);
+							echo 'Text that is changed: <b>' . $str . '</b><br>'; 
+						}
 					}
 				}
 
@@ -734,20 +827,20 @@ if (!function_exists('pcs_tsml_ajax_feedback')) {
 				$new_website = sanitize_text_field($_POST['new_website']);
 				$new_website_2 = sanitize_text_field($_POST['new_website_2']);
 				$new_email = sanitize_text_field($_POST['new_email']);
-				$new_phone = sanitize_text_field($_POST['new_phone']);
+				$new_phone = preg_replace('/[^[:digit:]]/', '', sanitize_text_field($_POST['new_phone']));
 				$new_mailing_address = stripslashes(sanitize_text_field($_POST['new_mailing_address']));
 				$new_venmo = sanitize_text_field($_POST['new_venmo']);
 				$new_square = sanitize_text_field($_POST['new_square']);
 				$new_paypal = sanitize_text_field($_POST['new_paypal']);
 				$new_contact_1_name = sanitize_text_field($_POST['new_contact_1_name']);
 				$new_contact_1_email = sanitize_text_field($_POST['new_contact_1_email']);
-				$new_contact_1_phone = sanitize_text_field($_POST['new_contact_1_phone']);
+				$chg_contact_1_phone = preg_replace('/[^[:digit:]]/', '', sanitize_text_field($_POST['contact_1_phone']));
 				$new_contact_2_name = sanitize_text_field($_POST['new_contact_2_name']);
 				$new_contact_2_email = sanitize_text_field($_POST['new_contact_2_email']);
-				$new_contact_2_phone = sanitize_text_field($_POST['new_contact_2_phone']);
+				$chg_contact_2_phone = preg_replace('/[^[:digit:]]/', '', sanitize_text_field($_POST['contact_2_phone']));
 				$new_contact_3_name = sanitize_text_field($_POST['new_contact_3_name']);
 				$new_contact_3_email = sanitize_text_field($_POST['new_contact_3_email']);
-				$new_contact_3_phone = sanitize_text_field($_POST['new_contact_3_phone']);
+				$chg_contact_3_phone = preg_replace('/[^[:digit:]]/', '', sanitize_text_field($_POST['contact_3_phone']));
 
 				if ( !empty($new_district_id) ) {
 					$new_district_name = '';
@@ -939,6 +1032,7 @@ if (!function_exists('pcs_tsml_ajax_feedback')) {
 		/************************************ EXITl ****************************************/
 		exit;
 	}
+
 }
 
 

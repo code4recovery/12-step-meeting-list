@@ -512,20 +512,20 @@ if (!function_exists('tsml_ajax_feedback')) {
 				$chg_website = sanitize_text_field($_POST['website']);
 				$chg_website_2 = sanitize_text_field($_POST['website_2']);
 				$chg_email = sanitize_text_field($_POST['email']);
-				$chg_phone = sanitize_text_field($_POST['phone']);
+				$chg_phone = preg_replace('/[^[:digit:]]/', '', sanitize_text_field($_POST['phone']));
 				$chg_mailing_address = stripslashes(sanitize_text_field($_POST['mailing_address']));
 				$chg_venmo = sanitize_text_field($_POST['venmo']);
 				$chg_square = sanitize_text_field($_POST['square']);
 				$chg_paypal = sanitize_text_field($_POST['paypal']);
 				$chg_contact_1_name = sanitize_text_field($_POST['contact_1_name']);
 				$chg_contact_1_email = sanitize_text_field($_POST['contact_1_email']);
-				$chg_contact_1_phone = sanitize_text_field($_POST['contact_1_phone']);
+				$chg_contact_1_phone = preg_replace('/[^[:digit:]]/', '', sanitize_text_field($_POST['contact_1_phone']));
 				$chg_contact_2_name = sanitize_text_field($_POST['contact_2_name']);
 				$chg_contact_2_email = sanitize_text_field($_POST['contact_2_email']);
-				$chg_contact_2_phone = sanitize_text_field($_POST['contact_2_phone']);
+				$chg_contact_2_phone = preg_replace('/[^[:digit:]]/', '', sanitize_text_field($_POST['contact_2_phone']));
 				$chg_contact_3_name = sanitize_text_field($_POST['contact_3_name']);
 				$chg_contact_3_email = sanitize_text_field($_POST['contact_3_email']);
-				$chg_contact_3_phone = sanitize_text_field($_POST['contact_3_phone']);
+				$chg_contact_3_phone = preg_replace('/[^[:digit:]]/', '', sanitize_text_field($_POST['contact_3_phone']));
 
 				$m_name = str_replace("\'s", "", $meeting->post_title );
 				$c_name = str_replace("\'s", "", $_POST['name']);
@@ -598,16 +598,21 @@ if (!function_exists('tsml_ajax_feedback')) {
 
 				$old = explode (' ', $meeting->notes);
 				$new = explode (' ', $chg_notes);
-				if ( $old ===  $new )  {
-					$message_lines[__('Notes', '12-step-meeting-list')] = "<tr><td style='color:red;'>Notes</td><td>$chg_notes</td></tr>";  
-					$IsChange = true;
-					if ($host === 'aatemplate-wp.dev.cc') { 
-						$diff = array_diff($old, $new);
-						echo 'Notes Changed' . '<br>'; 
-						echo '1-->[' . $meeting->notes . ']<br>';
-						echo '2-->[' . $chg_notes  . ']<br><br>';
-						$str = implode(' ', $diff);
-						echo 'Text that is changed: <b>' . $str . '</b><br>'; 
+				if ( $old !==  $new )  {
+					// Try a 2nd comparison with white space removed
+					$m_notes = str_replace(' ', '', $meeting->notes);
+					$c_notes = str_replace(' ', '', $chg_notes);
+					if ( ( strcmp( $m_notes, $c_notes ) !== 0) ) {
+						$message_lines[__('Notes', '12-step-meeting-list')] = "<tr><td style='color:red;'>Notes</td><td>$chg_notes</td></tr>";  
+						$IsChange = true;
+						if ($host === 'aatemplate-wp.dev.cc') { 
+							$diff = array_diff($old, $new);
+							echo 'Notes Changed' . '<br>'; 
+							echo '1-->[' . $meeting->notes . ']<br>';
+							echo '2-->[' . $chg_notes  . ']<br><br>';
+							$str = implode(' ', $diff);
+							echo 'Text that is changed: <b>' . $str . '</b><br>'; 
+						}
 					}
 				}
 
@@ -954,20 +959,20 @@ if (!function_exists('tsml_ajax_feedback')) {
 				$new_website = sanitize_text_field($_POST['new_website']);
 				$new_website_2 = sanitize_text_field($_POST['new_website_2']);
 				$new_email = sanitize_text_field($_POST['new_email']);
-				$new_phone = sanitize_text_field($_POST['new_phone']);
+				$new_phone = preg_replace('/[^[:digit:]]/', '', sanitize_text_field($_POST['new_phone']));
 				$new_mailing_address = stripslashes(sanitize_text_field($_POST['new_mailing_address']));
 				$new_venmo = sanitize_text_field($_POST['new_venmo']);
 				$new_square = sanitize_text_field($_POST['new_square']);
 				$new_paypal = sanitize_text_field($_POST['new_paypal']);
 				$new_contact_1_name = sanitize_text_field($_POST['new_contact_1_name']);
 				$new_contact_1_email = sanitize_text_field($_POST['new_contact_1_email']);
-				$new_contact_1_phone = sanitize_text_field($_POST['new_contact_1_phone']);
+				$chg_contact_1_phone = preg_replace('/[^[:digit:]]/', '', sanitize_text_field($_POST['contact_1_phone']));
 				$new_contact_2_name = sanitize_text_field($_POST['new_contact_2_name']);
 				$new_contact_2_email = sanitize_text_field($_POST['new_contact_2_email']);
-				$new_contact_2_phone = sanitize_text_field($_POST['new_contact_2_phone']);
+				$chg_contact_2_phone = preg_replace('/[^[:digit:]]/', '', sanitize_text_field($_POST['contact_2_phone']));
 				$new_contact_3_name = sanitize_text_field($_POST['new_contact_3_name']);
 				$new_contact_3_email = sanitize_text_field($_POST['new_contact_3_email']);
-				$new_contact_3_phone = sanitize_text_field($_POST['new_contact_3_phone']);
+				$chg_contact_3_phone = preg_replace('/[^[:digit:]]/', '', sanitize_text_field($_POST['contact_3_phone']));
 
 				if ( !empty($new_district_id) ) {
 					$new_district_name = '';

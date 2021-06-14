@@ -7,8 +7,9 @@
     "\\assets\\css",
     "\\assets\\js",
     "\\includes",
+    "\\myChildTheme",
     "\\templates"
   ],
-  "SelectedNode": "\\includes\\admin_meeting.php",
+  "SelectedNode": "\\templates\\single-meetings.php",
   "PreviewInSolutionExplorer": false
 }
