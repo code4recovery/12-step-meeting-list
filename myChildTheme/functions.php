@@ -146,7 +146,7 @@ if (!function_exists('pcs_tsml_ajax_feedback')) {
 		if ($host === 'aatemplate-wp.dev.cc') {
 			if (isset($_POST['submit'])) {
 
-				echo 'The submit button for a ' . $_POST['submit'] . ' request was pressed.<br />';
+				echo 'The submit button for a ' . $_POST['submit'] . ' request was pressed.<br><br>';
 			} /////////////////////////////////////////////////////////////////////// */
 		 }
 		if ( isset( $_POST['submit'] ) && ( $_POST['submit'] === 'change') ) {
@@ -179,7 +179,7 @@ if (!function_exists('pcs_tsml_ajax_feedback')) {
 		}
 		else 
 		{
-			if ($host === 'aatemplate-wp.dev.cc') { echo "Initialization Processing started...<br>"; }
+			//if ($host === 'aatemplate-wp.dev.cc') { echo "Initialization Processing started...<br>"; }
 			$meeting_id = $_POST['meeting_id'];
 			$meeting  = tsml_get_meeting ( intval( $meeting_id ) );
 			$permalink = get_permalink($meeting->ID);
@@ -200,7 +200,7 @@ if (!function_exists('pcs_tsml_ajax_feedback')) {
 				//	if ($host === 'aatemplate-wp.dev.cc') { echo "key: $mtg_key ----> value: $mtg_description<br>"; }
 			}
 
-			if ($host === 'aatemplate-wp.dev.cc') { echo $typesDescStr.'<br>'; }
+			//if ($host === 'aatemplate-wp.dev.cc') { echo $typesDescStr.'<br>'; }
 
 			//------------------ Continue with HTML table construction ----------------------
 			$message_lines = array(
@@ -347,12 +347,12 @@ if (!function_exists('pcs_tsml_ajax_feedback')) {
 				}
 			}
 
-			if ($host === 'aatemplate-wp.dev.cc') { echo "Initialization Processing finished...<br>"; }
+			//if ($host === 'aatemplate-wp.dev.cc') { echo "Initialization Processing finished...<br>"; }
 
 			//---------------   Change Processing - skip for adds, removals, & feedback  --------------------
 
 			if ( $RequestType === 'change' ) {
-				if ($host === 'aatemplate-wp.dev.cc') { echo "Change Processing started...<br>"; }
+				//if ($host === 'aatemplate-wp.dev.cc') { echo "Change Processing started...<br>"; }
 
 				$IsChange = false; // must prove to be real change
 
@@ -377,7 +377,7 @@ if (!function_exists('pcs_tsml_ajax_feedback')) {
 				$chg_district_id = sanitize_text_field($_POST['district']);
 				$chg_sub_district = sanitize_text_field($_POST['sub_district'] );
 				$chg_group_notes = sanitize_text_field($_POST['group_notes'] );
-				$chg_website = sanitize_text_field($_POST['website']);
+				$chg_website = sanitize_text_field($_POST['website_1']);
 				$chg_website_2 = sanitize_text_field($_POST['website_2']);
 				$chg_email = sanitize_text_field($_POST['email']);
 				$chg_phone = preg_replace('/[^[:digit:]]/', '', sanitize_text_field($_POST['phone']));
@@ -411,7 +411,6 @@ if (!function_exists('pcs_tsml_ajax_feedback')) {
 
 						$str = implode(' ', $diff);
 						echo 'Text that is changed: <b>' . $str . '</b><br>'; 
-
 					}
 				}
 
@@ -451,8 +450,6 @@ if (!function_exists('pcs_tsml_ajax_feedback')) {
 				else {
 					$chg_typesDescStr = 'No Types Selected';
 				}
-
-				if ($host === 'aatemplate-wp.dev.cc') { echo $chg_typesDescStr.'<br>'; }
 
 				if ( $typesArrayHasChanged === true )  {
 					$message_lines[__('Types', '12-step-meeting-list')] = "<tr><td style='color:red;'>Types</td><td>$chg_typesDescStr</td></tr>";
@@ -552,7 +549,6 @@ if (!function_exists('pcs_tsml_ajax_feedback')) {
 				if ( ( strcmp( $meeting->group, $chg_group ) !== 0) ) {
 					$message_lines[__('Group Name', '12-step-meeting-list')] = "<tr><td style='color:red;'>Group Name</td><td>$chg_group</td></tr>";  
 					$IsChange = true;
-					if ($host === 'aatemplate-wp.dev.cc') { echo "Location Notes Changed:<br>1-->[$meeting->location_notes]<br>2-->[$chg_location_notes]<br>"; }
 					if ($host === 'aatemplate-wp.dev.cc') { 
 						echo 'Group Name has Changed' . '<br>';
 						echo "1 [<b>$meeting->group</b>]<br>"; 
@@ -573,115 +569,122 @@ if (!function_exists('pcs_tsml_ajax_feedback')) {
 					}
 				}
 
-				if ( (!empty($chg_sub_district) ) && ($meeting->sub_district != $chg_sub_district) ) {
+				if ($meeting->sub_district != $chg_sub_district) {
 					$message_lines[__('Sub District', '12-step-meeting-list')] = "<tr><td style='color:red;'>Sub District</td><td>$chg_sub_district</td></tr>";  
 					$IsChange = true;
 					if ($host === 'aatemplate-wp.dev.cc') { echo "Sub District Changed<br>"; }
 				}
 
-				if ( !empty($chg_group_notes) && $meeting->group_notes != $chg_group_notes) {
+				if ( $meeting->group_notes != $chg_group_notes) {
 					$message_lines[__('Group Notes', '12-step-meeting-list')] = "<tr><td style='color:red;'>Group Notes</td><td>$chg_group_notes</td></tr>";  
 					$IsChange = true;
 					if ($host === 'aatemplate-wp.dev.cc') { echo "Group Notes Changed<br>"; }
 				}
 
-				if ( !empty($chg_website) && $meeting->website != $chg_website) {
+				if ( $meeting->website != $chg_website ) {
 					$message_lines[__('Website', '12-step-meeting-list')] = "<tr><td style='color:red;'>Website</td><td>$chg_website</td></tr>";  
-					if ($host === 'aatemplate-wp.dev.cc') { echo "Website Changed<br>"; }
 					$IsChange = true;
+					if ($host === 'aatemplate-wp.dev.cc') { echo "Website Changed<br>1-->[$meeting->website]<br>2-->[$chg_website]<br>"; }
 				}
 
-				if (!empty($meeting->website_2) && $meeting->website_2 != $chg_website_2) {
+				if ( $meeting->website_2 != $chg_website_2 ) {
 					$message_lines[__('Website 2', '12-step-meeting-list')] = "<tr><td style='color:red;'>Website 2</td><td>$chg_website_2</td></tr>";  
 					$IsChange = true;
+					if ($host === 'aatemplate-wp.dev.cc') { echo "Website 2 Changed<br>"; }
 				}
 			
-				if ( ( !empty($chg_email) && ( strpos($chg_email, '.***') === false ) )  &&  $meeting->email != $chg_email ) {
+				if ( $meeting->email != $chg_email ) {
 					$message_lines[__('Email', '12-step-meeting-list')] = "<tr><td style='color:red;'>Email</td><td>$chg_email</td></tr>";  
 					$IsChange = true;
 					if ($host === 'aatemplate-wp.dev.cc') { echo "Group Email Changed:<br>1-->[$meeting->email]<br>2-->[$chg_email]<br>"; }
 				}
 
-				if ( ( !empty($chg_phone) && ( strpos($chg_phone, '***-') === false ) )  && $meeting->phone != $chg_phone ) {
+				if ( $meeting->phone != $chg_phone ) {
 					$message_lines[__('Phone', '12-step-meeting-list')] = "<tr><td style='color:red;'>Phone</td><td>$chg_phone</td></tr>";  
 					$IsChange = true;
 					if ($host === 'aatemplate-wp.dev.cc') { echo "Group Phone Changed:<br>1-->[$meeting->phone]<br>2-->[$chg_phone]<br>"; }
 				}
 
-				if ( ( !empty($chg_mailing_address)  && ( strpos($chg_mailing_address, ' ***') === false) )  &&  $meeting->mailing_address != $chg_mailing_address ) {
+				if ( $meeting->mailing_address != $chg_mailing_address ) {
 					$message_lines[__('Mailing Address', '12-step-meeting-list')] = "<tr><td style='color:red;'>Mailing Address</td><td>$chg_mailing_address</td></tr>";  
 					$IsChange = true;
 					if ($host === 'aatemplate-wp.dev.cc') { echo "Group Mailing Address Changed:<br>1-->[$meeting->mailing_address]<br>2-->[$chg_mailing_address]<br>"; }
 				}
 
-				if (!empty($chg_venmo) && $meeting->venmo != $chg_venmo) {
+				if ( $meeting->venmo != $chg_venmo) {
 					$message_lines[__('Venmo', '12-step-meeting-list')] = "<tr><td style='color:red;'>Venmo</td><td >$chg_venmo</td></tr>";  
 					$IsChange = true;
 					if ($host === 'aatemplate-wp.dev.cc') { echo "Venmo Changed<br>"; }
 				}
 
-				if (!empty($chg_square) && $meeting->square != $chg_square) {
+				if ( $meeting->square != $chg_square) {
 					$message_lines[__('Square', '12-step-meeting-list')] = "<tr><td style='color:red;'>Square</td><td>$chg_square</td></tr>";  
 					$IsChange = true;
 					if ($host === 'aatemplate-wp.dev.cc') { echo "Square Changed<br>"; }
 				}
 
-				if (!empty($chg_paypal) && $meeting->paypal != $chg_paypal) {
+				if ( $meeting->paypal != $chg_paypal) {
 					$message_lines[__('Paypal', '12-step-meeting-list')] = "<tr><td style='color:red;'>Paypal</td><td>$chg_paypal</td></tr>";  
 					$IsChange = true;
 					if ($host === 'aatemplate-wp.dev.cc') { echo "PayPal Changed<br>"; }
 				}
 
-				if ( ( !empty($chg_contact_1_name) && ( strpos($chg_contact_1_name, ' ******') === false ) )  && $meeting->contact_1_name != $chg_contact_1_name ) {
+				if ( $meeting->contact_1_name != $chg_contact_1_name ) {
 					$message_lines[__('Contact 1 Name', '12-step-meeting-list')] = "<tr><td style='color:red;'>Contact 1 Name</td><td>$chg_contact_1_name</td></tr>";  
 					$IsChange = true;
 					if ($host === 'aatemplate-wp.dev.cc') { echo "Contact 1 Name Changed<br>"; }
 				}
 
-				if ( ( !empty($chg_contact_1_email) && ( strpos($chg_contact_1_email, '.***') === false ) )  &&  $meeting->contact_1_email != $chg_contact_1_email ) {
+				if ( $meeting->contact_1_email != $chg_contact_1_email ) {
 					$message_lines[__('Contact 1 Email', '12-step-meeting-list')] = "<tr><td style='color:red;'>Contact 1 Email</td><td>$chg_contact_1_email</td></tr>";  
 					$IsChange = true;
 					if ($host === 'aatemplate-wp.dev.cc') { echo "Contact 1 Email Changed<br>"; }
 				}
 
-				if ( ( !empty($chg_contact_1_phone) && ( strpos($chg_contact_1_phone, '***-') === false ) )  && $meeting->contact_1_phone != $chg_contact_1_phone ) {
-					$message_lines[__('Contact 1 Phone', '12-step-meeting-list')] = "<tr><td style='color:red;'>Contact 1 Phone'</td><td>$chg_contact_1_phone</td></tr>";  
+				if ( $meeting->contact_1_phone != $chg_contact_1_phone ) {
+					$message_lines[__('Contact 1 Phone', '12-step-meeting-list')] = "<tr><td style='color:red;'>Contact 1 Phone</td><td>$chg_contact_1_phone</td></tr>";  
 					$IsChange = true;
-					if ($host === 'aatemplate-wp.dev.cc') { echo "Contact 1 Phone Changed<br>"; }
+					if ($host === 'aatemplate-wp.dev.cc') { echo "Contact 1 Phone Changed:<br>1-->[$meeting->contact_1_phone]<br>2-->[$chg_contact_1_phone]<br>"; }
 				}
 
-				if ( ( !empty($chg_contact_2_name) && ( strpos($chg_contact_2_name, ' ******') === false ) )  && $meeting->contact_2_name != $chg_contact_2_name ) {
+				if ( $meeting->contact_2_name != $chg_contact_2_name ) {
 					$message_lines[__('Contact 2 Name', '12-step-meeting-list')] = "<tr><td style='color:red;'>Contact 2 Name</td><td>$chg_contact_2_name</td></tr>";  
 					$IsChange = true;
+					if ($host === 'aatemplate-wp.dev.cc') { echo "Contact 2 Name Changed<br>"; }
 				}
 
-				if ( ( !empty($chg_contact_2_email) && ( strpos($chg_contact_2_email, '.***') === false ) )  &&  $meeting->contact_2_email != $chg_contact_2_email ) {
+				if ( $meeting->contact_2_email != $chg_contact_2_email ) {
 					$message_lines[__('Contact 2 Email', '12-step-meeting-list')] = "<tr><td style='color:red;'>Contact 2 Email</td><td>$chg_contact_2_email</td></tr>";  
 					$IsChange = true;
+					if ($host === 'aatemplate-wp.dev.cc') { echo "Contact 2 Email Changed<br>"; }
 				}
 
-				if ( ( !empty($chg_contact_2_phone) && ( strpos($chg_contact_2_phone, '***-') === false ) )  && $meeting->contact_2_phone != $chg_contact_2_phone ) {
-					$message_lines[__('Contact 2 Phone', '12-step-meeting-list')] = "<tr><td style='color:red;'>Contact 2 Phone'</td><td >$chg_contact_2_phone</td></tr>";  
+				if ( $meeting->contact_2_phone != $chg_contact_2_phone ) {
+					$message_lines[__('Contact 2 Phone', '12-step-meeting-list')] = "<tr><td style='color:red;'>Contact 2 Phone</td><td >$chg_contact_2_phone</td></tr>";  
 					$IsChange = true;
+					if ($host === 'aatemplate-wp.dev.cc') { echo "Contact 2 Phone Changed<br>"; }
 				}
 
-				if ( ( !empty($chg_contact_3_name) && ( strpos($chg_contact_3_name, ' ******') === false ) )  && $meeting->contact_3_name != $chg_contact_3_name ) {
+				if ( $meeting->contact_3_name != $chg_contact_3_name ) {
 					$message_lines[__('Contact 3 Name', '12-step-meeting-list')] = "<tr><td<td style='color:red;'>Contact 3 Name</td><td>$chg_contact_3_name</td></tr>";  
 					$IsChange = true;
+					if ($host === 'aatemplate-wp.dev.cc') { echo "Contact 3 Name Changed<br>"; }
 				}
 
-				if ( ( !empty($chg_contact_3_email) && ( strpos($chg_contact_3_email, '.***') === false ) )  &&  $meeting->contact_3_email != $chg_contact_3_email ) {
+				if ( $meeting->contact_3_email != $chg_contact_3_email ) {
 					$message_lines[__('Contact 3 Email', '12-step-meeting-list')] = "<tr><td style='color:red;'>Contact 3 Email</td><td>$chg_contact_3_email</td></tr>";  
 					$IsChange = true;
+					if ($host === 'aatemplate-wp.dev.cc') { echo "Contact 3 Email Changed<br>"; }
 				}
 
-				if ( ( !empty($chg_contact_3_phone) && ( strpos($chg_contact_3_phone, '***-') === false ) )  && $meeting->contact_3_phone != $chg_contact_3_phone ) {
-					$message_lines[__('Contact 3 Phone', '12-step-meeting-list')] = "<tr><td style='color:red;'>Contact 3 Phone'</td><td>$chg_contact_3_phone</td></tr>";  
+				if ( $meeting->contact_3_phone != $chg_contact_3_phone ) {
+					$message_lines[__('Contact 3 Phone', '12-step-meeting-list')] = "<tr><td style='color:red;'>Contact 3 Phone</td><td>$chg_contact_3_phone</td></tr>";  
 					$IsChange = true;
+					if ($host === 'aatemplate-wp.dev.cc') { echo "Contact 3 Phone Changed<br>"; }
 				}
 
 
-				if ($host === 'aatemplate-wp.dev.cc') { echo "<br>Change Processing finished...<br>"; }
+				//if ($host === 'aatemplate-wp.dev.cc') { echo "<br>Change Processing finished...<br>"; }
 
 				if ( !$IsChange ) {
 					$IsFeedback = true;
@@ -699,7 +702,7 @@ if (!function_exists('pcs_tsml_ajax_feedback')) {
 
 		if ( $RequestType === 'new') {
 
-			if ($host === 'aatemplate-wp.dev.cc') { echo "New Processing started...<br>"; }
+			//if ($host === 'aatemplate-wp.dev.cc') { echo "New Processing started...<br>"; }
 
 			$message  = '<p style="padding-bottom: 20px; border-bottom: 2px dashed #ccc; margin-bottom: 20px;">' . nl2br(sanitize_text_area(stripslashes($_POST['tsml_message']))) . '</p>';
 			$message .= "<table border='1' style='width:600px;'><tbody>";
@@ -1032,7 +1035,6 @@ if (!function_exists('pcs_tsml_ajax_feedback')) {
 		/************************************ EXITl ****************************************/
 		exit;
 	}
-
 }
 
 

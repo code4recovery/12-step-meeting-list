@@ -644,8 +644,8 @@ get_header();
 															</div>
 															<div class="meta_form_row row">
 																<div class="well well-sm col-md-10 col-md-offset-1 ">
-																	<label for="website"><?php _e('Website', '12-step-meeting-list')?></label>
-																	<input type="Url" name="website" id="website" placeholder="<?php _e('primary URL of org where group posts its meeting info', '12-step-meeting-list')?>" value="<?php echo $meeting->website ?>">
+																	<label for="website_1"><?php _e('Website', '12-step-meeting-list')?></label>
+																	<input type="Url" name="website_1" id="website_1" placeholder="<?php _e('primary URL of org where group posts its meeting info', '12-step-meeting-list')?>" value="<?php echo $meeting->website ?>">
 																</div>
 															</div>
 															<div class="meta_form_row row">
@@ -669,7 +669,7 @@ get_header();
 															<div class="meta_form_row row">
 																<div class="well well-sm col-md-10 col-md-offset-1 ">
 																	<label for="mailing_address"><?php _e('Mailing Address', '12-step-meeting-list')?></label>
-																	<input type="text" name="mailing_address" id="mailing_address" placeholder="<?php _e('postal address which receives correspondence for the group', '12-step-meeting-list')?>" value="<?php echo (empty($meeting->mailing_address) ) ? '' : 'c/o '. substr($meeting->mailing_address, 0) ?>"> 
+																	<input type="text" name="mailing_address" id="mailing_address" placeholder="<?php _e('postal address which receives correspondence for the group', '12-step-meeting-list')?>" value="<?php echo (empty($meeting->mailing_address) ) ? '' : substr($meeting->mailing_address, 0) ?>"> 
 																</div>
 															</div>
 															<div class="meta_form_row row">
@@ -690,58 +690,59 @@ get_header();
 																	<input type="text" name="paypal" id="paypal" placeholder="<?php _e('PayPalUsername - handle for 7th Tradition contributions', '12-step-meeting-list')?>" value="<?php echo $meeting->paypal ?>">
 																</div>
 															</div>
+
 															<div class="meta_form_row row" >
 																<div class="well well-sm col-md-10 col-md-offset-1 ">
 																	<label for="contact_1_name"><?php _e('Contact 1 Name', '12-step-meeting-list')?></label>
-																	<input type="text" name="contact_1_name" id="contact_1_name" placeholder="<?php _e('First Name & Last Initial', '12-step-meeting-list')?>" value="<?php echo (empty($meeting->contact_1_name) ) ? '' : substr($meeting->contact_1_name, 0, 3) .'** ******' ?>" >
+																	<input type="text" name="contact_1_name" id="contact_1_name" placeholder="<?php _e('First Name & Last Initial', '12-step-meeting-list')?>" value="<?php echo $meeting->contact_1_name ?>" >
 																</div>
 															</div>
 															<div class="meta_form_row row" >
 																<div class="well well-sm col-md-10 col-md-offset-1 ">
 																	<label for="contact_1_email"><?php _e('Contact 1 Email', '12-step-meeting-list')?></label>
-																	<input type="text" name="contact_1_email" id="contact_1_email" placeholder="<?php _e('No personally identifying email address...', '12-step-meeting-list')?>" value="<?php echo (empty($meeting->contact_1_email) ) ? '' : substr($meeting->contact_1_email, 0, 3) .'****@*******.***' ?>" >
+																	<input type="text" name="contact_1_email" id="contact_1_email" placeholder="<?php _e('No personally identifying email address...', '12-step-meeting-list')?>" value="<?php echo $meeting->contact_1_email ?>" >
 																</div>
 															</div>
 															<div class="meta_form_row row" >
 																<div class="well well-sm col-md-10 col-md-offset-1 ">
 																	<label for="contact_1_phone"><?php _e('Contact 1 Phone', '12-step-meeting-list')?></label>
-																	<input type="text" name="contact_1_phone" id="contact_1_phone" value="<?php echo (empty($meeting->contact_1_phone) ) ? '' : '(***)***-' . substr($meeting->contact_1_phone, 6) ?>" >
+																	<input type="text" name="contact_1_phone" id="contact_1_phone" value="<?php echo $meeting->contact_1_phone ?>" >
 																</div>
 															</div>
 															<div class="meta_form_row row" >
 																<div class="well well-sm col-md-10 col-md-offset-1 ">
 																	<label for="contact_2_name"><?php _e('Contact 2 Name', '12-step-meeting-list')?></label>
-																	<input type="text" name="contact_2_name" id="contact_2_name" placeholder="<?php _e('First Name & Last Initial', '12-step-meeting-list')?>" value="<?php echo (empty($meeting->contact_2_name) ) ? '' :  substr($meeting->contact_2_name, 0, 3) .'** ******' ?>" >
+																	<input type="text" name="contact_2_name" id="contact_2_name" placeholder="<?php _e('First Name & Last Initial', '12-step-meeting-list')?>" value="<?php echo $meeting->contact_2_name ?>" >
 																</div>
 															</div>
 															<div class="meta_form_row row" >
 																<div class="well well-sm col-md-10 col-md-offset-1 ">
 																	<label for="contact_2_email"><?php _e('Contact 2 Email', '12-step-meeting-list')?></label>
-																	<input type="text" name="contact_2_email" id="contact_2_email" placeholder="<?php _e('No personally identifying email address...', '12-step-meeting-list')?>" value="<?php echo (empty($meeting->contact_2_email) ) ? '' : substr($meeting->contact_2_email, 0, 3) .'****@*******.***' ?>" >
+																	<input type="text" name="contact_2_email" id="contact_2_email" placeholder="<?php _e('No personally identifying email address...', '12-step-meeting-list')?>" value="<?php echo $meeting->contact_2_email ?>" >
 																</div>
 															</div>
 															<div class="meta_form_row row" >
 																<div class="well well-sm col-md-10 col-md-offset-1 ">
 																	<label for="contact_2_phone"><?php _e('Contact 2 Phone', '12-step-meeting-list')?></label>
-																	<input type="text" name="contact_2_phone" id="contact_2_phone" value="<?php echo (empty($meeting->contact_2_phone) ) ? '' : '(***)***-' . substr($meeting->contact_2_phone, 6) ?>" >
+																	<input type="text" name="contact_2_phone" id="contact_2_phone" value="<?php echo $meeting->contact_2_phone ?>" >
 																</div>
 															</div>
 															<div class="meta_form_row row" >
 																<div class="well well-sm col-md-10 col-md-offset-1 ">
 																	<label for="contact_3_name"><?php _e('Contact 3 Name', '12-step-meeting-list')?></label>
-																	<input type="text" name="contact_3_name" id="contact_3_name" placeholder="<?php _e('First Name & Last Initial', '12-step-meeting-list')?>" value="<?php echo (empty($meeting->contact_3_name) ) ? '' : substr($meeting->contact_3_name, 0, 3) .'** ******' ?>" >
+																	<input type="text" name="contact_3_name" id="contact_3_name" placeholder="<?php _e('First Name & Last Initial', '12-step-meeting-list')?>" value="<?php echo $meeting->contact_3_name ?>" >
 																</div>
 															</div>
 															<div class="meta_form_row row" >
 																<div class="well well-sm col-md-10 col-md-offset-1 ">
 																	<label for="contact_3_email"><?php _e('Contact 3 Email', '12-step-meeting-list')?></label>
-																	<input type="text" name="contact_3_email" id="contact_3_email" placeholder="<?php _e('No personally identifying email address...', '12-step-meeting-list')?>" value="<?php echo (empty($meeting->contact_3_email) ) ? '' : substr($meeting->contact_3_email, 0, 3) .'****@*******.***' ?>" >
+																	<input type="text" name="contact_3_email" id="contact_3_email" placeholder="<?php _e('No personally identifying email address...', '12-step-meeting-list')?>" value="<?php echo $meeting->contact_3_email ?>" >
 																</div>
 															</div>
 															<div class="meta_form_row row" >
 																<div class="well well-sm col-md-10 col-md-offset-1 ">
 																	<label for="contact_3_phone"><?php _e('Contact 3 Phone', '12-step-meeting-list')?></label>
-																	<input type="text" name="contact_3_phone" id="contact_3_phone" value="<?php echo (empty($meeting->contact_3_phone) ) ? '' :  '(***)***-' . substr($meeting->contact_3_phone, 6) ?>" >
+																	<input type="text" name="contact_3_phone" id="contact_3_phone" value="<?php echo $meeting->contact_3_phone ?>" >
 																</div>
 															</div>
 														</div>
@@ -951,7 +952,7 @@ get_header();
 																	<div class="meta_form_row row">
 																		<div class="well well-sm col-md-10 col-md-offset-1 ">
 																			<label for="new_website"><?php _e('Website', '12-step-meeting-list')?></label>
-																			<input type="text" name="new_website" id="new_website" placeholder="<?php _e('https:// primary URL of org where group posts its meeting info', '12-step-meeting-list')?>" value="<?php echo $meeting->website ?>">
+																			<input type="text" name="new_website" id="new_website" placeholder="<?php _e('https:// primary URL of org where group posts its meeting info', '12-step-meeting-list')?>" value="<?php echo '' ?>">
 																		</div>
 																	</div>
 																	<div class="meta_form_row row">
