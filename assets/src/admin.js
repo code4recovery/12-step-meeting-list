@@ -319,12 +319,13 @@ jQuery(function($) {
 								// hide error/warning messages
 								resetClasses();
 
+								meeting_is_online = $('input#conference_url').val() != '' || $('input#conference_phone').val() != '';
 								// In-person meetings can't have approximate addresses
 								if ($('input[name=in_person]:checked').val() == 'yes' && $('input#approximate').val() == 'yes') {
 									$('div.form_not_valid').removeClass('hidden');
 									$('input#formatted_address').addClass('error');
 									formIsNotValid();
-								} else if ($('input[name=in_person]:checked').val() == 'no' &&  $('input#approximate').val() == 'no' && ($('input#conference_url') !== "" || $('input#conference_phone') !== "")) {
+								} else if ($('input[name=in_person]:checked').val() == 'no' &&  $('input#approximate').val() == 'no' && meeting_is_online) {
 									$('div.need_approximate_address').removeClass('hidden');
 									$('input#location').addClass('warning');
 									$('input#formatted_address').addClass('warning');
@@ -357,6 +358,14 @@ jQuery(function($) {
 
 		// Verify address when a change to in_person question
 		$('input[name=in_person]')
+			.change(function() {
+				$('input#formatted_address').change();
+			});
+		$('input#conference_url')
+			.change(function() {
+				$('input#formatted_address').change();
+			});
+		$('input#conference_phone')
 			.change(function() {
 				$('input#formatted_address').change();
 			});
