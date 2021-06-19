@@ -24,7 +24,7 @@ function createMap(scrollwheel, locations, searchLocation) {
     if (!tsmlmap) {
       tsmlmap = new mapboxgl.Map({
         container: "map",
-        style: "mapbox://styles/mapbox/streets-v9"
+        style: tsml.mapbox_theme || 'mapbox://styles/mapbox/streets-v9'
       });
 
       //add zoom control
