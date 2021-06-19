@@ -475,6 +475,9 @@ $tsml_street_only = true;
 //for timing
 $tsml_timestamp = microtime(true);
 
+//for customizing TSML-UI
+$tsml_ui_config = array();
+
 //these are empty now because polylang might change the language. gets set in the plugins_loaded hook
 $tsml_days = $tsml_days_order = $tsml_programs = $tsml_types_in_use = $tsml_strings = null;
 

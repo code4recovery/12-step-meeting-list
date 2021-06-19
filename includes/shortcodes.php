@@ -93,22 +93,34 @@ if (!function_exists('tsml_types_list')) {
 }
 add_shortcode('tsml_types_list', 'tsml_types_list');
 
-//output a react meeting finder widget https://github.com/code4recovery/react
-if (!function_exists('tsml_react')) {
-	function tsml_react() {
-		global $tsml_mapbox_key, $tsml_nonce, $tsml_sharing, $tsml_conference_providers;
-		$host = 'https://react.' . (tsml_string_ends(get_site_url(), '.test') ? 'test' : 'meetingguide.org');
-		$url = admin_url('admin-ajax.php') . '?action=meetings&nonce=' . wp_create_nonce($tsml_nonce);
-		wp_enqueue_style('tsml_react', $host . '/style.css');
-		wp_enqueue_script('tsml_react', $host . '/app.js');
-		wp_localize_script('tsml_react', 'tsml_react_config', array(
-			'timezone' => get_option('timezone_string'),
-			'conference_providers' => $tsml_conference_providers
+//output a react meeting finder widget https://github.com/code4recovery/tsml-ui
+if (!function_exists('tsml_ui')) {
+	function tsml_ui() {
+		global $tsml_mapbox_key, $tsml_nonce, $tsml_sharing, $tsml_conference_providers, $tsml_language, $tsml_columns, $tsml_programs, $tsml_program, $tsml_ui_config, $tsml_feedback_addresses;
+		$js = defined('TSML_UI_PATH') ? TSML_UI_PATH : 'https://cdn.jsdelivr.net/gh/code4recovery/tsml-ui/public/app.js';
+		wp_enqueue_script('tsml_ui', $js);
+		wp_localize_script('tsml_ui', 'tsml_react_config', array_merge(
+			array(
+				'timezone' => get_option('timezone_string', 'America/New_York'),
+				'conference_providers' => $tsml_conference_providers,
+				'strings' => array(
+					$tsml_language => array_merge(
+						$tsml_columns, 
+						array(
+							'types' => $tsml_programs[$tsml_program]['types'],
+						),
+					),
+				),
+				'feedback_emails' => $tsml_feedback_addresses,
+			),
+			$tsml_ui_config,
 		));
-		return '<meetings src="' . $url . '" mapbox="' . $tsml_mapbox_key . '"/>';
+		$data = admin_url('admin-ajax.php') . '?action=meetings&nonce=' . wp_create_nonce($tsml_nonce);
+		return '<meetings src="' . $data . '" mapbox="' . $tsml_mapbox_key . '"/>';
 	}
 }
-add_shortcode('tsml_react', 'tsml_react');
+add_shortcode('tsml_react', 'tsml_ui');
+add_shortcode('tsml_ui', 'tsml_ui');
 
 //output a list of regions with links for AA-DC
 if (!function_exists('tsml_regions_list')) {
