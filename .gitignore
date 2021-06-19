@@ -14,3 +14,6 @@ docker-compose.yml
 /assets/src/public2.js
 /assets/css/public.min2.css
 /assets/css/admin.min2.css
+includes/admin_import.php.bak
+includes/variables.php.bak
+templates/single-meetings.php.bak
