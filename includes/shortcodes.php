@@ -1,7 +1,7 @@
 <?php
 
 //make shortcodes from functions in functions.php
-add_shortcode('tsml_group_count', 'tsml_group_count');
+add_shortcode('tsml_group_count', 'tsml_count_groups');
 add_shortcode('tsml_location_count', 'tsml_count_locations');
 add_shortcode('tsml_meeting_count', 'tsml_count_meetings');
 add_shortcode('tsml_region_count', 'tsml_count_regions');
@@ -10,7 +10,7 @@ add_shortcode('tsml_region_count', 'tsml_count_regions');
 if (!function_exists('tsml_next_meetings')) {
 	function tsml_next_meetings($arguments)
 	{
-		global $tsml_program, $tsml_programs;
+		global $tsml_program, $tsml_programs, $tsml_meeting_attendance_options;
 		$arguments = shortcode_atts(array('count' => 5, 'message' => ''), $arguments, 'tsml_next_meetings');
 		$meetings = tsml_get_meetings(array('day' => intval(current_time('w')), 'time' => 'upcoming'));
 		if (!count($meetings) && empty($arguments['message'])) {
@@ -24,33 +24,44 @@ if (!function_exists('tsml_next_meetings')) {
 		$meetings = array_slice($meetings, 0, $arguments['count']);
 		$rows = '';
 		foreach ($meetings as $meeting) {
-			if (is_array($meeting['types'])) {
-				$flags = array();
-				foreach ($tsml_programs[$tsml_program]['flags'] as $flag) {
-					if (in_array($flag, $meeting['types'])) {
-						$flags[] = $tsml_programs[$tsml_program]['types'][$flag];
-					}
-				}
-				if (count($flags)) {
-					sort($flags);
-					$meeting['name'] .= ' <small>' . implode(', ', $flags) . '</small>';
-				}
-			}
-
 			$classes = tsml_to_css_classes($meeting['types']);
 
 			if (!empty($meeting['notes'])) {
 				$classes .= ' notes';
 			}
 
-			$rows .= '<tr class="meeting ' . $classes .'">
+			$meeting_types = tsml_format_types($meeting['types']);
+			if (!empty($meeting_types)) {
+				$meeting_types = '<br/><small><span class="meeting_types">(' . $meeting_types . ')</span></small>';
+			}
+
+			$meeting_location = $meeting['location'];
+			if ($meeting['attendance_option'] == 'online' || $meeting['attendance_option'] == 'inactive') {
+				$meeting_location = !empty($meeting['group']) ? $meeting['group'] : '';
+			}
+
+			$rows .= '<tr class="meeting ' . $classes .' attendance-' . $meeting['attendance_option'] .'">
 				<td class="time">' . tsml_format_time($meeting['time']) . '</td>
-				<td class="name"><a href="' . $meeting['url'] . '">' . @$meeting['name'] . '</a></td>
-				<td class="location">' . @$meeting['location'] . '</td>
+				<td class="name"><a href="' . $meeting['url'] . '">' . @$meeting['name'] . '</a>' . $meeting_types . '</td>
+				<td class="location">
+					<div class="location-name">' . $meeting_location . '</div>
+					<div class="attendance-option attendance-' . $meeting['attendance_option'] . '"><small>' . ($meeting['attendance_option'] != 'in_person' ? $tsml_meeting_attendance_options[$meeting['attendance_option']] : '')  . '</small></div>
+				</td>
 				<td class="region">' . (@$meeting['sub_region'] ? @$meeting['sub_region'] : @$meeting['region']) . '</td>
 			</tr>';
 		}
 		return '
+
+		<style>
+    table.tsml_next_meetings div.attendance-hybrid small,
+    table.tsml_next_meetings div.attendance-online small {
+        color: green;
+    }
+
+    table.tsml_next_meetings div.attendance-inactive small {
+        color: #d40047;
+    }
+		</style>
 		<table class="tsml_next_meetings table table-striped">
 			<thead>
 				<tr>

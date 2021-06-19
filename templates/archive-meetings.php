@@ -96,6 +96,17 @@ if (!empty($_GET['tsml-type'])) {
         }
     }
 }
+
+$attendance_options = array();
+if (!empty($_GET['tsml-attendance_option'])) {
+    $attendance_option_queries = explode(',', $_GET['tsml-attendance_option']);
+    foreach ($attendance_option_queries as $attendance_option_query) {
+        if (array_key_exists($attendance_option_query, $tsml_meeting_attendance_options)) {
+            $attendance_options[] = $attendance_option_query;
+        }
+    }
+}
+
 if (isset($_GET['tsml-time']) && (($_GET['tsml-time'] == 'upcoming') || array_key_exists($_GET['tsml-time'], $times))) {
     $time = $_GET['tsml-time'];
 }
@@ -149,10 +160,15 @@ if ($region) {
     $region_label = $term->name;
 }
 $type_default = __('Any Type', '12-step-meeting-list');
-if (!count($types)) {
+if (!count($types) && (!count($attendance_options))) {
     $type_label = $type_default;
 } else {
     $type_label = array();
+    foreach ($attendance_options as $attendance_option) {
+        if (array_key_exists($attendance_option, $tsml_meeting_attendance_options)) {
+            $type_label[] = $tsml_meeting_attendance_options[$attendance_option];
+        }
+    }
     foreach ($types as $type) {
         if (array_key_exists($type, $tsml_programs[$tsml_program]['types'])) {
             $type_label[] = $tsml_programs[$tsml_program]['types'][$type];
@@ -209,7 +225,8 @@ $message = '';
 //run query
 if ($mode == 'search') {
     $type = implode(',', $types);
-    $meetings = tsml_get_meetings(compact('mode', 'day', 'time', 'region', 'district', 'type', 'query'));
+    $attendance_option = implode(',', $attendance_options);
+    $meetings = tsml_get_meetings(compact('mode', 'day', 'time', 'region', 'district', 'type', 'query', 'attendance_option'));
     if (!count($meetings)) {
         $message = $tsml_strings['no_meetings'];
     }
@@ -446,14 +463,32 @@ foreach ($distances as $key => $value) {
 						<span class="caret"></span>
 					</a>
 					<ul class="dropdown-menu" role="menu">
-						<li<?php if (!count($types)) {
+						<li<?php if (!count($types) && (!count($attendance_options))) {
     echo ' class="active"';
 }
     ?>><a><?php echo $type_default ?></a></li>
 						<li class="divider"></li>
+                        <li <?php if (in_array('active', $attendance_options)) echo ' class="active"'; ?> ><a href="<?php echo tmsl_meetings_url(array('tsml-attendance_option' => 'active')) ?>" data-id="active">Active</a></li>
+                <?php
+                    global $tsml_meeting_attendance_options;
+                    foreach ($tsml_meeting_attendance_options as $key => $value) {
+                        if ($key == 'inactive' || $key == 'hybrid') continue; ?>
+                        <li
+                          <?php 
+                              if (in_array($key, $attendance_options)) {
+                                  echo ' class="active"';
+                              }; 
+                          ?>
+                        >
+                        <a href="<?php echo tmsl_meetings_url(array('tsml-attendance_option' => $key)) ?>" data-id="<?php echo $key ?>"><?php echo $value ?></a></li>
+                    <?php }
+                  ?>
+						<li class="divider"></li>
 						<?php
 $types_to_list = array_intersect_key($tsml_programs[$tsml_program]['types'], array_flip($tsml_types_in_use));
-    foreach ($types_to_list as $key => $thistype) {?>
+    foreach ($types_to_list as $key => $thistype) {
+				if ($key == 'ONL' || $key == 'TC') continue; //hide "Online Meeting" since it's not manually settable, neither is location Temporarily Closed
+        ?>
 						<li<?php if (in_array($key, $types)) {
         echo ' class="active"';
     }
@@ -527,6 +562,7 @@ foreach ($meetings as $meeting) {
     foreach ($meeting['types'] as $type) {
         $classes[] = 'type-' . sanitize_title($type);
     }
+    $classes[] = 'attendance-' . sanitize_title($meeting['attendance_option']);
     ?>
 							<tr class="<?php echo join( ' ', $classes )?>">
 								<?php foreach ($tsml_columns as $key => $column) {
@@ -549,14 +585,28 @@ break;
 
             case 'name': ?>
 									<td class="name" data-sort="<?php echo tsml_sanitize_data_sort($meeting['name']) . '-' . $sort_time ?>">
-										<?php echo $meeting['link'] ?>
+                                        <a href="<?php echo $meeting['url']?>"><?php echo $meeting['name']?></a>
+                                        <?php
+                                            $meeting_types = tsml_format_types($meeting['types']);
+                                            if (!empty($meeting_types)) {
+                                                echo '<br/><small><span class="meeting_types">(' . $meeting_types . ')</span></small>';
+                                            }
+                                        ?>
+
 									</td>
 									<?php
 break;
 
             case 'location': ?>
+                <?php
+                    $meeting_location = $meeting['location'];
+                    if ($meeting['attendance_option'] == 'online' || $meeting['attendance_option'] == 'inactive') {
+                        $meeting_location = !empty($meeting['group']) ? $meeting['group'] : '';
+                    }
+                ?>
 									<td class="location" data-sort="<?php echo tsml_sanitize_data_sort($meeting['location']) . '-' . $sort_time ?>">
-										<?php echo $meeting['location'] ?>
+										<div class="location-name"><?php echo $meeting_location;?></div>
+										<div class="attendance-<?php echo $meeting['attendance_option'];?>"><small><?php if ($meeting['attendance_option'] != 'in_person') echo $tsml_meeting_attendance_options[$meeting['attendance_option']];?></small></div>
 									</td>
 									<?php
 break;

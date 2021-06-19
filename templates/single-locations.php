@@ -70,13 +70,24 @@ get_header();
 								$meetings = tsml_get_meetings(array('location_id' => $location->ID));
 								$location_days = array();
 								foreach ($meetings as $meeting) {
+									// Set types to be empty if it's not given, prevents php notices in log
+									if (empty($meeting['types'])) { $meeting['types'] = array(); }
+
 									if (!isset($location_days[$meeting['day']])) {
 										$location_days[$meeting['day']] = array();
 									}
 
 									$type_classes = tsml_to_css_classes($meeting['types']);
 
-									$location_days[$meeting['day']][] = '<li class="meeting ' . $type_classes . '"><span>' . $meeting['time_formatted'] . '</span> ' . tsml_link($meeting['url'], tsml_format_name($meeting['name'], $meeting['types']), 'tsml_location') . '</li>';
+									$meeting_link = '<li class="meeting attendance-' . $meeting['attendance_option']. '"><span>' . $meeting['time_formatted'] . '</span> ';
+									$meeting_link .= '<a href="' . $meeting['url'] . '">' . $meeting['name'] . '</a>';
+									$meeting_types = tsml_format_types($meeting['types']);
+									if (!empty($meeting_types)) {
+										$meeting_link .= '<div class="meeting_types"><small>(' . __($meeting_types, "12-step-meeting-list") . ')</small></div>';
+									}
+									$meeting_link .= '<div class="attendance-option">' . __($tsml_meeting_attendance_options[$meeting['attendance_option']], "12-step-meeting-list") . '</div>';
+									$meeting_link .= '</li>';
+									$location_days[$meeting['day']][] = $meeting_link;
 								}
 								ksort($location_days);
 

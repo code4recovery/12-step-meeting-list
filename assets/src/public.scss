@@ -15,6 +15,19 @@ $height: 550px; //height of map and min-height of list
 #tsml {
     @import '../../node_modules/bootstrap-sass/assets/stylesheets/_bootstrap.scss';
 
+    li.attendance-online div.attendance-option,
+    li.attendance-hybrid div.attendance-option {
+        color: $color_online;
+    }
+
+    li.attendance-inactive div.attendance-option {
+        color: $color_alert;
+    }
+
+    div.attendance-option {
+        font-weight: bold;
+    }
+
     a.btn {
         overflow: hidden;
         text-overflow: ellipsis;
@@ -39,6 +52,7 @@ $height: 550px; //height of map and min-height of list
 
     svg.icon {
         margin: 0 3px -2px 0 !important;
+        display:inline;
     }
 
     @keyframes spin {
@@ -453,9 +467,6 @@ $height: 550px; //height of map and min-height of list
                                     font-size: 11px;
                                     white-space: nowrap;
 
-                                    &:before {
-                                        content: " / ";
-                                    }
                                 }
                             }
 
@@ -476,6 +487,7 @@ $height: 550px; //height of map and min-height of list
                             }
                         }
 
+/*
                         &.type-tc {
                             opacity: .5;
 
@@ -493,17 +505,61 @@ $height: 550px; //height of map and min-height of list
                                 opacity: .5;
                             }
                         }
+*/
+                        &.attendance-inactive {
+                            .location {
+                                small {
+                                    color: $color_alert;
+                                }
+                                div.location-name {
+                                    opacity: .5;
+                                }
+                            }
+                            .address {
+                                font-size: 0%;
+                            }
+                            .region {
+                                opacity: .5;
+                                text-decoration: line-through;
+                            }
+                        }
+                        &.attendance-online {
+                            .location {
+                                small {
+                                    color: $color_online;
+                                }
+                                div.location-name {
+                                    opacity: .5;
+                                }
+                            }
+                            .address {
+                                font-size: 0%;
+                            }
+                            .region {
+                                opacity: .5;
+                                text-decoration: line-through;
+                            }
+                        }
+                        &.attendance-hybrid {
+                            .location {
+                                small {
+                                    color: $color_online;
+                                }
+                            }
+                        }
 
                         &.type-onl {
                             opacity: 1 !important;
 
+/*
                             .name {
 
                                 small {
-                                    color: $color_online;
-                                    font-weight: bold;
+                                    //color: $color_online;
+                                    //font-weight: bold;
                                 }
                             }
+*/
                         }
                     }
                 }
@@ -583,7 +639,7 @@ $height: 550px; //height of map and min-height of list
         }
     }
 
-    #meeting {
+    /*#meeting {
         .tsml-type-tc & {
             .page-header small {
                 color: $color_alert;
@@ -597,7 +653,7 @@ $height: 550px; //height of map and min-height of list
                 font-weight: bold;
             }
         }
-    }
+    }*/
 
     #meeting,
     #location {
@@ -622,10 +678,6 @@ $height: 550px; //height of map and min-height of list
 
         small {
             color: $color_black;
-
-            &::before {
-                content: " / ";
-            }
         }
 
         #map {
@@ -686,6 +738,9 @@ $height: 550px; //height of map and min-height of list
                         &:last-child {
                             margin-bottom: 0;
                         }
+                    }
+                    div.meeting_types {
+                        margin-bottom: 0;
                     }
 
                     h3.list-group-item-heading {
@@ -1128,16 +1183,33 @@ $height: 550px; //height of map and min-height of list
 }
 
 body {
+    &.attendance-online #map,
+    &.attendance-inactive  #map{
+        display: none;
+    }
+
+    &.attendance-hybrid div.attendance-option,
+    &.attendance-online div.attendance-option {
+        color: $color_online;
+    }
+    &.attendance-inactive  div.attendance-option {
+        color: $color_alert;
+    }
+    &.attendance-inactive p.location-address,
+    &.attendance-online p.location-address {
+        text-decoration: line-through;
+    }
 
     /* temporary closure meetings */
+/*
     &.tsml-meeting.tsml-type-tc {
-
         p.location-address,
         address {
             color: #999;
             text-decoration: line-through;
         }
     }
+*/
 
     /* Special per-theme fixes */
     &.twentyfourteen {
