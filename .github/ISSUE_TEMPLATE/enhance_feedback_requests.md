@@ -6,8 +6,8 @@ request screens would remain hidden until activated by the user, only then repla
 controled fashion prior to submitting the form data, ensuring that the website administrator receives a full set of accurate and auditable data with which to update the Meeting Information. The submitted 
 data would be parsed and injected into an html table within an email, with changes highlighted in Red text for easy analysis and action by the system administrator. 
 
-title: 'Change Request System'
-labels: ''
+title: 'Enhance Feedback Requests'
+labels: 'new feature/enhancement'
 assignees: ''
 
 ---
@@ -28,6 +28,6 @@ to submitting.
 
 **Additional context**
 Add any other context or screenshots about the feature request here.
-See screenshots MeetingDetailScreen1.png, MeetingDetailScreen2.png, ChangeRequestEmail.png.
+See screenshots MeetingDetailScreen1.png, MeetingDetailScreen2.png, MeetingRequestSubmitted.png, and ChangeRequestEmail.png.
 Focus above is on the Change Meeting Request, but the feature must include the associated Add New Meeting Request and Remove Meeting screens as well.
 
