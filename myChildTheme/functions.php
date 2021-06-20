@@ -363,7 +363,7 @@ if (!function_exists('pcs_tsml_ajax_feedback')) {
 				$chg_time = sanitize_text_field($_POST['start_time']);
 				$chg_end_time = sanitize_text_field($_POST['end_time']);
 				$chg_types_string = implode(', ', array_filter( $_POST['types'] ) );
-				$chg_notes = sanitize_text_field($_POST['content']);
+				$chg_notes = stripslashes(sanitize_text_field($_POST['content']));
 				$chg_conference_url = sanitize_text_field($_POST['conference_url']);
 				$chg_conference_url_notes = sanitize_text_field($_POST['conference_url_notes']);
 				$chg_conference_phone = sanitize_text_field($_POST['conference_phone']);
@@ -464,16 +464,15 @@ if (!function_exists('pcs_tsml_ajax_feedback')) {
 				$old = explode (' ', $meeting->notes);
 				$new = explode (' ', $chg_notes);
 				if ( $old !==  $new )  {
-					// Try a 2nd comparison with white space removed
-					$m_notes = str_replace(' ', '', $meeting->notes);
-					$c_notes = str_replace(' ', '', $chg_notes);
-					if ( ( strcmp( $m_notes, $c_notes ) !== 0) ) {
+					// Try a 2nd comparison after dealing with with db notes
+					$m_notes = html_entity_decode(stripslashes(sanitize_text_field($meeting->notes)), ENT_QUOTES, 'UTF-8');
+					if ( ( strcmp( $m_notes, $chg_notes ) !== 0) ) {
 						$message_lines[__('Notes', '12-step-meeting-list')] = "<tr><td style='color:red;'>Notes</td><td>$chg_notes</td></tr>";  
 						$IsChange = true;
 						if ($host === 'aatemplate-wp.dev.cc') { 
 							$diff = array_diff($old, $new);
 							echo 'Notes Changed' . '<br>'; 
-							echo '1-->[' . $meeting->notes . ']<br>';
+							echo '1-->[' . $m_notes . ']<br>';
 							echo '2-->[' . $chg_notes  . ']<br><br>';
 							$str = implode(' ', $diff);
 							echo 'Text that is changed: <b>' . $str . '</b><br>'; 
