@@ -104,10 +104,8 @@ if (!function_exists('tsml_ui')) {
 				'timezone' => get_option('timezone_string', 'America/New_York'),
 				'conference_providers' => $tsml_conference_providers,
 				'strings' => array(
-					$tsml_language => array_merge(
-						array(
-							'types' => $tsml_programs[$tsml_program]['types'],
-						),
+					$tsml_language => array(
+						'types' => $tsml_programs[$tsml_program]['types'],
 					),
 				),
 				'feedback_emails' => array_values($tsml_feedback_addresses),
