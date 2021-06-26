@@ -105,15 +105,14 @@ if (!function_exists('tsml_ui')) {
 				'conference_providers' => $tsml_conference_providers,
 				'strings' => array(
 					$tsml_language => array_merge(
-						$tsml_columns, 
 						array(
 							'types' => $tsml_programs[$tsml_program]['types'],
 						),
 					),
 				),
-				'feedback_emails' => $tsml_feedback_addresses,
+				'feedback_emails' => array_values($tsml_feedback_addresses),
 			),
-			$tsml_ui_config,
+			$tsml_ui_config
 		));
 		$data = admin_url('admin-ajax.php') . '?action=meetings&nonce=' . wp_create_nonce($tsml_nonce);
 		return '<meetings src="' . $data . '" mapbox="' . $tsml_mapbox_key . '"/>';
