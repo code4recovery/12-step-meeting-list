@@ -1,7 +1,7 @@
 <?php
 	
 //import CSV file and handle settings
-function tmsl_import_page() {
+function tsml_import_page() {
 	global $wpdb, $tsml_data_sources, $tsml_programs, $tsml_program, $tsml_nonce, $tsml_days, $tsml_feedback_addresses, 
 	$tsml_notification_addresses, $tsml_distance_units, $tsml_sharing, $tsml_sharing_keys, $tsml_contact_display,
 	$tsml_google_maps_key, $tsml_mapbox_key, $tsml_geocoding_method, $tsml_slug;

@@ -247,7 +247,7 @@ class Walker_Regions_Dropdown extends Walker_Category
         }
 
         $classes = count($classes) ? ' class="' . implode(' ', $classes) . '"' : '';
-        $output .= '<li' . $classes . '><a href="' . tmsl_meetings_url(array('tsml-region' => $category->slug)) . '" data-id="' . $category->slug . '">' . $category->name . '</a>';
+        $output .= '<li' . $classes . '><a href="' . tsml_meetings_url(array('tsml-region' => $category->slug)) . '" data-id="' . $category->slug . '">' . $category->name . '</a>';
         if ($args['has_children']) {
             $output .= '<div class="expand"></div>';
         }
@@ -282,7 +282,7 @@ class Walker_Districts_Dropdown extends Walker_Category
         }
 
         $classes = count($classes) ? ' class="' . implode(' ', $classes) . '"' : '';
-        $output .= '<li' . $classes . '><a href="' . tmsl_meetings_url(array('tsml-district' => $category->slug)) . '" data-id="' . $category->slug . '">' . $category->name . '</a>';
+        $output .= '<li' . $classes . '><a href="' . tsml_meetings_url(array('tsml-district' => $category->slug)) . '" data-id="' . $category->slug . '">' . $category->name . '</a>';
         if ($args['has_children']) {
             $output .= '<div class="expand"></div>';
         }
@@ -363,10 +363,10 @@ get_header();
 			<div class="col-sm-6 col-md-2 col-md-push-8 control-view">
 				<?php if ($maps_enabled) {?>
 				<div class="btn-group btn-group-justified" id="action">
-					<a class="btn btn-default toggle-view<?php if ($view == 'list') {?> active<?php }?>" href="<?php echo tmsl_meetings_url(array('tsml-view' => 'list')) ?>" data-id="list" role="button">
+					<a class="btn btn-default toggle-view<?php if ($view == 'list') {?> active<?php }?>" href="<?php echo tsml_meetings_url(array('tsml-view' => 'list')) ?>" data-id="list" role="button">
 						<?php _e('List', '12-step-meeting-list')?>
 					</a>
-					<a class="btn btn-default toggle-view<?php if ($view == 'map') {?> active<?php }?>" href="<?php echo tmsl_meetings_url(array('tsml-view' => 'map')) ?>" data-id="map" role="button">
+					<a class="btn btn-default toggle-view<?php if ($view == 'map') {?> active<?php }?>" href="<?php echo tsml_meetings_url(array('tsml-view' => 'map')) ?>" data-id="map" role="button">
 						<?php _e('Map', '12-step-meeting-list')?>
 					</a>
 				</div>
@@ -403,7 +403,7 @@ get_header();
 					<ul class="dropdown-menu" role="menu">
 						<?php
 foreach ($distances as $key => $value) {
-    echo '<li' . ($key == $distance ? ' class="active"' : '') . '><a href="' . tmsl_meetings_url(array('tsml-distance' => $key)) . '" data-id="' . $key . '">' . $value . '</a></li>';
+    echo '<li' . ($key == $distance ? ' class="active"' : '') . '><a href="' . tsml_meetings_url(array('tsml-distance' => $key)) . '" data-id="' . $key . '">' . $value . '</a></li>';
 }?>
 					</ul>
 				</div>
@@ -424,7 +424,7 @@ foreach ($distances as $key => $value) {
 						<li<?php if (intval($key) === $day) {
     echo ' class="active"';
 }
-    ?>><a href="<?php echo tmsl_meetings_url(array('tsml-day' => $key)) ?>" data-id="<?php echo $key ?>"><?php echo $value ?></a></li>
+    ?>><a href="<?php echo tsml_meetings_url(array('tsml-day' => $key)) ?>" data-id="<?php echo $key ?>"><?php echo $value ?></a></li>
 						<?php }?>
 					</ul>
 				</div>
@@ -444,13 +444,13 @@ foreach ($distances as $key => $value) {
 						<li class="upcoming<?php if ($time == 'upcoming') {
     echo ' active"';
 }
-?>"><a href="<?php echo tmsl_meetings_url(array('tsml-time' => 'upcoming')) ?>" data-id="upcoming"><?php esc_html_e('Upcoming', '12-step-meeting-list')?></a></li>
+?>"><a href="<?php echo tsml_meetings_url(array('tsml-time' => 'upcoming')) ?>" data-id="upcoming"><?php esc_html_e('Upcoming', '12-step-meeting-list')?></a></li>
 						<li class="divider"></li>
 						<?php foreach ($times as $key => $value) {?>
 						<li<?php if ($key === $time) {
     echo ' class="active"';
 }
-    ?>><a href="<?php echo tmsl_meetings_url(array('tsml-time' => $key)) ?>" data-id="<?php echo $key ?>"><?php echo $value ?></a></li>
+    ?>><a href="<?php echo tsml_meetings_url(array('tsml-time' => $key)) ?>" data-id="<?php echo $key ?>"><?php echo $value ?></a></li>
 						<?php }?>
 					</ul>
 				</div>
@@ -468,7 +468,7 @@ foreach ($distances as $key => $value) {
 }
     ?>><a><?php echo $type_default ?></a></li>
 						<li class="divider"></li>
-                        <li <?php if (in_array('active', $attendance_options)) echo ' class="active"'; ?> ><a href="<?php echo tmsl_meetings_url(array('tsml-attendance_option' => 'active')) ?>" data-id="active">Active</a></li>
+                        <li <?php if (in_array('active', $attendance_options)) echo ' class="active"'; ?> ><a href="<?php echo tsml_meetings_url(array('tsml-attendance_option' => 'active')) ?>" data-id="active">Active</a></li>
                 <?php
                     global $tsml_meeting_attendance_options;
                     foreach ($tsml_meeting_attendance_options as $key => $value) {
@@ -480,7 +480,7 @@ foreach ($distances as $key => $value) {
                               }; 
                           ?>
                         >
-                        <a href="<?php echo tmsl_meetings_url(array('tsml-attendance_option' => $key)) ?>" data-id="<?php echo $key ?>"><?php echo $value ?></a></li>
+                        <a href="<?php echo tsml_meetings_url(array('tsml-attendance_option' => $key)) ?>" data-id="<?php echo $key ?>"><?php echo $value ?></a></li>
                     <?php }
                   ?>
 						<li class="divider"></li>
@@ -492,7 +492,7 @@ $types_to_list = array_intersect_key($tsml_programs[$tsml_program]['types'], arr
 						<li<?php if (in_array($key, $types)) {
         echo ' class="active"';
     }
-        ?>><a href="<?php echo tmsl_meetings_url(array('tsml-type' => $key)) ?>" data-id="<?php echo $key ?>"><?php echo $thistype ?></a></li>
+        ?>><a href="<?php echo tsml_meetings_url(array('tsml-type' => $key)) ?>" data-id="<?php echo $key ?>"><?php echo $thistype ?></a></li>
 						<?php }?>
 					</ul>
 				</div>

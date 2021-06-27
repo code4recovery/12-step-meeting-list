@@ -1660,7 +1660,7 @@ function tsml_link($url, $string, $exclude='', $class=false) {
 
 //function: link to meetings page with parameters (added to link dropdown menus for SEO)
 //used:		archive-meetings.php
-function tmsl_meetings_url($parameters) {
+function tsml_meetings_url($parameters) {
 	$url = get_post_type_archive_link('tsml_meeting');
 	$url .= (strpos($url, '?') === false) ? '?' : '&';
 	$url .= http_build_query($parameters);

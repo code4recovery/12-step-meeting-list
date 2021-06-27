@@ -47,8 +47,8 @@ function tsml_posts_filter($query)
 }
 
 # Custom columns for meetings
-add_filter('manage_edit-tsml_meeting_columns', 'tmsl_admin_meetings_columns');
-function tmsl_admin_meetings_columns($defaults)
+add_filter('manage_edit-tsml_meeting_columns', 'tsml_admin_meetings_columns');
+function tsml_admin_meetings_columns($defaults)
 {
     return array(
         'cb' => '<input type="checkbox" />',
@@ -72,8 +72,8 @@ function tsml_delete_post($post_id)
 }
 
 # Custom list values for meetings
-add_action('manage_tsml_meeting_posts_custom_column', 'tmsl_admin_meetings_custom_column', 10, 2);
-function tmsl_admin_meetings_custom_column($column_name, $post_ID)
+add_action('manage_tsml_meeting_posts_custom_column', 'tsml_admin_meetings_custom_column', 10, 2);
+function tsml_admin_meetings_custom_column($column_name, $post_ID)
 {
     global $tsml_days, $wpdb;
     if ($column_name == 'day') {
