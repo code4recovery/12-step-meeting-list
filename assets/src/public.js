@@ -713,7 +713,7 @@ jQuery(function($) {
 										//formatLink(obj.url, obj.name, 'post_type') +
 										'<a href="' + obj.url + '">' + obj.name + '</a>';
 									if (typeList.length > 0) {
-										row += '<br/><small>(' + typeList.join(', ') + ')</small>';
+										row += ' <small>' + typeList.join(', ') + '</small>';
 									}
 									row += '</td>';
 									break;
@@ -739,7 +739,7 @@ jQuery(function($) {
 											row += 'Temporarily Inactive';
 											break;
 										case 'hybrid':
-											row += 'Hybrid';
+											row += 'In-person and Online';
 											break;
 										default:
 											break;

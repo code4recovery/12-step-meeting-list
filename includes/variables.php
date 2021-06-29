@@ -16,8 +16,8 @@ if (!$tsml_cache = get_option('tsml_cache')) {
 
 // Define attendance options
 $tsml_meeting_attendance_options = array(
-	'in_person' => 'In Person',
-	'hybrid' => 'In Person and Online',
+	'in_person' => 'In-person',
+	'hybrid' => 'In-person and Online',
 	'online' => 'Online',
 	'inactive' => 'Temporarily Inactive',
 );
@@ -27,7 +27,7 @@ $tsml_columns = array(
 	'time' => 'Time',
 	'distance' => 'Distance', 
 	'name' => 'Meeting',
-	'location' => 'Location',
+	'location' => 'Location / Group',
 	'address' => 'Address',
 	'region' => 'Region',
 	'district' => 'District',

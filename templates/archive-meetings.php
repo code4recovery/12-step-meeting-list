@@ -589,7 +589,7 @@ break;
                                         <?php
                                             $meeting_types = tsml_format_types($meeting['types']);
                                             if (!empty($meeting_types)) {
-                                                echo '<br/><small><span class="meeting_types">(' . $meeting_types . ')</span></small>';
+                                                echo ' <small><span class="meeting_types">' . $meeting_types . '</span></small>';
                                             }
                                         ?>
 
