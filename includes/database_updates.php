@@ -9,17 +9,6 @@ if(!function_exists('decide_if_location_approximate')) {
   }
 }
 
-if (!function_exists('db_update_tsml_locations_approximate_location')) {
-  function db_update_tsml_locations_approximate_location() {
-    $locations_posts = tsml_get_all_locations();
-    foreach ($locations_posts as $location_post) {
-      $location_custom = get_post_meta($location_post->ID);
-      $is_location_approximate = decide_if_location_approximate($location_custom['formatted_address'][0]);
-      update_post_meta($location_post->ID, 'is_approximate_location', $is_location_approximate);				
-    }
-  };
-};
-
 // Function: db_update_remove_all_approximate_location_cache
 if (!function_exists('db_update_remove_all_approximate_location_cache')) {
 	function db_update_remove_all_approximate_location_cache() {

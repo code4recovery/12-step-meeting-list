@@ -32,7 +32,6 @@ function tsml_admin_init() {
 	if (version_compare($tsml_version, TSML_VERSION, '<')) {
     db_update_remove_all_approximate_location_cache();
     db_update_remove_all_is_approximate_location_meta();
-		// db_update_tsml_locations_approximate_location();
 		update_option('tsml_version', TSML_VERSION);
 		flush_rewrite_rules();
 	};
