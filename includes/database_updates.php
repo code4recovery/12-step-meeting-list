@@ -1,14 +1,5 @@
 <?php 
 
-if(!function_exists('decide_if_location_approximate')) {
-  function decide_if_location_approximate($formatted_address) {
-    if (substr_compare($formatted_address, 'Australia', -9, $case_insensitivity = TRUE) === 0) {
-      $location_approximate = substr_count($formatted_address, ",") <= 1;
-    } else $location_approximate = substr_count($formatted_address, ",") <= 2;
-    return $location_approximate;
-  }
-}
-
 // Function: db_update_remove_all_approximate_location_cache
 if (!function_exists('db_update_remove_all_approximate_location_cache')) {
 	function db_update_remove_all_approximate_location_cache() {
