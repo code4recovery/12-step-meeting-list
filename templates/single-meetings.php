@@ -126,6 +126,9 @@ function tsml_body_class($classes) {
 		$classes[] = $type_classes;
 	}
 
+	// Add the attendance option class to the body tag
+	$classes[] = 'attendance-' . sanitize_title($meeting->attendance_option);
+
 	return $classes;
 }
 
@@ -185,6 +188,26 @@ get_header();
 												<svg class="icon" width="1em" height="1em" viewBox="0 0 16 16" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
 													<path fill-rule="evenodd" d="M10.97 4.97a.75.75 0 0 1 1.071 1.05l-3.992 4.99a.75.75 0 0 1-1.08.02L4.324 8.384a.75.75 0 1 1 1.06-1.06l2.094 2.093 3.473-4.425a.236.236 0 0 1 .02-.022z"/>
 												</svg>
+												switch ($meeting->attendance_option) {
+													case 'in_person':
+														echo '<li>' . $li_marker . __('In person', '12-step-meeting-list') . '</li>' . PHP_EOL;
+														break;
+													case 'hybrid':
+														echo '<li>' . $li_marker . __('In person', '12-step-meeting-list') . '</li>' . PHP_EOL;
+														echo '<li>' . $li_marker . __('Online', '12-step-meeting-list') . '</li>' . PHP_EOL;
+														break;
+													case 'online':
+														echo '<li>' . $li_marker . __('Online', '12-step-meeting-list') . '</li>' . PHP_EOL;
+														break;
+													case 'inactive':
+														echo '<li>' . $li_marker . __('Temporarily Inactive', '12-step-meeting-list') . '</li>' . PHP_EOL;
+														break;
+													default:
+														break;
+												}
+														echo '<li><hr style="margin:10px 0;" /></li>' . PHP_EOL;
+												?>
+
 												<?php _e($type, '12-step-meeting-list')?>
 											</li>
 										<?php }?>

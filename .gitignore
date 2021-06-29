@@ -5,3 +5,5 @@ node_modules
 Dockerfile
 docker-compose.yml
 .vscode
+/.vs/slnx.sqlite-journal
+/.vs/enhance-feedback-requests/v16/.suo
