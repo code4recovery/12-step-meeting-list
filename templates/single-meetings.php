@@ -186,16 +186,13 @@ get_header();
 												</svg>';
 											switch ($meeting->attendance_option) {
 												case 'in_person':
-													echo '<li>' . $li_marker . __('Active', '12-step-meeting-list') . '</li>' . PHP_EOL;
 													echo '<li>' . $li_marker . __('In person', '12-step-meeting-list') . '</li>' . PHP_EOL;
 													break;
-												case 'hybrid':
-													echo '<li>' . $li_marker . __('Active', '12-step-meeting-list') . '</li>' . PHP_EOL;
+												case 'hybrid':													echo '<li>' . $li_marker . __('Active', '12-step-meeting-list') . '</li>' . PHP_EOL;
 													echo '<li>' . $li_marker . __('In person', '12-step-meeting-list') . '</li>' . PHP_EOL;
 													echo '<li>' . $li_marker . __('Online', '12-step-meeting-list') . '</li>' . PHP_EOL;
 													break;
 												case 'online':
-													echo '<li>' . $li_marker . __('Active', '12-step-meeting-list') . '</li>' . PHP_EOL;
 													echo '<li>' . $li_marker . __('Online', '12-step-meeting-list') . '</li>' . PHP_EOL;
 													break;
 												case 'inactive':
