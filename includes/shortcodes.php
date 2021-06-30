@@ -32,7 +32,7 @@ if (!function_exists('tsml_next_meetings')) {
 
 			$meeting_types = tsml_format_types($meeting['types']);
 			if (!empty($meeting_types)) {
-				$meeting_types = '<br/><small><span class="meeting_types">(' . $meeting_types . ')</span></small>';
+				$meeting_types = ' <small><span class="meeting_types">' . $meeting_types . '</span></small>';
 			}
 
 			$meeting_location = $meeting['location'];

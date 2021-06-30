@@ -1112,6 +1112,7 @@ function tsml_get_meetings($arguments=array(), $from_cache=true) {
 				}
 			}
 
+
 			$meetings[] = $meeting;
 		}
 		$meetings = array_map('tsml_cache_clean', $meetings);
@@ -1123,6 +1124,11 @@ function tsml_get_meetings($arguments=array(), $from_cache=true) {
 			$meetings[$i]['attendance_option'] = tsml_calculate_attendance_option(empty($meetings[$i]['types']) ? array() : $meetings[$i]['types'], $meetings[$i]['formatted_address']);
 			update_post_meta($meetings[$i]['id'], 'attendance_option', $meetings[$i]['attendance_option']);
 			$rebuild_cache = true;
+		}
+
+		// Remove TC when online only meeting has approximate address
+		if ($meetings[$i]['attendance_option'] == 'online' && tsml_geocode($meetings[$i]['formatted_address'])['approximate'] == 'yes') {
+			$meetings[$i]['types'] = array_values(array_diff($meetings[$i]['types'], array('TC')));
 		}
 	}
 
