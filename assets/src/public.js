@@ -10,6 +10,7 @@ jQuery(function($) {
 	var $body = $('body');
 	var typeaheadEnabled = false;
 
+
 	if (typeof tsml_map !== 'object') {
     //main meetings page
     
@@ -318,6 +319,8 @@ jQuery(function($) {
 			document.title = string;
 			$('#tsml #meetings .title h1').text(string);
 
+      if (tsml.debug) console.log("Page title: ", document.title);
+
 			//show/hide upcoming menu option
 			toggleUpcoming();
 
@@ -372,11 +375,15 @@ jQuery(function($) {
 
 	//run search (triggered by dropdown toggle or form submit)
 	function doSearch() {
-		//types can be multiple
+		//types and attendanceOptions can be multiple
 		var types = [];
+    const attendanceOptions = [];
 		$('#type li.active a').each(function() {
-			if ($(this).attr('data-id')) {
-				types.push($(this).attr('data-id'));
+      let userChoice = $(this).attr('data-id');
+			if (userChoice) {
+        if (['active', 'in_person', 'hybrid', 'online', 'inactive'].indexOf(userChoice) !== -1) {
+          attendanceOptions.push(userChoice);
+        } else types.push(userChoice);
 			}
 		});
 
@@ -393,8 +400,10 @@ jQuery(function($) {
 			time: $('#time li.active a').attr('data-id'),
 			type: types.length ? types.join(',') : undefined,
 			distance: $('#distance li.active a').attr('data-id'),
-			view: $('#meetings .toggle-view.active').attr('data-id')
+			view: $('#meetings .toggle-view.active').attr('data-id'),
+      attendance_option: attendanceOptions.length ? attendanceOptions.join(',') : undefined, 
 		};
+    if (tsml.debug) console.log('doSearch() controls', controls);
 
 		//reset search location
 		searchLocation = null;
@@ -417,6 +426,7 @@ jQuery(function($) {
 		if (controls.time && controls.time != tsml.defaults.time) query_string['tsml-time'] = controls.time;
 		if (controls.type && controls.type != tsml.defaults.type) query_string['tsml-type'] = controls.type;
 		if (controls.view && controls.view != tsml.defaults.view) query_string['tsml-view'] = controls.view;
+    if (controls.attendance_option != null) query_string['tsml-attendance_option'] = controls.attendance_option; 
 		query_string = $.param(query_string);
 
 		//save the query in the query string, if the browser is up to it
@@ -562,7 +572,8 @@ jQuery(function($) {
 						(typeof controls.day !== 'undefined' ||
 							typeof controls.region !== 'undefined' ||
 							typeof controls.time !== 'undefined' ||
-							typeof controls.type !== 'undefined')
+							typeof controls.type !== 'undefined') ||
+              typeof controls.attendance_option !== 'undefined'
 					) {
 						$('#day li')
 							.removeClass('active')
@@ -580,12 +591,17 @@ jQuery(function($) {
 							.removeClass('active')
 							.first()
 							.addClass('active');
+            $('#attendance_option li')
+              .removeClass('active')
+              .first()
+              .addClass('active');
 
 						//set selected text
 						$('#day span.selected').html($('#day li:first-child a').html());
 						$('#time span.selected').html($('#time li:first-child a').html());
 						$('#region span.selected').html($('#region li:first-child a').html());
 						$('#type span.selected').html($('#type li:first-child a').html());
+            $('#attendance_option span.selected').html($('#attendance_option li:first-child a').html());
 
 						return doSearch();
 					}
@@ -605,6 +621,9 @@ jQuery(function($) {
 					$.each(response, function(index, obj) {
 						//types could be undefined
 						if (!obj.types) obj.types = [];
+
+						var typeList = [];
+
 						//add type 'flags'
 						if (typeof tsml.flags == 'object') {
 							// True if the meeting is temporarily closed, but online option available
@@ -614,8 +633,11 @@ jQuery(function($) {
 								// True if the type for the meeting obj matches one of the predetermined flags being looped
 								var typeIsFlagged = obj.types.indexOf(tsml.flags[i]) !== -1;
 								//  Add flag, except TC when meeting is also online
-								if (typeIsFlagged && !(meetingIsOnlineAndTC && flagIsTempClosed)) {
-									obj.name += ' <small>' + tsml.types[tsml.flags[i]] + '</small>';
+								//if (typeIsFlagged && !(meetingIsOnlineAndTC && flagIsTempClosed)) {
+									//obj.name += ' <small>' + tsml.types[tsml.flags[i]] + '</small>';
+								//}
+								if (typeIsFlagged && tsml.flags[i] != 'TC' && tsml.flags[i] != 'ONL') {
+									typeList.push(tsml.types[tsml.flags[i]]);
 								}
 							}
 						}
@@ -657,6 +679,7 @@ jQuery(function($) {
 						for (var i = 0; i < obj.types.length; i++) {
 							classes.push('type-' + sanitizeTitle(obj.types[i]));
 						}
+						classes.push('attendance-' + obj.attendance_option);
 
 						//add new table row
 						var row = '<tr class="' + classes.join(' ') + '">';
@@ -687,12 +710,42 @@ jQuery(function($) {
 										'-' +
 										sort_time +
 										'">' +
-										formatLink(obj.url, obj.name, 'post_type') +
-										'</td>';
+										//formatLink(obj.url, obj.name, 'post_type') +
+										'<a href="' + obj.url + '">' + obj.name + '</a>';
+									if (typeList.length > 0) {
+										row += ' <small>' + typeList.join(', ') + '</small>';
+									}
+									row += '</td>';
 									break;
 
 								case 'location':
-									row += '<td class="location" data-sort="' + sanitizeDataSort(obj.location) + '-' + sort_time + '">' + obj.location + '</td>';
+									meeting_location = obj.location;
+									if (obj.attendance_option == 'online' || obj.attendance_option == 'inactive') {
+										if (obj.group !== undefined) {
+											meeting_location = obj.group;
+										} else {
+											meeting_location = '';
+										}
+									}
+
+									row += '<td class="location" data-sort="' + sanitizeDataSort(obj.location) + '-' + sort_time + '">';
+									row += '<div class="location-name">' + meeting_location + '</div>';
+									row += '<div class="attendance-' + obj.attendance_option + '"><small>';
+									switch (obj.attendance_option) {
+										case 'online':
+											row += 'Online';
+											break;
+										case 'inactive':
+											row += 'Temporarily Inactive';
+											break;
+										case 'hybrid':
+											row += 'In-person and Online';
+											break;
+										default:
+											break;
+									}
+									row += '</small></div>';
+									row += '</td>';
 									break;
 
 								case 'address':

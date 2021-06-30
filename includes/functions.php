@@ -31,7 +31,7 @@ function tsml_alert($message, $type='success') {
 //function: enqueue assets for public or admin page
 //used: in templates and on admin_edit.php
 function tsml_assets() {
-	global $post_type, $tsml_street_only, $tsml_programs, $tsml_strings, $tsml_program, $tsml_google_maps_key, $tsml_mapbox_key, $tsml_google_overrides, $tsml_distance_units, $tsml_defaults, $tsml_language, $tsml_columns, $tsml_nonce;
+	global $post_type, $tsml_street_only, $tsml_programs, $tsml_strings, $tsml_program, $tsml_meeting_attendance_options, $tsml_google_maps_key, $tsml_mapbox_key, $tsml_mapbox_theme, $tsml_google_overrides, $tsml_distance_units, $tsml_defaults, $tsml_language, $tsml_columns, $tsml_nonce;
 
 	// TODO: verify this doesn't cause any other issues
 	$types = [
@@ -56,6 +56,7 @@ function tsml_assets() {
 			'debug' => WP_DEBUG,
 			'google_maps_key' => $tsml_google_maps_key, //to see if map should have been called
 			'mapbox_key' => $tsml_mapbox_key,
+			'mapbox_theme' => $tsml_mapbox_theme,
 			'nonce' => wp_create_nonce($tsml_nonce),
 		));
 	} else {
@@ -84,6 +85,7 @@ function tsml_assets() {
 			'flags' => $tsml_programs[$tsml_program]['flags'],
 			'google_maps_key' => $tsml_google_maps_key, //to see if map should have been called
 			'mapbox_key' => $tsml_mapbox_key,
+			'mapbox_theme' => $tsml_mapbox_theme,
 			'nonce' => wp_create_nonce($tsml_nonce),
 			'program' => empty($tsml_programs[$tsml_program]['abbr']) ? $tsml_programs[$tsml_program]['name'] : $tsml_programs[$tsml_program]['abbr'],
 			'street_only' => $tsml_street_only,
@@ -99,7 +101,7 @@ function tsml_bounds() {
 	global $wpdb, $tsml_bounds;
 
 	//get north & south
-	$latitudes = $wpdb->get_row('SELECT 
+	$latitudes = $wpdb->get_row('SELECT
 			MAX(m.meta_value) north,
 			MIN(m.meta_value) south
 		FROM ' . $wpdb->postmeta . ' m
@@ -107,7 +109,7 @@ function tsml_bounds() {
 		WHERE m.meta_key = "latitude" AND p.post_type = "tsml_location"');
 
 	//get east & west
-	$longitudes = $wpdb->get_row('SELECT 
+	$longitudes = $wpdb->get_row('SELECT
 			MAX(m.meta_value) west,
 			MIN(m.meta_value) east
 		FROM ' . $wpdb->postmeta . ' m
@@ -377,9 +379,9 @@ function tsml_delete_orphans() {
 	tsml_delete(array_merge($location_ids, $group_ids));
 
 	//edge case: draft-ify locations with only unpublished meetings
-	$location_ids = $wpdb->get_col('SELECT l.ID FROM ' . $wpdb->posts . ' l 
-		WHERE l.post_type = "tsml_location" AND 
-			(SELECT COUNT(*) FROM ' . $wpdb->posts . ' m 
+	$location_ids = $wpdb->get_col('SELECT l.ID FROM ' . $wpdb->posts . ' l
+		WHERE l.post_type = "tsml_location" AND
+			(SELECT COUNT(*) FROM ' . $wpdb->posts . ' m
 			WHERE m.post_type="tsml_meeting" AND m.post_status="publish" AND m.post_parent = l.id) = 0');
 	if (count($location_ids)) {
 		$wpdb->query('UPDATE ' . $wpdb->posts . ' l SET l.post_status = "draft" WHERE ID IN (' . implode(', ', $location_ids) . ')');
@@ -477,6 +479,25 @@ function tsml_format_name($name, $types=null) {
 	return count($append) ? $name . ' <small>' . implode(', ', $append) . '</small>' : $name;
 }
 
+//function:	get meeting types
+//used:		archive-meetings.php
+function tsml_format_types($types = array()) {
+	global $tsml_program, $tsml_programs;
+	if (!is_array($types)) $types = array();
+	$append = array();
+	// Types assigned to the meeting passed to the function
+	foreach ($types as $type) {
+		// True if the type for the meeting exists in one of the predetermined flags
+		$type_is_flagged = in_array($type, $tsml_programs[$tsml_program]['flags']);
+
+		if ($type_is_flagged && $type != 'TC' && $type != 'ONL') {
+			$append[] = $tsml_programs[$tsml_program]['types'][$type];
+		}
+	}
+
+	return implode(', ', $append);
+}
+
 //function: takes 18:30 and returns 6:30 pm (depending on your settings)
 //used:		tsml_get_meetings(), single-meetings.php, admin_lists.php
 function tsml_format_time($string, $empty='Appointment') {
@@ -572,7 +593,7 @@ function tsml_geocode($address) {
 	//Set the Google API Key before calling function that finds the address
 	if ($tsml_geocoding_method == 'google_key' && !empty($tsml_google_maps_key)) {
 		$tsml_map_key = $tsml_google_maps_key;
-	} else { 
+	} else {
 		$tsml_map_key = 'AIzaSyCXSu5YhUDJ92Di3oQiVvb10TXsXRMtI48';
 	}
 	$response = tsml_geocode_google($address, $tsml_map_key);
@@ -701,7 +722,7 @@ function tsml_geocode_google($address, $tsml_map_key) {
 			'longitude' => $data->results[0]->geometry->location->lng,
 			'approximate' => ($data->results[0]->geometry->location_type === 'APPROXIMATE') ? 'yes' : 'no',
 			'city' => null,
-			'status' => 'geocode', 
+			'status' => 'geocode',
 		);
 
 		//get city, we might need it for the region, and we are going to cache it
@@ -1002,13 +1023,21 @@ function tsml_get_meeting($meeting_id=false) {
 	array_map('trim', $meeting->types);
 	$meeting->types_expanded = array();
 	foreach ($meeting->types as $type) {
+		if ($type == 'ONL' || $type == 'TC') continue;
+
 		if (!empty($tsml_programs[$tsml_program]['types'][$type])) {
 			$meeting->types_expanded[] = $tsml_programs[$tsml_program]['types'][$type];
 		}
 	}
   sort($meeting->types_expanded);
-  
+
   if (!empty($meeting->post_title)) $meeting = tsml_ensure_location_approximate_set($meeting); // Can eventually remove this when <3.9 TSMLs no longer used.
+
+	// Ensure we have an attendance option
+	if (empty($meeting->attendance_option) && !empty($meeting->formatted_address)) {
+		$meeting->attendance_option = tsml_calculate_attendance_option($meeting->types, $meeting->formatted_address);
+		tsml_cache_rebuild();
+	}
 
 	return $meeting;
 }
@@ -1018,6 +1047,7 @@ function tsml_get_meeting($meeting_id=false) {
 //used:		tsml_ajax_meetings(), single-locations.php, archive-meetings.php
 function tsml_get_meetings($arguments=array(), $from_cache=true) {
 	global $tsml_cache, $tsml_contact_fields;
+	$rebuild_cache = false;
 
 	//start by grabbing all meetings
 	if ($from_cache && file_exists(WP_CONTENT_DIR . $tsml_cache) && $meetings = file_get_contents(WP_CONTENT_DIR . $tsml_cache)) {
@@ -1063,6 +1093,7 @@ function tsml_get_meetings($arguments=array(), $from_cache=true) {
 				'time'				=> @$meeting_meta[$post->ID]['time'],
 				'end_time'			=> @$meeting_meta[$post->ID]['end_time'],
 				'time_formatted'	=> tsml_format_time(@$meeting_meta[$post->ID]['time']),
+				'attendance_option'	=> @$meeting_meta[$post->ID]['attendance_option'],
 				'conference_url'	=> @$meeting_meta[$post->ID]['conference_url'],
 				'conference_url_notes'	=> @$meeting_meta[$post->ID]['conference_url_notes'],
 				'conference_phone'	=> @$meeting_meta[$post->ID]['conference_phone'],
@@ -1081,14 +1112,32 @@ function tsml_get_meetings($arguments=array(), $from_cache=true) {
 				}
 			}
 
+
 			$meetings[] = $meeting;
 		}
 		$meetings = array_map('tsml_cache_clean', $meetings);
+		$rebuild_cache = true;
+	}
+
+	for ($i=0; $i < count($meetings); $i++) {
+		if (empty($meetings[$i]['attendance_option'])) {
+			$meetings[$i]['attendance_option'] = tsml_calculate_attendance_option(empty($meetings[$i]['types']) ? array() : $meetings[$i]['types'], $meetings[$i]['formatted_address']);
+			update_post_meta($meetings[$i]['id'], 'attendance_option', $meetings[$i]['attendance_option']);
+			$rebuild_cache = true;
+		}
+
+		// Remove TC when online only meeting has approximate address
+		if ($meetings[$i]['attendance_option'] == 'online' && tsml_geocode($meetings[$i]['formatted_address'])['approximate'] == 'yes') {
+			$meetings[$i]['types'] = array_values(array_diff($meetings[$i]['types'], array('TC')));
+		}
+	}
+
+	if ($rebuild_cache) {
 		file_put_contents(WP_CONTENT_DIR . $tsml_cache, json_encode($meetings));
 	}
 
 	//check if we are filtering
-	$allowed = array('mode', 'day', 'time', 'region', 'district', 'type', 'query', 'group_id', 'location_id', 'latitude', 'longitude', 'distance_units', 'distance');
+	$allowed = array('mode', 'day', 'time', 'region', 'district', 'type', 'query', 'group_id', 'location_id', 'latitude', 'longitude', 'distance_units', 'distance', 'attendance_option');
 	if ($arguments = array_intersect_key($arguments, array_flip($allowed))) {
 		$filter = new tsml_filter_meetings($arguments);
 		$meetings = $filter->apply($meetings);
@@ -1100,6 +1149,42 @@ function tsml_get_meetings($arguments=array(), $from_cache=true) {
 
 }
 
+//function: calculate attendance option given types and address
+// called in tsml_get_meetings()
+function tsml_calculate_attendance_option($types, $address) {
+	$attendance_option = '';
+
+	$approximate = true;
+	if (!empty($address) && tsml_geocode($address)['approximate'] == 'no') {
+		$approximate = false;
+	}
+
+	// Handle when the types list is empty, this prevents PHP warnings
+	if (empty($types)) $types = array();
+
+	if (in_array('TC', $types) && in_array('ONL', $types)) {
+		// Types has both Location Temporarily Closed and Online, which means it should be an online meeting
+		$attendance_option = 'online';
+	} elseif (in_array('TC', $types)) {
+		// Types has Location Temporarily Closed, but not online, which means it really is temporarily closed
+		$attendance_option = 'inactive';
+	} elseif (in_array('ONL', $types)) {
+		// Types has Online, but not Temp closed, which means it's a hybrid (or online)
+		$attendance_option = 'hybrid';
+		if ($approximate) {
+			$attendance_option = 'online';
+		}
+	} else {
+		// Neither Online or Temp Closed, which means it's in person (or inactive)
+		$attendance_option = 'in_person';
+		if ($approximate) {
+			$attendance_option = 'inactive';
+		}
+	}
+
+	return $attendance_option;
+}
+
 //function: get metadata for all meetings very quickly
 //called in tsml_get_meetings(), tsml_get_locations()
 function tsml_get_meta($type, $id=null) {
@@ -1109,12 +1194,12 @@ function tsml_get_meta($type, $id=null) {
 	$keys = array(
 		'tsml_group' => '"website", "website_2", "email", "phone", "mailing_address", "venmo", "square", "paypal", "last_contact"' . (current_user_can('edit_posts') ? ', "contact_1_name", "contact_1_email", "contact_1_phone", "contact_2_name", "contact_2_email", "contact_2_phone", "contact_3_name", "contact_3_email", "contact_3_phone"' : ''),
 		'tsml_location' => '"formatted_address", "latitude", "longitude"',
-		'tsml_meeting' => '"day", "time", "end_time", "types", "group_id", "website", "website_2", "email", "phone", "mailing_address", "venmo", "square", "paypal", "last_contact", "conference_url", "conference_url_notes", "conference_phone", "conference_phone_notes"' . (current_user_can('edit_posts') ? ', "contact_1_name", "contact_1_email", "contact_1_phone", "contact_2_name", "contact_2_email", "contact_2_phone", "contact_3_name", "contact_3_email", "contact_3_phone"' : ''),
+		'tsml_meeting' => '"day", "time", "end_time", "types", "group_id", "website", "website_2", "email", "phone", "mailing_address", "venmo", "square", "paypal", "last_contact", "attendance_option", "conference_url", "conference_url_notes", "conference_phone", "conference_phone_notes"' . (current_user_can('edit_posts') ? ', "contact_1_name", "contact_1_email", "contact_1_phone", "contact_2_name", "contact_2_email", "contact_2_phone", "contact_3_name", "contact_3_email", "contact_3_phone"' : ''),
 	);
 	if (!array_key_exists($type, $keys)) return trigger_error('tsml_get_meta for unexpected type ' . $type);
 	$meta = array();
-	$query = 'SELECT post_id, meta_key, meta_value FROM ' . $wpdb->postmeta . ' WHERE 
-		meta_key IN (' . $keys[$type] . ') AND 
+	$query = 'SELECT post_id, meta_key, meta_value FROM ' . $wpdb->postmeta . ' WHERE
+		meta_key IN (' . $keys[$type] . ') AND
 		post_id ' . ($id ? '= ' . $id : 'IN (SELECT id FROM ' . $wpdb->posts . ' WHERE post_type = "' . $type . '")');
 	$values = $wpdb->get_results($query);
 	foreach ($values as $value) {
@@ -1123,7 +1208,7 @@ function tsml_get_meta($type, $id=null) {
 
 	//get taxonomy
 	if ($type == 'tsml_location') {
-		$regions = $wpdb->get_results('SELECT 
+		$regions = $wpdb->get_results('SELECT
 				r.`object_id` location_id,
 				t.`term_id` region_id,
 				t.`name` region
@@ -1136,7 +1221,7 @@ function tsml_get_meta($type, $id=null) {
 			$meta[$region->location_id]['region_id'] = $region->region_id;
 		}
 	} elseif ($type == 'tsml_group') {
-		$districts = $wpdb->get_results('SELECT 
+		$districts = $wpdb->get_results('SELECT
 				r.`object_id` group_id,
 				t.`term_id` district_id,
 				t.`name` district
@@ -1184,7 +1269,7 @@ function tsml_meeting_types($types) {
 //sanitize and import an array of meetings to an 'import buffer' (an wp_option that's iterated on progressively)
 //called from admin_import.php (both CSV and JSON)
 function tsml_import_buffer_set($meetings, $data_source=null) {
-	global $tsml_programs, $tsml_program, $tsml_days;
+	global $tsml_programs, $tsml_program, $tsml_days, $tsml_meeting_attendance_options;
 
 	if (strpos($data_source, "spreadsheets.google.com") !== false){
 		$meetings = tsml_import_reformat_googlesheet($meetings);
@@ -1368,6 +1453,14 @@ function tsml_import_buffer_set($meetings, $data_source=null) {
 		}
 		if (empty($meetings[$i]['conference_phone'])) {
 			$meetings[$i]['conference_phone_notes'] = null;
+		}
+
+		//Clean up attendance options
+		if (!empty($meetings[$i]['attendance_option'])) {
+			$meetings[$i]['attendance_option'] = trim(strtolower($meetings[$i]['attendance_option']));
+			if (!array_key_exists($meetings[$i]['attendance_option'], $tsml_meeting_attendance_options)) {
+				$meetings[$i]['attendance_option'] = '';
+			}
 		}
 
 		//make sure we're not double-listing types
@@ -1606,7 +1699,7 @@ function tsml_update_types_in_use() {
 
 	//shortcut to getting all meta values without getting all posts first
 	$types = $wpdb->get_col('SELECT
-			m.meta_value 
+			m.meta_value
 		FROM ' . $wpdb->postmeta . ' m
 		JOIN ' . $wpdb->posts . ' p ON m.post_id = p.id
 		WHERE p.post_type = "tsml_meeting" AND m.meta_key = "types" AND p.post_status = "publish"');

@@ -18,6 +18,7 @@ class tsml_filter_meetings
     public $searchable_keys;
     public $time;
     public $type;
+    public $attendance_option;
 
     //sanitize and save arguments (won't be passed to a database)
     public function __construct($arguments)
@@ -84,6 +85,21 @@ class tsml_filter_meetings
             $this->type = is_array($arguments['type']) ? array_map('trim', $arguments['type']) : explode(',',trim($arguments['type']));
         }
 
+        if (!empty($arguments['attendance_option'])) {
+            $this->attendance_option = is_array($arguments['attendance_option']) 
+                ? array_map('trim', $arguments['attendance_option'])
+                : explode(',',trim($arguments['attendance_option']));
+            if (!empty(array_intersect($this->attendance_option, Array('online', 'in_person')))) {
+                $this->attendance_option[] = 'hybrid';
+            }
+            if (!empty(array_intersect($this->attendance_option, Array('active')))) {
+                $this->attendance_option[] = 'hybrid';
+                $this->attendance_option[] = 'in_person';
+                $this->attendance_option[] = 'online';
+            }
+            $this->attendance_option = array_unique($this->attendance_option);
+        }
+
     }
 
     //run the filters
@@ -130,6 +146,10 @@ class tsml_filter_meetings
                 $meetings = array_filter($meetings, array($this, 'filter_distance'));
             }
 
+        }
+
+        if ($this->attendance_option) {
+          $meetings = array_filter($meetings, array($this, 'filter_attendance_option'));
         }
 
         //return data
@@ -260,6 +280,15 @@ class tsml_filter_meetings
             return false;
         }
         return !count(array_diff($this->type, $meeting['types']));
+    }
+
+    //callback function to pass to array_filter
+    public function filter_attendance_option($meeting)
+    {
+        if (!isset($meeting['attendance_option'])) {
+          return false;
+        }
+        return in_array($meeting['attendance_option'], $this->attendance_option);
     }
 
     //function to get district id from slug

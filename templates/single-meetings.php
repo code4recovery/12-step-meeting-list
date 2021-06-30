@@ -30,6 +30,9 @@ function tsml_body_class($classes) {
 		$classes[] = $type_classes;
 	}
 
+	// Add the attendance option class to the body tag
+	$classes[] = 'attendance-' . sanitize_title($meeting->attendance_option);
+
 	return $classes;
 }
 
@@ -42,7 +45,16 @@ get_header();
 			<div class="col-md-10 col-md-offset-1 main">
 
 				<div class="page-header">
-					<h1><?php echo tsml_format_name($meeting->post_title, $meeting->types) ?></h1>
+					<h1><?php echo $meeting->post_title; ?></h1>
+					<?php
+						$meeting_types = tsml_format_types($meeting->types);
+						if (!empty($meeting_types)) {
+							echo '<small><span class="meeting_types">(' . __($meeting_types, "12-step-meeting-list") . ')</span></small>';
+						}
+						echo '<div class="attendance-option">' . __($tsml_meeting_attendance_options[$meeting->attendance_option], "12-step-meeting-list");
+						echo '</div><br/>';
+					?>
+
 					<?php echo tsml_link(get_post_type_archive_link('tsml_meeting'), '<i class="glyphicon glyphicon-chevron-right"></i> ' . __('Back to Meetings', '12-step-meeting-list'), 'tsml_meeting') ?>
 				</div>
 
@@ -77,21 +89,42 @@ get_header();
 										echo __(' to ', '12-step-meeting-list'), tsml_format_time($meeting->end_time);
 									}
 									echo '</p>';
-									if (count($meeting->types_expanded)) { ?>
+									//if (count($meeting->types_expanded)) { ?>
 										<ul class="meeting-types">
-										<?php foreach ($meeting->types_expanded as $type) {?>
-											<li>
-												<svg class="icon" width="1em" height="1em" viewBox="0 0 16 16" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+											<?php
+											$li_marker = '<svg class="icon" width="1em" height="1em" viewBox="0 0 16 16" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
 													<path fill-rule="evenodd" d="M10.97 4.97a.75.75 0 0 1 1.071 1.05l-3.992 4.99a.75.75 0 0 1-1.08.02L4.324 8.384a.75.75 0 1 1 1.06-1.06l2.094 2.093 3.473-4.425a.236.236 0 0 1 .02-.022z"/>
-												</svg>
-												<?php _e($type, '12-step-meeting-list')?>
+												</svg>';
+											switch ($meeting->attendance_option) {
+												case 'in_person':
+													echo '<li>' . $li_marker . __('In person', '12-step-meeting-list') . '</li>' . PHP_EOL;
+													break;
+												case 'hybrid':
+													echo '<li>' . $li_marker . __('In person', '12-step-meeting-list') . '</li>' . PHP_EOL;
+													echo '<li>' . $li_marker . __('Online', '12-step-meeting-list') . '</li>' . PHP_EOL;
+													break;
+												case 'online':
+													echo '<li>' . $li_marker . __('Online', '12-step-meeting-list') . '</li>' . PHP_EOL;
+													break;
+												case 'inactive':
+													echo '<li>' . $li_marker . __('Temporarily Inactive', '12-step-meeting-list') . '</li>' . PHP_EOL;
+													break;
+												default:
+													break;
+											}
+													echo '<li><hr style="margin:10px 0;" /></li>' . PHP_EOL;
+											?>
+										<?php foreach ($meeting->types_expanded as $type) { ?>
+											<li>
+												<?php echo $li_marker;
+												_e($type, '12-step-meeting-list');?>
 											</li>
 										<?php }?>
 										</ul>
 										<?php if (!empty($meeting->type_description)) {?>
 											<p class="meeting-type-description"><?php _e($meeting->type_description, '12-step-meeting-list')?></p>
 										<?php }
-									}
+									//}
 
 									if (!empty($meeting->notes)) {?>
 										<section class="meeting-notes"><?php echo wpautop($meeting->notes) ?></section>
@@ -194,7 +227,14 @@ get_header();
 									);
 								}
 
-								if (!empty($meeting->group) || !empty($meeting->website) || !empty($meeting->website_2) || !empty($meeting->email) || !empty($meeting->phone || ($tsml_contact_display == 'public'))) {?>
+								//whether this meeting has public contact info to show
+								$hasContactInformation = (($tsml_contact_display == 'public') && (
+									!empty($meeting->contact_1_name) || !empty($meeting->contact_1_email) || !empty($meeting->contact_1_phone) ||
+									!empty($meeting->contact_2_name) || !empty($meeting->contact_2_email) || !empty($meeting->contact_2_phone) ||
+									!empty($meeting->contact_3_name) || !empty($meeting->contact_3_email) || !empty($meeting->contact_3_phone)
+								));
+
+								if (!empty($meeting->group) || !empty($meeting->website) || !empty($meeting->website_2) || !empty($meeting->email) || !empty($meeting->phone) || $hasContactInformation) {?>
 									<li class="list-group-item list-group-item-group">
 										<h3 class="list-group-item-heading"><?php echo empty($meeting->group) ? __('Contact Information', '12-step-meeting-list') : $meeting->group ?></h3>
 										<?php
@@ -242,9 +282,9 @@ get_header();
 												<?php _e('Group Phone', '12-step-meeting-list')?>
 											</a>
 										<?php }
-										if ($tsml_contact_display == 'public') {
+										if ($hasContactInformation) {
 											for ($i = 1; $i <= GROUP_CONTACT_COUNT; $i++) {
-												$name = empty($meeting->{'contact_' . $i . '_name'}) ? sprintf(__('Contact %n', '12-step-meeting-list'), $i) : $meeting->{'contact_' . $i . '_name'};
+												$name = empty($meeting->{'contact_' . $i . '_name'}) ? sprintf(__('Contact %s', '12-step-meeting-list'), $i) : $meeting->{'contact_' . $i . '_name'};
 												if (!empty($meeting->{'contact_' . $i . '_email'})) {?>
 													<a href="mailto:<?php echo $meeting->{'contact_' . $i . '_email'} ?>" class="btn btn-default btn-block contact-email">
 														<svg class="icon" width="1em" height="1em" viewBox="0 0 16 16" fill="currentColor" xmlns="http://www.w3.org/2000/svg">

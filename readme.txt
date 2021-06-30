@@ -2,7 +2,7 @@
 Contributors: Code for Recovery
 Requires at least: 3.2
 Tested up to: 5.6.0
-Stable tag: 3.10.0
+Stable tag: 3.11.0-b
 
 This plugin helps twelve step recovery programs list their meetings. It standardizes addresses, and displays results in a searchable list and map.
 
@@ -23,7 +23,7 @@ This plugin was originally designed to maintain a list of A.A. meetings in Santa
 
 == Installation ==
 
-Basically you can just install the plugin, add a mapping API key from Mapbox (or Google), and start 
+Basically you can just install the plugin, add a mapping API key from Mapbox (or Google), and start
 entering your meetings. That is all it takes to get started!
 
 == Frequently Asked Questions ==
@@ -38,11 +38,11 @@ If you have access to your theme's functions.php, you may add additional meeting
 			'XYZ' => 'My Custom Type',
 		));
 	}
-	
+
 Please note a few things about custom types:
 
 1. Once you've added the type, you will see it under 'More' on the Meeting edit screen. It will show up in the dropdown once you use it on a meeting.
-1. Be careful with the codes ("XYZ" in the above example) as this gives you the ability to replace existing types. 
+1. Be careful with the codes ("XYZ" in the above example) as this gives you the ability to replace existing types.
 1. Note that custom meeting types are not imported into the Meeting Guide app.
 1. They are for searching. If you can't imagine yourself searching for a meeting this way, then it's probably not a type you need. Have you ever searched for a 90-minute meeting? If not, then it's probably information that better belongs in the meeting notes.
 1. Don't add a type for the default, eg 'Hour Long Meeting' or 'Non-Smoking.' If you do that, then you have to be careful about tagging every single meeting in order to make the data complete.
@@ -51,7 +51,7 @@ Please note a few things about custom types:
 It depends on your Permalinks setup. The easiest way to find the link is to go to the **Dashboard > Meetings > Import & Settings** page and look for it under "Where's My Info?"
 
 = I need to correct a meeting address or change a pin's location =
-We get our geocoding positions from Google (this true even if your maps are by Mapbox). Google is correct an amazing amount of the time, but not always. If you need to add a custom location, add this to your theme's functions.php. 
+We get our geocoding positions from Google (this true even if your maps are by Mapbox). Google is correct an amazing amount of the time, but not always. If you need to add a custom location, add this to your theme's functions.php.
 
 Note you can add multiple entries to the array below.
 
@@ -107,10 +107,17 @@ By default, the plugin sorts by day, then time, then location name. To set your 
 
 	$tsml_sort_by = 'region'; //options are name, location, address, time, or region
 
+= If I am using Mapbox can I change the theme? =
+By default this plugin uses the Streets theme, v9. To change this, add this to your functions.php:
+
+	$tsml_mapbox_theme = '<theme URL>'
+
+*Please note* the version of the Mapbox script we use doesn't support all the themes displayed on the Mapbox site. The themes which have been tested and are known to work are: mapbox://styles/mapbox/streets-v9, mapbox://styles/mapbox/outdoors-v9, mapbox://styles/mapbox/light-v9, mapbox://styles/mapbox/dark-v9, mapbox://styles/mapbox/satellite-v9, and mapbox://styles/mapbox/satellite-streets-v9.
+
 = How can I override the meeting list or detail pages? =
 Copy the files from the plugin's templates directory into your theme's root directory. If you're using a theme from the Theme Directory, you may be better off creating a [Child Theme](https://codex.wordpress.org/Child_Themes). Now, you may override those pages. The archive-meetings.php file controls the meeting list page, single-meetings.php controls the meetings detail, and single-locations.php controls the location detail.
 
-*Please note* these pages will evolve over time. If you override, you will someday experience website errors after an update. If that happens, please update your theme's copy of the plugin pages. 
+*Please note* these pages will evolve over time. If you override, you will someday experience website errors after an update. If that happens, please update your theme's copy of the plugin pages.
 
 = Can I see types in the meeting list? And can I adjust the /Men and /Women after the meeting name? =
 To see types in the meeting list, one way to do it is to add some CSS to your theme which will make a types column visible.
@@ -135,7 +142,7 @@ Yes, with CSS. Rows that have meeting notes will have a 'notes' class. To add an
 	div#tsml tr.notes a:after { content: "*"; }
 
 = Can I import a custom spreadsheet format? =
-If you don't mind some PHP programming, then yes! Create a function called `tsml_import_reformat`, and use it to 
+If you don't mind some PHP programming, then yes! Create a function called `tsml_import_reformat`, and use it to
 reformat your incoming data to the standard format
 
 	if (!function_exists('tsml_import_reformat')) {
@@ -177,14 +184,14 @@ That's right, we don't display that information by default for the sake of anony
 Sure. Try adding this code to your theme's functions.php:
 
 	add_action('pre_get_posts', 'tsml_front_page');
-	
+
 Also check out our [One Page Meeting List](https://github.com/code4recovery/one-page-meeting-list) theme.
-	
+
 = Can I use this plugin to list telephone meetings or other meetings without a fixed location? =
 No, there's not a good way to do this at this time. All meetings currently need to have a geographic location.
 
 Some sites have used a general geographic area, such as a city name, but this isn't a very good solution, because a map
-pin will still show up for these meetings and people will try to get directions to them. 
+pin will still show up for these meetings and people will try to get directions to them.
 
 = Can I change the URL of the meetings list? =
 Yes, try setting the $tsml_slug variable in your functions.php.
@@ -205,6 +212,12 @@ To apply these changes, you must go to Settings > Permalinks and click "Save Cha
 
 == Changelog ==
 
+= 3.11.0 =
+* Add attendance option support, and improve online meeting support.
+* Add support for custom MapBox themes.
+* Improve TSMLui integration (short code, options).
+* Fix bug preventing map from displaying.
+
 = 3.10.0 =
 * Add BETA feature for API Gateway to replace direct geocoding calls to Google.
 * Add option for webmasters to configure their own Google geocoding API key.
@@ -214,27 +227,27 @@ To apply these changes, you must go to Settings > Permalinks and click "Save Cha
 
 = 3.9.6 =
 * Hot-fix to replace API key and correct additional geocode-related bug.
- 
+
 = 3.9.5 =
 * Hot-fix to remove geocode error when adding new meeting.
 
 = 3.9.4 =
 * Fix bugs associated with approximate values/display of directions dialogs.
 * Fix bug preventing draft locations from showing in suggestions.
-* Replace Twitter Typeahead with jQuery Autocomplete to fix dependency on 
+* Replace Twitter Typeahead with jQuery Autocomplete to fix dependency on
   deprecated jQuery code (should satisfy Wordpress 5.6 compatibility).
 
 = 3.9.3 =
 * Fix subversion process.
 
 = 3.9.2 =
-* Fix readme.txt version number. 
+* Fix readme.txt version number.
 
 = 3.9.1 =
 * Hot fix.
 
 = 3.9.0 =
-* Added tracking of approximate location. Markers/Directions are not 
+* Added tracking of approximate location. Markers/Directions are not
   provided for approximate locations.
 * Fixed bug leading to incorrect sorting in meetings list.
 * Fixed broken link for support (Need Help?).
@@ -242,7 +255,7 @@ To apply these changes, you must go to Settings > Permalinks and click "Save Cha
 * FAQ moved to Wiki on GitHub.
 
 = 3.8.0 =
-* Added notes fields for online/phone meetings. 
+* Added notes fields for online/phone meetings.
 * Fixed bug preventing selection of multiple types.
 * Fixed bug preventing customized meeting URL.
 * Fixed bug involving meetings in draft status stripping location.
@@ -256,7 +269,7 @@ To apply these changes, you must go to Settings > Permalinks and click "Save Cha
 = 3.7.1 =
 * Fixed bug introduced in previous version.
 
-= 3.7.0 = 
+= 3.7.0 =
 * Added additional support for 7th Tradition contributions.
 * Added outdoor and seniors meeting types.
 * Fixed bugs affecting contacts.
@@ -272,19 +285,19 @@ To apply these changes, you must go to Settings > Permalinks and click "Save Cha
 * Improved URL screening for csv/json imports.
 * Improved front end styling for meetings.
 
-= 3.6.4 = 
+= 3.6.4 =
 * Updated CSV import/export and template to reflect added fields.
 * Added abiility to bulk add/remove Temporary Closure type.
 * Add two additional online conference types.
 * Updated online phone button.
 * Other bug fixes.
 
-= 3.6.3 = 
+= 3.6.3 =
 * Fixed issue with setting null for conference types.
 * Fixed JSON feed not importing online conference info, and Venmo info.
 * Added Skype conference type.
 
-= 3.6.2 = 
+= 3.6.2 =
 * Changes online meeting information from group to individual meeting (Issue #82).
 * Adds front end styling for online meetings.
 
@@ -297,7 +310,7 @@ To apply these changes, you must go to Settings > Permalinks and click "Save Cha
 
 = 3.5.4 =
 * Added temporary closure styling to widget.
- 
+
 = 3.5.3 =
 * Changes to front end display supporting temporary closure tag.
 
@@ -391,7 +404,7 @@ To apply these changes, you must go to Settings > Permalinks and click "Save Cha
 * Geocodes (Western Mass)
 
 = 3.4.1 =
-* 3.4 was missing a file :( 
+* 3.4 was missing a file :(
 
 = 3.4 =
 * Major rewrite to make plugin more CPU-efficient (Ventura)
