@@ -4,7 +4,7 @@
 function tmsl_import_page() {
 	global $wpdb, $tsml_data_sources, $tsml_programs, $tsml_program, $tsml_nonce, $tsml_days, $tsml_feedback_addresses, 
 	$tsml_notification_addresses, $tsml_distance_units, $tsml_sharing, $tsml_sharing_keys, $tsml_contact_display,
-	$tsml_google_maps_key, $tsml_mapbox_key, $tsml_geocoding_method, $tsml_slug, $tsml_feedback_method;
+	$tsml_google_maps_key, $tsml_mapbox_key, $tsml_geocoding_method, $tsml_slug, $tsml_feedback_method; 
 
 	$error = false;
 	
@@ -344,7 +344,7 @@ function tmsl_import_page() {
 			tsml_alert(sprintf(esc_html__('<p><code>%s</code> was not found in the list of addresses. Please try again.</p>', '12-step-meeting-list'), $email), 'error');
 		}
 	}
-			
+	
 	//change feedback method
 	if (!empty($_POST['tsml_feedback_method']) && isset($_POST['tsml_nonce']) && wp_verify_nonce($_POST['tsml_nonce'], $tsml_nonce)) {
 		$tsml_feedback_method = ($_POST['tsml_feedback_method'] == 'enhanced') ? 'enhanced' : 'legacy';
@@ -352,7 +352,7 @@ function tmsl_import_page() {
 		tsml_cache_rebuild(); //this value affects what's in the cache
 		tsml_alert(__('Feedback Method updated.', '12-step-meeting-list'));
 	}
-
+	
 	//add a notification email
 	if (!empty($_POST['tsml_add_notification_address']) && isset($_POST['tsml_nonce']) && wp_verify_nonce($_POST['tsml_nonce'], $tsml_nonce)) {
 		$email = sanitize_text_field($_POST['tsml_add_notification_address']);

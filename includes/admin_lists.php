@@ -145,11 +145,12 @@ add_filter('bulk_actions-edit-tsml_meeting', 'tsml_my_bulk_actions');
 
 function tsml_my_bulk_actions($bulk_array)
 {
-    $bulk_array['tsml_add_tc'] = __('Add Temporary Closure', '12-step-meeting-list');
-    $bulk_array['tsml_remove_tc'] = __('Remove Temporary Closure', '12-step-meeting-list');
+    //$bulk_array['tsml_add_tc'] = __('Add Temporary Closure', '12-step-meeting-list');
+    //$bulk_array['tsml_remove_tc'] = __('Remove Temporary Closure', '12-step-meeting-list');
     /*
     $bulk_array['tsml_remove_onl'] = __('Remove Online Meeting', '12-step-meeting-list');
     */
+    $bulk_array['tsml_open_in_person'] = __('Reopen for In Person Attendees', '12-step-meeting-list');
     return $bulk_array;
 }
 
@@ -162,6 +163,7 @@ function tsml_bulk_action_handler($redirect, $doaction, $object_ids)
     // let's remove query args first
     $redirect = remove_query_arg(array('tsml_add_tc'), $redirect);
     $redirect = remove_query_arg(array('tsml_remove_tc'), $redirect);
+    $redirect = remove_query_arg(array('tsml_open_in_person'), $redirect);
     //$redirect = remove_query_arg(array('tsml_remove_onl'), $redirect);
 
     // do something for "Add Temporary Closure" bulk action
@@ -254,6 +256,46 @@ function tsml_bulk_action_handler($redirect, $doaction, $object_ids)
     }
     */
 
+    // do something for "Remove Temporary Closure" bulk action
+    if ($doaction == 'tsml_open_in_person') {
+        $count = 0;
+        foreach ($object_ids as $post_id) {
+            $meeting = tsml_get_meeting($post_id);
+
+            if ($meeting->attendance_option == 'in_person' || $meeting->attendance_option == 'hybrid') continue;
+
+            if (empty($meeting->formatted_address) || tsml_geocode($meeting->formatted_address)['approximate'] != 'no') continue;
+
+            if (!empty($meeting->conference_url) || !empty($meeting->conference_phone)) {
+                $meeting->attendance_option = 'hybrid';
+            } else {
+                $meeting->attendance_option = 'in_person';
+            }
+            update_post_meta($post_id, 'attendance_option', $meeting->attendance_option);
+
+            // For each select post, remove TC if it's selected in "types"
+            $types = get_post_meta($post_id, 'types', false)[0];
+            if (!empty($types) && in_array('TC', array_values($types))) {
+                $types = array_diff($types, array('TC'));
+                if (empty($types)) {
+                    delete_post_meta($post_id, 'types');
+                } else {
+                    update_post_meta($post_id, 'types', array_map('esc_attr', $types));
+                }
+            }
+            $count++;
+        }
+
+        if ($count > 0) {
+            //rebuild cache
+            tsml_cache_rebuild();
+            //update types in use
+            tsml_update_types_in_use();
+            // add number of meetings changed to query args
+            $redirect = add_query_arg('tsml_open_in_person', $count, $redirect);
+        }
+    }
+
     return $redirect;
 }
 
@@ -278,6 +320,15 @@ function tsml_bulk_action_notices () {
                 'Temporary Closure removed from %s meetings',
                 intval($_REQUEST['tsml_remove_tc'])
             ) . '</p></div>', intval($_REQUEST['tsml_remove_tc']));
+    }
+    if (!empty($_REQUEST['tsml_open_in_person'])){
+        // depending on how many posts were changed, make the message different
+        printf('<div id="message" class="updated notice is-dismissible"><p>' .
+            _n(
+                '%s meeting reopened for in person attendees',
+                '%s meetings reopended for in person attendees',
+                intval($_REQUEST['tsml_open_in_person'])
+            ) . '</p></div>', intval($_REQUEST['tsml_open_in_person']));
     }
     /*
     if (!empty($_REQUEST['tsml_remove_onl'])){

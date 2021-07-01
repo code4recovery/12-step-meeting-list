@@ -17,8 +17,9 @@ if (!$tsml_cache = get_option('tsml_cache')) {
 // Define attendance options
 $tsml_meeting_attendance_options = array(
 	'in_person' => 'In-person',
-	'online' => 'Online only',
-	'hybrid' => 'In-person and online',
+	'hybrid' => 'In-person and Online',
+	'online' => 'Online',
+	'inactive' => 'Temporarily Inactive',
 );
 
 //load the set of columns that should be present in the list (not sure why this shouldn't go after plugins_loaded below)
@@ -26,7 +27,7 @@ $tsml_columns = array(
 	'time' => 'Time',
 	'distance' => 'Distance', 
 	'name' => 'Meeting',
-	'location' => 'Location',
+	'location' => 'Location / Group',
 	'address' => 'Address',
 	'region' => 'Region',
 	'district' => 'District',
@@ -87,6 +88,7 @@ $tsml_defaults = array(
 	'mode' => 'search',
 	'query' => null,
 	'view' => 'list',
+  'attendance_option' => null
 );
 
 //load the distance units that we're using (ie miles or kms)
@@ -476,6 +478,9 @@ $tsml_street_only = true;
 //for timing
 $tsml_timestamp = microtime(true);
 
+//for customizing TSML-UI
+$tsml_ui_config = array();
+
 //these are empty now because polylang might change the language. gets set in the plugins_loaded hook
 $tsml_days = $tsml_days_order = $tsml_programs = $tsml_types_in_use = $tsml_strings = null;
 
@@ -581,8 +586,8 @@ function tsml_define_strings() {
 			'type_descriptions' => array(
 				'C' => __('This meeting is closed; only those who have a desire to stop drinking may attend.', '12-step-meeting-list'),
 				'O' => __('This meeting is open and anyone may attend.', '12-step-meeting-list'),
-				'TC' => __('This meeting is temporarily not meeting in-person.', '12-step-meeting-list'),
-				'ONL' => __('Online meeting. Details below.', '12-step-meeting-list')
+				//'TC' => __('This meeting is temporarily not meeting in-person.', '12-step-meeting-list'),
+				//'ONL' => __('Online meeting. Details below.', '12-step-meeting-list')
 			),
 			'types' => array(
 				'11' => __('11th Step Meditation', '12-step-meeting-list'),

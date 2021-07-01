@@ -75,6 +75,15 @@ jQuery(function($) {
 			$('#publish').addClass('disabled');
 		}
 
+		// Hide all errors/warnings
+		function resetClasses() {
+			$('div.form_not_valid').addClass('hidden');
+			$('div.need_approximate_address').addClass('hidden');
+			$('input#formatted_address').removeClass('error');
+			$('input#location').removeClass('warning');
+			$('input#formatted_address').removeClass('warning');
+		}
+
 		$('form#post').submit(function() {
 			return form_valid;
 		});
@@ -307,8 +316,24 @@ jQuery(function($) {
 									$('select[name=region] option[value=' + region_id + ']').prop('selected', true);
 								}
 
-								//form is ok to submit again
-								formIsValid();
+								// hide error/warning messages
+								resetClasses();
+
+								meeting_is_online = $('input#conference_url').val() != '' || $('input#conference_phone').val() != '';
+								// In-person meetings can't have approximate addresses
+								if ($('input[name=in_person]:checked').val() == 'yes' && $('input#approximate').val() == 'yes') {
+									$('div.form_not_valid').removeClass('hidden');
+									$('input#formatted_address').addClass('error');
+									formIsNotValid();
+								} else if ($('input[name=in_person]:checked').val() == 'no' &&  $('input#approximate').val() == 'no' && meeting_is_online) {
+									$('div.need_approximate_address').removeClass('hidden');
+									$('input#location').addClass('warning');
+									$('input#formatted_address').addClass('warning');
+									formIsValid()
+								} else {
+									//form is ok to submit again
+									formIsValid()
+								}
 							}
 						);
 					}
@@ -329,6 +354,20 @@ jQuery(function($) {
 						$('div.apply_address_to_location').addClass('hidden');
 					}
 				}
+			});
+
+		// Verify address when a change to in_person question
+		$('input[name=in_person]')
+			.change(function() {
+				$('input#formatted_address').change();
+			});
+		$('input#conference_url')
+			.change(function() {
+				$('input#formatted_address').change();
+			});
+		$('input#conference_phone')
+			.change(function() {
+				$('input#formatted_address').change();
 			});
 
 		//when page loads, run lookup
