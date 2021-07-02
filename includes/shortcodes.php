@@ -101,7 +101,6 @@ if (!function_exists('tsml_ui')) {
 		wp_enqueue_script('tsml_ui', $js);
 		wp_localize_script('tsml_ui', 'tsml_react_config', array_merge(
 			array(
-				'timezone' => get_option('timezone_string', 'America/New_York'),
 				'conference_providers' => $tsml_conference_providers,
 				'strings' => array(
 					$tsml_language => array(
@@ -113,7 +112,10 @@ if (!function_exists('tsml_ui')) {
 			$tsml_ui_config
 		));
 		$data = admin_url('admin-ajax.php') . '?action=meetings&nonce=' . wp_create_nonce($tsml_nonce);
-		return '<meetings src="' . $data . '" mapbox="' . $tsml_mapbox_key . '"/>';
+		return '<div id="tsml-ui" 
+					data-src="' . $data . '" 
+					data-timezone="' . get_option('timezone_string', 'America/New_York') . '" 
+					data-mapbox="' . $tsml_mapbox_key . '"></div>';
 	}
 }
 add_shortcode('tsml_react', 'tsml_ui');
