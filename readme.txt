@@ -212,6 +212,9 @@ To apply these changes, you must go to Settings > Permalinks and click "Save Cha
 
 == Changelog ==
 
+= 3.11.1 =
+* Fix PHP warnings.
+
 = 3.11.0 =
 * Add attendance option support, and improve online meeting support.
 * Add support for custom MapBox themes.
