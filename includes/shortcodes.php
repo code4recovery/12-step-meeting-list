@@ -97,7 +97,7 @@ add_shortcode('tsml_types_list', 'tsml_types_list');
 if (!function_exists('tsml_ui')) {
 	function tsml_ui() {
 		global $tsml_mapbox_key, $tsml_nonce, $tsml_sharing, $tsml_conference_providers, $tsml_language, $tsml_columns, $tsml_programs, $tsml_program, $tsml_ui_config, $tsml_feedback_addresses;
-		$js = defined('TSML_UI_PATH') ? TSML_UI_PATH : 'https://cdn.jsdelivr.net/gh/code4recovery/tsml-ui/public/app.js';
+		$js = defined('TSML_UI_PATH') ? TSML_UI_PATH : 'https://react.meetingguide.org/app.js';
 		wp_enqueue_script('tsml_ui', $js);
 		wp_localize_script('tsml_ui', 'tsml_react_config', array_merge(
 			array(
