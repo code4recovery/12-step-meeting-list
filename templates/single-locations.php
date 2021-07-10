@@ -80,7 +80,7 @@ get_header();
 									$type_classes = tsml_to_css_classes($meeting['types']);
 
 									$meeting_link = '<li class="meeting attendance-' . $meeting['attendance_option']. '"><span>' . $meeting['time_formatted'] . '</span> ';
-									$meeting_link .= '<a href="' . $meeting['url'] . '">' . $meeting['name'] . '</a>';
+									$meeting_link .= tsml_link($meeting['url'], $meeting['name']);
 									$meeting_types = tsml_format_types($meeting['types']);
 									if (!empty($meeting_types)) {
 										$meeting_link .= '<div class="meeting_types"><small>(' . __($meeting_types, "12-step-meeting-list") . ')</small></div>';

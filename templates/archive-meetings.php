@@ -536,7 +536,7 @@ foreach ($meetings as $meeting) {
         $meeting['types'] = array();
     }
 
-    $meeting['link'] = tsml_link($meeting['url'], tsml_format_name($meeting['name'], $meeting['types']), 'post_type');
+    //$meeting['link'] = tsml_link($meeting['url'], tsml_format_name($meeting['name'], $meeting['types']), 'post_type');
 
     if (!isset($locations[$meeting['location_id']])) {
         $locations[$meeting['location_id']] = array(
@@ -589,7 +589,7 @@ break;
 
             case 'name': ?>
 									<td class="name" data-sort="<?php echo tsml_sanitize_data_sort($meeting['name']) . '-' . $sort_time ?>">
-                                        <a href="<?php echo $meeting['url']?>"><?php echo $meeting['name']?></a>
+                                        <?php echo tsml_link($meeting['url'], $meeting['name']); ?>
                                         <?php
                                             $meeting_types = tsml_format_types($meeting['types']);
                                             if (!empty($meeting_types)) {
