@@ -12,7 +12,11 @@ if (!function_exists('tsml_next_meetings')) {
 	{
 		global $tsml_program, $tsml_programs, $tsml_meeting_attendance_options;
 		$arguments = shortcode_atts(array('count' => 5, 'message' => ''), $arguments, 'tsml_next_meetings');
-		$meetings = tsml_get_meetings(array('day' => intval(current_time('w')), 'time' => 'upcoming'));
+		$meetings = tsml_get_meetings(array(
+			'day' => intval(current_time('w')), 
+			'time' => 'upcoming',
+			'attendance_option' => 'active',
+		));
 		if (!count($meetings) && empty($arguments['message'])) {
 			return false;
 		}

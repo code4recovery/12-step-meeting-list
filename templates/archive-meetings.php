@@ -100,8 +100,9 @@ if (!empty($_GET['tsml-type'])) {
 $attendance_options = array();
 if (!empty($_GET['tsml-attendance_option'])) {
     $attendance_option_queries = explode(',', $_GET['tsml-attendance_option']);
+    // $tsml_meeting_attendance_options['active'] = null;
     foreach ($attendance_option_queries as $attendance_option_query) {
-        if (array_key_exists($attendance_option_query, $tsml_meeting_attendance_options)) {
+        if ((array_key_exists($attendance_option_query, $tsml_meeting_attendance_options)) || ($attendance_option_query === 'active')) {
             $attendance_options[] = $attendance_option_query;
         }
     }
@@ -165,6 +166,9 @@ if (!count($types) && (!count($attendance_options))) {
 } else {
     $type_label = array();
     foreach ($attendance_options as $attendance_option) {
+        if ($attendance_option === 'active') {
+          $type_label[] = "Active";
+        }
         if (array_key_exists($attendance_option, $tsml_meeting_attendance_options)) {
             $type_label[] = $tsml_meeting_attendance_options[$attendance_option];
         }
