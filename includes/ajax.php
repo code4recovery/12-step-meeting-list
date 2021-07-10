@@ -482,7 +482,7 @@ if (!function_exists('function_name')) {
 			}
 
 			//add custom meeting fields if available
-			foreach (array('types', 'data_source', 'attendance_option', 'conference_url', 'conference_url_notes', 'conference_phone', 'conference_phone_notes') as $key) {
+			foreach (array('types', 'data_source', 'conference_url', 'conference_url_notes', 'conference_phone', 'conference_phone_notes') as $key) {
 				if (!empty($meeting[$key])) add_post_meta($meeting_id, $key, $meeting[$key]);
 			}
 
