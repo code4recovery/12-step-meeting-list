@@ -663,12 +663,7 @@ jQuery(function($) {
 										'-' +
 										sort_time +
 										'">' +
-										//formatLink(obj.url, obj.name, 'post_type') +
-										'<a href="' +
-										obj.url +
-										'">' +
-										obj.name +
-										'</a>';
+										formatLink(obj.url, obj.name, 'post_type');
 									if (typeList.length > 0) {
 										row += ' <small>' + typeList.join(', ') + '</small>';
 									}
