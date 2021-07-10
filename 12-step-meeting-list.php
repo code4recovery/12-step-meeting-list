@@ -3,7 +3,7 @@
 Plugin Name: 12 Step Meeting List
 Plugin URI: https://wordpress.org/plugins/12-step-meeting-list/
 Description: Manage a list of recovery meetings
-Version: 3.11.1
+Version: 3.11.2
 Author: Code4Recovery
 Author URI: https://github.com/code4recovery/12-step-meeting-list
 Text Domain: 12-step-meeting-list
@@ -27,7 +27,7 @@ if (!defined('TSML_PATH')) {
 }
 
 if (!defined('TSML_VERSION')) {
-    define('TSML_VERSION', '3.11.1');
+    define('TSML_VERSION', '3.11.2');
 }
 
 //include these files first
