@@ -202,7 +202,6 @@ if (!function_exists('tsml_ajax_csv')) {
 			'contact_3_email' =>		'Contact 3 Email',
 			'contact_3_phone' =>		'Contact 3 Phone',
 			'last_contact' => 			'Last Contact',
-			'attendance_option' =>	'Attendance Option',
 			'conference_url' => 		'Conference URL',
 			'conference_url_notes' => 	'Conference URL Notes',
 			'conference_phone' => 		'Conference Phone',
