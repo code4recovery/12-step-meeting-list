@@ -6,10 +6,11 @@ The best way to install this plugin is via [its home page](https://wordpress.org
 
 ## Support
 
-We have changed the venue used for obtaining support for TSML to our development site. By using GitHub Issues, you are able to attach screen caps, share more information
-with the developers, and reduce duplicate work in the case of validated bugs. This also helps us as it consolidates support and improves tracking of concerns our users have.
+We are switching the venue used for obtaining support for TSML from GitHub Issues to GitHub Discussions. By using Discussions, you are able to be a part of the community and contribute to the development of the plugin! You can ask questions and get answers, share ideas, or open general discussions. You can also showcase your website modifications/improvments.
 
-To create a new support ticket, please navigate to [here](https://github.com/code4recovery/12-step-meeting-list/issues) and click on `New issue`. Then select the type of ticket, and complete as much as possible of the information requested. This will help us respond quicker.
+To create a new support ticket, please navigate to [here](https://github.com/code4recovery/12-step-meeting-list/dicussions) and click on `New discussion`. Then select the type of discussion, and complete as much as possible of the information requested. This will help us respond quicker.
+
+Eventually, we will close down public write access to Issues.
 
 ## Helping With Development
 

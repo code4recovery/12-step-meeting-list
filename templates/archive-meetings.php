@@ -100,8 +100,9 @@ if (!empty($_GET['tsml-type'])) {
 $attendance_options = array();
 if (!empty($_GET['tsml-attendance_option'])) {
     $attendance_option_queries = explode(',', $_GET['tsml-attendance_option']);
+    // $tsml_meeting_attendance_options['active'] = null;
     foreach ($attendance_option_queries as $attendance_option_query) {
-        if (array_key_exists($attendance_option_query, $tsml_meeting_attendance_options)) {
+        if ((array_key_exists($attendance_option_query, $tsml_meeting_attendance_options)) || ($attendance_option_query === 'active')) {
             $attendance_options[] = $attendance_option_query;
         }
     }
@@ -165,6 +166,9 @@ if (!count($types) && (!count($attendance_options))) {
 } else {
     $type_label = array();
     foreach ($attendance_options as $attendance_option) {
+        if ($attendance_option === 'active') {
+          $type_label[] = "Active";
+        }
         if (array_key_exists($attendance_option, $tsml_meeting_attendance_options)) {
             $type_label[] = $tsml_meeting_attendance_options[$attendance_option];
         }
@@ -532,7 +536,7 @@ foreach ($meetings as $meeting) {
         $meeting['types'] = array();
     }
 
-    $meeting['link'] = tsml_link($meeting['url'], tsml_format_name($meeting['name'], $meeting['types']), 'post_type');
+    //$meeting['link'] = tsml_link($meeting['url'], tsml_format_name($meeting['name'], $meeting['types']), 'post_type');
 
     if (!isset($locations[$meeting['location_id']])) {
         $locations[$meeting['location_id']] = array(
@@ -585,7 +589,7 @@ break;
 
             case 'name': ?>
 									<td class="name" data-sort="<?php echo tsml_sanitize_data_sort($meeting['name']) . '-' . $sort_time ?>">
-                                        <a href="<?php echo $meeting['url']?>"><?php echo $meeting['name']?></a>
+                                        <?php echo tsml_link($meeting['url'], $meeting['name']); ?>
                                         <?php
                                             $meeting_types = tsml_format_types($meeting['types']);
                                             if (!empty($meeting_types)) {

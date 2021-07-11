@@ -12,7 +12,11 @@ if (!function_exists('tsml_next_meetings')) {
 	{
 		global $tsml_program, $tsml_programs, $tsml_meeting_attendance_options;
 		$arguments = shortcode_atts(array('count' => 5, 'message' => ''), $arguments, 'tsml_next_meetings');
-		$meetings = tsml_get_meetings(array('day' => intval(current_time('w')), 'time' => 'upcoming'));
+		$meetings = tsml_get_meetings(array(
+			'day' => intval(current_time('w')), 
+			'time' => 'upcoming',
+			'attendance_option' => 'active',
+		));
 		if (!count($meetings) && empty($arguments['message'])) {
 			return false;
 		}
@@ -97,11 +101,10 @@ add_shortcode('tsml_types_list', 'tsml_types_list');
 if (!function_exists('tsml_ui')) {
 	function tsml_ui() {
 		global $tsml_mapbox_key, $tsml_nonce, $tsml_sharing, $tsml_conference_providers, $tsml_language, $tsml_columns, $tsml_programs, $tsml_program, $tsml_ui_config, $tsml_feedback_addresses;
-		$js = defined('TSML_UI_PATH') ? TSML_UI_PATH : 'https://cdn.jsdelivr.net/gh/code4recovery/tsml-ui/public/app.js';
+		$js = defined('TSML_UI_PATH') ? TSML_UI_PATH : 'https://react.meetingguide.org/app.js';
 		wp_enqueue_script('tsml_ui', $js);
 		wp_localize_script('tsml_ui', 'tsml_react_config', array_merge(
 			array(
-				'timezone' => get_option('timezone_string', 'America/New_York'),
 				'conference_providers' => $tsml_conference_providers,
 				'strings' => array(
 					$tsml_language => array(
@@ -113,7 +116,10 @@ if (!function_exists('tsml_ui')) {
 			$tsml_ui_config
 		));
 		$data = admin_url('admin-ajax.php') . '?action=meetings&nonce=' . wp_create_nonce($tsml_nonce);
-		return '<meetings src="' . $data . '" mapbox="' . $tsml_mapbox_key . '"/>';
+		return '<div id="tsml-ui" 
+					data-src="' . $data . '" 
+					data-timezone="' . get_option('timezone_string', 'America/New_York') . '" 
+					data-mapbox="' . $tsml_mapbox_key . '"></div>';
 	}
 }
 add_shortcode('tsml_react', 'tsml_ui');

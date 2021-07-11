@@ -1127,7 +1127,7 @@ function tsml_get_meetings($arguments=array(), $from_cache=true) {
 		}
 
 		// Remove TC when online only meeting has approximate address
-		if ($meetings[$i]['attendance_option'] == 'online' && tsml_geocode($meetings[$i]['formatted_address'])['approximate'] == 'yes') {
+		if (!empty($meetings[$i]['types']) && $meetings[$i]['attendance_option'] == 'online' && tsml_geocode($meetings[$i]['formatted_address'])['approximate'] == 'yes') {
 			$meetings[$i]['types'] = array_values(array_diff($meetings[$i]['types'], array('TC')));
 		}
 	}
