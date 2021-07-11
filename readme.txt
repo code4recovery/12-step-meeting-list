@@ -1,8 +1,8 @@
 === 12 Step Meeting List ===
 Contributors: Code for Recovery
 Requires at least: 3.2
-Tested up to: 5.6.0
-Stable tag: 3.11.0
+Tested up to: 5.7.2
+Stable tag: 3.11.2
 
 This plugin helps twelve step recovery programs list their meetings. It standardizes addresses, and displays results in a searchable list and map.
 
@@ -211,6 +211,16 @@ To apply these changes, you must go to Settings > Permalinks and click "Save Cha
 1. Edit location
 
 == Changelog ==
+
+= 3.11.2 =
+* Fix widget filtering.
+* Fix URL query parsing of `attendance_option`.
+* Fix filtering options persistence.
+* Revamp handling of online meeting links.
+* Change open/closed definitions text.
+* Fix display of online meeting location.
+* Fix handling of `attendance_option` import.
+* Update shortcode sytax for TSMLui.
 
 = 3.11.1 =
 * Fix PHP warnings.
