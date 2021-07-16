@@ -350,7 +350,7 @@ function tmsl_import_page() {
 		$tsml_feedback_method = ($_POST['tsml_feedback_method'] == 'enhanced') ? 'enhanced' : 'legacy';
 		update_option('tsml_feedback_method', $tsml_feedback_method);
 		tsml_cache_rebuild(); //this value affects what's in the cache
-		tsml_alert(__('Feedback Method updated to ' . $tsml_feedback_method . '. ', '12-step-meeting-list'));
+		tsml_alert(__('Feedback Method updated.', '12-step-meeting-list'));
 	}
 	
 	//add a notification email

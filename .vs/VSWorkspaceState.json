@@ -3,9 +3,6 @@
     "",
     "\\.github",
     "\\.github\\ISSUE_TEMPLATE",
-    "\\assets",
-    "\\assets\\css",
-    "\\assets\\js",
     "\\includes",
     "\\myChildTheme",
     "\\templates"
