@@ -1029,9 +1029,9 @@ function tsml_get_meeting($meeting_id=false) {
 			$meeting->types_expanded[] = $tsml_programs[$tsml_program]['types'][$type];
 		}
 	}
-	sort($meeting->types_expanded);
+  sort($meeting->types_expanded);
 
-  	if (!empty($meeting->post_title)) $meeting = tsml_ensure_location_approximate_set($meeting); // Can eventually remove this when <3.9 TSMLs no longer used.
+  if (!empty($meeting->post_title)) $meeting = tsml_ensure_location_approximate_set($meeting); // Can eventually remove this when <3.9 TSMLs no longer used.
 
 	// Ensure we have an attendance option
 	if (empty($meeting->attendance_option) && !empty($meeting->formatted_address)) {

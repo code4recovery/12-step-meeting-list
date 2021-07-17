@@ -212,6 +212,19 @@ To apply these changes, you must go to Settings > Permalinks and click "Save Cha
 
 == Changelog ==
 
+= 3.11.2 =
+* Fix widget filtering.
+* Fix URL query parsing of `attendance_option`.
+* Fix filtering options persistence.
+* Revamp handling of online meeting links.
+* Change open/closed definitions text.
+* Fix display of online meeting location.
+* Fix handling of `attendance_option` import.
+* Update shortcode sytax for TSMLui.
+
+= 3.11.1 =
+* Fix PHP warnings.
+
 = 3.11.0 =
 * Add attendance option support, and improve online meeting support.
 * Add support for custom MapBox themes.

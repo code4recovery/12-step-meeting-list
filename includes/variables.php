@@ -586,7 +586,7 @@ function tsml_define_strings() {
 			'type_descriptions' => array(
 				'C' => __('Closed meetings are for A.A. members only, or for those who have a drinking problem and “have a desire to stop drinking.”', '12-step-meeting-list'),
 				'O' => __('Open meetings are available to anyone interested in Alcoholics Anonymous’ program of recovery from alcoholism. Nonalcoholics may attend open meetings as observers.', '12-step-meeting-list'),
-				),
+			),
 			'types' => array(
 				'11' => __('11th Step Meditation', '12-step-meeting-list'),
 				'12x12' => __('12 Steps & 12 Traditions', '12-step-meeting-list'),
