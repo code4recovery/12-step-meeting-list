@@ -584,11 +584,9 @@ function tsml_define_strings() {
 			'flags' => array('M', 'W', 'TC', 'ONL'), //for /men and /women at end of meeting name (used in tsml_format_name())
 			'name' => __('Alcoholics Anonymous', '12-step-meeting-list'),
 			'type_descriptions' => array(
-				'C' => __('This meeting is closed; only those who have a desire to stop drinking may attend.', '12-step-meeting-list'),
-				'O' => __('This meeting is open and anyone may attend.', '12-step-meeting-list'),
-				//'TC' => __('This meeting is temporarily not meeting in-person.', '12-step-meeting-list'),
-				//'ONL' => __('Online meeting. Details below.', '12-step-meeting-list')
-			),
+				'C' => __('Closed meetings are for A.A. members only, or for those who have a drinking problem and “have a desire to stop drinking.”', '12-step-meeting-list'),
+				'O' => __('Open meetings are available to anyone interested in Alcoholics Anonymous’ program of recovery from alcoholism. Nonalcoholics may attend open meetings as observers.', '12-step-meeting-list'),
+				),
 			'types' => array(
 				'11' => __('11th Step Meditation', '12-step-meeting-list'),
 				'12x12' => __('12 Steps & 12 Traditions', '12-step-meeting-list'),

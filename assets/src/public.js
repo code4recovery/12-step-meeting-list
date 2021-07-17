@@ -319,7 +319,7 @@ jQuery(function($) {
 			document.title = string;
 			$('#tsml #meetings .title h1').text(string);
 
-      if (tsml.debug) console.log("Page title: ", document.title);
+			 if (tsml.debug) console.log('Page title: ', document.title);
 
 			//show/hide upcoming menu option
 			toggleUpcoming();
@@ -377,13 +377,13 @@ jQuery(function($) {
 	function doSearch() {
 		//types and attendanceOptions can be multiple
 		var types = [];
-    const attendanceOptions = [];
-		$('#type li.active a').each(function() {
-      let userChoice = $(this).attr('data-id');
+		const attendanceOptions = [];
+		$('#type li.active a').each(function () {
+			let userChoice = $(this).attr('data-id');
 			if (userChoice) {
-        if (['active', 'in_person', 'hybrid', 'online', 'inactive'].indexOf(userChoice) !== -1) {
-          attendanceOptions.push(userChoice);
-        } else types.push(userChoice);
+				if (['active', 'in_person', 'hybrid', 'online', 'inactive'].indexOf(userChoice) !== -1) {
+					attendanceOptions.push(userChoice);
+				} else types.push(userChoice);
 			}
 		});
 
@@ -401,9 +401,9 @@ jQuery(function($) {
 			type: types.length ? types.join(',') : undefined,
 			distance: $('#distance li.active a').attr('data-id'),
 			view: $('#meetings .toggle-view.active').attr('data-id'),
-      attendance_option: attendanceOptions.length ? attendanceOptions.join(',') : undefined, 
+			attendance_option: attendanceOptions.length ? attendanceOptions.join(',') : undefined
 		};
-    if (tsml.debug) console.log('doSearch() controls', controls);
+		if (tsml.debug) console.log('doSearch() controls', controls);
 
 		//reset search location
 		searchLocation = null;
@@ -426,7 +426,7 @@ jQuery(function($) {
 		if (controls.time && controls.time != tsml.defaults.time) query_string['tsml-time'] = controls.time;
 		if (controls.type && controls.type != tsml.defaults.type) query_string['tsml-type'] = controls.type;
 		if (controls.view && controls.view != tsml.defaults.view) query_string['tsml-view'] = controls.view;
-    if (controls.attendance_option != null) query_string['tsml-attendance_option'] = controls.attendance_option; 
+		if (controls.attendance_option != null) query_string['tsml-attendance_option'] = controls.attendance_option;
 		query_string = $.param(query_string);
 
 		//save the query in the query string, if the browser is up to it
@@ -570,10 +570,10 @@ jQuery(function($) {
 					if (
 						controls.query &&
 						(typeof controls.day !== 'undefined' ||
-							typeof controls.region !== 'undefined' ||
-							typeof controls.time !== 'undefined' ||
-							typeof controls.type !== 'undefined') ||
-              typeof controls.attendance_option !== 'undefined'
+						typeof controls.region !== 'undefined' ||
+						typeof controls.time !== 'undefined' ||
+						typeof controls.type !== 'undefined') ||
+						typeof controls.attendance_option !== 'undefined'
 					) {
 						$('#day li')
 							.removeClass('active')
@@ -591,17 +591,17 @@ jQuery(function($) {
 							.removeClass('active')
 							.first()
 							.addClass('active');
-            $('#attendance_option li')
-              .removeClass('active')
-              .first()
-              .addClass('active');
+						$('#attendance_option li')
+							.removeClass('active')
+							.first()
+							.addClass('active');
 
 						//set selected text
 						$('#day span.selected').html($('#day li:first-child a').html());
 						$('#time span.selected').html($('#time li:first-child a').html());
 						$('#region span.selected').html($('#region li:first-child a').html());
 						$('#type span.selected').html($('#type li:first-child a').html());
-            $('#attendance_option span.selected').html($('#attendance_option li:first-child a').html());
+						$('#attendance_option span.selected').html($('#attendance_option li:first-child a').html());
 
 						return doSearch();
 					}
@@ -634,7 +634,7 @@ jQuery(function($) {
 								var typeIsFlagged = obj.types.indexOf(tsml.flags[i]) !== -1;
 								//  Add flag, except TC when meeting is also online
 								//if (typeIsFlagged && !(meetingIsOnlineAndTC && flagIsTempClosed)) {
-									//obj.name += ' <small>' + tsml.types[tsml.flags[i]] + '</small>';
+								//obj.name += ' <small>' + tsml.types[tsml.flags[i]] + '</small>';
 								//}
 								if (typeIsFlagged && tsml.flags[i] != 'TC' && tsml.flags[i] != 'ONL') {
 									typeList.push(tsml.types[tsml.flags[i]]);
@@ -710,8 +710,7 @@ jQuery(function($) {
 										'-' +
 										sort_time +
 										'">' +
-										//formatLink(obj.url, obj.name, 'post_type') +
-										'<a href="' + obj.url + '">' + obj.name + '</a>';
+										formatLink(obj.url, obj.name, 'post_type');
 									if (typeList.length > 0) {
 										row += ' <small>' + typeList.join(', ') + '</small>';
 									}
