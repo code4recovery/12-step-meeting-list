@@ -7,3 +7,5 @@ docker-compose.yml
 .vscode
 /.vs/slnx.sqlite-journal
 /.vs/enhance-feedback-requests/v16/.suo
+/includes/variables.php.bak
+/templates/single-meetings.php.bak
