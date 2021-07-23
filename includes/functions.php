@@ -1093,7 +1093,6 @@ function tsml_get_meetings($arguments=array(), $from_cache=true) {
 				'time'				=> @$meeting_meta[$post->ID]['time'],
 				'end_time'			=> @$meeting_meta[$post->ID]['end_time'],
 				'time_formatted'	=> tsml_format_time(@$meeting_meta[$post->ID]['time']),
-				'attendance_option'	=> @$meeting_meta[$post->ID]['attendance_option'],
 				'conference_url'	=> @$meeting_meta[$post->ID]['conference_url'],
 				'conference_url_notes'	=> @$meeting_meta[$post->ID]['conference_url_notes'],
 				'conference_phone'	=> @$meeting_meta[$post->ID]['conference_phone'],
@@ -1122,7 +1121,6 @@ function tsml_get_meetings($arguments=array(), $from_cache=true) {
 	for ($i=0; $i < count($meetings); $i++) {
 		if (empty($meetings[$i]['attendance_option'])) {
 			$meetings[$i]['attendance_option'] = tsml_calculate_attendance_option(empty($meetings[$i]['types']) ? array() : $meetings[$i]['types'], $meetings[$i]['formatted_address']);
-			update_post_meta($meetings[$i]['id'], 'attendance_option', $meetings[$i]['attendance_option']);
 			$rebuild_cache = true;
 		}
 
