@@ -457,6 +457,7 @@ if (!function_exists('function_name')) {
 				add_post_meta($location_id, 'formatted_address',	$geocoded['formatted_address']);
 				add_post_meta($location_id, 'latitude',				$geocoded['latitude']);
 				add_post_meta($location_id, 'longitude',			$geocoded['longitude']);
+				add_post_meta($location_id, 'approximate',			$geocoded['approximate']);
 				wp_set_object_terms($location_id, $region_id, 'tsml_region');
 			}
 
