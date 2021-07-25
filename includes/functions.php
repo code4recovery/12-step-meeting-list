@@ -713,6 +713,9 @@ function tsml_geocode_google($address, $tsml_map_key) {
 	//check our overrides array again in case google is wrong
 	if (array_key_exists($data->results[0]->formatted_address, $tsml_google_overrides)) {
 		$response = $tsml_google_overrides[$data->results[0]->formatted_address];
+		if (empty($response['approximate'])) {
+			$response['approximate'] = 'no';
+		}
 	} else {
 		//start building response
 		// $myfile = fopen("./newfile.txt", "a") or die("Unable to open file!");
