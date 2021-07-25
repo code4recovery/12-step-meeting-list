@@ -653,6 +653,12 @@ function tmsl_import_page() {
 							$locations = tsml_count_locations();
 							$regions = tsml_count_regions();
 							$groups = tsml_count_groups();
+							$pdf_link = 'https://pdf.code4recovery.org/?' . http_build_query(array(
+								'json' => admin_url('admin-ajax.php') . '?' . http_build_query(array(
+									'action' => 'meetings',
+									'nonce' => $tsml_sharing === 'restricted' ? wp_create_nonce($tsml_nonce) : null
+								))
+							));
 							?>
 							<h3><?php _e('Where\'s My Info?', '12-step-meeting-list')?></h3>
 							<?php if ($tsml_slug) {?>
@@ -660,7 +666,9 @@ function tmsl_import_page() {
 							<?php }
 							if ($meetings) {?>
 							<p><?php printf(__('You can download your meetings in <a href="%s">CSV format</a>.', '12-step-meeting-list'), admin_url('admin-ajax.php') . '?action=csv')?></p>
-							<p><?php printf(__('A very basic PDF schedule is available in three sizes: <a href="%s">4&times;7</a>, <a href="%s">half page</a> and <a href="%s">full page</a>.', '12-step-meeting-list'), admin_url('admin-ajax.php') . '?action=tsml_pdf&width=4&height=7', admin_url('admin-ajax.php') . '?action=tsml_pdf', admin_url('admin-ajax.php') . '?action=tsml_pdf&width=8.5')?></p>
+							<p><?php printf(__('<strong>Going away soon:</strong> a very basic PDF schedule is available in three sizes: <a href="%s">4&times;7</a>, <a href="%s">half page</a> and <a href="%s">full page</a>.', '12-step-meeting-list'), admin_url('admin-ajax.php') . '?action=tsml_pdf&width=4&height=7', admin_url('admin-ajax.php') . '?action=tsml_pdf', admin_url('admin-ajax.php') . '?action=tsml_pdf&width=8.5')?></p>
+							<p><?php _e('<strong>New!</strong> We are developing a service to generate PDF directories of in-person meetings.', '12-step-meeting-list')?></p>
+							<p><a href="<?php echo $pdf_link?>" target="_blank" class="button"><?php _e('Generate PDF')?></a>
 							<?php }?>
 							<div id="tsml_counts"<?php if (($meetings + $locations + $groups + $regions) == 0) {?> class="hidden"<?php }?>>
 								<p><?php _e('You have:', '12-step-meeting-list')?></p>
