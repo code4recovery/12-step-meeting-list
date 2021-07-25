@@ -35,6 +35,10 @@ function tsml_admin_init() {
 		// db_update_addresses_cache_approximate_location();
 		// db_update_tsml_locations_approximate_location();
 		tsml_db_set_address_approximate();
+
+		// Delete the attendance_option metadata tag, don't need it
+		delete_metadata( 'post', 0, 'attendance_option', false, true );
+
 		update_option('tsml_version', TSML_VERSION);
 		flush_rewrite_rules();
 	};
