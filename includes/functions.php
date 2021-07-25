@@ -938,7 +938,7 @@ function tsml_get_locations() {
 			'location_notes' => $post->post_content,
 			'location_url' => get_permalink($post->ID),
 			'formatted_address' => empty($location_meta[$post->ID]['formatted_address']) ? null : $location_meta[$post->ID]['formatted_address'],
-			'approximate' => empty($location_meta[$post->ID]['approximate']) ? null : $location_meta[$post->ID]['approximate'],
+			'address_approximate' => empty($location_meta[$post->ID]['approximate']) ? null : $location_meta[$post->ID]['approximate'],
 			'latitude' => empty($location_meta[$post->ID]['latitude']) ? null : $location_meta[$post->ID]['latitude'],
 			'longitude' => empty($location_meta[$post->ID]['longitude']) ? null : $location_meta[$post->ID]['longitude'],
 			'region_id' => $region_id,

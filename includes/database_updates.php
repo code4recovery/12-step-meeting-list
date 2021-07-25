@@ -79,13 +79,13 @@ if (!function_exists('tsml_db_set_address_approximate')) {
 
     foreach ($locations as $location) {
       // if location doesn't have the approximate tag
-      if (empty($location['approximate'])) {
-        $location_address = $location['formatted_address'];
+      if (empty($location['address_approximate'])) {
+        $tmp_address = $location['formatted_address'];
 
         // if the cached address has the approximate tag
-        if (!empty($addresses_cache[$location_address]['approximate'])) {
+        if (!empty($addresses_cache[$tmp_address]['approximate'])) {
           // Location in Database doesn't have approximate, and it's in the address cache, so write it to the database
-          update_post_meta($location['location_id'], 'approximate', $addresses_cache[$location_address]['approximate']);
+          update_post_meta($location['location_id'], 'approximate', $addresses_cache[$tmp_address]['approximate']);
         }
       }
     }
