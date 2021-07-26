@@ -39,6 +39,9 @@ function tsml_admin_init() {
 		// Delete the attendance_option metadata tag, don't need it
 		delete_metadata( 'post', 0, 'attendance_option', false, true );
 
+		//Rebuild the meeting cache
+		tsml_cache_rebuild();
+
 		update_option('tsml_version', TSML_VERSION);
 		flush_rewrite_rules();
 	};
