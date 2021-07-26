@@ -62,6 +62,7 @@ Note you can add multiple entries to the array below.
 				'city' => 'Paris',
 				'latitude' => 48.858372,
 				'longitude' => 2.294481,
+				'approximate' => 'no',
 			),
 		));
 	}
