@@ -72,14 +72,14 @@ if (!function_exists('db_update_remove_all_is_approximate_location_meta')) {
 
 // Function: Add approximate value to locations when we can do so without doing a new geocode
 // May want do a geocode sometime in a later version of the plugin
-if (!function_exists('tsml_db_set_address_approximate')) {
-  function tsml_db_set_address_approximate() {
+if (!function_exists('tsml_db_set_location_approximate')) {
+  function tsml_db_set_location_approximate() {
     $locations = tsml_get_locations();
     $addresses_cache = get_option('tsml_addresses');
 
     foreach ($locations as $location) {
       // if location doesn't have the approximate tag
-      if (empty($location['address_approximate'])) {
+      if (empty($location['approximate'])) {
         $tmp_address = $location['formatted_address'];
 
         // if the cached address has the approximate tag

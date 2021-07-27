@@ -941,7 +941,7 @@ function tsml_get_locations() {
 			'location_notes' => $post->post_content,
 			'location_url' => get_permalink($post->ID),
 			'formatted_address' => empty($location_meta[$post->ID]['formatted_address']) ? null : $location_meta[$post->ID]['formatted_address'],
-			'address_approximate' => empty($location_meta[$post->ID]['approximate']) ? null : $location_meta[$post->ID]['approximate'],
+			'approximate' => empty($location_meta[$post->ID]['approximate']) ? null : $location_meta[$post->ID]['approximate'],
 			'latitude' => empty($location_meta[$post->ID]['latitude']) ? null : $location_meta[$post->ID]['latitude'],
 			'longitude' => empty($location_meta[$post->ID]['longitude']) ? null : $location_meta[$post->ID]['longitude'],
 			'region_id' => $region_id,
@@ -984,10 +984,10 @@ function tsml_get_meeting($meeting_id=false) {
 			'saddr' => 'Current Location',
 			'q' => $meeting->location,
 		));
-		$meeting->address_approximate = $location->approximate;
+		$meeting->approximate = $location->approximate;
 	}
 
-	if (empty($meeting->address_approximate)) $meeting->address_approximate = 'no';
+	if (empty($meeting->approximate)) $meeting->approximate = 'no';
 
 	//escape meeting values
 	foreach ($custom as $key=>$value) {
@@ -1026,10 +1026,10 @@ function tsml_get_meeting($meeting_id=false) {
 		$meeting->group = null;
 	}
 
-	$meeting->attendance_option = tsml_calculate_attendance_option($meeting->types, $meeting->address_approximate);
+	$meeting->attendance_option = tsml_calculate_attendance_option($meeting->types, $meeting->approximate);
 
 	// Remove TC when online only meeting has approximate address
-	if (!empty($meeting->types) && $meeting->attendance_option == 'online' && $meeting->address_approximate == 'yes') {
+	if (!empty($meeting->types) && $meeting->attendance_option == 'online' && $meeting->approximate == 'yes') {
 		$meeting->types = array_values(array_diff($meeting->types, array('TC')));
 	}
 
@@ -1119,15 +1119,15 @@ function tsml_get_meetings($arguments=array(), $from_cache=true) {
 			}
 
 			// Ensure each meeting has an address approximate value
-			if (empty($meeting['address_approximate'])) {
-				$meeting['address_approximate'] = 'no';
+			if (empty($meeting['approximate'])) {
+				$meeting['approximate'] = 'no';
 			}
 
 			// Calculate the attendance option
-			$meeting['attendance_option'] = tsml_calculate_attendance_option($meeting['types'], $meeting['address_approximate']);
+			$meeting['attendance_option'] = tsml_calculate_attendance_option($meeting['types'], $meeting['approximate']);
 
 			// Remove TC when online only meeting has approximate address
-			if (!empty($meeting['types']) && $meeting['attendance_option'] == 'online' && $meeting['address_approximate'] == 'yes') {
+			if (!empty($meeting['types']) && $meeting['attendance_option'] == 'online' && $meeting['approximate'] == 'yes') {
 				$meeting['types'] = array_values(array_diff($meeting['types'], array('TC')));
 			}
 
@@ -1154,8 +1154,7 @@ function tsml_get_meetings($arguments=array(), $from_cache=true) {
 
 //function: calculate attendance option given types and address
 // called in tsml_get_meetings()
-function tsml_calculate_attendance_option($types, $address_approximate) {
-	$approximate = $address_approximate == 'yes';
+function tsml_calculate_attendance_option($types, $approximate) {
 	$attendance_option = '';
 
 	// Handle when the types list is empty, this prevents PHP warnings
@@ -1170,13 +1169,13 @@ function tsml_calculate_attendance_option($types, $address_approximate) {
 	} elseif (in_array('ONL', $types)) {
 		// Types has Online, but not Temp closed, which means it's a hybrid (or online)
 		$attendance_option = 'hybrid';
-		if ($approximate) {
+		if ($approximate == 'yes') {
 			$attendance_option = 'online';
 		}
 	} else {
 		// Neither Online or Temp Closed, which means it's in person (or inactive)
 		$attendance_option = 'in_person';
-		if ($approximate) {
+		if ($approximate == 'yes') {
 			$attendance_option = 'inactive';
 		}
 	}

@@ -34,7 +34,7 @@ function tsml_admin_init() {
 		db_update_remove_all_is_approximate_location_meta();
 		// db_update_addresses_cache_approximate_location();
 		// db_update_tsml_locations_approximate_location();
-		tsml_db_set_address_approximate();
+		tsml_db_set_location_approximate();
 
 		// Delete the attendance_option metadata tag, don't need it
 		delete_metadata( 'post', 0, 'attendance_option', false, true );
