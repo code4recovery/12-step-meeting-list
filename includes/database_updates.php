@@ -76,6 +76,16 @@ if (!function_exists('tsml_db_set_location_approximate')) {
   function tsml_db_set_location_approximate() {
     $locations = tsml_get_locations();
     $addresses_cache = get_option('tsml_addresses');
+    $tmp_cache = array();
+
+    // Remove addresses from cache if approximate is not set
+    foreach ($addresses_cache as $key => $address) {
+      if (!empty($address['approximate'])) {
+        $tmp_cache[$key] = $address;
+      }
+    }
+    $addresses_cache = $tmp_cache;
+    update_option('tsml_addresses', $addresses_cache);
 
     foreach ($locations as $location) {
       // if location doesn't have the approximate tag
