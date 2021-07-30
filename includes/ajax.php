@@ -231,6 +231,7 @@ if (!function_exists('tsml_ajax_csv')) {
 					$line[] = $tsml_days[$meeting[$column]];
 				} elseif ($column == 'types') {
 					$types = $meeting[$column];
+					if (!is_array($types)) $types = array();
 					foreach ($types as &$type) $type = $tsml_programs[$tsml_program]['types'][trim($type)];
 					sort($types);
 					$line[] = $escape . implode(', ', $types) . $escape;
