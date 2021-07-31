@@ -138,6 +138,38 @@ function tsml_cache_rebuild()
 	tsml_get_meetings(array(), false);
 }
 
+//function: calculate attendance option given types and address
+// called in tsml_get_meetings()
+function tsml_calculate_attendance_option($types, $approximate)
+{
+	$attendance_option = '';
+
+	// Handle when the types list is empty, this prevents PHP warnings
+	if (empty($types)) $types = array();
+
+	if (in_array('TC', $types) && in_array('ONL', $types)) {
+		// Types has both Location Temporarily Closed and Online, which means it should be an online meeting
+		$attendance_option = 'online';
+	} elseif (in_array('TC', $types)) {
+		// Types has Location Temporarily Closed, but not online, which means it really is temporarily closed
+		$attendance_option = 'inactive';
+	} elseif (in_array('ONL', $types)) {
+		// Types has Online, but not Temp closed, which means it's a hybrid (or online)
+		$attendance_option = 'hybrid';
+		if ($approximate == 'yes') {
+			$attendance_option = 'online';
+		}
+	} else {
+		// Neither Online or Temp Closed, which means it's in person (or inactive)
+		$attendance_option = 'in_person';
+		if ($approximate == 'yes') {
+			$attendance_option = 'inactive';
+		}
+	}
+
+	return $attendance_option;
+}
+
 //called by register_activation_hook in 12-step-meeting-list.php
 //hands off to tsml_custom_post_types
 function tsml_change_activation_state()
@@ -321,15 +353,6 @@ function tsml_custom_types($types)
 		$tsml_programs[$tsml_program]['types'][$key] = $value;
 	}
 	asort($tsml_programs[$tsml_program]['types']);
-}
-
-//called by tsml_import() and in the future elsewhere
-function tsml_debug($string)
-{
-	global $tsml_timestamp;
-	if (!WP_DEBUG) return;
-	tsml_alert($string . ' in ' . round(microtime(true) - $tsml_timestamp, 2) . 's', 'warning');
-	$tsml_timestamp = microtime(true);
 }
 
 //function:	efficiently remove an array of post_ids
@@ -518,34 +541,30 @@ function tsml_format_time($string, $empty = 'Appointment')
 
 //get the next meeting start datetime for schema.org microdata
 //used:		single-meeting.php
-if (!function_exists('tsml_format_next_start')) {
-	function tsml_format_next_start($meeting)
-	{
-		if (empty($meeting->time)) {
-			return null;
-		}
-
-		$days = array('sunday', 'monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday');
-		$string = 'next ' . $days[$meeting->day] . ' ' . $meeting->time . ' ' . get_option('timezone_string');
-
-		return date('c', strtotime($string));
+function tsml_format_next_start($meeting)
+{
+	if (empty($meeting->time)) {
+		return null;
 	}
+
+	$days = array('sunday', 'monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday');
+	$string = 'next ' . $days[$meeting->day] . ' ' . $meeting->time . ' ' . get_option('timezone_string');
+
+	return date('c', strtotime($string));
 }
 
 //get the next meeting end datetime for schema.org microdata
 //used:		single-meeting.php
-if (!function_exists('tsml_format_next_end')) {
-	function tsml_format_next_end($meeting)
-	{
-		if (empty($meeting->end_time)) {
-			return null;
-		}
-
-		$days = array('sunday', 'monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday');
-		$string = 'next ' . $days[$meeting->day] . ' ' . $meeting->end_time . ' ' . get_option('timezone_string');
-
-		return date('c', strtotime($string));
+function tsml_format_next_end($meeting)
+{
+	if (empty($meeting->end_time)) {
+		return null;
 	}
+
+	$days = array('sunday', 'monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday');
+	$string = 'next ' . $days[$meeting->day] . ' ' . $meeting->end_time . ' ' . get_option('timezone_string');
+
+	return date('c', strtotime($string));
 }
 
 //function: takes a time string, eg 6:30 pm, and returns 18:30
@@ -585,7 +604,7 @@ function tsml_front_page($wp_query)
 //used:		tsml_ajax_import(), tsml_ajax_geocode()
 function tsml_geocode($address)
 {
-	global $tsml_curl_handle, $tsml_language, $tsml_google_overrides, $tsml_bounds, $tsml_google_maps_key, $tsml_geocoding_method;
+	global $tsml_google_overrides, $tsml_google_maps_key, $tsml_geocoding_method;
 
 	//check overrides first before anything
 	if (array_key_exists($address, $tsml_google_overrides)) {
@@ -1177,38 +1196,6 @@ function tsml_get_meetings($arguments = array(), $from_cache = true)
 	return $meetings;
 }
 
-//function: calculate attendance option given types and address
-// called in tsml_get_meetings()
-function tsml_calculate_attendance_option($types, $approximate)
-{
-	$attendance_option = '';
-
-	// Handle when the types list is empty, this prevents PHP warnings
-	if (empty($types)) $types = array();
-
-	if (in_array('TC', $types) && in_array('ONL', $types)) {
-		// Types has both Location Temporarily Closed and Online, which means it should be an online meeting
-		$attendance_option = 'online';
-	} elseif (in_array('TC', $types)) {
-		// Types has Location Temporarily Closed, but not online, which means it really is temporarily closed
-		$attendance_option = 'inactive';
-	} elseif (in_array('ONL', $types)) {
-		// Types has Online, but not Temp closed, which means it's a hybrid (or online)
-		$attendance_option = 'hybrid';
-		if ($approximate == 'yes') {
-			$attendance_option = 'online';
-		}
-	} else {
-		// Neither Online or Temp Closed, which means it's in person (or inactive)
-		$attendance_option = 'in_person';
-		if ($approximate == 'yes') {
-			$attendance_option = 'inactive';
-		}
-	}
-
-	return $attendance_option;
-}
-
 //function: get metadata for all meetings very quickly
 //called in tsml_get_meetings(), tsml_get_locations()
 function tsml_get_meta($type, $id = null)
@@ -1756,15 +1743,6 @@ function tsml_update_types_in_use()
 
 	//set option value
 	update_option('tsml_types_in_use', $tsml_types_in_use);
-}
-
-//function:	helper to debug out of memory errors
-//used:		ad-hoc
-function tsml_report_memory()
-{
-	$size = memory_get_peak_usage(true);
-	$units = array('B', 'KB', 'MB', 'GB');
-	die(round($size / pow(1024, ($i = floor(log($size, 1024)))), 2) . $units[$i]);
 }
 
 //function:	sanitize a value
