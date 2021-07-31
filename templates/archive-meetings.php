@@ -583,7 +583,7 @@ if (($day === null) && !empty($meeting['time'])) {
 break;
 
             case 'distance': ?>
-									<td class="distance" data-sort="<?php echo @$meeting['distance'] ?>"><?php echo @$meeting['distance'] ?></td>
+									<td class="distance" data-sort="<?php if (isset($meeting['distance'])) echo $meeting['distance'] ?>"><?php if (isset($meeting['distance'])) echo $meeting['distance'] ?></td>
 									<?php
 break;
 
