@@ -104,7 +104,6 @@ function tsml_save_post($post_id, $post, $update) {
 		$attendance_option = $meeting_is_online ? 'online' : 'inactive';
 		array_push($_POST['types'], 'TC');
 	}
-	update_post_meta($post->ID, 'attendance_option', $attendance_option);
 
 	//video conferencing info
 	if (!$update || strcmp($old_meeting->conference_url, $valid_conference_url) !== 0) {
