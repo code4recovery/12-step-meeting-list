@@ -21,7 +21,6 @@ function tsml_widgets_init()
             'after_title' => '</h3>',
         ));
     }
-
 }
 
 add_action('widgets_init', 'tsml_widgets_init');

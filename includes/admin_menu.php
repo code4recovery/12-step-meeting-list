@@ -41,5 +41,4 @@ function tsml_admin_menu()
         return $parent_file;
     }
     add_filter('parent_file', 'tsml_fix_highlight');
-
 }

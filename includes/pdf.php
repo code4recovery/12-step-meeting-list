@@ -36,7 +36,7 @@ if (!class_exists('TSMLPDF')) {
                 'body' => 7,
             ),
         );
-        
+
         public function __construct($options = array())
         {
             //mix options with defaults
@@ -65,7 +65,7 @@ if (!class_exists('TSMLPDF')) {
                     'font_size' => 'small'
                 ));
             }
-            
+
             $this->content_width = $this->options['width'] - ($this->options['margin'] * 2);
 
             //call TCPDF
@@ -152,7 +152,6 @@ if (!class_exists('TSMLPDF')) {
                 $this->Cell($time_width, .1, $types);
                 $this->MultiCell($right_width, .1, $location . ', ' . @$meeting['formatted_address'], 0, 'L');
                 $this->Ln(.1);
-
             }
 
             return $this;

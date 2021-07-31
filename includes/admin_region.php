@@ -4,27 +4,27 @@
 add_action('tsml_region_edit_form_fields', 'tsml_region_edit_form_fields');
 function tsml_region_edit_form_fields($term)
 {
-    ?>
-	<tr class="form-field">
-		<th valign="top" scope="row">
-			<label for="delete_and_reassign"><?php _e('Delete and Reassign', '12-step-meeting-list');?></label>
-		</th>
-		<td>
-			<?php wp_dropdown_categories(array(
-        'taxonomy' => 'tsml_region',
-        'hierarchical' => true,
-        'orderby' => 'name',
-        'exclude' => $term->term_id,
-        'show_option_all' => '&nbsp;',
-        'name' => 'delete_and_reassign',
-        'id' => 'delete_and_reassign',
-    ));
-    ?>
-			<p class="description">
-				<?php _e('Delete this region and reassign its locations to another region.', '12-step-meeting-list')?>
-			</p>
-		</td>
-	</tr>
+?>
+    <tr class="form-field">
+        <th valign="top" scope="row">
+            <label for="delete_and_reassign"><?php _e('Delete and Reassign', '12-step-meeting-list'); ?></label>
+        </th>
+        <td>
+            <?php wp_dropdown_categories(array(
+                'taxonomy' => 'tsml_region',
+                'hierarchical' => true,
+                'orderby' => 'name',
+                'exclude' => $term->term_id,
+                'show_option_all' => '&nbsp;',
+                'name' => 'delete_and_reassign',
+                'id' => 'delete_and_reassign',
+            ));
+            ?>
+            <p class="description">
+                <?php _e('Delete this region and reassign its locations to another region.', '12-step-meeting-list') ?>
+            </p>
+        </td>
+    </tr>
 <?php }
 
 add_action('edited_tsml_region', 'tsml_edited_region', 10, 2);

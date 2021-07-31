@@ -43,7 +43,6 @@ function tsml_posts_filter($query)
     //impossible scenario to show no results
 
     $query->query_vars['post_parent__in'] = $parent_ids;
-
 }
 
 # Custom columns for meetings
@@ -68,7 +67,6 @@ function tsml_delete_post($post_id)
     if ($post->post_type == 'tsml_meeting') {
         tsml_delete_orphans();
     }
-
 }
 
 # Custom list values for meetings
@@ -304,8 +302,9 @@ function tsml_bulk_action_handler($redirect, $doaction, $object_ids)
 // Notify how many Temporary Closures where removed
 add_action('admin_notices', 'tsml_bulk_action_notices');
 
-function tsml_bulk_action_notices () {
-    if (!empty($_REQUEST['tsml_add_tc'])){
+function tsml_bulk_action_notices()
+{
+    if (!empty($_REQUEST['tsml_add_tc'])) {
         // depending on how many posts were changed, make the message different
         printf('<div id="message" class="updated notice is-dismissible"><p>' .
             _n(
@@ -314,7 +313,7 @@ function tsml_bulk_action_notices () {
                 intval($_REQUEST['tsml_add_tc'])
             ) . '</p></div>', intval($_REQUEST['tsml_add_tc']));
     }
-    if (!empty($_REQUEST['tsml_remove_tc'])){
+    if (!empty($_REQUEST['tsml_remove_tc'])) {
         // depending on how many posts were changed, make the message different
         printf('<div id="message" class="updated notice is-dismissible"><p>' .
             _n(
@@ -323,7 +322,7 @@ function tsml_bulk_action_notices () {
                 intval($_REQUEST['tsml_remove_tc'])
             ) . '</p></div>', intval($_REQUEST['tsml_remove_tc']));
     }
-    if (!empty($_REQUEST['tsml_open_in_person'])){
+    if (!empty($_REQUEST['tsml_open_in_person'])) {
         // depending on how many posts were changed, make the message different
         printf('<div id="message" class="updated notice is-dismissible"><p>' .
             _n(

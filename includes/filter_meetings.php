@@ -82,14 +82,14 @@ class tsml_filter_meetings
         }
 
         if (!empty($arguments['type'])) {
-            $this->type = is_array($arguments['type']) ? array_map('trim', $arguments['type']) : explode(',',trim($arguments['type']));
+            $this->type = is_array($arguments['type']) ? array_map('trim', $arguments['type']) : explode(',', trim($arguments['type']));
         }
 
         if (!empty($arguments['attendance_option'])) {
-            $this->attendance_option = is_array($arguments['attendance_option']) 
+            $this->attendance_option = is_array($arguments['attendance_option'])
                 ? array_map('trim', $arguments['attendance_option'])
-                : explode(',',trim($arguments['attendance_option']));
-            if (!empty(array_intersect($this->attendance_option, Array('online', 'in_person')))) {
+                : explode(',', trim($arguments['attendance_option']));
+            if (!empty(array_intersect($this->attendance_option, array('online', 'in_person')))) {
                 $this->attendance_option[] = 'hybrid';
             }
             if (in_array('active', $this->attendance_option)) {
@@ -97,7 +97,6 @@ class tsml_filter_meetings
             }
             $this->attendance_option = array_unique($this->attendance_option);
         }
-
     }
 
     //run the filters
@@ -143,11 +142,10 @@ class tsml_filter_meetings
             if ($this->distance) {
                 $meetings = array_filter($meetings, array($this, 'filter_distance'));
             }
-
         }
 
         if ($this->attendance_option) {
-          $meetings = array_filter($meetings, array($this, 'filter_attendance_option'));
+            $meetings = array_filter($meetings, array($this, 'filter_attendance_option'));
         }
 
         //return data
@@ -234,7 +232,6 @@ class tsml_filter_meetings
             if (!$word_matches) {
                 return false;
             }
-
         }
         return true;
     }
@@ -284,7 +281,7 @@ class tsml_filter_meetings
     public function filter_attendance_option($meeting)
     {
         if (!isset($meeting['attendance_option'])) {
-          return false;
+            return false;
         }
         return in_array($meeting['attendance_option'], $this->attendance_option);
     }
@@ -304,5 +301,4 @@ class tsml_filter_meetings
         $children = get_term_children($term->term_id, 'tsml_region');
         return array_merge(array($term->term_id), $children);
     }
-
 }

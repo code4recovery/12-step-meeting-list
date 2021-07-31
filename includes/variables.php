@@ -25,7 +25,7 @@ $tsml_meeting_attendance_options = array(
 //load the set of columns that should be present in the list (not sure why this shouldn't go after plugins_loaded below)
 $tsml_columns = array(
 	'time' => 'Time',
-	'distance' => 'Distance', 
+	'distance' => 'Distance',
 	'name' => 'Meeting',
 	'location' => 'Location / Group',
 	'address' => 'Address',
@@ -88,7 +88,7 @@ $tsml_defaults = array(
 	'mode' => 'search',
 	'query' => null,
 	'view' => 'list',
-  'attendance_option' => null
+	'attendance_option' => null
 );
 
 //load the distance units that we're using (ie miles or kms)
@@ -132,12 +132,12 @@ $tsml_google_overrides = array(
 		'latitude' => 40.0065706,
 		'longitude' => -105.2717488,
 	),
-    '1845 State Hwy V, Mansfield, MO 65704, USA' => array(
-        'formatted_address' => '1845 State Hwy V, Mansfield, MO 65704, USA',
-        'city' => 'Mansfield',
-        'latitude' => 37.114508,
-        'longitude' => -92.619343,
-    ),
+	'1845 State Hwy V, Mansfield, MO 65704, USA' => array(
+		'formatted_address' => '1845 State Hwy V, Mansfield, MO 65704, USA',
+		'city' => 'Mansfield',
+		'latitude' => 37.114508,
+		'longitude' => -92.619343,
+	),
 	'185 Main St, Freeport, ME 04032, USA' => array(
 		'formatted_address' => '185 Main St, Freeport, ME 04032, USA',
 		'city' => 'Freeport',
@@ -479,18 +479,19 @@ $tsml_timestamp = microtime(true);
 $tsml_ui_config = array();
 
 //these are empty now because polylang might change the language. gets set in the plugins_loaded hook
-$tsml_days = $tsml_days_order = $tsml_programs = $tsml_types_in_use = $tsml_strings = null;
+$tsml_days = $tsml_days_order = $tsml_programs = $tsml_types_in_use = $tsml_strings = array();
 
 //string url for the meeting finder, or false for no automatic archive page
 if (!isset($tsml_slug)) $tsml_slug = null;
 
 add_action('plugins_loaded', 'tsml_define_strings');
 
-function tsml_define_strings() {
+function tsml_define_strings()
+{
 	global $tsml_days, $tsml_days_order, $tsml_programs, $tsml_program, $tsml_slug, $tsml_strings, $tsml_types_in_use;
 
-    //load internationalization
-    load_plugin_textdomain('12-step-meeting-list', false, '12-step-meeting-list/languages');
+	//load internationalization
+	load_plugin_textdomain('12-step-meeting-list', false, '12-step-meeting-list/languages');
 
 	//days of the week
 	$tsml_days	= array(
@@ -498,8 +499,8 @@ function tsml_define_strings() {
 		__('Monday', '12-step-meeting-list'),
 		__('Tuesday', '12-step-meeting-list'),
 		__('Wednesday', '12-step-meeting-list'),
-		__('Thursday', '12-step-meeting-list'), 
-		__('Friday', '12-step-meeting-list'), 
+		__('Thursday', '12-step-meeting-list'),
+		__('Friday', '12-step-meeting-list'),
 		__('Saturday', '12-step-meeting-list'),
 	);
 
@@ -511,7 +512,7 @@ function tsml_define_strings() {
 
 	//used by tsml_meetings_sort() over and over
 	$tsml_days_order = array_keys($tsml_days);
-	
+
 	//supported program names (alpha by the 'name' key)
 	$tsml_programs = array(
 		'aca' => array(
@@ -570,7 +571,7 @@ function tsml_define_strings() {
 				'SM' => __('Smoking Permitted', '12-step-meeting-list'),
 				'S' => __('Spanish', '12-step-meeting-list'),
 				'SP' => __('Speaker', '12-step-meeting-list'),
-				'ST' => __('Step Meeting', '12-step-meeting-list'),				
+				'ST' => __('Step Meeting', '12-step-meeting-list'),
 				'T' => __('Transgender', '12-step-meeting-list'),
 				'X' => __('Wheelchair Accessible', '12-step-meeting-list'),
 				'W' => __('Women', '12-step-meeting-list'),
@@ -637,7 +638,7 @@ function tsml_define_strings() {
 				'SM' => __('Smoking Permitted', '12-step-meeting-list'),
 				'S' => __('Spanish', '12-step-meeting-list'),
 				'SP' => __('Speaker', '12-step-meeting-list'),
-				'ST' => __('Step Meeting', '12-step-meeting-list'),				
+				'ST' => __('Step Meeting', '12-step-meeting-list'),
 				'TR' => __('Tradition Study', '12-step-meeting-list'),
 				'T' => __('Transgender', '12-step-meeting-list'),
 				'X' => __('Wheelchair Access', '12-step-meeting-list'),
@@ -682,7 +683,7 @@ function tsml_define_strings() {
 				'S' => __('Spanish', '12-step-meeting-list'),
 				'SP' => __('Speaker', '12-step-meeting-list'),
 				'ST' => __('Step Meeting', '12-step-meeting-list'),
-				'TEEN' => __('Teens', '12-step-meeting-list'),				
+				'TEEN' => __('Teens', '12-step-meeting-list'),
 				'D' => __('Topic Discussion', '12-step-meeting-list'),
 				'TR' => __('Tradition', '12-step-meeting-list'),
 				'T' => __('Transgender', '12-step-meeting-list'),
@@ -745,7 +746,7 @@ function tsml_define_strings() {
 				'SM' => __('Smoking Permitted', '12-step-meeting-list'),
 				'S' => __('Spanish', '12-step-meeting-list'),
 				'SP' => __('Speaker', '12-step-meeting-list'),
-				'ST' => __('Step Meeting', '12-step-meeting-list'),			
+				'ST' => __('Step Meeting', '12-step-meeting-list'),
 				'TR' => __('Tradition Study', '12-step-meeting-list'),
 				'T' => __('Transgender', '12-step-meeting-list'),
 				'X' => __('Wheelchair Access', '12-step-meeting-list'),
@@ -773,7 +774,7 @@ function tsml_define_strings() {
 				'SP' => __('Pitch/Speaker', '12-step-meeting-list'),
 				'PROM' => __('Promises', '12-step-meeting-list'),
 				'RANDR' => __('Relapse and Recovery', '12-step-meeting-list'),
-				'ST' => __('Steps/Traditions', '12-step-meeting-list'),				
+				'ST' => __('Steps/Traditions', '12-step-meeting-list'),
 				'D' => __('Topic/Discussion', '12-step-meeting-list'),
 			),
 		),
@@ -794,7 +795,7 @@ function tsml_define_strings() {
 				'O' => __('Open', '12-step-meeting-list'),
 				'P' => __('Prosperity', '12-step-meeting-list'),
 				'SP' => __('Speaker', '12-step-meeting-list'),
-				'ST' => __('Step Study', '12-step-meeting-list'),				
+				'ST' => __('Step Study', '12-step-meeting-list'),
 				'TI' => __('Time', '12-step-meeting-list'),
 				'TO' => __('Toolkit', '12-step-meeting-list'),
 				'V' => __('Vision', '12-step-meeting-list'),
@@ -817,7 +818,7 @@ function tsml_define_strings() {
 				'ONL' => __('Online Meeting', '12-step-meeting-list'),
 				'O' => __('Open', '12-step-meeting-list'),
 				'ST' => __('Step Meeting', '12-step-meeting-list'),
-				'SS' => __('Step Speaker', '12-step-meeting-list'),			
+				'SS' => __('Step Speaker', '12-step-meeting-list'),
 				'W' => __('Women', '12-step-meeting-list'),
 				'YP' => __('Young People', '12-step-meeting-list'),
 			),
@@ -863,7 +864,7 @@ function tsml_define_strings() {
 				'SM' => __('Smoking Permitted', '12-step-meeting-list'),
 				'S' => __('Spanish', '12-step-meeting-list'),
 				'SP' => __('Speaker', '12-step-meeting-list'),
-				'ST' => __('Step Meeting', '12-step-meeting-list'),				
+				'ST' => __('Step Meeting', '12-step-meeting-list'),
 				'TOP' => __('Topic', '12-step-meeting-list'),
 				'TR' => __('Tradition Study', '12-step-meeting-list'),
 				'X' => __('Wheelchair Access', '12-step-meeting-list'),
@@ -900,7 +901,7 @@ function tsml_define_strings() {
 				'SMOK' => __('Smoking', '12-step-meeting-list'),
 				'SPK' => __('Speaker', '12-step-meeting-list'),
 				'STEP' => __('Step', '12-step-meeting-list'),
-				'SWG' => __('Step Working Guide Study', '12-step-meeting-list'),				
+				'SWG' => __('Step Working Guide Study', '12-step-meeting-list'),
 				'TOP' => __('Topic', '12-step-meeting-list'),
 				'TRAD' => __('Tradition', '12-step-meeting-list'),
 				'VAR' => __('Format Varies', '12-step-meeting-list'),
@@ -938,7 +939,7 @@ function tsml_define_strings() {
 				'SMOK' => __('Smoking', '12-step-meeting-list'),
 				'SPK' => __('Speaker', '12-step-meeting-list'),
 				'STEP' => __('Step', '12-step-meeting-list'),
-				'SWG' => __('Step Working Guide Study', '12-step-meeting-list'),				
+				'SWG' => __('Step Working Guide Study', '12-step-meeting-list'),
 				'TOP' => __('Topic', '12-step-meeting-list'),
 				'TRAD' => __('Tradition', '12-step-meeting-list'),
 				'VAR' => __('Format Varies', '12-step-meeting-list'),
@@ -976,7 +977,7 @@ function tsml_define_strings() {
 				'SP' => __('Speaker', '12-step-meeting-list'),
 				'SD' => __('Speaker/Discussion', '12-step-meeting-list'),
 				'SPIR' => __('Spirituality', '12-step-meeting-list'),
-				'TEEN' => __('Teen Friendly', '12-step-meeting-list'),			
+				'TEEN' => __('Teen Friendly', '12-step-meeting-list'),
 				'PROM' => __('The Promises', '12-step-meeting-list'),
 				'TOOL' => __('Tools', '12-step-meeting-list'),
 				'D' => __('Topic', '12-step-meeting-list'),
@@ -984,7 +985,7 @@ function tsml_define_strings() {
 				'VOR' => __('Voices of Recovery', '12-step-meeting-list'),
 				'WORK' => __('Work Book Study', '12-step-meeting-list'),
 				'WRIT' => __('Writing', '12-step-meeting-list'),
-			),	
+			),
 		),
 		'pal' => array(
 			'abbr' => 'PAL',
@@ -1001,7 +1002,7 @@ function tsml_define_strings() {
 				'TC' => __('Location Temporarily Closed', '12-step-meeting-list'),
 				'ONL' => __('Online Meeting', '12-step-meeting-list'),
 				'O' => __('Open', '12-step-meeting-list'),
-				'SP' => __('Speaker', '12-step-meeting-list'),				
+				'SP' => __('Speaker', '12-step-meeting-list'),
 			),
 		),
 		'rd' => array(
@@ -1035,7 +1036,7 @@ function tsml_define_strings() {
 				'O' => __('Open', '12-step-meeting-list'),
 				'PR' => __('Process Addictions', '12-step-meeting-list'),
 				'ES' => __('Spanish', '12-step-meeting-list'),
-				'SV' => __('Swedish', '12-step-meeting-list'),				
+				'SV' => __('Swedish', '12-step-meeting-list'),
 				'TH' => __('Thai', '12-step-meeting-list'),
 				'WA' => __('Wheelchair Access', '12-step-meeting-list'),
 				'W' => __('Women', '12-step-meeting-list'),
@@ -1072,7 +1073,7 @@ function tsml_define_strings() {
 				'O' => __('Open', '12-step-meeting-list'),
 				'PR' => __('Process Addictions', '12-step-meeting-list'),
 				'ES' => __('Spanish', '12-step-meeting-list'),
-				'SV' => __('Swedish', '12-step-meeting-list'),			
+				'SV' => __('Swedish', '12-step-meeting-list'),
 				'TH' => __('Thai', '12-step-meeting-list'),
 				'WA' => __('Wheelchair Access', '12-step-meeting-list'),
 				'W' => __('Women', '12-step-meeting-list'),
@@ -1089,7 +1090,7 @@ function tsml_define_strings() {
 				'O' => __('Open', '12-step-meeting-list'),
 				'ST' => __('Step Meeting', '12-step-meeting-list'),
 				'LGBTQ' => __('LGBTQ', '12-step-meeting-list'),
-				'TC' => __('Location Temporarily Closed', '12-step-meeting-list'),				
+				'TC' => __('Location Temporarily Closed', '12-step-meeting-list'),
 				'W' => __('Women', '12-step-meeting-list'),
 			),
 		),
@@ -1109,7 +1110,7 @@ function tsml_define_strings() {
 				'O' => __('Open', '12-step-meeting-list'),
 				'PP' => __('Primary Purpose', '12-step-meeting-list'),
 				'SP' => __('Speaker', '12-step-meeting-list'),
-				'ST' => __('Step Study', '12-step-meeting-list'),			
+				'ST' => __('Step Study', '12-step-meeting-list'),
 				'W' => __('Women', '12-step-meeting-list'),
 			),
 		),
@@ -1128,7 +1129,7 @@ function tsml_define_strings() {
 				'ONL' => __('Online Meeting', '12-step-meeting-list'),
 				'O' => __('Open', '12-step-meeting-list'),
 				'SP' => __('Speaker', '12-step-meeting-list'),
-				'ST' => __('Step', '12-step-meeting-list'),				
+				'ST' => __('Step', '12-step-meeting-list'),
 			),
 		),
 		'slaa' => array(
@@ -1156,7 +1157,7 @@ function tsml_define_strings() {
 				'S' => __('Spanish', '12-step-meeting-list'),
 				'SP' => __('Speaker', '12-step-meeting-list'),
 				'ST' => __('Step Study', '12-step-meeting-list'),
-				'D' => __('Topic Discussion', '12-step-meeting-list'),			
+				'D' => __('Topic Discussion', '12-step-meeting-list'),
 				'TR' => __('Tradition Study', '12-step-meeting-list'),
 				'W' => __('Women', '12-step-meeting-list'),
 			),
@@ -1176,7 +1177,7 @@ function tsml_define_strings() {
 				'BE' => __('Newcomer', '12-step-meeting-list'),
 				'TC' => __('Location Temporarily Closed', '12-step-meeting-list'),
 				'ONL' => __('Online Meeting', '12-step-meeting-list'),
-				'O' => __('Open', '12-step-meeting-list'),				
+				'O' => __('Open', '12-step-meeting-list'),
 			),
 		),
 	);

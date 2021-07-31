@@ -30,6 +30,15 @@ if (!defined('TSML_VERSION')) {
     define('TSML_VERSION', '3.11.3');
 }
 
+//defining externally-defined constant + function for php intelephense
+if (false) {
+    define('TSML_UI_PATH', '');
+    function tsml_import_reformat()
+    {
+    }
+}
+
+
 //include these files first
 include TSML_PATH . '/includes/filter_meetings.php';
 include TSML_PATH . '/includes/functions.php';

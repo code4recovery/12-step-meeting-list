@@ -13,7 +13,7 @@ if (!function_exists('tsml_next_meetings')) {
 		global $tsml_program, $tsml_programs, $tsml_meeting_attendance_options;
 		$arguments = shortcode_atts(array('count' => 5, 'message' => ''), $arguments, 'tsml_next_meetings');
 		$meetings = tsml_get_meetings(array(
-			'day' => intval(current_time('w')), 
+			'day' => intval(current_time('w')),
 			'time' => 'upcoming',
 			'attendance_option' => 'active',
 		));
@@ -44,7 +44,7 @@ if (!function_exists('tsml_next_meetings')) {
 				$meeting_location = !empty($meeting['group']) ? $meeting['group'] : '';
 			}
 
-			$rows .= '<tr class="meeting ' . $classes .' attendance-' . $meeting['attendance_option'] .'">
+			$rows .= '<tr class="meeting ' . $classes . ' attendance-' . $meeting['attendance_option'] . '">
 				<td class="time">' . tsml_format_time($meeting['time']) . '</td>
 				<td class="name"><a href="' . $meeting['url'] . '">' . @$meeting['name'] . '</a>' . $meeting_types . '</td>
 				<td class="location">
@@ -99,7 +99,8 @@ add_shortcode('tsml_types_list', 'tsml_types_list');
 
 //output a react meeting finder widget https://github.com/code4recovery/tsml-ui
 if (!function_exists('tsml_ui')) {
-	function tsml_ui() {
+	function tsml_ui()
+	{
 		global $tsml_mapbox_key, $tsml_nonce, $tsml_sharing, $tsml_conference_providers, $tsml_language, $tsml_columns, $tsml_programs, $tsml_program, $tsml_ui_config, $tsml_feedback_addresses;
 		$js = defined('TSML_UI_PATH') ? TSML_UI_PATH : 'https://react.meetingguide.org/app.js';
 		wp_enqueue_script('tsml_ui', $js);
