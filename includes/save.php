@@ -1,22 +1,19 @@
 <?php
 
 //catch meetings without locations and save them as a draft, also format text
-add_filter('wp_insert_post_data', 'tsml_insert_post_check', '99', 2);
-function tsml_insert_post_check($post)
-{
+add_filter('wp_insert_post_data', function ($post) {
 
 	//sanitize text (remove html, trim)
 	if ($post['post_type'] == 'tsml_meeting') {
-		$post['post_content'] = sanitize_text_area($post['post_content']);
+		$post['post_content'] = tsml_sanitize_text_area($post['post_content']);
 	}
 
 	return $post;
-}
+}, '99', 2);
+
 
 //handle all the metadata, location
-add_action('save_post', 'tsml_save_post', 10, 3);
-function tsml_save_post($post_id, $post, $update)
-{
+add_action('save_post', function ($post_id, $post, $update) {
 	global $tsml_nonce, $wpdb, $tsml_notification_addresses, $tsml_days, $tsml_contact_fields;
 
 	//security
@@ -38,7 +35,7 @@ function tsml_save_post($post_id, $post, $update)
 	//sanitize textareas
 	$textareas = array('post_content', 'location_notes', 'group_notes');
 	foreach ($textareas as $textarea) {
-		$_POST[$textarea] = stripslashes(sanitize_text_area($_POST[$textarea]));
+		$_POST[$textarea] = stripslashes(tsml_sanitize_text_area($_POST[$textarea]));
 	}
 
 	//get current meeting state to compare against
@@ -463,4 +460,4 @@ function tsml_save_post($post_id, $post, $update)
 		$subject .= ': ' . sanitize_text_field($_POST['post_title']);
 		tsml_email($tsml_notification_addresses, $subject, $message);
 	}
-}
+}, 10, 3);

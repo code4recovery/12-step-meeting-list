@@ -7,54 +7,59 @@ add_shortcode('tsml_meeting_count', 'tsml_count_meetings');
 add_shortcode('tsml_region_count', 'tsml_count_regions');
 
 //function for shortcode: get a table of the next $count meetings
-if (!function_exists('tsml_next_meetings')) {
-	function tsml_next_meetings($arguments)
-	{
-		global $tsml_program, $tsml_programs, $tsml_meeting_attendance_options;
-		$arguments = shortcode_atts(array('count' => 5, 'message' => ''), $arguments, 'tsml_next_meetings');
-		$meetings = tsml_get_meetings(array(
-			'day' => intval(current_time('w')),
-			'time' => 'upcoming',
-			'attendance_option' => 'active',
-		));
-		if (!count($meetings) && empty($arguments['message'])) {
-			return false;
+function tsml_next_meetings($arguments)
+{
+	global $tsml_meeting_attendance_options;
+	$arguments = shortcode_atts(array('count' => 5, 'message' => ''), $arguments, 'tsml_next_meetings');
+	$meetings = tsml_get_meetings(array(
+		'day' => intval(current_time('w')),
+		'time' => 'upcoming',
+		'attendance_option' => 'active',
+	));
+	if (!count($meetings) && empty($arguments['message'])) {
+		return false;
+	}
+	if (!count($meetings) && !empty($arguments['message'])) {
+		return '<div class="tsml-no-upcoming-meetings">' . $arguments['message'] . '</div>';
+	}
+
+	$meetings = array_slice($meetings, 0, $arguments['count']);
+	$rows = '';
+	foreach ($meetings as $meeting) {
+		$classes = tsml_to_css_classes($meeting['types']);
+
+		if (!empty($meeting['notes'])) {
+			$classes .= ' notes';
 		}
-		if (!count($meetings) && !empty($arguments['message'])) {
-			return '<div class="tsml-no-upcoming-meetings">' . $arguments['message'] . '</div>';
+
+		$meeting_types = tsml_format_types($meeting['types']);
+		if (!empty($meeting_types)) {
+			$meeting_types = ' <small><span class="meeting_types">' . $meeting_types . '</span></small>';
 		}
 
-		//usort($meetings, 'tsml_next_meetings_sort');
-		$meetings = array_slice($meetings, 0, $arguments['count']);
-		$rows = '';
-		foreach ($meetings as $meeting) {
-			$classes = tsml_to_css_classes($meeting['types']);
+		$meeting_location = $meeting['location'];
+		if ($meeting['attendance_option'] == 'online' || $meeting['attendance_option'] == 'inactive') {
+			$meeting_location = !empty($meeting['group']) ? $meeting['group'] : '';
+		}
 
-			if (!empty($meeting['notes'])) {
-				$classes .= ' notes';
-			}
+		$region = '';
+		if (!empty($meeting['sub_region'])) {
+			$region = $meeting['sub_region'];
+		} elseif (!empty($meeting['region'])) {
+			$region = $meeting['region'];
+		}
 
-			$meeting_types = tsml_format_types($meeting['types']);
-			if (!empty($meeting_types)) {
-				$meeting_types = ' <small><span class="meeting_types">' . $meeting_types . '</span></small>';
-			}
-
-			$meeting_location = $meeting['location'];
-			if ($meeting['attendance_option'] == 'online' || $meeting['attendance_option'] == 'inactive') {
-				$meeting_location = !empty($meeting['group']) ? $meeting['group'] : '';
-			}
-
-			$rows .= '<tr class="meeting ' . $classes . ' attendance-' . $meeting['attendance_option'] . '">
+		$rows .= '<tr class="meeting ' . $classes . ' attendance-' . $meeting['attendance_option'] . '">
 				<td class="time">' . tsml_format_time($meeting['time']) . '</td>
 				<td class="name"><a href="' . $meeting['url'] . '">' . @$meeting['name'] . '</a>' . $meeting_types . '</td>
 				<td class="location">
 					<div class="location-name">' . $meeting_location . '</div>
 					<div class="attendance-option attendance-' . $meeting['attendance_option'] . '"><small>' . ($meeting['attendance_option'] != 'in_person' ? $tsml_meeting_attendance_options[$meeting['attendance_option']] : '')  . '</small></div>
 				</td>
-				<td class="region">' . (@$meeting['sub_region'] ? @$meeting['sub_region'] : @$meeting['region']) . '</td>
+				<td class="region">' . $region . '</td>
 			</tr>';
-		}
-		return '
+	}
+	return '
 
 		<style>
     table.tsml_next_meetings div.attendance-hybrid small,
@@ -77,25 +82,21 @@ if (!function_exists('tsml_next_meetings')) {
 			</thead>
 			<tbody>' . $rows . '</tbody>
 		</table>';
-	}
 }
 add_shortcode('tsml_next_meetings', 'tsml_next_meetings');
 
 //output a list of types with links for AA-DC
-if (!function_exists('tsml_types_list')) {
-	function tsml_types_list()
-	{
-		global $tsml_types_in_use, $tsml_programs, $tsml_program;
-		$types = array();
-		$base = get_post_type_archive_link('tsml_meeting') . '?tsml-day=any&tsml-type=';
-		foreach ($tsml_types_in_use as $type) {
-			$types[$tsml_programs[$tsml_program]['types'][$type]] = '<li><a href="' . $base . $type . '">' . $tsml_programs[$tsml_program]['types'][$type] . '</a></li>';
-		}
-		ksort($types);
-		return '<h3>Types</h3><ul>' . implode($types) . '</ul>';
+
+add_shortcode('tsml_types_list', function () {
+	global $tsml_types_in_use, $tsml_programs, $tsml_program;
+	$types = array();
+	$base = get_post_type_archive_link('tsml_meeting') . '?tsml-day=any&tsml-type=';
+	foreach ($tsml_types_in_use as $type) {
+		$types[$tsml_programs[$tsml_program]['types'][$type]] = '<li><a href="' . $base . $type . '">' . $tsml_programs[$tsml_program]['types'][$type] . '</a></li>';
 	}
-}
-add_shortcode('tsml_types_list', 'tsml_types_list');
+	ksort($types);
+	return '<h3>Types</h3><ul>' . implode($types) . '</ul>';
+});
 
 //output a react meeting finder widget https://github.com/code4recovery/tsml-ui
 if (!function_exists('tsml_ui')) {
@@ -127,26 +128,22 @@ add_shortcode('tsml_react', 'tsml_ui');
 add_shortcode('tsml_ui', 'tsml_ui');
 
 //output a list of regions with links for AA-DC
-if (!function_exists('tsml_regions_list')) {
-	function tsml_regions_list()
+add_shortcode('tsml_regions_list', function () {
+	//run function recursively
+	function get_regions($parent = 0)
 	{
-		//run function recursively
-		function get_regions($parent = 0)
-		{
-			$taxonomy = 'tsml_region';
-			$terms = get_terms(compact('taxonomy', 'parent'));
-			if (!count($terms)) {
-				return;
-			}
-
-			$base = get_post_type_archive_link('tsml_meeting') . '?tsml-day=any&tsml-region=';
-			foreach ($terms as &$term) {
-				$term = '<li><a href="' . $base . $term->term_id . '">' . $term->name . '</a>' . get_regions($term->term_id) . '</li>';
-			}
-			return '<ul>' . implode($terms) . '</ul>';
+		$taxonomy = 'tsml_region';
+		$terms = get_terms(compact('taxonomy', 'parent'));
+		if (!count($terms)) {
+			return;
 		}
 
-		return '<h3>Regions</h3>' . get_regions();
+		$base = get_post_type_archive_link('tsml_meeting') . '?tsml-day=any&tsml-region=';
+		foreach ($terms as &$term) {
+			$term = '<li><a href="' . $base . $term->term_id . '">' . $term->name . '</a>' . get_regions($term->term_id) . '</li>';
+		}
+		return '<ul>' . implode($terms) . '</ul>';
 	}
-}
-add_shortcode('tsml_regions_list', 'tsml_regions_list');
+
+	return '<h3>Regions</h3>' . get_regions();
+});

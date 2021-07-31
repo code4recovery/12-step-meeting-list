@@ -1,7 +1,7 @@
 <?php
 
 //import CSV file and handle settings
-function tmsl_import_page()
+function tsml_import_page()
 {
 	global $tsml_data_sources, $tsml_programs, $tsml_program, $tsml_nonce, $tsml_feedback_addresses,
 		$tsml_notification_addresses, $tsml_distance_units, $tsml_sharing, $tsml_sharing_keys, $tsml_contact_display,
@@ -286,7 +286,7 @@ function tmsl_import_page()
 				'action' => 'meetings',
 				'key' => $key,
 			));
-			tsml_email(MEETING_GUIDE_APP_NOTIFY, 'Sharing Key', $message, $current_user->user_email);
+			tsml_email(TSML_MEETING_GUIDE_APP_NOTIFY, 'Sharing Key', $message, $current_user->user_email);
 		}
 	}
 
@@ -410,12 +410,6 @@ function tmsl_import_page()
 		update_option('tsml_geocoding_method', $tsml_geocoding_method);
 		tsml_alert(__('Geocoding method updated.', '12-step-meeting-list'));
 	}
-
-	/*debugging
-	delete_option('tsml_data_sources');
-	tsml_delete('everything');
-	tsml_delete_orphans();
-	*/
 ?>
 	<div class="wrap">
 		<h2><?php _e('Import & Settings', '12-step-meeting-list') ?></h2>

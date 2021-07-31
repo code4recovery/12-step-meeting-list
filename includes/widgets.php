@@ -270,9 +270,7 @@ class TSML_Widget_App_Store extends WP_Widget
 }
 
 //register widgets
-function tsml_widget()
-{
+add_action('widgets_init', function () {
 	register_widget('TSML_Widget_Upcoming');
 	register_widget('TSML_Widget_App_Store');
-}
-add_action('widgets_init', 'tsml_widget');
+});

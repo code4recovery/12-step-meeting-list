@@ -1,28 +1,5 @@
 <?php
 
-// include_once dirname(__FILE__) . '/database_updates.php';
-include_once TSML_PATH . '/includes/database_updates.php';
-
-//function: helper for debugging
-//used:		ad-hoc
-if (!function_exists('dd')) {
-	function dd($array)
-	{
-		echo '<pre>';
-		print_r($array);
-		exit;
-	}
-}
-
-//function: sanitize multi-line text
-//used:		tsml_import() and save.php
-if (!function_exists('sanitize_text_area')) {
-	function sanitize_text_area($value)
-	{
-		return implode("\n", array_map('sanitize_text_field', explode("\n", trim($value))));
-	}
-}
-
 //function:	add an admin screen update message
 //used:		tsml_import() and admin_types.php
 //$type:		can be success, warning or error
@@ -35,7 +12,8 @@ function tsml_alert($message, $type = 'success')
 //used: in templates and on admin_edit.php
 function tsml_assets()
 {
-	global $post_type, $tsml_street_only, $tsml_programs, $tsml_strings, $tsml_program, $tsml_meeting_attendance_options, $tsml_google_maps_key, $tsml_mapbox_key, $tsml_mapbox_theme, $tsml_google_overrides, $tsml_distance_units, $tsml_defaults, $tsml_language, $tsml_columns, $tsml_nonce;
+	global $post_type, $tsml_street_only, $tsml_programs, $tsml_strings, $tsml_program, $tsml_google_maps_key,
+		$tsml_mapbox_key, $tsml_mapbox_theme, $tsml_distance_units, $tsml_defaults, $tsml_columns, $tsml_nonce;
 
 	// TODO: verify this doesn't cause any other issues
 	$types = [
@@ -1374,7 +1352,7 @@ function tsml_import_buffer_set($meetings, $data_source = null)
 			if (is_array($value)) $value = implode(',', $value);
 
 			if (tsml_string_ends($key, 'notes')) {
-				$meetings[$i][$key] = sanitize_text_area($value);
+				$meetings[$i][$key] = tsml_sanitize_text_area($value);
 			} else {
 				$meetings[$i][$key] = sanitize_text_field($value);
 			}
@@ -1722,7 +1700,7 @@ function tsml_link($url, $string, $exclude = '', $class = false)
 
 //function: link to meetings page with parameters (added to link dropdown menus for SEO)
 //used:		archive-meetings.php
-function tmsl_meetings_url($parameters)
+function tsml_meetings_url($parameters)
 {
 	$url = get_post_type_archive_link('tsml_meeting');
 	$url .= (strpos($url, '?') === false) ? '?' : '&';
@@ -1803,6 +1781,13 @@ function tsml_sanitize($type, $value)
 		return preg_replace('/[^0-9,+#]/', '', $value);
 	}
 	return sanitize_text_field($value);
+}
+
+//function: sanitize multi-line text
+//used:		tsml_import() and save.php
+function tsml_sanitize_text_area($value)
+{
+	return implode("\n", array_map('sanitize_text_field', explode("\n", trim($value))));
 }
 
 //function: sort an array of meetings

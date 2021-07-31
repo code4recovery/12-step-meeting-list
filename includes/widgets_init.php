@@ -1,8 +1,6 @@
 <?php
 //enables widgets on the meeting archive page
-
-function tsml_widgets_init()
-{
+add_action('widgets_init', function () {
 
     $areas = array(
         'tsml_meetings_top' => __('Meetings Top', '12-step-meeting-list'),
@@ -21,6 +19,4 @@ function tsml_widgets_init()
             'after_title' => '</h3>',
         ));
     }
-}
-
-add_action('widgets_init', 'tsml_widgets_init');
+});

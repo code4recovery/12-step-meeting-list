@@ -2,23 +2,21 @@
 //customizations for the add/edit meeting administration screens
 
 //custom title
-add_filter('enter_title_here', 'tsml_change_default_title');
-function tsml_change_default_title($title)
-{
+add_filter('enter_title_here', function ($title) {
 	$screen = get_current_screen();
 	if ($screen->post_type == 'tsml_meeting') {
 		$title = __('Enter meeting name', '12-step-meeting-list');
 	}
 	return $title;
-}
+});
+
 
 //move author meta box to right side
-add_action('do_meta_boxes', 'tsml_move_author_meta_box');
-function tsml_move_author_meta_box()
-{
+add_action('do_meta_boxes', function () {
 	remove_meta_box('authordiv', 'tsml_meeting', 'normal');
 	add_meta_box('authordiv', __('Editor', '12-step-meeting-list'), 'post_author_meta_box', 'tsml_meeting', 'side', 'default');
-}
+});
+
 
 // Hook tsml_assets where we can check $post_type
 add_action('admin_print_scripts-post.php', 'tsml_assets');
@@ -26,17 +24,13 @@ add_action('admin_print_scripts-post-new.php', 'tsml_assets');
 add_action('admin_print_scripts-tsml_meeting_page_import', 'tsml_assets');
 
 //edit page
-add_action('admin_init', 'tsml_admin_init');
-function tsml_admin_init()
-{
+add_action('admin_init', function () {
 
 	// Compares versions and updates databases as needed for upgrades
 	$tsml_version = get_option('tsml_version');
 	if (version_compare($tsml_version, TSML_VERSION, '<')) {
-		db_update_remove_all_approximate_location_cache();
-		db_update_remove_all_is_approximate_location_meta();
-		// db_update_addresses_cache_approximate_location();
-		// db_update_tsml_locations_approximate_location();
+		tsml_db_update_remove_all_approximate_location_cache();
+		tsml_db_update_remove_all_is_approximate_location_meta();
 		tsml_db_set_location_approximate();
 
 		// Delete the attendance_option metadata tag, don't need it
@@ -49,13 +43,8 @@ function tsml_admin_init()
 		flush_rewrite_rules();
 	};
 
-	//    tsml_assets();
-
-	add_meta_box('info', __('Meeting Information', '12-step-meeting-list'), 'tsml_meeting_box', 'tsml_meeting', 'normal', 'low');
-
-	function tsml_meeting_box()
-	{
-		global $post, $tsml_days, $tsml_programs, $tsml_program, $tsml_nonce, $tsml_types_in_use;
+	add_meta_box('info', __('Meeting Information', '12-step-meeting-list'), function () {
+		global $tsml_days, $tsml_programs, $tsml_program, $tsml_nonce, $tsml_types_in_use;
 
 		$meeting = tsml_get_meeting();
 
@@ -137,19 +126,19 @@ function tsml_admin_init()
 			<input type="text" name="conference_phone_notes" id="conference_phone_notes" value="<?php echo $meeting->conference_phone_notes ?>">
 		</div>
 	<?php
-	}
+	}, 'tsml_meeting', 'normal', 'low');
 
-	add_meta_box('location', __('Location Information', '12-step-meeting-list'), 'tsml_location_box', 'tsml_meeting', 'normal', 'low');
-
-	function tsml_location_box()
-	{
-		global $post, $tsml_days, $tsml_mapbox_key, $tsml_google_maps_key;
-		$meeting = tsml_get_meeting();
-		$meetings = array();
-		if ($post->post_parent) {
-			$location = tsml_get_location($post->post_parent);
-			$meetings = tsml_get_meetings(array('location_id' => $location->ID));
-		}
+	add_meta_box(
+		'location',
+		__('Location Information', '12-step-meeting-list'),
+		function () {
+			global $post, $tsml_days, $tsml_mapbox_key, $tsml_google_maps_key;
+			$meeting = tsml_get_meeting();
+			$meetings = array();
+			if ($post->post_parent) {
+				$location = tsml_get_location($post->post_parent);
+				$meetings = tsml_get_meetings(array('location_id' => $location->ID));
+			}
 	?>
 		<div class="meta_form_row radio">
 			<div class="in_person">
@@ -189,39 +178,40 @@ function tsml_admin_init()
 
 		<div class="meta_form_row">
 			<label for="location"><?php _e('Location', '12-step-meeting-list') ?></label>
-			<input type="text" name="location" id="location" value="<?php if (!empty($location->post_title)) {
-																		echo $location->post_title;
-																	}
-																	?>">
+			<input value="<?php if (!empty($location->post_title)) {
+								echo $location->post_title;
+							}
+							?>" type="text" name="location" id="location">
 		</div>
 		<div class="meta_form_row">
 			<label for="formatted_address"><?php _e('Address', '12-step-meeting-list') ?></label>
-			<input type="text" name="formatted_address" id="formatted_address" value="<?php if (!empty($location->formatted_address)) {
-																							echo $location->formatted_address;
-																						}
-																						?>" data-original-value="<?php if (!empty($location->formatted_address)) {
-										echo $location->formatted_address;
-									}
-									?>">
-			<input type="hidden" name="approximate" id="approximate" value="<?php if (!empty($location->approximate)) {
-																				echo $location->approximate;
-																			}
-																			?>">
-			<input type="hidden" name="latitude" id="latitude" value="<?php if (!empty($location->latitude)) {
-																			echo $location->latitude;
-																		}
-																		?>">
-			<input type="hidden" name="longitude" id="longitude" value="<?php if (!empty($location->longitude)) {
-																			echo $location->longitude;
-																		}
-																		?>">
+			<input value="<?php if (!empty($location->formatted_address)) {
+								echo $location->formatted_address;
+							}
+							?>" data-original-value="<?php if (!empty($location->formatted_address)) {
+															echo $location->formatted_address;
+														}
+														?>" type="text" name="formatted_address" id="formatted_address">
+			<input value="<?php if (!empty($location->approximate)) {
+								echo $location->approximate;
+							}
+							?>" type="hidden" name="approximate" id="approximate">
+			<input value="<?php if (!empty($location->latitude)) {
+								echo $location->latitude;
+							}
+							?>" type="hidden" name="latitude" id="latitude">
+			<input value="<?php
+							if (!empty($location->longitude)) {
+								echo $location->longitude;
+							}
+							?>" type="hidden" name="longitude" id="longitude">
 		</div>
 		<?php if (count($meetings) > 1) { ?>
 			<div class="meta_form_row checkbox apply_address_to_location hidden">
 				<label><input type="checkbox" name="apply_address_to_location"> <?php _e('Apply this updated address to all meetings at this location', '12-step-meeting-list') ?></label>
 			</div>
 		<?php }
-		if (wp_count_terms('tsml_region')) { ?>
+			if (wp_count_terms('tsml_region')) { ?>
 			<div class="meta_form_row">
 				<label for="region"><?php _e('Region', '12-step-meeting-list') ?></label>
 				<?php wp_dropdown_categories(array(
@@ -253,7 +243,6 @@ function tsml_admin_init()
 						if ($meeting['id'] != $post->ID) {
 							$meeting['name'] = '<a href="' . get_edit_post_link($meeting['id']) . '">' . $meeting['name'] . '</a>';
 						}
-
 					?>
 						<li><span><?php echo tsml_format_day_and_time(@$meeting['day'], @$meeting['time'], ' ', true) ?></span> <?php echo $meeting['name'] ?></li>
 					<?php } ?>
@@ -262,18 +251,21 @@ function tsml_admin_init()
 		<?php } ?>
 		<div class="meta_form_row">
 			<label><?php _e('Location Notes', '12-step-meeting-list') ?></label>
-			<textarea name="location_notes" placeholder="<?php _e('eg. Around back, basement, ring buzzer', '12-step-meeting-list') ?>"><?php if (!empty($location->post_content)) {
+			<textarea name="location_notes" placeholder="<?php _e('eg. Around back, basement, ring buzzer', '12-step-meeting-list') ?>"><?php
+																																		if (!empty($location->post_content)) {
 																																			echo $location->post_content;
 																																		}
 																																		?></textarea>
 		</div>
 	<?php
-	}
+		},
+		'tsml_meeting',
+		'normal',
+		'low'
+	);
 
-	add_meta_box('group', __('Contact Information <small>Optional</small>', '12-step-meeting-list'), 'tsml_group_box', 'tsml_meeting', 'normal', 'low');
 
-	function tsml_group_box()
-	{
+	add_meta_box('group', __('Contact Information <small>Optional</small>', '12-step-meeting-list'), function () {
 		global $tsml_contact_display;
 		$meeting = tsml_get_meeting();
 		$meetings = array();
@@ -373,7 +365,7 @@ function tsml_admin_init()
 																			} ?>)</span>
 				</label>
 				<div class="container">
-					<?php for ($i = 1; $i <= GROUP_CONTACT_COUNT; $i++) { ?>
+					<?php for ($i = 1; $i <= TSML_GROUP_CONTACT_COUNT; $i++) { ?>
 						<div class="row">
 							<div><input type="text" name="contact_<?php echo $i ?>_name" placeholder="<?php _e('Name', '12-step-meeting-list') ?>" value="<?php echo @$meeting->{'contact_' . $i . '_name'} ?>"></div>
 							<div><input type="text" name="contact_<?php echo $i ?>_email" placeholder="<?php _e('Email', '12-step-meeting-list') ?>" value="<?php echo @$meeting->{'contact_' . $i . '_email'} ?>"></div>
@@ -388,5 +380,5 @@ function tsml_admin_init()
 			</div>
 		</div>
 <?php
-	}
-}
+	}, 'tsml_meeting', 'normal', 'low');
+});

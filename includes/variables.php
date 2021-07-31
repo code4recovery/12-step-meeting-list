@@ -65,7 +65,7 @@ $tsml_contact_fields = array(
 );
 
 //append to contacts
-for ($i = 1; $i <= GROUP_CONTACT_COUNT; $i++) {
+for ($i = 1; $i <= TSML_GROUP_CONTACT_COUNT; $i++) {
 	foreach (array('name', 'email', 'phone') as $field) {
 		$tsml_contact_fields['contact_' . $i . '_' . $field] = $field == 'phone' ? 'phone' : 'string';
 	}

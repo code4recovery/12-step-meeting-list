@@ -10,25 +10,15 @@ Text Domain: 12-step-meeting-list
  */
 
 //define constants
-if (!defined('GROUP_CONTACT_COUNT')) {
-    define('GROUP_CONTACT_COUNT', 3);
-}
+define('TSML_GROUP_CONTACT_COUNT', 3);
 
-if (!defined('TSML_CONTACT_EMAIL')) {
-    define('TSML_CONTACT_EMAIL', 'tsml@code4recovery.org');
-}
+define('TSML_CONTACT_EMAIL', 'tsml@code4recovery.org');
 
-if (!defined('MEETING_GUIDE_APP_NOTIFY')) {
-    define('MEETING_GUIDE_APP_NOTIFY', 'appsupport@aa.org');
-}
+define('TSML_MEETING_GUIDE_APP_NOTIFY', 'appsupport@aa.org');
 
-if (!defined('TSML_PATH')) {
-    define('TSML_PATH', plugin_dir_path(__FILE__));
-}
+define('TSML_PATH', plugin_dir_path(__FILE__));
 
-if (!defined('TSML_VERSION')) {
-    define('TSML_VERSION', '3.11.3');
-}
+define('TSML_VERSION', '3.11.3');
 
 //defining externally-defined constant + function for php intelephense
 if (false) {
@@ -42,6 +32,7 @@ if (false) {
 //include these files first
 include TSML_PATH . '/includes/filter_meetings.php';
 include TSML_PATH . '/includes/functions.php';
+include TSML_PATH . '/includes/database_updates.php';
 include TSML_PATH . '/includes/variables.php';
 
 //include public files

@@ -17,12 +17,10 @@ wp_localize_script('tsml_public', 'tsml_map', array(
 ));
 
 //adding custom body classes
-add_filter('body_class', 'tsml_body_class');
-function tsml_body_class($classes)
-{
+add_filter('body_class', function ($classes) {
 	$classes[] = 'tsml tsml-detail tsml-location';
 	return $classes;
-}
+});
 
 get_header();
 ?>

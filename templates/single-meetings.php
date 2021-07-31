@@ -20,9 +20,7 @@ $startDate = tsml_format_next_start($meeting);
 $endDate = tsml_format_next_end($meeting);
 
 //adding custom body classes
-add_filter('body_class', 'tsml_body_class');
-function tsml_body_class($classes)
-{
+add_filter('body_class', function ($classes) {
 	global $meeting;
 
 	$classes[] = 'tsml tsml-detail tsml-meeting';
@@ -35,7 +33,7 @@ function tsml_body_class($classes)
 	$classes[] = 'attendance-' . sanitize_title($meeting->attendance_option);
 
 	return $classes;
-}
+});
 
 get_header();
 ?>
@@ -285,7 +283,7 @@ get_header();
 											</a>
 											<?php }
 										if ($hasContactInformation) {
-											for ($i = 1; $i <= GROUP_CONTACT_COUNT; $i++) {
+											for ($i = 1; $i <= TSML_GROUP_CONTACT_COUNT; $i++) {
 												$name = empty($meeting->{'contact_' . $i . '_name'}) ? sprintf(__('Contact %s', '12-step-meeting-list'), $i) : $meeting->{'contact_' . $i . '_name'};
 												if (!empty($meeting->{'contact_' . $i . '_email'})) { ?>
 													<a href="mailto:<?php echo $meeting->{'contact_' . $i . '_email'} ?>" class="btn btn-default btn-block contact-email">
