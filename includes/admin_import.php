@@ -638,33 +638,44 @@ function tsml_import_page()
 							$locations = tsml_count_locations();
 							$regions = tsml_count_regions();
 							$groups = tsml_count_groups();
+
+							$pdf_link = 'https://pdf.code4recovery.org/?' . http_build_query(array(
+								'json' => admin_url('admin-ajax.php') . '?' . http_build_query(array(
+									'action' => 'meetings',
+									'nonce' => $tsml_sharing === 'restricted' ? wp_create_nonce($tsml_nonce) : null
+								))
+							));
+
 							?>
 							<h3><?php _e('Where\'s My Info?', '12-step-meeting-list') ?></h3>
 							<?php if ($tsml_slug) { ?>
 								<p><?php printf(__('Your public meetings page is <a href="%s">right here</a>. Link that page from your site\'s nav menu to make it visible to the public.', '12-step-meeting-list'), get_post_type_archive_link('tsml_meeting')) ?></p>
-							<?php }
+							<?php
+							}
 							if ($meetings) { ?>
 								<p><?php printf(__('You can download your meetings in <a href="%s">CSV format</a>.', '12-step-meeting-list'), admin_url('admin-ajax.php') . '?action=csv') ?></p>
-								<p><?php printf(__('A very basic PDF schedule is available in three sizes: <a href="%s">4&times;7</a>, <a href="%s">half page</a> and <a href="%s">full page</a>.', '12-step-meeting-list'), admin_url('admin-ajax.php') . '?action=tsml_pdf&width=4&height=7', admin_url('admin-ajax.php') . '?action=tsml_pdf', admin_url('admin-ajax.php') . '?action=tsml_pdf&width=8.5') ?></p>
-							<?php } ?>
-							<div id="tsml_counts" <?php if (($meetings + $locations + $groups + $regions) == 0) { ?> class="hidden" <?php } ?>>
-								<p><?php _e('You have:', '12-step-meeting-list') ?></p>
-								<ul class="ul-disc">
-									<li class="meetings<?php if (!$meetings) { ?> hidden<?php } ?>">
-										<?php printf(_n('%s meeting', '%s meetings', $meetings, '12-step-meeting-list'), number_format_i18n($meetings)) ?>
-									</li>
-									<li class="locations<?php if (!$locations) { ?> hidden<?php } ?>">
-										<?php printf(_n('%s location', '%s locations', $locations, '12-step-meeting-list'), number_format_i18n($locations)) ?>
-									</li>
-									<li class="groups<?php if (!$groups) { ?> hidden<?php } ?>">
-										<?php printf(_n('%s group', '%s groups', $groups, '12-step-meeting-list'), number_format_i18n($groups)) ?>
-									</li>
-									<li class="regions<?php if (!$regions) { ?> hidden<?php } ?>">
-										<?php printf(_n('%s region', '%s regions', $regions, '12-step-meeting-list'), number_format_i18n($regions)) ?>
-									</li>
-								</ul>
-							</div>
-							<p><?php printf(__('Want to send a mass email to your contacts? <a href="%s" target="_blank">Click here</a> to see their email addresses.', '12-step-meeting-list'), admin_url('admin-ajax.php') . '?action=contacts') ?></p>
+								<p><?php printf(__('<strong>Going away soon:</strong> a very basic PDF schedule is available in three sizes: <a href="%s">4&times;7</a>, <a href="%s">half page</a> and <a href="%s">full page</a>.', '12-step-meeting-list'), admin_url('admin-ajax.php') . '?action=tsml_pdf&width=4&height=7', admin_url('admin-ajax.php') . '?action=tsml_pdf', admin_url('admin-ajax.php') . '?action=tsml_pdf&width=8.5') ?></p>
+								<p><?php _e('<strong>New!</strong> We are developing a service to generate PDF directories of in-person meetings.', '12-step-meeting-list') ?></p>
+								<p><a href="<?php echo $pdf_link ?>" target="_blank" class="button"><?php _e('Generate PDF') ?></a>
+								<?php } ?>
+								<div id="tsml_counts" <?php if (($meetings + $locations + $groups + $regions) == 0) { ?> class="hidden" <?php } ?>>
+									<p><?php _e('You have:', '12-step-meeting-list') ?></p>
+									<ul class="ul-disc">
+										<li class="meetings<?php if (!$meetings) { ?> hidden<?php } ?>">
+											<?php printf(_n('%s meeting', '%s meetings', $meetings, '12-step-meeting-list'), number_format_i18n($meetings)) ?>
+										</li>
+										<li class="locations<?php if (!$locations) { ?> hidden<?php } ?>">
+											<?php printf(_n('%s location', '%s locations', $locations, '12-step-meeting-list'), number_format_i18n($locations)) ?>
+										</li>
+										<li class="groups<?php if (!$groups) { ?> hidden<?php } ?>">
+											<?php printf(_n('%s group', '%s groups', $groups, '12-step-meeting-list'), number_format_i18n($groups)) ?>
+										</li>
+										<li class="regions<?php if (!$regions) { ?> hidden<?php } ?>">
+											<?php printf(_n('%s region', '%s regions', $regions, '12-step-meeting-list'), number_format_i18n($regions)) ?>
+										</li>
+									</ul>
+								</div>
+								<p><?php printf(__('Want to send a mass email to your contacts? <a href="%s" target="_blank">Click here</a> to see their email addresses.', '12-step-meeting-list'), admin_url('admin-ajax.php') . '?action=contacts') ?></p>
 						</div>
 					</div>
 
