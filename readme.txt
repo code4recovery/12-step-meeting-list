@@ -215,8 +215,8 @@ To apply these changes, you must go to Settings > Permalinks and click "Save Cha
 == Changelog ==
 
 = 3.12 =
-* Internal upgrades (please note: TSML, like WordPress, now requires PHP 5.6 or higher)
-* Link to new PDF service
+* Internal upgrades (please note: TSML, like WordPress, now requires PHP 5.6 or higher).
+* Link to new PDF service.
 
 = 3.11.3 =
 * Address performance issues.
