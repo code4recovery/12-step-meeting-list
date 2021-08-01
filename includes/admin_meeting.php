@@ -134,7 +134,7 @@ add_action('admin_init', function () {
 		function () {
 			global $post, $tsml_mapbox_key, $tsml_google_maps_key;
 			$meeting = tsml_get_meeting();
-			$meetings = array();
+			$location = $meetings = array();
 			if ($post->post_parent) {
 				$location = tsml_get_location($post->post_parent);
 				$meetings = tsml_get_meetings(array('location_id' => $location->ID));

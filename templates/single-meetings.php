@@ -16,9 +16,6 @@ wp_localize_script('tsml_public', 'tsml_map', array(
 	'longitude' => $meeting->longitude,
 ));
 
-$startDate = tsml_format_next_start($meeting);
-$endDate = tsml_format_next_end($meeting);
-
 //adding custom body classes
 add_filter('body_class', function ($classes) {
 	global $meeting;
@@ -80,16 +77,15 @@ get_header();
 							<ul class="list-group">
 								<li class="list-group-item meeting-info">
 									<h3 class="list-group-item-heading"><?php _e('Meeting Information', '12-step-meeting-list') ?></h3>
-									<?php
-									echo '<p class="meeting-time"' . ($startDate ? ' content="' . $startDate . '"' : '') . ($endDate ? ' data-end-date="' . $endDate . '"' : '') . '>';
-									echo tsml_format_day_and_time($meeting->day, $meeting->time);
-									if (!empty($meeting->end_time)) {
-										/* translators: until */
-										echo __(' to ', '12-step-meeting-list'), tsml_format_time($meeting->end_time);
-									}
-									echo '</p>';
-									//if (count($meeting->types_expanded)) { 
-									?>
+									<p class="meeting-time">
+										<?php
+										echo tsml_format_day_and_time($meeting->day, $meeting->time);
+										if (!empty($meeting->end_time)) {
+											/* translators: until */
+											echo __(' to ', '12-step-meeting-list'), tsml_format_time($meeting->end_time);
+										}
+										?>
+									</p>
 									<ul class="meeting-types">
 										<?php
 										$li_marker = '<svg class="icon" width="1em" height="1em" viewBox="0 0 16 16" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
@@ -112,8 +108,10 @@ get_header();
 											default:
 												break;
 										}
-										echo '<li><hr style="margin:10px 0;" /></li>' . PHP_EOL;
 										?>
+										<li>
+											<hr style="margin:10px 0;" />
+										</li>
 										<?php foreach ($meeting->types_expanded as $type) { ?>
 											<li>
 												<?php echo $li_marker;
@@ -124,7 +122,6 @@ get_header();
 									<?php if (!empty($meeting->type_description)) { ?>
 										<p class="meeting-type-description"><?php _e($meeting->type_description, '12-step-meeting-list') ?></p>
 									<?php }
-									//}
 
 									if (!empty($meeting->notes)) { ?>
 										<section class="meeting-notes"><?php echo wpautop($meeting->notes) ?></section>

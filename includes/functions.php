@@ -78,7 +78,7 @@ function tsml_assets()
 	}
 }
 
-//set tsml_bounds from current data
+//set geo boundaries from current data (for biased geocoding)
 function tsml_bounds()
 {
 	global $wpdb, $tsml_bounds;
@@ -115,19 +115,6 @@ function tsml_bounds()
 
 		update_option('tsml_bounds', $tsml_bounds);
 	}
-}
-
-//function used by array_map in tsml_get_meetings()
-function tsml_cache_clean($meeting)
-{
-	foreach ($meeting as $key => $value) {
-		if (empty($meeting[$key]) && $meeting[$key] !== '0') {
-			unset($meeting[$key]);
-		} elseif (in_array($key, array('id', 'day', 'latitude', 'longitude', 'location_id', 'group_id', 'region_id', 'district_id'))) {
-			$meeting[$key] -= 0;
-		}
-	}
-	return $meeting;
 }
 
 //try to build a cache of meetings to help with CPU load
@@ -547,50 +534,12 @@ function tsml_format_time($string, $empty = 'Appointment')
 	return date(get_option('time_format'), $date);
 }
 
-//get the next meeting start datetime for schema.org microdata
-//used:		single-meeting.php
-function tsml_format_next_start($meeting)
-{
-	if (empty($meeting->time)) {
-		return null;
-	}
-
-	$days = array('sunday', 'monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday');
-	$string = 'next ' . $days[$meeting->day] . ' ' . $meeting->time . ' ' . get_option('timezone_string');
-
-	return date('c', strtotime($string));
-}
-
-//get the next meeting end datetime for schema.org microdata
-//used:		single-meeting.php
-function tsml_format_next_end($meeting)
-{
-	if (empty($meeting->end_time)) {
-		return null;
-	}
-
-	$days = array('sunday', 'monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday');
-	$string = 'next ' . $days[$meeting->day] . ' ' . $meeting->end_time . ' ' . get_option('timezone_string');
-
-	return date('c', strtotime($string));
-}
-
 //function: takes a time string, eg 6:30 pm, and returns 18:30
 //used:		tsml_import(), tsml_time_duration()
 function tsml_format_time_reverse($string)
 {
 	$time_parts = date_parse($string);
 	return sprintf('%02d', $time_parts['hour']) . ':' . sprintf('%02d', $time_parts['minute']);
-}
-
-//function:	convert a string to utf8 if it needs it
-//used:		by tsml_import()
-function tsml_format_utf8(&$item, $key)
-{
-	if (!function_exists('mb_detect_encoding')) return;
-	if (!mb_detect_encoding($item, 'utf-8', true)) {
-		$item = utf8_encode($item);
-	}
 }
 
 //function: display meeting list on home page (must be set to a static page)
@@ -623,7 +572,9 @@ function tsml_geocode($address)
 	$addresses	= get_option('tsml_addresses', array());
 
 	//filter out any empty addresses that got added due to a bug
-	$addresses = array_filter($addresses, 'tsml_has_address');
+	$addresses = array_filter($addresses, function ($address) {
+		return !empty($address['formatted_address']);
+	});
 
 	//if key exists && approximate is set for that address, return it
 	if (array_key_exists($address, $addresses) && !empty($addresses[$address]['approximate'])) {
@@ -797,7 +748,6 @@ function tsml_ensure_location_approximate_set($meeting_location_info)
 //used:		tsml_group_count()
 function tsml_get_all_groups($status = 'any')
 {
-
 	return get_posts(array(
 		'post_type'   => 'tsml_group',
 		'post_status' => $status,
@@ -811,7 +761,6 @@ function tsml_get_all_groups($status = 'any')
 //used:		tsml_location_count(), tsml_import(), and admin_import.php
 function tsml_get_all_locations($status = 'any')
 {
-
 	return get_posts(array(
 		'post_type'   => 'tsml_location',
 		'post_status' => $status,
@@ -825,7 +774,6 @@ function tsml_get_all_locations($status = 'any')
 //used:		tsml_meeting_count(), tsml_import(), and admin_import.php
 function tsml_get_all_meetings($status = 'any')
 {
-
 	return get_posts(array(
 		'post_type'   => 'tsml_meeting',
 		'post_status' => $status,
@@ -1126,9 +1074,9 @@ function tsml_get_meetings($arguments = array(), $from_cache = true)
 		}
 
 		$posts = get_posts(array(
-			'post_type'			=> 'tsml_meeting',
-			'numberposts'		=> -1,
-			'post_status'		=> $arguments['post_status'],
+			'post_type' => 'tsml_meeting',
+			'numberposts' => -1,
+			'post_status' => $arguments['post_status'],
 		));
 
 		$meeting_meta = tsml_get_meta('tsml_meeting');
@@ -1142,22 +1090,22 @@ function tsml_get_meetings($arguments = array(), $from_cache = true)
 
 			//append to array
 			$meeting = array_merge(array(
-				'id'				=> $post->ID,
-				'name'				=> $post->post_title,
-				'slug'				=> $post->post_name,
-				'notes'				=> $post->post_content,
-				'updated'			=> $post->post_modified_gmt,
-				'location_id'		=> $post->post_parent,
-				'url'				=> get_permalink($post->ID),
-				'day'				=> @$meeting_meta[$post->ID]['day'],
-				'time'				=> @$meeting_meta[$post->ID]['time'],
-				'end_time'			=> @$meeting_meta[$post->ID]['end_time'],
-				'time_formatted'	=> tsml_format_time(@$meeting_meta[$post->ID]['time']),
-				'conference_url'	=> @$meeting_meta[$post->ID]['conference_url'],
-				'conference_url_notes'	=> @$meeting_meta[$post->ID]['conference_url_notes'],
-				'conference_phone'	=> @$meeting_meta[$post->ID]['conference_phone'],
-				'conference_phone_notes'	=> @$meeting_meta[$post->ID]['conference_phone_notes'],
-				'types'				=> empty($meeting_meta[$post->ID]['types']) ? array() : array_values(unserialize($meeting_meta[$post->ID]['types'])),
+				'id' => $post->ID,
+				'name' => $post->post_title,
+				'slug' => $post->post_name,
+				'notes' => $post->post_content,
+				'updated' => $post->post_modified_gmt,
+				'location_id' => $post->post_parent,
+				'url' => get_permalink($post->ID),
+				'day' => @$meeting_meta[$post->ID]['day'],
+				'time' => isset($meeting_meta[$post->ID]['time']) ? $meeting_meta[$post->ID]['time'] : null,
+				'end_time' => isset($meeting_meta[$post->ID]['end_time']) ? $meeting_meta[$post->ID]['end_time'] : null,
+				'time_formatted' => isset($meeting_meta[$post->ID]['time']) ? tsml_format_time($meeting_meta[$post->ID]['time']) : null,
+				'conference_url' => isset($meeting_meta[$post->ID]['conference_url']) ? $meeting_meta[$post->ID]['conference_url'] : null,
+				'conference_url_notes' => isset($meeting_meta[$post->ID]['conference_url_notes']) ? $meeting_meta[$post->ID]['conference_url_notes'] : null,
+				'conference_phone' => isset($meeting_meta[$post->ID]['conference_phone']) ? $meeting_meta[$post->ID]['conference_phone'] : null,
+				'conference_phone_notes' => isset($meeting_meta[$post->ID]['conference_phone_notes']) ? $meeting_meta[$post->ID]['conference_phone_notes'] : null,
+				'types' => empty($meeting_meta[$post->ID]['types']) ? array() : array_values(unserialize($meeting_meta[$post->ID]['types'])),
 			), $locations[$post->post_parent]);
 
 			//append contact info to meeting
@@ -1187,8 +1135,19 @@ function tsml_get_meetings($arguments = array(), $from_cache = true)
 			$meetings[] = $meeting;
 		}
 
-		// Clean up the array, and write it to cache
-		$meetings = array_map('tsml_cache_clean', $meetings);
+		// Clean up the array
+		$meetings = array_map(function ($meeting) {
+			foreach ($meeting as $key => $value) {
+				if (empty($meeting[$key]) && $meeting[$key] !== '0') {
+					unset($meeting[$key]);
+				} elseif (in_array($key, array('id', 'day', 'latitude', 'longitude', 'location_id', 'group_id', 'region_id', 'district_id'))) {
+					$meeting[$key] -= 0;
+				}
+			}
+			return $meeting;
+		}, $meetings);
+
+		//write array to cache
 		file_put_contents(WP_CONTENT_DIR . $tsml_cache, json_encode($meetings));
 	}
 
@@ -1199,7 +1158,51 @@ function tsml_get_meetings($arguments = array(), $from_cache = true)
 		$meetings = $filter->apply($meetings);
 	}
 
-	usort($meetings, 'tsml_sort_meetings');
+	//sort meetings
+	usort($meetings, function ($a, $b) {
+		global $tsml_days_order, $tsml_sort_by;
+
+		//sub_regions are regions in this scenario
+		if (!empty($a['sub_region'])) $a['region'] = $a['sub_region'];
+		if (!empty($b['sub_region'])) $b['region'] = $b['sub_region'];
+
+		//custom sort order?
+		if ($tsml_sort_by !== 'time') {
+			if ($a[$tsml_sort_by] != $b[$tsml_sort_by]) {
+				return strcmp($a[$tsml_sort_by], $b[$tsml_sort_by]);
+			}
+		}
+
+		//get the user-settable order of days
+		$a_day_index = isset($a['day']) && strlen($a['day']) ? array_search($a['day'], $tsml_days_order) : false;
+		$b_day_index = isset($b['day']) && strlen($b['day']) ? array_search($b['day'], $tsml_days_order) : false;
+		if ($a_day_index === false && $b_day_index !== false) {
+			return 1;
+		} elseif ($a_day_index !== false && $b_day_index === false) {
+			return -1;
+		} elseif ($a_day_index != $b_day_index) {
+			return $a_day_index - $b_day_index;
+		} else {
+			//days are the same or both null
+			$a_time = empty($a['time']) ? '' : (($a['time'] == '00:00') ? '23:59' : $a['time']);
+			$b_time = empty($b['time']) ? '' : (($b['time'] == '00:00') ? '23:59' : $b['time']);
+			$time_diff = strcmp($a_time, $b_time);
+			if ($time_diff) {
+				return $time_diff;
+			} else {
+				$a_location = empty($a['location']) ? '' : $a['location'];
+				$b_location = empty($b['location']) ? '' : $b['location'];
+				$location_diff = strcmp($a_location, $b_location);
+				if ($location_diff) {
+					return $location_diff;
+				} else {
+					$a_name = empty($a['name']) ? '' : $a['name'];
+					$b_name = empty($b['name']) ? '' : $b['name'];
+					return strcmp($a_name, $b_name);
+				}
+			}
+		}
+	});
 
 	return $meetings;
 }
@@ -1259,19 +1262,6 @@ function tsml_get_meta($type, $id = null)
 	return $meta;
 }
 
-//function get author usernames & ids
-//used by tsml_get_meetings() and import ajax
-function tsml_get_users($keyed_by_id = true)
-{
-	$users = get_users(array(
-		'fields' => array('ID', 'user_login'),
-	));
-	foreach ($users as $user) {
-		$return[$user->ID] = $user->user_login;
-	}
-	return ($keyed_by_id) ? $return : array_flip($return);
-}
-
 //return spelled-out meeting types
 //called from save.php (updates) and archive-meetings.php (display)
 function tsml_meeting_types($types)
@@ -1303,14 +1293,36 @@ function tsml_import_buffer_set($meetings, $data_source = null)
 	$upper_days = array_map('strtoupper', $tsml_days);
 
 	//get users, keyed by username
-	$users = tsml_get_users(false);
+	$users = [];
+	foreach (get_users([
+		'fields' => ['ID', 'user_login'],
+	]) as $user) {
+		$users[$user->user_login] = $user->ID;
+	}
+
 	$user_id = get_current_user_id();
 
 	//convert the array to UTF-8
-	array_walk_recursive($meetings, 'tsml_format_utf8');
+	array_walk_recursive($meetings, function (&$item) {
+		if (!mb_detect_encoding($item, 'utf-8', true)) {
+			$item = utf8_encode($item);
+		}
+	});
 
 	//trim everything
-	array_walk_recursive($meetings, 'tsml_import_sanitize_field');
+	array_walk_recursive($meetings, function ($value) {
+		//preserve <br>s as line breaks if present, otherwise clean up
+		$value = preg_replace('/\<br(\s*)?\/?\>/i', PHP_EOL, $value);
+		$value = stripslashes($value);
+		$value = trim($value);
+
+		//turn "string" into string (only do if on both ends though)
+		if ((substr($value, 0, 1) == '"') && (substr($value, -1) == '"')) {
+			$value = trim(trim($value, '"'));
+		}
+
+		return $value;
+	});
 
 	//check for any meetings with arrays of days and creates an individual meeting for each day in array
 	$meetings_to_add = array();
@@ -1507,13 +1519,6 @@ function tsml_import_buffer_set($meetings, $data_source = null)
 	update_option('tsml_import_buffer', $meetings, false);
 }
 
-//function: determine whether a geocoded address has a non-empty formatted address
-//used:		tsml_geocode();
-function tsml_has_address($address)
-{
-	return !empty($address['formatted_address']);
-}
-
 //function:	filter workaround for setting post_modified dates
 //used:		tsml_ajax_import()
 function tsml_import_post_modified($data, $postarr)
@@ -1660,23 +1665,6 @@ function tsml_import_reformat_googlesheet($data)
 	return $meetings;
 }
 
-//function: turn "string" into string
-//used:		tsml_ajax_import() inside array_map
-function tsml_import_sanitize_field($value)
-{
-	//preserve <br>s as line breaks if present, otherwise clean up
-	$value = preg_replace('/\<br(\s*)?\/?\>/i', PHP_EOL, $value);
-	$value = stripslashes($value);
-	$value = trim($value);
-
-	//turn "string" into string (only do if on both ends though)
-	if ((substr($value, 0, 1) == '"') && (substr($value, -1) == '"')) {
-		$value = trim(trim($value, '"'));
-	}
-
-	return $value;
-}
-
 //function: return an html link with current query string appended -- this is because query string permalink structure is an enormous pain in the ass
 //used:		archive-meetings.php, single-locations.php, single-meetings.php
 function tsml_link($url, $string, $exclude = '', $class = false)
@@ -1774,59 +1762,6 @@ function tsml_sanitize($type, $value)
 function tsml_sanitize_text_area($value)
 {
 	return implode("\n", array_map('sanitize_text_field', explode("\n", trim($value))));
-}
-
-//function: sort an array of meetings
-//used: as a callback in tsml_get_meetings()
-//method: sort by
-//	1) day, following "week starts on" user preference, with appointment meetings last,
-//	2) followed by time, where the day starts at 5am,
-//	3) followed by location name,
-//	4) followed by meeting name
-function tsml_sort_meetings($a, $b)
-{
-	global $tsml_days_order, $tsml_sort_by;
-
-	//sub_regions are regions in this scenario
-	if (!empty($a['sub_region'])) $a['region'] = $a['sub_region'];
-	if (!empty($b['sub_region'])) $b['region'] = $b['sub_region'];
-
-	//custom sort order?
-	if ($tsml_sort_by !== 'time') {
-		if ($a[$tsml_sort_by] != $b[$tsml_sort_by]) {
-			return strcmp($a[$tsml_sort_by], $b[$tsml_sort_by]);
-		}
-	}
-
-	//get the user-settable order of days
-	$a_day_index = isset($a['day']) && strlen($a['day']) ? array_search($a['day'], $tsml_days_order) : false;
-	$b_day_index = isset($b['day']) && strlen($b['day']) ? array_search($b['day'], $tsml_days_order) : false;
-	if ($a_day_index === false && $b_day_index !== false) {
-		return 1;
-	} elseif ($a_day_index !== false && $b_day_index === false) {
-		return -1;
-	} elseif ($a_day_index != $b_day_index) {
-		return $a_day_index - $b_day_index;
-	} else {
-		//days are the same or both null
-		$a_time = empty($a['time']) ? '' : (($a['time'] == '00:00') ? '23:59' : $a['time']);
-		$b_time = empty($b['time']) ? '' : (($b['time'] == '00:00') ? '23:59' : $b['time']);
-		$time_diff = strcmp($a_time, $b_time);
-		if ($time_diff) {
-			return $time_diff;
-		} else {
-			$a_location = empty($a['location']) ? '' : $a['location'];
-			$b_location = empty($b['location']) ? '' : $b['location'];
-			$location_diff = strcmp($a_location, $b_location);
-			if ($location_diff) {
-				return $location_diff;
-			} else {
-				$a_name = empty($a['name']) ? '' : $a['name'];
-				$b_name = empty($b['name']) ? '' : $b['name'];
-				return strcmp($a_name, $b_name);
-			}
-		}
-	}
 }
 
 //function:	does a string end with another string
