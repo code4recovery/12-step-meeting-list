@@ -2,7 +2,7 @@
 Contributors: Code for Recovery
 Requires at least: 3.2
 Tested up to: 5.7.2
-Stable tag: 3.11.2
+Stable tag: 3.11.3
 
 This plugin helps twelve step recovery programs list their meetings. It standardizes addresses, and displays results in a searchable list and map.
 
@@ -212,6 +212,10 @@ To apply these changes, you must go to Settings > Permalinks and click "Save Cha
 1. Edit location
 
 == Changelog ==
+
+= 3.11.3 =
+* Address performance issues.
+* Fix link to new Discussions (replaces Issues for public users).
 
 = 3.11.2 =
 * Fix widget filtering.
