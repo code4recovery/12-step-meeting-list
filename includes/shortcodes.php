@@ -11,12 +11,12 @@ add_shortcode('tsml_region_count', 'tsml_count_regions');
 function tsml_next_meetings($arguments)
 {
 	global $tsml_meeting_attendance_options;
-	$arguments = shortcode_atts(array('count' => 5, 'message' => ''), $arguments, 'tsml_next_meetings');
-	$meetings = tsml_get_meetings(array(
+	$arguments = shortcode_atts(['count' => 5, 'message' => ''], $arguments, 'tsml_next_meetings');
+	$meetings = tsml_get_meetings([
 		'day' => intval(current_time('w')),
 		'time' => 'upcoming',
 		'attendance_option' => 'active',
-	));
+	]);
 	if (!count($meetings) && empty($arguments['message'])) {
 		return false;
 	}
@@ -89,7 +89,7 @@ add_shortcode('tsml_next_meetings', 'tsml_next_meetings');
 
 add_shortcode('tsml_types_list', function () {
 	global $tsml_types_in_use, $tsml_programs, $tsml_program;
-	$types = array();
+	$types = [];
 	$base = get_post_type_archive_link('tsml_meeting') . '?tsml-day=any&tsml-type=';
 	foreach ($tsml_types_in_use as $type) {
 		$types[$tsml_programs[$tsml_program]['types'][$type]] = '<li><a href="' . $base . $type . '">' . $tsml_programs[$tsml_program]['types'][$type] . '</a></li>';
@@ -105,15 +105,15 @@ function tsml_ui()
 	$js = defined('TSML_UI_PATH') ? TSML_UI_PATH : 'https://react.meetingguide.org/app.js';
 	wp_enqueue_script('tsml_ui', $js);
 	wp_localize_script('tsml_ui', 'tsml_react_config', array_merge(
-		array(
+		[
 			'conference_providers' => $tsml_conference_providers,
-			'strings' => array(
-				$tsml_language => array(
+			'strings' => [
+				$tsml_language => [
 					'types' => $tsml_programs[$tsml_program]['types'],
-				),
-			),
+				],
+			],
 			'feedback_emails' => array_values($tsml_feedback_addresses),
-		),
+		],
 		$tsml_ui_config
 	));
 	$data = admin_url('admin-ajax.php') . '?action=meetings&nonce=' . wp_create_nonce($tsml_nonce);

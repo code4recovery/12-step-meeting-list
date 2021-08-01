@@ -8,7 +8,7 @@ add_action('tsml_region_edit_form_fields', function ($term) {
             <label for="delete_and_reassign"><?php _e('Delete and Reassign', '12-step-meeting-list'); ?></label>
         </th>
         <td>
-            <?php wp_dropdown_categories(array(
+            <?php wp_dropdown_categories([
                 'taxonomy' => 'tsml_region',
                 'hierarchical' => true,
                 'orderby' => 'name',
@@ -16,7 +16,7 @@ add_action('tsml_region_edit_form_fields', function ($term) {
                 'show_option_all' => '&nbsp;',
                 'name' => 'delete_and_reassign',
                 'id' => 'delete_and_reassign',
-            ));
+            ]);
             ?>
             <p class="description">
                 <?php _e('Delete this region and reassign its locations to another region.', '12-step-meeting-list') ?>
@@ -30,26 +30,26 @@ add_action(
     function ($region_id) {
 
         //set updated time for all meetings in region if a region is edited
-        $meetings = tsml_get_meetings(array('region' => $region_id));
+        $meetings = tsml_get_meetings(['region' => $region_id]);
         foreach ($meetings as $meeting) {
-            wp_update_post(array('ID' => $meeting['id']));
+            wp_update_post(['ID' => $meeting['id']]);
         }
 
         $delete_and_reassign = intval($_POST['delete_and_reassign']);
 
         //delete this region and reassign its locations to another region
         if (!empty($delete_and_reassign)) {
-            $location_ids = get_posts(array(
+            $location_ids = get_posts([
                 'post_type' => 'tsml_location',
                 'numberposts' => -1,
                 'fields' => 'ids',
-                'tax_query' => array(
-                    array(
+                'tax_query' => [
+                    [
                         'taxonomy' => 'tsml_region',
                         'terms' => intval($region_id),
-                    ),
-                ),
-            ));
+                    ],
+                ],
+            ]);
 
             //assign new region to each location
             foreach ($location_ids as $location_id) {

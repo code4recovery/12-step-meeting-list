@@ -134,10 +134,10 @@ add_action('admin_init', function () {
 		function () {
 			global $post, $tsml_mapbox_key, $tsml_google_maps_key;
 			$meeting = tsml_get_meeting();
-			$location = $meetings = array();
+			$location = $meetings = [];
 			if ($post->post_parent) {
 				$location = tsml_get_location($post->post_parent);
-				$meetings = tsml_get_meetings(array('location_id' => $location->ID));
+				$meetings = tsml_get_meetings(['location_id' => $location->ID]);
 			}
 	?>
 		<div class="meta_form_row radio">
@@ -204,7 +204,7 @@ add_action('admin_init', function () {
 			if (wp_count_terms('tsml_region')) { ?>
 			<div class="meta_form_row">
 				<label for="region"><?php _e('Region', '12-step-meeting-list') ?></label>
-				<?php wp_dropdown_categories(array(
+				<?php wp_dropdown_categories([
 					'name' => 'region',
 					'taxonomy' => 'tsml_region',
 					'hierarchical' => true,
@@ -212,7 +212,7 @@ add_action('admin_init', function () {
 					'orderby' => 'name',
 					'selected' => empty($location->region_id) ? null : $location->region_id,
 					'show_option_none' => __('Region', '12-step-meeting-list'),
-				)) ?>
+				]) ?>
 			</div>
 		<?php } ?>
 
@@ -258,11 +258,11 @@ add_action('admin_init', function () {
 	add_meta_box('group', __('Contact Information <small>Optional</small>', '12-step-meeting-list'), function () {
 		global $tsml_contact_display;
 		$meeting = tsml_get_meeting();
-		$meetings = array();
+		$meetings = [];
 		$district = 0;
 		if (!empty($meeting->group_id)) {
-			$meetings = tsml_get_meetings(array('group_id' => $meeting->group_id));
-			$district = wp_get_post_terms($meeting->group_id, 'tsml_district', array('fields' => 'ids'));
+			$meetings = tsml_get_meetings(['group_id' => $meeting->group_id]);
+			$district = wp_get_post_terms($meeting->group_id, 'tsml_district', ['fields' => 'ids']);
 			if (is_array($district)) {
 				$district = empty($district) ? 0 : $district[0];
 			}
@@ -307,7 +307,7 @@ add_action('admin_init', function () {
 			if (wp_count_terms('tsml_district')) { ?>
 				<div class="meta_form_row group-visible">
 					<label for="district"><?php _e('District', '12-step-meeting-list') ?></label>
-					<?php wp_dropdown_categories(array(
+					<?php wp_dropdown_categories([
 						'name' => 'district',
 						'taxonomy' => 'tsml_district',
 						'hierarchical' => true,
@@ -315,7 +315,7 @@ add_action('admin_init', function () {
 						'orderby' => 'name',
 						'selected' => $district,
 						'show_option_none' => __('District', '12-step-meeting-list'),
-					)) ?>
+					]) ?>
 				</div>
 			<?php } ?>
 			<div class="meta_form_row group-visible">

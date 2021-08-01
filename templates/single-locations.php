@@ -4,7 +4,7 @@ tsml_assets();
 $location = tsml_get_location();
 
 //define some vars for the map
-wp_localize_script('tsml_public', 'tsml_map', array(
+wp_localize_script('tsml_public', 'tsml_map', [
 	'formatted_address' => $location->formatted_address,
 	'approximate' => $location->approximate,
 	'directions' => __('Directions', '12-step-meeting-list'),
@@ -14,7 +14,7 @@ wp_localize_script('tsml_public', 'tsml_map', array(
 	'location_id' => $location->ID,
 	'location_url' => get_permalink($location->ID),
 	'longitude' => $location->longitude,
-));
+]);
 
 //adding custom body classes
 add_filter('body_class', function ($classes) {
@@ -65,16 +65,16 @@ get_header();
 								</li>
 
 								<?php
-								$meetings = tsml_get_meetings(array('location_id' => $location->ID));
-								$location_days = array();
+								$meetings = tsml_get_meetings(['location_id' => $location->ID]);
+								$location_days = [];
 								foreach ($meetings as $meeting) {
 									// Set types to be empty if it's not given, prevents php notices in log
 									if (empty($meeting['types'])) {
-										$meeting['types'] = array();
+										$meeting['types'] = [];
 									}
 
 									if (!isset($location_days[$meeting['day']])) {
-										$location_days[$meeting['day']] = array();
+										$location_days[$meeting['day']] = [];
 									}
 
 									$type_classes = tsml_to_css_classes($meeting['types']);

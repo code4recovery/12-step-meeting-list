@@ -7,7 +7,7 @@ add_action('restrict_manage_posts', function () {
         return;
     }
 
-    wp_dropdown_categories(array(
+    wp_dropdown_categories([
         'show_option_all' => 'Region',
         'orderby' => 'tax_name',
         'hide_empty' => true,
@@ -17,7 +17,7 @@ add_action('restrict_manage_posts', function () {
         'taxonomy' => 'tsml_region',
         'hide_if_empty' => true,
         'value_field' => 'term_id',
-    ));
+    ]);
 });
 
 # If filter is set, restrict results
@@ -35,7 +35,7 @@ add_filter(
             JOIN ' . $wpdb->term_taxonomy . ' x ON x.term_taxonomy_id = r.term_taxonomy_id
             WHERE x.term_id = ' . intval($_GET['region']));
 
-        $query->query_vars['post_parent__in'] = empty($parent_ids) ? array(0) : $parent_ids;
+        $query->query_vars['post_parent__in'] = empty($parent_ids) ? [0] : $parent_ids;
     }
 );
 
@@ -43,14 +43,14 @@ add_filter(
 add_filter(
     'manage_edit-tsml_meeting_columns',
     function () {
-        return array(
+        return [
             'cb' => '<input type="checkbox" />',
             'title' => __('Meeting', '12-step-meeting-list'),
             'day' => __('Day', '12-step-meeting-list'),
             'time' => __('Time', '12-step-meeting-list'),
             'region' => __('Region', '12-step-meeting-list'),
             'date' => __('Date', '12-step-meeting-list'),
-        );
+        ];
     }
 );
 
@@ -98,15 +98,15 @@ add_filter('request', function ($vars) {
     if (isset($vars['orderby'])) {
         switch ($vars['orderby']) {
             case 'day':
-                return array_merge($vars, array(
+                return array_merge($vars, [
                     'meta_key' => 'day',
                     'orderby' => 'meta_value',
-                ));
+                ]);
             case 'time':
-                return array_merge($vars, array(
+                return array_merge($vars, [
                     'meta_key' => 'time',
                     'orderby' => 'meta_value',
-                ));
+                ]);
         }
     }
     return $vars;
@@ -135,9 +135,9 @@ add_filter('bulk_actions-edit-tsml_meeting', function ($bulk_array) {
 add_filter('handle_bulk_actions-edit-tsml_meeting', function ($redirect, $doaction, $object_ids) {
     // Handle tsml_add_tc
     // let's remove query args first
-    $redirect = remove_query_arg(array('tsml_add_tc'), $redirect);
-    $redirect = remove_query_arg(array('tsml_remove_tc'), $redirect);
-    $redirect = remove_query_arg(array('tsml_open_in_person'), $redirect);
+    $redirect = remove_query_arg(['tsml_add_tc'], $redirect);
+    $redirect = remove_query_arg(['tsml_remove_tc'], $redirect);
+    $redirect = remove_query_arg(['tsml_open_in_person'], $redirect);
 
     // do something for "Add Temporary Closure" bulk action
     if ($doaction == 'tsml_add_tc') {
@@ -170,7 +170,7 @@ add_filter('handle_bulk_actions-edit-tsml_meeting', function ($redirect, $doacti
             // For each select post, remove TC if it's selected in "types"
             $types = get_post_meta($post_id, 'types', false)[0];
             if (!empty($types) && in_array('TC', array_values($types))) {
-                $types = array_diff($types, array('TC'));
+                $types = array_diff($types, ['TC']);
                 if (empty($types)) {
                     delete_post_meta($post_id, 'types');
                 } else {
@@ -204,7 +204,7 @@ add_filter('handle_bulk_actions-edit-tsml_meeting', function ($redirect, $doacti
             // For each select post, remove TC if it's selected in "types"
             $types = get_post_meta($post_id, 'types', false)[0];
             if (!empty($types) && in_array('TC', array_values($types))) {
-                $types = array_diff($types, array('TC'));
+                $types = array_diff($types, ['TC']);
                 if (empty($types)) {
                     delete_post_meta($post_id, 'types');
                 } else {
@@ -226,8 +226,6 @@ add_filter('handle_bulk_actions-edit-tsml_meeting', function ($redirect, $doacti
 
     return $redirect;
 }, 10, 3);
-
-
 
 // Notify how many Temporary Closures where removed
 add_action(

@@ -4,7 +4,7 @@ tsml_assets();
 $meeting = tsml_get_meeting();
 
 //define some vars for the map
-wp_localize_script('tsml_public', 'tsml_map', array(
+wp_localize_script('tsml_public', 'tsml_map', [
 	'directions' => __('Directions', '12-step-meeting-list'),
 	'directions_url' => in_array('TC', $meeting->types) ? null : $meeting->directions,
 	'formatted_address' => $meeting->formatted_address,
@@ -14,7 +14,7 @@ wp_localize_script('tsml_public', 'tsml_map', array(
 	'location_id' => $meeting->post_parent,
 	'location_url' => get_permalink($meeting->post_parent),
 	'longitude' => $meeting->longitude,
-));
+]);
 
 //adding custom body classes
 add_filter('body_class', function ($classes) {
@@ -159,23 +159,23 @@ get_header();
 									</li>
 								<?php }
 
-								$services = array(
-									'venmo' => array(
+								$services = [
+									'venmo' => [
 										'name' => 'Venmo',
 										'url' => 'https://venmo.com/',
 										'substr' => 1,
-									),
-									'square' => array(
+									],
+									'square' => [
 										'name' => 'Cash App',
 										'url' => 'https://cash.app/',
 										'substr' => 0,
-									),
-									'paypal' => array(
+									],
+									'paypal' => [
 										'name' => 'PayPal',
 										'url' => 'https://www.paypal.me/',
 										'substr' => 0,
-									)
-								);
+									],
+								];
 								$active_services = array_filter(array_keys($services), function ($service) use ($meeting) {
 									return !empty($meeting->{$service});
 								});
@@ -289,7 +289,8 @@ get_header();
 														</svg>
 														<?php echo sprintf(__('%s’s Email', '12-step-meeting-list'), $name) ?>
 													</a>
-												<?php }
+												<?php
+												}
 												if (!empty($meeting->{'contact_' . $i . '_phone'})) { ?>
 													<a href="tel:<?php echo $meeting->{'contact_' . $i . '_phone'} ?>" class="btn btn-default btn-block contact-phone">
 														<svg class="icon" width="1em" height="1em" viewBox="0 0 16 16" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
@@ -349,9 +350,6 @@ get_header();
 
 					</div>
 					<div class="col-md-8">
-						<?php /* if (has_post_thumbnail()) { ?>
-						<img src="<?php echo get_the_post_thumbnail_url(); ?>" class="panel panel-default meeting-thumbnail img-responsive">
-						<?php } */ ?>
 						<?php if (!empty($tsml_mapbox_key) || !empty($tsml_google_maps_key)) { ?>
 							<div id="map" class="panel panel-default"></div>
 						<?php } ?>

@@ -10,9 +10,9 @@ class TSML_Widget_Upcoming extends WP_Widget
 		parent::__construct(
 			'tsml_widget_upcoming',
 			__('Upcoming Meetings', '12-step-meeting-list'),
-			array(
+			[
 				'description' => __('Display a table of upcoming meetings.', '12-step-meeting-list'),
-			)
+			]
 		);
 	}
 
@@ -108,7 +108,7 @@ class TSML_Widget_Upcoming extends WP_Widget
 			echo $args['before_title'] . apply_filters('widget_title', $instance['title']) . $args['after_title'];
 		}
 		echo $table;
-		$meetings = tsml_get_meetings(array('day' => intval(current_time('w')), 'time' => 'upcoming'));
+		$meetings = tsml_get_meetings(['day' => intval(current_time('w')), 'time' => 'upcoming']);
 		$meetings_link = get_post_type_archive_link('tsml_meeting');
 		if (!count($meetings) && !empty($instance['message'])) {
 			$link = $meetings_link;
@@ -152,12 +152,12 @@ class TSML_Widget_Upcoming extends WP_Widget
 	//sanitize widget form values as they are saved
 	public function update($new_instance, $old_instance)
 	{
-		return array(
+		return [
 			'title' => !empty($new_instance['title']) ? strip_tags($new_instance['title']) : '',
 			'count' => !empty($new_instance['count']) ? intval($new_instance['count']) : 5,
 			'css' => !empty($new_instance['css']),
 			'message' => !empty($new_instance['message']) ? strip_tags($new_instance['message']) : '',
-		);
+		];
 	}
 }
 
@@ -171,9 +171,9 @@ class TSML_Widget_App_Store extends WP_Widget
 		parent::__construct(
 			'tsml_widget_app_store',
 			__('App Store', '12-step-meeting-list'),
-			array(
+			[
 				'description' => __('Display links to the Meeting Guide app in the Apple and Android app stores.', '12-step-meeting-list'),
-			)
+			]
 		);
 	}
 
@@ -196,7 +196,7 @@ class TSML_Widget_App_Store extends WP_Widget
 	//sanitize widget form values as they are saved
 	public function update($new_instance, $old_instance)
 	{
-		$instance = array();
+		$instance = [];
 		$instance['title'] = empty($new_instance['title']) ? '' : strip_tags($new_instance['title']);
 		$instance['css'] = !empty($new_instance['css']);
 		return $instance;

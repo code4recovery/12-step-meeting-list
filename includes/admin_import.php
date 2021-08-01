@@ -34,7 +34,7 @@ function tsml_import_page()
 			}
 		} elseif (empty($extension)) {
 			$error = __('Uploaded file did not have a file extension. Please add .csv to the end of the file name.', '12-step-meeting-list');
-		} elseif (!in_array($extension, array('csv', 'txt'))) {
+		} elseif (!in_array($extension, ['csv', 'txt'])) {
 			$error = sprintf(__('Please upload a csv file. Your file ended in .%s.', '12-step-meeting-list'), $extension);
 		} elseif (!$handle = fopen($_FILES['tsml_import']['tmp_name'], 'r')) {
 			$error = __('Error opening CSV file', '12-step-meeting-list');
@@ -95,54 +95,53 @@ function tsml_import_page()
 					if ($_POST['delete'] == 'regions') {
 
 						//get all regions present in array
-						$regions = array();
+						$regions = [];
 						foreach ($meetings as $meeting) {
 							$regions[] = empty($meeting['sub_region']) ? $meeting['region'] : $meeting['sub_region'];
 						}
 
 						//get locations for those meetings
-						$location_ids = get_posts(array(
-							'post_type'			=> 'tsml_location',
-							'numberposts'		=> -1,
-							'fields'			=> 'ids',
-							'tax_query'			=> array(
-								array(
-									'taxonomy'	=> 'tsml_region',
-									'field'		=> 'name',
-									'terms'		=> array_unique($regions),
-								),
-							),
-						));
+						$location_ids = get_posts([
+							'post_type' => 'tsml_location',
+							'numberposts' => -1,
+							'fields' => 'ids',
+							'tax_query' => [
+								[
+									'taxonomy' => 'tsml_region',
+									'field' => 'name',
+									'terms' => array_unique($regions),
+								],
+							],
+						]);
 
 						//get posts for those meetings
-						$meeting_ids = get_posts(array(
-							'post_type'			=> 'tsml_meeting',
-							'numberposts'		=> -1,
-							'fields'			=> 'ids',
-							'post_parent__in'	=> $location_ids,
-						));
+						$meeting_ids = get_posts([
+							'post_type' => 'tsml_meeting',
+							'numberposts' => -1,
+							'fields' => 'ids',
+							'post_parent__in' => $location_ids,
+						]);
 
 						tsml_delete($meeting_ids);
 
 						tsml_delete_orphans();
 					} elseif ($_POST['delete'] == 'no_data_source') {
 
-						tsml_delete(get_posts(array(
-							'post_type'		=> 'tsml_meeting',
-							'numberposts'	=> -1,
-							'fields'			=> 'ids',
-							'meta_query'		=> array(
-								array(
+						tsml_delete(get_posts([
+							'post_type' => 'tsml_meeting',
+							'numberposts' => -1,
+							'fields' => 'ids',
+							'meta_query' => [
+								[
 									'key' => 'data_source',
 									'compare' => 'NOT EXISTS',
 									'value' => '',
-								),
-							),
-						)));
+								],
+							],
+						]));
 
 						tsml_delete_orphans();
 					} elseif ($_POST['delete'] == 'all') {
-
 						tsml_delete('everything');
 					}
 				}
@@ -154,13 +153,13 @@ function tsml_import_page()
 	if (!empty($_POST['tsml_add_data_source']) && isset($_POST['tsml_nonce']) && wp_verify_nonce($_POST['tsml_nonce'], $tsml_nonce)) {
 
 		//sanitize URL
-		$_POST['tsml_add_data_source'] = trim(esc_url_raw($_POST['tsml_add_data_source'], array('http', 'https')));
+		$_POST['tsml_add_data_source'] = trim(esc_url_raw($_POST['tsml_add_data_source'], ['http', 'https']));
 
 		//try fetching	
-		$response = wp_remote_get($_POST['tsml_add_data_source'], array(
+		$response = wp_remote_get($_POST['tsml_add_data_source'], [
 			'timeout' => 30,
 			'sslverify' => false,
-		));
+		]);
 		if (is_array($response) && !empty($response['body']) && ($body = json_decode($response['body'], true))) {
 
 			//if already set, hard refresh
@@ -169,13 +168,13 @@ function tsml_import_page()
 				tsml_delete_orphans();
 			}
 
-			$tsml_data_sources[$_POST['tsml_add_data_source']] = array(
+			$tsml_data_sources[$_POST['tsml_add_data_source']] = [
 				'status' => 'OK',
 				'last_import' => current_time('timestamp'),
 				'count_meetings' => 0,
 				'name' => sanitize_text_field($_POST['tsml_add_data_source_name']),
 				'type' => 'JSON',
-			);
+			];
 
 			//import feed
 			tsml_import_buffer_set($body, $_POST['tsml_add_data_source']);
@@ -217,13 +216,13 @@ function tsml_import_page()
 	}
 
 	//check for existing import buffer
-	$meetings = get_option('tsml_import_buffer', array());
+	$meetings = get_option('tsml_import_buffer', []);
 
 	//remove data source
 	if (!empty($_POST['tsml_remove_data_source'])) {
 
 		//sanitize URL
-		$_POST['tsml_remove_data_source'] = esc_url_raw($_POST['tsml_remove_data_source'], array('http', 'https'));
+		$_POST['tsml_remove_data_source'] = esc_url_raw($_POST['tsml_remove_data_source'], ['http', 'https']);
 
 		if (array_key_exists($_POST['tsml_remove_data_source'], $tsml_data_sources)) {
 
@@ -282,10 +281,10 @@ function tsml_import_page()
 		//users might expect that if they add "meeting guide" that then they are added to the app
 		if (strtolower($name) == 'meeting guide') {
 			$current_user = wp_get_current_user();
-			$message = admin_url('admin-ajax.php?') . http_build_query(array(
+			$message = admin_url('admin-ajax.php?') . http_build_query([
 				'action' => 'meetings',
 				'key' => $key,
-			));
+			]);
 			tsml_email(TSML_MEETING_GUIDE_APP_NOTIFY, 'Sharing Key', $message, $current_user->user_email);
 		}
 	}
@@ -490,11 +489,11 @@ function tsml_import_page()
 								<p>
 									<?php _e('When importing...', '12-step-meeting-list') ?><br>
 									<?php
-									$delete_options = array(
+									$delete_options = [
 										'nothing'	=> __('don\'t delete anything', '12-step-meeting-list'),
 										'regions'	=> __('delete only the meetings, locations, and groups for the regions present in this CSV', '12-step-meeting-list'),
 										'all' 		=> __('delete all meetings, locations, groups, districts, and regions', '12-step-meeting-list'),
-									);
+									];
 									if (!empty($tsml_data_sources)) {
 										$delete_options['no_data_source'] = __('delete all meetings, locations, and groups not from a data source', '12-step-meeting-list');
 									}
@@ -639,12 +638,12 @@ function tsml_import_page()
 							$regions = tsml_count_regions();
 							$groups = tsml_count_groups();
 
-							$pdf_link = 'https://pdf.code4recovery.org/?' . http_build_query(array(
-								'json' => admin_url('admin-ajax.php') . '?' . http_build_query(array(
+							$pdf_link = 'https://pdf.code4recovery.org/?' . http_build_query([
+								'json' => admin_url('admin-ajax.php') . '?' . http_build_query([
 									'action' => 'meetings',
 									'nonce' => $tsml_sharing === 'restricted' ? wp_create_nonce($tsml_nonce) : null
-								))
-							));
+								])
+							]);
 
 							?>
 							<h3><?php _e('Where\'s My Info?', '12-step-meeting-list') ?></h3>
@@ -702,11 +701,13 @@ function tsml_import_page()
 								<?php wp_nonce_field($tsml_nonce, 'tsml_nonce', false) ?>
 								<select name="tsml_distance_units" onchange="this.form.submit()">
 									<?php
-									foreach (array(
+									foreach ([
 										'km' => __('Kilometers', '12-step-meeting-list'),
 										'mi' => __('Miles', '12-step-meeting-list'),
-									) as $key => $value) { ?>
-										<option value="<?php echo $key ?>" <?php selected($tsml_distance_units, $key) ?>><?php echo $value ?></option>
+									] as $key => $value) { ?>
+										<option value="<?php echo $key ?>" <?php selected($tsml_distance_units, $key) ?>>
+											<?php echo $value ?>
+										</option>
 									<?php } ?>
 								</select>
 							</form>
@@ -718,11 +719,13 @@ function tsml_import_page()
 								<?php wp_nonce_field($tsml_nonce, 'tsml_nonce', false) ?>
 								<select name="tsml_contact_display" onchange="this.form.submit()">
 									<?php
-									foreach (array(
+									foreach ([
 										'public' => __('Public', '12-step-meeting-list'),
 										'private' => __('Private', '12-step-meeting-list'),
-									) as $key => $value) { ?>
-										<option value="<?php echo $key ?>" <?php selected($tsml_contact_display, $key) ?>><?php echo $value ?></option>
+									] as $key => $value) { ?>
+										<option value="<?php echo $key ?>" <?php selected($tsml_contact_display, $key) ?>>
+											<?php echo $value ?>
+										</option>
 									<?php } ?>
 								</select>
 							</form>
@@ -734,11 +737,13 @@ function tsml_import_page()
 								<?php wp_nonce_field($tsml_nonce, 'tsml_nonce', false) ?>
 								<select name="tsml_sharing" onchange="this.form.submit()">
 									<?php
-									foreach (array(
+									foreach ([
 										'open' => __('Open', '12-step-meeting-list'),
 										'restricted' => __('Restricted', '12-step-meeting-list'),
-									) as $key => $value) { ?>
-										<option value="<?php echo $key ?>" <?php selected($tsml_sharing, $key) ?>><?php echo $value ?></option>
+									] as $key => $value) { ?>
+										<option value="<?php echo $key ?>" <?php selected($tsml_sharing, $key) ?>>
+											<?php echo $value ?>
+										</option>
 									<?php } ?>
 								</select>
 							</form>
@@ -751,10 +756,10 @@ function tsml_import_page()
 								<?php if (count($tsml_sharing_keys)) { ?>
 									<table class="tsml_sharing_list">
 										<?php foreach ($tsml_sharing_keys as $key => $name) {
-											$address = admin_url('admin-ajax.php?') . http_build_query(array(
+											$address = admin_url('admin-ajax.php?') . http_build_query([
 												'action' => 'meetings',
 												'key' => $key,
-											));
+											]);
 										?>
 											<tr>
 												<td><a href="<?php echo $address ?>" target="_blank"><?php echo $name ?></a></td>
