@@ -413,6 +413,14 @@ function tsml_delete_orphans()
 	}
 }
 
+//echo a property if it exists (used on admin_meeting.php)
+function tsml_echo($object, $property)
+{
+	if (!empty($object->{$property})) {
+		echo $object->{$property};
+	}
+}
+
 //send a nice-looking email (used by tsml_ajax_feedback() and save.php (change notifications)
 function tsml_email($to, $subject, $message, $reply_to = false)
 {

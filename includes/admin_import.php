@@ -613,13 +613,7 @@ function tsml_import_page()
 				</div>
 				<div id="postbox-container-1" class="postbox-container">
 
-					<?php if (version_compare(PHP_VERSION, '5.4') < 0) { ?>
-						<div class="notice notice-warning inline">
-							<p><?php printf(__('You are running PHP <strong>%s</strong>, while <a href="%s" target="_blank">WordPress recommends</a> PHP %s or above. This can cause unexpected errors. Please contact your host and upgrade!', '12-step-meeting-list'), PHP_VERSION, 'https://wordpress.org/about/requirements/', '5.6') ?></p>
-						</div>
-					<?php }
-
-					if (!is_ssl()) { ?>
+					<?php if (!is_ssl()) { ?>
 						<div class="notice notice-warning inline">
 							<p><?php _e('If you enable SSL (https), your users will be able to search near their location.', '12-step-meeting-list') ?></p>
 						</div>
@@ -884,11 +878,17 @@ function tsml_import_page()
 							<form method="post" action="<?php echo $_SERVER['REQUEST_URI'] ?>">
 								<?php wp_nonce_field($tsml_nonce, 'tsml_nonce', false) ?>
 								<select name="tsml_geocoding_method" onchange="this.form.submit()">
-									<option value="legacy" <?php selected($tsml_geocoding_method, 'legacy') ?>><?php _e('Legacy Method', '12-step-meeting-list'); ?></option>
+									<option value="legacy" <?php selected($tsml_geocoding_method, 'legacy') ?>>
+										<?php _e('Legacy Method', '12-step-meeting-list') ?>
+									</option>
 									<?php if (!empty($tsml_google_maps_key)) { ?>
-										<option value="google_key" <?php selected($tsml_geocoding_method, 'google_key') ?>><?php _e('Use my Google API Key', '12-step-meeting-list'); ?></option>
+										<option value="google_key" <?php selected($tsml_geocoding_method, 'google_key') ?>>
+											<?php _e('Use my Google API Key', '12-step-meeting-list') ?>
+										</option>
 									<?php } ?>
-									<option value="api_gateway" <?php selected($tsml_geocoding_method, 'api_gateway') ?>><?php _e('BETA - API Gateway - BETA', '12-step-meeting-list'); ?></option>
+									<option value="api_gateway" <?php selected($tsml_geocoding_method, 'api_gateway') ?>>
+										<?php _e('BETA - API Gateway - BETA', '12-step-meeting-list') ?>
+									</option>
 								</select>
 							</form>
 							<?php if (!empty($tsml_google_maps_key)) { ?>

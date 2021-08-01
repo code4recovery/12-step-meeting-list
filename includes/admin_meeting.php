@@ -132,7 +132,7 @@ add_action('admin_init', function () {
 		'location',
 		__('Location Information', '12-step-meeting-list'),
 		function () {
-			global $post, $tsml_days, $tsml_mapbox_key, $tsml_google_maps_key;
+			global $post, $tsml_mapbox_key, $tsml_google_maps_key;
 			$meeting = tsml_get_meeting();
 			$meetings = array();
 			if ($post->post_parent) {
@@ -143,72 +143,62 @@ add_action('admin_init', function () {
 		<div class="meta_form_row radio">
 			<div class="in_person">
 				<div><?php _e('Can I currently attend this meeting in person?', '12-step-meeting-list') ?></div>
-				<label><input type="radio" name="in_person" value="yes" <?php checked(empty($meeting->attendance_option) || $meeting->attendance_option == 'in_person' || $meeting->attendance_option == 'hybrid') ?> /> <?php _e('Yes', '12-step-meeting-list') ?></label>
-				<label><input type="radio" name="in_person" value="no" <?php checked($meeting->attendance_option == 'online' || $meeting->attendance_option == 'inactive') ?> /> <?php _e('No', '12-step-meeting-list') ?></label>
+				<label>
+					<input type="radio" name="in_person" value="yes" <?php checked(empty($meeting->attendance_option) || $meeting->attendance_option == 'in_person' || $meeting->attendance_option == 'hybrid') ?> />
+					<?php _e('Yes', '12-step-meeting-list') ?>
+				</label>
+				<label>
+					<input type="radio" name="in_person" value="no" <?php checked($meeting->attendance_option == 'online' || $meeting->attendance_option == 'inactive') ?> />
+					<?php _e('No', '12-step-meeting-list') ?>
+				</label>
 			</div>
 			<div class="location_note">
-				<?php _e('Select Yes for in-person or hybrid meetings.', '12-step-meeting-list'); ?><br />
-				<?php _e('Select No for online-only meetings, or meetings that are temporarily inactive.', '12-step-meeting-list'); ?><br /><br />
+				<?php _e('Select Yes for in-person or hybrid meetings.', '12-step-meeting-list') ?><br />
+				<?php _e('Select No for online-only meetings, or meetings that are temporarily inactive.', '12-step-meeting-list') ?><br /><br />
 
-				<?php _e('For meetings I can attend in person:', '12-step-meeting-list'); ?>
+				<?php _e('For meetings I can attend in person:', '12-step-meeting-list') ?>
 				<ul>
-					<li><?php _e('A specific address is required', '12-step-meeting-list'); ?></li>
+					<li><?php _e('A specific address is required', '12-step-meeting-list') ?></li>
 				</ul>
 
-				<?php _e('For online or hybrid meetings:', '12-step-meeting-list'); ?>
+				<?php _e('For online or hybrid meetings:', '12-step-meeting-list') ?>
 				<ul>
-					<li><?php _e('Fill in the "Online Meeting Details" above', '12-step-meeting-list'); ?></li>
+					<li><?php _e('Fill in the "Online Meeting Details" above', '12-step-meeting-list') ?></li>
 				</ul>
 
-				<?php _e('For online-only meetings:', '12-step-meeting-list'); ?>
+				<?php _e('For online-only meetings:', '12-step-meeting-list') ?>
 				<ul>
-					<li><?php _e('Use an approximate address, example: Philadelphia, PA, USA. It may help to think of it as the meeting\'s origin. The Meeting Guide app uses this information to infer the meeting\'s time zone.', '12-step-meeting-list'); ?></li>
+					<li><?php _e('Use an approximate address, example: Philadelphia, PA, USA. It may help to think of it as the meeting\'s origin. The Meeting Guide app uses this information to infer the meeting\'s time zone.', '12-step-meeting-list') ?></li>
 				</ul>
 			</div>
 			<div class="location_error form_not_valid hidden">
-				<?php _e('Error: In person meetings must have a specific address.', '12-step-meeting-list'); ?>
+				<?php _e('Error: In person meetings must have a specific address.', '12-step-meeting-list') ?>
 			</div>
 			<div class="location_warning need_approximate_address hidden">
-				<?php _e('Warning: Online meetings with a specific address will appear that the location temporarily closed. Meetings that are Online only should use appoximate addresses.', '12-step-meeting-list'); ?><br /><br />
-				<?php _e('Example:', '12-step-meeting-list'); ?><br />
-				<?php _e('Location: Online-Philadelphia', '12-step-meeting-list'); ?><br />
-				<?php _e('Address: Philadelphia, PA, USA', '12-step-meeting-list'); ?>
+				<?php _e('Warning: Online meetings with a specific address will appear that the location temporarily closed. Meetings that are Online only should use appoximate addresses.', '12-step-meeting-list') ?><br /><br />
+				<?php _e('Example:', '12-step-meeting-list') ?><br />
+				<?php _e('Location: Online-Philadelphia', '12-step-meeting-list') ?><br />
+				<?php _e('Address: Philadelphia, PA, USA', '12-step-meeting-list') ?>
 			</div>
 		</div>
 
 		<div class="meta_form_row">
 			<label for="location"><?php _e('Location', '12-step-meeting-list') ?></label>
-			<input value="<?php if (!empty($location->post_title)) {
-								echo $location->post_title;
-							}
-							?>" type="text" name="location" id="location">
+			<input value="<?php tsml_echo($location, 'post_title') ?>" type="text" name="location" id="location">
 		</div>
 		<div class="meta_form_row">
 			<label for="formatted_address"><?php _e('Address', '12-step-meeting-list') ?></label>
-			<input value="<?php if (!empty($location->formatted_address)) {
-								echo $location->formatted_address;
-							}
-							?>" data-original-value="<?php if (!empty($location->formatted_address)) {
-															echo $location->formatted_address;
-														}
-														?>" type="text" name="formatted_address" id="formatted_address">
-			<input value="<?php if (!empty($location->approximate)) {
-								echo $location->approximate;
-							}
-							?>" type="hidden" name="approximate" id="approximate">
-			<input value="<?php if (!empty($location->latitude)) {
-								echo $location->latitude;
-							}
-							?>" type="hidden" name="latitude" id="latitude">
-			<input value="<?php
-							if (!empty($location->longitude)) {
-								echo $location->longitude;
-							}
-							?>" type="hidden" name="longitude" id="longitude">
+			<input value="<?php tsml_echo($location, 'formatted_address') ?>" data-original-value="<?php tsml_echo($location, 'formatted_address') ?>" type="text" name="formatted_address" id="formatted_address">
+			<input value="<?php tsml_echo($location, 'approximate') ?>" type="hidden" name="approximate" id="approximate">
+			<input value="<?php tsml_echo($location, 'latitude') ?>" type="hidden" name="latitude" id="latitude">
+			<input value="<?php tsml_echo($location, 'latitude') ?>" type="hidden" name="longitude" id="longitude">
 		</div>
 		<?php if (count($meetings) > 1) { ?>
 			<div class="meta_form_row checkbox apply_address_to_location hidden">
-				<label><input type="checkbox" name="apply_address_to_location"> <?php _e('Apply this updated address to all meetings at this location', '12-step-meeting-list') ?></label>
+				<label>
+					<input type="checkbox" name="apply_address_to_location">
+					<?php _e('Apply this updated address to all meetings at this location', '12-step-meeting-list') ?>
+				</label>
 			</div>
 		<?php }
 			if (wp_count_terms('tsml_region')) { ?>
@@ -244,18 +234,19 @@ add_action('admin_init', function () {
 							$meeting['name'] = '<a href="' . get_edit_post_link($meeting['id']) . '">' . $meeting['name'] . '</a>';
 						}
 					?>
-						<li><span><?php echo tsml_format_day_and_time(@$meeting['day'], @$meeting['time'], ' ', true) ?></span> <?php echo $meeting['name'] ?></li>
+						<li>
+							<span><?php echo tsml_format_day_and_time(@$meeting['day'], @$meeting['time'], ' ', true) ?></span>
+							<?php echo $meeting['name'] ?>
+						</li>
 					<?php } ?>
 				</ol>
 			</div>
 		<?php } ?>
 		<div class="meta_form_row">
 			<label><?php _e('Location Notes', '12-step-meeting-list') ?></label>
-			<textarea name="location_notes" placeholder="<?php _e('eg. Around back, basement, ring buzzer', '12-step-meeting-list') ?>"><?php
-																																		if (!empty($location->post_content)) {
-																																			echo $location->post_content;
-																																		}
-																																		?></textarea>
+			<textarea name="location_notes" placeholder="<?php _e('eg. Around back, basement, ring buzzer', '12-step-meeting-list') ?>">
+				<?php tsml_echo($location, 'post_content') ?>
+			</textarea>
 		</div>
 	<?php
 		},
@@ -263,7 +254,6 @@ add_action('admin_init', function () {
 		'normal',
 		'low'
 	);
-
 
 	add_meta_box('group', __('Contact Information <small>Optional</small>', '12-step-meeting-list'), function () {
 		global $tsml_contact_display;
@@ -280,15 +270,24 @@ add_action('admin_init', function () {
 	?>
 		<div id="contact-type" data-type="<?php echo empty($meeting->group) ? 'meeting' : 'group' ?>">
 			<div class="meta_form_row radio">
-				<label><input type="radio" name="group_status" value="meeting" <?php checked(empty($meeting->group)) ?>> <?php _e('Individual meeting', '12-step-meeting-list') ?></label>
-				<label><input type="radio" name="group_status" value="group" <?php checked(!empty($meeting->group)) ?>> <?php _e('Part of a group', '12-step-meeting-list') ?></label>
+				<label>
+					<input type="radio" name="group_status" value="meeting" <?php checked(empty($meeting->group)) ?>>
+					<?php _e('Individual meeting', '12-step-meeting-list') ?>
+				</label>
+				<label>
+					<input type="radio" name="group_status" value="group" <?php checked(!empty($meeting->group)) ?>>
+					<?php _e('Part of a group', '12-step-meeting-list') ?>
+				</label>
 			</div>
 			<div class="meta_form_row group-visible">
 				<label for="group"><?php _e('Group', '12-step-meeting-list') ?></label>
-				<input type="text" name="group" id="group" value="<?php echo @$meeting->group ?>">
+				<input type="text" name="group" id="group" value="<?php tsml_echo($meeting, 'group') ?>">
 			</div>
 			<div class="meta_form_row checkbox apply_group_to_location hidden">
-				<label><input type="checkbox" name="apply_group_to_location"> <?php _e('Apply this group to all meetings at this location', '12-step-meeting-list') ?></label>
+				<label>
+					<input type="checkbox" name="apply_group_to_location">
+					<?php _e('Apply this group to all meetings at this location', '12-step-meeting-list') ?>
+				</label>
 			</div>
 			<?php if (count($meetings) > 1) { ?>
 				<div class="meta_form_row">
@@ -325,58 +324,70 @@ add_action('admin_init', function () {
 			</div>
 			<div class="meta_form_row">
 				<label for="website"><?php _e('Website', '12-step-meeting-list') ?></label>
-				<input type="text" name="website" id="website" value="<?php echo @$meeting->website ?>" placeholder="https://">
+				<input type="text" name="website" id="website" value="<?php tsml_echo($meeting, 'website') ?>" placeholder="https://">
 			</div>
 			<div class="meta_form_row">
 				<label for="website_2"><?php _e('Website 2', '12-step-meeting-list') ?></label>
-				<input type="text" name="website_2" id="website_2" value="<?php echo @$meeting->website_2 ?>" placeholder="https://">
+				<input type="text" name="website_2" id="website_2" value="<?php tsml_echo($meeting, 'website_2') ?>" placeholder="https://">
 			</div>
 			<div class="meta_form_row">
 				<label for="email"><?php _e('Email', '12-step-meeting-list') ?></label>
-				<input type="text" name="email" id="email" value="<?php echo @$meeting->email ?>" placeholder="group@website.org">
+				<input type="text" name="email" id="email" value="<?php tsml_echo($meeting, 'email') ?>" placeholder="group@website.org">
 			</div>
 			<div class="meta_form_row">
 				<label for="phone"><?php _e('Phone', '12-step-meeting-list') ?></label>
-				<input type="text" name="phone" id="phone" value="<?php echo @$meeting->phone ?>" placeholder="+18005551212">
+				<input type="text" name="phone" id="phone" value="<?php tsml_echo($meeting, 'phone') ?>" placeholder="+18005551212">
 			</div>
 			<div class="meta_form_row">
 				<label for="mailing_address"><?php _e('Mailing Address', '12-step-meeting-list') ?></label>
-				<input type="text" name="mailing_address" id="mailing_address" value="<?php echo @$meeting->mailing_address ?>" placeholder="123 Main St, Anytown OK">
+				<input type="text" name="mailing_address" id="mailing_address" value="<?php tsml_echo($meeting, 'mailing_address') ?>" placeholder="123 Main St, Anytown OK">
 			</div>
 			<div class="meta_form_row">
 				<label><?php _e('Venmo', '12-step-meeting-list') ?></label>
-				<input type="text" name="venmo" placeholder="@VenmoHandle" value="<?php echo @$meeting->venmo ?>">
+				<input type="text" name="venmo" placeholder="@VenmoHandle" value="<?php tsml_echo($meeting, 'venmo') ?>">
 			</div>
 			<div class="meta_form_row">
 				<label><?php _e('Square Cash', '12-step-meeting-list') ?></label>
-				<input type="text" name="square" placeholder="$Cashtag" value="<?php echo @$meeting->square ?>">
+				<input type="text" name="square" placeholder="$Cashtag" value="<?php tsml_echo($meeting, 'square') ?>">
 			</div>
 			<div class="meta_form_row">
 				<label><?php _e('PayPal', '12-step-meeting-list') ?></label>
-				<input type="text" name="paypal" placeholder="PayPalUsername" value="<?php echo @$meeting->paypal ?>">
+				<input type="text" name="paypal" placeholder="PayPalUsername" value="<?php tsml_echo($meeting, 'paypal') ?>">
 			</div>
 			<div class="meta_form_row">
 				<label>
 					<?php _e('Contacts', '12-step-meeting-list') ?>
-					<span style="display: block;font-size:90%;color:#999;">(<?php if ($tsml_contact_display == 'public') {
-																				_e('Public', '12-step-meeting-list');
-																			} else {
-																				_e('Private', '12-step-meeting-list');
-																			} ?>)</span>
+					<span style="display: block;font-size:90%;color:#999;">
+						(<?php if ($tsml_contact_display == 'public') {
+								_e('Public', '12-step-meeting-list');
+							} else {
+								_e('Private', '12-step-meeting-list');
+							} ?>)
+					</span>
 				</label>
 				<div class="container">
-					<?php for ($i = 1; $i <= TSML_GROUP_CONTACT_COUNT; $i++) { ?>
+					<?php
+					for ($i = 1; $i <= TSML_GROUP_CONTACT_COUNT; $i++) { ?>
 						<div class="row">
-							<div><input type="text" name="contact_<?php echo $i ?>_name" placeholder="<?php _e('Name', '12-step-meeting-list') ?>" value="<?php echo @$meeting->{'contact_' . $i . '_name'} ?>"></div>
-							<div><input type="text" name="contact_<?php echo $i ?>_email" placeholder="<?php _e('Email', '12-step-meeting-list') ?>" value="<?php echo @$meeting->{'contact_' . $i . '_email'} ?>"></div>
-							<div><input type="text" name="contact_<?php echo $i ?>_phone" placeholder="<?php _e('Phone', '12-step-meeting-list') ?>" value="<?php echo @$meeting->{'contact_' . $i . '_phone'} ?>"></div>
+							<?php
+							foreach ([
+								'name' => __('Name', '12-step-meeting-list'),
+								'email' => __('Email', '12-step-meeting-list'),
+								'phone' => __('Phone', '12-step-meeting-list')
+							] as $key => $label) {
+								$field = implode('_', ['contact', $i, $key]);
+							?>
+								<div>
+									<input type="text" name="<?php echo $field ?>" placeholder="<?php echo $label ?>" value="<?php tsml_echo($meeting, $field) ?>">
+								</div>
+							<?php } ?>
 						</div>
 					<?php } ?>
 				</div>
 			</div>
 			<div class="meta_form_row">
 				<label for="last_contact"><?php _e('Last Contact', '12-step-meeting-list') ?></label>
-				<input type="date" name="last_contact" value="<?php echo @$meeting->last_contact ?>">
+				<input type="date" name="last_contact" value="<?php tsml_echo($meeting, 'last_contact') ?>">
 			</div>
 		</div>
 <?php

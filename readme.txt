@@ -1,8 +1,9 @@
 === 12 Step Meeting List ===
 Contributors: Code for Recovery
 Requires at least: 3.2
+Requires PHP: 5.6
 Tested up to: 5.7.2
-Stable tag: 3.11.2
+Stable tag: 3.11.3
 
 This plugin helps twelve step recovery programs list their meetings. It standardizes addresses, and displays results in a searchable list and map.
 
@@ -212,6 +213,10 @@ To apply these changes, you must go to Settings > Permalinks and click "Save Cha
 1. Edit location
 
 == Changelog ==
+
+= 3.11.3 =
+* Performance fixes
+* Please note: TSML, like WordPress, now requires PHP 5.6 or higher
 
 = 3.11.2 =
 * Fix widget filtering.

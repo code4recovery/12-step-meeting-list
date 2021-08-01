@@ -7,6 +7,7 @@ add_shortcode('tsml_meeting_count', 'tsml_count_meetings');
 add_shortcode('tsml_region_count', 'tsml_count_regions');
 
 //function for shortcode: get a table of the next $count meetings
+//used here and in widgets.php
 function tsml_next_meetings($arguments)
 {
 	global $tsml_meeting_attendance_options;
@@ -60,28 +61,27 @@ function tsml_next_meetings($arguments)
 			</tr>';
 	}
 	return '
+	<style>
+		table.tsml_next_meetings div.attendance-hybrid small,
+		table.tsml_next_meetings div.attendance-online small {
+			color: green;
+		}
 
-		<style>
-    table.tsml_next_meetings div.attendance-hybrid small,
-    table.tsml_next_meetings div.attendance-online small {
-        color: green;
-    }
-
-    table.tsml_next_meetings div.attendance-inactive small {
-        color: #d40047;
-    }
-		</style>
-		<table class="tsml_next_meetings table table-striped">
-			<thead>
-				<tr>
-					<th class="time">' . __('Time', '12-step-meeting-list') . '</th>
-					<th class="name">' . __('Meeting', '12-step-meeting-list') . '</th>
-					<th class="location">' . __('Location', '12-step-meeting-list') . '</th>
-					<th class="region">' . __('Region', '12-step-meeting-list') . '</th>
-				</tr>
-			</thead>
-			<tbody>' . $rows . '</tbody>
-		</table>';
+		table.tsml_next_meetings div.attendance-inactive small {
+			color: #d40047;
+		}
+	</style>
+	<table class="tsml_next_meetings table table-striped">
+		<thead>
+			<tr>
+				<th class="time">' . __('Time', '12-step-meeting-list') . '</th>
+				<th class="name">' . __('Meeting', '12-step-meeting-list') . '</th>
+				<th class="location">' . __('Location', '12-step-meeting-list') . '</th>
+				<th class="region">' . __('Region', '12-step-meeting-list') . '</th>
+			</tr>
+		</thead>
+		<tbody>' . $rows . '</tbody>
+	</table>';
 }
 add_shortcode('tsml_next_meetings', 'tsml_next_meetings');
 

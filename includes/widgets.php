@@ -152,12 +152,12 @@ class TSML_Widget_Upcoming extends WP_Widget
 	//sanitize widget form values as they are saved
 	public function update($new_instance, $old_instance)
 	{
-		$instance = array();
-		$instance['title'] = (!empty($new_instance['title'])) ? strip_tags($new_instance['title']) : '';
-		$instance['count'] = (!empty($new_instance['count'])) ? intval($new_instance['count']) : 5;
-		$instance['css'] = !empty($new_instance['css']);
-		$instance['message'] = (!empty($new_instance['message'])) ? strip_tags($new_instance['message']) : '';
-		return $instance;
+		return array(
+			'title' => !empty($new_instance['title']) ? strip_tags($new_instance['title']) : '',
+			'count' => !empty($new_instance['count']) ? intval($new_instance['count']) : 5,
+			'css' => !empty($new_instance['css']),
+			'message' => !empty($new_instance['message']) ? strip_tags($new_instance['message']) : '',
+		);
 	}
 }
 

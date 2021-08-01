@@ -11,7 +11,7 @@ add_action('restrict_manage_posts', function () {
         'show_option_all' => 'Region',
         'orderby' => 'tax_name',
         'hide_empty' => true,
-        'selected' => @$_GET['region'],
+        'selected' => !empty($_GET['region']) ? $_GET['region'] : null,
         'hierarchical' => true,
         'name' => 'region',
         'taxonomy' => 'tsml_region',
@@ -31,16 +31,11 @@ add_filter(
         }
 
         $parent_ids = $wpdb->get_col('SELECT p.ID FROM ' . $wpdb->posts . ' p
-		JOIN ' . $wpdb->term_relationships . ' r ON r.object_id = p.ID
-		JOIN ' . $wpdb->term_taxonomy . ' x ON x.term_taxonomy_id = r.term_taxonomy_id
-		WHERE x.term_id = ' . intval($_GET['region']));
+            JOIN ' . $wpdb->term_relationships . ' r ON r.object_id = p.ID
+            JOIN ' . $wpdb->term_taxonomy . ' x ON x.term_taxonomy_id = r.term_taxonomy_id
+            WHERE x.term_id = ' . intval($_GET['region']));
 
-        if (empty($parent_ids)) {
-            $parent_ids = array(0);
-        }
-        //impossible scenario to show no results
-
-        $query->query_vars['post_parent__in'] = $parent_ids;
+        $query->query_vars['post_parent__in'] = empty($parent_ids) ? array(0) : $parent_ids;
     }
 );
 
@@ -53,7 +48,7 @@ add_filter(
             'title' => __('Meeting', '12-step-meeting-list'),
             'day' => __('Day', '12-step-meeting-list'),
             'time' => __('Time', '12-step-meeting-list'),
-            'region' => __('Region'),
+            'region' => __('Region', '12-step-meeting-list'),
             'date' => __('Date', '12-step-meeting-list'),
         );
     }
