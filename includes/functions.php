@@ -563,16 +563,14 @@ function tsml_geocode($address)
 
 	//check overrides first before anything
 	if (array_key_exists($address, $tsml_google_overrides)) {
+		if (empty($tsml_google_overrides[$address]['approximate'])) {
+			$tsml_google_overrides[$address]['approximate'] = 'no';
+		}
 		return $tsml_google_overrides[$address];
 	}
 
 	//check cache
 	$addresses	= get_option('tsml_addresses', []);
-
-	//filter out any empty addresses that got added due to a bug
-	$addresses = array_filter($addresses, function ($address) {
-		return !empty($address['formatted_address']);
-	});
 
 	//if key exists && approximate is set for that address, return it
 	if (array_key_exists($address, $addresses) && !empty($addresses[$address]['approximate'])) {

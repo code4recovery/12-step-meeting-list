@@ -56,7 +56,7 @@ We get our geocoding positions from Google (this true even if your maps are by M
 
 Note you can add multiple entries to the array below.
 
-	if (function_exists('tsml_custom_types')) {
+	if (function_exists('tsml_custom_addresses')) {
 		tsml_custom_addresses(array(
 			'5 Avenue Anatole France, 75007 Paris, France' => array(
 				'formatted_address' => '5 Avenue Anatole France, 75007 Paris, France',
