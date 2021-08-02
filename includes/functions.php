@@ -584,9 +584,6 @@ function tsml_geocode($address) {
 	//check cache
 	$addresses	= get_option('tsml_addresses', array());
 
-	//filter out any empty addresses that got added due to a bug
-	$addresses = array_filter($addresses, 'tsml_has_address');
-
 	//if key exists && approximate is set for that address, return it
 	if (array_key_exists($address, $addresses) && !empty($addresses[$address]['approximate'])) {
 		$addresses[$address]['status'] = 'cache';
@@ -1483,12 +1480,6 @@ function tsml_import_buffer_set($meetings, $data_source=null) {
 
 	//prepare import buffer in wp_options
 	update_option('tsml_import_buffer', $meetings, false);
-}
-
-//function: determine whether a geocoded address has a non-empty formatted address
-//used:		tsml_geocode();
-function tsml_has_address($address) {
-	return !empty($address['formatted_address']);
 }
 
 //function:	filter workaround for setting post_modified dates

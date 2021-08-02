@@ -80,7 +80,7 @@ if (!function_exists('tsml_db_set_location_approximate')) {
 
     // Remove addresses from cache if approximate is not set
     foreach ($addresses_cache as $key => $address) {
-      if (!empty($address['approximate'])) {
+      if (!empty($address['approximate']) && !empty($address['formatted_address'])) {
         $tmp_cache[$key] = $address;
       }
     }
