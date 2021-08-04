@@ -28,11 +28,7 @@ add_filter('body_class', function ($classes) {
 
 	// Add the attendance option class to the body tag
 	$classes[] = 'attendance-' . sanitize_title($meeting->attendance_option);
-	if ($meeting->approximate === 'yes') {
-		$classes[] = 'address-approximate';
-	} else {
-		$classes[] = 'address-specific';
-	}
+	$classes[] = ($meeting->approximate === 'yes') ? 'address-approximate' : 'address-specific';
 
 	return $classes;
 });
@@ -52,10 +48,11 @@ get_header();
 					if (!empty($meeting_types)) {
 						echo '<small><span class="meeting_types">(' . __($meeting_types, "12-step-meeting-list") . ')</span></small>';
 					}
-					echo '<div class="attendance-option">' . __($tsml_meeting_attendance_options[$meeting->attendance_option], "12-step-meeting-list");
-					echo '</div><br/>';
 					?>
-
+					<div class="attendance-option">
+						<?php _e($tsml_meeting_attendance_options[$meeting->attendance_option], "12-step-meeting-list") ?>
+					</div>
+					<br />
 					<?php echo tsml_link(get_post_type_archive_link('tsml_meeting'), '<i class="glyphicon glyphicon-chevron-right"></i> ' . __('Back to Meetings', '12-step-meeting-list'), 'tsml_meeting') ?>
 				</div>
 

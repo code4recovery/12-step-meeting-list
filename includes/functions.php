@@ -996,9 +996,8 @@ function tsml_get_meeting($meeting_id = false)
 
 	// Remove TC when online only meeting has approximate address
 	if (!empty($meeting->types) && $meeting->attendance_option === 'online' && $meeting->approximate === 'yes') {
-		$meeting->types = array_values(array_diff($meeting->types, array('TC')));
+		$meeting->types = array_values(array_diff($meeting->types, ['TC']));
 	}
-
 
 	//type description? (todo support multiple)
 	if (!empty($tsml_programs[$tsml_program]['type_descriptions'])) {

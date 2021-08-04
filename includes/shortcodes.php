@@ -101,7 +101,7 @@ add_shortcode('tsml_types_list', function () {
 //output a react meeting finder widget https://github.com/code4recovery/tsml-ui
 function tsml_ui()
 {
-	global $tsml_mapbox_key, $tsml_nonce, $tsml_sharing, $tsml_conference_providers, $tsml_language, $tsml_columns, $tsml_programs, $tsml_program, $tsml_ui_config, $tsml_feedback_addresses;
+	global $tsml_mapbox_key, $tsml_nonce, $tsml_conference_providers, $tsml_language, $tsml_programs, $tsml_program, $tsml_ui_config, $tsml_feedback_addresses;
 	$js = defined('TSML_UI_PATH') ? TSML_UI_PATH : 'https://react.meetingguide.org/app.js';
 	wp_enqueue_script('tsml_ui', $js);
 	wp_localize_script('tsml_ui', 'tsml_react_config', array_merge(

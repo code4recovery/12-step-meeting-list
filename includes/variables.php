@@ -538,7 +538,7 @@ $tsml_days = $tsml_days_order = $tsml_programs = $tsml_types_in_use = $tsml_stri
 if (!isset($tsml_slug)) $tsml_slug = null;
 
 add_action('plugins_loaded', function () {
-	global $tsml_days, $tsml_days_order, $tsml_programs, $tsml_program, $tsml_slug, $tsml_strings, $tsml_types_in_use;
+	global $tsml_days, $tsml_days_order, $tsml_programs, $tsml_slug, $tsml_strings, $tsml_types_in_use;
 
 	//load internationalization
 	load_plugin_textdomain('12-step-meeting-list', false, '12-step-meeting-list/languages');
