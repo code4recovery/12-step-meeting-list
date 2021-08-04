@@ -111,6 +111,7 @@ function tsml_ajax_regions()
 
 //ajax for address checking
 add_action('wp_ajax_tsml_address', function () {
+
 	if (!$posts = get_posts([
 		'post_type' => 'tsml_location',
 		'numberposts' => 1,
@@ -118,7 +119,7 @@ add_action('wp_ajax_tsml_address', function () {
 		'meta_value' => sanitize_text_field($_GET['formatted_address']),
 	])) wp_send_json(false);
 
-	$region = array_values(get_the_terms($posts[0]->ID, 'tsml_region'));
+	$region = get_the_terms($posts[0]->ID, 'tsml_region');
 
 	//return info to user
 	wp_send_json([
