@@ -994,6 +994,12 @@ function tsml_get_meeting($meeting_id = false)
 	$meeting->post_title			= htmlentities($meeting->post_title, ENT_QUOTES);
 	$meeting->notes 				= esc_html($meeting->post_content);
 
+	// Remove TC when online only meeting has approximate address
+	if (!empty($meeting->types) && $meeting->attendance_option === 'online' && $meeting->approximate === 'yes') {
+		$meeting->types = array_values(array_diff($meeting->types, array('TC')));
+	}
+
+
 	//type description? (todo support multiple)
 	if (!empty($tsml_programs[$tsml_program]['type_descriptions'])) {
 		$types_with_descriptions = array_intersect($meeting->types, array_keys($tsml_programs[$tsml_program]['type_descriptions']));

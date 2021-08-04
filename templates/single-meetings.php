@@ -28,6 +28,11 @@ add_filter('body_class', function ($classes) {
 
 	// Add the attendance option class to the body tag
 	$classes[] = 'attendance-' . sanitize_title($meeting->attendance_option);
+	if ($meeting->approximate === 'yes') {
+		$classes[] = 'address-approximate';
+	} else {
+		$classes[] = 'address-specific';
+	}
 
 	return $classes;
 });

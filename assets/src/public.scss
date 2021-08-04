@@ -1195,6 +1195,7 @@ body {
     &.attendance-inactive  div.attendance-option {
         color: $color_alert;
     }
+    &.attendance-online.address-specific p.location-address,
     &.attendance-inactive p.location-address {
         text-decoration: line-through;
     }
