@@ -231,6 +231,7 @@ if (!function_exists('tsml_ajax_csv')) {
 					$line[] = $tsml_days[$meeting[$column]];
 				} elseif ($column == 'types') {
 					$types = $meeting[$column];
+					if (!is_array($types)) $types = array();
 					foreach ($types as &$type) $type = $tsml_programs[$tsml_program]['types'][trim($type)];
 					sort($types);
 					$line[] = $escape . implode(', ', $types) . $escape;
@@ -457,6 +458,7 @@ if (!function_exists('function_name')) {
 				add_post_meta($location_id, 'formatted_address',	$geocoded['formatted_address']);
 				add_post_meta($location_id, 'latitude',				$geocoded['latitude']);
 				add_post_meta($location_id, 'longitude',			$geocoded['longitude']);
+				add_post_meta($location_id, 'approximate',			$geocoded['approximate']);
 				wp_set_object_terms($location_id, $region_id, 'tsml_region');
 			}
 

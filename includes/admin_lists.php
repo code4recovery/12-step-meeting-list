@@ -266,12 +266,14 @@ function tsml_bulk_action_handler($redirect, $doaction, $object_ids)
 
             if (empty($meeting->formatted_address) || tsml_geocode($meeting->formatted_address)['approximate'] != 'no') continue;
 
+            /* No longer writing attendance_option to the database...
             if (!empty($meeting->conference_url) || !empty($meeting->conference_phone)) {
                 $meeting->attendance_option = 'hybrid';
             } else {
                 $meeting->attendance_option = 'in_person';
             }
             update_post_meta($post_id, 'attendance_option', $meeting->attendance_option);
+            */
 
             // For each select post, remove TC if it's selected in "types"
             $types = get_post_meta($post_id, 'types', false)[0];
