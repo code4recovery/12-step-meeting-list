@@ -77,7 +77,7 @@ class tsml_filter_meetings
         if (!empty($arguments['time'])) {
             $this->time = is_array($arguments['time']) ? array_map('sanitize_title', $arguments['time']) : [sanitize_title($arguments['time'])];
             if (in_array('upcoming', $this->time)) {
-                $this->now = current_time('H:i');
+                $this->ten_minutes_ago = date('H:i', current_time('U') - 600);
             }
         }
 
@@ -263,7 +263,7 @@ class tsml_filter_meetings
             } elseif ($time == 'night') {
                 return (strcmp('20:00', $meeting['time']) <= 0 || strcmp('04:59', $meeting['time']) >= 0);
             } elseif ($time == 'upcoming') {
-                return (strcmp($this->now, $meeting['time']) <= 0);
+                return (strcmp($this->ten_minutes_ago, $meeting['time']) <= 0);
             }
         }
     }
