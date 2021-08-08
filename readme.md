@@ -61,3 +61,22 @@ git push origin my-new-feature
   - Click the "Create pull request" button
 
 If you're new to git, you might benefit from [this git tutorial](https://git-scm.com/book/en/v2).
+
+## Coding Suggestions
+
+These help improve code readability and maintainability:
+
+- Use extensions like [PHP Intelephense](https://marketplace.visualstudio.com/items?itemName=bmewburn.vscode-intelephense-client) and 
+[Prettier](https://marketplace.visualstudio.com/items?itemName=esbenp.prettier-vscode) to format code on save
+- Use the [Query Monitor WordPress plugin](https://wordpress.org/plugins/query-monitor/) locally to detect and fix any PHP warnings
+- All constants, global functions, and global variables should have a name starting with `tsml_`
+- Functions ought to be useful in multiple places (except functions that are available to end users such as `tsml_custom_types`)
+- Use anonymous functions when possible (we are PHP 5.6+)
+- Use bracket syntax for arrays (we are PHP 5.6+)
+
+Also some best practices:
+
+- Don't leave code commented out (if it's needed later we can find it in the git history)
+- Don't put database updates or other expensive operations inside a repeat loop
+- No unused variables
+- Filter inputs

@@ -1,10 +1,7 @@
 <?php
 
 //for all users
-add_action('init', 'tsml_init');
-
-function tsml_init()
-{
+add_action('init', function () {
 
     //register post types and taxonomies
     tsml_custom_post_types();
@@ -55,7 +52,7 @@ function tsml_init()
         $classes[] = sanitize_title($theme->Template);
         return $classes;
     }
-}
+});
 
 if (is_admin()) {
     //rebuild cache when trashing or untrashing posts
@@ -69,13 +66,11 @@ if (is_admin()) {
     }
 } else {
     //add plugin version number to header on public site
-    add_action('wp_head', 'tsml_head');
-    function tsml_head()
-    {
+    add_action('wp_head', function () {
         global $tsml_sharing;
         echo '<meta name="12_step_meeting_list" content="' . TSML_VERSION . '">' . PHP_EOL;
         if ($tsml_sharing == 'open') {
             echo '<link rel="alternate" type="application/json" title="Meetings Feed" href="' . admin_url('admin-ajax.php?action=meetings') . '">' . PHP_EOL;
         }
-    }
+    });
 }

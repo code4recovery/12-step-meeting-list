@@ -1,38 +1,40 @@
 <?php
-/*
-Plugin Name: 12 Step Meeting List
-Plugin URI: https://wordpress.org/plugins/12-step-meeting-list/
-Description: Manage a list of recovery meetings
-Version: 3.11.3
-Author: Code4Recovery
-Author URI: https://github.com/code4recovery/12-step-meeting-list
-Text Domain: 12-step-meeting-list
+
+/**
+ * Plugin Name: 12 Step Meeting List
+ * Plugin URI: https://wordpress.org/plugins/12-step-meeting-list/
+ * Description: Manage a list of recovery meetings
+ * Version: 3.12
+ * Requires PHP: 5.6
+ * Author: Code for Recovery
+ * Author URI: https://github.com/code4recovery/12-step-meeting-list
+ * Text Domain: 12-step-meeting-list
  */
 
 //define constants
-if (!defined('GROUP_CONTACT_COUNT')) {
-    define('GROUP_CONTACT_COUNT', 3);
+define('TSML_GROUP_CONTACT_COUNT', 3);
+
+define('TSML_CONTACT_EMAIL', 'tsml@code4recovery.org');
+
+define('TSML_MEETING_GUIDE_APP_NOTIFY', 'appsupport@aa.org');
+
+define('TSML_PATH', plugin_dir_path(__FILE__));
+
+define('TSML_VERSION', '3.12');
+
+//defining externally-defined constant + function for php intelephense
+if (false) {
+    define('TSML_UI_PATH', '');
+    function tsml_import_reformat()
+    {
+    }
 }
 
-if (!defined('TSML_CONTACT_EMAIL')) {
-    define('TSML_CONTACT_EMAIL', 'tsml@code4recovery.org');
-}
-
-if (!defined('MEETING_GUIDE_APP_NOTIFY')) {
-    define('MEETING_GUIDE_APP_NOTIFY', 'appsupport@aa.org');
-}
-
-if (!defined('TSML_PATH')) {
-    define('TSML_PATH', plugin_dir_path(__FILE__));
-}
-
-if (!defined('TSML_VERSION')) {
-    define('TSML_VERSION', '3.11.3');
-}
 
 //include these files first
 include TSML_PATH . '/includes/filter_meetings.php';
 include TSML_PATH . '/includes/functions.php';
+include TSML_PATH . '/includes/database_updates.php';
 include TSML_PATH . '/includes/variables.php';
 
 //include public files
