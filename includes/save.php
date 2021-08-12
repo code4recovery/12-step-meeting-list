@@ -75,33 +75,25 @@ add_action('save_post', function ($post_id, $post, $update) {
 	//video conference information (doing this here because it affects types)
 	// If either Conference URL or phone have values, we allow/set type ONL
 	$valid_conference_url = null;
-	$meeting_is_online = false;
 	$_POST['types'] = array_values(array_diff($_POST['types'], ['ONL']));
 	if (!empty($_POST['conference_url'])) {
 		$url = tsml_sanitize('url', $_POST['conference_url']);
 		if (tsml_conference_provider($url)) {
 			$valid_conference_url = $url;
-			array_push($_POST['types'], 'ONL');
-			$meeting_is_online = true;
+			$_POST['types'][] = 'ONL';
 		}
 	}
 	$_POST['conference_phone'] = tsml_sanitize('phone', $_POST['conference_phone']);
 	if (!empty($_POST['conference_phone']) && empty($valid_conference_url)) {
-		array_push($_POST['types'], 'ONL');
-		$meeting_is_online = true;
+		$_POST['types'][] = 'ONL';
 	}
 
-	// Handle the in_person field (also here because it affects types)
-	$approximate = true;
-	if (!empty($_POST['formatted_address']) && tsml_geocode($_POST['formatted_address'])['approximate'] == 'no') {
-		$approximate = false;
-	}
-	$attendance_option = '';
-	if ($_POST['in_person'] == 'yes' && !$approximate) {
-		$attendance_option = $meeting_is_online ? 'hybrid' : 'in_person';
-	} else {
-		$attendance_option = $meeting_is_online ? 'online' : 'inactive';
-		array_push($_POST['types'], 'TC');
+	//re-geocode to determine whether location is approximate
+	$approximate = (empty($_POST['formatted_address']) || tsml_geocode($_POST['formatted_address'])['approximate'] === 'yes');
+
+	//add TC if location is specific and and can't attend in person
+	if ($_POST['in_person'] === 'no' && !$approximate) {
+		$_POST['types'][] = 'TC';
 	}
 
 	//video conferencing info
@@ -223,9 +215,9 @@ add_action('save_post', function ($post_id, $post, $update) {
 			$location_id = $locations[0]->ID;
 			if ($locations[0]->post_title != $_POST['location'] || $locations[0]->post_content != $_POST['location_notes']) {
 				wp_update_post([
-					'ID'			=> $location_id,
-					'post_title'	=> $_POST['location'],
-					'post_content'  => $_POST['location_notes'],
+					'ID' => $location_id,
+					'post_title' => $_POST['location'],
+					'post_content' => $_POST['location_notes'],
 				]);
 			}
 
@@ -249,16 +241,16 @@ add_action('save_post', function ($post_id, $post, $update) {
 			}
 		} elseif (!empty($_POST['formatted_address'])) {
 			$location_id = wp_insert_post([
-				'post_title'	=> $_POST['location'],
-				'post_type'		=> 'tsml_location',
-				'post_status'	=> 'publish',
-				'post_content'  => $_POST['location_notes'],
+				'post_title' => $_POST['location'],
+				'post_type' => 'tsml_location',
+				'post_status' => 'publish',
+				'post_content' => $_POST['location_notes'],
 			]);
 
-			//set latitude, longitude, approximate_location and region
-			add_post_meta($location_id, 'latitude', floatval($_POST['latitude']));
-			add_post_meta($location_id, 'longitude', floatval($_POST['longitude']));
-			update_post_meta($location_id, 'approximate', $_POST['approximate']);
+			//set latitude, longitude, approximate and region
+			update_post_meta($location_id, 'latitude', floatval($_POST['latitude']));
+			update_post_meta($location_id, 'longitude', floatval($_POST['longitude']));
+			update_post_meta($location_id, 'approximate', $approximate ? 'yes' : 'no');
 			wp_set_object_terms($location_id, intval($_POST['region']), 'tsml_region');
 		}
 
@@ -310,8 +302,8 @@ add_action('save_post', function ($post_id, $post, $update) {
 				if (!$update || $old_meeting->group != $_POST['group']) $changes[] = 'group';
 				if (!$update || $old_meeting->group_notes != $_POST['group_notes']) $changes[] = 'group_notes';
 				wp_update_post([
-					'ID'			=> $contact_entity_id,
-					'post_title'	=> $_POST['group'],
+					'ID'            => $contact_entity_id,
+					'post_title'    => $_POST['group'],
 					'post_content'  => $_POST['group_notes'],
 				]);
 			}
@@ -326,10 +318,10 @@ add_action('save_post', function ($post_id, $post, $update) {
 			$changes[] = 'group';
 			if (!empty($_POST['group_notes'])) $changes[] = 'group_notes';
 			$contact_entity_id = wp_insert_post([
-				'post_type'		=> 'tsml_group',
-				'post_status'	=> 'publish',
-				'post_title'	=> $_POST['group'],
-				'post_content'  => $_POST['group_notes'],
+				'post_type' => 'tsml_group',
+				'post_status' => 'publish',
+				'post_title' => $_POST['group'],
+				'post_content' => $_POST['group_notes'],
 			]);
 			if (!empty($_POST['district'])) {
 				$changes[] = 'district';
