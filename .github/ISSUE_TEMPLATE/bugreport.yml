@@ -47,15 +47,15 @@ body:
     validations:
       required: true
   - type: dropdown
-  id: wordperssVersion
-  attributes:
-    label: Wordpress Version
-    description: What version of Wordpress is on the site?
-    options:
-      - Latest (default)
-      - Other (Identify version in text above)
-  validations:
-    required: true
+    id: wordperssVersion
+    attributes:
+      label: Wordpress Version
+      description: What version of Wordpress is on the site?
+      options:
+        - Latest (default)
+        - Other (Identify version in text above)
+    validations:
+      required: true
   - type: dropdown
     id: browsers
     attributes:
