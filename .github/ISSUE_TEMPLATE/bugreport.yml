@@ -1,9 +1,10 @@
 name: Bug Report (Developers)
-description: For developers only, please. End-users should open a question in our [Discussions Q&A](https://github.com/code4recovery/12-step-meeting-list/discussions/categories/q-a)
+description: For developers only, please. End-users should ask a question in our Discussions Q&A for support.
 title: "[Bug]: "
 labels: [bug, triage]
 assignees:
   - tech2serve
+  - brianw-area24
 body:
   - type: markdown
     attributes:
@@ -17,25 +18,44 @@ body:
       placeholder: ex. email@example.com
     validations:
       required: false
+  - type: input
+    id: website
+    attributes:
+      label: Website With Issue
+      description: Please identify the website experiencing the bug
+      placeholder: ex. https://example.com
+    validations:
+      required: false
   - type: textarea
     id: what-happened
     attributes:
       label: What happened?
-      description: Also tell us, what did you expect to happen?
+      description: Also describe what you expect to happen
       placeholder: Tell us what you see!
       value: "A bug happened!"
     validations:
       required: true
   - type: dropdown
-    id: version
+    id: tsmlVersion
     attributes:
-      label: Version
-      description: What version of our software are you running?
+      label: TSML Version
+      description: What version of TSML are you running?
       options:
-        - 1.0.2 (Default)
-        - 1.0.3 (Edge)
+        - Latest (default)
+        - beta
+        - Other (Identify version in text above)
     validations:
       required: true
+  - type: dropdown
+  id: wordperssVersion
+  attributes:
+    label: Wordpress Version
+    description: What version of Wordpress is on the site?
+    options:
+      - Latest (default)
+      - Other (Identify version in text above)
+  validations:
+    required: true
   - type: dropdown
     id: browsers
     attributes:
