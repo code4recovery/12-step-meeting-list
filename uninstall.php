@@ -13,7 +13,7 @@ $wpdb->query('DELETE t.*, tt.*
 		FROM ' . $wpdb->terms . ' AS t
 		INNER JOIN ' . $wpdb->term_taxonomy . ' AS tt ON t.term_id = tt.term_id
 		WHERE tt.taxonomy = "tsml_region"');
-$wpdb->delete($wpdb->term_taxonomy, array('taxonomy' => 'tsml_region'), array('%s'));
+$wpdb->delete($wpdb->term_taxonomy, ['taxonomy' => 'tsml_region'], ['%s']);
 
 //remove custom post types
 $locations = get_posts('post_type=tsml_location&numberposts=-1');

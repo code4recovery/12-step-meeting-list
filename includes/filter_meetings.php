@@ -25,15 +25,15 @@ class tsml_filter_meetings
     {
 
         if (!empty($arguments['day']) || (isset($arguments['day']) && $arguments['day'] == 0)) {
-            $this->day = is_array($arguments['day']) ? array_map('intval', $arguments['day']) : array(intval($arguments['day']));
+            $this->day = is_array($arguments['day']) ? array_map('intval', $arguments['day']) : [intval($arguments['day'])];
         }
 
         if (!empty($arguments['district'])) {
-            $this->district_id = is_array($arguments['district']) ? array_map('sanitize_title', $arguments['district']) : array(sanitize_title($arguments['district']));
+            $this->district_id = is_array($arguments['district']) ? array_map('sanitize_title', $arguments['district']) : [sanitize_title($arguments['district'])];
             //we are recieving district slugs, need to convert to IDs (todo save this in the cache)
-            $this->district_id = array_map(array($this, 'get_district_id'), $this->district_id);
+            $this->district_id = array_map([$this, 'get_district_id'], $this->district_id);
             //district_id is now an array of arrays because districts can have children
-            $return = array();
+            $return = [];
             foreach ($this->district_id as $district_id_array) {
                 $return = array_merge($return, $district_id_array);
             }
@@ -41,7 +41,7 @@ class tsml_filter_meetings
         }
 
         if (!empty($arguments['group_id'])) {
-            $this->group_id = is_array($arguments['group_id']) ? array_map('intval', $arguments['group_id']) : array(intval($arguments['group_id']));
+            $this->group_id = is_array($arguments['group_id']) ? array_map('intval', $arguments['group_id']) : [intval($arguments['group_id'])];
         }
 
         if (!empty($arguments['latitude']) && !empty($arguments['longitude'])) {
@@ -54,20 +54,20 @@ class tsml_filter_meetings
         }
 
         if (!empty($arguments['location_id'])) {
-            $this->location_id = is_array($arguments['location_id']) ? array_map('intval', $arguments['location_id']) : array(intval($arguments['location_id']));
+            $this->location_id = is_array($arguments['location_id']) ? array_map('intval', $arguments['location_id']) : [intval($arguments['location_id'])];
         }
 
         if (!empty($arguments['query'])) {
-            $this->searchable_keys = array('name', 'notes', 'location', 'location_notes', 'formatted_address', 'group', 'group_notes');
+            $this->searchable_keys = ['name', 'notes', 'location', 'location_notes', 'formatted_address', 'group', 'group_notes'];
             $this->query = array_map('sanitize_text_field', array_filter(array_unique(explode(' ', stripslashes($arguments['query'])))));
         }
 
         if (!empty($arguments['region'])) {
-            $this->region_id = is_array($arguments['region']) ? array_map('sanitize_title', $arguments['region']) : array(sanitize_title($arguments['region']));
+            $this->region_id = is_array($arguments['region']) ? array_map('sanitize_title', $arguments['region']) : [sanitize_title($arguments['region'])];
             //we are recieving region slugs, need to convert to IDs (todo save this in the cache)
-            $this->region_id = array_map(array($this, 'get_region_id'), $this->region_id);
+            $this->region_id = array_map([$this, 'get_region_id'], $this->region_id);
             //region_id is now an array of arrays because regions can have children
-            $return = array();
+            $return = [];
             foreach ($this->region_id as $region_id_array) {
                 $return = array_merge($return, $region_id_array);
             }
@@ -75,29 +75,28 @@ class tsml_filter_meetings
         }
 
         if (!empty($arguments['time'])) {
-            $this->time = is_array($arguments['time']) ? array_map('sanitize_title', $arguments['time']) : array(sanitize_title($arguments['time']));
+            $this->time = is_array($arguments['time']) ? array_map('sanitize_title', $arguments['time']) : [sanitize_title($arguments['time'])];
             if (in_array('upcoming', $this->time)) {
-                $this->now = current_time('H:i');
+                $this->ten_minutes_ago = date('H:i', current_time('U') - 600);
             }
         }
 
         if (!empty($arguments['type'])) {
-            $this->type = is_array($arguments['type']) ? array_map('trim', $arguments['type']) : explode(',',trim($arguments['type']));
+            $this->type = is_array($arguments['type']) ? array_map('trim', $arguments['type']) : explode(',', trim($arguments['type']));
         }
 
         if (!empty($arguments['attendance_option'])) {
-            $this->attendance_option = is_array($arguments['attendance_option']) 
+            $this->attendance_option = is_array($arguments['attendance_option'])
                 ? array_map('trim', $arguments['attendance_option'])
-                : explode(',',trim($arguments['attendance_option']));
-            if (!empty(array_intersect($this->attendance_option, Array('online', 'in_person')))) {
+                : explode(',', trim($arguments['attendance_option']));
+            if (!empty(array_intersect($this->attendance_option, ['online', 'in_person']))) {
                 $this->attendance_option[] = 'hybrid';
             }
             if (in_array('active', $this->attendance_option)) {
-                $this->attendance_option = array('hybrid', 'in_person', 'online');
+                $this->attendance_option = ['hybrid', 'in_person', 'online'];
             }
             $this->attendance_option = array_unique($this->attendance_option);
         }
-
     }
 
     //run the filters
@@ -106,48 +105,47 @@ class tsml_filter_meetings
 
         //run filters
         if ($this->day) {
-            $meetings = array_filter($meetings, array($this, 'filter_day'));
+            $meetings = array_filter($meetings, [$this, 'filter_day']);
         }
 
         if ($this->district_id) {
-            $meetings = array_filter($meetings, array($this, 'filter_district'));
+            $meetings = array_filter($meetings, [$this, 'filter_district']);
         }
 
         if ($this->group_id) {
-            $meetings = array_filter($meetings, array($this, 'filter_group'));
+            $meetings = array_filter($meetings, [$this, 'filter_group']);
         }
 
         if ($this->location_id) {
-            $meetings = array_filter($meetings, array($this, 'filter_location'));
+            $meetings = array_filter($meetings, [$this, 'filter_location']);
         }
 
         if ($this->query) {
-            $meetings = array_filter($meetings, array($this, 'filter_query'));
+            $meetings = array_filter($meetings, [$this, 'filter_query']);
         }
 
         if ($this->region_id) {
-            $meetings = array_filter($meetings, array($this, 'filter_region'));
+            $meetings = array_filter($meetings, [$this, 'filter_region']);
         }
 
         if ($this->time) {
-            $meetings = array_filter($meetings, array($this, 'filter_time'));
+            $meetings = array_filter($meetings, [$this, 'filter_time']);
         }
 
         if ($this->type) {
-            $meetings = array_filter($meetings, array($this, 'filter_type'));
+            $meetings = array_filter($meetings, [$this, 'filter_type']);
         }
 
         //if lat and lon are set then compute distances
         if ($this->latitude && $this->longitude) {
-            $meetings = array_map(array($this, 'calculate_distance'), $meetings);
+            $meetings = array_map([$this, 'calculate_distance'], $meetings);
             if ($this->distance) {
-                $meetings = array_filter($meetings, array($this, 'filter_distance'));
+                $meetings = array_filter($meetings, [$this, 'filter_distance']);
             }
-
         }
 
         if ($this->attendance_option) {
-          $meetings = array_filter($meetings, array($this, 'filter_attendance_option'));
+            $meetings = array_filter($meetings, [$this, 'filter_attendance_option']);
         }
 
         //return data
@@ -234,7 +232,6 @@ class tsml_filter_meetings
             if (!$word_matches) {
                 return false;
             }
-
         }
         return true;
     }
@@ -266,7 +263,7 @@ class tsml_filter_meetings
             } elseif ($time == 'night') {
                 return (strcmp('20:00', $meeting['time']) <= 0 || strcmp('04:59', $meeting['time']) >= 0);
             } elseif ($time == 'upcoming') {
-                return (strcmp($this->now, $meeting['time']) <= 0);
+                return (strcmp($this->ten_minutes_ago, $meeting['time']) <= 0);
             }
         }
     }
@@ -284,7 +281,7 @@ class tsml_filter_meetings
     public function filter_attendance_option($meeting)
     {
         if (!isset($meeting['attendance_option'])) {
-          return false;
+            return false;
         }
         return in_array($meeting['attendance_option'], $this->attendance_option);
     }
@@ -294,7 +291,7 @@ class tsml_filter_meetings
     {
         $term = get_term_by('slug', $slug, 'tsml_district');
         $children = get_term_children($term->term_id, 'tsml_district');
-        return array_merge(array($term->term_id), $children);
+        return array_merge([$term->term_id], $children);
     }
 
     //function to get region id from slug, as well as child region ids
@@ -302,7 +299,6 @@ class tsml_filter_meetings
     {
         $term = get_term_by('slug', $slug, 'tsml_region');
         $children = get_term_children($term->term_id, 'tsml_region');
-        return array_merge(array($term->term_id), $children);
+        return array_merge([$term->term_id], $children);
     }
-
 }

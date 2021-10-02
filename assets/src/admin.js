@@ -165,58 +165,52 @@ jQuery(function($) {
 			}
 		});
 
-    // location typeahead
-    $.getJSON(
-      tsml.ajaxurl + "?action=tsml_locations",
-      function (data) {
-        $("input#location").autocomplete({
-          source: data,
-          minLength: 1,
-          select: function ($e, selected) {
-            var location = selected.item;
-            console.log("Location: ", location);
-            $('input[name=formatted_address]')
-              .val(location.formatted_address)
-              .trigger('change');
-            $('input[name=latitude]').val(location.latitude);
-            $('input[name=longitude]').val(location.longitude);
-            $('select[name=region] option[value=' + location.region + ']').prop('selected', true);
-            $('textarea[name=location_notes]').val(location.notes);        
-          }
-        });
-      }
-    );
+		// location typeahead
+		$.getJSON(tsml.ajaxurl + '?action=tsml_locations', function(data) {
+			$('input#location').autocomplete({
+				source: data,
+				minLength: 1,
+				select: function($e, selected) {
+					var location = selected.item;
+					console.log('Location: ', location);
+					$('input[name=formatted_address]')
+						.val(location.formatted_address)
+						.trigger('change');
+					$('input[name=latitude]').val(location.latitude);
+					$('input[name=longitude]').val(location.longitude);
+					$('select[name=region] option[value=' + location.region + ']').prop('selected', true);
+					$('textarea[name=location_notes]').val(location.notes);
+				}
+			});
+		});
 
-    // group typeahead
-    $.getJSON(
-      tsml.ajaxurl + '?action=tsml_groups',
-      function (data) {
-        $("input#group").autocomplete({
-          source: data,
-          minLength: 1,
-          select: function ($e, selected) {
-            var group = selected.item;
-            console.log('Selected: ', selected);
-            $('input[name=website]').val(group.website);
-            $('input[name=email]').val(group.email);
-            $('input[name=phone]').val(group.phone);
-            $('input[name=contact_1_name]').val(group.contact_1_name);
-            $('input[name=contact_1_email]').val(group.contact_1_email);
-            $('input[name=contact_1_phone]').val(group.contact_1_phone);
-            $('input[name=contact_2_name]').val(group.contact_2_name);
-            $('input[name=contact_2_email]').val(group.contact_2_email);
-            $('input[name=contact_2_phone]').val(group.contact_2_phone);
-            $('input[name=contact_3_name]').val(group.contact_3_name);
-            $('input[name=contact_3_email]').val(group.contact_3_email);
-            $('input[name=contact_3_phone]').val(group.contact_3_phone);
-            $('input[name=mailing_address]').val(group.mailing_address);
-            $('input[name=venmo]').val(group.venmo);
-            $('input[name=last_contact]').val(group.last_contact);
-            $('textarea[name=group_notes]').val(group.notes);
-          }
-        })
-      }
-    );
+		// group typeahead
+		$.getJSON(tsml.ajaxurl + '?action=tsml_groups', function(data) {
+			$('input#group').autocomplete({
+				source: data,
+				minLength: 1,
+				select: function($e, selected) {
+					var group = selected.item;
+					console.log('Selected: ', selected);
+					$('input[name=website]').val(group.website);
+					$('input[name=email]').val(group.email);
+					$('input[name=phone]').val(group.phone);
+					$('input[name=contact_1_name]').val(group.contact_1_name);
+					$('input[name=contact_1_email]').val(group.contact_1_email);
+					$('input[name=contact_1_phone]').val(group.contact_1_phone);
+					$('input[name=contact_2_name]').val(group.contact_2_name);
+					$('input[name=contact_2_email]').val(group.contact_2_email);
+					$('input[name=contact_2_phone]').val(group.contact_2_phone);
+					$('input[name=contact_3_name]').val(group.contact_3_name);
+					$('input[name=contact_3_email]').val(group.contact_3_email);
+					$('input[name=contact_3_phone]').val(group.contact_3_phone);
+					$('input[name=mailing_address]').val(group.mailing_address);
+					$('input[name=venmo]').val(group.venmo);
+					$('input[name=last_contact]').val(group.last_contact);
+					$('textarea[name=group_notes]').val(group.notes);
+				}
+			});
+		});
 
 		$('input[name="group_status"]').change(function() {
 			$('#contact-type').attr('data-type', $(this).val());
@@ -261,7 +255,7 @@ jQuery(function($) {
 						nonce: tsml.nonce
 					},
 					function(geocoded) {
-            console.log('Geocoded: ', geocoded);
+						console.log('Geocoded: ', geocoded);
 						//check status first, eg REQUEST_DENIED, ZERO_RESULTS
 						if (geocoded.status == 'error') return;
 
@@ -291,8 +285,7 @@ jQuery(function($) {
 							.val(geocoded.formatted_address)
 							.trigger('keyup');
 
-						$('input#approximate')
-							.val(geocoded.approximate);
+						$('input#approximate').val(geocoded.approximate);
 
 						//check if location with same address is already in the system, populate form
 						$.getJSON(
@@ -325,14 +318,14 @@ jQuery(function($) {
 									$('div.form_not_valid').removeClass('hidden');
 									$('input#formatted_address').addClass('error');
 									formIsNotValid();
-								} else if ($('input[name=in_person]:checked').val() == 'no' &&  $('input#approximate').val() == 'no' && meeting_is_online) {
+								} else if ($('input[name=in_person]:checked').val() == 'no' && $('input#approximate').val() == 'no' && meeting_is_online) {
 									$('div.need_approximate_address').removeClass('hidden');
 									$('input#location').addClass('warning');
 									$('input#formatted_address').addClass('warning');
-									formIsValid()
+									formIsValid();
 								} else {
 									//form is ok to submit again
-									formIsValid()
+									formIsValid();
 								}
 							}
 						);
@@ -357,18 +350,15 @@ jQuery(function($) {
 			});
 
 		// Verify address when a change to in_person question
-		$('input[name=in_person]')
-			.change(function() {
-				$('input#formatted_address').change();
-			});
-		$('input#conference_url')
-			.change(function() {
-				$('input#formatted_address').change();
-			});
-		$('input#conference_phone')
-			.change(function() {
-				$('input#formatted_address').change();
-			});
+		$('input[name=in_person]').change(function() {
+			$('input#formatted_address').change();
+		});
+		$('input#conference_url').change(function() {
+			$('input#formatted_address').change();
+		});
+		$('input#conference_phone').change(function() {
+			$('input#formatted_address').change();
+		});
 
 		//when page loads, run lookup
 		if ($('input#formatted_address').val()) $('input#formatted_address').trigger('change');
