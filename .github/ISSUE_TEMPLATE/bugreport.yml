@@ -1,0 +1,74 @@
+name: Bug Report (Developers)
+description: For developers only, please. End-users should ask a question in our Discussions Q&A for support.
+title: "[Bug]: "
+labels: [bug, triage]
+assignees:
+  - tech2serve
+  - brianw-area24
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for taking the time to fill out this bug report!
+  - type: input
+    id: contact
+    attributes:
+      label: Contact Details
+      description: How can we get in touch with you if we need more info?
+      placeholder: ex. email@example.com
+    validations:
+      required: false
+  - type: input
+    id: website
+    attributes:
+      label: Website With Issue
+      description: Please identify the website experiencing the bug
+      placeholder: ex. https://example.com
+    validations:
+      required: false
+  - type: textarea
+    id: what-happened
+    attributes:
+      label: What happened?
+      description: Also describe what you expect to happen
+      placeholder: Tell us what you see!
+      value: "A bug happened!"
+    validations:
+      required: true
+  - type: dropdown
+    id: tsmlVersion
+    attributes:
+      label: TSML Version
+      description: What version of TSML are you running?
+      options:
+        - Latest (default)
+        - beta
+        - Other (Identify version in text above)
+    validations:
+      required: true
+  - type: dropdown
+    id: wordperssVersion
+    attributes:
+      label: Wordpress Version
+      description: What version of Wordpress is on the site?
+      options:
+        - Latest (default)
+        - Other (Identify version in text above)
+    validations:
+      required: true
+  - type: dropdown
+    id: browsers
+    attributes:
+      label: What browsers are you seeing the problem on?
+      multiple: true
+      options:
+        - Firefox
+        - Chrome
+        - Safari
+        - Microsoft Edge
+  - type: textarea
+    id: logs
+    attributes:
+      label: Relevant log output/errors
+      description: Please copy and paste any relevant log output. This will be automatically formatted into code, so no need for backticks.
+      render: shell

@@ -30,7 +30,6 @@ if (false) {
     }
 }
 
-
 //include these files first
 include TSML_PATH . '/includes/filter_meetings.php';
 include TSML_PATH . '/includes/functions.php';

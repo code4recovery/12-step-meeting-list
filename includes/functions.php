@@ -572,6 +572,7 @@ function tsml_geocode($address)
 	//check cache
 	$addresses	= get_option('tsml_addresses', []);
 
+
 	//if key exists && approximate is set for that address, return it
 	if (array_key_exists($address, $addresses) && !empty($addresses[$address]['approximate'])) {
 		$addresses[$address]['status'] = 'cache';
