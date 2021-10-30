@@ -1,5 +1,7 @@
 <?php
 
+if (!function_exists('tsml_import_page')) {
+
 //import CSV file and handle settings
 function tsml_import_page()
 {
@@ -917,4 +919,6 @@ function tsml_import_page()
 		</div>
 	</div>
 <?php
+}
+
 }
