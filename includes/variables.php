@@ -1,5 +1,5 @@
 <?php
-/*	
+/*
 Don't make changes to this file! You'll have to reapply them every time you update the plugin.
 if you need to customize your site, please follow the instructions on our FAQ:
 👉 https://wordpress.org/plugins/12-step-meeting-list/
@@ -51,7 +51,7 @@ $tsml_conference_providers = [
 //whether contacts are displayed publicly (defaults to no)
 $tsml_contact_display = get_option('tsml_contact_display', 'private');
 
-//define contact fields 
+//define contact fields
 $tsml_contact_fields = [
 	'website' => 'url',
 	'website_2' => 'url',
@@ -695,6 +695,37 @@ add_action('plugins_loaded', function () {
 				'XB' => __('Wheelchair-Accessible Bathroom', '12-step-meeting-list'),
 				'W' => __('Women', '12-step-meeting-list'),
 				'Y' => __('Young People', '12-step-meeting-list'),
+			],
+		],
+		'cma' => [
+			'abbr' => __('CMA', '12-step-meeting-list'),
+			'flags' => ['M', 'W', 'TC', 'ONL'], //for /men and /women at end of meeting name (used in tsml_format_name())
+			'name' => __('Crystal Meth Anonymous', '12-step-meeting-list'),
+			'type_descriptions' => [
+				'C' => __('Closed meetings are for C.M.A members only, or for those who have a using problem and “have a desire to stop using.”', '12-step-meeting-list'),
+				'O' => __('Open meetings are available to anyone interested in Crystal Meth Anonymous’ program of recovery from using. Non users may attend open meetings as observers.', '12-step-meeting-list'),
+			],
+			'types' => [
+				'ASL' => __('Sign Language', '12-step-meeting-list'),
+				'C' => __('Closed', '12-step-meeting-list'),
+				'LGBTQ' => __('LGBTQ', '12-step-meeting-list'),
+				'LIT' => __('Literature', '12-step-meeting-list'),
+				'M' => __('Men', '12-step-meeting-list'),
+				'BE' => __('Newcomer', '12-step-meeting-list'),
+				'ONL' => __('Online (only)', '12-step-meeting-list'),
+				'O' => __('Open', '12-step-meeting-list'),
+				'OUT' => __('Outdoor Meeting', '12-step-meeting-list'),
+				'POC' => __('People of Color', '12-step-meeting-list'),
+				'SM' => __('Smoking Permitted', '12-step-meeting-list'),
+				'S' => __('Spanish', '12-step-meeting-list'),
+				'SP' => __('Speaker', '12-step-meeting-list'),
+				'ST' => __('Step Meeting', '12-step-meeting-list'),
+				'T' => __('Transgender', '12-step-meeting-list'),
+				'TC' => __('Location Temporarily Closed', '12-step-meeting-list'),
+				'W' => __('Women', '12-step-meeting-list'),
+				'Y' => __('Young People', '12-step-meeting-list'),
+				'X' => __('Wheelchair Access', '12-step-meeting-list'),
+				'XB' => __('Wheelchair-Accessible Bathroom', '12-step-meeting-list'),
 			],
 		],
 		'coda' => [
