@@ -558,6 +558,14 @@ get_header();
                                 if (!empty($meeting['notes'])) {
                                     $classes[] = 'notes';
                                 }
+
+                                // Fixes issue 41
+                                if (intval(current_time('w')) == $meeting['day']) {
+                                    if ( date('H:i', strtotime($meeting['time'])) <= date('H:i',current_time('U')) ) {
+                                        $classes[] = 'past';
+                                    }
+                                }
+
                                 foreach ($meeting['types'] as $type) {
                                     $classes[] = 'type-' . sanitize_title($type);
                                 }
