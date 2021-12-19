@@ -91,6 +91,12 @@ Add this to your theme's functions.php.
 
 	$tsml_street_only = false;
 
+= Can I add a feedback_url to each meeting when using tsml_ui? = Add a URL to your themes functions.php.
+
+	$tsml_feedback_url = "https://domain.com?meeting={{slug}}";
+	$tsml_feedback_url = "https://domain.com?meeting={{id}}";
+	$tsml_feedback_url = "mailto:office@domain.com?subject={{slug}}";
+
 = Can I change the order of the columns on the meeting list page, eg put the Region first? =
 Add this to your theme's functions.php. Feel free to change the order or column names (eg 'Region') but keep the keys the same (eg 'region').
 
