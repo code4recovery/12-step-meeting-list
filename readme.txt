@@ -91,7 +91,7 @@ Add this to your theme's functions.php.
 
 	$tsml_street_only = false;
 
-= Can I add a feedback_url to each meeting when using tsml_ui? = Add a URL to your themes functions.php.
+= Can I add a feedback_url to each meeting when using TSML UI? = Add a URL to your themes functions.php.
 
 	$tsml_feedback_url = "https://domain.com?meeting={{slug}}";
 	$tsml_feedback_url = "https://domain.com?meeting={{id}}";

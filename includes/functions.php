@@ -1052,6 +1052,7 @@ function tsml_get_meeting($meeting_id = false)
 function tsml_feedback_url($post)
 {
     global $tsml_feedback_url;
+    $url = "";
 
     if (isset($tsml_feedback_url)) {
         $id = $post->ID;
@@ -1062,7 +1063,7 @@ function tsml_feedback_url($post)
         $url = str_replace('{{id}}', $id, $url);
         $url = str_replace('{{slug}}', $slug, $url);
     }
-    return esc_url_raw($url, ['http', 'https', 'mailto', 'tel', 'sms']);
+    return $url;
 }
 
 
