@@ -6,7 +6,7 @@ function tsml_db_update_remove_all_approximate_location_cache()
   $updated_address_cache = [];
   if (!empty($addresses_cache)) {
     foreach ($addresses_cache as $key => $entry) {
-      if (array_key_exists('is_approximate_location', $entry)) {
+      if (isset($entry['is_approximate_location'])) {
         unset($entry['is_approximate_location']);
       }
       $updated_address_cache[$key] = $entry;
@@ -20,7 +20,7 @@ function tsml_db_update_remove_all_is_approximate_location_meta()
   $location_posts = tsml_get_all_locations();
   foreach ($location_posts as $location_post) {
     $location_custom = get_post_meta($location_post->ID);
-    if (array_key_exists('is_approximate_location', $location_custom)) {
+    if (isset($location_custom['is_approximate_location'])) {
       delete_post_meta($location_post->ID, 'is_approximate_location');
     }
   }
