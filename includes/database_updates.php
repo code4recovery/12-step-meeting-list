@@ -33,9 +33,9 @@ function tsml_db_set_location_approximate()
   $addresses = get_option('tsml_addresses', []);
 
   // Remove addresses from cache if approximate or formatted_address is not set
-  $addresses = array_map(function ($address) {
+  $addresses = array_filter($addresses, function ($address) {
     return !empty($address['approximate']) && !empty($address['formatted_address']);
-  }, $addresses);
+  });
 
   update_option('tsml_addresses', $addresses);
 
