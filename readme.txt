@@ -3,7 +3,7 @@ Contributors: Code for Recovery
 Requires at least: 3.2
 Requires PHP: 5.6
 Tested up to: 5.8.2
-Stable tag: 3.12.1
+Stable tag: 3.12.2
 
 This plugin helps twelve step recovery programs list their meetings. It standardizes addresses, and displays results in a searchable list and map.
 
@@ -213,6 +213,10 @@ To apply these changes, you must go to Settings > Permalinks and click "Save Cha
 1. Edit location
 
 == Changelog ==
+
+= 3.12.2 =
+* Add wrapper to fix wp_insert_post_data hook
+* Fixed database updates
 
 = 3.12.1 =
 * Add CSS class for past meetings
