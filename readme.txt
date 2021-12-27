@@ -215,8 +215,8 @@ To apply these changes, you must go to Settings > Permalinks and click "Save Cha
 == Changelog ==
 
 = 3.12.2 =
-* Add wrapper to fix wp_insert_post_data hook
-* Fixed database updates
+* Fix bug adding pages
+* Fix database updates
 
 = 3.12.1 =
 * Add CSS class for past meetings
