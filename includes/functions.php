@@ -1288,6 +1288,11 @@ function tsml_import_buffer_set($meetings, $data_source = null)
 		$meetings = tsml_import_reformat_googlesheet($meetings);
 	}
 
+	//allow theme-defined function to reformat data source import - issue #439
+	if (function_exists('tsml_import_reformat')) { 
+		$meetings = tsml_import_reformat($meetings);
+	}
+
 	//uppercasing for value matching later
 	$upper_types = array_map('strtoupper', $tsml_programs[$tsml_program]['types']);
 	$upper_days = array_map('strtoupper', $tsml_days);
