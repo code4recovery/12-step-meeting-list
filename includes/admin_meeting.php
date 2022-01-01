@@ -314,7 +314,7 @@ add_action('admin_init', function () {
 						'hide_empty' => false,
 						'orderby' => 'name',
 						'selected' => $district,
-						'show_option_none' => __('District', '12-step-meeting-list'),
+						'show_option_none' => __('None', '12-step-meeting-list'),
 					]) ?>
 				</div>
 			<?php } ?>
