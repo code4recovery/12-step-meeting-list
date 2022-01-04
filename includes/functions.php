@@ -1280,7 +1280,7 @@ function tsml_meeting_types($types)
 
 //sanitize and import an array of meetings to an 'import buffer' (an wp_option that's iterated on progressively)
 //called from admin_import.php (both CSV and JSON)
-function tsml_import_buffer_set($meetings, $data_source_url, $data_source_parent_region_id = null) {
+function tsml_import_buffer_set($meetings, $data_source_url = null, $data_source_parent_region_id = null) {
 	global $tsml_programs, $tsml_program, $tsml_days, $tsml_meeting_attendance_options;
 
 	if (strpos($data_source_url, "spreadsheets.google.com") !== false) {
