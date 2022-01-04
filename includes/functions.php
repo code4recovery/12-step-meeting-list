@@ -1287,8 +1287,8 @@ function tsml_import_buffer_set($meetings, $data_source_url, $data_source_parent
 		$meetings = tsml_import_reformat_googlesheet($meetings);
 	}
 
-	//allow theme-defined function to reformat import - issue #439
-	if (function_exists('tsml_import_reformat')) {
+	//allow theme-defined function to reformat data source import - issue #439
+	if (function_exists('tsml_import_reformat')) { 
 		$meetings = tsml_import_reformat($meetings);
 	}
 
