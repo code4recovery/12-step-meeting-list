@@ -1,5 +1,7 @@
 <?php
 
+//import and settings
+
 if (!function_exists('tsml_import_page')) {
 
 //import CSV file and handle settings
@@ -7,9 +9,10 @@ function tsml_import_page()
 {
 	global $tsml_data_sources, $tsml_programs, $tsml_program, $tsml_nonce, $tsml_feedback_addresses,
 		$tsml_notification_addresses, $tsml_distance_units, $tsml_sharing, $tsml_sharing_keys, $tsml_contact_display,
-		$tsml_google_maps_key, $tsml_mapbox_key, $tsml_geocoding_method, $tsml_slug;
+		$tsml_google_maps_key, $tsml_mapbox_key, $tsml_geocoding_method, $tsml_slug, $tsml_change_detect;
 
 	$error = false;
+	$tsml_data_sources = get_option('tsml_data_sources', array());
 
 	//if posting a CSV, check for errors and add it to the import buffer
 	if (isset($_FILES['tsml_import']) && isset($_POST['tsml_nonce']) && wp_verify_nonce($_POST['tsml_nonce'], $tsml_nonce)) {
@@ -154,35 +157,46 @@ function tsml_import_page()
 	//add data source
 	if (!empty($_POST['tsml_add_data_source']) && isset($_POST['tsml_nonce']) && wp_verify_nonce($_POST['tsml_nonce'], $tsml_nonce)) {
 
-		//sanitize URL
-		$_POST['tsml_add_data_source'] = trim(esc_url_raw($_POST['tsml_add_data_source'], ['http', 'https']));
+		//sanitize URL, name, parent region id, and Change Detection values
+		$data_source_url = trim(esc_url_raw($_POST['tsml_add_data_source'], array('http', 'https')));
+		$data_source_name = sanitize_text_field($_POST['tsml_add_data_source_name']);
+		$data_source_parent_region_id = (int) $_POST['tsml_add_data_source_parent_region_id'];
+		$data_source_change_detect = sanitize_text_field($_POST['tsml_add_data_source_change_detect']);
 
 		//try fetching	
-		$response = wp_remote_get($_POST['tsml_add_data_source'], [
+		$response = wp_remote_get($data_source_url, [
 			'timeout' => 30,
 			'sslverify' => false,
 		]);
 		if (is_array($response) && !empty($response['body']) && ($body = json_decode($response['body'], true))) {
 
 			//if already set, hard refresh
-			if (array_key_exists($_POST['tsml_add_data_source'], $tsml_data_sources)) {
-				tsml_delete(tsml_get_data_source_ids($_POST['tsml_add_data_source']));
+			if (array_key_exists($data_source_url, $tsml_data_sources)) {
+				tsml_delete(tsml_get_data_source_ids($data_source_url));
 				tsml_delete_orphans();
 			}
 
-			$tsml_data_sources[$_POST['tsml_add_data_source']] = [
+			$tsml_data_sources[$data_source_url] = [
 				'status' => 'OK',
 				'last_import' => current_time('timestamp'),
 				'count_meetings' => 0,
-				'name' => sanitize_text_field($_POST['tsml_add_data_source_name']),
+				'name' => $data_source_name,
+				'parent_region_id' => $data_source_parent_region_id,
+				'change_detect' => $data_source_change_detect,
 				'type' => 'JSON',
 			];
 
 			//import feed
-			tsml_import_buffer_set($body, $_POST['tsml_add_data_source']);
+			tsml_import_buffer_set($body, $data_source_url, $data_source_parent_region_id);
 
 			//save data source configuration
 			update_option('tsml_data_sources', $tsml_data_sources);
+
+			// Create a cron job to run daily when Change Detection is enabled for the new data source
+			if ( $data_source_change_detect === 'enabled' ) {
+				tsml_CreateAndScheduleCronJob($data_source_url, $data_source_name);
+			} 
+					
 		} elseif (!is_array($response)) {
 
 			tsml_alert(__('Invalid response, <pre>' . print_r($response, true) . '</pre>.', '12-step-meeting-list'), 'error');
@@ -550,69 +564,134 @@ function tsml_import_page()
 						</div>
 					</div>
 					<div class="postbox">
-						<div class="inside">
-							<h3><?php _e('Data Sources', '12-step-meeting-list') ?></h3>
+						<div class="inside col-md-12">
+							<h3><?php _e('Data Sources', '12-step-meeting-list')?></h3>
 							<p><?php printf(__('Data sources are JSON feeds that contain a website\'s public meeting data. They can be used to aggregate meetings from different sites into a single master list. 
-								Data sources listed below will pull meeting information into this website. More information is available at the <a href="%s" target="_blank">Meeting Guide API Specification</a>.', '12-step-meeting-list'), 'https://github.com/code4recovery/spec') ?></p>
-							<?php if (!empty($tsml_data_sources)) { ?>
-								<table>
-									<thead>
-										<tr>
-											<th class="small"></th>
-											<th><?php _e('Feed', '12-step-meeting-list') ?></th>
-											<th class="align-center"><?php _e('Meetings', '12-step-meeting-list') ?></th>
-											<th class="align-right"><?php _e('Last Update', '12-step-meeting-list') ?></th>
-											<th class="small"></th>
-										</tr>
-									</thead>
-									<tbody>
-										<?php foreach ($tsml_data_sources as $feed => $properties) { ?>
-											<tr data-source="<?php echo $feed ?>">
-												<td class="small">
-													<form method="post" action="<?php echo $_SERVER['REQUEST_URI'] ?>">
-														<?php wp_nonce_field($tsml_nonce, 'tsml_nonce', false) ?>
-														<input type="hidden" name="tsml_add_data_source" value="<?php echo $feed ?>">
-														<input type="hidden" name="tsml_add_data_source_name" value="<?php echo @$properties['name'] ?>">
-														<input type="submit" value="Refresh" class="button button-small">
-													</form>
-												</td>
-												<td>
-													<a href="<?php echo $feed ?>" target="_blank">
-														<?php echo !empty($properties['name']) ? $properties['name'] : __('Unnamed Feed', '12-step-meeting-list') ?>
-													</a>
-												</td>
-												<td class="align-center count_meetings"><?php echo number_format($properties['count_meetings']) ?></td>
-												<td class="align-right">
-													<?php echo date(get_option('date_format') . ' ' . get_option('time_format'), $properties['last_import']) ?>
-												</td>
-												<td class="small">
-													<form method="post" action="<?php echo $_SERVER['REQUEST_URI'] ?>">
-														<?php wp_nonce_field($tsml_nonce, 'tsml_nonce', false) ?>
-														<input type="hidden" name="tsml_remove_data_source" value="<?php echo $feed ?>">
-														<span class="dashicons dashicons-no-alt"></span>
-													</form>
-												</td>
-											</tr>
-										<?php } ?>
-									</tbody>
-								</table>
-							<?php } ?>
-							<form class="columns" method="post" action="<?php echo $_SERVER['REQUEST_URI'] ?>">
-								<?php wp_nonce_field($tsml_nonce, 'tsml_nonce', false) ?>
-								<div class="input-half">
-									<input type="text" name="tsml_add_data_source_name" placeholder="<?php _e('District 02', '12-step-meeting-list') ?>">
+								Data sources listed below will pull meeting information into this website. A configurable schedule allows for each enabled data source to be scanned at least once per day looking 
+								for updates to the listing. Change Notification email addresses are sent an email when action is required to re-sync a data source with its meeting list information. 
+								Please note: records that you intend to maintain on your website should always be imported using the Import CSV feature above. <b>Data Source records will be overwritten when the 
+								parent data source is refreshed. </b>More information is available at the <a href="%s" target="_blank">Meeting Guide API Specification</a>.', '12-step-meeting-list'), 'https://github.com/code4recovery/spec')?></p> 
+							<?php if (!empty($tsml_data_sources)) {?>
+							<table>
+								<thead>
+									<tr>
+										<th class="col-sm-1"><?php _e('Refresh', '12-step-meeting-list')?></th>
+										<th class="align-left col-md-3"><?php _e('Feed', '12-step-meeting-list')?></th>
+										<th class="align-left col-md-2"><?php _e('Parent Region', '12-step-meeting-list')?></th>
+										<th class="align-left col-md-2"><?php _e('Change Detection', '12-step-meeting-list')?></th>
+										<th class="align-center col-md-1"><?php _e('Meetings', '12-step-meeting-list')?></th>
+										<th class="align-center col-md-2"><?php _e('Last Refresh', '12-step-meeting-list')?></th>
+									</tr>
+								</thead>
+								<tbody>
+									<?php foreach ($tsml_data_sources as $feed => $properties) {?>
+									<tr data-source="<?php echo $feed?>">
+										<td class="small col-md-2">
+											<form method="post" action="<?php echo $_SERVER['REQUEST_URI']?>">
+												<?php wp_nonce_field($tsml_nonce, 'tsml_nonce', false)?>
+												<input type="hidden" name="tsml_add_data_source" value="<?php echo $feed?>">
+												<input type="hidden" name="tsml_add_data_source_name" value="<?php echo @$properties['name']?>">
+												<input type="hidden" name="tsml_add_data_source_parent_region_id" value="<?php echo @$properties['parent_region_id']?>">
+												<input type="hidden" name="tsml_add_data_source_change_detect" value="<?php echo @$properties['change_detect'] ?>">
+												<input type="submit" value="Refresh" class="button button-small">
+											</form>
+										</td>
+										<td class="col-md-2" >
+											<a href="<?php echo $feed?>" target="_blank">
+												<?php echo !empty($properties['name']) ? $properties['name'] : __('Unnamed Feed', '12-step-meeting-list')?>
+											</a>
+										</td>
+										<td class="col-md-2" >
+											<?php
+												$parent_region = null;
+												if (empty($properties['parent_region_id']) || $properties['parent_region_id'] == -1) {
+													$parent_region = __('Top-level region', '12-step-meeting-list');
+												} elseif (empty($regions[$properties['parent_region_id']])) {
+													$term = get_term_by('term_id', $properties['parent_region_id'], 'tsml_region');
+													$parent_region = $term->name;
+													if ($parent_region == null) {
+														$parent_region = 'Missing Parent Region: ' . $properties['parent_region_id'];
+													}
+												} else {
+													$parent_region = $regions[$properties['parent_region_id']];
+												}
+												echo $parent_region;
+											?>
+										</td>
+										<td class="col-md-2" >
+											<?php
+												$change_detect = null;
+												if (empty($properties['change_detect']) || $properties['change_detect'] == -1) {
+													$change_detect = __('Disabled', '12-step-meeting-list');
+												} else {
+													$change_detect = ucfirst($properties['change_detect']);
+												}
+
+												echo $change_detect;
+											?>
+										</td>
+										<td class="align-center count_meetings col-md-2"><?php echo number_format($properties['count_meetings'])?></td>
+
+										<td class="align-right col-md-2">
+											<?php echo Date(get_option('date_format') . ' ' . get_option('time_format'), $properties['last_import'])?>
+										</td>
+
+										<td class="small col-md-2">
+											<form method="post" action="<?php echo $_SERVER['REQUEST_URI']?>">
+												<?php wp_nonce_field($tsml_nonce, 'tsml_nonce', false)?>
+												<input type="hidden" name="tsml_remove_data_source" value="<?php echo $feed?>">
+												<span class="dashicons dashicons-no-alt"></span>
+											</form>
+										</td>
+									</tr>
+									<?php }?>
+								</tbody>
+							</table>
+							<?php }?>
+							<form class="columns" method="post" action="<?php echo $_SERVER['REQUEST_URI']?>">
+								<?php wp_nonce_field($tsml_nonce, 'tsml_nonce', false)?>
+
+								<div class="col-md-2">
+									<input type="text" name="tsml_add_data_source_name" placeholder="<?php _e('District 02', '12-step-meeting-list')?>">
 								</div>
-								<div class="input-half">
+
+								<div class="input-half col-md-2">
 									<input type="text" name="tsml_add_data_source" placeholder="https://">
 								</div>
-								<div class="btn">
-									<input type="submit" class="button" value="<?php _e('Add Data Source', '12-step-meeting-list') ?>">
+
+								<div class="input-data-source input-region col-md-2">
+									<?php wp_dropdown_categories(array(
+										'name' => 'tsml_add_data_source_parent_region_id',
+										'taxonomy' => 'tsml_region',
+										'hierarchical' => true,
+										'hide_empty' => false,
+										'orderby' => 'name',
+										'selected' => null,
+										'title' => __('Append regions created by this data source to… (top-level, if none selected)', '12-step-meeting-list'),
+										'show_option_none' => __('Parent Region…', '12-step-meeting-list'),
+									))?>
+								</div>
+
+								<div class="input-data-source input-auto-refresh col-md-2" >
+									<?php wp_nonce_field($tsml_nonce, 'tsml_nonce', false)?>
+									<select name="tsml_add_data_source_change_detect" id="tsml_change_detect" >
+									<?php 
+									foreach (array(
+											'disabled' => __('Change Detection Disabled', '12-step-meeting-list'),
+											'enabled' => __('Change Detection Enabled', '12-step-meeting-list'),	
+										) as $key => $value) {?>
+										<option value="<?php echo $key?>"<?php selected($tsml_change_detect, $key)?> ><?php echo $value?></option>
+									<?php }?>
+									</select>
+								</div>
+								<div class="col-md-2">
+									<input type="submit" class="btn button" value="<?php _e('Add Data Source', '12-step-meeting-list')?>">
 								</div>
 							</form>
 						</div>
 					</div>
 				</div>
-				<div id="postbox-container-1" class="postbox-container">
+				<div id="postbox-container-1" class="postbox-container container">
 
 					<?php if (!is_ssl()) { ?>
 						<div class="notice notice-warning inline">
