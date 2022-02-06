@@ -1051,18 +1051,21 @@ function tsml_get_meeting($meeting_id = false)
 //called in tsml_get_meta
 function tsml_feedback_url($post)
 {
-    global $tsml_feedback_url;
+	global $tsml_feedback_url;
 
-    if (isset($tsml_feedback_url)) {
-        $id = $post->ID;
-        $slug = $post->post_name;
+	if (isset($tsml_feedback_url)) {
+		$id = $post->ID;
+		$slug = $post->post_name;
 
-        $url = $tsml_feedback_url;
+		$url = $tsml_feedback_url;
 
-        $url = str_replace('{{id}}', $id, $url);
-        $url = str_replace('{{slug}}', $slug, $url);
-    }
-    return esc_url_raw($url, ['http', 'https', 'mailto', 'tel', 'sms']);
+		$url = str_replace('{{id}}', $id, $url);
+		$url = str_replace('{{slug}}', $slug, $url);
+
+		return esc_url_raw($url, ['http', 'https', 'mailto', 'tel', 'sms']);
+	}
+
+	return null;
 }
 
 
@@ -1118,7 +1121,7 @@ function tsml_get_meetings($arguments = [], $from_cache = true)
 				'end_time' => isset($meeting_meta[$post->ID]['end_time']) ? $meeting_meta[$post->ID]['end_time'] : null,
 				'time_formatted' => isset($meeting_meta[$post->ID]['time']) ? tsml_format_time($meeting_meta[$post->ID]['time']) : null,
 				'feedback_url' => tsml_feedback_url($post),
-				'edit_url' => get_edit_post_link($post),
+				'edit_url' => get_edit_post_link($post, ''),
 				'conference_url' => isset($meeting_meta[$post->ID]['conference_url']) ? $meeting_meta[$post->ID]['conference_url'] : null,
 				'conference_url_notes' => isset($meeting_meta[$post->ID]['conference_url_notes']) ? $meeting_meta[$post->ID]['conference_url_notes'] : null,
 				'conference_phone' => isset($meeting_meta[$post->ID]['conference_phone']) ? $meeting_meta[$post->ID]['conference_phone'] : null,
