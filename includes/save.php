@@ -259,6 +259,7 @@ add_action('save_post', function ($post_id, $post, $update) {
 					update_post_meta($location_id, $field, floatval($_POST[$field]));
 				}
 			}
+			update_post_meta($location_id, 'approximate', $approximate ? 'yes' : 'no');
 
 			//update region
 			if (!$update || $old_meeting->region_id != $_POST['region']) {
