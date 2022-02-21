@@ -1924,14 +1924,15 @@ if (!function_exists('tsml_scan_data_source')) {
 				return;
 			}
 
-			//try fetching
+			//try fetching	
 			$response = wp_remote_get($data_source_url, array(
 				'timeout' => 30,
 				'sslverify' => false,
 			));
 
 			if (is_array($response) && !empty($response['body']) && ($body = json_decode($response['body'], true))) {
-				//allow theme-defined function to reformat prior to import
+				$meetings = $body;
+				//allow theme-defined function to reformat prior to import 
 				if (function_exists('tsml_import_reformat')) {
 					$meetings = tsml_import_reformat($body);
 				}
@@ -1958,7 +1959,7 @@ if (!function_exists('tsml_scan_data_source')) {
 						}
 					}
 
-					// send Changes Detected email
+					// send Changes Detected email 
 					$subject = __('Data Source Changes Detected', '12-step-meeting-list') . ': ' . $data_source_name;
 					if (tsml_email($tsml_notification_addresses, str_replace("'s", "s", $subject), $message)) {
 						_e("<div class='bg-success text-light'>Data Source changes were detected during the daily sychronization check with this feed: $data_source_url.<br></div>", '12-step-meeting-list');
@@ -2048,11 +2049,11 @@ function tsml_import_has_changes($meetings, $data_source_count_meetings, $data_s
 }
 
 //function:	Creates and configures cron job to run a scheduled data source scan
-//used:		admin-import.php
+//used:		admin-import.php 
 function tsml_CreateAndScheduleCronJob($data_source_url, $data_source_name)
 {
 
-	$timestamp = tsml_strtotime('tomorrow midnight'); // Use tsml_strtotime to incorporate local site timezone with UTC.
+	$timestamp = tsml_strtotime('tomorrow midnight'); // Use tsml_strtotime to incorporate local site timezone with UTC. 
 
 	// Get the timestamp for the next event when found.
 	$ts = wp_next_scheduled("tsml_scan_data_source", array($data_source_url));
@@ -2063,7 +2064,7 @@ function tsml_CreateAndScheduleCronJob($data_source_url, $data_source_name)
 		// When adding a data source we schedule its daily cron job
 		register_activation_hook(__FILE__, 'tsml_activate_data_source_scan');
 
-		//Schedule the refresh
+		//Schedule the refresh  
 		if (wp_schedule_event($timestamp, "daily", "tsml_scan_data_source", array($data_source_url)) === false) {
 			tsml_debug("$data_source_name data source scan scheduling failed!");
 		} else {
@@ -2073,8 +2074,8 @@ function tsml_CreateAndScheduleCronJob($data_source_url, $data_source_name)
 	}
 }
 
-//function:	incorporates wp timezone into php's StrToTime() function
-//used:		here, admin-import.php
+//function:	incorporates wp timezone into php's StrToTime() function 
+//used:		here, admin-import.php 
 function tsml_strtotime($str)
 {
 	// This function behaves a bit like PHP's StrToTime() function, but taking into account the Wordpress site's timezone
@@ -2102,8 +2103,8 @@ function tsml_strtotime($str)
 	return $datetime->format('U');
 }
 
-//function:	incorporates wp timezone into php's date() function
-//used:		here, admin-import.php
+//function:	incorporates wp timezone into php's date() function 
+//used:		here, admin-import.php 
 function tsml_date_localised($format, $timestamp = null)
 {
 	// This function behaves a bit like PHP's Date() function, but taking into account the Wordpress site's timezone
