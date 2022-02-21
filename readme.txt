@@ -3,7 +3,7 @@ Contributors: Code for Recovery
 Requires at least: 3.2
 Requires PHP: 5.6
 Tested up to: 5.8.2
-Stable tag: 3.12.2
+Stable tag: 3.13
 
 This plugin helps twelve step recovery programs list their meetings. It standardizes addresses, and displays results in a searchable list and map.
 
@@ -219,6 +219,12 @@ To apply these changes, you must go to Settings > Permalinks and click "Save Cha
 1. Edit location
 
 == Changelog ==
+
+= 3.13 =
+* Add change detection notification option for feeds
+* Update url in TSML UI shortcode
+* Fix district dropdown list
+* Write approximate value when saving location
 
 = 3.12.2 =
 * Fix bug adding pages
