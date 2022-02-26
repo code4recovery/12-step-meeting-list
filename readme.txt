@@ -3,7 +3,7 @@ Contributors: Code for Recovery
 Requires at least: 3.2
 Requires PHP: 5.6
 Tested up to: 5.8.2
-Stable tag: 3.12.1
+Stable tag: 3.13
 
 This plugin helps twelve step recovery programs list their meetings. It standardizes addresses, and displays results in a searchable list and map.
 
@@ -90,6 +90,12 @@ Add this to your theme's functions.php. The value should be an existing value, i
 Add this to your theme's functions.php.
 
 	$tsml_street_only = false;
+
+= Can I add a feedback_url to each meeting when using TSML UI? = Add a URL to your themes functions.php.
+
+	$tsml_feedback_url = "https://domain.com?meeting={{slug}}";
+	$tsml_feedback_url = "https://domain.com?meeting={{id}}";
+	$tsml_feedback_url = "mailto:office@domain.com?subject={{slug}}";
 
 = Can I change the order of the columns on the meeting list page, eg put the Region first? =
 Add this to your theme's functions.php. Feel free to change the order or column names (eg 'Region') but keep the keys the same (eg 'region').
@@ -213,6 +219,16 @@ To apply these changes, you must go to Settings > Permalinks and click "Save Cha
 1. Edit location
 
 == Changelog ==
+
+= 3.13 =
+* Add change detection notification option for feeds
+* Update url in TSML UI shortcode
+* Fix district dropdown list
+* Write approximate value when saving location
+
+= 3.12.2 =
+* Fix bug adding pages
+* Fix database updates
 
 = 3.12.1 =
 * Add CSS class for past meetings
