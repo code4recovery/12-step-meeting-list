@@ -9,10 +9,7 @@ if you need to customize your site, please follow the instructions on our FAQ:
 $tsml_bounds = get_option('tsml_bounds');
 
 //get the secret cache location
-if (!$tsml_cache = get_option('tsml_cache')) {
-	$tsml_cache = '/tsml-cache-' . substr(str_shuffle(md5(microtime())), 0, 10) . '.json';
-	update_option('tsml_cache', $tsml_cache);
-}
+$tsml_cache = '/meetings.json';
 
 // Define attendance options
 $tsml_meeting_attendance_options = [
