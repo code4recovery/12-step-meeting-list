@@ -1070,7 +1070,7 @@ function tsml_feedback_url($post)
 //function: get meetings based on unsanitized $arguments
 //$from_cache is only false when calling from tsml_cache_rebuild()
 //used:		tsml_ajax_meetings(), single-locations.php, archive-meetings.php
-function tsml_get_meetings($arguments = [], $from_cache = true)
+function tsml_get_meetings($arguments = [], $from_cache = true, $full_export = false)
 {
 	global $tsml_cache, $tsml_contact_fields, $tsml_contact_display;
 
@@ -1126,6 +1126,11 @@ function tsml_get_meetings($arguments = [], $from_cache = true)
 				'types' => empty($meeting_meta[$post->ID]['types']) ? [] : array_values(unserialize($meeting_meta[$post->ID]['types'])),
 			], $locations[$post->post_parent]);
 
+			// Include the data source when doing a full export
+			if ($full_export && isset($meeting_meta[$post->ID]['data_source'])) {
+				$meeting['data_source'] = $meeting_meta[$post->ID]['data_source'];
+			}
+
 			//append contact info to meeting
 			if (!empty($meeting_meta[$post->ID]['group_id']) && array_key_exists($meeting_meta[$post->ID]['group_id'], $groups)) {
 				$meeting = array_merge($meeting, $groups[$meeting_meta[$post->ID]['group_id']]);
@@ -1137,8 +1142,8 @@ function tsml_get_meetings($arguments = [], $from_cache = true)
 				}
 			}
 
-			// Only show contact information when 'public'
-			if ($tsml_contact_display !== 'public') {
+			// Only show contact information when 'public' or doing a full export
+			if ($tsml_contact_display !== 'public' && !$full_export) {
 				for ($i = 1; $i < 4; $i++) {
 					unset($meeting['contact_' . $i . '_name']);
 					unset($meeting['contact_' . $i . '_email']);
@@ -1175,7 +1180,9 @@ function tsml_get_meetings($arguments = [], $from_cache = true)
 		}, $meetings);
 
 		//write array to cache
-		file_put_contents(WP_CONTENT_DIR . $tsml_cache, json_encode($meetings));
+		if (!$full_export) {
+			file_put_contents(WP_CONTENT_DIR . $tsml_cache, json_encode($meetings));
+		}
 	}
 
 	//check if we are filtering
@@ -1247,7 +1254,7 @@ function tsml_get_meta($type, $id = null)
 	$keys = [
 		'tsml_group' => '"website", "website_2", "email", "phone", "mailing_address", "venmo", "square", "paypal", "last_contact"' . (current_user_can('edit_posts') ? ', "contact_1_name", "contact_1_email", "contact_1_phone", "contact_2_name", "contact_2_email", "contact_2_phone", "contact_3_name", "contact_3_email", "contact_3_phone"' : ''),
 		'tsml_location' => '"formatted_address", "latitude", "longitude", "approximate"',
-		'tsml_meeting' => '"day", "time", "end_time", "types", "group_id", "website", "website_2", "email", "phone", "mailing_address", "venmo", "square", "paypal", "last_contact", "attendance_option", "conference_url", "conference_url_notes", "conference_phone", "conference_phone_notes"' . (current_user_can('edit_posts') ? ', "contact_1_name", "contact_1_email", "contact_1_phone", "contact_2_name", "contact_2_email", "contact_2_phone", "contact_3_name", "contact_3_email", "contact_3_phone"' : ''),
+		'tsml_meeting' => '"day", "time", "end_time", "types", "group_id", "website", "website_2", "email", "phone", "mailing_address", "venmo", "square", "paypal", "last_contact", "attendance_option", "conference_url", "conference_url_notes", "conference_phone", "conference_phone_notes", "data_source"' . (current_user_can('edit_posts') ? ', "contact_1_name", "contact_1_email", "contact_1_phone", "contact_2_name", "contact_2_email", "contact_2_phone", "contact_3_name", "contact_3_email", "contact_3_phone"' : ''),
 	];
 	if (!array_key_exists($type, $keys)) return trigger_error('tsml_get_meta for unexpected type ' . $type);
 	$meta = [];

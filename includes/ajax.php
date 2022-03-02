@@ -158,7 +158,7 @@ function tsml_ajax_csv()
 	}
 
 	//get data source
-	$meetings = tsml_get_meetings();
+	$meetings = tsml_get_meetings([], false, true);
 
 	//define columns to output, always in English for portability (per Poland NA)
 	$columns = [
@@ -201,6 +201,7 @@ function tsml_ajax_csv()
 		'conference_phone_notes' => 'Conference Phone Notes',
 		'author' => 				'Author',
 		'slug' => 					'Slug',
+		'data_source' =>			'Data Source',
 		'updated' =>				'Updated',
 	];
 
