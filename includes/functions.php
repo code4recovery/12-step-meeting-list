@@ -1392,7 +1392,9 @@ function tsml_import_buffer_set($meetings, $data_source_url = null, $data_source
 	$count_meetings = count($meetings);
 	for ($i = 0; $i < $count_meetings; $i++) {
 
-		$meetings[$i]['data_source'] = $data_source_url;
+		if (empty($meetings[$i]['data_source'])) {
+			$meetings[$i]['data_source'] = $data_source_url;
+		}
 		$meetings[$i]['data_source_parent_region_id'] = $data_source_parent_region_id;
 
 		//do wordpress sanitization
