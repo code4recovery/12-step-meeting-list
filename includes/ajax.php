@@ -224,13 +224,13 @@ function tsml_ajax_csv()
 			} elseif ($column == 'day') {
 				$line[] = $tsml_days[$meeting[$column]];
 			} elseif ($column == 'types') {
-				$types = $meeting[$column];
+				$types = !empty($meeting[$column]) ? $meeting[$column] : [];
 				if (!is_array($types)) $types = [];
 				foreach ($types as &$type) $type = $tsml_programs[$tsml_program]['types'][trim($type)];
 				sort($types);
 				$line[] = $escape . implode(', ', $types) . $escape;
 			} elseif (strstr($column, 'notes')) {
-				$line[] = $escape . strip_tags(str_replace($escape, str_repeat($escape, 2), $meeting[$column])) . $escape;
+				$line[] = $escape . strip_tags(str_replace($escape, str_repeat($escape, 2), !empty($meeting[$column]) ? $meeting[$column] : '')) . $escape;
 			} elseif (array_key_exists($column, $meeting)) {
 				$line[] = $escape . str_replace($escape, '', $meeting[$column]) . $escape;
 			} else {
