@@ -36,6 +36,14 @@ add_action('admin_init', function () {
 		// Delete the attendance_option metadata tag, don't need it
 		delete_metadata('post', 0, 'attendance_option', false, true);
 
+		// Remove old cache info
+		if ($tmpstr = get_option('tsml_cache')) {
+			if (file_exists(WP_CONTENT_DIR . $tmpstr)) {
+				unlink(WP_CONTENT_DIR . $tmpstr);
+			}
+			delete_option('tsml_cache');
+		}
+
 		//Rebuild the meeting cache
 		tsml_cache_rebuild();
 

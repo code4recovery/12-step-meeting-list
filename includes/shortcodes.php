@@ -116,7 +116,7 @@ function tsml_ui()
 		],
 		$tsml_ui_config
 	));
-	$data = admin_url('admin-ajax.php') . '?action=meetings&nonce=' . wp_create_nonce($tsml_nonce);
+	$data = content_url('meetings.json');
 	return '<div id="tsml-ui" 
 					data-src="' . $data . '" 
 					data-timezone="' . get_option('timezone_string', 'America/New_York') . '" 

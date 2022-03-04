@@ -1070,9 +1070,9 @@ function tsml_feedback_url($post)
 //function: get meetings based on unsanitized $arguments
 //$from_cache is only false when calling from tsml_cache_rebuild()
 //used:		tsml_ajax_meetings(), single-locations.php, archive-meetings.php
-function tsml_get_meetings($arguments = [], $from_cache = true)
+function tsml_get_meetings($arguments = [], $from_cache = true, $full_export = false)
 {
-	global $tsml_cache, $tsml_contact_fields;
+	global $tsml_cache, $tsml_contact_fields, $tsml_contact_display;
 
 	//start by grabbing all meetings
 	if ($from_cache && file_exists(WP_CONTENT_DIR . $tsml_cache) && $meetings = file_get_contents(WP_CONTENT_DIR . $tsml_cache)) {
@@ -1126,6 +1126,11 @@ function tsml_get_meetings($arguments = [], $from_cache = true)
 				'types' => empty($meeting_meta[$post->ID]['types']) ? [] : array_values(unserialize($meeting_meta[$post->ID]['types'])),
 			], $locations[$post->post_parent]);
 
+			// Include the data source when doing a full export
+			if ($full_export && isset($meeting_meta[$post->ID]['data_source'])) {
+				$meeting['data_source'] = $meeting_meta[$post->ID]['data_source'];
+			}
+
 			//append contact info to meeting
 			if (!empty($meeting_meta[$post->ID]['group_id']) && array_key_exists($meeting_meta[$post->ID]['group_id'], $groups)) {
 				$meeting = array_merge($meeting, $groups[$meeting_meta[$post->ID]['group_id']]);
@@ -1134,6 +1139,15 @@ function tsml_get_meetings($arguments = [], $from_cache = true)
 					if (!empty($meeting_meta[$post->ID][$field])) {
 						$meeting[$field] = $meeting_meta[$post->ID][$field];
 					}
+				}
+			}
+
+			// Only show contact information when 'public' or doing a full export
+			if ($tsml_contact_display !== 'public' && !$full_export) {
+				for ($i = 1; $i < 4; $i++) {
+					unset($meeting['contact_' . $i . '_name']);
+					unset($meeting['contact_' . $i . '_email']);
+					unset($meeting['contact_' . $i . '_phone']);
 				}
 			}
 
@@ -1166,7 +1180,9 @@ function tsml_get_meetings($arguments = [], $from_cache = true)
 		}, $meetings);
 
 		//write array to cache
-		file_put_contents(WP_CONTENT_DIR . $tsml_cache, json_encode($meetings));
+		if (!$full_export) {
+			file_put_contents(WP_CONTENT_DIR . $tsml_cache, json_encode($meetings));
+		}
 	}
 
 	//check if we are filtering
@@ -1238,7 +1254,7 @@ function tsml_get_meta($type, $id = null)
 	$keys = [
 		'tsml_group' => '"website", "website_2", "email", "phone", "mailing_address", "venmo", "square", "paypal", "last_contact"' . (current_user_can('edit_posts') ? ', "contact_1_name", "contact_1_email", "contact_1_phone", "contact_2_name", "contact_2_email", "contact_2_phone", "contact_3_name", "contact_3_email", "contact_3_phone"' : ''),
 		'tsml_location' => '"formatted_address", "latitude", "longitude", "approximate"',
-		'tsml_meeting' => '"day", "time", "end_time", "types", "group_id", "website", "website_2", "email", "phone", "mailing_address", "venmo", "square", "paypal", "last_contact", "attendance_option", "conference_url", "conference_url_notes", "conference_phone", "conference_phone_notes"' . (current_user_can('edit_posts') ? ', "contact_1_name", "contact_1_email", "contact_1_phone", "contact_2_name", "contact_2_email", "contact_2_phone", "contact_3_name", "contact_3_email", "contact_3_phone"' : ''),
+		'tsml_meeting' => '"day", "time", "end_time", "types", "group_id", "website", "website_2", "email", "phone", "mailing_address", "venmo", "square", "paypal", "last_contact", "attendance_option", "conference_url", "conference_url_notes", "conference_phone", "conference_phone_notes", "data_source"' . (current_user_can('edit_posts') ? ', "contact_1_name", "contact_1_email", "contact_1_phone", "contact_2_name", "contact_2_email", "contact_2_phone", "contact_3_name", "contact_3_email", "contact_3_phone"' : ''),
 	];
 	if (!array_key_exists($type, $keys)) return trigger_error('tsml_get_meta for unexpected type ' . $type);
 	$meta = [];
@@ -1303,7 +1319,7 @@ function tsml_meeting_types($types)
 //called from admin_import.php (both CSV and JSON)
 function tsml_import_buffer_set($meetings, $data_source_url = null, $data_source_parent_region_id = null)
 {
-	global $tsml_programs, $tsml_program, $tsml_days, $tsml_meeting_attendance_options;
+	global $tsml_programs, $tsml_program, $tsml_days, $tsml_meeting_attendance_options, $tsml_data_sources;
 
 	if (strpos($data_source_url, "spreadsheets.google.com") !== false) {
 		$meetings = tsml_import_reformat_googlesheet($meetings);
@@ -1376,7 +1392,24 @@ function tsml_import_buffer_set($meetings, $data_source_url = null, $data_source
 	$count_meetings = count($meetings);
 	for ($i = 0; $i < $count_meetings; $i++) {
 
-		$meetings[$i]['data_source'] = $data_source_url;
+		// If the meeting doesn't have a data_source, use the one from the function call
+		if (empty($meetings[$i]['data_source'])) {
+			$meetings[$i]['data_source'] = $data_source_url;
+		} else {
+			// Check if this data sources is in our list of feeds
+			if (!array_key_exists($meetings[$i]['data_source'], $tsml_data_sources)) {
+				// Not already there, so add it
+				$tsml_data_sources[$meetings[$i]['data_source']] = [
+					'status' => 'OK',
+					'last_import' => current_time('timestamp'),
+					'count_meetings' => 0,
+					'name' => parse_url($meetings[$i]['data_source'], PHP_URL_HOST),
+					'parent_region_id' => $data_source_parent_region_id,
+					'change_detect' => null,
+					'type' => 'JSON',
+				];
+			}
+		}
 		$meetings[$i]['data_source_parent_region_id'] = $data_source_parent_region_id;
 
 		//do wordpress sanitization
@@ -1536,6 +1569,9 @@ function tsml_import_buffer_set($meetings, $data_source_url = null, $data_source
 		//preserve row number for errors later
 		$meetings[$i]['row'] = $i + 2;
 	}
+
+	//save data source configuration
+	update_option('tsml_data_sources', $tsml_data_sources);
 
 	//allow user-defined function to filter the meetings (for gal-aa.org)
 	if (function_exists('tsml_import_filter')) {
@@ -1924,7 +1960,7 @@ if (!function_exists('tsml_scan_data_source')) {
 				return;
 			}
 
-			//try fetching	
+			//try fetching
 			$response = wp_remote_get($data_source_url, array(
 				'timeout' => 30,
 				'sslverify' => false,
@@ -1932,7 +1968,7 @@ if (!function_exists('tsml_scan_data_source')) {
 
 			if (is_array($response) && !empty($response['body']) && ($body = json_decode($response['body'], true))) {
 				$meetings = $body;
-				//allow theme-defined function to reformat prior to import 
+				//allow theme-defined function to reformat prior to import
 				if (function_exists('tsml_import_reformat')) {
 					$meetings = tsml_import_reformat($body);
 				}
@@ -1959,7 +1995,7 @@ if (!function_exists('tsml_scan_data_source')) {
 						}
 					}
 
-					// send Changes Detected email 
+					// send Changes Detected email
 					$subject = __('Data Source Changes Detected', '12-step-meeting-list') . ': ' . $data_source_name;
 					if (tsml_email($tsml_notification_addresses, str_replace("'s", "s", $subject), $message)) {
 						_e("<div class='bg-success text-light'>Data Source changes were detected during the daily sychronization check with this feed: $data_source_url.<br></div>", '12-step-meeting-list');
@@ -2049,11 +2085,11 @@ function tsml_import_has_changes($meetings, $data_source_count_meetings, $data_s
 }
 
 //function:	Creates and configures cron job to run a scheduled data source scan
-//used:		admin-import.php 
+//used:		admin-import.php
 function tsml_CreateAndScheduleCronJob($data_source_url, $data_source_name)
 {
 
-	$timestamp = tsml_strtotime('tomorrow midnight'); // Use tsml_strtotime to incorporate local site timezone with UTC. 
+	$timestamp = tsml_strtotime('tomorrow midnight'); // Use tsml_strtotime to incorporate local site timezone with UTC.
 
 	// Get the timestamp for the next event when found.
 	$ts = wp_next_scheduled("tsml_scan_data_source", array($data_source_url));
@@ -2064,7 +2100,7 @@ function tsml_CreateAndScheduleCronJob($data_source_url, $data_source_name)
 		// When adding a data source we schedule its daily cron job
 		register_activation_hook(__FILE__, 'tsml_activate_data_source_scan');
 
-		//Schedule the refresh  
+		//Schedule the refresh
 		if (wp_schedule_event($timestamp, "daily", "tsml_scan_data_source", array($data_source_url)) === false) {
 			tsml_debug("$data_source_name data source scan scheduling failed!");
 		} else {
@@ -2074,8 +2110,8 @@ function tsml_CreateAndScheduleCronJob($data_source_url, $data_source_name)
 	}
 }
 
-//function:	incorporates wp timezone into php's StrToTime() function 
-//used:		here, admin-import.php 
+//function:	incorporates wp timezone into php's StrToTime() function
+//used:		here, admin-import.php
 function tsml_strtotime($str)
 {
 	// This function behaves a bit like PHP's StrToTime() function, but taking into account the Wordpress site's timezone
@@ -2103,8 +2139,8 @@ function tsml_strtotime($str)
 	return $datetime->format('U');
 }
 
-//function:	incorporates wp timezone into php's date() function 
-//used:		here, admin-import.php 
+//function:	incorporates wp timezone into php's date() function
+//used:		here, admin-import.php
 function tsml_date_localised($format, $timestamp = null)
 {
 	// This function behaves a bit like PHP's Date() function, but taking into account the Wordpress site's timezone
