@@ -108,8 +108,6 @@ jQuery(function($) {
 				// Put a value in time and end_time if they don't already have a value
 				if (!$time.val()) {
 					$time.val('00:00').timepicker();
-				}
-				if (!$end_time.val()) {
 					$end_time.val('01:00').timepicker();
 				}
 			} else {
