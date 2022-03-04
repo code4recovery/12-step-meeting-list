@@ -310,7 +310,11 @@ add_filter('body_class', function ($classes) {
 });
 
 //do this after everything is loaded
-get_header();
+if (wp_is_block_theme()) {
+    block_template_part('header');
+} else {
+    get_header();
+}
 
 ?>
 <div id="tsml">
@@ -559,9 +563,8 @@ get_header();
                                     $classes[] = 'notes';
                                 }
 
-                                // Fixes issue 41
                                 if (intval(current_time('w')) == $meeting['day']) {
-                                    if ( date('H:i', strtotime($meeting['time'])) <= date('H:i',current_time('U')) ) {
+                                    if (date('H:i', strtotime($meeting['time'])) <= date('H:i', current_time('U'))) {
                                         $classes[] = 'past';
                                     }
                                 }
@@ -668,4 +671,8 @@ get_header();
 </script>
 
 <?php
-get_footer();
+if (wp_is_block_theme()) {
+    block_template_part('footer');
+} else {
+    get_footer();
+}

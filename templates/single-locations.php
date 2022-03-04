@@ -22,7 +22,11 @@ add_filter('body_class', function ($classes) {
 	return $classes;
 });
 
-get_header();
+if (wp_is_block_theme()) {
+	block_template_part('header');
+} else {
+	get_header();
+}
 ?>
 
 <div id="tsml">
@@ -130,4 +134,8 @@ get_header();
 	</div>
 </div>
 <?php
-get_footer();
+if (wp_is_block_theme()) {
+	block_template_part('footer');
+} else {
+	get_footer();
+}
