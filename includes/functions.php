@@ -1319,7 +1319,7 @@ function tsml_meeting_types($types)
 //called from admin_import.php (both CSV and JSON)
 function tsml_import_buffer_set($meetings, $data_source_url = null, $data_source_parent_region_id = null)
 {
-	global $tsml_programs, $tsml_program, $tsml_days, $tsml_meeting_attendance_options;
+	global $tsml_programs, $tsml_program, $tsml_days, $tsml_meeting_attendance_options, $tsml_data_sources;
 
 	if (strpos($data_source_url, "spreadsheets.google.com") !== false) {
 		$meetings = tsml_import_reformat_googlesheet($meetings);
@@ -1392,8 +1392,23 @@ function tsml_import_buffer_set($meetings, $data_source_url = null, $data_source
 	$count_meetings = count($meetings);
 	for ($i = 0; $i < $count_meetings; $i++) {
 
+		// If the meeting doesn't have a data_source, use the one from the function call
 		if (empty($meetings[$i]['data_source'])) {
 			$meetings[$i]['data_source'] = $data_source_url;
+		} else {
+			// Check if this data sources is in our list of feeds
+			if (!array_key_exists($meetings[$i]['data_source'], $tsml_data_sources)) {
+				// Not already there, so add it
+				$tsml_data_sources[$meetings[$i]['data_source']] = [
+					'status' => 'OK',
+					'last_import' => current_time('timestamp'),
+					'count_meetings' => 0,
+					'name' => parse_url($meetings[$i]['data_source'], PHP_URL_HOST),
+					'parent_region_id' => $data_source_parent_region_id,
+					'change_detect' => null,
+					'type' => 'JSON',
+				];
+			}
 		}
 		$meetings[$i]['data_source_parent_region_id'] = $data_source_parent_region_id;
 
@@ -1554,6 +1569,9 @@ function tsml_import_buffer_set($meetings, $data_source_url = null, $data_source
 		//preserve row number for errors later
 		$meetings[$i]['row'] = $i + 2;
 	}
+
+	//save data source configuration
+	update_option('tsml_data_sources', $tsml_data_sources);
 
 	//allow user-defined function to filter the meetings (for gal-aa.org)
 	if (function_exists('tsml_import_filter')) {
