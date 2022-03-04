@@ -101,14 +101,17 @@ jQuery(function($) {
 			var val = $(this).val();
 			var $time = $('input#time');
 			var $end_time = $('input#end_time');
+			// If a day is selected, not Appointment
 			if (val) {
 				$time.removeAttr('disabled');
 				$end_time.removeAttr('disabled');
-				var newTime = !$time.val() && $time.attr('data-value') ? $time.attr('data-value') : '00:00';
-				var newEndTime = !$end_time.val() && $end_time.attr('data-value') ? $end_time.attr('data-value') : '01:00';
-				$time.val(newTime).timepicker();
-				$end_time.val(newEndTime).timepicker();
+				// Put a value in time and end_time if they don't already have a value
+				if (!$time.val()) {
+					$time.val('00:00').timepicker();
+					$end_time.val('01:00').timepicker();
+				}
 			} else {
+				// Appointment is sellected
 				$time
 					.attr('data-value', $time.val())
 					.val('')
