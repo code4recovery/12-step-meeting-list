@@ -33,12 +33,7 @@ add_filter('body_class', function ($classes) {
 	return $classes;
 });
 
-//do this after everything is loaded
-if (function_exists('wp_is_block_theme') && wp_is_block_theme()) {
-	block_template_part('header');
-} else {
-	get_header();
-}
+get_header();
 ?>
 
 <div id="tsml">
@@ -374,8 +369,4 @@ if (function_exists('wp_is_block_theme') && wp_is_block_theme()) {
 	</div>
 </div>
 <?php
-if (function_exists('wp_is_block_theme') && wp_is_block_theme()) {
-	wp_footer();
-} else {
-	get_footer();
-}
+get_footer();

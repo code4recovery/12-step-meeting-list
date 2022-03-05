@@ -310,11 +310,7 @@ add_filter('body_class', function ($classes) {
 });
 
 //do this after everything is loaded
-if (function_exists('wp_is_block_theme') && wp_is_block_theme()) {
-    block_template_part('header');
-} else {
-    get_header();
-}
+get_header();
 
 ?>
 <div id="tsml">
@@ -563,8 +559,9 @@ if (function_exists('wp_is_block_theme') && wp_is_block_theme()) {
                                     $classes[] = 'notes';
                                 }
 
+                                // Fixes issue 41
                                 if (intval(current_time('w')) == $meeting['day']) {
-                                    if (date('H:i', strtotime($meeting['time'])) <= date('H:i', current_time('U'))) {
+                                    if ( date('H:i', strtotime($meeting['time'])) <= date('H:i',current_time('U')) ) {
                                         $classes[] = 'past';
                                     }
                                 }
@@ -671,8 +668,4 @@ if (function_exists('wp_is_block_theme') && wp_is_block_theme()) {
 </script>
 
 <?php
-if (function_exists('wp_is_block_theme') && wp_is_block_theme()) {
-    wp_footer();
-} else {
-    get_footer();
-}
+get_footer();
