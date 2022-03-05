@@ -310,7 +310,7 @@ add_filter('body_class', function ($classes) {
 });
 
 //do this after everything is loaded
-if (wp_is_block_theme()) {
+if (function_exists('wp_is_block_theme') && wp_is_block_theme()) {
     block_template_part('header');
 } else {
     get_header();
@@ -671,8 +671,8 @@ if (wp_is_block_theme()) {
 </script>
 
 <?php
-if (wp_is_block_theme()) {
-    block_template_part('footer');
+if (function_exists('wp_is_block_theme') && wp_is_block_theme()) {
+    wp_footer();
 } else {
     get_footer();
 }
