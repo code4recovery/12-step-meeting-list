@@ -105,7 +105,7 @@ get_header();
 												echo '<li>' . $li_marker . __('Online', '12-step-meeting-list') . '</li>' . PHP_EOL;
 												break;
 											case 'inactive':
-												echo '<li>' . $li_marker . __('Temporarily Inactive', '12-step-meeting-list') . '</li>' . PHP_EOL;
+												echo '<li>' . $li_marker . __('Inactive', '12-step-meeting-list') . '</li>' . PHP_EOL;
 												break;
 											default:
 												break;
