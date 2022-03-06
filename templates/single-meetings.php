@@ -94,8 +94,8 @@ get_header();
 													<path fill-rule="evenodd" d="M10.97 4.97a.75.75 0 0 1 1.071 1.05l-3.992 4.99a.75.75 0 0 1-1.08.02L4.324 8.384a.75.75 0 1 1 1.06-1.06l2.094 2.093 3.473-4.425a.236.236 0 0 1 .02-.022z"/>
 												</svg>';
 										if ($meeting->attendance_option === 'hybrid') {
-											echo '<li>' . $li_marker . __('In-person', '12-step-meeting-list') . '</li>' . PHP_EOL;
-											echo '<li>' . $li_marker . __('Online', '12-step-meeting-list') . '</li>' . PHP_EOL;
+											echo '<li>' . $li_marker . $tsml_meeting_attendance_options['in_person'] . '</li>' . PHP_EOL;
+											echo '<li>' . $li_marker . $tsml_meeting_attendance_options['online'] . '</li>' . PHP_EOL;
 										} else {
 											echo '<li>' . $li_marker . $tsml_meeting_attendance_options[$meeting->attendance_option] . '</li>' . PHP_EOL;
 										}
