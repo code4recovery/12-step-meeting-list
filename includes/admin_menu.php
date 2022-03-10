@@ -50,6 +50,5 @@ function tsml_dashboard_widgets()
 }
 function tsml_dashboard_help()
 {
-    echo '<p><a href="https://code4recovery.org/">Code for Recovery</a>, the group that maintains TSML, and other recovery based projects, has a <a href="https://code4recovery.org/">new web site</a>. We continue to add information to this site, including information about our group, our projects, our volunteer opportunities. We are also adding project documentation to the website.</p>';
-    echo '<p>Code for Recovery now has 501c3 nonprofit status, so we can take contribuitions to cover costs and build up a prudent reserve. More information at our <a href="https://code4recovery.org/donate">Donate to Code for Recovery</a> page.</p>';
+    echo '<p><a href="https://code4recovery.org/">Code for Recovery</a> is a nonprofit organization of volunteer members building technology services for recovery fellowships, such as AA and Al-Anon. If you need help, please join our discussion forum. If you would like to make a tax-deductible contribution, please <a href="https://code4recovery.org/">visit our website.</a></p>';
 }
