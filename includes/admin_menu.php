@@ -46,7 +46,7 @@ function tsml_dashboard_widgets()
 {
     global $wp_meta_boxes;
 
-    wp_add_dashboard_widget('tsml_help_widget', 'Code for Recovery/12 Step Meeting List(TSML) Plugin', 'tsml_dashboard_help');
+    wp_add_dashboard_widget('tsml_help_widget', 'Code for Recovery/12 Step Meeting List(TSML) Plugin', 'tsml_dashboard_help', null, null, 'normal', 'high');
 }
 function tsml_dashboard_help()
 {
