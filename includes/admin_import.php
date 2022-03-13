@@ -9,7 +9,7 @@ function tsml_import_page()
 {
 	global $tsml_data_sources, $tsml_programs, $tsml_program, $tsml_nonce, $tsml_feedback_addresses,
 		$tsml_notification_addresses, $tsml_distance_units, $tsml_sharing, $tsml_sharing_keys, $tsml_contact_display,
-		$tsml_google_maps_key, $tsml_mapbox_key, $tsml_geocoding_method, $tsml_slug, $tsml_change_detect;
+		$tsml_google_maps_key, $tsml_mapbox_key, $tsml_geocoding_method, $tsml_slug, $tsml_change_detect, $tsml_user_interface;
 
 	$error = false;
 	$tsml_data_sources = get_option('tsml_data_sources', array());
@@ -424,6 +424,18 @@ function tsml_import_page()
 		$tsml_geocoding_method = sanitize_text_field($_POST['tsml_geocoding_method']);
 		update_option('tsml_geocoding_method', $tsml_geocoding_method);
 		tsml_alert(__('Geocoding method updated.', '12-step-meeting-list'));
+	}
+
+	//change user interface
+	if (!empty($_POST['tsml_user_interface']) && isset($_POST['tsml_nonce']) && wp_verify_nonce($_POST['tsml_nonce'], $tsml_nonce)) {
+		$tsml_user_interface = sanitize_text_field($_POST['tsml_user_interface']);
+		update_option('tsml_user_interface', $tsml_user_interface);
+		if ( isset($tsml_google_maps_key) ) {
+			tsml_alert(__('<u>User Interface Display now set to ' . strtoupper($tsml_user_interface) . '</u>. <br><b>Please note</b> that TSML UI only supports Mapbox. To enable mapping you will need a Mapbox token. <br>To sign up for Mapbox <a href="https://www.mapbox.com/signup/" target="_blank">go here</a>. You will only need a valid email address; no credit card is required. <br>Copy your access token and paste it in the Mapbox Access Token field below.', '12-step-meeting-list'));
+		} else {
+			tsml_alert(__('User Interface Display now set to ' . strtoupper($tsml_user_interface) . '.', '12-step-meeting-list'));
+		}
+
 	}
 ?>
 	<div class="wrap">
@@ -991,6 +1003,23 @@ function tsml_import_page()
 							<?php if (!empty($tsml_google_maps_key)) { ?>
 								<p>If you select "Use my Google API Key", then you <strong>must</strong> go into the Google Console and enable the geocode API for your key</p>
 							<?php } ?>
+
+							<details>
+								<summary><strong><?php _e('User Interface Display', '12-step-meeting-list') ?></strong></summary>
+								<p><?php _e('Please select the user interface design that is right for your site. Pick the New React/Javascript Design (that we call <b>TSML UI</b>) or stay with the default legacy interface (<b>Legacy UI</b>).', '12-step-meeting-list') ?></p>
+							</details>
+							<form method="post" action="<?php echo $_SERVER['REQUEST_URI'] ?>">
+								<?php wp_nonce_field($tsml_nonce, 'tsml_nonce', false) ?>
+								<select name="tsml_user_interface" onchange="this.form.submit()">
+									<option value="legacy" <?php selected($tsml_user_interface, 'legacy_ui') ?>>
+										<?php _e('Legacy UI', '12-step-meeting-list') ?>
+									</option>
+									<option value="tsml_ui" <?php selected($tsml_user_interface, 'tsml_ui') ?>>
+										<?php _e('NEW - TSML UI', '12-step-meeting-list') ?>
+									</option>
+								</select>
+							</form>
+
 						</div>
 					</div>
 				</div>
