@@ -103,9 +103,6 @@ $tsml_google_maps_key = get_option('tsml_google_maps_key');
 //load the geocoding method
 $tsml_geocoding_method = get_option('tsml_geocoding_method', 'legacy');
 
-//load the screen user interface choice
-$tsml_user_interface = get_option('tsml_user_interface', 'legacy_ui');
-
 /*
 unfortunately the google geocoding API is not always perfect. used by tsml_import() and admin.js
 find correct coordinates with http://nominatim.openstreetmap.org/ and https://www.latlong.net/

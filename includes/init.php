@@ -10,23 +10,13 @@ add_action('init', function () {
     add_filter('archive_template', 'tsml_archive_template');
     function tsml_archive_template($template)
     {
-        global $tsml_user_interface;
-
         if (is_post_type_archive('tsml_meeting')) {
             $user_theme_file = get_stylesheet_directory() . '/archive-meetings.php';
             if (file_exists($user_theme_file)) {
                 return $user_theme_file;
             }
 
-            if ($tsml_user_interface == 'tsml_ui') { 
-                if (function_exists('wp_is_block_theme') && wp_is_block_theme()) {
-                    return dirname(__FILE__) . '/../templates/archive-tsml-ui-blocks.php';
-                } else {
-                    return dirname(__FILE__) . '/../templates/archive-tsml-ui-classic.php';
-                }
-            } else { // legacy_ui
-                return dirname(__FILE__) . '/../templates/archive-meetings.php';
-            }
+            return dirname(__FILE__) . '/../templates/archive-meetings.php';
         }
         return $template;
     }
