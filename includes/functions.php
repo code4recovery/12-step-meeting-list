@@ -1072,10 +1072,10 @@ function tsml_feedback_url($post)
 //used:		tsml_ajax_meetings(), single-locations.php, archive-meetings.php
 function tsml_get_meetings($arguments = [], $from_cache = true, $full_export = false)
 {
-	global $tsml_cache, $tsml_contact_fields, $tsml_contact_display;
+	global $tsml_cache, $tsml_cache_writable, $tsml_contact_fields, $tsml_contact_display;
 
 	//start by grabbing all meetings
-	if ($from_cache && file_exists(WP_CONTENT_DIR . $tsml_cache) && $meetings = file_get_contents(WP_CONTENT_DIR . $tsml_cache)) {
+	if ($from_cache && $tsml_cache_writable && $meetings = file_get_contents(WP_CONTENT_DIR . $tsml_cache)) {
 		$meetings = json_decode($meetings, true);
 	} else {
 		//from database

@@ -10,6 +10,7 @@ $tsml_bounds = get_option('tsml_bounds');
 
 //get the secret cache location
 $tsml_cache = '/meetings.json';
+$tsml_cache_writable = file_exists(WP_CONTENT_DIR . $tsml_cache) && is_writable(WP_CONTENT_DIR . $tsml_cache);
 
 // Define attendance options
 $tsml_meeting_attendance_options = [
