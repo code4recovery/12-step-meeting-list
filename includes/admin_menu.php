@@ -46,9 +46,9 @@ function tsml_dashboard_widgets()
 {
     global $wp_meta_boxes;
 
-    wp_add_dashboard_widget('tsml_help_widget', 'Code for Recovery/12 Step Meeting List(TSML) Plugin', 'tsml_dashboard_help', null, null, 'normal', 'high');
+    wp_add_dashboard_widget('tsml_help_widget', '12 Step Meeting List Plugin', 'tsml_dashboard_help', null, null, 'normal', 'high');
 }
 function tsml_dashboard_help()
 {
-    echo '<p><a href="https://code4recovery.org/">Code for Recovery</a> ' . __('is a nonprofit organization of volunteer members building technology services for recovery fellowships, such as AA and Al-Anon. If you need help, please join our discussion forum. If you would like to make a tax-deductible contribution, please', '12-step-meeting-list') . ' <a href="https://code4recovery.org/"> ' . __('visit our website', '12-step-meeting-list') . '.</a></p>';
+    echo '<p><a href="https://code4recovery.org/">Code for Recovery</a> ' . __('is a nonprofit organization of volunteer members building technology services for recovery fellowships, such as AA and Al-Anon. If you need help, please', '12-step-meeting-list') . ' <a href="https://github.com/code4recovery/12-step-meeting-list/discussions">' . __('join our discussion forum', '12-step-meeting-list') . '</a>. ' . __('If you would like to make a tax-deductible contribution, please', '12-step-meeting-list') . ' <a href="https://code4recovery.org/"> ' . __('visit our website', '12-step-meeting-list') . '.</a></p>';
 }
