@@ -1181,8 +1181,14 @@ function tsml_get_meetings($arguments = [], $from_cache = true, $full_export = f
 
 		//write array to cache
 		if (!$full_export) {
-			$filesize = file_put_contents(WP_CONTENT_DIR . $tsml_cache, json_encode($meetings));
-			update_option('tsml_cache_writable', $filesize === false ? 0 : 1);
+			$filepath = WP_CONTENT_DIR . $tsml_cache;
+			// Check if the file is writable, and if so, write it
+			if (is_writable($filepath) || (!file_exists($filepath) && is_writable(WP_CONTENT_DIR))) {
+				$filesize = file_put_contents($filepath, json_encode($meetings));
+				update_option('tsml_cache_writable', $filesize === false ? 0 : 1);
+			} else {
+				update_option('tsml_cache_writable', 0);
+			}
 		}
 	}
 
