@@ -118,7 +118,7 @@ function tsml_ui()
 	));
 
 	// use meetings.json if it's writable, otherwise use the admin-ajax URL to the feed
-	$data = $tsml_cache_writable ? content_url('meetings.json') : $data = admin_url('admin-ajax.php') . '?action=meetings&nonce=' . wp_create_nonce($tsml_nonce);
+	$data = $tsml_cache_writable ? content_url('meetings.json') : admin_url('admin-ajax.php') . '?action=meetings&nonce=' . wp_create_nonce($tsml_nonce);
 	return '<div id="tsml-ui"
 					data-src="' . $data . '"
 					data-timezone="' . get_option('timezone_string', 'America/New_York') . '"
