@@ -1181,7 +1181,8 @@ function tsml_get_meetings($arguments = [], $from_cache = true, $full_export = f
 
 		//write array to cache
 		if (!$full_export) {
-			file_put_contents(WP_CONTENT_DIR . $tsml_cache, json_encode($meetings));
+			$filesize = file_put_contents(WP_CONTENT_DIR . $tsml_cache, json_encode($meetings));
+			update_option('tsml_cache_writable', $filesize === false ? 0 : 1);
 		}
 	}
 
