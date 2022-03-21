@@ -9,7 +9,10 @@ if you need to customize your site, please follow the instructions on our FAQ:
 $tsml_bounds = get_option('tsml_bounds');
 
 //get the secret cache location
-$tsml_cache = '/meetings.json';
+if (!$tsml_cache = get_option('tsml_cache')) {
+	$tsml_cache = '/tsml-cache-' . substr(str_shuffle(md5(microtime())), 0, 10) . '.json';
+	update_option('tsml_cache', $tsml_cache);
+}
 
 // Define attendance options
 $tsml_meeting_attendance_options = [
@@ -99,6 +102,9 @@ $tsml_google_maps_key = get_option('tsml_google_maps_key');
 
 //load the geocoding method
 $tsml_geocoding_method = get_option('tsml_geocoding_method', 'legacy');
+
+//load the screen user interface choice
+$tsml_user_interface = get_option('tsml_user_interface', 'legacy_ui');
 
 /*
 unfortunately the google geocoding API is not always perfect. used by tsml_import() and admin.js
