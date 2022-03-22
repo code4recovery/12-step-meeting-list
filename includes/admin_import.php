@@ -451,7 +451,6 @@ if (!function_exists('tsml_import_page')) {
 			box-sizing: border-box;
 		}
 
-
 		#about-us .left {
 		  float: left;
 		  width: 60%;
@@ -463,6 +462,7 @@ if (!function_exists('tsml_import_page')) {
 		#about-us .right {
 		  float: right;
 		  width: 35%;
+		  padding-top: 28px;
 		}
 
 		#about-us .inner-column {
@@ -477,18 +477,54 @@ if (!function_exists('tsml_import_page')) {
 		#import_settings_wrap .column {
 			float: left;
 			width: 30%;  
-			column-gap: 0;
-			min-width: 550px;
+		    column-gap: 20px;
+			min-width: 493px;
 			margin: 0 0 0 0;
 			padding: 20px 20px 20px 0;
 			height: auto; 
 		}
 
-		/* Clear floats after the columns */
+		#import_settings_wrap .third-column {
+			float: left;
+		    column-gap: 20px;
+			min-width: 300px;
+			margin: 0 0 0 0;
+			padding: 20px 20px 20px 0;
+			height: auto; 
+		}
+
 		.row:after {
 			content: "";
 			display: table;
 			clear: both;
+		}
+
+		#col1 {
+		  width: 580px;
+			float: left;
+			width: 30%;  
+		    column-gap: 20px;
+			min-width: 580px;
+			margin: 0 0 0 0;
+			padding: 20px 20px 20px 0;
+			height: auto; 
+		}
+
+		#import-data-source {
+		  width: 1460px; 
+		  min-width: 100%; 
+		  z-index 1;
+		}
+
+		#col2 {
+		  width: 580px;
+			float: left;
+			width: 30%;  
+		    column-gap: 20px;
+			min-width: 580px;
+			margin: 0 0 0 0;
+			padding: 20px 20px 20px 0;
+			height: auto; 
 		}
 
 		#import_settings_wrap .settings-form {
@@ -805,8 +841,8 @@ if (!function_exists('tsml_import_page')) {
 									<?php if (empty($tsml_mapbox_key)) : ?>
 										<div class="location_note">
 											<p>To get signed up for the <strong>Mapbox Map Service </strong><a href="https://www.mapbox.com/signup/" target="_blank">Go Here</a>. You will only need
-												a valid email address. <i>No credit card is required</i>). Once signed up you can copy and paste your access token below.</p>
-											<p>*Please note: Only Mapbox is supported by our <b>TSML UI</b> user interface!  Google is not an option.
+												a valid email address. <i>No credit card is required</i>. Once signed up you can copy and paste your access token below.</p>
+											<p>*Please note: Only Mapbox is supported by our <b>TSML UI</b> user interface display.  Google is not an option!
 										</div><br>
 										<?php endif; ?>
 										<form class="columns" method="post" action="<?php echo $_SERVER['REQUEST_URI'] ?>">
@@ -874,12 +910,12 @@ if (!function_exists('tsml_import_page')) {
 							<div id="about-us" class="inside row">
 								<div class="inner-column">
 									<div class="right" >
-										<a href="https://code4recovery.org"><img src="/wp-content/plugins/12-step-meeting-list/assets/img/code4recovery.png" alt="Code For Recovery" width="180px;"></a>
+										<a href="https://code4recovery.org"><img src="/wp-content/plugins/12-step-meeting-list/assets/img/code4recovery.png" alt="Code For Recovery" width="150px;"></a>
 									</div>
 									<div class="middle"></div>
 									<div class="left">
 										<h1><?php _e('About Us', '12-step-meeting-list') ?></h1>
-										<p><?php _e('The <b>12 Step Meeting List</b> plugin (TSML) is one of the free services offered by the nonprofit organization <b>Code For Recovery</b>, whose volunteer members build and maintain technology services for recovery fellowships such as AA and Al-Anon.', '12-step-meeting-list') ?></p>
+										<p><?php _e('This <b>12 Step Meeting List</b> plugin (TSML) is one of the free services offered by the nonprofit organization <b>Code For Recovery</b>, whose volunteer members build and maintain technology services for recovery fellowships such as AA and Al-Anon.', '12-step-meeting-list') ?></p>
 									</div>
 								</div>
 							</div>
@@ -915,10 +951,10 @@ if (!function_exists('tsml_import_page')) {
 								<h1><?php _e('Need Help?', '12-step-meeting-list') ?></h1>
 								<p><?php _e("To get information about this product or our organization, simply use one of the linked buttons below. Both the plugin Wiki page and/or the <b>Code For Recovery</b> website are great sources of information. You can also ask questions directly throght our GitHub discussion forum which is monitored daily by members of our maintenance team.", '12-step-meeting-list') ?></p>
 								<p>
-									<a href="https://github.com/code4recovery/12-step-meeting-list/wiki/" target="_blank" class="button" style="margin-right: 30px;">
+									<a href="https://github.com/code4recovery/12-step-meeting-list/wiki/" target="_blank" class="button" style="margin-right: 20px;">
 										<?php _e('Go to our Wiki', '12-step-meeting-list') ?>
 									</a> 
-									<a href="https:///code4recovery.org/" target="_blank" class="button" style="margin-right: 30px;">
+									<a href="https:///code4recovery.org/" target="_blank" class="button" style="margin-right: 20px;">
 										<?php _e('Code For Recovery website', '12-step-meeting-list') ?>
 									</a>
 									<a href="https://github.com/code4recovery/12-step-meeting-list/discussions" target="_blank" class="button" style="margin-top: 20px;">
@@ -961,7 +997,7 @@ if (!function_exists('tsml_import_page')) {
 							<li><?php _e('<strong>Last Contact</strong> is an optional date.', '12-step-meeting-list') ?></li>
 							<?php if (!empty($tsml_programs[$tsml_program]['types'])) { ?>
 								<li><?php _e('<strong>Types</strong> should be a comma-separated list of the following options. This list is determined by which program is selected on the Settings tab.', '12-step-meeting-list') ?>
-									<ul class="types">
+									<ul class="types" style="column-count: 4; column-gap: 40px;">
 										<?php foreach ($tsml_programs[$tsml_program]['types'] as $value) { ?>
 											<li><?php echo $value ?></li>
 										<?php } ?>
@@ -981,7 +1017,7 @@ if (!function_exists('tsml_import_page')) {
 				<!-- Import HTML goes here -->
 				<div id="import-1" class="row">
 
-					<div id="col1" class="column" >
+					<div id="col1" class="" >
 						<!-- Put Import CSV section here -->
 						<div id="import-csv" class="postbox shadow import-form" >
 							<div class="inside">
@@ -1012,7 +1048,7 @@ if (!function_exists('tsml_import_page')) {
 						</div>
 
 						<!-- Put Import Data Sources section here -->
-						<div id="import-data-source" class="postbox shadow " style="width: 1080px; min-width: 100%;" >
+						<div id="import-data-source" class="postbox shadow" >
 							<div class="inside ">
 								<h3><?php _e('Import Data Sources', '12-step-meeting-list')?></h3>
 								<p><?php printf(__('Data sources are JSON feeds that contain a website\'s public meeting data. They can be used to aggregate meetings from different sites into a single master list. 
@@ -1024,12 +1060,13 @@ if (!function_exists('tsml_import_page')) {
 								<table>
 									<thead>
 										<tr>
-											<th<?php _e('Refresh', '12-step-meeting-list') ?> </th>
-											<th<?php _e('Feed', '12-step-meeting-list') ?> </th>
-											<th><?php _e('Parent Region', '12-step-meeting-list') ?></th>
-											<th><?php _e('Change Detection', '12-step-meeting-list') ?></th>
-											<th><?php _e('Meetings', '12-step-meeting-list') ?></th>
-											<th><?php _e('Last Refresh', '12-step-meeting-list') ?></th>
+											<th class="small"></th>
+											<th class=""><?php _e('Feed', '12-step-meeting-list') ?> </th>
+											<th class="align-left"><?php _e('Parent Region', '12-step-meeting-list') ?></th>
+											<th class="align-left"><?php _e('Change Detection', '12-step-meeting-list') ?></th>
+											<th class="align-center"><?php _e('Meetings', '12-step-meeting-list') ?></th>
+											<th class="align-right"><?php _e('Last Refresh', '12-step-meeting-list') ?></th>
+											<th class="small"></th>
 										</tr>
 									</thead>
 									<tbody>
@@ -1141,9 +1178,9 @@ if (!function_exists('tsml_import_page')) {
 						</div>
 					</div>
 
-					<div id="col2" class="column" >
+					<div id="col2" class="" >
 						<!-- Put Wheres My Info? section here -->
-						<div id="wheres_my_info" class="postbox shadow import-form" >
+						<div id="wheres_my_info" class="postbox shadow import-form">
 							<div class="inside">
 								<?php
 								$meetings = tsml_count_meetings();
@@ -1191,18 +1228,18 @@ if (!function_exists('tsml_import_page')) {
 						</div>
 					</div>
 			
-					<div id="col3" class="column" >
+					<div id="col3" class="third-column "  >
 						<!-- Put Export Meeting List section here -->
-						<div id="export_meeting_list" class="postbox shadow import-form" >
-							<div class="inside">
+						<div id="export_meeting_list" class="postbox shadow"  >
+							<div class="inside" >
 								<h3><?php _e('Export Meeting List', '12-step-meeting-list') ?></h3>
 								<?php
 								if ($meetings) { ?>
 									<p><?php printf(__('You can download your meetings in <a href="%s">CSV format</a>.', '12-step-meeting-list'), admin_url('admin-ajax.php') . '?action=csv') ?></p>
 								<?php } ?>
-								<p><?php printf(__('Want to send a mass email to your contacts? <a href="%s" target="_blank">Click here</a> to see their email addresses.', '12-step-meeting-list'), admin_url('admin-ajax.php') . '?action=contacts') ?></p>
+								<p><?php printf(__('Want to send a mass email to your contacts? <br><a href="%s" target="_blank">Click here</a> to see their email addresses.', '12-step-meeting-list'), admin_url('admin-ajax.php') . '?action=contacts') ?></p>
 							</div>
-						<div>
+						</div>
 					</div>
 				</div>
 
