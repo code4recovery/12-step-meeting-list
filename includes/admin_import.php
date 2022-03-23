@@ -269,7 +269,7 @@ if (!function_exists('tsml_import_page')) {
 			tsml_alert(__('Distance units updated.', '12-step-meeting-list'));
 		}
 
-		//change distance units
+		//change contact display
 		if (!empty($_POST['tsml_contact_display']) && isset($_POST['tsml_nonce']) && wp_verify_nonce($_POST['tsml_nonce'], $tsml_nonce)) {
 			$tsml_contact_display = ($_POST['tsml_contact_display'] == 'public') ? 'public' : 'private';
 			update_option('tsml_contact_display', $tsml_contact_display);
@@ -429,7 +429,12 @@ if (!function_exists('tsml_import_page')) {
 		if (!empty($_POST['tsml_user_interface']) && isset($_POST['tsml_nonce']) && wp_verify_nonce($_POST['tsml_nonce'], $tsml_nonce)) {
 			$tsml_user_interface = sanitize_text_field($_POST['tsml_user_interface']);
 			update_option('tsml_user_interface', $tsml_user_interface);
-			tsml_alert(__('User Interface Display is now set to <u>' . strtoupper($tsml_user_interface) . '</u>', '12-step-meeting-list') );
+			if ($tsml_user_interface == 'tsml_ui') {
+				$tsml_ui = "TSML UI";
+			} else {
+				$tsml_ui = "LEGACY UI";
+			}
+			tsml_alert(__('User Interface Display is now set to <strong>' . $tsml_ui . '</strong>', '12-step-meeting-list') );
 			if ( empty( $tsml_mapbox_key ) && ($tsml_user_interface == 'tsml_ui') ) {
 				tsml_alert(__('<b>Please note</b> that TSML UI only supports Mapbox. To enable mapping you will need a Mapbox token. <br>To sign up for Mapbox <a href="https://www.mapbox.com/signup/" target="_blank">go here</a>. Only a valid email address is required. Copy your access token and paste it in the Mapping & Geocoding section\'s <b>Mapbox Access Token</b> field.', '12-step-meeting-list'),'warning');
 			} 		
@@ -447,111 +452,78 @@ if (!function_exists('tsml_import_page')) {
 		?>
 
 		<style>
-		* {
-			box-sizing: border-box;
-		}
+			.column {
+			  vertical-align: top;
+			  padding: 10px 0px;
+			  display: inline-block;
+			  width: 100%;
+			}
 
-		#about-us .left {
-		  float: left;
-		  width: 60%;
-		}
-		#about-us .middle {
-		  float: left;
-		  width: 5%;
-		}
-		#about-us .right {
-		  float: right;
-		  width: 35%;
-		  padding-top: 28px;
-		}
+			@media only screen and (min-width: 900px) {
+			.column.one-third { width: 33%; }
+			.column.three-third { width:100%; }
+			}
 
-		#about-us .inner-column {
-		  padding: 0;
-		  margin: 0;
-		}
+			.column div {
+			  margin: 10px;
+			}
 
-		.shadow {
-		  <!-- box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2); -->
-		}
+			.column p {
+			  margin: 0px;
+			}
 
-		#import_settings_wrap .column {
-			float: left;
-			width: 30%;  
-		    column-gap: 20px;
-			min-width: 493px;
-			margin: 0 0 0 0;
-			padding: 20px 20px 20px 0;
-			height: auto; 
-		}
+			#about-us .left {
+			  float: left;
+			  width: 60%;
+			}
+			#about-us .middle {
+			  float: left;
+			}
+			#about-us .right {
+			  float: right;
+			  width: 150px;
+			  padding: 0;
+			}
 
-		#import_settings_wrap .third-column {
-			float: left;
-		    column-gap: 20px;
-			min-width: 300px;
-			margin: 0 0 0 0;
-			padding: 20px 20px 20px 0;
-			height: auto; 
-		}
+			#about-us .inner-column {
+			  padding: 0;
+			  margin: 0;
+			}
 
-		.row:after {
-			content: "";
-			display: table;
-			clear: both;
-		}
+			.shadow {
+			  box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2); 
+			}
 
-		#col1 {
-		  width: 580px;
-			float: left;
-			width: 30%;  
-		    column-gap: 20px;
-			min-width: 580px;
-			margin: 0 0 0 0;
-			padding: 20px 20px 20px 0;
-			height: auto; 
-		}
+			#import_settings_wrap .settings-card {
+				padding:10px;
+				line-height: 50%;
+				height: auto;
+			}
 
-		#import-data-source {
-		  width: 1460px; 
-		  min-width: 100%; 
-		  z-index 1;
-		}
+			#import_settings_wrap .li .p {
+				margin: 0;
+				padding: 0;
+			}
 
-		#col2 {
-		  width: 580px;
-			float: left;
-			width: 30%;  
-		    column-gap: 20px;
-			min-width: 580px;
-			margin: 0 0 0 0;
-			padding: 20px 20px 20px 0;
-			height: auto; 
-		}
+			#import_settings_wrap .import-card {
+				padding:10px;
+				line-height: 50%;
+				height: 300px;
+			}
 
-		#import_settings_wrap .settings-form {
-			padding:10px 20px 0px 0px;
-			line-height: 50%;
-			height: auto;
-		}
+			#import-1 .li .p {
+				margin: 0;
+				padding: 0;
+			}
 
-		#import_settings_wrap .li .p {
-			margin: 0;
-			padding: 0;
-		}
+			#import-data-source {
+				margin-right: 20px;
+				margin-left: 10px;
+				padding-right: 20px;
+			}
 
-		#import_settings_wrap .import-form {
-			padding:10px 20px 0px 0px;
-			line-height: 50%;
-			height: 325px;
-		}
-
-		#import-1 .li .p {
-			margin: 0;
-			padding: 0;
-		}
-
-		#ul_horiz_summary li {
-		display: inline;
-		}
+			#ul_horiz_summary li { list-style: disc; padding: 1px 20px; display: inline; margin:0 auto;  border: solid; border-width: 1px; border-color: lightgray; }
+		
 
 		</style>
 
@@ -645,14 +617,14 @@ if (!function_exists('tsml_import_page')) {
 			case 'settings':   ?>
 
 				<!-- Settings tab HTML goes here -->
-				<div id="settings-row1" class="row" >
+				<div id="settings-row1" class="" >
 
-					<div id="column1" class="column" >
+					<div id="column1" class="column one-third" >
 						<!-- Put General Settings section here -->
-						<div class="postbox shadow" >
+						<div class="postbox " >
 							<div class="inside">
 								<h1><?php _e('General', '12-step-meeting-list') ?></h1>
-								<form method="post" class="settings-form" action="<?php echo $_SERVER['REQUEST_URI'] ?>">
+								<form method="post" class="settings-card" action="<?php echo $_SERVER['REQUEST_URI'] ?>">
 										<h3><strong><?php _e('Program', '12-step-meeting-list') ?></strong></h3>
 										<p><?php _e('Select the Recovery Program your site targets here.', '12-step-meeting-list') ?></p>
 									<?php wp_nonce_field($tsml_nonce, 'tsml_nonce', false) ?>
@@ -662,7 +634,7 @@ if (!function_exists('tsml_import_page')) {
 										<?php } ?>
 									</select>
 								</form>
-								<form method="post" class="settings-form" action="<?php echo $_SERVER['REQUEST_URI'] ?>">
+								<form method="post" class="settings-card" action="<?php echo $_SERVER['REQUEST_URI'] ?>">
 										<h3><strong><?php _e('Distance Units', '12-step-meeting-list') ?></strong></h3>
 										<p><?php _e('This determines which units are used on the meeting list page.', '12-step-meeting-list') ?></p>
 									<?php wp_nonce_field($tsml_nonce, 'tsml_nonce', false) ?>
@@ -678,7 +650,7 @@ if (!function_exists('tsml_import_page')) {
 										<?php } ?>
 									</select>
 								</form>
-								<form method="post" class="settings-form" action="<?php echo $_SERVER['REQUEST_URI'] ?>">
+								<form method="post" class="settings-card" action="<?php echo $_SERVER['REQUEST_URI'] ?>">
 										<h3><strong><?php _e('Contact Visibility', '12-step-meeting-list') ?></strong></h3>
 										<p><?php _e('This determines whether contacts are displayed publicly on meeting detail pages.', '12-step-meeting-list') ?></p>
 									<?php wp_nonce_field($tsml_nonce, 'tsml_nonce', false) ?>
@@ -697,11 +669,11 @@ if (!function_exists('tsml_import_page')) {
 							</div>
 						</div>
 
-						<div class="postbox shadow" >
+						<div class="postbox " >
 						<!-- Put Feed Management here -->
 							<div class="inside">
 								<h1><?php _e('Feed Management', '12-step-meeting-list') ?></h1>
-								<form method="post" action="<?php echo $_SERVER['REQUEST_URI'] ?>">
+								<form method="post" class="settings-card" action="<?php echo $_SERVER['REQUEST_URI'] ?>">
 									<h3><strong><?php _e('Feed Sharing', '12-step-meeting-list') ?></strong></h3>
 									<p><?php printf(__('Open means your feeds are available publicly. Restricted means people need a key or to be logged in to get the feed.', '12-step-meeting-list')) ?></p>
 									<?php wp_nonce_field($tsml_nonce, 'tsml_nonce', false) ?>
@@ -761,12 +733,148 @@ if (!function_exists('tsml_import_page')) {
 						</div>
 					</div>
 
-					<div id="column2" class="column"  >
+					<div id="column2" class="column one-third "  >
+						<div class="postbox " >
+						<!-- Put Switch UI here -->
+							<div class="inside">
+								<h1><?php _e('Switch UI', '12-step-meeting-list') ?></h1>
+								<div class="settings-card" >
+									<h3><strong><?php _e('User Interface Display', '12-step-meeting-list') ?></strong></h3>
+									<p><?php _e('Please select the user interface design that is right for your site. Choose between our latest design that we call <b>TSML UI</b> or stay with the old standard <b>Legacy UI</b>.', '12-step-meeting-list') ?></p>							
+									<form method="post" action="<?php echo $_SERVER['REQUEST_URI'] ?>">
+										<?php wp_nonce_field($tsml_nonce, 'tsml_nonce', false) ?>
+										<select name="tsml_user_interface" onchange="this.form.submit()">
+											<option value="legacy" <?php selected($tsml_user_interface, 'legacy_ui') ?> >
+												<?php _e('Legacy UI', '12-step-meeting-list') ?>
+											</option>
+											<option value="tsml_ui" <?php selected($tsml_user_interface, 'tsml_ui') ?> >
+												<?php _e('TSML UI', '12-step-meeting-list') ?>
+											</option>
+										</select>
+									</form>
+								</div>
+							</div>
+						</div>
+
+						<!-- Put Map Settings here -->
+						<div class="postbox " >
+							<div class="inside">
+								<h1><?php _e('Mapping & Geocoding', '12-step-meeting-list') ?></h1>
+								<p style="padding-left:20px;"><?php _e('Display of maps requires an authorization key from </strong><a href="https://www.mapbox.com/" target="_blank">Mapbox</a></strong> or </strong><a href="https://console.cloud.google.com/home/" target="_blank">Google</a></strong>.', '12-step-meeting-list') ?></p>
+
+								<div class="settings-card">
+									<h3><strong><?php _e('Mapbox Access Token', '12-step-meeting-list') ?></strong></h3>
+									<p><?php _e('Enter a key from Mapbox to enable their Web Map Services.', '12-step-meeting-list') ?></p>
+									<!-- Put Mapbox Signup Instructions here -->
+									<?php if (empty($tsml_mapbox_key)) : ?>
+										<div class="location_note">
+											<p>To get signed up for the <strong>Mapbox Map Service </strong><a href="https://www.mapbox.com/signup/" target="_blank">Go Here</a>. You will only need
+												a valid email address. <i>No credit card is required</i>. Once signed up you can copy and paste your access token below.</p>
+											<p>*Please note: TSML UI only supports Mapbox, not Google.</p>
+										</div><br>
+										<?php endif; ?>
+										<form class="columns" method="post" action="<?php echo $_SERVER['REQUEST_URI'] ?>">
+											<?php wp_nonce_field($tsml_nonce, 'tsml_nonce', false) ?>
+											<div class="input">
+												<input type="text" name="tsml_add_mapbox_key" value="<?php echo $tsml_mapbox_key ?>" placeholder="Enter Mapbox access token here">
+											</div>
+											<div class="btn">
+												<?php if (empty($tsml_mapbox_key)) { ?>
+													<input type="submit" class="button" value="<?php _e('Add', '12-step-meeting-list') ?>">
+												<?php } else { ?>
+													<input type="submit" class="button" value="<?php _e('Update', '12-step-meeting-list') ?>">
+												<?php } ?>
+											</div>
+										</form>
+									</div>
+								<div class="settings-card">
+									<h3><strong><?php _e('Google Maps API Key', '12-step-meeting-list') ?></strong></h3>
+									<p><?php _e('Enter a key from Google authorizing use of their Map Services (<a href="https://developers.google.com/maps/documentation/javascript/get-api-key" target="_blank">get instructions here</a>).', '12-step-meeting-list') ?></p>
+									<form class="columns" method="post" action="<?php echo $_SERVER['REQUEST_URI'] ?>">
+										<?php wp_nonce_field($tsml_nonce, 'tsml_nonce', false) ?>
+										<div class="input">
+											<input type="text" name="tsml_add_google_maps_key" value="<?php echo $tsml_google_maps_key ?>" placeholder="Enter Google API key here">
+										</div>
+										<div class="btn">
+											<?php if (empty($tsml_google_maps_key)) { ?>
+												<input type="submit" class="button" value="<?php _e('Add', '12-step-meeting-list') ?>">
+											<?php } else { ?>
+												<input type="submit" class="button" value="<?php _e('Update', '12-step-meeting-list') ?>">
+											<?php } ?>
+										</div>
+									</form>
+								</div>
+							
+								<div class="settings-card">
+									<h3><strong><?php _e('Address Geocoding', '12-step-meeting-list') ?></strong></h3>
+									<p><?php _e('Code4Recovery is working on a new method for geocoding addresses. You can decide whether to use the old way, or whether to help us test the new way.', '12-step-meeting-list') ?></p>
+								<form method="post" action="<?php echo $_SERVER['REQUEST_URI'] ?>">
+									<?php wp_nonce_field($tsml_nonce, 'tsml_nonce', false) ?>
+									<select name="tsml_geocoding_method" onchange="this.form.submit()">
+										<option value="legacy" <?php selected($tsml_geocoding_method, 'legacy') ?>>
+											<?php _e('Legacy Method', '12-step-meeting-list') ?>
+										</option>
+										<?php if (!empty($tsml_google_maps_key)) { ?>
+											<option value="google_key" <?php selected($tsml_geocoding_method, 'google_key') ?>>
+												<?php _e('Use my Google API Key', '12-step-meeting-list') ?>
+											</option>
+										<?php } ?>
+										<option value="api_gateway" <?php selected($tsml_geocoding_method, 'api_gateway') ?>>
+											<?php _e('BETA - API Gateway - BETA', '12-step-meeting-list') ?>
+										</option>
+									</select>
+								</form>
+								<?php if (!empty($tsml_google_maps_key)) { ?>
+									<p>If you select "Use my Google API Key", then you <strong>must</strong> go into the Google Console and enable the geocode API for your key</p>
+								<?php } ?>
+								</div>
+							</div>
+						</div>
+					</div>
+
+					<div id="column3" class="column one-third" >
+						<!-- Put About Us here -->
+						<div class="postbox" >
+							<div class="inside">
+								<div class="inner-column" style="padding: 0; margin: 0;">
+									<div class="right" style="float:right;  padding: 0; margin:20px auto;" >
+										<a href="https://code4recovery.org"><img src="/wp-content/plugins/12-step-meeting-list/assets/img/code4recovery.svg" alt="Code For Recovery" ></a>										
+									</div>
+									<div class="left">
+										<h1  style="padding-left:0; "><?php _e('About Us', '12-step-meeting-list') ?></h1>
+										<p style="padding: 20px; 10px; 0 10px;"><?php _e('This <b>12 Step Meeting List</b> plugin (TSML) is one of the free services offered by the nonprofit organization <b>Code For Recovery</b> whose volunteer members build and maintain technology services for recovery fellowships such as AA and Al-Anon.', '12-step-meeting-list') ?></p>										
+									</div>
+								</div>
+							</div>
+						</div>
+
+						<div class="postbox " >
+						<!-- Put Need Help here -->
+							<div class="inside">
+								<h1><?php _e('Need Help?', '12-step-meeting-list') ?></h1>
+								<div class="settings-card">
+									
+									<p><?php _e("To get information about this product or our organization, simply use one of the linked buttons below. Both the plugin Wiki page and/or the <b>Code For Recovery</b> website are great sources of information. You can also ask questions directly throght our GitHub discussion forum which is monitored daily by members of our maintenance team.", '12-step-meeting-list') ?></p>
+									<div style="margin:10px;">
+										<a href="https://github.com/code4recovery/12-step-meeting-list/wiki/" target="_blank" class="button" style=" margin-right: 35px;">
+											<?php _e('Go to our Wiki', '12-step-meeting-list') ?>
+										</a> 
+										<a href="https:///code4recovery.org/" target="_blank" class="button" style="margin-right: 35px;">
+											<?php _e('Code For Recovery website', '12-step-meeting-list') ?>
+										</a>
+										<a href="https://github.com/code4recovery/12-step-meeting-list/discussions" target="_blank" class="button" style="">
+											<?php _e('Ask a Question', '12-step-meeting-list') ?>
+										</a> 
+									</div>
+								</div>
+							</div>
+						</div>
+
 						<!-- Put Email Settings here -->
-						<div class="postbox shadow" >
+						<div class="postbox" >
 							<div class="inside" >
 								<h1><?php _e('Email Addresses', '12-step-meeting-list') ?></h1>
-								<div class="settings-form" >
+								<div class="settings-card" >
 										<h3><strong><?php _e('User Feedback Emails', '12-step-meeting-list') ?></strong></h3>
 										<p><?php _e('Enable a meeting info feedback form by adding email addresses here.', '12-step-meeting-list') ?></p>
 
@@ -796,7 +904,7 @@ if (!function_exists('tsml_import_page')) {
 										</div>
 									</form>
 								</div>
-								<div class="settings-form" >
+								<div class="settings-card" >
 									<h3><strong><?php _e('Change Notification Emails', '12-step-meeting-list') ?></strong></h3>
 									<p><?php _e('Receive notifications of meeting changes at the email addresses below.', '12-step-meeting-list') ?></p>
 									<?php if (!empty($tsml_notification_addresses)) { ?>
@@ -827,149 +935,13 @@ if (!function_exists('tsml_import_page')) {
 								</div>
 							</div>
 						</div>
-
-						<!-- Put Map Settings here -->
-						<div class="postbox shadow" >
-							<div class="inside">
-								<h1><?php _e('Mapping & Geocoding', '12-step-meeting-list') ?></h1>
-								<p><?php _e('Display of maps requires an authorization key from </strong><a href="https://www.mapbox.com/" target="_blank">Mapbox</a></strong> or </strong><a href="https://console.cloud.google.com/home/" target="_blank">Google</a></strong>.', '12-step-meeting-list') ?></p>
-
-								<div class="settings-form">
-									<h3><strong><?php _e('Mapbox Access Token', '12-step-meeting-list') ?></strong></h3>
-									<p><?php _e('Enter a key from Mapbox to enable their Web Map Services.', '12-step-meeting-list') ?></p>
-									<!-- Put Mapbox Signup Instructions here -->
-									<?php if (empty($tsml_mapbox_key)) : ?>
-										<div class="location_note">
-											<p>To get signed up for the <strong>Mapbox Map Service </strong><a href="https://www.mapbox.com/signup/" target="_blank">Go Here</a>. You will only need
-												a valid email address. <i>No credit card is required</i>. Once signed up you can copy and paste your access token below.</p>
-											<p>*Please note: Only Mapbox is supported by our <b>TSML UI</b> user interface display.  Google is not an option!
-										</div><br>
-										<?php endif; ?>
-										<form class="columns" method="post" action="<?php echo $_SERVER['REQUEST_URI'] ?>">
-											<?php wp_nonce_field($tsml_nonce, 'tsml_nonce', false) ?>
-											<div class="input">
-												<input type="text" name="tsml_add_mapbox_key" value="<?php echo $tsml_mapbox_key ?>" placeholder="Enter Mapbox access token here">
-											</div>
-											<div class="btn">
-												<?php if (empty($tsml_mapbox_key)) { ?>
-													<input type="submit" class="button" value="<?php _e('Add', '12-step-meeting-list') ?>">
-												<?php } else { ?>
-													<input type="submit" class="button" value="<?php _e('Update', '12-step-meeting-list') ?>">
-												<?php } ?>
-											</div>
-										</form>
-									</div>
-								<div class="settings-form">
-									<h3><strong><?php _e('Google Maps API Key', '12-step-meeting-list') ?></strong></h3>
-									<p><?php _e('Enter a key from Google authorizing use of their Map Services (<a href="https://developers.google.com/maps/documentation/javascript/get-api-key" target="_blank">get instructions here</a>).', '12-step-meeting-list') ?></p>
-									<form class="columns" method="post" action="<?php echo $_SERVER['REQUEST_URI'] ?>">
-										<?php wp_nonce_field($tsml_nonce, 'tsml_nonce', false) ?>
-										<div class="input">
-											<input type="text" name="tsml_add_google_maps_key" value="<?php echo $tsml_google_maps_key ?>" placeholder="Enter Google API key here">
-										</div>
-										<div class="btn">
-											<?php if (empty($tsml_google_maps_key)) { ?>
-												<input type="submit" class="button" value="<?php _e('Add', '12-step-meeting-list') ?>">
-											<?php } else { ?>
-												<input type="submit" class="button" value="<?php _e('Update', '12-step-meeting-list') ?>">
-											<?php } ?>
-										</div>
-									</form>
-								</div>
-							
-								<div class="settings-form">
-									<h3><strong><?php _e('Address Geocoding', '12-step-meeting-list') ?></strong></h3>
-									<p><?php _e('Code4Recovery is working on a new method for geocoding addresses. You can decide whether to use the old way, or whether to help us test the new way.', '12-step-meeting-list') ?></p>
-								<form method="post" action="<?php echo $_SERVER['REQUEST_URI'] ?>">
-									<?php wp_nonce_field($tsml_nonce, 'tsml_nonce', false) ?>
-									<select name="tsml_geocoding_method" onchange="this.form.submit()">
-										<option value="legacy" <?php selected($tsml_geocoding_method, 'legacy') ?>>
-											<?php _e('Legacy Method', '12-step-meeting-list') ?>
-										</option>
-										<?php if (!empty($tsml_google_maps_key)) { ?>
-											<option value="google_key" <?php selected($tsml_geocoding_method, 'google_key') ?>>
-												<?php _e('Use my Google API Key', '12-step-meeting-list') ?>
-											</option>
-										<?php } ?>
-										<option value="api_gateway" <?php selected($tsml_geocoding_method, 'api_gateway') ?>>
-											<?php _e('BETA - API Gateway - BETA', '12-step-meeting-list') ?>
-										</option>
-									</select>
-								</form>
-								<?php if (!empty($tsml_google_maps_key)) { ?>
-									<p>If you select "Use my Google API Key", then you <strong>must</strong> go into the Google Console and enable the geocode API for your key</p>
-								<?php } ?>
-								</div>
-							</div>
-						</div>
-					</div>
-
-					<div id="column3" class="column" >
-						<!-- Put About Us here -->
-						<div class="postbox shadow" >
-							<div id="about-us" class="inside row">
-								<div class="inner-column">
-									<div class="right" >
-										<a href="https://code4recovery.org"><img src="/wp-content/plugins/12-step-meeting-list/assets/img/code4recovery.png" alt="Code For Recovery" width="150px;"></a>
-									</div>
-									<div class="middle"></div>
-									<div class="left">
-										<h1><?php _e('About Us', '12-step-meeting-list') ?></h1>
-										<p><?php _e('This <b>12 Step Meeting List</b> plugin (TSML) is one of the free services offered by the nonprofit organization <b>Code For Recovery</b>, whose volunteer members build and maintain technology services for recovery fellowships such as AA and Al-Anon.', '12-step-meeting-list') ?></p>
-									</div>
-								</div>
-							</div>
-						</div>
-
-						<div class="clear"/>
-
-						<div class="postbox shadow" >
-						<!-- Put Switch UI here -->
-							<div class="inside">
-								<h1><?php _e('Switch UI', '12-step-meeting-list') ?></h1>
-								<div class="settings-form" >
-									<h3><strong><?php _e('User Interface Display', '12-step-meeting-list') ?></strong></h3>
-									<p><?php _e('Please select the user interface design that is right for your site. Choose between our latest design that we call <b>TSML UI</b> or stay with the old standard <b>Legacy UI</b>.', '12-step-meeting-list') ?></p>							
-									<form method="post" action="<?php echo $_SERVER['REQUEST_URI'] ?>">
-										<?php wp_nonce_field($tsml_nonce, 'tsml_nonce', false) ?>
-										<select name="tsml_user_interface" onchange="this.form.submit()">
-											<option value="legacy" <?php selected($tsml_user_interface, 'legacy_ui') ?> >
-												<?php _e('Legacy UI', '12-step-meeting-list') ?>
-											</option>
-											<option value="tsml_ui" <?php selected($tsml_user_interface, 'tsml_ui') ?> >
-												<?php _e('TSML UI', '12-step-meeting-list') ?>
-											</option>
-										</select>
-									</form>
-								</div>
-							</div>
-						</div>
-
-						<div class="postbox shadow" >
-						<!-- Put Need Help here -->
-							<div class="inside">
-								<h1><?php _e('Need Help?', '12-step-meeting-list') ?></h1>
-								<p><?php _e("To get information about this product or our organization, simply use one of the linked buttons below. Both the plugin Wiki page and/or the <b>Code For Recovery</b> website are great sources of information. You can also ask questions directly throght our GitHub discussion forum which is monitored daily by members of our maintenance team.", '12-step-meeting-list') ?></p>
-								<p>
-									<a href="https://github.com/code4recovery/12-step-meeting-list/wiki/" target="_blank" class="button" style="margin-right: 20px;">
-										<?php _e('Go to our Wiki', '12-step-meeting-list') ?>
-									</a> 
-									<a href="https:///code4recovery.org/" target="_blank" class="button" style="margin-right: 20px;">
-										<?php _e('Code For Recovery website', '12-step-meeting-list') ?>
-									</a>
-									<a href="https://github.com/code4recovery/12-step-meeting-list/discussions" target="_blank" class="button" style="margin-top: 20px;">
-										<?php _e('Ask a Question', '12-step-meeting-list') ?>
-									</a> 
-								</p>
-							</div>
-						</div>
 					</div>
 				</div>
 
 			  <?php break;
 			case 'example':   ?>
 				<!-- Spreadsheet Example & Spec goes here -->
-				<div class="postbox shadow">
+				<div class="postbox ">
 					<div class="inside">
 						<!-- <h3><strong><?php _e('Spreadsheet Example & Spec', '12-step-meeting-list') ?></strong></h3> -->
 						<p><a href="<?php echo plugin_dir_url(__FILE__) . '../template.csv' ?>" class="button button-large"><span class="dashicons dashicons-media-spreadsheet"></span><?php _e('Example spreadsheet', '12-step-meeting-list') ?></a></p>
@@ -1015,11 +987,11 @@ if (!function_exists('tsml_import_page')) {
 
 			default:  ?>
 				<!-- Import HTML goes here -->
-				<div id="import-1" class="row">
+				<div id="import-1" class="">
 
-					<div id="col1" class="" >
+					<div id="col1" class="column one-third" >
 						<!-- Put Import CSV section here -->
-						<div id="import-csv" class="postbox shadow import-form" >
+						<div id="import-csv" class="postbox  import-card" >
 							<div class="inside">
 
 								<h3><?php _e('Import CSV', '12-step-meeting-list') ?></h3>
@@ -1046,141 +1018,11 @@ if (!function_exists('tsml_import_page')) {
 								</form>
 							</div>
 						</div>
-
-						<!-- Put Import Data Sources section here -->
-						<div id="import-data-source" class="postbox shadow" >
-							<div class="inside ">
-								<h3><?php _e('Import Data Sources', '12-step-meeting-list')?></h3>
-								<p><?php printf(__('Data sources are JSON feeds that contain a website\'s public meeting data. They can be used to aggregate meetings from different sites into a single master list. 
-									Data sources listed below will pull meeting information into this website. A configurable schedule allows for each enabled data source to be scanned at least once per day looking 
-									for updates to the listing. Change Notification email addresses are sent an email when action is required to re-sync a data source with its meeting list information. 
-									Please note: records that you intend to maintain on your website should always be imported using the Import CSV feature above. <b>Data Source records will be overwritten when the 
-									parent data source is refreshed. </b>More information is available at the <a href="%s" target="_blank">Meeting Guide API Specification</a>.', '12-step-meeting-list'), 'https://github.com/code4recovery/spec')?></p> 
-								<?php if (!empty($tsml_data_sources)) { ?>
-								<table>
-									<thead>
-										<tr>
-											<th class="small"></th>
-											<th class=""><?php _e('Feed', '12-step-meeting-list') ?> </th>
-											<th class="align-left"><?php _e('Parent Region', '12-step-meeting-list') ?></th>
-											<th class="align-left"><?php _e('Change Detection', '12-step-meeting-list') ?></th>
-											<th class="align-center"><?php _e('Meetings', '12-step-meeting-list') ?></th>
-											<th class="align-right"><?php _e('Last Refresh', '12-step-meeting-list') ?></th>
-											<th class="small"></th>
-										</tr>
-									</thead>
-									<tbody>
-										<?php foreach ($tsml_data_sources as $feed => $properties) { ?>
-										<tr data-source="<?php echo $feed?>">
-											<td class="small ">
-												<form method="post" action="<?php echo $_SERVER['REQUEST_URI']?>">
-													<?php wp_nonce_field($tsml_nonce, 'tsml_nonce', false)?>
-													<input type="hidden" name="tsml_add_data_source" value="<?php echo $feed?>">
-													<input type="hidden" name="tsml_add_data_source_name" value="<?php echo @$properties['name']?>">
-													<input type="hidden" name="tsml_add_data_source_parent_region_id" value="<?php echo @$properties['parent_region_id']?>">
-													<input type="hidden" name="tsml_add_data_source_change_detect" value="<?php echo @$properties['change_detect'] ?>">
-													<input type="submit" value="Refresh" class="button button-small">
-												</form>
-											</td>
-											<td>
-												<a href="<?php echo $feed?>" target="_blank">
-													<?php echo !empty($properties['name']) ? $properties['name'] : __('Unnamed Feed', '12-step-meeting-list')?>
-												</a>
-											</td>
-											<td>
-												<?php
-													$parent_region = null;
-													if (empty($properties['parent_region_id']) || $properties['parent_region_id'] == -1) {
-														$parent_region = __('Top-level region', '12-step-meeting-list');
-													} elseif (empty($regions[$properties['parent_region_id']])) {
-														$term = get_term_by('term_id', $properties['parent_region_id'], 'tsml_region');
-														$parent_region = $term->name;
-														if ($parent_region == null) {
-															$parent_region = 'Missing Parent Region: ' . $properties['parent_region_id'];
-														}
-													} else {
-														$parent_region = $regions[$properties['parent_region_id']];
-													}
-													echo $parent_region;
-												?>
-											</td>
-											<td>
-												<?php
-													$change_detect = null;
-													if (empty($properties['change_detect']) || $properties['change_detect'] == -1) {
-														$change_detect = __('Disabled', '12-step-meeting-list');
-													} else {
-														$change_detect = ucfirst($properties['change_detect']);
-													}
-
-													echo $change_detect;
-												?>
-											</td>
-											<td class="align-center count_meetings"><?php echo number_format($properties['count_meetings']) ?></td>
-
-											<td class="align-right">
-												<?php echo Date(get_option('date_format') . ' ' . get_option('time_format'), $properties['last_import'])?>
-											</td>
-
-											<td class="small">
-												<form method="post" action="<?php echo $_SERVER['REQUEST_URI']?>">
-													<?php wp_nonce_field($tsml_nonce, 'tsml_nonce', false)?>
-													<input type="hidden" name="tsml_remove_data_source" value="<?php echo $feed?>">
-													<span class="dashicons dashicons-no-alt"></span>
-												</form>
-											</td>
-										</tr>
-										<?php }?>
-									</tbody>
-								</table>
-								<?php } ?>
-								<form class="columns" method="post" action="<?php echo $_SERVER['REQUEST_URI']?>">
-									<?php wp_nonce_field($tsml_nonce, 'tsml_nonce', false)?>
-
-									<div>
-										<input type="text" name="tsml_add_data_source_name" placeholder="<?php _e('District 02', '12-step-meeting-list')?>">
-									</div>
-
-									<div class="input-half">
-										<input type="text" name="tsml_add_data_source" placeholder="https://">
-									</div>
-
-									<div class="input-data-source input-region">
-										<?php wp_dropdown_categories(array(
-											'name' => 'tsml_add_data_source_parent_region_id',
-											'taxonomy' => 'tsml_region',
-											'hierarchical' => true,
-											'hide_empty' => false,
-											'orderby' => 'name',
-											'selected' => null,
-											'title' => __('Append regions created by this data source to… (top-level, if none selected)', '12-step-meeting-list'),
-											'show_option_none' => __('Parent Region…', '12-step-meeting-list'),
-										))?>
-									</div>
-
-									<div class="input-data-source input-auto-refresh" >
-										<?php wp_nonce_field($tsml_nonce, 'tsml_nonce', false)?>
-										<select name="tsml_add_data_source_change_detect" id="tsml_change_detect" >
-										<?php 
-										foreach (array(
-												'disabled' => __('Change Detection Disabled', '12-step-meeting-list'),
-												'enabled' => __('Change Detection Enabled', '12-step-meeting-list'),	
-											) as $key => $value) {?>
-											<option value="<?php echo $key?>"<?php selected($tsml_change_detect, $key) ?> ><?php echo $value?></option>
-										<?php } ?>
-										</select>
-									</div>
-									<div>
-										<input type="submit" class="btn button" value="<?php _e('Add Data Source', '12-step-meeting-list') ?>">
-									</div>
-								</form>
-							</div>
-						</div>
 					</div>
 
-					<div id="col2" class="" >
+					<div id="col2" class="column one-third " >
 						<!-- Put Wheres My Info? section here -->
-						<div id="wheres_my_info" class="postbox shadow import-form">
+						<div id="wheres_my_info" class="postbox import-card">
 							<div class="inside">
 								<?php
 								$meetings = tsml_count_meetings();
@@ -1209,36 +1051,171 @@ if (!function_exists('tsml_import_page')) {
 
 								<div id="tsml_counts" <?php if (($meetings + $locations + $groups + $regions) == 0) { ?> class="hidden" <?php } ?> >
 									<p><?php _e('You have:', '12-step-meeting-list') ?></p>
-									<ul id="ul_horiz_summary" class="ul-disc">
-										<li class="meetings<?php if (!$meetings) { ?> hidden<?php } ?>">
-											<?php printf(_n('%s meeting', '%s meetings', $meetings, '12-step-meeting-list'), number_format_i18n($meetings)) ?>
-										</li>
-										<li class="locations<?php if (!$locations) { ?> hidden<?php } ?>">
-											<?php printf(_n('%s location', '%s locations', $locations, '12-step-meeting-list'), number_format_i18n($locations)) ?>
-										</li>
-										<li class="groups<?php if (!$groups) { ?> hidden<?php } ?>">
-											<?php printf(_n('%s group', '%s groups', $groups, '12-step-meeting-list'), number_format_i18n($groups)) ?>
-										</li>
-										<li class="regions<?php if (!$regions) { ?> hidden<?php } ?>">
-											<?php printf(_n('%s region', '%s regions', $regions, '12-step-meeting-list'), number_format_i18n($regions)) ?>
-										</li>
-									</ul>
+									<div class="table">
+										<ul id="ul_horiz_summary" class="" style="width:100%;">
+											<li class="meetings<?php if (!$meetings) { ?> hidden<?php } ?>">
+												<?php printf(_n('%s meeting', '%s meetings', $meetings, '12-step-meeting-list'), number_format_i18n($meetings)) ?>
+											</li>
+											<li class="locations<?php if (!$locations) { ?> hidden<?php } ?>">
+												<?php printf(_n('%s location', '%s locations', $locations, '12-step-meeting-list'), number_format_i18n($locations)) ?>
+											</li>
+											<li class="groups<?php if (!$groups) { ?> hidden<?php } ?>">
+												<?php printf(_n('%s group', '%s groups', $groups, '12-step-meeting-list'), number_format_i18n($groups)) ?>
+											</li>
+											<li class="regions<?php if (!$regions) { ?> hidden<?php } ?>">
+												<?php printf(_n('%s region', '%s regions', $regions, '12-step-meeting-list'), number_format_i18n($regions)) ?>
+											</li>
+										</ul>
+									</div>
 								</div>	
 							</div>
 						</div>
 					</div>
 			
-					<div id="col3" class="third-column "  >
+					<div id="col3" class="column one-third"  >
 						<!-- Put Export Meeting List section here -->
-						<div id="export_meeting_list" class="postbox shadow"  >
+						<div id="export_meeting_list" class="postbox import-card"  >
 							<div class="inside" >
 								<h3><?php _e('Export Meeting List', '12-step-meeting-list') ?></h3>
 								<?php
 								if ($meetings) { ?>
 									<p><?php printf(__('You can download your meetings in <a href="%s">CSV format</a>.', '12-step-meeting-list'), admin_url('admin-ajax.php') . '?action=csv') ?></p>
-								<?php } ?>
+								<?php } ?><br>
 								<p><?php printf(__('Want to send a mass email to your contacts? <br><a href="%s" target="_blank">Click here</a> to see their email addresses.', '12-step-meeting-list'), admin_url('admin-ajax.php') . '?action=contacts') ?></p>
 							</div>
+						</div>
+					</div>
+				</div>
+
+				<div id="import-2" class="">
+					<!-- Put Import Data Sources section here -->
+					<div id="import-data-source" class="postbox " >
+						<div class="inside column three-third" style="">
+							<h3><?php _e('Import Data Sources', '12-step-meeting-list')?></h3>
+							<p style="padding: 0 20px 0 20px;">
+							<?php printf(__('Data sources are JSON feeds that contain a website\'s public meeting data. They can be used to aggregate meetings from different sites into a single master list. 
+								Data sources listed below will pull meeting information into this website. A configurable schedule allows for each enabled data source to be scanned at least once per day looking 
+								for updates to the listing. Change Notification email addresses are sent an email when action is required to re-sync a data source with its meeting list information. 
+								Please note: records that you intend to maintain on your website should always be imported using the Import CSV feature above. <b>Data Source records will be overwritten when the 
+								parent data source is refreshed. </b>More information is available at the <a href="%s" target="_blank">Meeting Guide API Specification</a>.', '12-step-meeting-list'), 'https://github.com/code4recovery/spec')?></p> 
+							<?php if (!empty($tsml_data_sources)) { ?>
+							<table>
+								<thead>
+									<tr>
+										<th class="small"></th>
+										<th class=""><?php _e('Feed', '12-step-meeting-list') ?> </th>
+										<th class="align-left"><?php _e('Parent Region', '12-step-meeting-list') ?></th>
+										<th class="align-left"><?php _e('Change Detection', '12-step-meeting-list') ?></th>
+										<th class="align-center"><?php _e('Meetings', '12-step-meeting-list') ?></th>
+										<th class="align-right"><?php _e('Last Refresh', '12-step-meeting-list') ?></th>
+										<th class="small"></th>
+									</tr>
+								</thead>
+								<tbody>
+									<?php foreach ($tsml_data_sources as $feed => $properties) { ?>
+									<tr data-source="<?php echo $feed?>">
+										<td class="small ">
+											<form method="post" action="<?php echo $_SERVER['REQUEST_URI']?>">
+												<?php wp_nonce_field($tsml_nonce, 'tsml_nonce', false)?>
+												<input type="hidden" name="tsml_add_data_source" value="<?php echo $feed?>">
+												<input type="hidden" name="tsml_add_data_source_name" value="<?php echo @$properties['name']?>">
+												<input type="hidden" name="tsml_add_data_source_parent_region_id" value="<?php echo @$properties['parent_region_id']?>">
+												<input type="hidden" name="tsml_add_data_source_change_detect" value="<?php echo @$properties['change_detect'] ?>">
+												<input type="submit" value="Refresh" class="button button-small">
+											</form>
+										</td>
+										<td>
+											<a href="<?php echo $feed?>" target="_blank">
+												<?php echo !empty($properties['name']) ? $properties['name'] : __('Unnamed Feed', '12-step-meeting-list')?>
+											</a>
+										</td>
+										<td>
+											<?php
+												$parent_region = null;
+												if (empty($properties['parent_region_id']) || $properties['parent_region_id'] == -1) {
+													$parent_region = __('Top-level region', '12-step-meeting-list');
+												} elseif (empty($regions[$properties['parent_region_id']])) {
+													$term = get_term_by('term_id', $properties['parent_region_id'], 'tsml_region');
+													$parent_region = $term->name;
+													if ($parent_region == null) {
+														$parent_region = 'Missing Parent Region: ' . $properties['parent_region_id'];
+													}
+												} else {
+													$parent_region = $regions[$properties['parent_region_id']];
+												}
+												echo $parent_region;
+											?>
+										</td>
+										<td>
+											<?php
+												$change_detect = null;
+												if (empty($properties['change_detect']) || $properties['change_detect'] == -1) {
+													$change_detect = __('Disabled', '12-step-meeting-list');
+												} else {
+													$change_detect = ucfirst($properties['change_detect']);
+												}
+
+												echo $change_detect;
+											?>
+										</td>
+										<td class="align-center count_meetings"><?php echo number_format($properties['count_meetings']) ?></td>
+
+										<td class="align-right">
+											<?php echo Date(get_option('date_format') . ' ' . get_option('time_format'), $properties['last_import'])?>
+										</td>
+
+										<td class="small">
+											<form method="post" action="<?php echo $_SERVER['REQUEST_URI']?>">
+												<?php wp_nonce_field($tsml_nonce, 'tsml_nonce', false)?>
+												<input type="hidden" name="tsml_remove_data_source" value="<?php echo $feed?>">
+												<span class="dashicons dashicons-no-alt"></span>
+											</form>
+										</td>
+									</tr>
+									<?php }?>
+								</tbody>
+							</table>
+							<?php } ?>
+							<form class="columns" method="post" action="<?php echo $_SERVER['REQUEST_URI']?>">
+								<?php wp_nonce_field($tsml_nonce, 'tsml_nonce', false)?>
+
+								<div>
+									<input type="text" name="tsml_add_data_source_name" placeholder="<?php _e('District 02', '12-step-meeting-list')?>">
+								</div>
+
+								<div class="input-half">
+									<input type="text" name="tsml_add_data_source" placeholder="https://">
+								</div>
+
+								<div class="input-data-source input-region">
+									<?php wp_dropdown_categories(array(
+										'name' => 'tsml_add_data_source_parent_region_id',
+										'taxonomy' => 'tsml_region',
+										'hierarchical' => true,
+										'hide_empty' => false,
+										'orderby' => 'name',
+										'selected' => null,
+										'title' => __('Append regions created by this data source to… (top-level, if none selected)', '12-step-meeting-list'),
+										'show_option_none' => __('Parent Region…', '12-step-meeting-list'),
+									))?>
+								</div>
+
+								<div class="input-data-source input-auto-refresh" >
+									<?php wp_nonce_field($tsml_nonce, 'tsml_nonce', false)?>
+									<select name="tsml_add_data_source_change_detect" id="tsml_change_detect" >
+									<?php 
+									foreach (array(
+											'disabled' => __('Change Detection Disabled', '12-step-meeting-list'),
+											'enabled' => __('Change Detection Enabled', '12-step-meeting-list'),	
+										) as $key => $value) {?>
+										<option value="<?php echo $key?>"<?php selected($tsml_change_detect, $key) ?> ><?php echo $value?></option>
+									<?php } ?>
+									</select>
+								</div>
+								<div>
+									<input type="submit" class="btn button" value="<?php _e('Add Data Source', '12-step-meeting-list') ?>">
+								</div>
+							</form>
 						</div>
 					</div>
 				</div>

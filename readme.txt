@@ -80,7 +80,7 @@ Change Detection can only be enabled when adding a data source to your list of D
 * Pressing the "Add Data Source" button will register a WordPress Cron Job (tsml_scan_data_source) for the newly added and enabled data source. By default, this cron job is scheduled to run "Once Daily" starting at midnight (12:00 AM). 
 The frequency and scheduled time that the cron job runs is completely configurable by you if the "WP Crontrol" plugin has been installed.
 
-That's it, your done!
+That's it, you're done!
 
 = How can I make the Region dropdown not be collapsible? =
 No problem, just add this CSS to your theme:

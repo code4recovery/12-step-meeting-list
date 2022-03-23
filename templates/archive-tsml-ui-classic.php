@@ -12,7 +12,7 @@
 <?php
 get_header();
 
-echo do_shortcode('[tsml_ui]');
+echo tsml_ui();
 
 get_footer();
 ?>
