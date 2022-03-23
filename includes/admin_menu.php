@@ -50,5 +50,12 @@ function tsml_dashboard_widgets()
 }
 function tsml_dashboard_help()
 {
-    echo '<p><a href="https://code4recovery.org/">Code for Recovery</a> ' . __('is a nonprofit organization of volunteer members building technology services for recovery fellowships, such as AA and Al-Anon. If you need help, please', '12-step-meeting-list') . ' <a href="https://github.com/code4recovery/12-step-meeting-list/discussions">' . __('join our discussion forum', '12-step-meeting-list') . '</a>. ' . __('If you would like to make a tax-deductible contribution, please', '12-step-meeting-list') . ' <a href="https://code4recovery.org/"> ' . __('visit our website', '12-step-meeting-list') . '.</a></p>';
+    printf(
+        '<p>' . __('%1$s is a nonprofit organization of volunteer members building technology services for recovery fellowships, such as AA and Al-Anon. If you need help, please %2$s join our discussion forum%3$s. If you would like to make a tax-deductible contribution, please %4$s visit our website%5$s.', '12-step-meeting-list') . '</p>',
+        '<a href="https://code4recovery.org/">Code for Recovery</a>',
+        '<a href="https://github.com/code4recovery/12-step-meeting-list/discussions">',
+        '</a>',
+        '<a href="https://code4recovery.org/">',
+        '</a>'
+    );
 }
