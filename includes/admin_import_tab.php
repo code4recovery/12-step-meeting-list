@@ -9,7 +9,7 @@
 		<!-- Put Import CSV section here -->
 		<div id="import-csv" class="postbox  settings-card" >
 			<div class="inside">
-				<h3><?php _e('Import CSV', '12-step-meeting-list') ?></h3>
+				<h1><?php _e('Import CSV', '12-step-meeting-list') ?></h1>
 				<form method="post" action="<?php echo $_SERVER['REQUEST_URI'] ?>" enctype="multipart/form-data" style="padding-left:10px;">
 					<?php wp_nonce_field($tsml_nonce, 'tsml_nonce', false) ?>
 					<input type="file" name="tsml_import">
@@ -53,7 +53,7 @@
 				]);
 
 				?>
-				<h3><?php _e('Where\'s My Info?', '12-step-meeting-list') ?></h3>
+				<h1><?php _e('Where\'s My Info?', '12-step-meeting-list') ?></h1>
 				<?php if ($tsml_slug) { ?>
 					<p><?php printf(__('Your public meetings page is <a href="%s">right here</a>. Link that page from your site\'s nav menu to make it visible to the public.', '12-step-meeting-list'), get_post_type_archive_link('tsml_meeting')) ?></p>
 				<?php
@@ -91,7 +91,7 @@
 		<!-- Put Export Meeting List section here -->
 		<div id="export_meeting_list" class="postbox settings-card"  >
 			<div class="inside" >
-				<h3><?php _e('Export Meeting List', '12-step-meeting-list') ?></h3>
+				<h1><?php _e('Export Meeting List', '12-step-meeting-list') ?></h1>
 				<?php
 				if ($meetings) { ?>
 					<p><?php printf(__('You can download your meetings in <a href="%s">CSV format</a>.', '12-step-meeting-list'), admin_url('admin-ajax.php') . '?action=csv') ?></p>
@@ -106,7 +106,7 @@
 	<!-- Put Import Data Sources section here -->
 	<div id="import-data-source" class="postbox import-card" >
 		<div class="inside column three-third" style="">
-			<h3><?php _e('Import Data Sources', '12-step-meeting-list')?></h3>
+			<h1><?php _e('Import Data Sources', '12-step-meeting-list')?></h1>
 			<p>
 			<?php printf(__('Data sources are JSON feeds that contain a website\'s public meeting data. They can be used to aggregate meetings from different sites into a single master list. 
 				Data sources listed below will pull meeting information into this website. A configurable schedule allows for each enabled data source to be scanned at least once per day looking 
