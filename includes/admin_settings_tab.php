@@ -115,7 +115,7 @@
 				<?php } else { ?>
 					<h3><strong><?php _e('Public Feed', '12-step-meeting-list') ?></strong></h3>
 					<p><?php _e('The following feed contains your publicly available meeting information.', '12-step-meeting-list') ?></p>
-					<?php printf(__('<a class="public_feed" href="%s" target="_blank">Public Data Source</a>', '12-step-meeting-list'), admin_url('admin-ajax.php?action=meetings')) ?>
+					<p><?php printf(__('<a class="public_feed" href="%s" target="_blank">Public Data Source</a>', '12-step-meeting-list'), admin_url('admin-ajax.php?action=meetings')) ?></p>
 				<?php } ?>
 				</div>
 			</div>
