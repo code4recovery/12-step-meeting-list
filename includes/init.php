@@ -38,13 +38,30 @@ add_action('init', function () {
         global $post;
         if ($post->post_type == 'tsml_meeting') {
             $user_theme_file = get_stylesheet_directory() . '/single-meetings.php';
+           
             if (file_exists($user_theme_file)) {
-                return $user_theme_file;
+                 if ($tsml_user_interface == 'tsml_ui') { 
+                    wp_redirect(add_query_arg('tsml_ui', $tsml_user_interface));
+                } else { 
+                    return $user_theme_file;
+                }
             }
 
             return dirname(__FILE__) . '/../templates/single-meetings.php';
+
         } elseif ($post->post_type == 'tsml_location') {
             $user_theme_file = get_stylesheet_directory() . '/single-locations.php';
+
+            if (file_exists($user_theme_file)) {
+                 if ($tsml_user_interface == 'tsml_ui') { 
+                    if ( wp_redirect(add_query_arg('tsml_ui', $tsml_user_interface)) ) {
+                        exit;
+                    }
+                } else { 
+                    return $user_theme_file;
+                }
+            }
+
             if (file_exists($user_theme_file)) {
                 return $user_theme_file;
             }

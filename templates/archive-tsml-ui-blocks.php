@@ -10,10 +10,23 @@
 <div class="wp-site-blocks">
 
 <?php
-echo tsml_ui();
+
+echo do_blocks( '<!-- wp:template-part {"slug":"header","theme":"twentytwentytwo","tagName":"header","className":"site-header","layout":{"inherit":true}} /-->' );
 //block_header_area();
 
-echo do_shortcode('[tsml_ui]');
+if (is_active_sidebar('tsml_meetings_top')) { 
+    <div class="widgets meetings-widgets meetings-widgets-top" role="complementary">
+        <?php dynamic_sidebar('tsml_meetings_top') ?>
+    </div>
+} 
+
+echo tsml_ui();
+
+<?php if (is_active_sidebar('tsml_meetings_bottom')) { ?>
+    <div class="widgets meetings-widgets meetings-widgets-bottom" role="complementary">
+        <?php dynamic_sidebar('tsml_meetings_bottom') ?>
+    </div>
+<?php } ?>
 
 //block_footer_area();
 echo do_blocks('<!-- wp:template-part {"slug":"footer","theme":"twentytwentytwo","tagName":"footer","className":"site-footer","layout":{"inherit":true}} /-->');

@@ -46,6 +46,8 @@ include TSML_PATH . '/includes/widgets_init.php';
 //include admin files
 if (is_admin()) {
     include TSML_PATH . '/includes/admin_import.php';
+    //include TSML_PATH . '/includes/admin_import_tab.php';
+    //include TSML_PATH . '/includes/admin_settings_tab.php';
     include TSML_PATH . '/includes/admin_lists.php';
     include TSML_PATH . '/includes/admin_meeting.php';
     include TSML_PATH . '/includes/admin_menu.php';

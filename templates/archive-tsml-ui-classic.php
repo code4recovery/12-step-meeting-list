@@ -1,24 +1,21 @@
 <!-- USE WITH TSML UI IN A CLASSIC THEME  -->
-<!doctype html>
-<html <?php language_attributes(); ?>>
-<head>
-	<meta charset="<?php bloginfo( 'charset' ); ?>">
-	<?php wp_head(); ?>
-</head>
-<body <?php body_class(); ?>>
-<?php wp_body_open(); ?>
-<div class="wp-site-blocks">
-
 <?php
 get_header();
 
+if (is_active_sidebar('tsml_meetings_top')) {  ?>
+    <div class="widgets meetings-widgets meetings-widgets-top" role="complementary">
+        <?php dynamic_sidebar('tsml_meetings_top') ?>
+    </div>
+<?php } 
+
 echo tsml_ui();
 
+if (is_active_sidebar('tsml_meetings_bottom')) { ?>
+    <div class="widgets meetings-widgets meetings-widgets-bottom" role="complementary">
+        <?php dynamic_sidebar('tsml_meetings_bottom') ?>
+    </div>
+<?php } 
+
 get_footer();
+
 ?>
-
-</div>
-<?php wp_footer(); ?>
-</body>
-</html>
-
