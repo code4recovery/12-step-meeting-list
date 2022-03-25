@@ -14,11 +14,11 @@
 echo do_blocks( '<!-- wp:template-part {"slug":"header","theme":"twentytwentytwo","tagName":"header","className":"site-header","layout":{"inherit":true}} /-->' );
 //block_header_area();
 
-if (is_active_sidebar('tsml_meetings_top')) { 
+if (is_active_sidebar('tsml_meetings_top')) {  ?>
     <div class="widgets meetings-widgets meetings-widgets-top" role="complementary">
         <?php dynamic_sidebar('tsml_meetings_top') ?>
     </div>
-} 
+<?php }  ?>
 
 echo tsml_ui();
 
