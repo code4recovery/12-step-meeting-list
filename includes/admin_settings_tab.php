@@ -3,11 +3,11 @@
 ?>
 
 <!-- Settings tab HTML goes here -->
-<div id="settings-row1" class="" >
+<div id="settings-row1" >
 
-	<div id="column1" class="column one-third" >
+	<div id="column1" class="col one-third" >
 		<!-- Put General Settings section here -->
-		<div class="postbox " style="margin-bottom: 25px;">
+		<div class="postbox" >
 			<div class="inside">
 				<h1><?php _e('General', '12-step-meeting-list') ?></h1>
 				<form method="post" class="settings-card" action="<?php echo $_SERVER['REQUEST_URI'] ?>">
@@ -122,8 +122,8 @@
 		</div>
 	</div>
 
-	<div id="column2" class="column one-third "  >
-		<div class="postbox " style="margin-bottom: 25px;">
+	<div id="column2" class="col one-third "  >
+		<div class="postbox">
 		<!-- Put Switch UI here -->
 			<div class="inside">
 				<h1><?php _e('Switch UI', '12-step-meeting-list') ?></h1>
@@ -221,23 +221,23 @@
 		</div>
 	</div>
 
-	<div id="column3" class="column one-third" >
+	<div id="column3" class="col one-third">
 		<!-- Put About Us here -->
-		<div class="postbox" style="margin-bottom: 25px;">
+		<div class="postbox" >
 			<div class="inside">
-				<div class="inner-column" style="padding: 0; margin: 0;">
-					<div class="right" style="float:right;  padding: 0; margin:20px auto;" >
+				<h1><?php _e('About Us', '12-step-meeting-list') ?></h1>
+				<div class="settings-card">
+					<div style="float:right; margin-top:-30px;" >
 						<a href="https://code4recovery.org"><img src="/wp-content/plugins/12-step-meeting-list/assets/img/code4recovery.svg" alt="Code For Recovery" ></a>										
 					</div>
-					<div class="left">
-						<h1  style="padding-left:0; "><?php _e('About Us', '12-step-meeting-list') ?></h1>
-						<p style="padding: 20px; 10px; 0 10px;"><?php _e('This <b>12 Step Meeting List</b> plugin (TSML) is one of the free services offered by the nonprofit organization <b>Code For Recovery</b> whose volunteer members build and maintain technology services for recovery fellowships such as AA and Al-Anon.', '12-step-meeting-list') ?></p>										
+					<div>
+						<p><?php _e('This <b>12 Step Meeting List</b> plugin (TSML) is one of the free services offered by the nonprofit organization <b>Code For Recovery</b> whose volunteer members build and maintain technology services for recovery fellowships such as AA and Al-Anon.', '12-step-meeting-list') ?></p>										
 					</div>
 				</div>
 			</div>
 		</div>
 
-		<div class="postbox " style="margin-bottom: 25px;">
+		<div class="postbox">
 		<!-- Put Need Help here -->
 			<div class="inside">
 				<h1><?php _e('Need Help?', '12-step-meeting-list') ?></h1>

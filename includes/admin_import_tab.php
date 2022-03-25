@@ -3,109 +3,10 @@
 ?>
 
 <!-- Import HTML goes here -->
-<div id="import-1" class="">
-
-	<div id="col1" class="column one-third" >
-		<!-- Put Import CSV section here -->
-		<div id="import-csv" class="postbox  settings-card" >
-			<div class="inside">
-				<h1><?php _e('Import CSV', '12-step-meeting-list') ?></h1>
-				<form method="post" action="<?php echo $_SERVER['REQUEST_URI'] ?>" enctype="multipart/form-data" style="padding-left:10px;">
-					<?php wp_nonce_field($tsml_nonce, 'tsml_nonce', false) ?>
-					<input type="file" name="tsml_import">
-					<p>
-						<?php _e('When importing...', '12-step-meeting-list') ?><br>
-						<?php
-						$delete_options = [
-							'nothing'	=> __('don\'t delete anything', '12-step-meeting-list'),
-							'regions'	=> __('delete only the meetings, locations, and groups for the regions present in this CSV', '12-step-meeting-list'),
-							'all' 		=> __('delete all meetings, locations, groups, districts, and regions', '12-step-meeting-list'),
-						];
-						if (!empty($tsml_data_sources)) {
-							$delete_options['no_data_source'] = __('delete all meetings, locations, and groups not from a data source', '12-step-meeting-list');
-						}
-						$delete_selected = (empty($_POST['delete']) || !array_key_exists($_POST['delete'], $delete_options)) ? 'nothing' : $_POST['delete'];
-						foreach ($delete_options as $key => $value) { ?>
-							<label><input type="radio" name="delete" value="<?php echo $key ?>" <?php checked($key, $delete_selected) ?>> <?php echo $value ?></label><br>
-						<?php } ?>
-					</p>
-					<p><input type="submit" class="button button-primary" value="<?php _e('Begin', '12-step-meeting-list') ?>"></p>
-				</form>
-			</div>
-		</div>
-	</div>
-
-	<div id="col2" class="column one-third " >
-		<!-- Put Wheres My Info? section here -->
-		<div id="wheres_my_info" class="postbox settings-card">
-			<div class="inside">
-				<?php
-				$meetings = tsml_count_meetings();
-				$locations = tsml_count_locations();
-				$regions = tsml_count_regions();
-				$groups = tsml_count_groups();
-
-				$pdf_link = 'https://pdf.code4recovery.org/?' . http_build_query([
-					'json' => admin_url('admin-ajax.php') . '?' . http_build_query([
-						'action' => 'meetings',
-						'nonce' => $tsml_sharing === 'restricted' ? wp_create_nonce($tsml_nonce) : null
-					])
-				]);
-
-				?>
-				<h1><?php _e('Where\'s My Info?', '12-step-meeting-list') ?></h1>
-				<?php if ($tsml_slug) { ?>
-					<p><?php printf(__('Your public meetings page is <a href="%s">right here</a>. Link that page from your site\'s nav menu to make it visible to the public.', '12-step-meeting-list'), get_post_type_archive_link('tsml_meeting')) ?></p>
-				<?php
-				}
-				if ($meetings) { ?>
-					<p><?php printf(__('<strong>Going away soon:</strong> a very basic PDF schedule is available in three sizes: <a href="%s">4&times;7</a>, <a href="%s">half page</a> and <a href="%s">full page</a>.', '12-step-meeting-list'), admin_url('admin-ajax.php') . '?action=tsml_pdf&width=4&height=7', admin_url('admin-ajax.php') . '?action=tsml_pdf', admin_url('admin-ajax.php') . '?action=tsml_pdf&width=8.5') ?></p>
-					<p><?php _e('<strong>New!</strong> We are developing a service to generate PDF directories of in-person meetings.', '12-step-meeting-list') ?></p>
-					<p><a href="<?php echo $pdf_link ?>" target="_blank" class="button"><?php _e('Generate PDF') ?></a>
-				<?php } ?>
-
-				<div id="tsml_counts" <?php if (($meetings + $locations + $groups + $regions) == 0) { ?> class="hidden" <?php } ?> >
-					<p><?php _e('You have:', '12-step-meeting-list') ?></p>
-					<div class="table">
-						<ul id="Xul_horiz_summary" class="ul-disc" >
-							<li class="meetings<?php if (!$meetings) { ?> hidden<?php } ?>">
-								<?php printf(_n('%s meeting', '%s meetings', $meetings, '12-step-meeting-list'), number_format_i18n($meetings)) ?>
-							</li>
-							<li class="locations<?php if (!$locations) { ?> hidden<?php } ?>">
-								<?php printf(_n('%s location', '%s locations', $locations, '12-step-meeting-list'), number_format_i18n($locations)) ?>
-							</li>
-							<li class="groups<?php if (!$groups) { ?> hidden<?php } ?>">
-								<?php printf(_n('%s group', '%s groups', $groups, '12-step-meeting-list'), number_format_i18n($groups)) ?>
-							</li>
-							<li class="regions<?php if (!$regions) { ?> hidden<?php } ?>">
-								<?php printf(_n('%s region', '%s regions', $regions, '12-step-meeting-list'), number_format_i18n($regions)) ?>
-							</li>
-						</ul>
-					</div>
-				</div>	
-			</div>
-		</div>
-	</div>
-			
-	<div id="col3" class="column one-third"  >
-		<!-- Put Export Meeting List section here -->
-		<div id="export_meeting_list" class="postbox settings-card"  >
-			<div class="inside" >
-				<h1><?php _e('Export Meeting List', '12-step-meeting-list') ?></h1>
-				<?php
-				if ($meetings) { ?>
-					<p><?php printf(__('You can download your meetings in <a href="%s">CSV format</a>.', '12-step-meeting-list'), admin_url('admin-ajax.php') . '?action=csv') ?></p>
-				<?php } ?>
-				<p><?php printf(__('Want to send a mass email to your contacts? <br><a href="%s" target="_blank">Click here</a> to see their email addresses.', '12-step-meeting-list'), admin_url('admin-ajax.php') . '?action=contacts') ?></p>
-			</div>
-		</div>
-	</div>
-</div>
-
-<div id="import-2" class="">
+<div id="import-2" class="import-col three-third">
 	<!-- Put Import Data Sources section here -->
-	<div id="import-data-source" class="postbox import-card" >
-		<div class="inside column three-third" style="">
+	<div class="postbox " >
+		<div class="inside ">
 			<h1><?php _e('Import Data Sources', '12-step-meeting-list')?></h1>
 			<p>
 			<?php printf(__('Data sources are JSON feeds that contain a website\'s public meeting data. They can be used to aggregate meetings from different sites into a single master list. 
@@ -234,6 +135,105 @@
 		</div>
 	</div>
 </div>
+
+<div id="import-1">
+	<div id="col1" class="col one-third" >
+		<!-- Put Import CSV section here -->
+		<div id="import-csv" class="postbox" >
+			<div class="inside settings-card">
+				<h1><?php _e('Import CSV', '12-step-meeting-list') ?></h1>
+				<form method="post" style="padding-top: 10px;" action="<?php echo $_SERVER['REQUEST_URI'] ?>" enctype="multipart/form-data">
+					<?php wp_nonce_field($tsml_nonce, 'tsml_nonce', false) ?>
+					<input type="file" name="tsml_import">
+					<p>
+						<?php _e('When importing...', '12-step-meeting-list') ?><br>
+						<?php
+						$delete_options = [
+							'nothing'	=> __('don\'t delete anything', '12-step-meeting-list'),
+							'regions'	=> __('delete only the meetings, locations, and groups for the regions present in this CSV', '12-step-meeting-list'),
+							'all' 		=> __('delete all meetings, locations, groups, districts, and regions', '12-step-meeting-list'),
+						];
+						if (!empty($tsml_data_sources)) {
+							$delete_options['no_data_source'] = __('delete all meetings, locations, and groups not from a data source', '12-step-meeting-list');
+						}
+						$delete_selected = (empty($_POST['delete']) || !array_key_exists($_POST['delete'], $delete_options)) ? 'nothing' : $_POST['delete'];
+						foreach ($delete_options as $key => $value) { ?>
+							<label><input type="radio" name="delete" value="<?php echo $key ?>" <?php checked($key, $delete_selected) ?>> <?php echo $value ?></label><br>
+						<?php } ?>
+					</p>
+					<p><input type="submit" class="button button-primary" value="<?php _e('Begin', '12-step-meeting-list') ?>"></p>
+				</form>
+			</div>
+		</div>
+	</div>
+
+	<div id="col2" class="col one-third" >
+		<!-- Put Wheres My Info? section here -->
+		<div id="wheres_my_info" class="postbox settings-card">
+			<div class="inside">
+				<?php
+				$meetings = tsml_count_meetings();
+				$locations = tsml_count_locations();
+				$regions = tsml_count_regions();
+				$groups = tsml_count_groups();
+
+				$pdf_link = 'https://pdf.code4recovery.org/?' . http_build_query([
+					'json' => admin_url('admin-ajax.php') . '?' . http_build_query([
+						'action' => 'meetings',
+						'nonce' => $tsml_sharing === 'restricted' ? wp_create_nonce($tsml_nonce) : null
+					])
+				]);
+
+				?>
+				<h1><?php _e('Where\'s My Info?', '12-step-meeting-list') ?></h1>
+				<?php if ($tsml_slug) { ?>
+					<p><?php printf(__('Your public meetings page is <a href="%s">right here</a>. Link that page from your site\'s nav menu to make it visible to the public.', '12-step-meeting-list'), get_post_type_archive_link('tsml_meeting')) ?></p>
+				<?php
+				}
+				if ($meetings) { ?>
+					<p><?php printf(__('<strong>Going away soon:</strong> a very basic PDF schedule is available in three sizes: <a href="%s">4&times;7</a>, <a href="%s">half page</a> and <a href="%s">full page</a>.', '12-step-meeting-list'), admin_url('admin-ajax.php') . '?action=tsml_pdf&width=4&height=7', admin_url('admin-ajax.php') . '?action=tsml_pdf', admin_url('admin-ajax.php') . '?action=tsml_pdf&width=8.5') ?></p>
+					<p><?php _e('<strong>New!</strong> We are developing a service to generate PDF directories of in-person meetings.', '12-step-meeting-list') ?></p>
+					<p><a href="<?php echo $pdf_link ?>" target="_blank" class="button"><?php _e('Generate PDF') ?></a>
+				<?php } ?>
+
+				<div id="tsml_counts" <?php if (($meetings + $locations + $groups + $regions) == 0) { ?> class="hidden" <?php } ?> >
+					<p><?php _e('You have:', '12-step-meeting-list') ?></p>
+					<div class="table">
+						<ul id="Xul_horiz_summary" class="ul-disc" >
+							<li class="meetings<?php if (!$meetings) { ?> hidden<?php } ?>">
+								<?php printf(_n('%s meeting', '%s meetings', $meetings, '12-step-meeting-list'), number_format_i18n($meetings)) ?>
+							</li>
+							<li class="locations<?php if (!$locations) { ?> hidden<?php } ?>">
+								<?php printf(_n('%s location', '%s locations', $locations, '12-step-meeting-list'), number_format_i18n($locations)) ?>
+							</li>
+							<li class="groups<?php if (!$groups) { ?> hidden<?php } ?>">
+								<?php printf(_n('%s group', '%s groups', $groups, '12-step-meeting-list'), number_format_i18n($groups)) ?>
+							</li>
+							<li class="regions<?php if (!$regions) { ?> hidden<?php } ?>">
+								<?php printf(_n('%s region', '%s regions', $regions, '12-step-meeting-list'), number_format_i18n($regions)) ?>
+							</li>
+						</ul>
+					</div>
+				</div>	
+			</div>
+		</div>
+	</div>
+			
+	<div id="col3" class="col one-third" >
+		<!-- Put Export Meeting List section here -->
+		<div id="export_meeting_list" class="postbox settings-card"  >
+			<div class="inside" >
+				<h1><?php _e('Export Meeting List', '12-step-meeting-list') ?></h1>
+				<?php
+				if ($meetings) { ?>
+					<p><?php printf(__('You can download your meetings in <a href="%s">CSV format</a>.', '12-step-meeting-list'), admin_url('admin-ajax.php') . '?action=csv') ?></p>
+				<?php } ?>
+				<p><?php printf(__('Want to send a mass email to your contacts? <br><a href="%s" target="_blank">Click here</a> to see their email addresses.', '12-step-meeting-list'), admin_url('admin-ajax.php') . '?action=contacts') ?></p>
+			</div>
+		</div>
+	</div>
+</div>
+
 
 
 
