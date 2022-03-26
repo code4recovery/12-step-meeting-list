@@ -1,16 +1,22 @@
-<!-- USE WITH TSML UI IN A CLASSIC THEME  -->
+ <!-- USING TSML UI IN A CLASSIC THEME -->
 <?php
+
 get_header();
 
 if (is_active_sidebar('tsml_meetings_top')) {  ?>
     <div class="widgets meetings-widgets meetings-widgets-top" role="complementary">
         <?php dynamic_sidebar('tsml_meetings_top') ?>
     </div>
-<?php } 
+<?php } ?>
 
-echo tsml_ui();
+<div class="wp-site-blocks">
 
-if (is_active_sidebar('tsml_meetings_bottom')) { ?>
+<?php  
+
+echo tsml_ui();  ?>
+
+</div>
+<?php if (is_active_sidebar('tsml_meetings_bottom')) { ?>
     <div class="widgets meetings-widgets meetings-widgets-bottom" role="complementary">
         <?php dynamic_sidebar('tsml_meetings_bottom') ?>
     </div>
