@@ -227,11 +227,12 @@
 			<div class="inside">
 				<h1><?php _e('About Us', '12-step-meeting-list') ?></h1>
 				<div class="settings-card">
-					<div style="float:right; margin-top:-30px;" >
+					<div class="c4r-logo" style="float:right; margin-top:-55px; margin-right: -10px;" >
 						<a href="https://code4recovery.org"><img src="/wp-content/plugins/12-step-meeting-list/assets/img/code4recovery.svg" alt="Code For Recovery" ></a>										
 					</div>
 					<div>
-						<p><?php _e('This <b>12 Step Meeting List</b> plugin (TSML) is one of the free services offered by the nonprofit organization <b>Code For Recovery</b> whose volunteer members build and maintain technology services for recovery fellowships such as AA and Al-Anon.', '12-step-meeting-list') ?></p>										
+						<p><?php _e('This <b>12 Step Meeting List</b> plugin (TSML) is one of the free services offered by the nonprofit organization <b>Code For Recovery</b> whose volunteer members build and maintain technology services for recovery fellowships such as AA and Al-Anon.', 
+						'12-step-meeting-list') ?></p>										
 					</div>
 				</div>
 			</div>
@@ -243,7 +244,8 @@
 				<h1><?php _e('Need Help?', '12-step-meeting-list') ?></h1>
 				<div class="settings-card">
 									
-					<p><?php _e("To get information about this product or our organization, simply use one of the linked buttons below. Both the plugin Wiki page and/or the <b>Code For Recovery</b> website are great sources of information. You can also ask questions directly throght our GitHub discussion forum which is monitored daily by members of our maintenance team.", '12-step-meeting-list') ?></p>
+					<p><?php _e("To get information about this product or our organization, simply use one of the linked buttons below. Both the plugin Wiki page and/or the <b>Code For Recovery</b> website are great sources of information. 
+					You can also ask questions directly throght our GitHub discussion forum which is monitored daily by members of our maintenance team.", '12-step-meeting-list') ?></p>
 					<div style="margin:10px;">
 						<a href="https://github.com/code4recovery/12-step-meeting-list/wiki/" target="_blank" class="button" style=" margin-right: 35px;">
 							<?php _e('Go to our Wiki', '12-step-meeting-list') ?>

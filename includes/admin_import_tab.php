@@ -3,10 +3,10 @@
 ?>
 
 <!-- Import HTML goes here -->
-<div id="import-2" class="import-col three-third">
+<div id="import-2" class="col three-third">
 	<!-- Put Import Data Sources section here -->
-	<div class="postbox " >
-		<div class="inside ">
+	<div class="postbox">
+		<div class="inside import-card" >
 			<h1><?php _e('Import Data Sources', '12-step-meeting-list')?></h1>
 			<p>
 			<?php printf(__('Data sources are JSON feeds that contain a website\'s public meeting data. They can be used to aggregate meetings from different sites into a single master list. 
@@ -137,7 +137,7 @@
 </div>
 
 <div id="import-1">
-	<div id="col1" class="col one-third" >
+	<div id="col1" class="col one-third import-col">
 		<!-- Put Import CSV section here -->
 		<div id="import-csv" class="postbox" >
 			<div class="inside settings-card">
@@ -167,10 +167,10 @@
 		</div>
 	</div>
 
-	<div id="col2" class="col one-third" >
+	<div id="col2" class="col one-third import-col" >
 		<!-- Put Wheres My Info? section here -->
-		<div id="wheres_my_info" class="postbox settings-card">
-			<div class="inside">
+		<div id="wheres_my_info" class="postbox">
+			<div class="inside  settings-card">
 				<?php
 				$meetings = tsml_count_meetings();
 				$locations = tsml_count_locations();
@@ -219,10 +219,10 @@
 		</div>
 	</div>
 			
-	<div id="col3" class="col one-third" >
+	<div id="col3" class="col one-third import-col" >
 		<!-- Put Export Meeting List section here -->
-		<div id="export_meeting_list" class="postbox settings-card"  >
-			<div class="inside" >
+		<div id="export_meeting_list" class="postbox" >
+			<div class="inside settings-card">
 				<h1><?php _e('Export Meeting List', '12-step-meeting-list') ?></h1>
 				<?php
 				if ($meetings) { ?>
