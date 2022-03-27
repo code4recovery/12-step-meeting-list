@@ -477,7 +477,7 @@ if (!function_exists('tsml_import_page')) {
 						<?php } ?>
 
 						<?php if (empty($tsml_mapbox_key) && empty($tsml_google_maps_key)) { ?>
-							<div class="notice notice-warning inline" style="margin: 1px 0 22px;">
+							<div class="notice notice-warning inline">
 								<div class="inside" >
 									<h1>Enable Maps on Your Site</h1>
 									<p>If you want to enable maps on your site you have two options: <strong>Mapbox</strong> or <strong>Google</strong>. *See the Google restriction noted below.
