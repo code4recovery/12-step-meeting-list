@@ -52,6 +52,7 @@ body {
 		}
 		//meeting types legend
 		.postbox, .notice-warning {
+			margin: 1px 0 22px;
 
 			a.button-large {
 				padding-top: 4px;
@@ -65,9 +66,10 @@ body {
 			ul.types {
 				margin-top: 10px;
 				overflow: auto;
-				-webkit-columns: 3 auto;
-				-moz-columns: 3 auto;
-				columns: 3 auto;
+				-webkit-columns: 4 auto;
+				-moz-columns: 4 auto;
+				columns: 4 auto;
+				column-gap: 40px;
 
 				li {
 					margin-bottom: 0;
@@ -160,6 +162,7 @@ body {
 				overflow: auto;
 				margin: 0 -5px;
 				box-sizing: border-box;
+				margin: 15px -5px 22px 0;
 
 				& > div {
 					box-sizing: border-box;
@@ -276,10 +279,36 @@ body {
 			padding: 10px;
 		}
 
-		.c4r-logo {
-			float: right;
-			margin-top: -55px;
-			margin-right: -10px;
+		#c4r-logo {
+			* {
+				box-sizing: border-box;
+			}
+
+			p {
+				float: left;
+				border: solid 1px #000;
+				display: inline-block;
+				width: auto;
+			}
+
+			img {
+				float: right;
+				margin-top: -55px;
+				margin-right: -20px;
+				display: inline-block;
+			}
+		}
+
+		#frm-import-csv {
+			padding-top: 10px;
+		}
+
+		#divContactInfo {
+			margin: 10px;
+		}
+
+		#btnGoOurWiki #btnC4R {
+			margin-right: 35px;
 		}
 	}
 	//region list page

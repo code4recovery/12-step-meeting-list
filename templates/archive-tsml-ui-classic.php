@@ -1,5 +1,6 @@
  <!-- USING TSML UI IN A CLASSIC THEME -->
 <?php
+tsml_assets();
 
 get_header();
 
@@ -24,4 +25,3 @@ echo tsml_ui();  ?>
 
 get_footer();
 
-?>

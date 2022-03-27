@@ -142,7 +142,7 @@
 		<div id="import-csv" class="postbox" >
 			<div class="inside settings-card">
 				<h1><?php _e('Import CSV', '12-step-meeting-list') ?></h1>
-				<form method="post" style="padding-top: 10px;" action="<?php echo $_SERVER['REQUEST_URI'] ?>" enctype="multipart/form-data">
+				<form id="frm-import-csv" method="post" action="<?php echo $_SERVER['REQUEST_URI'] ?>" enctype="multipart/form-data">
 					<?php wp_nonce_field($tsml_nonce, 'tsml_nonce', false) ?>
 					<input type="file" name="tsml_import">
 					<p>

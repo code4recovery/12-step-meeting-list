@@ -129,7 +129,7 @@
 				<h1><?php _e('Switch UI', '12-step-meeting-list') ?></h1>
 				<div class="settings-card" >
 					<h3><strong><?php _e('User Interface Display', '12-step-meeting-list') ?></strong></h3>
-					<p><?php _e('Please select the user interface design that is right for your site. Choose between our latest design that we call <b>TSML UI</b> or stay with the old standard <b>Legacy UI</b>.', '12-step-meeting-list') ?></p>							
+					<p><?php _e('Please select the user interface that is right for your site. Choose between our latest design that we call <b>TSML UI</b> or stay with the old standard <b>Legacy UI</b>.', '12-step-meeting-list') ?></p>							
 					<form method="post" action="<?php echo $_SERVER['REQUEST_URI'] ?>">
 						<?php wp_nonce_field($tsml_nonce, 'tsml_nonce', false) ?>
 						<select name="tsml_user_interface" onchange="this.form.submit()">
@@ -149,7 +149,7 @@
 		<div class="postbox " >
 			<div class="inside">
 				<h1><?php _e('Mapping & Geocoding', '12-step-meeting-list') ?></h1>
-				<p style="padding-left:20px;"><?php _e('Display of maps requires an authorization key from </strong><a href="https://www.mapbox.com/" target="_blank">Mapbox</a></strong> or </strong><a href="https://console.cloud.google.com/home/" target="_blank">Google</a></strong>.', '12-step-meeting-list') ?></p>
+				<p><?php _e('Display of maps requires an authorization key from <strong><a href="https://www.mapbox.com/" target="_blank">Mapbox</a></strong> or <strong><a href="https://console.cloud.google.com/home/" target="_blank">Google</a></strong>.', '12-step-meeting-list') ?></p>
 
 				<div class="settings-card">
 					<h3><strong><?php _e('Mapbox Access Token', '12-step-meeting-list') ?></strong></h3>
@@ -227,12 +227,16 @@
 			<div class="inside">
 				<h1><?php _e('About Us', '12-step-meeting-list') ?></h1>
 				<div class="settings-card">
-					<div class="c4r-logo" style="float:right; margin-top:-55px; margin-right: -10px;" >
-						<a href="https://code4recovery.org"><img src="/wp-content/plugins/12-step-meeting-list/assets/img/code4recovery.svg" alt="Code For Recovery" ></a>										
-					</div>
 					<div>
-						<p><?php _e('This <b>12 Step Meeting List</b> plugin (TSML) is one of the free services offered by the nonprofit organization <b>Code For Recovery</b> whose volunteer members build and maintain technology services for recovery fellowships such as AA and Al-Anon.', 
-						'12-step-meeting-list') ?></p>										
+						<p id="c4r-logo">
+							<img src="/wp-content/plugins/12-step-meeting-list/assets/img/code4recovery.svg" alt="Code For Recovery" />
+							<?php _e('This <b>12 Step Meeting List</b> plugin (TSML) is one of the free services offered by the nonprofit organization <b>Code For Recovery</b> whose volunteer members build and maintain technology services for recovery fellowships such as AA and Al-Anon.', 
+							'12-step-meeting-list') ?>
+						</p>										
+					</div>
+
+					<div  style="float: left;">
+																
 					</div>
 				</div>
 			</div>
@@ -244,16 +248,16 @@
 				<h1><?php _e('Need Help?', '12-step-meeting-list') ?></h1>
 				<div class="settings-card">
 									
-					<p><?php _e("To get information about this product or our organization, simply use one of the linked buttons below. Both the plugin Wiki page and/or the <b>Code For Recovery</b> website are great sources of information. 
-					You can also ask questions directly throght our GitHub discussion forum which is monitored daily by members of our maintenance team.", '12-step-meeting-list') ?></p>
-					<div style="margin:10px;">
-						<a href="https://github.com/code4recovery/12-step-meeting-list/wiki/" target="_blank" class="button" style=" margin-right: 35px;">
+					<p><?php _e("To get information about this product or our organization, simply use one of the linked buttons below which are great sources for information and answers.", 
+					'12-step-meeting-list') ?></p>
+					<div id="divContactInfo">
+						<a href="https://github.com/code4recovery/12-step-meeting-list/wiki/" id="btnGotoOurWiki" target="_blank" class="button">
 							<?php _e('Go to our Wiki', '12-step-meeting-list') ?>
 						</a> 
-						<a href="https:///code4recovery.org/" target="_blank" class="button" style="margin-right: 35px;">
+						<a href="https:///code4recovery.org/" id="btnC4R" target="_blank" class="button" >
 							<?php _e('Code For Recovery website', '12-step-meeting-list') ?>
 						</a>
-						<a href="https://github.com/code4recovery/12-step-meeting-list/discussions" target="_blank" class="button" style="">
+						<a href="https://github.com/code4recovery/12-step-meeting-list/discussions" target="_blank" class="button">
 							<?php _e('Ask a Question', '12-step-meeting-list') ?>
 						</a> 
 					</div>

@@ -434,7 +434,7 @@ if (!function_exists('tsml_import_page')) {
 			} else {
 				$tsml_ui = "LEGACY UI";
 			}
-			tsml_alert(__('User Interface Display is now set to <strong>' . $tsml_ui . '</strong>', '12-step-meeting-list') );
+			tsml_alert(__('Switch UI is now set to <strong>' . $tsml_ui . '</strong>', '12-step-meeting-list') );
 			if ( empty( $tsml_mapbox_key ) && ($tsml_user_interface == 'tsml_ui') ) {
 				tsml_alert(__('<b>Please note</b> that TSML UI only supports Mapbox. To enable mapping you will need a Mapbox token. <br>To sign up for Mapbox <a href="https://www.mapbox.com/signup/" target="_blank">go here</a>. Only a valid email address is required. Copy your access token and paste it in the Mapping & Geocoding section\'s <b>Mapbox Access Token</b> field.', '12-step-meeting-list'),'warning');
 			} 		
@@ -488,7 +488,7 @@ if (!function_exists('tsml_import_page')) {
 									</p>
 									<p>To sign up for Mapbox <a href="https://www.mapbox.com/signup/" target="_blank">go here</a>. You will only need
 										a valid email address, no credit card required. Copy your access token and paste it below:</p>
-									<form class="columns" method="post" action="<?php echo $_SERVER['REQUEST_URI'] ?>" style="margin:15px -5px 22px 0;">
+									<form class="columns" method="post" action="<?php echo $_SERVER['REQUEST_URI'] ?>" >
 										<?php wp_nonce_field($tsml_nonce, 'tsml_nonce', false) ?>
 										<div class="input">
 											<input type="text" name="tsml_add_mapbox_key" placeholder="Enter Mapbox access token here">
@@ -498,7 +498,7 @@ if (!function_exists('tsml_import_page')) {
 										</div>
 									</form>
 
-									<p>*Please note: Only Mapbox is supported by our <b>TSML UI</b> user interface!  Google is not an option.
+									<p>*Please note: Only Mapbox is currently supported by our <b>TSML UI</b> user interface!  Google is not an option.
 
 									<p>For our legacy user interface (<b>Legacy UI</b>), you can alternatively choose to use Google. Their interface is slightly more complex because they offer more
 										services. <a href="https://developers.google.com/maps/documentation/javascript/get-api-key" target="_blank">Go here</a>
@@ -515,7 +515,7 @@ if (!function_exists('tsml_import_page')) {
 
 									<p>Once you're done, paste your new key below.</p>
 
-									<form class="columns" method="post" action="<?php echo $_SERVER['REQUEST_URI'] ?>" style="margin:15px -5px 22px 0;">
+									<form class="columns" method="post" action="<?php echo $_SERVER['REQUEST_URI'] ?>" >
 										<?php wp_nonce_field($tsml_nonce, 'tsml_nonce', false) ?>
 										<div class="input">
 											<input type="text" name="tsml_add_google_maps_key" placeholder="Enter Google API key here">
@@ -580,7 +580,7 @@ if (!function_exists('tsml_import_page')) {
 								<li><?php _e('<strong>Last Contact</strong> is an optional date.', '12-step-meeting-list') ?></li>
 								<?php if (!empty($tsml_programs[$tsml_program]['types'])) { ?>
 									<li><?php _e('<strong>Types</strong> should be a comma-separated list of the following options. This list is determined by which program is selected on the Settings tab.', '12-step-meeting-list') ?>
-										<ul class="types" style="column-count: 4; column-gap: 40px;">
+										<ul class="types">
 											<?php foreach ($tsml_programs[$tsml_program]['types'] as $value) { ?>
 												<li><?php echo $value ?></li>
 											<?php } ?>

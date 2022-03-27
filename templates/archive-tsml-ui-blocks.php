@@ -10,6 +10,7 @@
 <div class="wp-site-blocks">
 
 <?php
+tsml_assets();
 
 echo do_blocks( '<!-- wp:template-part {"slug":"header","theme":"twentytwentytwo","tagName":"header","className":"site-header","layout":{"inherit":true}} /-->' );
 
