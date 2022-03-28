@@ -12,7 +12,7 @@
 			<?php printf(__('Data sources are JSON feeds that contain a website\'s public meeting data. They can be used to aggregate meetings from different sites into a single master list. 
 				Data sources listed below will pull meeting information into this website. A configurable schedule allows for each enabled data source to be scanned at least once per day looking 
 				for updates to the listing. Change Notification email addresses are sent an email when action is required to re-sync a data source with its meeting list information. 
-				Please note: records that you intend to maintain on your website should always be imported using the Import CSV feature above. <b>Data Source records will be overwritten when the 
+				Please note: records that you intend to maintain on your website should always be imported using the Import CSV feature below. <b>Data Source records will be overwritten when the 
 				parent data source is refreshed. </b>More information is available at the <a href="%s" target="_blank">Meeting Guide API Specification</a>.', '12-step-meeting-list'), 'https://github.com/code4recovery/spec')?></p> 
 			<?php if (!empty($tsml_data_sources)) { ?>
 			<table>
