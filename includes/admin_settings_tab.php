@@ -229,14 +229,12 @@
 				<div class="settings-card">
 					<div>
 						<p id="c4r-logo">
-							<img src="/wp-content/plugins/12-step-meeting-list/assets/img/code4recovery.svg" alt="Code For Recovery" />
+							<a href="https://code4recovery.org/" target="_blank">
+								<img src="<?php echo plugin_dir_url( __FILE__ ) . '../assets/img/code4recovery.svg'; ?>" . alt="Code For Recovery" width="75px;" title="go to Code For Recovery" >
+							</a>
 							<?php _e('This <b>12 Step Meeting List</b> plugin (TSML) is one of the free services offered by the nonprofit organization <b>Code For Recovery</b> whose volunteer members build and maintain technology services for recovery fellowships such as AA and Al-Anon.', 
 							'12-step-meeting-list') ?>
 						</p>										
-					</div>
-
-					<div  style="float: left;">
-																
 					</div>
 				</div>
 			</div>
@@ -251,13 +249,10 @@
 					<p><?php _e("To get information about this product or our organization, simply use one of the linked buttons below which are great sources for information and answers.", 
 					'12-step-meeting-list') ?></p>
 					<div id="divContactInfo">
-						<a href="https://github.com/code4recovery/12-step-meeting-list/wiki/" id="btnGotoOurWiki" target="_blank" class="button">
+						<a href="https://github.com/code4recovery/12-step-meeting-list/wiki/" id="btnGotoOurWiki" target="_blank" class="button" title="get answers to common questions">
 							<?php _e('Go to our Wiki', '12-step-meeting-list') ?>
 						</a> 
-						<a href="https:///code4recovery.org/" id="btnC4R" target="_blank" class="button" >
-							<?php _e('Code For Recovery website', '12-step-meeting-list') ?>
-						</a>
-						<a href="https://github.com/code4recovery/12-step-meeting-list/discussions" target="_blank" class="button">
+						<a href="https://github.com/code4recovery/12-step-meeting-list/discussions" target="_blank" class="button" title="ask on our github discussion forum">
 							<?php _e('Ask a Question', '12-step-meeting-list') ?>
 						</a> 
 					</div>

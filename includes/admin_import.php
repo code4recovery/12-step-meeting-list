@@ -440,15 +440,15 @@ if (!function_exists('tsml_import_page')) {
 			} 		
 		}
 
-		// check user capabilities
-		if ( ! current_user_can( 'manage_options' ) ) {
-			return;
-		}
-
 		//Get the active tab from the $_GET param
 		$default_tab = null;
 		$tab = isset($_GET['tab']) ? $_GET['tab'] : $default_tab;
 
+		/*debugging
+		delete_option('tsml_data_sources');
+		tsml_delete('everything');
+		tsml_delete_orphans();
+		*/
 		?>
 
 

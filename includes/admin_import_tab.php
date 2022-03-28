@@ -52,8 +52,10 @@
 									$parent_region = __('Top-level region', '12-step-meeting-list');
 								} elseif (empty($regions[$properties['parent_region_id']])) {
 									$term = get_term_by('term_id', $properties['parent_region_id'], 'tsml_region');
+									//$parent_region = $term[3];
 									$parent_region = $term->name;
 									if ($parent_region == null) {
+										$parent_region = __('Top-level region', '12-step-meeting-list');
 										$parent_region = 'Missing Parent Region: ' . $properties['parent_region_id'];
 									}
 								} else {
