@@ -86,11 +86,11 @@ That's it, you're done!
 When editing a data source record a warning is given that the record will be over-written when the data source is refreshed. 
 To avoid this warning and prevent a refresh from altering an edited record it's necessary to follow a few simple steps to reimport the data source records:
 
-1 Make a backup of your existing meeting list by using the export link found on the Import tab of the Import & Settings page.
-1 Open the exported file (meetings.csv) which you should find in your local Downloads folder.
-1 Delete the entire 'Data Source' column found near the far right and then Save the file (recommend using Save As to rename the file to something unique such as my-meetings.csv).
-1 Remove the imported data source (click on the X next to it's Last Refresh timestamp). 
-1 Import the saved file using the Import CSV feature on the Import & Settings page. 
+* Make a backup of your existing meeting list by using the export link found on the Import tab of the Import & Settings page.
+* Open the exported file (meetings.csv) which you should find in your local Downloads folder.
+* Delete the entire 'Data Source' column found near the far right and then Save the file (recommend using Save As to rename the file to something unique such as my-meetings.csv).
+* Remove the imported data source (click on the X next to it's Last Refresh timestamp). 
+* Import the saved file using the Import CSV feature on the Import & Settings page. 
 
 Your meeting list records will now no longer display a warning message when being edited, and will not be overwritten by a data source refresh operation!
 

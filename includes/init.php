@@ -36,33 +36,37 @@ add_action('init', function () {
     function tsml_single_template($template)
     {
         global $post, $tsml_user_interface;
+
         if ($post->post_type == 'tsml_meeting') {
+
             $user_theme_file = get_stylesheet_directory() . '/single-meetings.php';
              
             if ($tsml_user_interface == 'tsml_ui') { 
-                    // output we are looking for: https://gutenberg.dev.cc/meetings?meeting=never-stand-alone-group  or  https://gutenberg.dev.cc/meetings?meeting=807-1 
+
+                if (file_exists($user_theme_file)) {
+                    return $user_theme_file;
+                }
+
+                // example of what we are looking for: https://domain.org/meetings?meeting=group-name 
                 $mtg_permalink = get_post_type_archive_link('tsml_meeting');
-                wp_redirect(add_query_arg('meeting', $mtg_permalink ));
+                wp_redirect(add_query_arg($mtg_permalink ));
+                exit;
             }
             
-
             return dirname(__FILE__) . '/../templates/single-meetings.php';
         } elseif ($post->post_type == 'tsml_location') {
             $user_theme_file = get_stylesheet_directory() . '/single-locations.php';
             
+            if (file_exists($user_theme_file)) {
+                return $user_theme_file;
+            }
+
             if ($tsml_user_interface == 'tsml_ui') { 
                 $mtg_permalink = get_post_type_archive_link('tsml_meeting');
-                wp_redirect(add_query_arg('meeting', $mtg_permalink ));
+                wp_redirect($mtg_permalink);
+                exit;
             }
             
-            if (file_exists($user_theme_file)) {
-                return $user_theme_file;
-            }
-
-            if (file_exists($user_theme_file)) {
-                return $user_theme_file;
-            }
-
             return dirname(__FILE__) . '/../templates/single-locations.php';
         }
         return $template;
