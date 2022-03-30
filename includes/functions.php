@@ -1072,10 +1072,10 @@ function tsml_feedback_url($post)
 //used:		tsml_ajax_meetings(), single-locations.php, archive-meetings.php
 function tsml_get_meetings($arguments = [], $from_cache = true, $full_export = false)
 {
-	global $tsml_cache, $tsml_contact_fields, $tsml_contact_display;
+	global $tsml_cache, $tsml_cache_writable, $tsml_contact_fields, $tsml_contact_display;
 
 	//start by grabbing all meetings
-	if ($from_cache && file_exists(WP_CONTENT_DIR . $tsml_cache) && $meetings = file_get_contents(WP_CONTENT_DIR . $tsml_cache)) {
+	if ($from_cache && $tsml_cache_writable && $meetings = file_get_contents(WP_CONTENT_DIR . $tsml_cache)) {
 		$meetings = json_decode($meetings, true);
 	} else {
 		//from database
@@ -1181,7 +1181,14 @@ function tsml_get_meetings($arguments = [], $from_cache = true, $full_export = f
 
 		//write array to cache
 		if (!$full_export) {
-			file_put_contents(WP_CONTENT_DIR . $tsml_cache, json_encode($meetings));
+			$filepath = WP_CONTENT_DIR . $tsml_cache;
+			// Check if the file is writable, and if so, write it
+			if (is_writable($filepath) || (!file_exists($filepath) && is_writable(WP_CONTENT_DIR))) {
+				$filesize = file_put_contents($filepath, json_encode($meetings));
+				update_option('tsml_cache_writable', $filesize === false ? 0 : 1);
+			} else {
+				update_option('tsml_cache_writable', 0);
+			}
 		}
 	}
 
