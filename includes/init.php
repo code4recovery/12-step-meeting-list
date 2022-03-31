@@ -18,6 +18,7 @@ add_action('init', function () {
                 return $user_theme_file;
             }
 
+            // when UI switch set to tsml_ui we use special template depending on block theme or not. 
             if ($tsml_user_interface == 'tsml_ui') { 
                 if (function_exists('wp_is_block_theme') && wp_is_block_theme()) {
                     return dirname(__FILE__) . '/../templates/archive-tsml-ui-blocks.php';
@@ -39,32 +40,35 @@ add_action('init', function () {
 
         if ($post->post_type == 'tsml_meeting') {
 
-            $user_theme_file = get_stylesheet_directory() . '/single-meetings.php';
-             
-            if ($tsml_user_interface == 'tsml_ui') { 
+           // when UI switch set to tsml_ui we bypass. Format: https://domain.org/meetings?meeting=group-name 
+           if ($tsml_user_interface == 'tsml_ui') { 
 
-                if (file_exists($user_theme_file)) {
-                    return $user_theme_file;
-                }
-
-                // example of what we are looking for: https://domain.org/meetings?meeting=group-name 
                 $mtg_permalink = get_post_type_archive_link('tsml_meeting');
-                wp_redirect(add_query_arg($mtg_permalink ));
+                echo $mtg_permalink;
+                wp_redirect(add_query_arg($mtg_permalink));
                 exit;
+            }
+
+            //  when User has a bypass for single-meeting
+            $user_theme_file = get_stylesheet_directory() . '/single-meetings.php'; 
+            if (file_exists($user_theme_file)) {
+                return $user_theme_file;
             }
             
             return dirname(__FILE__) . '/../templates/single-meetings.php';
         } elseif ($post->post_type == 'tsml_location') {
-            $user_theme_file = get_stylesheet_directory() . '/single-locations.php';
             
+           // when UI switch set to tsml_ui we bypass. Format: https://domain.org/meetings?meeting=group-name 
+            if ($tsml_user_interface == 'tsml_ui') { 
+                $loc_permalink = $post->post_name;
+                wp_redirect($loc_permalink);
+                exit;
+            }
+  
+            // when User has a bypass for single-locations
+            $user_theme_file = get_stylesheet_directory() . '/single-locations.php';
             if (file_exists($user_theme_file)) {
                 return $user_theme_file;
-            }
-
-            if ($tsml_user_interface == 'tsml_ui') { 
-                $mtg_permalink = get_post_type_archive_link('tsml_meeting');
-                wp_redirect($mtg_permalink);
-                exit;
             }
             
             return dirname(__FILE__) . '/../templates/single-locations.php';

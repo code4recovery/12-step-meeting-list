@@ -69,13 +69,13 @@ Note you can add multiple entries to the array below.
 	}
 
 = What is Change Detection? =
-Change Detection is a feature that augments our data import utility by sensing data changes in enabled data source feeds and generating email notifications for Change Notification Email recipients who you registered on the Import & Settings page.
+Change Detection is a feature that augments our data import utility by sensing data changes in enabled data source feeds and generating email notifications to Change Notification Email recipients who you registered on the Import & Settings page.
 
 = How can I enable Change Detection for my disabled data source? =
 Change Detection can only be enabled when adding a data source to your list of Data Sources. Re-registering an existing data source is necessary to get Change Detection enabled. This includes:
 * To be safe, always make a backup of your existing meeting list by using the link on the Import tab to export your Meeting List.
 * If you are going to have change detection on multple data sources, you may choose to add the parent organization(s) to your list of Regions first (i.e. District 1, YourCity Intergroup, etc.)
-* Remove the data source (click on the X next to it's Last Refresh timestamp) We suggest first noting the json feed URL (hover over the feed name to view the URL) for use when adding it back 
+* Remove the data source (click on the X next to its Last Refresh timestamp) We suggest first noting the json feed URL (hover over the feed name to view the URL) for use when adding it back 
 * Set data source options: enter a name for your feed, set the feed URL, select the parent region from the Parent Region dropdown, and lastly choose the "Change Detection Enabled" option.
 * Pressing the "Add Data Source" button will register a WordPress Cron Job (tsml_scan_data_source) for the newly added and enabled data source. By default, this cron job is scheduled to run "Once Daily" starting at midnight (12:00 AM). 
 The frequency and scheduled time that the cron job runs is completely configurable by you if the "WP Crontrol" plugin has been installed.
@@ -89,7 +89,7 @@ To avoid this warning and prevent a refresh from altering an edited record it's 
 * Make a backup of your existing meeting list by using the export link found on the Import tab of the Import & Settings page.
 * Open the exported file (meetings.csv) which you should find in your local Downloads folder.
 * Delete the entire 'Data Source' column found near the far right and then Save the file (recommend using Save As to rename the file to something unique such as my-meetings.csv).
-* Remove the imported data source (click on the X next to it's Last Refresh timestamp). 
+* Remove the imported data source (click on the X next to its Last Refresh timestamp). 
 * Import the saved file using the Import CSV feature on the Import & Settings page. 
 
 Your meeting list records will now no longer display a warning message when being edited, and will not be overwritten by a data source refresh operation!
