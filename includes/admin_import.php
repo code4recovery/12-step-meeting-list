@@ -461,6 +461,8 @@ if (!function_exists('tsml_import_page')) {
 				</div>
 			<?php } ?>
 
+			<h1></h1> <!-- Set alerts here -->
+
 			<div id="poststuff" >
 				<div id="post-body" class="inside ">
 					<div id="post-body-content" >

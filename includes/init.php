@@ -36,20 +36,25 @@ add_action('init', function () {
     add_filter('single_template', 'tsml_single_template');
     function tsml_single_template($template)
     {
-        global $post, $tsml_user_interface;
+        global $post, $tsml_user_interface, $loc_ui_flag;
 
         if ($post->post_type == 'tsml_meeting') {
 
            // when UI switch set to tsml_ui we bypass. Format: https://domain.org/meetings?meeting=group-name 
            if ($tsml_user_interface == 'tsml_ui') { 
-
+                // handle any open legacy ui detail in other tab when switch ui made to tsml ui
+                if  ( $loc_ui_flag != $tsml_user_interface ) {
+                    $loc_ui_flag = $tsml_user_interface;
+                    return dirname(__FILE__) . '/../templates/single-meetings.php';
+                }
+                // redirect meeting
                 $mtg_permalink = get_post_type_archive_link('tsml_meeting');
-                echo $mtg_permalink;
                 wp_redirect(add_query_arg($mtg_permalink));
+                $loc_ui_flag = $tsml_user_interface;
                 exit;
             }
 
-            //  when User has a bypass for single-meeting
+            //  when User has a custom bypass for single-meeting
             $user_theme_file = get_stylesheet_directory() . '/single-meetings.php'; 
             if (file_exists($user_theme_file)) {
                 return $user_theme_file;
@@ -59,13 +64,20 @@ add_action('init', function () {
         } elseif ($post->post_type == 'tsml_location') {
             
            // when UI switch set to tsml_ui we bypass. Format: https://domain.org/meetings?meeting=group-name 
-            if ($tsml_user_interface == 'tsml_ui') { 
+            if ($tsml_user_interface == 'tsml_ui')  { 
+                // handle any open legacy ui detail in other tab when switch ui made to tsml ui
+                if  ( $loc_ui_flag != $tsml_user_interface ) {
+                    wp_redirect(add_query_arg('mmetings', null));
+                    $loc_ui_flag = $tsml_user_interface;
+                    exit;
+                }
+                // redirect location 
                 $loc_permalink = $post->post_name;
-                wp_redirect($loc_permalink);
+                wp_redirect(add_query_arg($loc_permalink));
                 exit;
             }
   
-            // when User has a bypass for single-locations
+            // when User has a custom bypass for single-locations
             $user_theme_file = get_stylesheet_directory() . '/single-locations.php';
             if (file_exists($user_theme_file)) {
                 return $user_theme_file;
