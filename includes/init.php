@@ -18,13 +18,9 @@ add_action('init', function () {
                 return $user_theme_file;
             }
 
-            // when UI switch set to tsml_ui we use special template depending on block theme or not. 
+            // when UI switch set to tsml_ui we use special template
             if ($tsml_user_interface == 'tsml_ui') {
-                if (function_exists('wp_is_block_theme') && wp_is_block_theme()) {
-                    return dirname(__FILE__) . '/../templates/archive-tsml-ui-blocks.php';
-                } else {
-                    return dirname(__FILE__) . '/../templates/archive-tsml-ui-classic.php';
-                }
+                return dirname(__FILE__) . '/../templates/archive-tsml-ui.php';
             } else { // legacy_ui
                 return dirname(__FILE__) . '/../templates/archive-meetings.php';
             }
