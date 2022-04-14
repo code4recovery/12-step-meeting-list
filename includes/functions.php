@@ -1328,7 +1328,7 @@ function tsml_import_buffer_set($meetings, $data_source_url = null, $data_source
 {
 	global $tsml_programs, $tsml_program, $tsml_days, $tsml_meeting_attendance_options, $tsml_data_sources;
 
-	if (strpos($data_source_url, "spreadsheets.google.com") !== false) {
+	if (strpos($data_source_url, "sheets.googleapis.com") !== false) {
 		$meetings = tsml_import_reformat_googlesheet($meetings);
 	}
 
@@ -1716,16 +1716,15 @@ function tsml_import_reformat_fnv($rows)
 //used: tsml_import_buffer_set
 function tsml_import_reformat_googlesheet($data)
 {
-	$meetings = [];
+$meetings = [];
 
-	for ($i = 0; $i < count($data['feed']['entry']); $i++) {
+	for ($i = 1; $i < count($data['values']); $i++) {
 
-		//creates a meeting array with elements corresponding to each column header of the Google Sheet
+		//creates a meeting array with elements corresponding to each column header of the Google Sheet; updated for Google Sheets v4 API 
 		$meeting = [];
-		$meetingKeys = array_keys($data['feed']['entry'][$i]);
-		for ($j = 0; $j < count($meetingKeys); $j++) {
-			if (substr($meetingKeys[$j], 0, 4) == "gsx$") {
-				$meeting[substr($meetingKeys[$j], 4)] = $data['feed']['entry'][$i][$meetingKeys[$j]]['$t'];
+		for ($j=0; $j < count($data['values'][0]); $j++) {
+			if ( isset($data['values'][$i][$j]) ){			
+				$meeting[$data['values'][0][$j]] = $data['values'][$i][$j];
 			}
 		}
 
