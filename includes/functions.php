@@ -1716,15 +1716,20 @@ function tsml_import_reformat_fnv($rows)
 //used: tsml_import_buffer_set
 function tsml_import_reformat_googlesheet($data)
 {
-$meetings = [];
+	$meetings = [];
 
-	for ($i = 1; $i < count($data['values']); $i++) {
+	$header = array_shift($data['values']);
+	$header = array_map('sanitize_title_with_dashes', $header);
+	$header = str_replace('-', '_', $header);
+	$header_count = count($header);
+
+	foreach ($data['values'] as $row) {
 
 		//creates a meeting array with elements corresponding to each column header of the Google Sheet; updated for Google Sheets v4 API 
 		$meeting = [];
-		for ($j=0; $j < count($data['values'][0]); $j++) {
-			if ( isset($data['values'][$i][$j]) ){			
-				$meeting[$data['values'][0][$j]] = $data['values'][$i][$j];
+		for ($j = 0; $j < $header_count; $j++) {
+			if (isset($row[$j])) {
+				$meeting[$header[$j]] = $row[$j];
 			}
 		}
 
