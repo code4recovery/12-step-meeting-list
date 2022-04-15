@@ -9,7 +9,7 @@ if you need to customize your site, please follow the instructions on our FAQ:
 $tsml_bounds = get_option('tsml_bounds');
 
 //get the secret cache location
-$tsml_cache = '/meetings.json';
+$tsml_cache = '/meetings-cache-' . get_current_blog_id() . '.json';
 $tsml_cache_writable = boolval(get_option('tsml_cache_writable', 0));
 
 // Define attendance options
