@@ -44,6 +44,10 @@ add_action('admin_init', function () {
 			delete_option('tsml_cache');
 		}
 
+		if (file_exists(WP_CONTENT_DIR . '/meetings.json')) {
+			unlink(WP_CONTENT_DIR . '/meetings.json');
+		}
+
 		//Rebuild the meeting cache
 		tsml_cache_rebuild();
 
