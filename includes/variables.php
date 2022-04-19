@@ -13,13 +13,14 @@ if (!$tsml_cache = get_option('tsml_cache')) {
 	$tsml_cache = '/tsml-cache-' . substr(str_shuffle(md5(microtime())), 0, 10) . '.json';
 	update_option('tsml_cache', $tsml_cache);
 }
+$tsml_cache_writable = boolval(get_option('tsml_cache_writable', 0));
 
 // Define attendance options
 $tsml_meeting_attendance_options = [
 	'in_person' => __('In-person', '12-step-meeting-list'),
 	'hybrid' => __('In-person and Online', '12-step-meeting-list'),
 	'online' => __('Online', '12-step-meeting-list'),
-	'inactive' => __('Temporarily Inactive', '12-step-meeting-list'),
+	'inactive' => __('Inactive', '12-step-meeting-list'),
 ];
 
 //load the set of columns that should be present in the list (not sure why this shouldn't go after plugins_loaded below)
@@ -102,6 +103,9 @@ $tsml_google_maps_key = get_option('tsml_google_maps_key');
 
 //load the geocoding method
 $tsml_geocoding_method = get_option('tsml_geocoding_method', 'legacy');
+
+//load the screen user interface choice
+$tsml_user_interface = get_option('tsml_user_interface', 'legacy_ui');
 
 /*
 unfortunately the google geocoding API is not always perfect. used by tsml_import() and admin.js

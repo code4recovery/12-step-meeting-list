@@ -2,8 +2,8 @@
 Contributors: Code for Recovery
 Requires at least: 3.2
 Requires PHP: 5.6
-Tested up to: 5.8.2
-Stable tag: 3.12.1
+Tested up to: 5.9.2
+Stable tag: 3.14.1
 
 This plugin helps twelve step recovery programs list their meetings. It standardizes addresses, and displays results in a searchable list and map.
 
@@ -68,6 +68,32 @@ Note you can add multiple entries to the array below.
 		));
 	}
 
+= What is Change Detection? =
+Change Detection is a feature that augments our data import utility by sensing data changes in enabled data source feeds and generating email notifications to Change Notification Email recipients who you registered on the Import & Settings page.
+
+= How can I enable Change Detection for my disabled data source? =
+Change Detection can only be enabled when adding a data source to your list of Data Sources. Re-registering an existing data source is necessary to get Change Detection enabled. This includes:
+* To be safe, always make a backup of your existing meeting list by using the link on the Import tab to export your Meeting List.
+* If you are going to have change detection on multple data sources, you may choose to add the parent organization(s) to your list of Regions first (i.e. District 1, YourCity Intergroup, etc.)
+* Remove the data source (click on the X next to its Last Refresh timestamp) We suggest first noting the json feed URL (hover over the feed name to view the URL) for use when adding it back
+* Set data source options: enter a name for your feed, set the feed URL, select the parent region from the Parent Region dropdown, and lastly choose the "Change Detection Enabled" option.
+* Pressing the "Add Data Source" button will register a WordPress Cron Job (tsml_scan_data_source) for the newly added and enabled data source. By default, this cron job is scheduled to run "Once Daily" starting at midnight (12:00 AM).
+The frequency and scheduled time that the cron job runs is completely configurable by you if the "WP Crontrol" plugin has been installed.
+
+That's it, you're done!
+
+= How can I convert a data source into a maintainable list for my new website? =
+When editing a data source record a warning is given that the record will be over-written when the data source is refreshed.
+To avoid this warning and prevent a refresh from altering an edited record it's necessary to follow a few simple steps to reimport the data source records:
+
+* Make a backup of your existing meeting list by using the export link found on the Import tab of the Import & Settings page.
+* Open the exported file (meetings.csv) which you should find in your local Downloads folder.
+* Delete the entire 'Data Source' column found near the far right and then Save the file (recommend using Save As to rename the file to something unique such as my-meetings.csv).
+* Remove the imported data source (click on the X next to its Last Refresh timestamp).
+* Import the saved file using the Import CSV feature on the Import & Settings page.
+
+Your meeting list records will now no longer display a warning message when being edited, and will not be overwritten by a data source refresh operation!
+
 = How can I make the Region dropdown not be collapsible? =
 No problem, just add this CSS to your theme:
 
@@ -91,7 +117,7 @@ Add this to your theme's functions.php.
 
 	$tsml_street_only = false;
 
-= Can I add a feedback_url to each meeting when using tsml_ui? = Add a URL to your themes functions.php.
+= Can I add a feedback_url to each meeting when using TSML UI? = Add a URL to your themes functions.php.
 
 	$tsml_feedback_url = "https://domain.com?meeting={{slug}}";
 	$tsml_feedback_url = "https://domain.com?meeting={{id}}";
@@ -219,6 +245,26 @@ To apply these changes, you must go to Settings > Permalinks and click "Save Cha
 1. Edit location
 
 == Changelog ==
+
+= 3.14.1 =
+* Make cache file unique
+
+= 3.14 =
+* Add Switch UI feature to facilitate switching between the two available user interface displays: Legacy UI and TSML UI
+* Refactor Import & Settings page with tabs & cards to segregate and group features and settings
+* Modify feed to follow the directive from setting "Meeting/Group Contacts Are" (Private/Public)
+* Improve CSV export/import, includes contact and imported feed information
+* Add TSML widget on WordPress dashboard
+
+= 3.13 =
+* Add change detection notification option for feeds
+* Update url in TSML UI shortcode
+* Fix district dropdown list
+* Write approximate value when saving location
+
+= 3.12.2 =
+* Fix bug adding pages
+* Fix database updates
 
 = 3.12.1 =
 * Add CSS class for past meetings

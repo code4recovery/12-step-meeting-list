@@ -101,9 +101,9 @@ add_shortcode('tsml_types_list', function () {
 //output a react meeting finder widget https://github.com/code4recovery/tsml-ui
 function tsml_ui()
 {
-	global $tsml_mapbox_key, $tsml_nonce, $tsml_conference_providers, $tsml_language, $tsml_programs, $tsml_program, $tsml_ui_config, $tsml_feedback_addresses;
-	$js = defined('TSML_UI_PATH') ? TSML_UI_PATH : 'https://react.meetingguide.org/app.js';
-	wp_enqueue_script('tsml_ui', $js);
+	global $tsml_mapbox_key, $tsml_nonce, $tsml_conference_providers, $tsml_language, $tsml_programs, $tsml_program, $tsml_ui_config, $tsml_feedback_addresses, $tsml_cache, $tsml_cache_writable;
+	$js = defined('TSML_UI_PATH') ? TSML_UI_PATH : 'https://tsml-ui.code4recovery.org/app.js';
+	wp_enqueue_script('tsml_ui', $js, [], false, true);
 	wp_localize_script('tsml_ui', 'tsml_react_config', array_merge(
 		[
 			'conference_providers' => $tsml_conference_providers,
@@ -116,10 +116,12 @@ function tsml_ui()
 		],
 		$tsml_ui_config
 	));
-	$data = admin_url('admin-ajax.php') . '?action=meetings&nonce=' . wp_create_nonce($tsml_nonce);
-	return '<div id="tsml-ui" 
-					data-src="' . $data . '" 
-					data-timezone="' . get_option('timezone_string', 'America/New_York') . '" 
+
+	// use meetings.json if it's writable, otherwise use the admin-ajax URL to the feed
+	$data = $tsml_cache_writable && file_exists(WP_CONTENT_DIR . $tsml_cache) && defined('ABSPATH') ? get_site_url() . str_replace(ABSPATH, '/', WP_CONTENT_DIR) . $tsml_cache : admin_url('admin-ajax.php') . '?action=meetings&nonce=' . wp_create_nonce($tsml_nonce);
+	return '<div id="tsml-ui"
+					data-src="' . $data . '"
+					data-timezone="' . get_option('timezone_string', 'America/New_York') . '"
 					data-mapbox="' . $tsml_mapbox_key . '"></div>';
 }
 add_shortcode('tsml_react', 'tsml_ui');

@@ -10,13 +10,20 @@ add_action('init', function () {
     add_filter('archive_template', 'tsml_archive_template');
     function tsml_archive_template($template)
     {
+        global $tsml_user_interface;
+
         if (is_post_type_archive('tsml_meeting')) {
             $user_theme_file = get_stylesheet_directory() . '/archive-meetings.php';
             if (file_exists($user_theme_file)) {
                 return $user_theme_file;
             }
 
-            return dirname(__FILE__) . '/../templates/archive-meetings.php';
+            // when UI switch set to tsml_ui we use special template
+            if ($tsml_user_interface == 'tsml_ui') {
+                return dirname(__FILE__) . '/../templates/archive-tsml-ui.php';
+            } else { // legacy_ui
+                return dirname(__FILE__) . '/../templates/archive-meetings.php';
+            }
         }
         return $template;
     }
@@ -25,20 +32,41 @@ add_action('init', function () {
     add_filter('single_template', 'tsml_single_template');
     function tsml_single_template($template)
     {
-        global $post;
-        if ($post->post_type == 'tsml_meeting') {
+        global $post, $tsml_user_interface;
+
+        if ($post->post_type === 'tsml_meeting') {
+
+            //when TSML UI is enabled, redirect legacy meeting detail page to TSML UI detail page
+            if ($tsml_user_interface === 'tsml_ui') {
+                $mtg_permalink = get_post_type_archive_link('tsml_meeting');
+                wp_redirect(add_query_arg('meeting', $post->post_name, $mtg_permalink));
+                exit;
+            }
+
+            //user has a custom meeting detail page
             $user_theme_file = get_stylesheet_directory() . '/single-meetings.php';
             if (file_exists($user_theme_file)) {
                 return $user_theme_file;
             }
 
+            //show legacy meeting detail page
             return dirname(__FILE__) . '/../templates/single-meetings.php';
         } elseif ($post->post_type == 'tsml_location') {
+
+            //when TSML UI is enabled, redirect legacy location page to main meetings page
+            if ($tsml_user_interface == 'tsml_ui') {
+                $mtg_permalink = get_post_type_archive_link('tsml_meeting');
+                wp_redirect($mtg_permalink);
+                exit;
+            }
+
+            //user has a custom location detail page
             $user_theme_file = get_stylesheet_directory() . '/single-locations.php';
             if (file_exists($user_theme_file)) {
                 return $user_theme_file;
             }
 
+            //show legacy location detail page
             return dirname(__FILE__) . '/../templates/single-locations.php';
         }
         return $template;

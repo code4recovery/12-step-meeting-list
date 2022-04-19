@@ -310,7 +310,13 @@ add_filter('body_class', function ($classes) {
 });
 
 //do this after everything is loaded
-get_header();
+/*
+if (function_exists('wp_is_block_theme') && wp_is_block_theme()) {
+    echo do_blocks( '<!-- wp:template-part {"slug":"header","theme":"twentytwentytwo","tagName":"header","className":"site-header","layout":{"inherit":true}} /-->' );
+}
+else { */
+    get_header();
+// }
 
 ?>
 <div id="tsml">
@@ -668,4 +674,13 @@ get_header();
 </script>
 
 <?php
-get_footer();
+/*
+if (function_exists('wp_is_block_theme') && wp_is_block_theme()) {
+   echo do_blocks('<!-- wp:template-part {"slug":"footer","theme":"twentytwentytwo","tagName":"footer","className":"site-footer","layout":{"inherit":true}} /-->');
+   wp_footer();
+}
+else { */
+    get_footer();
+// }
+
+

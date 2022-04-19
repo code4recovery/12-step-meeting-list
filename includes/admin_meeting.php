@@ -36,6 +36,18 @@ add_action('admin_init', function () {
 		// Delete the attendance_option metadata tag, don't need it
 		delete_metadata('post', 0, 'attendance_option', false, true);
 
+		// Remove old cache info
+		if ($tmpstr = get_option('tsml_cache')) {
+			if (file_exists(WP_CONTENT_DIR . $tmpstr)) {
+				unlink(WP_CONTENT_DIR . $tmpstr);
+			}
+			delete_option('tsml_cache');
+		}
+
+		if (file_exists(WP_CONTENT_DIR . '/meetings.json')) {
+			unlink(WP_CONTENT_DIR . '/meetings.json');
+		}
+
 		//Rebuild the meeting cache
 		tsml_cache_rebuild();
 
@@ -314,7 +326,7 @@ add_action('admin_init', function () {
 						'hide_empty' => false,
 						'orderby' => 'name',
 						'selected' => $district,
-						'show_option_none' => __('District', '12-step-meeting-list'),
+						'show_option_none' => __('None', '12-step-meeting-list'),
 					]) ?>
 				</div>
 			<?php } ?>

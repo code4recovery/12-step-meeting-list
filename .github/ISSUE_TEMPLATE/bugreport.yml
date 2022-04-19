@@ -5,6 +5,7 @@ labels: [bug, triage]
 assignees:
   - tech2serve
   - brianw-area24
+  - 97eighty
 body:
   - type: markdown
     attributes:

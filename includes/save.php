@@ -9,12 +9,14 @@ add_filter('wp_insert_post_data', function ($post) {
 		$post['post_content'] = tsml_sanitize_text_area($post['post_content']);
 	}
 
-	//check for blank title. if empty, build one from entered values
-	if (empty($post['post_title'])) {
-		$title = empty($_POST['location']) ? __('New Meeting', '12-step-meeting-list') : $_POST['location'];
-		$title .= in_array($_POST['day'], ['0', '1', '2', '3', '4', '5', '6']) ? ' ' . $tsml_days[$_POST['day']] : '';
-		$title .= empty($_POST['time']) ? '' : ' ' . $_POST['time'];
-		$post['post_title'] = $title;
+	if ($post['post_type'] == 'tsml_meeting') {
+		//check for blank title. if empty, build one from entered values
+		if (empty($post['post_title'])) {
+			$title = empty($_POST['location']) ? __('New Meeting', '12-step-meeting-list') : $_POST['location'];
+			$title .= in_array($_POST['day'], ['0', '1', '2', '3', '4', '5', '6']) ? ' ' . $tsml_days[$_POST['day']] : '';
+			$title .= empty($_POST['time']) ? '' : ' ' . $_POST['time'];
+			$post['post_title'] = $title;
+		}
 	}
 
 	return $post;
@@ -257,6 +259,7 @@ add_action('save_post', function ($post_id, $post, $update) {
 					update_post_meta($location_id, $field, floatval($_POST[$field]));
 				}
 			}
+			update_post_meta($location_id, 'approximate', $approximate ? 'yes' : 'no');
 
 			//update region
 			if (!$update || $old_meeting->region_id != $_POST['region']) {
