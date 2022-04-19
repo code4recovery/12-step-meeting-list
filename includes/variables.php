@@ -43,6 +43,7 @@ $tsml_conference_providers = [
 	'meet.google.com' => 'Google Hangouts',
 	'gotomeet.me' => 'GoToMeeting',
 	'gotomeeting.com' => 'GoToMeeting',
+	'meet.jit.si' => 'Jitsi',
 	'skype.com' => 'Skype',
 	'webex.com' => 'WebEx',
 	'zoho.com' => 'Zoho',
