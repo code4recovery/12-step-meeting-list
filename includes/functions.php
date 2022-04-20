@@ -2058,39 +2058,104 @@ if (!function_exists('tsml_scan_data_source')) {
 	}
 }
 
-//function:	Returns boolean indicator when data source changes detected
-function tsml_import_has_changes($meetings, $data_source_count_meetings, $data_source_last_refresh)
+//function:	Returns summary list of modified records when data source changes detected
+function tsml_import_has_changes($data_source_url, $meetings, $data_source_count_meetings, $data_source_last_refresh)
 {
+	$is_there_change = false;
+	$meetings_updated = $db_meetings = $feed_slugs = $message_lines = [];
+	$days = [0 => 'Sunday',1 => 'Monday',2 => 'Tuesday',3 => 'Wednesday',4 => 'Thursday',5 => 'Friday',6 => 'Saturday'];
 
-	$meetings_updated = array();
+	//get db meetings 
+	$all_db_meetings = tsml_get_meetings();
+	$ds_ids = tsml_get_data_source_ids($data_source_url);
+	sort($ds_ids);
 
-	//allow theme-defined function to reformat import - issue #439
-	/*if (function_exists('tsml_import_reformat')) {
-		$meetings = tsml_import_reformat($meetings);
-	}*/
-
-	if (count($meetings) !== $data_source_count_meetings) {
-
-		if (count($meetings) > $data_source_count_meetings) {
-			$meetings_updated[] = 'Feed Records: ' . count($meetings) . ' more than DB Records: ' . $data_source_count_meetings;
-		} elseif (count($meetings) < $data_source_count_meetings) {
-			$meetings_updated[] = 'Feed Records: ' . count($meetings) . ' less than DB Records: ' . $data_source_count_meetings;
-		} else {
-			$meetings_updated[] = 'Record count different';
+	/* filter out all but the data source meetings  */
+	foreach ($all_db_meetings as $db_meeting) {
+	    $db_id = $db_meeting['id'];
+		if (in_array($db_id, $ds_ids)) {
+		    array_push($db_meetings, $db_meeting);
 		}
 	}
 
+	// create array of db slugs for matching
+	$db_slugs = array_column($db_meetings, 'slug', 'id');
+	sort($db_slugs);
+	$db_slugs_cnt = count($db_slugs);
+
+	// list changed and new meetings found in the ds feed
 	foreach ($meetings as $meeting) {
+
+	    $mtg_slug =  $meeting['slug'];
+		if (is_array($meeting['day'])) {
+			$dow = implode("",  $meeting['day']);
+		} else {
+			$dow = $meeting['day'];
+		}
+		
+		if ( is_numeric( $mtg_slug )) {
+			$mtg_slug .= '-' . $dow; 
+		}
+
+		// match feed/database on unique slug
+	    $is_matched = in_array( $mtg_slug, $db_slugs );
+
+		// add slug to feed array to help determine current db removals later on...
+		$feed_slugs[$meeting['slug']] = $mtg_slug;
 
 		// has meeting been updated?
 		$updated = $meeting['updated'];
 		$cur_meeting_lastupdate = strtotime($updated);
-
 		if ($cur_meeting_lastupdate > $data_source_last_refresh) {
+			$is_there_change = true;
 			$mtg_name = $meeting['name'];
-			$mtg_updte = date("l F j, Y  h:i a", $cur_meeting_lastupdate);
-			$meetings_updated[] = "$mtg_name updated: $mtg_updte";
+			$mtg_updte = date("M j, Y  g:i a", $cur_meeting_lastupdate);
+			if ( is_numeric( $dow )) {
+				$dayofweek = $days[date($dow)]; 
+			} else {
+				$dayofweek = $dow; 
+			}
+			
+			if ($is_matched) {
+				$message_lines[] = "<tr style='color:gray;'><td>Change</td><td >$mtg_name</td><td>$dayofweek</td><td>$mtg_updte</td></tr>";
+			}
+			else {
+				$message_lines[] = "<tr style='color:green;'><td>Add New</td><td >$mtg_name</td><td>$dayofweek</td><td>$mtg_updte</td></tr>";
+			}
 		}
+	}
+
+	sort($feed_slugs);
+
+	// list removed meetings found in local db
+	foreach ($db_meetings as $db_meeting) {
+
+	    $mtg_slug =  $db_meeting['slug'];
+		if (is_array($db_meeting['day'])) {
+			$dow = implode("",  $db_meeting['day']);
+		} else {
+			$dow = $db_meeting['day'];
+		}
+
+	    $is_matched = in_array( $mtg_slug, $feed_slugs );
+
+		if (!$is_matched) {
+		    $is_there_change = true;
+			if ( is_numeric( $dow )) {
+				$dayofweek = $days[date($dow)]; 
+			} else {
+				$dayofweek = $dow; 
+			}
+			$updated = $data_source_last_refresh;
+			$cur_meeting_lastupdate = strtotime($updated);
+			$mtg_updte = date("M j, Y  g:i a", $updated);
+			$mtg_name = $db_meeting['name'];
+			$message_lines[] = "<tr style='color:red;'><td>Remove</td><td >$mtg_name</td><td>$dayofweek</td><td>* $mtg_updte</td></tr>";
+		}
+	}
+
+	if ($is_there_change) {
+		$meetings_updated = $message_lines;
 	}
 	return $meetings_updated;
 }
