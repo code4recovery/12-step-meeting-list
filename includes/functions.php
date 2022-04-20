@@ -1985,26 +1985,28 @@ if (!function_exists('tsml_scan_data_source')) {
 				}
 
 				// check import feed for changes
-				$meetings_updated = tsml_import_has_changes($meetings, $data_source_count_meetings, $data_source_last_import);
-
-				if ($meetings_updated) {
+				$meetings_updated = tsml_import_has_changes($data_source_url, $meetings, $data_source_count_meetings, $data_source_last_import);
+				
+				if (count($meetings_updated) > 0) {
 					// Send Email notifying Admins that this Data Source needs updating
 					$message = "Data Source changes were detected during a scheduled sychronization check with this feed: $data_source_url. Your website meeting list details based on the $data_source_name feed are no longer in sync. <br><br>Please sign-in to your website and refresh the $data_source_name Data Source feed found on the Meetings Import & Settings page.<br><br>";
 					$message .= "data_source_name: $data_source_name <br>";
 					$term = get_term_by('term_id', $data_source_parent_region_id, 'tsml_region');
 					$parent_region = $term->name;
 					$message .= "parent_region: $parent_region <br>";
-					$message .= "change_detect: $data_source_change_detect <br>";
+					//$message .= "change_detect: $data_source_change_detect <br>";
 					$message .= " database count: $data_source_count_meetings <br>";
 					$feedCount = count($meetings);
-					$message .= "import feed cnt: $feedCount<br>";
-					$message .= 'Last Refresh: ' . Date("l F j, Y  h:i a", $data_source_last_import) . '<br>';
-					if ($meetings_updated) {
-						$message .= "<br><b><u>Detected Difference</b></u><br>";
-						foreach ($meetings_updated as $updated_group) {
-							$message .=  "$updated_group <br>";
-						}
+					$message .= "data source feed cnt: $feedCount<br>";
+					$message .= "Last Refresh: <span style='color:red;'>*</span>" . Date("l F j, Y  h:i a", $data_source_last_import) . '<br>';
+					$message .= "<br><b><u>Detected Difference</b></u><br>";
+					$message .= "<table border='1' style='width:600px;'><tbody><tr><th>Update Mode</th><th>Meeting Name</th><th>Day of Week</th><th>Last Updated</th></tr>";
+					foreach	($meetings_updated as $key => $value) {
+						$message .= $value;
 					}
+					$message .= "</tbody></table><br>";
+					$import_page_url = 'https://' . $_SERVER['SERVER_NAME'] . '/wp-admin/edit.php?post_type=tsml_meeting&page=import';
+					$message .= "<a href='" . $import_page_url . "' style=' margin: 0 auto;background-color: #4CAF50;border: none;color: white;padding: 25px 32px;text-align: center;text-decoration: none;display: table;font-size: 18px;'>Goto Import & Settings page...</a>";
 
 					// send Changes Detected email
 					$subject = __('Data Source Changes Detected', '12-step-meeting-list') . ': ' . $data_source_name;
