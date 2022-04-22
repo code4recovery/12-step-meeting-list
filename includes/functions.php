@@ -2060,6 +2060,15 @@ if (!function_exists('tsml_scan_data_source')) {
 function tsml_import_changes($feed_meetings, $data_source_url, $data_source_last_refresh)
 {
 	$db_meetings = $feed_slugs = $message_lines = [];
+	$week_days	= [
+		__('Sunday', '12-step-meeting-list'),
+		__('Monday', '12-step-meeting-list'),
+		__('Tuesday', '12-step-meeting-list'),
+		__('Wednesday', '12-step-meeting-list'),
+		__('Thursday', '12-step-meeting-list'),
+		__('Friday', '12-step-meeting-list'),
+		__('Saturday', '12-step-meeting-list'),
+	];	
 
 	// get local meetings 
 	$all_db_meetings = tsml_get_meetings();
@@ -2081,7 +2090,7 @@ function tsml_import_changes($feed_meetings, $data_source_url, $data_source_last
 	// list changed and new meetings found in the data source feed
 	foreach ($feed_meetings as $meeting) {
 	
-		list($dayofweek, $dow_number) = tsml_get_day_of_week_info($meeting['day']);
+		list($day_of_week, $dow_number) = tsml_get_day_of_week_info($meeting['day'], $week_days);
 	    $meeting_slug =  $meeting['slug'];
 
 		// numeric slugs may need some reformatting
@@ -2102,10 +2111,10 @@ function tsml_import_changes($feed_meetings, $data_source_url, $data_source_last
 			$meeting_update_date = date('M j, Y  g:i a', $current_meeting_last_update);
 			
 			if ($is_matched) {
-				$message_lines[] = "<tr style='color:gray;'><td>Change</td><td >$meeting_name</td><td>$dayofweek</td><td>$meeting_update_date</td></tr>";
+				$message_lines[] = "<tr style='color:gray;'><td>Change</td><td >$meeting_name</td><td>$day_of_week</td><td>$meeting_update_date</td></tr>";
 			}
 			else {
-				$message_lines[] = "<tr style='color:green;'><td>Add New</td><td >$meeting_name</td><td>$dayofweek</td><td>$meeting_update_date</td></tr>";
+				$message_lines[] = "<tr style='color:green;'><td>Add New</td><td >$meeting_name</td><td>$day_of_week</td><td>$meeting_update_date</td></tr>";
 			}
 		}
 	}
@@ -2113,7 +2122,7 @@ function tsml_import_changes($feed_meetings, $data_source_url, $data_source_last
 	// list meetings in local database which are not matched with feed
 	foreach ($db_meetings as $db_meeting) {
 
-		list($dayofweek, $dow_number) = tsml_get_day_of_week_info($db_meeting['day']);
+		list($day_of_week, $dow_number) = tsml_get_day_of_week_info($db_meeting['day'], $week_days);
 	    $meeting_slug = $db_meeting['slug'];
 
 	    $is_matched = in_array( $meeting_slug, $feed_slugs );
@@ -2121,7 +2130,7 @@ function tsml_import_changes($feed_meetings, $data_source_url, $data_source_last
 		if (!$is_matched) {
 			$meeting_update_date = date('M j, Y  g:i a', $data_source_last_refresh);
 			$meeting_name = $db_meeting['name'];
-			$message_lines[] = "<tr style='color:red;'><td>Remove</td><td >$meeting_name</td><td>$dayofweek</td><td>* $meeting_update_date</td></tr>";
+			$message_lines[] = "<tr style='color:red;'><td>Remove</td><td >$meeting_name</td><td>$day_of_week</td><td>* $meeting_update_date</td></tr>";
 		}
 	}
 	
@@ -2130,13 +2139,11 @@ function tsml_import_changes($feed_meetings, $data_source_url, $data_source_last
 
 //function:	Returns corresponding day of week string and number for the day input
 if (!function_exists('tsml_get_day_of_week_info')) {
-	function tsml_get_day_of_week_info( $meeting_day_input, $dayofweek = '', $dow_number = '' )
+	function tsml_get_day_of_week_info( $meeting_day_input, $week_days, $day_of_week = '', $dow_number = '' )
 	{
-		global $tsml_days;
-		
 		// when day is like "Sunday" convert to number 0
-		if ( in_array($meeting_day_input, $tsml_days) ) {
-			$dow_number = array_search($meeting_day_input, $tsml_days);
+		if ( in_array($meeting_day_input, $week_days) ) {
+			$dow_number = array_search($meeting_day_input, $week_days);
 
 		} elseif ( is_array($meeting_day_input) ) {
 			$dow_number = implode("",  $meeting_day_input);
@@ -2146,9 +2153,9 @@ if (!function_exists('tsml_get_day_of_week_info')) {
 		}
 
 		// only accept valid day of week numbers
-		$dayofweek = array_key_exists($dow_number, $tsml_days) ? $tsml_days[$dow_number] : 'invalid value';
+		$day_of_week = array_key_exists($dow_number, $week_days) ? $week_days[$dow_number] : 'invalid value';
 
-		return [$dayofweek, $dow_number];
+		return [$day_of_week, $dow_number];
 	}
 }
 
