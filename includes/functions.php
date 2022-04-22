@@ -1984,8 +1984,8 @@ if (!function_exists('tsml_scan_data_source')) {
 					$meetings = tsml_import_reformat($body);
 				}
 
-				// check import feed for changes
-				$meetings_updated = tsml_import_has_changes($data_source_url, $meetings, $data_source_count_meetings, $data_source_last_import);
+				// check import feed for changes and return list summing up changes detected
+				$meetings_updated = tsml_import_changes($meetings, $data_source_url, $data_source_last_import);
 				
 				if (count($meetings_updated) > 0) {
 					// Send Email notifying Admins that this Data Source needs updating
@@ -1994,19 +1994,16 @@ if (!function_exists('tsml_scan_data_source')) {
 					$term = get_term_by('term_id', $data_source_parent_region_id, 'tsml_region');
 					$parent_region = $term->name;
 					$message .= "parent_region: $parent_region <br>";
-					//$message .= "change_detect: $data_source_change_detect <br>";
-					$message .= " database count: $data_source_count_meetings <br>";
+					$message .= "database record count: $data_source_count_meetings <br>";
 					$feedCount = count($meetings);
-					$message .= "data source feed cnt: $feedCount<br>";
+					$message .= "data source feed count: $feedCount<br>";
 					$message .= "Last Refresh: <span style='color:red;'>*</span>" . Date("l F j, Y  h:i a", $data_source_last_import) . '<br>';
 					$message .= "<br><b><u>Detected Difference</b></u><br>";
 					$message .= "<table border='1' style='width:600px;'><tbody><tr><th>Update Mode</th><th>Meeting Name</th><th>Day of Week</th><th>Last Updated</th></tr>";
-					foreach	($meetings_updated as $key => $value) {
-						$message .= $value;
-					}
+					$message .= implode('', $meetings_updated);	
 					$message .= "</tbody></table><br>";
-					$import_page_url = 'https://' . $_SERVER['SERVER_NAME'] . '/wp-admin/edit.php?post_type=tsml_meeting&page=import';
-					$message .= "<a href='" . $import_page_url . "' style=' margin: 0 auto;background-color: #4CAF50;border: none;color: white;padding: 25px 32px;text-align: center;text-decoration: none;display: table;font-size: 18px;'>Goto Import & Settings page...</a>";
+					$import_page_url = 'https://' . admin_url() . '/wp-admin/edit.php?post_type=tsml_meeting&page=import';
+					$message .= "<a href='" . $import_page_url . "' style=' margin: 0 auto;background-color: #4CAF50;border: none;color: white;padding: 25px 32px;text-align: center;text-decoration: none;display: block;font-size: 18px;'>Go to Import & Settings page</a>";
 
 					// send Changes Detected email
 					$subject = __('Data Source Changes Detected', '12-step-meeting-list') . ': ' . $data_source_name;
@@ -2020,7 +2017,6 @@ if (!function_exists('tsml_scan_data_source')) {
 							_e("<div class='bg-warning text-dark'>An error occurred while sending email!</div>", '12-step-meeting-list');
 						}
 					}
-
 					remove_filter('wp_mail_content_type', 'tsml_email_content_type_html');
 					tsml_alert(__('Send Email: Data Source Changes Detected.', '12-step-meeting-list'));
 				}
@@ -2061,13 +2057,11 @@ if (!function_exists('tsml_scan_data_source')) {
 }
 
 //function:	Returns summary list of modified records when data source changes detected
-function tsml_import_has_changes($data_source_url, $meetings, $data_source_count_meetings, $data_source_last_refresh)
+function tsml_import_changes($feed_meetings, $data_source_url, $data_source_last_refresh)
 {
-	$is_there_change = false;
-	$meetings_updated = $db_meetings = $feed_slugs = $message_lines = [];
-	$days = [0 => 'Sunday',1 => 'Monday',2 => 'Tuesday',3 => 'Wednesday',4 => 'Thursday',5 => 'Friday',6 => 'Saturday'];
+	$db_meetings = $feed_slugs = $message_lines = [];
 
-	//get db meetings 
+	// get local meetings 
 	$all_db_meetings = tsml_get_meetings();
 	$ds_ids = tsml_get_data_source_ids($data_source_url);
 	sort($ds_ids);
@@ -2080,86 +2074,88 @@ function tsml_import_has_changes($data_source_url, $meetings, $data_source_count
 		}
 	}
 
-	// create array of db slugs for matching
+	// create array of database slugs for matching
 	$db_slugs = array_column($db_meetings, 'slug', 'id');
 	sort($db_slugs);
-	$db_slugs_cnt = count($db_slugs);
 
-	// list changed and new meetings found in the ds feed
-	foreach ($meetings as $meeting) {
+	// list changed and new meetings found in the data source feed
+	foreach ($feed_meetings as $meeting) {
+	
+		$dayofweek = $dow_number = '';
+		tsml_get_day_of_week_info( $meeting['day'], $dayofweek, $dow_number);
+	    $meeting_slug =  $meeting['slug'];
 
-	    $mtg_slug =  $meeting['slug'];
-		if (is_array($meeting['day'])) {
-			$dow = implode("",  $meeting['day']);
-		} else {
-			$dow = $meeting['day'];
-		}
-		
-		if ( is_numeric( $mtg_slug )) {
-			$mtg_slug .= '-' . $dow; 
+		// numeric slugs may need some reformatting
+		if ( is_numeric( $meeting_slug )) {
+			$meeting_slug .= '-' . $dow_number; 
 		}
 
 		// match feed/database on unique slug
-	    $is_matched = in_array( $mtg_slug, $db_slugs );
+	    $is_matched = in_array( $meeting_slug, $db_slugs );
 
 		// add slug to feed array to help determine current db removals later on...
-		$feed_slugs[$meeting['slug']] = $mtg_slug;
+		$feed_slugs[$meeting['slug']] = $meeting_slug;
 
-		// has meeting been updated?
-		$updated = $meeting['updated'];
-		$cur_meeting_lastupdate = strtotime($updated);
-		if ($cur_meeting_lastupdate > $data_source_last_refresh) {
-			$is_there_change = true;
-			$mtg_name = $meeting['name'];
-			$mtg_updte = date("M j, Y  g:i a", $cur_meeting_lastupdate);
-			if ( is_numeric( $dow )) {
-				$dayofweek = $days[date($dow)]; 
-			} else {
-				$dayofweek = $dow; 
-			}
+		// has the meeting been updated since the last refresh?
+		$current_meeting_last_update = strtotime($meeting['updated']);
+		if ($current_meeting_last_update > $data_source_last_refresh) {
+
+			$meeting_name = $meeting['name'];
+			$meeting_update_date = date("M j, Y  g:i a", $current_meeting_last_update);
 			
 			if ($is_matched) {
-				$message_lines[] = "<tr style='color:gray;'><td>Change</td><td >$mtg_name</td><td>$dayofweek</td><td>$mtg_updte</td></tr>";
+				$message_lines[] = "<tr style='color:gray;'><td>Change</td><td >$meeting_name</td><td>$dayofweek</td><td>$meeting_update_date</td></tr>";
 			}
 			else {
-				$message_lines[] = "<tr style='color:green;'><td>Add New</td><td >$mtg_name</td><td>$dayofweek</td><td>$mtg_updte</td></tr>";
+				$message_lines[] = "<tr style='color:green;'><td>Add New</td><td >$meeting_name</td><td>$dayofweek</td><td>$meeting_update_date</td></tr>";
 			}
 		}
 	}
-
-	sort($feed_slugs);
-
-	// list removed meetings found in local db
+	
+	// list meetings in local database which are not matched with feed
 	foreach ($db_meetings as $db_meeting) {
 
-	    $mtg_slug =  $db_meeting['slug'];
-		if (is_array($db_meeting['day'])) {
-			$dow = implode("",  $db_meeting['day']);
-		} else {
-			$dow = $db_meeting['day'];
-		}
+		$dayofweek = $dow_number = '';
+		tsml_get_day_of_week_info( $db_meeting['day'], $dayofweek, $dow_number);
+	    $meeting_slug = $db_meeting['slug'];
 
-	    $is_matched = in_array( $mtg_slug, $feed_slugs );
+	    $is_matched = in_array( $meeting_slug, $feed_slugs );
 
 		if (!$is_matched) {
-		    $is_there_change = true;
-			if ( is_numeric( $dow )) {
-				$dayofweek = $days[date($dow)]; 
-			} else {
-				$dayofweek = $dow; 
-			}
-			$updated = $data_source_last_refresh;
-			$cur_meeting_lastupdate = strtotime($updated);
-			$mtg_updte = date("M j, Y  g:i a", $updated);
-			$mtg_name = $db_meeting['name'];
-			$message_lines[] = "<tr style='color:red;'><td>Remove</td><td >$mtg_name</td><td>$dayofweek</td><td>* $mtg_updte</td></tr>";
+			$meeting_update_date = date("M j, Y  g:i a", $data_source_last_refresh);
+			$meeting_name = $db_meeting['name'];
+			$message_lines[] = "<tr style='color:red;'><td>Remove</td><td >$meeting_name</td><td>$dayofweek</td><td>* $meeting_update_date</td></tr>";
 		}
 	}
+	
+	return $message_lines;
+}
 
-	if ($is_there_change) {
-		$meetings_updated = $message_lines;
+//function:	Returns corresponding day of week string and number for the day input
+if (!function_exists('tsml_get_day_of_week_info')) {
+	function tsml_get_day_of_week_info( $meeting_day_input, &$dayofweek, &$dow_number )
+	{
+		global $tsml_days;
+		
+		// when day is like "Monday" convert to number
+		if ( in_array($meeting_day_input, $tsml_days) ) {
+			$dow_number = date('N', strtotime( $meeting_day_input ) );
+			if ($meeting_day_input == 'Sunday') {$dow_number = '0';}
+
+		} elseif ( is_array($meeting_day_input) ) {
+			$dow_number = implode("",  $meeting_day_input);
+
+		} else {
+			$dow_number = $meeting_day_input;
+		}
+
+		// only accept valid day of week numbers
+		if (($dow_number >= 0) && ($dow_number <= 6)) {
+		    $dayofweek = $tsml_days[$dow_number];
+		} else {
+		    $dayofweek = 'invalid value';
+		}
 	}
-	return $meetings_updated;
 }
 
 //function:	Creates and configures cron job to run a scheduled data source scan
