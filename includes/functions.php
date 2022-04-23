@@ -1986,7 +1986,7 @@ if (!function_exists('tsml_scan_data_source')) {
 
 				// check import feed for changes and return list summing up changes detected
 				$meetings_updated = tsml_import_changes($meetings, $data_source_url, $data_source_last_import);
-				
+
 				if (count($meetings_updated) > 0) {
 					// Send Email notifying Admins that this Data Source needs updating
 					$message = "Data Source changes were detected during a scheduled sychronization check with this feed: $data_source_url. Your website meeting list details based on the $data_source_name feed are no longer in sync. <br><br>Please sign-in to your website and refresh the $data_source_name Data Source feed found on the Meetings Import & Settings page.<br><br>";
@@ -2000,7 +2000,7 @@ if (!function_exists('tsml_scan_data_source')) {
 					$message .= "Last Refresh: <span style='color:red;'>*</span>" . Date("l F j, Y  h:i a", $data_source_last_import) . '<br>';
 					$message .= "<br><b><u>Detected Difference</b></u><br>";
 					$message .= "<table border='1' style='width:600px;'><tbody><tr><th>Update Mode</th><th>Meeting Name</th><th>Day of Week</th><th>Last Updated</th></tr>";
-					$message .= implode('', $meetings_updated);	
+					$message .= implode('', $meetings_updated);
 					$message .= "</tbody></table><br>";
 					$import_page_url = admin_url('edit.php?post_type=tsml_meeting&page=import');
 					$message .= "<a href='" . $import_page_url . "' style=' margin: 0 auto;background-color: #4CAF50;border: none;color: white;padding: 25px 32px;text-align: center;text-decoration: none;display: block;font-size: 18px;'>Go to Import & Settings page</a>";
@@ -2068,7 +2068,7 @@ function tsml_import_changes($feed_meetings, $data_source_url, $data_source_last
 		__('Thursday', '12-step-meeting-list'),
 		__('Friday', '12-step-meeting-list'),
 		__('Saturday', '12-step-meeting-list'),
-	];	
+	];
 
 	// get local meetings 
 	$all_db_meetings = tsml_get_meetings();
@@ -2077,9 +2077,9 @@ function tsml_import_changes($feed_meetings, $data_source_url, $data_source_last
 
 	/* filter out all but the data source meetings  */
 	foreach ($all_db_meetings as $db_meeting) {
-	    $db_id = $db_meeting['id'];
+		$db_id = $db_meeting['id'];
 		if (in_array($db_id, $ds_ids)) {
-		    array_push($db_meetings, $db_meeting);
+			array_push($db_meetings, $db_meeting);
 		}
 	}
 
@@ -2089,17 +2089,17 @@ function tsml_import_changes($feed_meetings, $data_source_url, $data_source_last
 
 	// list changed and new meetings found in the data source feed
 	foreach ($feed_meetings as $meeting) {
-	
+
 		list($day_of_week, $dow_number) = tsml_get_day_of_week_info($meeting['day'], $week_days);
-	    $meeting_slug =  $meeting['slug'];
+		$meeting_slug =  $meeting['slug'];
 
 		// numeric slugs may need some reformatting
-		if ( is_numeric( $meeting_slug )) {
-			$meeting_slug .= '-' . $dow_number; 
+		if (is_numeric($meeting_slug)) {
+			$meeting_slug .= '-' . $dow_number;
 		}
 
 		// match feed/database on unique slug
-	    $is_matched = in_array( $meeting_slug, $db_slugs );
+		$is_matched = in_array($meeting_slug, $db_slugs);
 
 		// add slug to feed array to help determine current db removals later on...
 		$feed_slugs[] = $meeting_slug;
@@ -2109,23 +2109,22 @@ function tsml_import_changes($feed_meetings, $data_source_url, $data_source_last
 		if ($current_meeting_last_update > $data_source_last_refresh) {
 			$meeting_name = $meeting['name'];
 			$meeting_update_date = date('M j, Y  g:i a', $current_meeting_last_update);
-			
+
 			if ($is_matched) {
 				$message_lines[] = "<tr style='color:gray;'><td>Change</td><td >$meeting_name</td><td>$day_of_week</td><td>$meeting_update_date</td></tr>";
-			}
-			else {
+			} else {
 				$message_lines[] = "<tr style='color:green;'><td>Add New</td><td >$meeting_name</td><td>$day_of_week</td><td>$meeting_update_date</td></tr>";
 			}
 		}
 	}
-	
+
 	// list meetings in local database which are not matched with feed
 	foreach ($db_meetings as $db_meeting) {
 
 		list($day_of_week, $dow_number) = tsml_get_day_of_week_info($db_meeting['day'], $week_days);
-	    $meeting_slug = $db_meeting['slug'];
+		$meeting_slug = $db_meeting['slug'];
 
-	    $is_matched = in_array( $meeting_slug, $feed_slugs );
+		$is_matched = in_array($meeting_slug, $feed_slugs);
 
 		if (!$is_matched) {
 			$meeting_update_date = date('M j, Y  g:i a', $data_source_last_refresh);
@@ -2133,21 +2132,19 @@ function tsml_import_changes($feed_meetings, $data_source_url, $data_source_last
 			$message_lines[] = "<tr style='color:red;'><td>Remove</td><td >$meeting_name</td><td>$day_of_week</td><td>* $meeting_update_date</td></tr>";
 		}
 	}
-	
+
 	return $message_lines;
 }
 
 //function:	Returns corresponding day of week string and number for the day input
 if (!function_exists('tsml_get_day_of_week_info')) {
-	function tsml_get_day_of_week_info( $meeting_day_input, $week_days, $day_of_week = '', $dow_number = '' )
+	function tsml_get_day_of_week_info($meeting_day_input, $week_days, $day_of_week = '', $dow_number = '')
 	{
 		// when day is like "Sunday" convert to number 0
-		if ( in_array($meeting_day_input, $week_days) ) {
+		if (in_array($meeting_day_input, $week_days)) {
 			$dow_number = array_search($meeting_day_input, $week_days);
-
-		} elseif ( is_array($meeting_day_input) ) {
+		} elseif (is_array($meeting_day_input)) {
 			$dow_number = implode("",  $meeting_day_input);
-
 		} else {
 			$dow_number = $meeting_day_input;
 		}
@@ -2177,7 +2174,7 @@ function tsml_CreateAndScheduleCronJob($data_source_url, $data_source_name)
 
 		//Schedule the refresh
 		if (wp_schedule_event($timestamp, "daily", "tsml_scan_data_source", array($data_source_url)) === false) {
-			tsml_debug("$data_source_name data source scan scheduling failed!");
+			tsml_alert("$data_source_name data source scan scheduling failed!");
 		} else {
 			$mydisplaytime = tsml_date_localised(get_option('date_format') . ' ' . get_option('time_format'), $timestamp); // Use tsml_date_localised to convert to specified format with local site timezone included.
 			tsml_alert("The $data_source_name data source's next scheduled run is $mydisplaytime.  You can adjust the recurrences and the times that the job ('<b>tsml_scan_data_source</b>') runs with the WP_Crontrol plugin.");
