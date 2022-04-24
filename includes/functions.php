@@ -2159,7 +2159,7 @@ if (!function_exists('tsml_get_day_of_week_info')) {
 
 //function:	Creates and configures cron job to run a scheduled data source scan
 //used:		admin-import.php
-function tsml_schedule_import_scan()($data_source_url, $data_source_name)
+function tsml_schedule_import_scan($data_source_url, $data_source_name)
 {
 
 	$timestamp = tsml_strtotime('tomorrow midnight'); // Use tsml_strtotime to incorporate local site timezone with UTC.
