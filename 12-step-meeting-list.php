@@ -50,6 +50,7 @@ if (is_admin()) {
     include TSML_PATH . '/includes/admin_meeting.php';
     include TSML_PATH . '/includes/admin_menu.php';
     include TSML_PATH . '/includes/admin_region.php';
+    include TSML_PATH . '/includes/admin_addresses.php';
     include TSML_PATH . '/includes/save.php';
 }
 

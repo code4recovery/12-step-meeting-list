@@ -556,10 +556,15 @@ function tsml_front_page($wp_query)
 }
 
 //function: request accurate address information from google
+//returns:	array when successful, or string when unsuccessful
 //used:		tsml_ajax_import(), tsml_ajax_geocode()
 function tsml_geocode($address)
 {
-	global $tsml_google_overrides, $tsml_google_maps_key, $tsml_geocoding_method;
+	global $tsml_google_overrides, $tsml_google_maps_key, $tsml_geocoding_method, $tsml_curl_handle, $tsml_language, $tsml_bounds;
+
+	if (empty($address)) {
+		return 'Address string is empty';
+	}
 
 	//check overrides first before anything
 	if (array_key_exists($address, $tsml_google_overrides)) {
@@ -572,45 +577,10 @@ function tsml_geocode($address)
 	//check cache
 	$addresses	= get_option('tsml_addresses', []);
 
-
 	//if key exists && approximate is set for that address, return it
 	if (array_key_exists($address, $addresses) && !empty($addresses[$address]['approximate'])) {
 		$addresses[$address]['status'] = 'cache';
 		return $addresses[$address];
-	}
-
-	//Set the Google API Key before calling function that finds the address
-	if ($tsml_geocoding_method == 'google_key' && !empty($tsml_google_maps_key)) {
-		$tsml_map_key = $tsml_google_maps_key;
-	} else {
-		$tsml_map_key = 'AIzaSyDm-pU-DlU-WsTkXJPGEVowY2hICRFLNeQ';
-	}
-	$response = tsml_geocode_google($address, $tsml_map_key);
-
-	//Return if the status is error
-	if ($response['status'] == 'error') {
-		return $response;
-	}
-
-	//cache result
-	$addresses[$address] = $response;
-	$addresses[$response['formatted_address']] = $response;
-	update_option('tsml_addresses', $addresses);
-
-	return $response;
-}
-
-//function: Call Google for geocoding of the address
-function tsml_geocode_google($address, $tsml_map_key)
-{
-	global $tsml_curl_handle, $tsml_language, $tsml_google_overrides, $tsml_bounds, $tsml_geocoding_method;
-
-	// Can't Geocode an empty address
-	if (empty($address)) {
-		return [
-			'status' => 'error',
-			'reason' => 'Addres string was empty',
-		];
 	}
 
 	//initialize curl handle if necessary
@@ -626,32 +596,60 @@ function tsml_geocode_google($address, $tsml_map_key)
 
 	//start list of options for geocoding request
 	$options = [
-		'key' => $tsml_map_key,
 		'address' => $address,
 		'language' => $tsml_language,
+		'bounds' => $tsml_bounds
+			? $tsml_bounds['south'] . ',' . $tsml_bounds['west'] . '|' . $tsml_bounds['north'] . ',' . $tsml_bounds['east']
+			: null,
 	];
 
-	//bias the viewport if we know the bounds
-	if ($tsml_bounds) {
-		$options['bounds'] = $tsml_bounds['south'] . ',' . $tsml_bounds['west'] . '|' . $tsml_bounds['north'] . ',' . $tsml_bounds['east'];
-	}
-
-	//send request to google
-	if ($tsml_geocoding_method == 'api_gateway') {
+	//tsml_geocoding_method can be "api_gateway", "legacy", "google_key", or "c4r_geocoding"
+	if ($tsml_geocoding_method === 'api_gateway') {
+		$provider = 'API Gateway';
 		curl_setopt($tsml_curl_handle, CURLOPT_URL, 'https://api-gateway.apps.itstechnical.net/api/geocode?' . http_build_query($options));
+	} elseif ($tsml_geocoding_method === 'c4r_geocoding') {
+		$provider = 'Code for Recovery Geocoding';
+		if (!$registration = get_option('tsml_geocoding_registration')) {
+			$registration_params = [
+				"organizationName" => get_bloginfo('name'),
+				"websiteURL" => get_bloginfo('url'),
+			];
+
+			curl_setopt($tsml_curl_handle, CURLOPT_URL, "https://geocode.code4recovery.org/api/v1/users");
+			curl_setopt($tsml_curl_handle, CURLOPT_POST, 1);
+			curl_setopt(
+				$tsml_curl_handle,
+				CURLOPT_POSTFIELDS,
+				http_build_query($registration_params)
+			);
+			$result = curl_exec($tsml_curl_handle);
+
+			if ($result === false) {
+				return 'Could not connect to ' . $provider . ' to register. Response was <code>' . curl_error($tsml_curl_handle) . '</code>';
+			}
+
+			if (!empty($result['serviceError'])) {
+				return 'Received ' . $result['name'] . ' from ' . $provider;
+			}
+
+			echo '<pre>';
+			print_r(json_decode($result));
+			exit;
+		}
 	} else {
+		$provider = 'Google';
+		//use the user's google key if indicated
+		$options['key'] = ($tsml_geocoding_method === 'google_key' && !empty($tsml_google_maps_key))
+			? $tsml_google_maps_key
+			: 'AIzaSyDm-pU-DlU-WsTkXJPGEVowY2hICRFLNeQ';
 		curl_setopt($tsml_curl_handle, CURLOPT_URL, 'https://maps.googleapis.com/maps/api/geocode/json?' . http_build_query($options));
 	}
-	curl_setopt($tsml_curl_handle, CURLOPT_RETURNTRANSFER, true);
 
 	$result = curl_exec($tsml_curl_handle);
 
 	//could not connect error
 	if ($result === false) {
-		return [
-			'status' => 'error',
-			'reason' => 'Google could not validate the address <code>' . $address . '</code>. Response was <code>' . curl_error($tsml_curl_handle) . '</code>',
-		];
+		return $provider . ' could not validate the address <code>' . $address . '</code>. Response was <code>' . curl_error($tsml_curl_handle) . '</code>';
 	}
 
 	//decode result
@@ -664,10 +662,7 @@ function tsml_geocode_google($address, $tsml_map_key)
 
 		//could not connect error
 		if ($result === false) {
-			return [
-				'status' => 'error',
-				'reason' => 'Google could not validate the address <code>' . $address . '</code>. Response was <code>' . curl_error($tsml_curl_handle) . '</code>',
-			];
+			return $provider . ' could not validate the address <code>' . $address . '</code>. Response was <code>' . curl_error($tsml_curl_handle) . '</code>';
 		}
 
 		//decode result
@@ -675,29 +670,20 @@ function tsml_geocode_google($address, $tsml_map_key)
 
 		//if we're still over the limit, stop
 		if ($data->status === 'OVER_QUERY_LIMIT') {
-			return [
-				'status' => 'error',
-				'reason' => 'We are over the rate limit for the Google Geocoding API.'
-			];
+			return 'We are over the rate limit for ' . $provider . '.';
 		}
 	}
 
 	//if there are no results report it
 	if ($data->status === 'ZERO_RESULTS') {
 		if (empty($result)) {
-			return [
-				'status' => 'error',
-				'reason' => 'Google could not validate the address <code>' . $address . '</code>',
-			];
+			return $provider . ' could not validate the address <code>' . $address . '</code>';
 		}
 	}
 
 	//if result is otherwise bad, stop
 	if (($data->status !== 'OK') || empty($data->results[0]->formatted_address)) {
-		return [
-			'status' => 'error',
-			'reason' => 'Google gave an unexpected response for address <code>' . $address . '</code>. Response was <pre>' . var_export($data, true) . '</pre>',
-		];
+		return $provider . ' gave an unexpected response for address <code>' . $address . '</code>. Response was <pre>' . var_export($data, true) . '</pre>';
 	}
 
 	//check our overrides array again in case google is wrong
@@ -708,7 +694,6 @@ function tsml_geocode_google($address, $tsml_map_key)
 		}
 	} else {
 		//start building response
-		// $myfile = fopen("./newfile.txt", "a") or die("Unable to open file!");
 		$response = [
 			'formatted_address' => $data->results[0]->formatted_address,
 			'latitude' => $data->results[0]->geometry->location->lat,
@@ -726,8 +711,14 @@ function tsml_geocode_google($address, $tsml_map_key)
 		}
 	}
 
+	//cache result
+	$addresses[$address] = $response;
+	$addresses[$response['formatted_address']] = $response;
+	update_option('tsml_addresses', $addresses);
+
 	return $response;
 }
+
 
 //function: Ensure location->approximate set through geocoding and updated
 //used: single-meetings.php, single-locations.php
