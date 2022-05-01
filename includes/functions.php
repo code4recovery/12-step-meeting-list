@@ -560,7 +560,8 @@ function tsml_front_page($wp_query)
 //used:		tsml_ajax_import(), tsml_ajax_geocode()
 function tsml_geocode($address)
 {
-	global $tsml_google_overrides, $tsml_google_maps_key, $tsml_geocoding_method, $tsml_curl_handle, $tsml_language, $tsml_bounds;
+	global $tsml_google_overrides, $tsml_google_maps_key, $tsml_geocoding_method, $tsml_geocoding_methods, $tsml_curl_handle,
+		$tsml_language, $tsml_bounds, $tsml_programs, $tsml_program;
 
 	if (empty($address)) {
 		return 'Address string is empty';
@@ -594,8 +595,11 @@ function tsml_geocode($address)
 		]);
 	}
 
+	//get provider name
+	$provider = $tsml_geocoding_methods[$tsml_geocoding_method];
+
 	//start list of options for geocoding request
-	$options = [
+	$geocode_parameters = [
 		'address' => $address,
 		'language' => $tsml_language,
 		'bounds' => $tsml_bounds
@@ -605,44 +609,75 @@ function tsml_geocode($address)
 
 	//tsml_geocoding_method can be "api_gateway", "legacy", "google_key", or "c4r_geocoding"
 	if ($tsml_geocoding_method === 'api_gateway') {
-		$provider = 'API Gateway';
-		curl_setopt($tsml_curl_handle, CURLOPT_URL, 'https://api-gateway.apps.itstechnical.net/api/geocode?' . http_build_query($options));
+		curl_setopt($tsml_curl_handle, CURLOPT_URL, 'https://api-gateway.apps.itstechnical.net/api/geocode?' . http_build_query($geocode_parameters));
 	} elseif ($tsml_geocoding_method === 'c4r_geocoding') {
-		$provider = 'Code for Recovery Geocoding';
+
 		if (!$registration = get_option('tsml_geocoding_registration')) {
-			$registration_params = [
+
+			//create registration request
+			$registration_parameters = [
 				"organizationName" => get_bloginfo('name'),
 				"websiteURL" => get_bloginfo('url'),
+				"metadata" => [
+					[
+						"keyName" => "appName",
+						"value" => "TSML",
+					], [
+						"keyName" => "appVersion",
+						"value" => TSML_VERSION,
+					], [
+						"keyName" => "wordpressVersion",
+						"value" => get_bloginfo('version'),
+					],
+				]
 			];
+
+			//gateway only supports certain program values
+			if (in_array($tsml_programs[$tsml_program]['abbr'], ['AA', 'Al-Anon', 'NA', 'CA', 'SA'])) {
+				$registration_parameters['metadata'][] = [
+					"keyName" => "recoveryProgram",
+					"value" => $tsml_programs[$tsml_program]['abbr'],
+				];
+			}
 
 			curl_setopt($tsml_curl_handle, CURLOPT_URL, "https://geocode.code4recovery.org/api/v1/users");
 			curl_setopt($tsml_curl_handle, CURLOPT_POST, 1);
-			curl_setopt(
-				$tsml_curl_handle,
-				CURLOPT_POSTFIELDS,
-				http_build_query($registration_params)
-			);
+			curl_setopt($tsml_curl_handle, CURLOPT_POSTFIELDS, http_build_query($registration_parameters));
 			$result = curl_exec($tsml_curl_handle);
 
+			//connection error
 			if ($result === false) {
 				return 'Could not connect to ' . $provider . ' to register. Response was <code>' . curl_error($tsml_curl_handle) . '</code>';
 			}
 
-			if (!empty($result['serviceError'])) {
-				return 'Received ' . $result['name'] . ' from ' . $provider;
+			$data = json_decode($result, true);
+
+			//registration error
+			if (empty($data['apiToken'])) {
+				return 'An error occurred when registering with ' . $provider . '. The server returned <code>' . $result . '</code>';
 			}
 
-			echo '<pre>';
-			print_r(json_decode($result));
-			exit;
+			//registration was succesful
+			$registration = $registration_parameters + $data + [
+				'registered_at' => current_time('mysql'),
+			];
+
+			//save registration
+			update_option('tsml_geocoding_registration', $registration);
+
+			//turn POST off again 
+			curl_setopt($tsml_curl_handle, CURLOPT_POST, 0);
 		}
+
+		$geocode_parameters['apiToken'] = $registration['apiToken'];
+
+		curl_setopt($tsml_curl_handle, CURLOPT_URL, 'https://geocode.code4recovery.org/api/v1/geocodes?' . http_build_query($geocode_parameters));
 	} else {
-		$provider = 'Google';
 		//use the user's google key if indicated
-		$options['key'] = ($tsml_geocoding_method === 'google_key' && !empty($tsml_google_maps_key))
+		$geocode_parameters['key'] = ($tsml_geocoding_method === 'google_key' && !empty($tsml_google_maps_key))
 			? $tsml_google_maps_key
 			: 'AIzaSyDm-pU-DlU-WsTkXJPGEVowY2hICRFLNeQ';
-		curl_setopt($tsml_curl_handle, CURLOPT_URL, 'https://maps.googleapis.com/maps/api/geocode/json?' . http_build_query($options));
+		curl_setopt($tsml_curl_handle, CURLOPT_URL, 'https://maps.googleapis.com/maps/api/geocode/json?' . http_build_query($geocode_parameters));
 	}
 
 	$result = curl_exec($tsml_curl_handle);
@@ -701,6 +736,7 @@ function tsml_geocode($address)
 			'approximate' => ($data->results[0]->geometry->location_type === 'APPROXIMATE') ? 'yes' : 'no',
 			'city' => null,
 			'status' => 'geocode',
+			'source' => $tsml_geocoding_method,
 		];
 
 		//get city, we might need it for the region, and we are going to cache it
@@ -708,6 +744,11 @@ function tsml_geocode($address)
 			if (in_array('locality', $component->types)) {
 				$response['city'] = $component->short_name;
 			}
+		}
+
+		//save the geocode id, if it exists
+		if (!empty($data->geocodeId)) {
+			$response['geocode_id'] = $data->geocodeId;
 		}
 	}
 

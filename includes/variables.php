@@ -105,6 +105,17 @@ $tsml_google_maps_key = get_option('tsml_google_maps_key');
 //load the geocoding method
 $tsml_geocoding_method = get_option('tsml_geocoding_method', 'legacy');
 
+//options for geocoding
+$tsml_geocoding_methods = [
+	'legacy' => __('Legacy Method', '12-step-meeting-list'),
+	'api_gateway' =>  __('API Gateway (Alpha, temporary)', '12-step-meeting-list'),
+	'c4r_geocoding' =>  __('API Gateway (Beta)', '12-step-meeting-list'),
+];
+
+if (!empty($tsml_google_maps_key) || $tsml_geocoding_method === 'google_key') {
+	$tsml_geocoding_methods['google_key'] = __('Use my Google API key', '12-step-meeting-list');
+}
+
 //load the screen user interface choice
 $tsml_user_interface = get_option('tsml_user_interface', 'legacy_ui');
 

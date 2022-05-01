@@ -200,20 +200,11 @@
 				<form method="post" action="<?php echo $_SERVER['REQUEST_URI'] ?>">
 					<?php wp_nonce_field($tsml_nonce, 'tsml_nonce', false) ?>
 					<select name="tsml_geocoding_method" onchange="this.form.submit()">
-						<option value="legacy" <?php selected($tsml_geocoding_method, 'legacy') ?>>
-							<?php _e('Legacy Method', '12-step-meeting-list') ?>
+						<?php foreach ($tsml_geocoding_methods as $key => $value) {?>
+						<option value="<?php echo $key?>" <?php selected($tsml_geocoding_method, $key) ?>>
+							<?php echo $value?>
 						</option>
-						<?php if (!empty($tsml_google_maps_key)) { ?>
-							<option value="google_key" <?php selected($tsml_geocoding_method, 'google_key') ?>>
-								<?php _e('Use my Google API Key', '12-step-meeting-list') ?>
-							</option>
 						<?php } ?>
-						<option value="api_gateway" <?php selected($tsml_geocoding_method, 'api_gateway') ?>>
-							<?php _e('API Gateway (Alpha, temporary)', '12-step-meeting-list') ?>
-						</option>
-						<option value="c4r_geocoding" <?php selected($tsml_geocoding_method, 'c4r_geocoding') ?>>
-							<?php _e('API Gateway (Beta)', '12-step-meeting-list') ?>
-						</option>
 					</select>
 				</form>
 				<?php if (!empty($tsml_google_maps_key)) { ?>

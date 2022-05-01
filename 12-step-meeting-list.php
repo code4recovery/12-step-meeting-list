@@ -22,6 +22,10 @@ define('TSML_PATH', plugin_dir_path(__FILE__));
 
 define('TSML_VERSION', '3.14.2');
 
+if (!defined('TSML_ADMIN')) {
+    define('TSML_ADMIN', false);
+}
+
 //defining externally-defined constant + function for php intelephense
 if (false) {
     define('TSML_UI_PATH', '');
@@ -50,7 +54,9 @@ if (is_admin()) {
     include TSML_PATH . '/includes/admin_meeting.php';
     include TSML_PATH . '/includes/admin_menu.php';
     include TSML_PATH . '/includes/admin_region.php';
-    include TSML_PATH . '/includes/admin_addresses.php';
+    if (TSML_ADMIN) {
+        include TSML_PATH . '/includes/admin_geocoding.php';
+    }
     include TSML_PATH . '/includes/save.php';
 }
 
