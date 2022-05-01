@@ -3,7 +3,6 @@
 function tsml_geocoding_page()
 {
     $result = empty($_POST['address']) ? null : tsml_geocode($_POST['address']);
-    //delete_option('tsml_geocoding_registration');
 ?>
     <div class="wrap">
         <h1>Geocoding</h1>
@@ -15,7 +14,7 @@ function tsml_geocoding_page()
                 <hr>
                 <form method="post">
                     <label for="address">Address</label>
-                    <input type="search" id="address" name="address" value="<?php if (!empty($_POST['address'])) echo $_POST['address'] ?>" placeholder=" 123 Main Street, Buffalo, NY">
+                    <input type="search" id="address" name="address" value="<?php if (!empty($_POST['address'])) echo $_POST['address'] ?>" placeholder="Enter address here">
                     <input type="submit" value="Look Up">
                     <?php
                     if (!empty($result)) {
@@ -46,7 +45,6 @@ function tsml_geocoding_page()
             <div class="inside">
                 <h2>Cache</h2>
                 <hr>
-                <p>Individual geocodes are inexpensive, but, in aggregate, the costs can pile up. This is why TSML saves this data locally.</p>
                 <?php if ($cache = get_option('tsml_addresses')) {
                     $cache = array_reverse($cache);
                 ?>
