@@ -633,7 +633,31 @@ function tsml_geocode($address)
 			];
 
 			//gateway only supports certain program values
-			$supported_programs = ['AA', 'Al-Anon', 'NA', 'CA', 'SA'];
+			$supported_programs = [
+				'AA',
+				'ACA',
+				'Al-Anon',
+				'CA',
+				'CEA-HOW',
+				'CMA',
+				'CoDA',
+				'DA',
+				'DAA',
+				'GA',
+				'HA',
+				'NA',
+				'OA',
+				'PAL',
+				'RCA',
+				'RD',
+				'RR',
+				'SA',
+				'SAA',
+				'SCA',
+				'SG',
+				'SLAA',
+				'VA',
+			];
 			if (!empty($tsml_programs[$tsml_program]['abbr']) && in_array($tsml_programs[$tsml_program]['abbr'], $supported_programs)) {
 				$registration_parameters['metadata'][] = [
 					"keyName" => "recoveryProgram",

@@ -108,9 +108,12 @@ $tsml_geocoding_method = get_option('tsml_geocoding_method', 'legacy');
 //options for geocoding
 $tsml_geocoding_methods = [
 	'legacy' => __('Legacy Method', '12-step-meeting-list'),
-	'api_gateway' =>  __('API Gateway (Alpha, temporary)', '12-step-meeting-list'),
-	'c4r_geocoding' =>  __('API Gateway (Beta)', '12-step-meeting-list'),
+	'c4r_geocoding' =>  __('C4R Geocoding (Beta)', '12-step-meeting-list'),
 ];
+
+if ($tsml_geocoding_method === 'api_gateway') {
+	$tsml_geocoding_methods['api_gateway'] = __('C4R Geocoding (Alpha, temporary)', '12-step-meeting-list');
+}
 
 if (!empty($tsml_google_maps_key) || $tsml_geocoding_method === 'google_key') {
 	$tsml_geocoding_methods['google_key'] = __('Use my Google API key', '12-step-meeting-list');
@@ -1103,7 +1106,7 @@ add_action('plugins_loaded', function () {
 			],
 		],
 		'rd' => [
-			'abbr' => __('Recovery Dharma', '12-step-meeting-list'),
+			'abbr' => __('RD', '12-step-meeting-list'),
 			'flags' => ['M', 'W', 'TC', 'ONL'], //for /men and /women at end of meeting name (used in tsml_format_name())
 			'name' => __('Recovery Dharma', '12-step-meeting-list'),
 			'type_descriptions' => [
@@ -1140,7 +1143,7 @@ add_action('plugins_loaded', function () {
 			],
 		],
 		'rr' => [
-			'abbr' => __('Refuge Recovery', '12-step-meeting-list'),
+			'abbr' => __('RR', '12-step-meeting-list'),
 			'flags' => ['M', 'W', 'TC', 'ONL'], //for /men and /women at end of meeting name (used in tsml_format_name())
 			'name' => __('Refuge Recovery', '12-step-meeting-list'),
 			'type_descriptions' => [
@@ -1260,8 +1263,9 @@ add_action('plugins_loaded', function () {
 			],
 		],
 		'sg' => [
+			'abbr' => __('SG', '12-step-meeting-list'),
 			'flags' => [],
-			'name' => 'Support Groups',
+			'name' => __('Support Groups', '12-step-meeting-list'),
 			'types' => [],
 		],
 		'va' => [
