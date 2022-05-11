@@ -249,10 +249,10 @@
 					<p><?php _e("To get information about this product or our organization, simply use one of the linked buttons below which are great sources for information and answers.", 
 					'12-step-meeting-list') ?></p>
 					<div id="divContactInfo">
-						<a href="https://github.com/code4recovery/12-step-meeting-list/wiki/" id="btnGotoOurWiki" target="_blank" class="button" title="get answers to common questions">
-							<?php _e('Go to our Wiki', '12-step-meeting-list') ?>
+						<a href="https://code4recovery.org/docs/12-step-meeting-list" target="_blank" class="button">
+							<?php _e('View Documentation', '12-step-meeting-list') ?>
 						</a> 
-						<a href="https://github.com/code4recovery/12-step-meeting-list/discussions" target="_blank" class="button" title="ask on our github discussion forum">
+						<a href="https://github.com/code4recovery/12-step-meeting-list/discussions" target="_blank" class="button">
 							<?php _e('Ask a Question', '12-step-meeting-list') ?>
 						</a> 
 					</div>
