@@ -6,7 +6,6 @@ p,
 label,
 ul {
 	font-size: 15px;
-	line-height: 1.6;
 }
 
 ol.notice-error {
@@ -59,13 +58,26 @@ a.button-large {
 	}
 }
 
+.stack {
+	display: grid;
+	gap: 18px;
+	justify-items: flex-start;
+	&.compact {
+		gap: 8px;
+	}
+}
+
+.row {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 9px;
+}
+
 //meeting types legend
 .postbox {
 	margin: 18px 0 0;
 	padding: 20px;
 	min-width: auto;
-	display: grid;
-	gap: 18px;
 
 	* {
 		margin: 0;
@@ -101,11 +113,26 @@ a.button-large {
 	}
 
 	//radio import options
-	form.radio {
-		display: grid;
-		gap: 0.5rem;
-		justify-items: flex-start;
-		label {
+	form {
+		input {
+			box-shadow: none;
+
+			&[type='text'],
+			&[type='email'] {
+				font-family: monospace;
+				width: 300px;
+			}
+
+			&[type='submit'] {
+				min-width: 80px;
+			}
+		}
+
+		select {
+			width: 300px;
+		}
+
+		&.radio label {
 			display: flex;
 			justify-content: flex-start;
 			gap: 0.25rem;
@@ -173,37 +200,6 @@ a.button-large {
 			.button.button-small {
 				height: 18px;
 				line-height: 16px;
-			}
-		}
-	}
-
-	//add email forms
-	form.columns {
-		display: flex;
-		flex-wrap: wrap;
-		gap: 18px;
-
-		> div {
-			input {
-				box-shadow: none;
-				width: 100%;
-
-				&[type='text'],
-				&[type='email'] {
-					font-family: monospace;
-				}
-			}
-
-			&.input {
-				width: 70%;
-			}
-
-			&.input-half {
-				width: 35%;
-			}
-
-			&.btn {
-				width: 30%;
 			}
 		}
 	}
