@@ -101,24 +101,33 @@ add_shortcode('tsml_types_list', function () {
 //output a react meeting finder widget https://github.com/code4recovery/tsml-ui
 function tsml_ui()
 {
-	global $tsml_mapbox_key, $tsml_nonce, $tsml_conference_providers, $tsml_language, $tsml_programs, $tsml_program, $tsml_ui_config, $tsml_feedback_addresses, $tsml_cache, $tsml_cache_writable;
+	global $tsml_mapbox_key, $tsml_nonce, $tsml_conference_providers, $tsml_language, $tsml_programs, $tsml_program, $tsml_ui_config,
+		$tsml_feedback_addresses, $tsml_cache, $tsml_cache_writable, $tsml_distance_units;
+
+	//enqueue app script
 	$js = defined('TSML_UI_PATH') ? TSML_UI_PATH : 'https://tsml-ui.code4recovery.org/app.js';
 	wp_enqueue_script('tsml_ui', $js, [], false, true);
+
+	//apply settings
 	wp_localize_script('tsml_ui', 'tsml_react_config', array_merge(
 		[
 			'conference_providers' => $tsml_conference_providers,
+			'distance_unit' => $tsml_distance_units,
+			'feedback_emails' => array_values($tsml_feedback_addresses),
 			'strings' => [
 				$tsml_language => [
 					'types' => $tsml_programs[$tsml_program]['types'],
 				],
 			],
-			'feedback_emails' => array_values($tsml_feedback_addresses),
 		],
 		$tsml_ui_config
 	));
 
 	// use meetings.json if it's writable, otherwise use the admin-ajax URL to the feed
-	$data = $tsml_cache_writable && file_exists(WP_CONTENT_DIR . $tsml_cache) && defined('ABSPATH') ? get_site_url() . str_replace(ABSPATH, '/', WP_CONTENT_DIR) . $tsml_cache  . '?' . filemtime(WP_CONTENT_DIR . $tsml_cache) : admin_url('admin-ajax.php') . '?action=meetings&nonce=' . wp_create_nonce($tsml_nonce);
+	$data = $tsml_cache_writable && file_exists(WP_CONTENT_DIR . $tsml_cache) && defined('ABSPATH')
+		? get_site_url() . str_replace(ABSPATH, '/', WP_CONTENT_DIR) . $tsml_cache  . '?' . filemtime(WP_CONTENT_DIR . $tsml_cache)
+		: admin_url('admin-ajax.php') . '?action=meetings&nonce=' . wp_create_nonce($tsml_nonce);
+
 	return '<div id="tsml-ui"
 					data-src="' . $data . '"
 					data-timezone="' . get_option('timezone_string', 'America/New_York') . '"
