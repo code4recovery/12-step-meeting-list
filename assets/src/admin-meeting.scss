@@ -1,0 +1,386 @@
+.postbox {
+	.handlediv {
+		display: none;
+	}
+
+	.hndle {
+		background-color: #fafafa;
+	}
+
+	&.closed .inside {
+		display: block;
+	}
+
+	//group Information (optional) gray
+	h2 small,
+	h3 small {
+		color: #aaa;
+		font-size: inherit;
+
+		&:before {
+			content: ' (';
+		}
+
+		&:after {
+			content: ')';
+		}
+	}
+}
+
+.meta_form_separator {
+	margin-left: 15%;
+
+	h4 {
+		border-bottom: 1px solid #ccc;
+		margin-bottom: 0;
+		padding-bottom: 10px;
+	}
+
+	p {
+		margin: 10px 0 0;
+	}
+}
+
+.meta_form_row {
+	padding: 10px 0 0;
+	overflow: auto;
+	clear: left;
+
+	label,
+	input,
+	div.checkboxes,
+	#map {
+		float: left;
+		line-height: 100%;
+	}
+
+	label {
+		width: 13%;
+		margin-right: 2%;
+		text-align: right;
+		font-size: 15px;
+		line-height: 1.4;
+		margin-top: 9px;
+		white-space: nowrap;
+	}
+
+	input[type='text'],
+	input[type='date'],
+	input[type='url'],
+	select,
+	textarea,
+	div.checkboxes,
+	#map {
+		width: 85%;
+		margin: 0;
+		font-size: 18px;
+		padding: 6px;
+		height: 40px;
+		line-height: normal;
+		float: left;
+		box-sizing: border-box;
+	}
+
+	input[type='text'],
+	input[type='date'],
+	select,
+	textarea,
+	#map {
+		border: 1px solid #ddd !important;
+		border-radius: 4px !important;
+	}
+
+	input.time {
+		width: 42%;
+
+		&:last-child {
+			margin-left: 1%;
+		}
+	}
+
+	input,
+	select {
+		border: 1px solid #ccc;
+	}
+
+	input[type='radio'],
+	input[type='checkbox'] {
+		box-shadow: none;
+
+		&:checked:before {
+			display: none;
+		}
+	}
+	//wordpress is doing something fancy with checkboxes and it's not working
+	input[type='checkbox'] {
+		-webkit-appearance: checkbox;
+	}
+
+	input[type='radio'] {
+		-webkit-appearance: radio;
+	}
+
+	input[disabled] {
+		opacity: 0.5;
+		cursor: not-allowed;
+	}
+
+	input.error {
+		border: solid 1px #d40047 !important;
+	}
+
+	input.warning {
+		border: solid 1px #d3a73e !important;
+	}
+
+	&.checkbox,
+	&.radio {
+		padding-left: 15%;
+		line-height: 1;
+
+		label {
+			width: auto;
+			margin: 0;
+			font-size: 13px;
+			display: block;
+			float: none;
+			text-align: left;
+			position: relative;
+			padding: 0 0 0 20px;
+
+			input {
+				position: absolute;
+				left: 0;
+				top: 5px;
+			}
+
+			&:first-child {
+				margin-bottom: 5px;
+			}
+		}
+	}
+
+	textarea {
+		height: 140px;
+	}
+
+	&:last-child {
+		margin-bottom: 0;
+	}
+
+	div.checkboxes {
+		overflow-x: hidden;
+		overflow-y: auto;
+		padding: 0;
+		height: auto;
+		-webkit-columns: 3 auto;
+		-moz-columns: 3 auto;
+		columns: 3 auto;
+		position: relative;
+
+		label {
+			float: none;
+			display: block;
+			margin: 0;
+			line-height: 16px;
+			width: 100%;
+			text-align: left;
+			font-size: 13px;
+			-webkit-column-break-inside: avoid;
+			padding: 5px 0 5px 20px;
+			position: relative;
+			box-sizing: border-box;
+
+			input {
+				position: absolute;
+				top: 10px;
+				left: 0;
+			}
+
+			&.not_in_use {
+				display: none;
+			}
+		}
+
+		.toggle_more {
+			display: none;
+			position: absolute;
+			font-size: 13px;
+
+			.less {
+				display: none;
+			}
+		}
+
+		&.has_more {
+			padding-bottom: 30px;
+
+			.toggle_more {
+				position: absolute;
+				bottom: 0;
+				display: block;
+				left: 0;
+			}
+		}
+
+		&.showing_more {
+			label.not_in_use {
+				display: block;
+			}
+
+			.more {
+				display: none;
+			}
+
+			.less {
+				display: block;
+			}
+		}
+	}
+
+	&.city {
+		input {
+			width: 60%;
+			margin-right: 1%;
+		}
+
+		select {
+			width: 24%;
+		}
+	}
+
+	::-webkit-input-placeholder {
+		color: #ccc;
+	}
+
+	:-moz-placeholder {
+		color: #ccc;
+	}
+
+	::-moz-placeholder {
+		color: #ccc;
+	}
+
+	:-ms-input-placeholder {
+		color: #ccc;
+	}
+
+	#map {
+		background-color: #f6f6f6;
+		height: 300px;
+		padding: 0;
+
+		*:focus {
+			outline: none;
+		}
+
+		.mapboxgl-ctrl-logo,
+		.mapboxgl-ctrl-attrib {
+			display: none;
+		}
+
+		p {
+			font-style: italic;
+			font-size: 15px;
+			margin: 8px 10px;
+			color: #999;
+		}
+	}
+	//meetings at a location
+	ol {
+		column-gap: 60px;
+		columns: 2 auto;
+		font-size: 15px;
+		margin: 0;
+		overflow: auto;
+		padding: 10px 0 0 0;
+
+		li {
+			break-inside: avoid-column;
+			-webkit-column-break-inside: avoid;
+			padding: 0 0 10px 110px;
+			position: relative;
+			margin: 0 0 0 25px;
+
+			span {
+				color: #999;
+				display: inline-block;
+				position: absolute;
+				left: 0;
+			}
+
+			&:last-child {
+				margin-bottom: 0;
+			}
+		}
+	}
+
+	.container {
+		width: 85%;
+		float: left;
+		display: table;
+
+		.row {
+			display: table-row;
+
+			&:first-child div {
+				border-top: 0;
+			}
+
+			div {
+				border-left: 10px solid transparent;
+				border-top: 10px solid transparent;
+				display: table-cell;
+
+				&:first-child {
+					border-left: 0;
+				}
+
+				input {
+					width: 100%;
+				}
+			}
+		}
+	}
+}
+
+#contact-type {
+	&[data-type='meeting'] .group-visible {
+		display: none;
+	}
+
+	&[data-type='group'] .group-visible {
+		display: block;
+	}
+}
+
+// Note box for in-person question
+div.in_person div {
+	margin-bottom: 5px;
+}
+
+div.location_note {
+	padding: 10px;
+	border: solid 1px #c3c4c7;
+	border-left: solid 4px #72aee6;
+	margin-top: 10px;
+}
+
+div.location_note ul {
+	list-style-type: disc;
+	margin: 0 0 0 15px;
+}
+
+div.location_warning {
+	padding: 10px;
+	border: solid 1px #c3c4c7;
+	border-left: solid 4px #d3a73e;
+	margin-top: 5px;
+}
+
+div.location_error {
+	padding: 10px;
+	border: solid 1px #c3c4c7;
+	border-left: solid 4px #d40047;
+	margin-top: 5px;
+}

@@ -192,10 +192,9 @@ if (!function_exists('tsml_import_page')) {
 				update_option('tsml_data_sources', $tsml_data_sources);
 
 				// Create a cron job to run daily when Change Detection is enabled for the new data source
-				if ( $data_source_change_detect === 'enabled' ) {
+				if ($data_source_change_detect === 'enabled') {
 					tsml_schedule_import_scan($data_source_url, $data_source_name);
-				} 
-					
+				}
 			} elseif (!is_array($response)) {
 
 				tsml_alert(__('Invalid response, <pre>' . print_r($response, true) . '</pre>.', '12-step-meeting-list'), 'error');
@@ -434,26 +433,38 @@ if (!function_exists('tsml_import_page')) {
 			} else {
 				$tsml_ui = "LEGACY UI";
 			}
-			tsml_alert(__('Switch UI is now set to <strong>' . $tsml_ui . '</strong>', '12-step-meeting-list') );
-			if ( empty( $tsml_mapbox_key ) && ($tsml_user_interface == 'tsml_ui') ) {
-				tsml_alert(__('<b>Please note</b> that TSML UI only supports Mapbox. To enable mapping you will need a Mapbox token. <br>To sign up for Mapbox <a href="https://www.mapbox.com/signup/" target="_blank">go here</a>. Only a valid email address is required. Copy your access token and paste it in the Mapping & Geocoding section\'s <b>Mapbox Access Token</b> field.', '12-step-meeting-list'),'warning');
-			} 		
+			tsml_alert(__('Switch UI is now set to <strong>' . $tsml_ui . '</strong>', '12-step-meeting-list'));
+			if (empty($tsml_mapbox_key) && ($tsml_user_interface == 'tsml_ui')) {
+				tsml_alert(__('<b>Please note</b> that TSML UI only supports Mapbox. To enable mapping you will need a Mapbox token. <br>To sign up for Mapbox <a href="https://www.mapbox.com/signup/" target="_blank">go here</a>. Only a valid email address is required. Copy your access token and paste it in the Mapping & Geocoding section\'s <b>Mapbox Access Token</b> field.', '12-step-meeting-list'), 'warning');
+			}
 		}
-
-		//Get the active tab from the $_GET param
-		$default_tab = null;
-		$tab = isset($_GET['tab']) ? $_GET['tab'] : $default_tab;
 
 		/*debugging
 		delete_option('tsml_data_sources');
 		tsml_delete('everything');
 		tsml_delete_orphans();
 		*/
-		?>
-
+?>
 
 		<!-- Admin page content should all be inside .wrap -->
-		<div id="import_settings_wrap" class="wrap">
+		<div class="wrap">
+			<?php
+			$tabs = [
+				'import' => __('Import', '12-step-meeting-list'),
+				'settings' => __('Settings', '12-step-meeting-list'),
+				'spec' => __('Spreadsheet Example & Spec', '12-step-meeting-list')
+			];
+			$tab = !empty($_GET['tab']) && array_key_exists($_GET['tab'], $tabs) ? $_GET['tab'] : array_keys($tabs)[0];
+			?>
+			<nav class="nav-tab-wrapper">
+				<?php foreach ($tabs as $key => $value) { ?>
+					<a href="?post_type=tsml_meeting&page=import&tab=<?php echo $key ?>" class="nav-tab<?php if ($key === $tab) echo ' nav-tab-active' ?>">
+						<?php echo $value ?>
+					</a>
+				<?php } ?>
+			</nav>
+
+			<h1></h1> <!-- Set alerts here -->
 
 			<?php if (!is_ssl()) { ?>
 				<div class="notice notice-warning inline">
@@ -461,120 +472,70 @@ if (!function_exists('tsml_import_page')) {
 				</div>
 			<?php } ?>
 
-			<h1></h1> <!-- Set alerts here -->
-
-			<div id="poststuff" >
-				<div id="post-body" class="inside ">
-					<div id="post-body-content" >
-
-						<?php if ($error) { ?>
-							<div class="error inline">
-								<p><?php echo $error ?></p>
-							</div>
-						<?php } elseif ($total = count($meetings)) { ?>
-							<div id="tsml_import_progress" class="progress" data-total="<?php echo $total ?>">
-								<div class="progress-bar"></div>
-							</div>
-							<ol id="tsml_import_errors" class="error inline hidden"></ol>
-						<?php } ?>
-
-						<?php if (empty($tsml_mapbox_key) && empty($tsml_google_maps_key)) { ?>
-							<div class="notice notice-warning inline">
-								<div class="inside" >
-									<h1>Enable Maps on Your Site</h1>
-									<p>If you want to enable maps on your site you have two options: <strong>Mapbox</strong> or <strong>Google</strong>. *See the Google restriction noted below.
-										They are both good options, although Google is not completely supported by all our features! In all likelihood neither one will charge you money. Mapbox gives
-										<a href="https://www.mapbox.com/pricing/" target="_blank">50,000 free map views</a> / month, Google gives
-										<a href="https://cloud.google.com/maps-platform/pricing/" target="_blank">28,500 free views</a>.
-										That's a lot of traffic!
-									</p>
-									<p>To sign up for Mapbox <a href="https://www.mapbox.com/signup/" target="_blank">go here</a>. You will only need
-										a valid email address, no credit card required. Copy your access token and paste it below:</p>
-									<form class="columns" method="post" action="<?php echo $_SERVER['REQUEST_URI'] ?>" >
-										<?php wp_nonce_field($tsml_nonce, 'tsml_nonce', false) ?>
-										<div class="input">
-											<input type="text" name="tsml_add_mapbox_key" placeholder="Enter Mapbox access token here">
-										</div>
-										<div class="btn">
-											<input type="submit" class="button" value="<?php _e('Add', '12-step-meeting-list') ?>">
-										</div>
-									</form>
-
-									<p>*Please note: Only Mapbox is currently supported by our <b>TSML UI</b> user interface!  Google is not an option.
-
-									<p>For our legacy user interface (<b>Legacy UI</b>), you can alternatively choose to use Google. Their interface is slightly more complex because they offer more
-										services. <a href="https://developers.google.com/maps/documentation/javascript/get-api-key" target="_blank">Go here</a>
-										to get a key from Google. The process should only take a few minutes, although you will have to enter a	credit card.
-										<a href="https://theeventscalendar.com/knowledgebase/setting-up-your-google-maps-api-key/" target="_blank">Here
-											are some instructions</a>.
-									</p>
-
-									<p>Be sure to:<br>
-										<span class="dashicons dashicons-yes"></span> Enable the Google Maps Javascript API<br>
-										<span class="dashicons dashicons-yes"></span> Secure your credentials by adding your website URL to the list
-										of allowed referrers
-									</p>
-
-									<p>Once you're done, paste your new key below.</p>
-
-									<form class="columns" method="post" action="<?php echo $_SERVER['REQUEST_URI'] ?>" >
-										<?php wp_nonce_field($tsml_nonce, 'tsml_nonce', false) ?>
-										<div class="input">
-											<input type="text" name="tsml_add_google_maps_key" placeholder="Enter Google API key here">
-										</div>
-										<div class="btn">
-											<input type="submit" class="button" value="<?php _e('Add', '12-step-meeting-list') ?>">
-										</div>
-									</form>
-								</div>
-							</div>
-						<?php } ?>
-					</div>
+			<?php if ($error) { ?>
+				<div class="error inline">
+					<p><?php echo $error ?></p>
 				</div>
-			</div>
+			<?php } elseif ($total = count($meetings)) { ?>
+				<div id="tsml_import_progress" class="progress" data-total="<?php echo $total ?>">
+					<div class="progress-bar"></div>
+				</div>
+				<ol id="tsml_import_errors" class="error inline hidden"></ol>
+			<?php } ?>
 
-			<nav class="nav-tab-wrapper">
-				<a href="?post_type=tsml_meeting&page=import" class="nav-tab <?php if($tab===null):?>nav-tab-active<?php endif; ?>">Import</a>
-				<a href="?post_type=tsml_meeting&page=import&tab=settings" class="nav-tab <?php if($tab==='settings'):?>nav-tab-active<?php endif; ?>">Settings</a>
-				<a href="?post_type=tsml_meeting&page=import&tab=example" class="nav-tab <?php if($tab==='example'):?>nav-tab-active<?php endif; ?>">Spreadsheet Example & Spec</a>
-			</nav>
+			<?php if (empty($tsml_mapbox_key) && empty($tsml_google_maps_key)) { ?>
+				<div class="notice notice-warning">
+					<h2>Enable Maps on Your Site</h2>
+					<p>If you want to enable maps on your site you have two options: <strong>Mapbox</strong> or <strong>Google</strong>.
+						They are both good options, although Google is not completely supported by all our features! In all likelihood neither one will charge you money. Mapbox gives
+						<a href="https://www.mapbox.com/pricing/" target="_blank">50,000 free map views</a> / month, Google gives
+						<a href="https://cloud.google.com/maps-platform/pricing/" target="_blank">28,500 free views</a>.
+						That's a lot of traffic!
+					</p>
 
-			<div class="tab-content">
-			<?php switch($tab) :
-			case 'settings':   
+					<p>To sign up for Mapbox <a href="https://www.mapbox.com/signup/" target="_blank">go here</a>. You will only need
+						a valid email address, no credit card required. Copy your access token and paste it below:</p>
 
-				$file = TSML_PATH . "includes/admin_settings_tab.php";
+					<form class="row" method="post" action="<?php echo $_SERVER['REQUEST_URI'] ?>">
+						<?php wp_nonce_field($tsml_nonce, 'tsml_nonce', false) ?>
+						<div class="input">
+							<input type="text" name="tsml_add_mapbox_key" placeholder="Enter Mapbox access token here">
+						</div>
+						<div class="btn">
+							<input type="submit" class="button" value="<?php _e('Add', '12-step-meeting-list') ?>">
+						</div>
+					</form>
 
-				if (file_exists($file)) {
-					require $file;
-				}
-				?>
+					<p>* Please note: our <b>TSML UI</b> user interface supports Mapbox, not Google.
 
-			  <?php break;
-			case 'example':   
+					<p>For our legacy user interface (<b>Legacy UI</b>), you can alternatively choose to use Google. Their interface is slightly more complex because they offer more
+						services. <a href="https://developers.google.com/maps/documentation/javascript/get-api-key" target="_blank">Go here</a>
+						to get a key from Google. The process should only take a few minutes, although you will have to enter a credit card.
+					</p>
 
-				$file = TSML_PATH . "includes/admin_spec_tab.php";
+					<p>Be sure to:<br>
+						<span class="dashicons dashicons-yes"></span> Enable the Google Maps Javascript API<br>
+						<span class="dashicons dashicons-yes"></span> Secure your credentials by adding your website URL to the list
+						of allowed referrers
+					</p>
 
-				if (file_exists($file)) {
-					require $file;
-				}
-				?>
+					<p>Once you're done, paste your new key below.</p>
 
-			  <?php break;
+					<form class="row" method="post" action="<?php echo $_SERVER['REQUEST_URI'] ?>">
+						<?php wp_nonce_field($tsml_nonce, 'tsml_nonce', false) ?>
+						<div class="input">
+							<input type="text" name="tsml_add_google_maps_key" placeholder="Enter Google API key here">
+						</div>
+						<div class="btn">
+							<input type="submit" class="button" value="<?php _e('Add', '12-step-meeting-list') ?>">
+						</div>
+					</form>
+				</div>
+			<?php }
 
-			default:  
-				$file = TSML_PATH . "includes/admin_import_tab.php";
-
-				if (file_exists($file)) {
-					require $file;
-				}
-				?>
-				<div class="clear"></div>
-
-			  <?php break;
-			endswitch; ?>
-			</div>
+			include TSML_PATH . '/includes/admin_' . $tab . '_tab.php';
+			?>
 		</div>
-	<?php
+<?php
 	}
 }
