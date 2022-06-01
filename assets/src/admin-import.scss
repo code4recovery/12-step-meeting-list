@@ -1,5 +1,15 @@
+h1 {
+	margin: 0;
+	padding: 0;
+}
+
 h2 {
 	font-size: 20px;
+	margin: 0;
+}
+
+h3 {
+	margin-top: 10px !important;
 }
 
 p,
@@ -8,11 +18,17 @@ ul {
 	font-size: 15px;
 }
 
-ol.notice-error {
-	padding: 10px 10px 8px 45px;
-
-	li {
-		margin: 0 0 2px;
+.notice {
+	margin-top: 18px;
+	margin-bottom: 0;
+	&.notice-error {
+		padding: 10px 10px 8px 45px;
+		li {
+			margin: 0 0 2px;
+		}
+	}
+	&.notice-warning {
+		padding: 18px;
 	}
 }
 
@@ -47,7 +63,7 @@ a.button-large {
 	}
 }
 
-@media (min-width: 950px) {
+@media (min-width: 1200px) {
 	.three-column {
 		display: flex;
 		gap: 18px;
@@ -60,7 +76,7 @@ a.button-large {
 
 .stack {
 	display: grid;
-	gap: 18px;
+	gap: 20px;
 	justify-items: flex-start;
 	&.compact {
 		gap: 8px;

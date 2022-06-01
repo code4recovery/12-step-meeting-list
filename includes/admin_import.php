@@ -484,8 +484,8 @@ if (!function_exists('tsml_import_page')) {
 			<?php } ?>
 
 			<?php if (empty($tsml_mapbox_key) && empty($tsml_google_maps_key)) { ?>
-				<div class="notice notice-warning inline">
-					<h1>Enable Maps on Your Site</h1>
+				<div class="notice notice-warning">
+					<h2>Enable Maps on Your Site</h2>
 					<p>If you want to enable maps on your site you have two options: <strong>Mapbox</strong> or <strong>Google</strong>.
 						They are both good options, although Google is not completely supported by all our features! In all likelihood neither one will charge you money. Mapbox gives
 						<a href="https://www.mapbox.com/pricing/" target="_blank">50,000 free map views</a> / month, Google gives

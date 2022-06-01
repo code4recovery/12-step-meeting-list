@@ -195,8 +195,8 @@
 	</div>
 
 	<div>
-		<!-- Put About Us here -->
-		<div class="postbox">
+		<!-- About Us -->
+		<div class="postbox stack">
 			<h2><?php _e('About Us', '12-step-meeting-list') ?></h2>
 			<p>
 				<a href="https://code4recovery.org/" target="_blank" class="logo">
@@ -209,15 +209,15 @@
 			</p>
 		</div>
 
-		<div class="postbox">
-			<!-- Put Need Help here -->
+		<div class="postbox stack">
+			<!-- Need Help -->
 			<h2><?php _e('Need Help?', '12-step-meeting-list') ?></h2>
 
 			<p><?php _e(
 					'To get information about this product or our organization, simply use one of the linked buttons below which are great sources for information and answers.',
 					'12-step-meeting-list'
 				) ?></p>
-			<p>
+			<p class="row">
 				<a href="https://code4recovery.org/docs/12-step-meeting-list" target="_blank" class="button">
 					<?php _e('View Documentation', '12-step-meeting-list') ?>
 				</a>
@@ -227,58 +227,61 @@
 			</p>
 		</div>
 
-		<!-- Put Email Settings here -->
-		<div class="postbox">
+		<!-- Email Settings -->
+		<div class="postbox stack">
 			<h2><?php _e('Email Addresses', '12-step-meeting-list') ?></h2>
 
-			<h3><?php _e('User Feedback Emails', '12-step-meeting-list') ?></h3>
-			<p><?php _e('Enable a meeting info feedback form by adding email addresses here.', '12-step-meeting-list') ?></p>
+			<div class="stack compact">
+				<h3><?php _e('User Feedback Emails', '12-step-meeting-list') ?></h3>
+				<p><?php _e('Enable a meeting info feedback form by adding email addresses here.', '12-step-meeting-list') ?></p>
+				<?php if (!empty($tsml_feedback_addresses)) { ?>
+					<table class="tsml_address_list">
+						<?php foreach ($tsml_feedback_addresses as $address) { ?>
+							<tr>
+								<td><?php echo $address ?></td>
+								<td>
+									<form method="post" action="<?php echo $_SERVER['REQUEST_URI'] ?>">
+										<?php wp_nonce_field($tsml_nonce, 'tsml_nonce', false) ?>
+										<input type="hidden" name="tsml_remove_feedback_address" value="<?php echo $address ?>">
+										<span class="dashicons dashicons-no-alt"></span>
+									</form>
+								</td>
+							</tr>
+						<?php } ?>
+					</table>
+				<?php } ?>
+				<form class="row" method="post" action="<?php echo $_SERVER['REQUEST_URI'] ?>">
+					<?php wp_nonce_field($tsml_nonce, 'tsml_nonce', false) ?>
+					<input type="email" name="tsml_add_feedback_address" placeholder="email@example.org">
+					<input type="submit" class="button" value="<?php _e('Add', '12-step-meeting-list') ?>">
+				</form>
+			</div>
 
-			<?php if (!empty($tsml_feedback_addresses)) { ?>
-				<table class="tsml_address_list">
-					<?php foreach ($tsml_feedback_addresses as $address) { ?>
-						<tr>
-							<td><?php echo $address ?></td>
-							<td>
-								<form method="post" action="<?php echo $_SERVER['REQUEST_URI'] ?>">
-									<?php wp_nonce_field($tsml_nonce, 'tsml_nonce', false) ?>
-									<input type="hidden" name="tsml_remove_feedback_address" value="<?php echo $address ?>">
-									<span class="dashicons dashicons-no-alt"></span>
-								</form>
-							</td>
-						</tr>
-					<?php } ?>
-				</table>
-			<?php } ?>
-			<form class="row" method="post" action="<?php echo $_SERVER['REQUEST_URI'] ?>">
-				<?php wp_nonce_field($tsml_nonce, 'tsml_nonce', false) ?>
-				<input type="email" name="tsml_add_feedback_address" placeholder="email@example.org">
-				<input type="submit" class="button" value="<?php _e('Add', '12-step-meeting-list') ?>">
-			</form>
-
-			<h3><?php _e('Change Notification Emails', '12-step-meeting-list') ?></h3>
-			<p><?php _e('Receive notifications of meeting changes at the email addresses below.', '12-step-meeting-list') ?></p>
-			<?php if (!empty($tsml_notification_addresses)) { ?>
-				<table class="tsml_address_list">
-					<?php foreach ($tsml_notification_addresses as $address) { ?>
-						<tr>
-							<td><?php echo $address ?></td>
-							<td>
-								<form method="post" action="<?php echo $_SERVER['REQUEST_URI'] ?>">
-									<?php wp_nonce_field($tsml_nonce, 'tsml_nonce', false) ?>
-									<input type="hidden" name="tsml_remove_notification_address" value="<?php echo $address ?>">
-									<span class="dashicons dashicons-no-alt"></span>
-								</form>
-							</td>
-						</tr>
-					<?php } ?>
-				</table>
-			<?php } ?>
-			<form class="row" method="post" action="<?php echo $_SERVER['REQUEST_URI'] ?>">
-				<?php wp_nonce_field($tsml_nonce, 'tsml_nonce', false) ?>
-				<input type="email" name="tsml_add_notification_address" placeholder="email@example.org">
-				<input type="submit" class="button" value="<?php _e('Add', '12-step-meeting-list') ?>">
-			</form>
+			<div class="stack compact">
+				<h3><?php _e('Change Notification Emails', '12-step-meeting-list') ?></h3>
+				<p><?php _e('Receive notifications of meeting changes at the email addresses below.', '12-step-meeting-list') ?></p>
+				<?php if (!empty($tsml_notification_addresses)) { ?>
+					<table class="tsml_address_list">
+						<?php foreach ($tsml_notification_addresses as $address) { ?>
+							<tr>
+								<td><?php echo $address ?></td>
+								<td>
+									<form method="post" action="<?php echo $_SERVER['REQUEST_URI'] ?>">
+										<?php wp_nonce_field($tsml_nonce, 'tsml_nonce', false) ?>
+										<input type="hidden" name="tsml_remove_notification_address" value="<?php echo $address ?>">
+										<span class="dashicons dashicons-no-alt"></span>
+									</form>
+								</td>
+							</tr>
+						<?php } ?>
+					</table>
+				<?php } ?>
+				<form class="row" method="post" action="<?php echo $_SERVER['REQUEST_URI'] ?>">
+					<?php wp_nonce_field($tsml_nonce, 'tsml_nonce', false) ?>
+					<input type="email" name="tsml_add_notification_address" placeholder="email@example.org">
+					<input type="submit" class="button" value="<?php _e('Add', '12-step-meeting-list') ?>">
+				</form>
+			</div>
 		</div>
 	</div>
 </div>
