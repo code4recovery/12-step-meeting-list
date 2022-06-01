@@ -379,6 +379,18 @@ add_action('wp_ajax_tsml_import', function () {
 			continue;
 		}
 
+		//override region with data source parent region when available and not already set
+		if (array_key_exists($meeting['data_source'], $tsml_data_sources)) {
+			$region_id = intval($tsml_data_sources[$meeting['data_source']]['parent_region_id']);
+			if ($region_id != -1) {
+				$term = get_term_by('term_id', $region_id, 'tsml_region');
+				if ($meeting['region'] !== $term->name) {
+					$meeting['sub_region'] = $meeting['region'];
+					$meeting['region'] = $term->name;
+				}
+			}
+		}
+
 		//try to guess region from geocode
 		if (empty($meeting['region']) && !empty($geocoded['city'])) $meeting['region'] = $geocoded['city'];
 
