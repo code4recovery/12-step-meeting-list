@@ -339,7 +339,7 @@ add_action('wp_ajax_tsml_import', function () {
 
 	$meetings	= get_option('tsml_import_buffer', []);
 	$errors		= [];
-	$limit		= 5;
+	$limit		= 25;
 
 	//manage import buffer
 	if (count($meetings) > $limit) {
