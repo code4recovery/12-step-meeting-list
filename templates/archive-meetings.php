@@ -315,7 +315,7 @@ if (function_exists('wp_is_block_theme') && wp_is_block_theme()) {
     echo do_blocks( '<!-- wp:template-part {"slug":"header","theme":"twentytwentytwo","tagName":"header","className":"site-header","layout":{"inherit":true}} /-->' );
 }
 else { */
-    get_header();
+get_header();
 // }
 
 ?>
@@ -567,7 +567,7 @@ else { */
 
                                 // Fixes issue 41
                                 if (intval(current_time('w')) == $meeting['day']) {
-                                    if ( date('H:i', strtotime($meeting['time'])) <= date('H:i',current_time('U')) ) {
+                                    if (date('H:i', strtotime($meeting['time'])) <= date('H:i', current_time('U'))) {
                                         $classes[] = 'past';
                                     }
                                 }
@@ -616,6 +616,20 @@ else { */
                                                 break;
 
                                             case 'location': ?>
+                                                <?php
+                                                ?>
+                                                <td class="location" data-sort="<?php echo tsml_sanitize_data_sort($meeting['location']) . '-' . $sort_time ?>">
+                                                    <div class="location-name"><?php echo $meeting['location'] ?></div>
+                                                    <div class="attendance-<?php echo $meeting['attendance_option'] ?>">
+                                                        <small>
+                                                            <?php if ($meeting['attendance_option'] != 'in_person') echo $tsml_meeting_attendance_options[$meeting['attendance_option']] ?>
+                                                        </small>
+                                                    </div>
+                                                </td>
+                                            <?php
+                                                break;
+
+                                            case 'location_group': ?>
                                                 <?php
                                                 $meeting_location = $meeting['location'];
                                                 if ($meeting['attendance_option'] == 'online' || $meeting['attendance_option'] == 'inactive') {
@@ -680,7 +694,5 @@ if (function_exists('wp_is_block_theme') && wp_is_block_theme()) {
    wp_footer();
 }
 else { */
-    get_footer();
+get_footer();
 // }
-
-
