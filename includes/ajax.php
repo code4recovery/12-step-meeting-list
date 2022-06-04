@@ -339,7 +339,7 @@ add_action('wp_ajax_tsml_import', function () {
 
 	$meetings	= get_option('tsml_import_buffer', []);
 	$errors		= [];
-	$limit		= 25;
+	$limit		= 5;
 
 	//manage import buffer
 	if (count($meetings) > $limit) {
@@ -364,6 +364,8 @@ add_action('wp_ajax_tsml_import', function () {
 	//todo occasionally remove this to see if it is working
 	add_filter('wp_insert_post_data', 'tsml_import_post_modified', 99, 2);
 
+	$data_source_parent_region_id = 0;
+
 	foreach ($meetings as $meeting) {
 		//check address
 		if (empty($meeting['formatted_address'])) {
@@ -379,16 +381,8 @@ add_action('wp_ajax_tsml_import', function () {
 			continue;
 		}
 
-		//override region with data source parent region when available and not already set
-		if (array_key_exists($meeting['data_source'], $tsml_data_sources)) {
-			$region_id = intval($tsml_data_sources[$meeting['data_source']]['parent_region_id']);
-			if ($region_id != -1) {
-				$term = get_term_by('term_id', $region_id, 'tsml_region');
-				if ($meeting['region'] !== $term->name) {
-					$meeting['sub_region'] = $meeting['region'];
-					$meeting['region'] = $term->name;
-				}
-			}
+		if ($data_source_parent_region_id == 0 && array_key_exists($meeting['data_source'], $tsml_data_sources)) {
+			$data_source_parent_region_id = intval($tsml_data_sources[$meeting['data_source']]['parent_region_id']) != -1 ? intval($tsml_data_sources[$meeting['data_source']]['parent_region_id']) : 0;
 		}
 
 		//try to guess region from geocode
@@ -396,8 +390,9 @@ add_action('wp_ajax_tsml_import', function () {
 
 		//add region to taxonomy if it doesn't exist yet
 		if (!empty($meeting['region'])) {
-			if (!$term = term_exists($meeting['region'], 'tsml_region', 0)) {
-				$term = wp_insert_term($meeting['region'], 'tsml_region', 0);
+			$args = ['parent' => $data_source_parent_region_id,];
+			if (!$term = term_exists($meeting['region'], 'tsml_region', $args)) {
+				$term = wp_insert_term($meeting['region'], 'tsml_region', $args);
 			}
 			$region_id = intval($term['term_id']);
 
