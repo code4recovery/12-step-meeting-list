@@ -131,6 +131,19 @@ Add this to your theme's functions.php. Feel free to change the order or column 
 		'time' => 'Time',
 		'distance' => 'Distance',
 		'name' => 'Name',
+		'location_group' => 'Location / Group',
+		'address' => 'Address',
+		'types' => 'Types'
+	);
+
+= Can I change the "Location / Group" column to display only the Location name instead?
+Add this to your theme's functions.php. 
+
+	$tsml_columns = array(
+		'region' => 'Region',
+		'time' => 'Time',
+		'distance' => 'Distance',
+		'name' => 'Name',
 		'location' => 'Location',
 		'address' => 'Address',
 		'types' => 'Types'

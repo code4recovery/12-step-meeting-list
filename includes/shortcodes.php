@@ -102,7 +102,7 @@ add_shortcode('tsml_types_list', function () {
 function tsml_ui()
 {
 	global $tsml_mapbox_key, $tsml_nonce, $tsml_conference_providers, $tsml_language, $tsml_programs, $tsml_program, $tsml_ui_config,
-		$tsml_feedback_addresses, $tsml_cache, $tsml_cache_writable, $tsml_distance_units;
+		$tsml_feedback_addresses, $tsml_cache, $tsml_cache_writable, $tsml_distance_units, $tsml_columns;
 
 	//enqueue app script
 	$js = defined('TSML_UI_PATH') ? TSML_UI_PATH : 'https://tsml-ui.code4recovery.org/app.js';
@@ -111,13 +111,15 @@ function tsml_ui()
 	//apply settings
 	wp_localize_script('tsml_ui', 'tsml_react_config', array_merge(
 		[
+			'columns' => array_keys($tsml_columns),
 			'conference_providers' => $tsml_conference_providers,
 			'distance_unit' => $tsml_distance_units,
 			'feedback_emails' => array_values($tsml_feedback_addresses),
 			'strings' => [
-				$tsml_language => [
+				$tsml_language => array_merge($tsml_columns, [
 					'types' => $tsml_programs[$tsml_program]['types'],
-				],
+					'type_descriptions' => $tsml_programs[$tsml_program]['type_descriptions']
+				]),
 			],
 		],
 		$tsml_ui_config
