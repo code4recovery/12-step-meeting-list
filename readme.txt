@@ -3,7 +3,7 @@ Contributors: Code for Recovery
 Requires at least: 3.2
 Requires PHP: 5.6
 Tested up to: 5.9.2
-Stable tag: 3.14.3
+Stable tag: 3.14.4
 
 This plugin helps twelve step recovery programs list their meetings. It standardizes addresses, and displays results in a searchable list and map.
 
@@ -137,7 +137,7 @@ Add this to your theme's functions.php. Feel free to change the order or column 
 	);
 
 = Can I change the "Location / Group" column to display only the Location name instead?
-Add this to your theme's functions.php. 
+Add this to your theme's functions.php.
 
 	$tsml_columns = array(
 		'region' => 'Region',
@@ -258,6 +258,10 @@ To apply these changes, you must go to Settings > Permalinks and click "Save Cha
 1. Edit location
 
 == Changelog ==
+
+= 3.14.4 =
+* Set parent region on imported data source records
+* Enable user-settable location-only column
 
 = 3.14.3 =
 * Add Jitsi conference provider
