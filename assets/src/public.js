@@ -671,6 +671,27 @@ jQuery(function($) {
 									break;
 
 								case 'location':
+									row += '<td class="location" data-sort="' + sanitizeDataSort(obj.location) + '-' + sort_time + '">';
+									row += '<div class="location-name">' + obj.location + '</div>';
+									row += '<div class="attendance-' + obj.attendance_option + '"><small>';
+									switch (obj.attendance_option) {
+										case 'online':
+											row += 'Online';
+											break;
+										case 'inactive':
+											row += 'Temporarily Inactive';
+											break;
+										case 'hybrid':
+											row += 'In-person and Online';
+											break;
+										default:
+											break;
+									}
+									row += '</small></div>';
+									row += '</td>';
+									break;
+
+								case 'location_group':
 									meeting_location = obj.location;
 									if (obj.attendance_option == 'online' || obj.attendance_option == 'inactive') {
 										if (obj.group !== undefined) {
