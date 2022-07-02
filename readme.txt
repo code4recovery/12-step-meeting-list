@@ -259,7 +259,7 @@ To apply these changes, you must go to Settings > Permalinks and click "Save Cha
 
 == Changelog ==
 
-= 3.14.4 =
+= 3.14.5 =
 * Fix table layout bug when filtering
 * Enable multiple levels of regions in TSML UI
 
