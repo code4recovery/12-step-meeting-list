@@ -115,6 +115,7 @@ function tsml_ui()
 			'conference_providers' => $tsml_conference_providers,
 			'distance_unit' => $tsml_distance_units,
 			'feedback_emails' => array_values($tsml_feedback_addresses),
+			'flags' => $tsml_programs[$tsml_program]['flags'],
 			'strings' => [
 				$tsml_language => array_merge($tsml_columns, [
 					'types' => $tsml_programs[$tsml_program]['types'],
