@@ -66,11 +66,9 @@ jQuery(function($) {
 	$body.on('click', 'a.tsml-directions', function(e) {
 		e.preventDefault();
 		var directions =
-			(iOS ? 'maps://?' : 'https://maps.google.com/?') +
+			(iOS ? 'maps://?' : 'https://maps.google.com/maps/dir/?api=1&') +
 			$.param({
-				daddr: $(this).attr('data-latitude') + ',' + $(this).attr('data-longitude'),
-				saddr: 'Current Location',
-				q: $(this).attr('data-location')
+				destination: $(this).attr('data-latitude') + ',' + $(this).attr('data-longitude'),
 			});
 		window.open(directions);
 	});

@@ -891,10 +891,8 @@ function tsml_get_location($location_id = false)
 	}
 
 	//directions link (obsolete 4/15/2018, keeping for compatibility)
-	$location->directions = 'https://maps.google.com/?' . http_build_query([
-		'daddr' => $location->latitude . ',' . $location->longitude,
-		'saddr' => 'Current Location',
-		'q' => $location->post_title,
+	$location->directions = 'https://maps.google.com/maps/dir/?api=1&' . http_build_query([
+		'destination' => $location->latitude . ',' . $location->longitude,
 	]);
 
 	return $location;
@@ -979,10 +977,8 @@ function tsml_get_meeting($meeting_id = false)
 		$meeting->location_meetings = tsml_get_meetings(['location_id' => $location->ID]);
 
 		//directions link (obsolete 4/15/2018, keeping for compatibility)
-		$meeting->directions = 'https://maps.google.com/?' . http_build_query([
-			'daddr' => $location->latitude . ',' . $location->longitude,
-			'saddr' => 'Current Location',
-			'q' => $meeting->location,
+		$meeting->directions = 'https://maps.google.com/maps/dir/?api=1&' . http_build_query([
+			'destination' => $location->latitude . ',' . $location->longitude,
 		]);
 		$meeting->approximate = $location->approximate;
 	}
