@@ -262,6 +262,7 @@ To apply these changes, you must go to Settings > Permalinks and click "Save Cha
 = 3.14.6 =
 * Add href link to meeting name for change detection
 * Add flag settings to TSML UI configuration
+* Fix build of directions URL for Google Maps
 
 = 3.14.5 =
 * Fix table layout bug when filtering
