@@ -37,8 +37,8 @@ git remote add upstream https://github.com/code4recovery/12-step-meeting-list.gi
 
 ```bash
 git fetch --all
-git checkout develop
-git merge upstream/develop
+git checkout main
+git merge upstream/main
 ```
 
 - To create a new feature, first update your copy from the upstream repository, then from the develop branch:
