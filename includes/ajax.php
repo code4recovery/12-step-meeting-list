@@ -233,6 +233,8 @@ function tsml_ajax_csv()
 				$line[] = $escape . strip_tags(str_replace($escape, str_repeat($escape, 2), !empty($meeting[$column]) ? $meeting[$column] : '')) . $escape;
 			} elseif (array_key_exists($column, $meeting)) {
 				$line[] = $escape . str_replace($escape, '', $meeting[$column]) . $escape;
+			} elseif ($column == 'data_source') {
+				$line[] = get_site_url();
 			} else {
 				$line[] = '';
 			}
