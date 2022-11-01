@@ -300,7 +300,7 @@ function tsml_custom_post_types()
 			'show_ui' => true,
 			'has_archive' => $is_public,
 			'menu_icon' => 'dashicons-groups',
-			'rewrite' => ['slug' => $tsml_slug],
+			'rewrite' => ['slug' => $tsml_slug, 'with_front' => apply_filters('tslm_meeting_with_front', true)],
 		]
 	);
 

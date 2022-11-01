@@ -249,6 +249,11 @@ You may set it to false to hide the public meeting finder altogether.
 
 To apply these changes, you must go to Settings > Permalinks and click "Save Changes"
 
+= Can I change the with_front configuration of the tsml meeting post type
+Yes, you can use the following filter to change the with_front configuration from true to false
+
+	add_filter( 'tslm_meeting_with_front', '__return_false');
+
 == Screenshots ==
 
 1. Meeting list page
