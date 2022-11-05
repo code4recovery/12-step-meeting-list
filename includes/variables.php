@@ -38,6 +38,7 @@ $tsml_columns = [
 //list of valid conference providers (matches Meeting Guide app). set this to null in your theme if you don't want to validate
 $tsml_conference_providers = [
 	'bluejeans.com' => 'Bluejeans',
+	'discord.gg' => 'Discord',
 	'freeconference.com' => 'Free Conference',
 	'freeconferencecall.com' => 'FreeConferenceCall',
 	'meet.google.com' => 'Google Hangouts',
