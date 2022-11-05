@@ -249,10 +249,10 @@ You may set it to false to hide the public meeting finder altogether.
 
 To apply these changes, you must go to Settings > Permalinks and click "Save Changes"
 
-= Can I update the $tsml_slug to be appended after the site url instead of the blog url identified in permalinks structure
+= Can I change the with_front configuration of the tsml meeting post type
 Yes, you can use the following filter to change the with_front configuration from true to false
 
-	add_filter( 'tsml_meeting_with_front', '__return_false');
+	add_filter( 'tslm_meeting_with_front', '__return_false');
 
 == Screenshots ==
 

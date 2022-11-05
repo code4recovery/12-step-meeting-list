@@ -300,7 +300,7 @@ function tsml_custom_post_types()
 			'show_ui' => true,
 			'has_archive' => $is_public,
 			'menu_icon' => 'dashicons-groups',
-            'rewrite' => ['slug' => $tsml_slug, 'with_front' => apply_filters('tsml_meeting_with_front', true)],
+			'rewrite' => ['slug' => $tsml_slug, 'with_front' => apply_filters('tslm_meeting_with_front', true)],
 		]
 	);
 
@@ -1725,7 +1725,7 @@ function tsml_import_reformat_googlesheet($data)
 
 	foreach ($data['values'] as $row) {
 
-		//creates a meeting array with elements corresponding to each column header of the Google Sheet; updated for Google Sheets v4 API
+		//creates a meeting array with elements corresponding to each column header of the Google Sheet; updated for Google Sheets v4 API 
 		$meeting = [];
 		for ($j = 0; $j < $header_count; $j++) {
 			if (isset($row[$j])) {
@@ -2070,7 +2070,7 @@ function tsml_import_changes($feed_meetings, $data_source_url, $data_source_last
 		__('Saturday', '12-step-meeting-list'),
 	];
 
-	// get local meetings
+	// get local meetings 
 	$all_db_meetings = tsml_get_meetings();
 	$ds_ids = tsml_get_data_source_ids($data_source_url);
 	sort($ds_ids);
