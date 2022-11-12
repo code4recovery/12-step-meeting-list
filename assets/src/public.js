@@ -62,15 +62,24 @@ jQuery(function($) {
 	//b) jQuery event handlers
 
 	//handle directions links; send to Apple Maps (iOS), or Google Maps (everything else)
-	var iOS = !!navigator.platform && /iPad|iPhone|iPod/.test(navigator.platform);
 	$body.on('click', 'a.tsml-directions', function(e) {
 		e.preventDefault();
-		var directions =
-			(iOS ? 'maps://?' : 'https://maps.google.com/maps/dir/?api=1&') +
-			$.param({
-				destination: $(this).attr('data-latitude') + ',' + $(this).attr('data-longitude'),
-			});
-		window.open(directions);
+
+		//latitude,longitude
+		var coordinates = [$(this).attr('data-latitude'), $(this).attr('data-longitude')].join();
+
+		//detect if user is on iOS
+		var iOS =
+			['iPad Simulator', 'iPhone Simulator', 'iPod Simulator', 'iPad', 'iPhone', 'iPod'].includes(navigator.platform) ||
+			(navigator.userAgent.includes('Mac') && 'ontouchend' in document);
+
+		if (iOS) {
+			//https://developer.apple.com/library/archive/featuredarticles/iPhoneURLScheme_Reference/MapLinks/MapLinks.html
+			window.open('maps://?daddr=' + coordinates);
+		} else {
+			//https://developers.google.com/maps/documentation/urls/get-started#directions-action
+			window.open('https://www.google.com/maps/dir/?api=1&destination=' + coordinates);
+		}
 	});
 
 	//expand region select

@@ -3,7 +3,7 @@ Contributors: Code for Recovery
 Requires at least: 3.2
 Requires PHP: 5.6
 Tested up to: 6.0
-Stable tag: 3.14.6
+Stable tag: 3.14.7
 
 This plugin helps twelve step recovery programs list their meetings. It standardizes addresses, and displays results in a searchable list and map.
 
@@ -249,6 +249,11 @@ You may set it to false to hide the public meeting finder altogether.
 
 To apply these changes, you must go to Settings > Permalinks and click "Save Changes"
 
+= Can I update the $tsml_slug to be appended after the site url instead of the blog url identified in permalinks structure
+Yes, you can use the following filter to change the with_front configuration from true to false
+
+	add_filter( 'tsml_meeting_with_front', '__return_false');
+
 == Screenshots ==
 
 1. Meeting list page
@@ -258,6 +263,10 @@ To apply these changes, you must go to Settings > Permalinks and click "Save Cha
 1. Edit location
 
 == Changelog ==
+
+= 3.14.7 =
+* Fix directions button on mobile
+* Fix TSML-UI data loading on GoDaddy CDN
 
 = 3.14.6 =
 * Add href link to meeting name for change detection
