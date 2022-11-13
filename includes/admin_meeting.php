@@ -28,29 +28,34 @@ add_action('admin_init', function () {
 
 	// Compares versions and updates databases as needed for upgrades
 	$tsml_version = get_option('tsml_version');
-	if (version_compare($tsml_version, '3.14.7', '<')) {
-		tsml_db_update_remove_all_approximate_location_cache();
-		tsml_db_update_remove_all_is_approximate_location_meta();
-		tsml_db_set_location_approximate();
+	if (version_compare($tsml_version, TSML_VERSION, '<')) {
 
-		// Delete the attendance_option metadata tag, don't need it
-		delete_metadata('post', 0, 'attendance_option', false, true);
+		//if upgrading from less than 3.14.7, delete cache
+		if (version_compare($tsml_version, '3.14.7', '<')) {
+			tsml_db_update_remove_all_approximate_location_cache();
+			tsml_db_update_remove_all_is_approximate_location_meta();
+			tsml_db_set_location_approximate();
 
-		// Remove old cache info
-		if ($tmpstr = get_option('tsml_cache')) {
-			if (file_exists(WP_CONTENT_DIR . $tmpstr)) {
-				unlink(WP_CONTENT_DIR . $tmpstr);
+			// Delete the attendance_option metadata tag, don't need it
+			delete_metadata('post', 0, 'attendance_option', false, true);
+
+			// Remove old cache info
+			if ($tmpstr = get_option('tsml_cache')) {
+				if (file_exists(WP_CONTENT_DIR . $tmpstr)) {
+					unlink(WP_CONTENT_DIR . $tmpstr);
+				}
+				delete_option('tsml_cache');
 			}
-			delete_option('tsml_cache');
+
+			if (file_exists(WP_CONTENT_DIR . '/meetings.json')) {
+				unlink(WP_CONTENT_DIR . '/meetings.json');
+			}
+
+			//Rebuild the meeting cache
+			tsml_cache_rebuild();
 		}
 
-		if (file_exists(WP_CONTENT_DIR . '/meetings.json')) {
-			unlink(WP_CONTENT_DIR . '/meetings.json');
-		}
-
-		//Rebuild the meeting cache
-		tsml_cache_rebuild();
-
+		//do this every time
 		update_option('tsml_version', TSML_VERSION);
 		flush_rewrite_rules();
 	};
