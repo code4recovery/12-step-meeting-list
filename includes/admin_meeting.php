@@ -28,7 +28,7 @@ add_action('admin_init', function () {
 
 	// Compares versions and updates databases as needed for upgrades
 	$tsml_version = get_option('tsml_version');
-	if (version_compare($tsml_version, TSML_VERSION, '<')) {
+	if (version_compare($tsml_version, '3.14.7', '<')) {
 		tsml_db_update_remove_all_approximate_location_cache();
 		tsml_db_update_remove_all_is_approximate_location_meta();
 		tsml_db_set_location_approximate();
