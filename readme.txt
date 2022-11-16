@@ -235,10 +235,7 @@ Sure. Try adding this code to your theme's functions.php:
 Also check out our [One Page Meeting List](https://github.com/code4recovery/one-page-meeting-list) theme.
 
 = Can I use this plugin to list telephone meetings or other meetings without a fixed location? =
-No, there's not a good way to do this at this time. All meetings currently need to have a geographic location.
-
-Some sites have used a general geographic area, such as a city name, but this isn't a very good solution, because a map
-pin will still show up for these meetings and people will try to get directions to them.
+Yes, but you will need to enter an approximate location. To do this simply enter the city and state or province of the general geographic location of the meeting into the address field.
 
 = Can I change the URL of the meetings list? =
 Yes, try setting the $tsml_slug variable in your functions.php.
