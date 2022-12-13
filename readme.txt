@@ -162,7 +162,9 @@ By default this plugin uses the Streets theme, v9. To change this, add this to y
 *Please note* the version of the Mapbox script we use doesn't support all the themes displayed on the Mapbox site. The themes which have been tested and are known to work are: mapbox://styles/mapbox/streets-v9, mapbox://styles/mapbox/outdoors-v9, mapbox://styles/mapbox/light-v9, mapbox://styles/mapbox/dark-v9, mapbox://styles/mapbox/satellite-v9, and mapbox://styles/mapbox/satellite-streets-v9.
 
 = How can I override the meeting list or detail pages? =
-Copy the files from the plugin's templates directory into your theme's root directory. If you're using a theme from the Theme Directory, you may be better off creating a [Child Theme](https://codex.wordpress.org/Child_Themes). Now, you may override those pages. The archive-meetings.php file controls the meeting list page, single-meetings.php controls the meetings detail, and single-locations.php controls the location detail.
+If you are using the "Legacy UI" appearance, copy the files from the plugin's templates directory into your theme's root directory. If you're using a theme from the Theme Directory, you may be better off creating a [Child Theme](https://codex.wordpress.org/Child_Themes). Now, you may override those pages. The archive-meetings.php file controls the meeting list page, single-meetings.php controls the meetings detail, and single-locations.php controls the location detail.
+
+If you are using TSML UI, then adding local CSS is the best way to customize the appearance of the meeting finder.
 
 *Please note* these pages will evolve over time. If you override, you will someday experience website errors after an update. If that happens, please update your theme's copy of the plugin pages.
 

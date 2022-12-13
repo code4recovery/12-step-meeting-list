@@ -13,15 +13,14 @@ add_action('init', function () {
         global $tsml_user_interface;
 
         if (is_post_type_archive('tsml_meeting')) {
-            $user_theme_file = get_stylesheet_directory() . '/archive-meetings.php';
-            if (file_exists($user_theme_file)) {
-                return $user_theme_file;
-            }
-
             // when UI switch set to tsml_ui we use special template
             if ($tsml_user_interface == 'tsml_ui') {
                 return dirname(__FILE__) . '/../templates/archive-tsml-ui.php';
             } else { // legacy_ui
+                $user_theme_file = get_stylesheet_directory() . '/archive-meetings.php';
+                if (file_exists($user_theme_file)) {
+                    return $user_theme_file;
+                }
                 return dirname(__FILE__) . '/../templates/archive-meetings.php';
             }
         }

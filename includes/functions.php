@@ -261,6 +261,7 @@ function tsml_custom_post_types()
 			'not_found' => __('No regions found.', '12-step-meeting-list'),
 		],
 		'hierarchical' => true,
+		'public' => false,
 	]);
 
 	register_taxonomy('tsml_district', 'tsml_group', [
@@ -281,6 +282,7 @@ function tsml_custom_post_types()
 			'not_found' => __('No districts found.', '12-step-meeting-list'),
 		],
 		'hierarchical' => true,
+		'public' => false,
 	]);
 
 	register_post_type(
