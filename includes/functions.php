@@ -261,6 +261,7 @@ function tsml_custom_post_types()
 			'not_found' => __('No regions found.', '12-step-meeting-list'),
 		],
 		'hierarchical' => true,
+		'public' => false,
 	]);
 
 	register_taxonomy('tsml_district', 'tsml_group', [
@@ -281,6 +282,7 @@ function tsml_custom_post_types()
 			'not_found' => __('No districts found.', '12-step-meeting-list'),
 		],
 		'hierarchical' => true,
+		'public' => false,
 	]);
 
 	register_post_type(
@@ -2133,7 +2135,7 @@ function tsml_import_changes($feed_meetings, $data_source_url, $data_source_last
 		// Check if slug has been modified on import by removing an appended suffix and test for match again
 		if (!$is_matched) {
 			for ($x = 0; $x <= 10; $x++) {
-				if (str_contains($meeting_slug, '-' . $x) ) {
+				if (str_contains($meeting_slug, '-' . $x)) {
 					$meeting_slug = str_replace('-' . $x, '', $meeting_slug);
 					break;
 				}
