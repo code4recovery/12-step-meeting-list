@@ -8,7 +8,7 @@ if (!function_exists('tsml_import_page')) {
 	{
 		global $tsml_data_sources, $tsml_programs, $tsml_program, $tsml_nonce, $tsml_feedback_addresses,
 			$tsml_notification_addresses, $tsml_distance_units, $tsml_sharing, $tsml_sharing_keys, $tsml_contact_display,
-			$tsml_google_maps_key, $tsml_mapbox_key, $tsml_geocoding_method, $tsml_slug, $tsml_change_detect, $tsml_user_interface;
+			$tsml_google_maps_key, $tsml_mapbox_key, $tsml_slug, $tsml_change_detect, $tsml_user_interface;
 
 		$error = false;
 		$tsml_data_sources = get_option('tsml_data_sources', array());
@@ -415,13 +415,6 @@ if (!function_exists('tsml_import_page')) {
 			//there can be only one
 			$tsml_mapbox_key = null;
 			delete_option('tsml_mapbox_key');
-		}
-
-		//change geocoding method
-		if (!empty($_POST['tsml_geocoding_method']) && isset($_POST['tsml_nonce']) && wp_verify_nonce($_POST['tsml_nonce'], $tsml_nonce)) {
-			$tsml_geocoding_method = sanitize_text_field($_POST['tsml_geocoding_method']);
-			update_option('tsml_geocoding_method', $tsml_geocoding_method);
-			tsml_alert(__('Geocoding method updated.', '12-step-meeting-list'));
 		}
 
 		//change user interface
