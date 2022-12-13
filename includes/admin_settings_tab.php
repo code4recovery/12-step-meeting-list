@@ -136,7 +136,7 @@
 
 		<!-- Map Settings -->
 		<div class="postbox stack">
-			<h2><?php _e('Mapping & Geocoding', '12-step-meeting-list') ?></h2>
+			<h2><?php _e('Maps', '12-step-meeting-list') ?></h2>
 			<p><?php _e('Display of maps requires an authorization key from <strong><a href="https://www.mapbox.com/" target="_blank">Mapbox</a></strong> or <strong><a href="https://console.cloud.google.com/home/" target="_blank">Google</a></strong>.', '12-step-meeting-list') ?></p>
 
 			<div class="stack compact">
