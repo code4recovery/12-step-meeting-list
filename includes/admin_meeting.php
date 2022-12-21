@@ -30,6 +30,11 @@ add_action('admin_init', function () {
 	$tsml_version = get_option('tsml_version');
 	if (version_compare($tsml_version, TSML_VERSION, '<')) {
 
+		//if upgrading from less than 3.14.8, delete obsolete geocoding option
+		if (version_compare($tsml_version, '3.14.8', '<')) {
+			delete_option('tsml_geocoding_method');
+		}
+
 		//if upgrading from less than 3.14.7, delete cache
 		if (version_compare($tsml_version, '3.14.7', '<')) {
 			tsml_db_update_remove_all_approximate_location_cache();

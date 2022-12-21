@@ -561,7 +561,7 @@ function tsml_front_page($wp_query)
 //used:		tsml_ajax_import(), tsml_ajax_geocode()
 function tsml_geocode($address)
 {
-	global $tsml_google_overrides, $tsml_google_maps_key, $tsml_geocoding_method;
+	global $tsml_google_overrides, $tsml_google_maps_key;
 
 	//check overrides first before anything
 	if (array_key_exists($address, $tsml_google_overrides)) {
@@ -582,7 +582,7 @@ function tsml_geocode($address)
 	}
 
 	//Set the Google API Key before calling function that finds the address
-	if ($tsml_geocoding_method == 'google_key' && !empty($tsml_google_maps_key)) {
+	if (!empty($tsml_google_maps_key)) {
 		$tsml_map_key = $tsml_google_maps_key;
 	} else {
 		$tsml_map_key = 'AIzaSyDm-pU-DlU-WsTkXJPGEVowY2hICRFLNeQ';
@@ -605,7 +605,7 @@ function tsml_geocode($address)
 //function: Call Google for geocoding of the address
 function tsml_geocode_google($address, $tsml_map_key)
 {
-	global $tsml_curl_handle, $tsml_language, $tsml_google_overrides, $tsml_bounds, $tsml_geocoding_method;
+	global $tsml_curl_handle, $tsml_language, $tsml_google_overrides, $tsml_bounds;
 
 	// Can't Geocode an empty address
 	if (empty($address)) {
@@ -639,11 +639,7 @@ function tsml_geocode_google($address, $tsml_map_key)
 	}
 
 	//send request to google
-	if ($tsml_geocoding_method == 'api_gateway') {
-		curl_setopt($tsml_curl_handle, CURLOPT_URL, 'https://api-gateway.apps.itstechnical.net/api/geocode?' . http_build_query($options));
-	} else {
-		curl_setopt($tsml_curl_handle, CURLOPT_URL, 'https://maps.googleapis.com/maps/api/geocode/json?' . http_build_query($options));
-	}
+	curl_setopt($tsml_curl_handle, CURLOPT_URL, 'https://maps.googleapis.com/maps/api/geocode/json?' . http_build_query($options));
 	curl_setopt($tsml_curl_handle, CURLOPT_RETURNTRANSFER, true);
 
 	$result = curl_exec($tsml_curl_handle);

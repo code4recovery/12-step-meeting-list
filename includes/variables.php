@@ -104,9 +104,6 @@ $tsml_feedback_addresses = get_option('tsml_feedback_addresses', []);
 //load the API key user saved, if any
 $tsml_google_maps_key = get_option('tsml_google_maps_key');
 
-//load the geocoding method
-$tsml_geocoding_method = get_option('tsml_geocoding_method', 'legacy');
-
 //load the screen user interface choice
 $tsml_user_interface = get_option('tsml_user_interface', 'legacy_ui');
 

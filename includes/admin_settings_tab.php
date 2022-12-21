@@ -136,7 +136,7 @@
 
 		<!-- Map Settings -->
 		<div class="postbox stack">
-			<h2><?php _e('Mapping & Geocoding', '12-step-meeting-list') ?></h2>
+			<h2><?php _e('Maps', '12-step-meeting-list') ?></h2>
 			<p><?php _e('Display of maps requires an authorization key from <strong><a href="https://www.mapbox.com/" target="_blank">Mapbox</a></strong> or <strong><a href="https://console.cloud.google.com/home/" target="_blank">Google</a></strong>.', '12-step-meeting-list') ?></p>
 
 			<div class="stack compact">
@@ -168,29 +168,6 @@
 				</form>
 			</div>
 
-			<div class="stack compact">
-				<h3><?php _e('Address Geocoding', '12-step-meeting-list') ?></h3>
-				<p><?php _e('Code for Recovery is working on a new method for geocoding addresses. You can decide whether to use the old way, or whether to help us test the new way.', '12-step-meeting-list') ?></p>
-				<form method="post" action="<?php echo $_SERVER['REQUEST_URI'] ?>">
-					<?php wp_nonce_field($tsml_nonce, 'tsml_nonce', false) ?>
-					<select name="tsml_geocoding_method" onchange="this.form.submit()">
-						<option value="legacy" <?php selected($tsml_geocoding_method, 'legacy') ?>>
-							<?php _e('Legacy Method', '12-step-meeting-list') ?>
-						</option>
-						<?php if (!empty($tsml_google_maps_key)) { ?>
-							<option value="google_key" <?php selected($tsml_geocoding_method, 'google_key') ?>>
-								<?php _e('Use my Google API Key', '12-step-meeting-list') ?>
-							</option>
-						<?php } ?>
-						<option value="api_gateway" <?php selected($tsml_geocoding_method, 'api_gateway') ?>>
-							<?php _e('BETA - API Gateway - BETA', '12-step-meeting-list') ?>
-						</option>
-					</select>
-				</form>
-				<?php if (!empty($tsml_google_maps_key)) { ?>
-					<p>If you select "Use my Google API Key", then you <strong>must</strong> go into the Google Console and enable the geocode API for your key</p>
-				<?php } ?>
-			</div>
 		</div>
 	</div>
 

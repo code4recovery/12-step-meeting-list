@@ -3,7 +3,7 @@ Contributors: Code for Recovery
 Requires at least: 3.2
 Requires PHP: 5.6
 Tested up to: 6.0
-Stable tag: 3.14.7
+Stable tag: 3.14.8
 
 This plugin helps twelve step recovery programs list their meetings. It standardizes addresses, and displays results in a searchable list and map.
 
@@ -262,6 +262,16 @@ Yes, you can use the following filter to change the with_front configuration fro
 1. Edit location
 
 == Changelog ==
+
+= 3.14.8 =
+* Remove deprecated "BETA" geocoding option
+* Don't regenerate cache after every update
+* Upgrade dev dependencies
+* Overriding theme files no longer overrides TSML UI setting
+* Add four new types for Al-Anon
+* Remove automatic taxonomy pages
+* Add ability for meetings page to be appended to site URL (rather than blog URL)
+* Add Discord and GoTo.com as valid conference providers
 
 = 3.14.7 =
 * Fix directions button on mobile
