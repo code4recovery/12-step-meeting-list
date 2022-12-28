@@ -1753,6 +1753,25 @@ function tsml_link($url, $string, $exclude = '', $class = false)
 	return $return;
 }
 
+//function: add an entry to the activity log
+function tsml_log_activity($event, $error = false, $note = null)
+{
+	global $tsml_activity;
+
+	//default variables
+	$type = $error ? 'error' : 'log';
+	$timestamp = current_time('mysql');
+
+	//prepend to array
+	array_unshift($tsml_activity, compact('type', 'event', 'note', 'timestamp'));
+
+	//truncate to 25 events
+	$tsml_activity = array_slice($tsml_activity, 0, 25);
+
+	//save
+	update_option('tsml_activity', $tsml_activity);
+}
+
 //function: link to meetings page with parameters (added to link dropdown menus for SEO)
 //used:		archive-meetings.php
 function tsml_meetings_url($parameters)
