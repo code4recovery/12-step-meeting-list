@@ -542,7 +542,7 @@ $tsml_days = $tsml_days_order = $tsml_programs = $tsml_types_in_use = $tsml_stri
 if (!isset($tsml_slug)) $tsml_slug = null;
 
 add_action('plugins_loaded', function () {
-	global $tsml_days, $tsml_days_order, $tsml_programs, $tsml_slug, $tsml_strings, $tsml_types_in_use;
+	global $tsml_days, $tsml_days_order, $tsml_programs, $tsml_slug, $tsml_strings, $tsml_user_interface, $tsml_types_in_use;
 
 	//load internationalization
 	load_plugin_textdomain('12-step-meeting-list', false, '12-step-meeting-list/languages');
@@ -1270,6 +1270,13 @@ add_action('plugins_loaded', function () {
 			],
 		],
 	];
+
+	//remove 'TC' and 'ONL' from default flags if meeting finder is TSML UI
+	if ($tsml_user_interface === 'tsml_ui') {
+		foreach ($tsml_programs as $key => $value) {
+			$tsml_programs[$key]['flags'] = array_diff($value['flags'], ['TC', 'ONL']);
+		}
+	}
 
 	//the location where the list will show up, eg https://intergroup.org/meetings
 	if ($tsml_slug === null) {
