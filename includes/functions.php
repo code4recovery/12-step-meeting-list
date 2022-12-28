@@ -262,6 +262,7 @@ function tsml_custom_post_types()
 		],
 		'hierarchical' => true,
 		'public' => false,
+		'show_ui' => true,
 	]);
 
 	register_taxonomy('tsml_district', 'tsml_group', [
@@ -283,6 +284,7 @@ function tsml_custom_post_types()
 		],
 		'hierarchical' => true,
 		'public' => false,
+		'show_ui' => true,
 	]);
 
 	register_post_type(
