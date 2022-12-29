@@ -3,7 +3,7 @@ Contributors: Code for Recovery
 Requires at least: 3.2
 Requires PHP: 5.6
 Tested up to: 6.0
-Stable tag: 3.14.8
+Stable tag: 3.14.9
 
 This plugin helps twelve step recovery programs list their meetings. It standardizes addresses, and displays results in a searchable list and map.
 
@@ -262,6 +262,11 @@ Yes, you can use the following filter to change the with_front configuration fro
 1. Edit location
 
 == Changelog ==
+
+= 3.14.9 =
+* Fix bug in 3.14.8 causing Regions and Districts to not be editable - [more info](https://github.com/code4recovery/12-step-meeting-list/issues/1016)
+* Fix warning when type_descriptions are not set for program - [more info](https://github.com/code4recovery/12-step-meeting-list/issues/1006)
+* When using TSML UI, remove Online and Location Temporarily Closed as default flags - [more info](https://github.com/code4recovery/12-step-meeting-list/issues/1008)
 
 = 3.14.8 =
 * Remove deprecated "BETA" geocoding option
