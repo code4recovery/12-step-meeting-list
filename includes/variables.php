@@ -1285,6 +1285,7 @@ add_action('plugins_loaded', function () {
 
 	//strings that must be synced between the javascript and the PHP
 	$tsml_strings = [
+		'appointment' => __('Appointment', '12-step-meeting-list'),
 		'data_error' => __('Got an improper response from the server, try refreshing the page.', '12-step-meeting-list'),
 		'email_not_sent' => __('Email was not sent.', '12-step-meeting-list'),
 		'loc_empty' => __('Enter a location in the field above.', '12-step-meeting-list'),

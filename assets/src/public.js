@@ -5,7 +5,7 @@
 	c) functions
 */
 
-jQuery(function($) {
+jQuery(function ($) {
 	//a) procedural logic
 	var $body = $('body');
 	var typeaheadEnabled = false;
@@ -19,9 +19,7 @@ jQuery(function($) {
 		//if already searching, mark results
 		var $search_field = $('#meetings #search input[name=query]');
 		if ($search_field.length && $search_field.val().length) {
-			$('#tsml td')
-				.not('.time')
-				.mark($search_field.val());
+			$('#tsml td').not('.time').mark($search_field.val());
 		}
 
 		var mode = $('#search li.active a').attr('data-id');
@@ -62,7 +60,7 @@ jQuery(function($) {
 	//b) jQuery event handlers
 
 	//handle directions links; send to Apple Maps (iOS), or Google Maps (everything else)
-	$body.on('click', 'a.tsml-directions', function(e) {
+	$body.on('click', 'a.tsml-directions', function (e) {
 		e.preventDefault();
 
 		//latitude,longitude
@@ -83,38 +81,32 @@ jQuery(function($) {
 	});
 
 	//expand region select
-	$('.panel-expandable').on('click', '.panel-heading', function(e) {
-		$(this)
-			.closest('.panel-expandable')
-			.toggleClass('expanded');
+	$('.panel-expandable').on('click', '.panel-heading', function (e) {
+		$(this).closest('.panel-expandable').toggleClass('expanded');
 		if (tsml.debug) console.log('.panel-expandable toggling');
 	});
 
 	//single meeting page feedback form
 	$('#meeting #feedback').validate({
 		onfocusout: false,
-		onkeyup: function(element) {},
-		highlight: function(element, errorClass, validClass) {
-			$(element)
-				.parent()
-				.addClass('has-error');
+		onkeyup: function (element) {},
+		highlight: function (element, errorClass, validClass) {
+			$(element).parent().addClass('has-error');
 		},
-		unhighlight: function(element, errorClass, validClass) {
-			$(element)
-				.parent()
-				.removeClass('has-error');
+		unhighlight: function (element, errorClass, validClass) {
+			$(element).parent().removeClass('has-error');
 		},
-		errorPlacement: function(error, element) {
+		errorPlacement: function (error, element) {
 			return; //don't show message on page, simply highlight
 		},
-		submitHandler: function(form) {
+		submitHandler: function (form) {
 			var $form = $(form),
 				$feedback = $form.closest('#feedback');
 			if (!$form.hasClass('running'));
-			$.post(tsml.ajaxurl, $form.serialize(), function(data) {
+			$.post(tsml.ajaxurl, $form.serialize(), function (data) {
 				$form.removeClass('running');
 				$feedback.find('.list-group').html('<li class="list-group-item has-info">' + data + '</li>');
-			}).fail(function(response) {
+			}).fail(function (response) {
 				$form.removeClass('running');
 				$feedback.find('.list-group').html('<li class="list-group-item has-error">' + tsml.strings.email_not_sent + '</li>');
 			});
@@ -124,7 +116,7 @@ jQuery(function($) {
 	});
 
 	//table sorting
-	$('#meetings table thead').on('click', 'th', function() {
+	$('#meetings table thead').on('click', 'th', function () {
 		var sort = $(this).attr('class');
 		var order;
 
@@ -141,29 +133,25 @@ jQuery(function($) {
 
 	//controls changes
 	$('#meetings .controls')
-		.on('submit', '#search', function() {
+		.on('submit', '#search', function () {
 			//capture submit event
 			trackAnalytics('search', $search_field.val());
 			doSearch();
 			return false;
 		})
-		.on('click', 'div.expand', function(e) {
+		.on('click', 'div.expand', function (e) {
 			//expand or contract regions submenu
 			e.preventDefault();
 			e.stopPropagation();
-			$(this)
-				.next('ul.children')
-				.toggleClass('expanded');
+			$(this).next('ul.children').toggleClass('expanded');
 			$(this).toggleClass('expanded');
 		})
-		.on('click', '.dropdown-menu a', function(e) {
+		.on('click', '.dropdown-menu a', function (e) {
 			//these are live hrefs now
 			e.preventDefault();
 
 			//dropdown menu click
-			var param = $(this)
-				.closest('div')
-				.attr('id');
+			var param = $(this).closest('div').attr('id');
 
 			if (param == 'mode') {
 				if (tsml.debug) console.log('dropdown click search mode');
@@ -177,20 +165,14 @@ jQuery(function($) {
 				//change icon & enable or disable
 				if ($(this).attr('data-id') == 'search') {
 					$search_field.prop('disabled', false);
-					$('#search button i')
-						.removeClass()
-						.addClass('glyphicon glyphicon-search');
+					$('#search button i').removeClass().addClass('glyphicon glyphicon-search');
 				} else if ($(this).attr('data-id') == 'location') {
 					$search_field.prop('disabled', false);
-					$('#search button i')
-						.removeClass()
-						.addClass('glyphicon glyphicon-map-marker');
+					$('#search button i').removeClass().addClass('glyphicon glyphicon-map-marker');
 					setAlert('loc_thinking');
 				} else if ($(this).attr('data-id') == 'me') {
 					$search_field.prop('disabled', true);
-					$('#search button i')
-						.removeClass()
-						.addClass('glyphicon glyphicon-user');
+					$('#search button i').removeClass().addClass('glyphicon glyphicon-user');
 					setAlert('geo_thinking');
 				}
 
@@ -206,14 +188,8 @@ jQuery(function($) {
 				//switch between region and district mode
 				if ($(this).hasClass('switch')) {
 					if (tsml.debug) console.log('dropdown click switching between region and district');
-					var mode = $(this)
-						.parent()
-						.hasClass('region')
-						? 'district'
-						: 'region';
-					$(this)
-						.closest('#meetings')
-						.attr('tax-mode', mode);
+					var mode = $(this).parent().hasClass('region') ? 'district' : 'region';
+					$(this).closest('#meetings').attr('tax-mode', mode);
 					e.stopPropagation();
 					return;
 				}
@@ -242,16 +218,14 @@ jQuery(function($) {
 				trackAnalytics('type', $(this).text());
 			}
 
-			$(this)
-				.parent()
-				.toggleClass('active');
+			$(this).parent().toggleClass('active');
 
 			//wait to set label on type until we have a complete count
 			if (param == 'type') {
 				if ($('#type li.active a[data-id]').length) {
 					if (tsml.debug) console.log('dropdown click ' + $('#type li.active a[data-id]').length + ' types selected');
 					var types = [];
-					$('#type li.active a[data-id]').each(function() {
+					$('#type li.active a[data-id]').each(function () {
 						types.push($(this).text());
 					});
 					$('#type span.selected').html(types.join(' + '));
@@ -288,7 +262,7 @@ jQuery(function($) {
 		});
 
 	//toggle between list and map
-	$('#meetings #action .toggle-view').click(function(e) {
+	$('#meetings #action .toggle-view').click(function (e) {
 		//these are live hrefs now
 		e.preventDefault();
 
@@ -320,7 +294,7 @@ jQuery(function($) {
 	});
 
 	//resize fullscreen on resize
-	$(window).resize(function(e) {
+	$(window).resize(function (e) {
 		if ($('#meetings').hasClass('tsml_fullscreen')) {
 			var center = map.getCenter();
 			var height = $(window).height() - 79;
@@ -338,7 +312,7 @@ jQuery(function($) {
 		//types and attendanceOptions can be multiple
 		var types = [];
 		const attendanceOptions = [];
-		$('#type li.active a').each(function() {
+		$('#type li.active a').each(function () {
 			let userChoice = $(this).attr('data-id');
 			if (userChoice) {
 				if (['active', 'in_person', 'hybrid', 'online', 'inactive'].indexOf(userChoice) !== -1) {
@@ -350,9 +324,7 @@ jQuery(function($) {
 		//prepare query for ajax
 		var controls = {
 			action: 'meetings',
-			query: $('#meetings #search input[name=query]')
-				.val()
-				.trim(),
+			query: $('#meetings #search input[name=query]').val().trim(),
 			mode: $('#search li.active a').attr('data-id'),
 			region: $('#region li.region.active a').attr('data-id'),
 			district: $('#region li.district.active a').attr('data-id'),
@@ -411,9 +383,7 @@ jQuery(function($) {
 
 			if (controls.query) {
 				//start spinner
-				$('#search button i')
-					.removeClass()
-					.addClass('glyphicon glyphicon-refresh spinning');
+				$('#search button i').removeClass().addClass('glyphicon glyphicon-refresh spinning');
 
 				//geocode the address
 				$.getJSON(
@@ -423,11 +393,9 @@ jQuery(function($) {
 						address: controls.query,
 						nonce: tsml.nonce
 					},
-					function(geocoded) {
+					function (geocoded) {
 						if (tsml.debug) console.log('doSearch() location geocoded', geocoded);
-						$('#search button i')
-							.removeClass()
-							.addClass('glyphicon glyphicon-map-marker');
+						$('#search button i').removeClass().addClass('glyphicon glyphicon-map-marker');
 						if (geocoded.status == 'error') {
 							//show error message
 							removeSearchMarker(); //clear marker if it exists
@@ -455,16 +423,12 @@ jQuery(function($) {
 			}
 
 			//start spinner
-			$('#search button i')
-				.removeClass()
-				.addClass('glyphicon glyphicon-refresh spinning');
+			$('#search button i').removeClass().addClass('glyphicon glyphicon-refresh spinning');
 
 			if (navigator.geolocation) {
 				navigator.geolocation.getCurrentPosition(
-					function(pos) {
-						$('#search button i')
-							.removeClass()
-							.addClass('glyphicon glyphicon-user');
+					function (pos) {
+						$('#search button i').removeClass().addClass('glyphicon glyphicon-user');
 						controls.latitude = pos.coords.latitude;
 						controls.longitude = pos.coords.longitude;
 						searchLocation = {
@@ -473,12 +437,10 @@ jQuery(function($) {
 						};
 						getMeetings(controls);
 					},
-					function() {
+					function () {
 						//browser supports but can't get geolocation
 						if (tsml.debug) console.log('doSearch() didnt get location');
-						$('#search button i')
-							.removeClass()
-							.addClass('glyphicon glyphicon-user'); //todo switch to location
+						$('#search button i').removeClass().addClass('glyphicon glyphicon-user'); //todo switch to location
 						removeSearchMarker();
 						setAlert('geo_error');
 					},
@@ -491,9 +453,7 @@ jQuery(function($) {
 			} else {
 				//browser doesn't support geolocation
 				if (tsml.debug) console.log('doSearch() no browser support for geo');
-				$('#search button i')
-					.removeClass()
-					.addClass('glyphicon glyphicon-user'); //todo switch to location
+				$('#search button i').removeClass().addClass('glyphicon glyphicon-user'); //todo switch to location
 				removeSearchMarker();
 				setAlert('geo_error_browser');
 			}
@@ -518,7 +478,7 @@ jQuery(function($) {
 		$.post(
 			tsml.ajaxurl,
 			controls,
-			function(response) {
+			function (response) {
 				if (tsml.debug) console.log('getMeetings() received', response);
 
 				if (typeof response != 'object' || response == null) {
@@ -535,26 +495,11 @@ jQuery(function($) {
 								typeof controls.type !== 'undefined')) ||
 						typeof controls.attendance_option !== 'undefined'
 					) {
-						$('#day li')
-							.removeClass('active')
-							.first()
-							.addClass('active');
-						$('#time li')
-							.removeClass('active')
-							.first()
-							.addClass('active');
-						$('#region li')
-							.removeClass('active')
-							.first()
-							.addClass('active');
-						$('#type li')
-							.removeClass('active')
-							.first()
-							.addClass('active');
-						$('#attendance_option li')
-							.removeClass('active')
-							.first()
-							.addClass('active');
+						$('#day li').removeClass('active').first().addClass('active');
+						$('#time li').removeClass('active').first().addClass('active');
+						$('#region li').removeClass('active').first().addClass('active');
+						$('#type li').removeClass('active').first().addClass('active');
+						$('#attendance_option li').removeClass('active').first().addClass('active');
 
 						//set selected text
 						$('#day span.selected').html($('#day li:first-child a').html());
@@ -578,7 +523,7 @@ jQuery(function($) {
 					var tbody = $('#meetings_tbody').html('');
 
 					//loop through JSON meetings
-					$.each(response, function(index, obj) {
+					$.each(response, function (index, obj) {
 						//types could be undefined
 						if (!obj.types) obj.types = [];
 
@@ -652,11 +597,9 @@ jQuery(function($) {
 										sort_time +
 										'-' +
 										sanitizeDataSort(obj.location) +
-										'"><span>' +
-										(typeof controls.day !== 'undefined' || typeof obj.day === 'undefined'
-											? obj.time_formatted
-											: tsml.days[obj.day] + '</span><span>' + obj.time_formatted) +
-										'</span></td>';
+										'">' +
+										formatDayAndTime(obj, controls) +
+										'</td>';
 									break;
 
 								case 'distance':
@@ -773,9 +716,7 @@ jQuery(function($) {
 
 					//highlight search results
 					if (controls.query && controls.mode == 'search') {
-						$('#tsml td')
-							.not('.time')
-							.mark(controls.query);
+						$('#tsml td').not('.time').mark(controls.query);
 					}
 
 					//build map
@@ -791,6 +732,18 @@ jQuery(function($) {
 			},
 			'json'
 		);
+	}
+
+	//return Sunday, 4:20pm or 4:20pm, or Appointment
+	function formatDayAndTime(obj, controls) {
+		if (typeof obj.time_formatted === 'undefined' || typeof obj.day === 'undefined' || typeof tsml.days[obj.day] === 'undefined') {
+			//appointment meeting
+			return '<span>' + tsml.strings.appointment + '</span>';
+		} else if (typeof controls.day !== 'undefined') {
+			//day is set, return only the time
+			return '<span>' + obj.time_formatted + '</span>';
+		}
+		return '<span>' + tsml.days[obj.day] + '</span><span>' + obj.time_formatted + '</span>';
 	}
 
 	//slugify a string, like WordPress's sanitize_title()
@@ -873,13 +826,9 @@ jQuery(function($) {
 	//set or clear the alert message
 	function setAlert(message_key) {
 		if (typeof message_key == 'undefined') {
-			$('#alert')
-				.html('')
-				.addClass('hidden');
+			$('#alert').html('').addClass('hidden');
 		} else {
-			$('#alert')
-				.html(tsml.strings[message_key])
-				.removeClass('hidden');
+			$('#alert').html(tsml.strings[message_key]).removeClass('hidden');
 		}
 	}
 
@@ -908,12 +857,12 @@ jQuery(function($) {
 			var locales = [document.documentElement.lang];
 			if (!(locales[0].startsWith != 'en')) locales.push('en');
 			var collator = new Intl.Collator(locales, {sensitivity: 'variant'});
-			compareFunction = function(x, y) {
+			compareFunction = function (x, y) {
 				return collator.compare(x[0], y[0]) * (order == 'asc' ? 1 : -1);
 			};
 		} else {
 			// No Intl object. Must be a very old browser. Do the best we can
-			compareFunction = function(x, y) {
+			compareFunction = function (x, y) {
 				if (x[0] > y[0]) return order == 'asc' ? 1 : -1;
 				if (x[0] < y[0]) return order == 'asc' ? -1 : 1;
 				return 0;
@@ -929,24 +878,14 @@ jQuery(function($) {
 	//if day is today, show 'upcoming' time option, otherwise hide it
 	function toggleUpcoming() {
 		var current_day = new Date().getDay();
-		var selected_day = $('#day li.active a')
-			.first()
-			.attr('data-id');
-		var selected_time = $('#time li.active a')
-			.first()
-			.attr('data-id');
+		var selected_day = $('#day li.active a').first().attr('data-id');
+		var selected_time = $('#time li.active a').first().attr('data-id');
 		if (current_day != selected_day) {
 			$('#time li.upcoming').addClass('hidden');
 			if (selected_time == 'upcoming') {
 				$('#time li.active').removeClass('active');
-				$('#time li')
-					.first()
-					.addClass('active');
-				$('#time span.selected').html(
-					$('#time li a')
-						.first()
-						.text()
-				);
+				$('#time li').first().addClass('active');
+				$('#time span.selected').html($('#time li a').first().text());
 			}
 		} else {
 			$('#time li.upcoming').removeClass('hidden');
@@ -963,22 +902,19 @@ jQuery(function($) {
 
 	//Create the custom widget for search autocomplete
 	$.widget('custom.autocomplete', $.ui.autocomplete, {
-		_create: function() {
+		_create: function () {
 			this._super();
 			this.widget().menu('option', 'items', '> :not(.ui-autocomplete-category)');
 		},
-		_renderItem: function(ul, item) {
+		_renderItem: function (ul, item) {
 			var matcher = new RegExp($.ui.autocomplete.escapeRegex(this.term), 'ig');
 			var output = item.label.replace(matcher, '<strong>' + this.term + '</strong>');
-			return $('<li>')
-				.attr('data-value', item.value)
-				.append(output)
-				.appendTo(ul);
+			return $('<li>').attr('data-value', item.value).append(output).appendTo(ul);
 		},
-		_renderMenu: function(ul, items) {
+		_renderMenu: function (ul, items) {
 			var that = this,
 				currentType = '';
-			$.each(items, function(index, item) {
+			$.each(items, function (index, item) {
 				var li;
 				if (item.type != currentType) {
 					const key = `${item.type}s`;
@@ -1008,17 +944,17 @@ jQuery(function($) {
 			$.getJSON(tsml.ajaxurl + '?action=tsml_regions'),
 			$.getJSON(tsml.ajaxurl + '?action=tsml_groups'),
 			$.getJSON(tsml.ajaxurl + '?action=tsml_locations')
-		).done(function(data1, data2, data3) {
+		).done(function (data1, data2, data3) {
 			var search_data = data1[0].concat(data2[0], data3[0]);
 			typeaheadEnabled = true;
 			$('#meetings #search input[name="query"]').autocomplete({
 				autoFocus: false,
 				source: search_data,
 				minLength: 1,
-				change: function(event, ui) {
+				change: function (event, ui) {
 					console.log('Change! ', event, ui);
 				},
-				select: function(event, ui) {
+				select: function (event, ui) {
 					const {item} = ui;
 					console.log('item: ', item);
 					if (item.type == 'region') {
