@@ -19,8 +19,7 @@ ul {
 }
 
 .notice {
-	margin-top: 18px;
-	margin-bottom: 0;
+	margin-bottom: 20px;
 	&.notice-error {
 		padding: 10px 10px 8px 45px;
 		li {
@@ -60,11 +59,17 @@ a.button-large {
 	}
 }
 
+.three-column {
+	display: flex;
+	width: 100%;
+	gap: 20px;
+	flex-direction: column;
+}
+
 @media (min-width: 1200px) {
 	.three-column {
-		display: flex;
-		gap: 18px;
 		align-items: flex-start;
+		flex-direction: row;
 		> * {
 			flex: 1;
 		}
@@ -80,6 +85,11 @@ a.button-large {
 	}
 }
 
+.wrap {
+	margin: 0;
+	padding: 20px 20px 0 0;
+}
+
 .row {
 	display: flex;
 	flex-wrap: wrap;
@@ -87,9 +97,10 @@ a.button-large {
 }
 
 .postbox {
-	margin: 18px 0 0;
+	margin: 0;
 	padding: 20px;
-	min-width: auto;
+	width: 100%;
+	box-sizing: border-box;
 
 	* {
 		margin: 0;
