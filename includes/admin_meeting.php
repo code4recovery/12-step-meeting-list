@@ -22,6 +22,7 @@ add_action('do_meta_boxes', function () {
 add_action('admin_print_scripts-post.php', 'tsml_assets');
 add_action('admin_print_scripts-post-new.php', 'tsml_assets');
 add_action('admin_print_scripts-tsml_meeting_page_import', 'tsml_assets');
+add_action('admin_print_scripts-tsml_meeting_page_settings', 'tsml_assets');
 
 //edit page
 add_action('admin_init', function () {
