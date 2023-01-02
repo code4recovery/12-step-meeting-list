@@ -117,10 +117,17 @@ Add this to your theme's functions.php.
 
 	$tsml_street_only = false;
 
-= Can I add a feedback_url to each meeting when using TSML UI? = Add a URL to your themes functions.php.
+= Can I set a custom "Update Meeting Info" button in TSML UI? =
+Add a URL to your theme's functions.php.
 
-	$tsml_feedback_url = "https://domain.com?meeting={{slug}}";
-	$tsml_feedback_url = "https://domain.com?meeting={{id}}";
+	$tsml_feedback_url = '/feedback';
+
+You can add variables to the URL that can be picked up by a form plugin:
+
+	$tsml_feedback_url = '/feedback?slug={{slug}}&id={{id}}&name={{name}}&day={{day}}&time={{time}}&end_time={{end_time}}&types={{types}}&notes={{notes}}&conference_url={{conference_url}}&conference_url_notes={{conference_url_notes}}&conference_phone={{conference_phone}}&conference_phone_notes={{conference_phone_notes}}&location={{location}}&formatted_address={{formatted_address}}&region={{region}}&location_notes={{location_notes}}&group={{group}}&group_notes={{group_notes}}&district={{district}}&website={{website}}&email={{email}}&phone={{phone}}&venmo={{venmo}}&square={{square}}&paypal={{paypal}}';
+
+Feel free to adjust as necessary. This can also be a new email URL, such as:
+
 	$tsml_feedback_url = "mailto:office@domain.com?subject={{slug}}";
 
 = Can I change the order of the columns on the meeting list page, eg put the Region first? =

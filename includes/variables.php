@@ -98,6 +98,52 @@ $tsml_defaults = [
 //load the distance units that we're using (ie miles or kms)
 $tsml_distance_units = get_option('tsml_distance_units', 'mi');
 
+//define columns to output, always in English for portability (per Poland NA) - used in tsml_ajax_csv() and tsml_feedback_url()
+$tsml_export_columns = [
+	'time' =>					'Time',
+	'end_time' =>				'End Time',
+	'day' =>					'Day',
+	'name' =>					'Name',
+	'location' =>				'Location',
+	'formatted_address' =>		'Address',
+	'region' =>					'Region',
+	'sub_region' =>				'Sub Region',
+	'types' =>					'Types',
+	'notes' =>					'Notes',
+	'location_notes' =>			'Location Notes',
+	'group' => 					'Group',
+	'district' => 				'District',
+	'sub_district' => 			'Sub District',
+	'website' => 				'Website',
+	'website_2' => 				'Website 2',
+	'mailing_address' =>		'Mailing Address',
+	'venmo' => 					'Venmo',
+	'square' => 				'Square',
+	'paypal' => 				'Paypal',
+	'email' => 					'Email',
+	'phone' => 					'Phone',
+	'group_notes' => 			'Group Notes',
+	'contact_1_name' =>			'Contact 1 Name',
+	'contact_1_email' =>		'Contact 1 Email',
+	'contact_1_phone' =>		'Contact 1 Phone',
+	'contact_2_name' =>			'Contact 2 Name',
+	'contact_2_email' =>		'Contact 2 Email',
+	'contact_2_phone' =>		'Contact 2 Phone',
+	'contact_3_name' =>			'Contact 3 Name',
+	'contact_3_email' =>		'Contact 3 Email',
+	'contact_3_phone' =>		'Contact 3 Phone',
+	'last_contact' => 			'Last Contact',
+	'conference_url' => 		'Conference URL',
+	'conference_url_notes' => 	'Conference URL Notes',
+	'conference_phone' => 		'Conference Phone',
+	'conference_phone_notes' => 'Conference Phone Notes',
+	'author' => 				'Author',
+	'slug' => 					'Slug',
+	'data_source' =>			'Data Source',
+	'updated' =>				'Updated',
+	'id' =>						'ID',
+];
+
 //load email addresses to send user feedback about meetings
 $tsml_feedback_addresses = get_option('tsml_feedback_addresses', []);
 

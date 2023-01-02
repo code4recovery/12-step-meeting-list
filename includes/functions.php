@@ -1048,19 +1048,20 @@ function tsml_get_meeting($meeting_id = false)
 
 //function: get feedback_url
 //called in tsml_get_meta
-function tsml_feedback_url($post)
+function tsml_feedback_url($meeting)
 {
-	global $tsml_feedback_url;
-	$url = "";
+	global $tsml_export_columns, $tsml_feedback_url;
 
-	if (isset($tsml_feedback_url)) {
-		$id = $post->ID;
-		$slug = $post->post_name;
+	if (empty($tsml_feedback_url)) return;
 
-		$url = $tsml_feedback_url;
+	$url = $tsml_feedback_url;
 
-		$url = str_replace('{{id}}', $id, $url);
-		$url = str_replace('{{slug}}', $slug, $url);
+	foreach ($tsml_export_columns as $key => $heading) {
+		$value = @$meeting[$key];
+		if (is_array($value)) {
+			$value = implode(',', $value);
+		}
+		$url = str_replace('{{' . $key . '}}', urlencode($value), $url);
 	}
 	return $url;
 }
@@ -1117,7 +1118,6 @@ function tsml_get_meetings($arguments = [], $from_cache = true, $full_export = f
 				'time' => isset($meeting_meta[$post->ID]['time']) ? $meeting_meta[$post->ID]['time'] : null,
 				'end_time' => isset($meeting_meta[$post->ID]['end_time']) ? $meeting_meta[$post->ID]['end_time'] : null,
 				'time_formatted' => isset($meeting_meta[$post->ID]['time']) ? tsml_format_time($meeting_meta[$post->ID]['time']) : null,
-				'feedback_url' => tsml_feedback_url($post),
 				'edit_url' => get_edit_post_link($post, ''),
 				'conference_url' => isset($meeting_meta[$post->ID]['conference_url']) ? $meeting_meta[$post->ID]['conference_url'] : null,
 				'conference_url_notes' => isset($meeting_meta[$post->ID]['conference_url_notes']) ? $meeting_meta[$post->ID]['conference_url_notes'] : null,
@@ -1162,6 +1162,11 @@ function tsml_get_meetings($arguments = [], $from_cache = true, $full_export = f
 			// Remove TC when online only meeting has approximate address
 			if (!empty($meeting['types']) && $meeting['attendance_option'] == 'online' && $meeting['approximate'] == 'yes') {
 				$meeting['types'] = array_values(array_diff($meeting['types'], ['TC']));
+			}
+
+			//add feedback_url only if present
+			if ($feedback_url = tsml_feedback_url($meeting)) {
+				$meeting['feedback_url'] = $feedback_url;
 			}
 
 			$meetings[] = $meeting;
