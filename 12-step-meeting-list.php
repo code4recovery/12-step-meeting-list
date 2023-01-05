@@ -4,7 +4,7 @@
  * Plugin Name: 12 Step Meeting List
  * Plugin URI: https://wordpress.org/plugins/12-step-meeting-list/
  * Description: Manage a list of recovery meetings
- * Version: 3.14.9
+ * Version: 3.14.10
  * Requires PHP: 5.6
  * Author: Code for Recovery
  * Author URI: https://github.com/code4recovery/12-step-meeting-list
@@ -20,7 +20,7 @@ define('TSML_MEETING_GUIDE_APP_NOTIFY', 'appsupport@aa.org');
 
 define('TSML_PATH', plugin_dir_path(__FILE__));
 
-define('TSML_VERSION', '3.14.9');
+define('TSML_VERSION', '3.14.10');
 
 //defining externally-defined constant + function for php intelephense
 if (false) {

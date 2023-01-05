@@ -409,7 +409,7 @@ if (!function_exists('tsml_settings_page')) {
 
 						<div class="stack compact">
 							<h3><?php _e('Google Maps API Key', '12-step-meeting-list') ?></h3>
-							<p class="no_space_after"><?php _e('Be sure to enable Javascript Maps API and Geocoding API (<a href="https://developers.google.com/maps/documentation/javascript/get-api-key" target="_blank">read more</a>).', '12-step-meeting-list') ?></p>
+							<p><?php _e('Be sure to enable JavaScript Maps API (<a href="https://developers.google.com/maps/documentation/javascript/get-api-key" target="_blank">read more</a>).', '12-step-meeting-list') ?></p>
 							<form class="row" method="post" action="<?php echo $_SERVER['REQUEST_URI'] ?>">
 								<?php wp_nonce_field($tsml_nonce, 'tsml_nonce', false) ?>
 								<input type="text" name="tsml_add_google_maps_key" value="<?php echo $tsml_google_maps_key ?>" placeholder="Enter Google API key here">
