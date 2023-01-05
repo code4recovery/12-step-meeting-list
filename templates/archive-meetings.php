@@ -551,7 +551,7 @@ get_header();
                                 }
 
                                 $locations[$meeting['location_id']]['meetings'][] = [
-                                    'time' => $meeting['time_formatted'],
+                                    'time' => @$meeting['time_formatted'],
                                     'day' => @$meeting['day'],
                                     'name' => $meeting['name'],
                                     'url' => $meeting['url'], //can't use link here, unfortunately
@@ -566,7 +566,7 @@ get_header();
                                 }
 
                                 // Fixes issue 41
-                                if (intval(current_time('w')) == $meeting['day']) {
+                                if (intval(current_time('w')) === @$meeting['day']) {
                                     if (date('H:i', strtotime($meeting['time'])) <= date('H:i', current_time('U'))) {
                                         $classes[] = 'past';
                                     }
@@ -586,8 +586,10 @@ get_header();
                                                         <?php
                                                         if (($day === null) && !empty($meeting['time'])) {
                                                             echo tsml_format_day_and_time($meeting['day'], $meeting['time'], '</span><span>');
-                                                        } else {
+                                                        } elseif (!empty($meeting['time_formatted'])) {
                                                             echo $meeting['time_formatted'];
+                                                        } else {
+                                                            _e('Appointment', '12-step-meeting-list');
                                                         }
                                                         ?>
                                                     </span>
