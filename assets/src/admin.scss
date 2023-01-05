@@ -2,8 +2,9 @@
 
 body {
 	//import & settings
-	&.tsml_meeting_page_import {
-		@import 'admin-import.scss';
+	&.tsml_meeting_page_import,
+	&.tsml_meeting_page_settings {
+		@import 'admin-import-settings.scss';
 	}
 
 	//region list page
