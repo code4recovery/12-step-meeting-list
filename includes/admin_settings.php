@@ -259,7 +259,7 @@ if (!function_exists('tsml_settings_page')) {
 						<h2><?php _e('General', '12-step-meeting-list') ?></h2>
 						<form class="stack compact" method="post" action="<?php echo $_SERVER['REQUEST_URI'] ?>">
 							<h3><?php _e('Program', '12-step-meeting-list') ?></h3>
-							<p><?php _e('Select the Recovery Program your site targets here.', '12-step-meeting-list') ?></p>
+							<p><?php _e('Select the recovery program your site targets here.', '12-step-meeting-list') ?></p>
 							<?php wp_nonce_field($tsml_nonce, 'tsml_nonce', false) ?>
 							<select name="tsml_program" onchange="this.form.submit()">
 								<?php foreach ($tsml_programs as $key => $value) { ?>
@@ -390,9 +390,10 @@ if (!function_exists('tsml_settings_page')) {
 
 					<!-- Map Settings -->
 					<div class="postbox stack">
-						<h2><?php _e('Maps', '12-step-meeting-list') ?></h2>
-						<p><?php _e('Display of maps requires an authorization key from <strong><a href="https://www.mapbox.com/" target="_blank">Mapbox</a></strong> or <strong><a href="https://console.cloud.google.com/home/" target="_blank">Google</a></strong>.', '12-step-meeting-list') ?></p>
-
+						<div class="stack compact">
+							<h2><?php _e('Maps', '12-step-meeting-list') ?></h2>
+							<p><?php _e('Display of maps requires an authorization key from <strong><a href="https://www.mapbox.com/" target="_blank">Mapbox</a></strong> or <strong><a href="https://console.cloud.google.com/home/" target="_blank">Google</a></strong>.', '12-step-meeting-list') ?></p>
+						</div>
 						<div class="stack compact">
 							<h3><?php _e('Mapbox Access Token', '12-step-meeting-list') ?></h3>
 
@@ -409,7 +410,7 @@ if (!function_exists('tsml_settings_page')) {
 
 						<div class="stack compact">
 							<h3><?php _e('Google Maps API Key', '12-step-meeting-list') ?></h3>
-							<p class="no_space_after"><?php _e('Be sure to enable Javascript Maps API and Geocoding API (<a href="https://developers.google.com/maps/documentation/javascript/get-api-key" target="_blank">read more</a>).', '12-step-meeting-list') ?></p>
+							<p><?php _e('Be sure to enable JavaScript Maps API (<a href="https://developers.google.com/maps/documentation/javascript/get-api-key" target="_blank">read more</a>).', '12-step-meeting-list') ?></p>
 							<form class="row" method="post" action="<?php echo $_SERVER['REQUEST_URI'] ?>">
 								<?php wp_nonce_field($tsml_nonce, 'tsml_nonce', false) ?>
 								<input type="text" name="tsml_add_google_maps_key" value="<?php echo $tsml_google_maps_key ?>" placeholder="Enter Google API key here">
@@ -427,26 +428,30 @@ if (!function_exists('tsml_settings_page')) {
 				<div class="stack">
 					<!-- About Us -->
 					<div class="postbox stack">
-						<h2><?php _e('About Us', '12-step-meeting-list') ?></h2>
-						<p>
-							<a href="https://code4recovery.org/" target="_blank" class="logo">
-								<img src="<?php echo plugin_dir_url(__FILE__) . '../assets/img/code4recovery.svg'; ?>" alt="Code for Recovery">
-							</a>
-							<?php _e(
-								'This <b>12 Step Meeting List</b> plugin (TSML) is one of the free services offered by the nonprofit organization <b>Code For Recovery</b> whose volunteer members build and maintain technology services for recovery fellowships such as AA and Al-Anon.',
-								'12-step-meeting-list'
-							) ?>
-						</p>
+						<div class="stack compact">
+							<h2><?php _e('About Us', '12-step-meeting-list') ?></h2>
+							<p>
+								<a href="https://code4recovery.org/" target="_blank" class="logo">
+									<img src="<?php echo plugin_dir_url(__FILE__) . '../assets/img/code4recovery.svg'; ?>" alt="Code for Recovery">
+								</a>
+								<?php _e(
+									'This <b>12 Step Meeting List</b> plugin (TSML) is one of the free services offered by the nonprofit organization <b>Code For Recovery</b> whose volunteer members build and maintain technology services for recovery fellowships such as AA and Al-Anon.',
+									'12-step-meeting-list'
+								) ?>
+							</p>
+						</div>
 					</div>
 
 					<div class="postbox stack">
 						<!-- Need Help -->
-						<h2><?php _e('Need Help?', '12-step-meeting-list') ?></h2>
+						<div class="stack compact">
+							<h2><?php _e('Need Help?', '12-step-meeting-list') ?></h2>
 
-						<p><?php _e(
-								'To get information about this product or our organization, simply use one of the linked buttons below which are great sources for information and answers.',
-								'12-step-meeting-list'
-							) ?></p>
+							<p><?php _e(
+									'To get information about this product or our organization, simply use one of the linked buttons below which are great sources for information and answers.',
+									'12-step-meeting-list'
+								) ?></p>
+						</div>
 						<p class="row">
 							<a href="https://code4recovery.org/docs/12-step-meeting-list" target="_blank" class="button">
 								<?php _e('View Documentation', '12-step-meeting-list') ?>

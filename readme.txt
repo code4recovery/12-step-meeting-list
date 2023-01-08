@@ -3,7 +3,7 @@ Contributors: Code for Recovery
 Requires at least: 3.2
 Requires PHP: 5.6
 Tested up to: 6.0
-Stable tag: 3.14.9
+Stable tag: 3.14.10
 
 This plugin helps twelve step recovery programs list their meetings. It standardizes addresses, and displays results in a searchable list and map.
 
@@ -260,6 +260,11 @@ Yes, you can use the following filter to change the with_front configuration fro
 
 	add_filter( 'tsml_meeting_with_front', '__return_false');
 
+= Can I use my own geocoding API key?
+Yes, add the following to your theme's functions.php. Make sure you've enabled the Geocoding API in the Google Cloud Console.
+
+	$tsml_google_geocoding_key = 'my.api.key.goes.here';
+
 == Screenshots ==
 
 1. Meeting list page
@@ -269,6 +274,12 @@ Yes, you can use the following filter to change the with_front configuration fro
 1. Edit location
 
 == Changelog ==
+
+= 3.14.10 =
+* Split Import & Settings into separate pages
+* Fix bugs when rendering Appointment meetings
+* Add more options for linking TSML UI to a feedback URL
+* Use TSML's geocoding key except when specified in code
 
 = 3.14.9 =
 * Fix bug in 3.14.8 causing Regions and Districts to not be editable - [more info](https://github.com/code4recovery/12-step-meeting-list/issues/1016)

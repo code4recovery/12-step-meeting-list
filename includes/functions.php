@@ -563,7 +563,7 @@ function tsml_front_page($wp_query)
 //used:		tsml_ajax_import(), tsml_ajax_geocode()
 function tsml_geocode($address)
 {
-	global $tsml_google_overrides, $tsml_google_maps_key;
+	global $tsml_google_overrides;
 
 	//check overrides first before anything
 	if (array_key_exists($address, $tsml_google_overrides)) {
@@ -583,13 +583,7 @@ function tsml_geocode($address)
 		return $addresses[$address];
 	}
 
-	//Set the Google API Key before calling function that finds the address
-	if (!empty($tsml_google_maps_key)) {
-		$tsml_map_key = $tsml_google_maps_key;
-	} else {
-		$tsml_map_key = 'AIzaSyDm-pU-DlU-WsTkXJPGEVowY2hICRFLNeQ';
-	}
-	$response = tsml_geocode_google($address, $tsml_map_key);
+	$response = tsml_geocode_google($address);
 
 	//Return if the status is error
 	if ($response['status'] == 'error') {
@@ -605,9 +599,9 @@ function tsml_geocode($address)
 }
 
 //function: Call Google for geocoding of the address
-function tsml_geocode_google($address, $tsml_map_key)
+function tsml_geocode_google($address)
 {
-	global $tsml_curl_handle, $tsml_language, $tsml_google_overrides, $tsml_bounds;
+	global $tsml_curl_handle, $tsml_language, $tsml_google_overrides, $tsml_bounds, $tsml_google_geocoding_key;
 
 	// Can't Geocode an empty address
 	if (empty($address)) {
@@ -628,9 +622,12 @@ function tsml_geocode_google($address, $tsml_map_key)
 		]);
 	}
 
+	//user can specify their own geocoding key in functions.php
+	$key = !empty($tsml_google_geocoding_key) ? $tsml_google_geocoding_key : 'AIzaSyDm-pU-DlU-WsTkXJPGEVowY2hICRFLNeQ';
+
 	//start list of options for geocoding request
 	$options = [
-		'key' => $tsml_map_key,
+		'key' => $key,
 		'address' => $address,
 		'language' => $tsml_language,
 	];

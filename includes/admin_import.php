@@ -6,8 +6,7 @@ if (!function_exists('tsml_import_page')) {
 
 	function tsml_import_page()
 	{
-		global $tsml_data_sources, $tsml_programs, $tsml_program, $tsml_nonce, $tsml_sharing, $tsml_google_maps_key, $tsml_mapbox_key,
-			$tsml_slug, $tsml_change_detect;
+		global $tsml_data_sources, $tsml_programs, $tsml_program, $tsml_nonce, $tsml_sharing, $tsml_slug, $tsml_change_detect;
 
 		$error = false;
 		$tsml_data_sources = get_option('tsml_data_sources', array());
