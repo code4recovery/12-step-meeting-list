@@ -40,8 +40,8 @@ a.button-large {
 	background-color: white;
 	box-shadow: 0 1px 1px 0 rgba(0, 0, 0, 0.1);
 	height: 20px;
-	margin: 5px 0 15px;
 	overflow: hidden;
+	width: 100%;
 
 	.progress-bar {
 		background-color: #bbb;
@@ -109,11 +109,11 @@ a.button-large {
 	.logo {
 		display: block;
 		float: right;
-		margin: -35px 0 0 10px;
+		margin: -30px 0 0 10px;
 		img {
 			display: block;
 			height: auto;
-			width: 80px;
+			width: 85px;
 		}
 	}
 
