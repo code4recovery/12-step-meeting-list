@@ -11,9 +11,9 @@ This plugin helps twelve step recovery programs list their meetings. It standard
 
 This plugin helps twelve step recovery programs list their meetings. It standardizes addresses, and displays results in a searchable list and map.
 
-It's also the easiest way for Alcoholics Anonymous service entities to get listed in the [Meeting Guide mobile app](https://meetingguide.org/) for iOS and Android devices.
+It's also the easiest way for Alcoholics Anonymous service entities to get listed in the [Meeting Guide mobile app](https://www.aa.org/meeting-guide-app/) for iOS and Android devices.
 
-This plugin was originally designed to maintain a list of A.A. meetings in Santa Clara County, CA. It is being used to provide meeting information for AA and other 12-step/recovery groups around the world.
+This plugin was originally designed to maintain a list of A.A. meetings in Santa Clara County, CA. It is now used to provide meeting information for A.A. and other 12-step recovery groups around the world.
 
 = Notes =
 
@@ -24,13 +24,12 @@ This plugin was originally designed to maintain a list of A.A. meetings in Santa
 
 == Installation ==
 
-Basically you can just install the plugin, add a mapping API key from Mapbox (or Google), and start
-entering your meetings. That is all it takes to get started!
+Just install the plugin, add a mapping API key from Mapbox (or Google), and start entering your meetings. That is all it takes to get started!
 
 == Frequently Asked Questions ==
 
 = My meeting type isn't listed! =
-If it's a broadly-applicable meeting type, please ask us in the [support forum](https://wordpress.org/support/plugin/12-step-meeting-list/). We must maintain consistency for the [mobile apps](https://meetingguide.org/), so not all proposals are accepted.
+If it's a broadly-applicable meeting type, please ask us in the [discussions forum](https://github.com/code4recovery/12-step-meeting-list/discussions). We must maintain consistency for the [mobile apps](https://www.aa.org/meeting-guide-app/), so not all proposals are accepted.
 
 If you have access to your theme's functions.php, you may add additional meeting types or rename existing ones. Simply adapt the following example to your purposes:
 
@@ -45,11 +44,11 @@ Please note a few things about custom types:
 1. Once you've added the type, you will see it under 'More' on the Meeting edit screen. It will show up in the dropdown once you use it on a meeting.
 1. Be careful with the codes ("XYZ" in the above example) as this gives you the ability to replace existing types.
 1. Note that custom meeting types are not imported into the Meeting Guide app.
-1. They are for searching. If you can't imagine yourself searching for a meeting this way, then it's probably not a type you need. Have you ever searched for a 90-minute meeting? If not, then it's probably information that better belongs in the meeting notes.
-1. Don't add a type for the default, eg 'Hour Long Meeting' or 'Non-Smoking.' If you do that, then you have to be careful about tagging every single meeting in order to make the data complete.
+1. They are for members in recovery to find a meeting. If you can't imagine an addict looking for a meeting this way, then we recommend not adding it to your site.
+1. Don't add a type for the default, eg 'Non-Smoking.' If you do that, then you have to be vigilant about tagging every last meeting in order to make the data complete.
 
 = Where are my meetings listed? =
-It depends on your Permalinks setup. The easiest way to find the link is to go to the **Dashboard > Meetings > Import & Settings** page and look for it under "Where's My Info?"
+It depends on your Permalinks setup. The easiest way to find the link is to go to the **Dashboard > Meetings > Import & Export** page and look for it under "Where's My Info?"
 
 = I need to correct a meeting address or change a pin's location =
 We get our geocoding positions from Google (this true even if your maps are by Mapbox). Google is correct an amazing amount of the time, but not always. If you need to add a custom location, add this to your theme's functions.php.
@@ -69,33 +68,31 @@ Note you can add multiple entries to the array below.
 	}
 
 = What is Change Detection? =
-Change Detection is a feature that augments our data import utility by sensing data changes in enabled data source feeds and generating email notifications to Change Notification Email recipients who you registered on the Import & Settings page.
+Change Detection augments our data import utility by periodically polling your data sources and generating email notifications to Change Notification Email recipients who you registered on the Settings page.
 
 = How can I enable Change Detection for my disabled data source? =
 Change Detection can only be enabled when adding a data source to your list of Data Sources. Re-registering an existing data source is necessary to get Change Detection enabled. This includes:
 * To be safe, always make a backup of your existing meeting list by using the link on the Import tab to export your Meeting List.
-* If you are going to have change detection on multple data sources, you may choose to add the parent organization(s) to your list of Regions first (i.e. District 1, YourCity Intergroup, etc.)
-* Remove the data source (click on the X next to its Last Refresh timestamp) We suggest first noting the json feed URL (hover over the feed name to view the URL) for use when adding it back
+* If you are going to have change detection on multple data sources, you may choose to add the parent organization(s) to your list of Regions first (i.e. District 1, YourCity Intergroup, etc.).
+* Remove the data source (click on the X next to its Last Refresh timestamp) We suggest first noting the json feed URL (hover over the feed name to view the URL) for use when adding it back.
 * Set data source options: enter a name for your feed, set the feed URL, select the parent region from the Parent Region dropdown, and lastly choose the "Change Detection Enabled" option.
 * Pressing the "Add Data Source" button will register a WordPress Cron Job (tsml_scan_data_source) for the newly added and enabled data source. By default, this cron job is scheduled to run "Once Daily" starting at midnight (12:00 AM).
-The frequency and scheduled time that the cron job runs is completely configurable by you if the "WP Crontrol" plugin has been installed.
-
-That's it, you're done!
+The frequency and time that the cron job runs is optionally configurable with the [WP Crontrol[(https://wordpress.org/plugins/wp-crontrol/)] plugin.
 
 = How can I convert a data source into a maintainable list for my new website? =
 When editing a data source record a warning is given that the record will be over-written when the data source is refreshed.
 To avoid this warning and prevent a refresh from altering an edited record it's necessary to follow a few simple steps to reimport the data source records:
 
-* Make a backup of your existing meeting list by using the export link found on the Import tab of the Import & Settings page.
+* Make a backup of your existing meeting list by using the export link found on the Import tab of the Import & Export page.
 * Open the exported file (meetings.csv) which you should find in your local Downloads folder.
 * Delete the entire 'Data Source' column found near the far right and then Save the file (recommend using Save As to rename the file to something unique such as my-meetings.csv).
 * Remove the imported data source (click on the X next to its Last Refresh timestamp).
-* Import the saved file using the Import CSV feature on the Import & Settings page.
+* Import the saved file using the Import CSV feature on the Import & Export page.
 
 Your meeting list records will now no longer display a warning message when being edited, and will not be overwritten by a data source refresh operation!
 
 = How can I make the Region dropdown not be collapsible? =
-No problem, just add this CSS to your theme:
+Add this CSS to your theme:
 
 	div#tsml #meetings .controls ul.dropdown-menu div.expand { display: none; }
 	div#tsml #meetings .controls ul.dropdown-menu ul.children { height: auto; }
@@ -234,7 +231,7 @@ Additionally, you can use `[tsml_types_list]` and `[tsml_regions_list]` to outpu
 It is translated into Polish. If you would like to volunteer to help translate another language, we would be pleased to work with you.
 
 = I entered contact information into the meeting edit page but don't see it displayed on the site. =
-That's right, we don't display that information by default for the sake of anonymity. To display it in your theme, go to Import & Settings and set the Meeting/Group Contacts dropdown to "public."
+That's right, we don't display that information by default for the sake of anonymity. To display it in your theme, go to Meetings > Settings and set the Meeting/Group Contacts dropdown to "public."
 
 = Can I run this as my main website homepage? =
 Sure. Try adding this code to your theme's functions.php:

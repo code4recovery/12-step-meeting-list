@@ -1,16 +1,16 @@
 # 12 Step Meeting List
 
-This plugin is designed to help 12 step programs (AA, NA, Al-Anon, etc) list their meetings. It standardizes addresses, and displays in a list or map.
+This plugin is designed to help recovery programs (AA, NA, Al-Anon, etc) list their meetings. It standardizes addresses, and displays in a list or map.
 
 The best way to install this plugin is via [its home page](https://wordpress.org/plugins/12-step-meeting-list/) in the WordPress Plugin Directory.
 
 ## Support
 
-Have a question? Check out our [Frequently Asked Questions](https://wordpress.org/plugins/12-step-meeting-list/).
+Have a question? Check out our [Frequently Asked Questions](https://wordpress.org/plugins/12-step-meeting-list/#faq-header).
 
 Need help? Please [open a new discussion](https://github.com/code4recovery/12-step-meeting-list/discussions).
 
-## Helping With Development
+## Helping with Development
 
 Do you want to help develop the plugin? We welcome new members! Please find out more at [code4recovery.org](https://code4recovery.org).
 
@@ -35,5 +35,5 @@ Also some best practices:
 
 ## Compiling Assets
 
-If you're making changes to javascript or CSS, you will want to install SASS and webpack one time by running `npm i`. Then, while developing,
+If you're making changes to JavaScript or CSS, you will want to install SASS and webpack one time by running `npm i`. Then, while developing,
 run `npx mix watch` to compile assets as you make changes. When you are ready to make a pull request, run `npx mix --production`.
