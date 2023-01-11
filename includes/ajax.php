@@ -186,7 +186,7 @@ function tsml_ajax_csv()
 {
 
 	//going to need this later
-	global $tsml_days, $tsml_programs, $tsml_program, $tsml_sharing;
+	global $tsml_days, $tsml_programs, $tsml_program, $tsml_sharing, $tsml_export_columns;
 
 	//security
 	if (($tsml_sharing != 'open') && !is_user_logged_in()) {
@@ -196,57 +196,12 @@ function tsml_ajax_csv()
 	//get data source
 	$meetings = tsml_get_meetings([], false, true);
 
-	//define columns to output, always in English for portability (per Poland NA)
-	$columns = [
-		'time' =>					'Time',
-		'end_time' =>				'End Time',
-		'day' =>					'Day',
-		'name' =>					'Name',
-		'location' =>				'Location',
-		'formatted_address' =>		'Address',
-		'region' =>					'Region',
-		'sub_region' =>				'Sub Region',
-		'types' =>					'Types',
-		'notes' =>					'Notes',
-		'location_notes' =>			'Location Notes',
-		'group' => 					'Group',
-		'district' => 				'District',
-		'sub_district' => 			'Sub District',
-		'website' => 				'Website',
-		'website_2' => 				'Website 2',
-		'mailing_address' =>		'Mailing Address',
-		'venmo' => 					'Venmo',
-		'square' => 				'Square',
-		'paypal' => 				'Paypal',
-		'email' => 					'Email',
-		'phone' => 					'Phone',
-		'group_notes' => 			'Group Notes',
-		'contact_1_name' =>			'Contact 1 Name',
-		'contact_1_email' =>		'Contact 1 Email',
-		'contact_1_phone' =>		'Contact 1 Phone',
-		'contact_2_name' =>			'Contact 2 Name',
-		'contact_2_email' =>		'Contact 2 Email',
-		'contact_2_phone' =>		'Contact 2 Phone',
-		'contact_3_name' =>			'Contact 3 Name',
-		'contact_3_email' =>		'Contact 3 Email',
-		'contact_3_phone' =>		'Contact 3 Phone',
-		'last_contact' => 			'Last Contact',
-		'conference_url' => 		'Conference URL',
-		'conference_url_notes' => 	'Conference URL Notes',
-		'conference_phone' => 		'Conference Phone',
-		'conference_phone_notes' => 'Conference Phone Notes',
-		'author' => 				'Author',
-		'slug' => 					'Slug',
-		'data_source' =>			'Data Source',
-		'updated' =>				'Updated',
-	];
-
 	//helper vars
 	$delimiter = ',';
 	$escape = '"';
 
 	//do header
-	$return = implode($delimiter, array_values($columns)) . PHP_EOL;
+	$return = implode($delimiter, array_values($tsml_export_columns)) . PHP_EOL;
 
 	//get the preferred time format setting
 	$time_format = get_option('time_format');
@@ -254,7 +209,7 @@ function tsml_ajax_csv()
 	//append meetings
 	foreach ($meetings as $meeting) {
 		$line = [];
-		foreach ($columns as $column => $value) {
+		foreach ($tsml_export_columns as $column => $value) {
 			if (in_array($column, ['time', 'end_time'])) {
 				$line[] = empty($meeting[$column]) ? null : date($time_format, strtotime($meeting[$column]));
 			} elseif ($column == 'day') {

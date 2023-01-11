@@ -3,7 +3,7 @@ Contributors: Code for Recovery
 Requires at least: 3.2
 Requires PHP: 5.6
 Tested up to: 6.0
-Stable tag: 3.14.8
+Stable tag: 3.14.11
 
 This plugin helps twelve step recovery programs list their meetings. It standardizes addresses, and displays results in a searchable list and map.
 
@@ -117,10 +117,17 @@ Add this to your theme's functions.php.
 
 	$tsml_street_only = false;
 
-= Can I add a feedback_url to each meeting when using TSML UI? = Add a URL to your themes functions.php.
+= Can I set a custom "Update Meeting Info" button in TSML UI? =
+Add a URL to your theme's functions.php.
 
-	$tsml_feedback_url = "https://domain.com?meeting={{slug}}";
-	$tsml_feedback_url = "https://domain.com?meeting={{id}}";
+	$tsml_feedback_url = '/feedback';
+
+You can add variables to the URL that can be picked up by a form plugin:
+
+	$tsml_feedback_url = '/feedback?slug={{slug}}&id={{id}}&name={{name}}&day={{day}}&time={{time}}&end_time={{end_time}}&types={{types}}&notes={{notes}}&conference_url={{conference_url}}&conference_url_notes={{conference_url_notes}}&conference_phone={{conference_phone}}&conference_phone_notes={{conference_phone_notes}}&location={{location}}&formatted_address={{formatted_address}}&region={{region}}&location_notes={{location_notes}}&group={{group}}&group_notes={{group_notes}}&district={{district}}&website={{website}}&email={{email}}&phone={{phone}}&venmo={{venmo}}&square={{square}}&paypal={{paypal}}';
+
+Feel free to adjust as necessary. This can also be a new email URL, such as:
+
 	$tsml_feedback_url = "mailto:office@domain.com?subject={{slug}}";
 
 = Can I change the order of the columns on the meeting list page, eg put the Region first? =
@@ -253,6 +260,11 @@ Yes, you can use the following filter to change the with_front configuration fro
 
 	add_filter( 'tsml_meeting_with_front', '__return_false');
 
+= Can I use my own geocoding API key?
+Yes, add the following to your theme's functions.php. Make sure you've enabled the Geocoding API in the Google Cloud Console.
+
+	$tsml_google_geocoding_key = 'my.api.key.goes.here';
+
 == Screenshots ==
 
 1. Meeting list page
@@ -262,6 +274,20 @@ Yes, you can use the following filter to change the with_front configuration fro
 1. Edit location
 
 == Changelog ==
+
+= 3.14.11 =
+* Fix missing file warning
+
+= 3.14.10 =
+* Split Import & Settings into separate pages
+* Fix bugs when rendering Appointment meetings
+* Add more options for linking TSML UI to a feedback URL
+* Use TSML's geocoding key except when specified in code
+
+= 3.14.9 =
+* Fix bug in 3.14.8 causing Regions and Districts to not be editable - [more info](https://github.com/code4recovery/12-step-meeting-list/issues/1016)
+* Fix warning when type_descriptions are not set for program - [more info](https://github.com/code4recovery/12-step-meeting-list/issues/1006)
+* When using TSML UI, remove Online and Location Temporarily Closed as default flags - [more info](https://github.com/code4recovery/12-step-meeting-list/issues/1008)
 
 = 3.14.8 =
 * Remove deprecated "BETA" geocoding option

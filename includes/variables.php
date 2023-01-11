@@ -101,6 +101,52 @@ $tsml_defaults = [
 //load the distance units that we're using (ie miles or kms)
 $tsml_distance_units = get_option('tsml_distance_units', 'mi');
 
+//define columns to output, always in English for portability (per Poland NA) - used in tsml_ajax_csv() and tsml_feedback_url()
+$tsml_export_columns = [
+	'time' => 'Time',
+	'end_time' => 'End Time',
+	'day' => 'Day',
+	'name' => 'Name',
+	'location' => 'Location',
+	'formatted_address' => 'Address',
+	'region' => 'Region',
+	'sub_region' => 'Sub Region',
+	'types' => 'Types',
+	'notes' => 'Notes',
+	'location_notes' => 'Location Notes',
+	'group' => 'Group',
+	'district' => 'District',
+	'sub_district' => 'Sub District',
+	'website' => 'Website',
+	'website_2' => 'Website 2',
+	'mailing_address' => 'Mailing Address',
+	'venmo' => 'Venmo',
+	'square' => 'Square',
+	'paypal' => 'Paypal',
+	'email' => 'Email',
+	'phone' => 'Phone',
+	'group_notes' => 'Group Notes',
+	'contact_1_name' => 'Contact 1 Name',
+	'contact_1_email' => 'Contact 1 Email',
+	'contact_1_phone' => 'Contact 1 Phone',
+	'contact_2_name' => 'Contact 2 Name',
+	'contact_2_email' => 'Contact 2 Email',
+	'contact_2_phone' => 'Contact 2 Phone',
+	'contact_3_name' => 'Contact 3 Name',
+	'contact_3_email' => 'Contact 3 Email',
+	'contact_3_phone' => 'Contact 3 Phone',
+	'last_contact' => 'Last Contact',
+	'conference_url' => 'Conference URL',
+	'conference_url_notes' => 'Conference URL Notes',
+	'conference_phone' => 'Conference Phone',
+	'conference_phone_notes' => 'Conference Phone Notes',
+	'author' => 'Author',
+	'slug' => 'Slug',
+	'data_source' => 'Data Source',
+	'updated' => 'Updated',
+	'id' => 'ID',
+];
+
 //load email addresses to send user feedback about meetings
 $tsml_feedback_addresses = get_option('tsml_feedback_addresses', []);
 
@@ -545,7 +591,7 @@ $tsml_days = $tsml_days_order = $tsml_programs = $tsml_types_in_use = $tsml_stri
 if (!isset($tsml_slug)) $tsml_slug = null;
 
 add_action('plugins_loaded', function () {
-	global $tsml_days, $tsml_days_order, $tsml_programs, $tsml_slug, $tsml_strings, $tsml_types_in_use;
+	global $tsml_days, $tsml_days_order, $tsml_programs, $tsml_slug, $tsml_strings, $tsml_user_interface, $tsml_types_in_use;
 
 	//load internationalization
 	load_plugin_textdomain('12-step-meeting-list', false, '12-step-meeting-list/languages');
@@ -1274,6 +1320,13 @@ add_action('plugins_loaded', function () {
 		],
 	];
 
+	//remove 'TC' and 'ONL' from default flags if meeting finder is TSML UI
+	if ($tsml_user_interface === 'tsml_ui') {
+		foreach ($tsml_programs as $key => $value) {
+			$tsml_programs[$key]['flags'] = array_diff($value['flags'], ['TC', 'ONL']);
+		}
+	}
+
 	//the location where the list will show up, eg https://intergroup.org/meetings
 	if ($tsml_slug === null) {
 		$tsml_slug = sanitize_title(__('meetings', '12-step-meeting-list'));
@@ -1281,6 +1334,7 @@ add_action('plugins_loaded', function () {
 
 	//strings that must be synced between the javascript and the PHP
 	$tsml_strings = [
+		'appointment' => __('Appointment', '12-step-meeting-list'),
 		'data_error' => __('Got an improper response from the server, try refreshing the page.', '12-step-meeting-list'),
 		'email_not_sent' => __('Email was not sent.', '12-step-meeting-list'),
 		'loc_empty' => __('Enter a location in the field above.', '12-step-meeting-list'),

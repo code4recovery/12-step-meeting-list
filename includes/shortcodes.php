@@ -108,6 +108,14 @@ function tsml_ui()
 	$js = defined('TSML_UI_PATH') ? TSML_UI_PATH : 'https://tsml-ui.code4recovery.org/app.js';
 	wp_enqueue_script('tsml_ui', $js, [], false, true);
 
+	//get program types and type descriptions
+	$types = !empty($tsml_programs[$tsml_program]['types'])
+		? $tsml_programs[$tsml_program]['types']
+		: [];
+	$type_descriptions = !empty($tsml_programs[$tsml_program]['type_descriptions'])
+		? $tsml_programs[$tsml_program]['type_descriptions']
+		: [];
+
 	//apply settings
 	wp_localize_script('tsml_ui', 'tsml_react_config', array_merge(
 		[
@@ -117,10 +125,7 @@ function tsml_ui()
 			'feedback_emails' => array_values($tsml_feedback_addresses),
 			'flags' => $tsml_programs[$tsml_program]['flags'],
 			'strings' => [
-				$tsml_language => array_merge($tsml_columns, [
-					'types' => $tsml_programs[$tsml_program]['types'],
-					'type_descriptions' => $tsml_programs[$tsml_program]['type_descriptions']
-				]),
+				$tsml_language => array_merge($tsml_columns, compact('types', 'type_descriptions')),
 			],
 		],
 		$tsml_ui_config

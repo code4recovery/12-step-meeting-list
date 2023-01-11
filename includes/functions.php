@@ -262,6 +262,7 @@ function tsml_custom_post_types()
 		],
 		'hierarchical' => true,
 		'public' => false,
+		'show_ui' => true,
 	]);
 
 	register_taxonomy('tsml_district', 'tsml_group', [
@@ -283,6 +284,7 @@ function tsml_custom_post_types()
 		],
 		'hierarchical' => true,
 		'public' => false,
+		'show_ui' => true,
 	]);
 
 	register_post_type(
@@ -561,7 +563,7 @@ function tsml_front_page($wp_query)
 //used:		tsml_ajax_import(), tsml_ajax_geocode()
 function tsml_geocode($address)
 {
-	global $tsml_google_overrides, $tsml_google_maps_key;
+	global $tsml_google_overrides;
 
 	//check overrides first before anything
 	if (array_key_exists($address, $tsml_google_overrides)) {
@@ -581,13 +583,7 @@ function tsml_geocode($address)
 		return $addresses[$address];
 	}
 
-	//Set the Google API Key before calling function that finds the address
-	if (!empty($tsml_google_maps_key)) {
-		$tsml_map_key = $tsml_google_maps_key;
-	} else {
-		$tsml_map_key = 'AIzaSyDm-pU-DlU-WsTkXJPGEVowY2hICRFLNeQ';
-	}
-	$response = tsml_geocode_google($address, $tsml_map_key);
+	$response = tsml_geocode_google($address);
 
 	//Return if the status is error
 	if ($response['status'] == 'error') {
@@ -603,9 +599,9 @@ function tsml_geocode($address)
 }
 
 //function: Call Google for geocoding of the address
-function tsml_geocode_google($address, $tsml_map_key)
+function tsml_geocode_google($address)
 {
-	global $tsml_curl_handle, $tsml_language, $tsml_google_overrides, $tsml_bounds;
+	global $tsml_curl_handle, $tsml_language, $tsml_google_overrides, $tsml_bounds, $tsml_google_geocoding_key;
 
 	// Can't Geocode an empty address
 	if (empty($address)) {
@@ -626,9 +622,12 @@ function tsml_geocode_google($address, $tsml_map_key)
 		]);
 	}
 
+	//user can specify their own geocoding key in functions.php
+	$key = !empty($tsml_google_geocoding_key) ? $tsml_google_geocoding_key : 'AIzaSyDm-pU-DlU-WsTkXJPGEVowY2hICRFLNeQ';
+
 	//start list of options for geocoding request
 	$options = [
-		'key' => $tsml_map_key,
+		'key' => $key,
 		'address' => $address,
 		'language' => $tsml_language,
 	];
@@ -1046,19 +1045,20 @@ function tsml_get_meeting($meeting_id = false)
 
 //function: get feedback_url
 //called in tsml_get_meta
-function tsml_feedback_url($post)
+function tsml_feedback_url($meeting)
 {
-	global $tsml_feedback_url;
-	$url = "";
+	global $tsml_export_columns, $tsml_feedback_url;
 
-	if (isset($tsml_feedback_url)) {
-		$id = $post->ID;
-		$slug = $post->post_name;
+	if (empty($tsml_feedback_url)) return;
 
-		$url = $tsml_feedback_url;
+	$url = $tsml_feedback_url;
 
-		$url = str_replace('{{id}}', $id, $url);
-		$url = str_replace('{{slug}}', $slug, $url);
+	foreach ($tsml_export_columns as $key => $heading) {
+		$value = @$meeting[$key];
+		if (is_array($value)) {
+			$value = implode(',', $value);
+		}
+		$url = str_replace('{{' . $key . '}}', urlencode($value), $url);
 	}
 	return $url;
 }
@@ -1115,7 +1115,6 @@ function tsml_get_meetings($arguments = [], $from_cache = true, $full_export = f
 				'time' => isset($meeting_meta[$post->ID]['time']) ? $meeting_meta[$post->ID]['time'] : null,
 				'end_time' => isset($meeting_meta[$post->ID]['end_time']) ? $meeting_meta[$post->ID]['end_time'] : null,
 				'time_formatted' => isset($meeting_meta[$post->ID]['time']) ? tsml_format_time($meeting_meta[$post->ID]['time']) : null,
-				'feedback_url' => tsml_feedback_url($post),
 				'edit_url' => get_edit_post_link($post, ''),
 				'conference_url' => isset($meeting_meta[$post->ID]['conference_url']) ? $meeting_meta[$post->ID]['conference_url'] : null,
 				'conference_url_notes' => isset($meeting_meta[$post->ID]['conference_url_notes']) ? $meeting_meta[$post->ID]['conference_url_notes'] : null,
@@ -1160,6 +1159,11 @@ function tsml_get_meetings($arguments = [], $from_cache = true, $full_export = f
 			// Remove TC when online only meeting has approximate address
 			if (!empty($meeting['types']) && $meeting['attendance_option'] == 'online' && $meeting['approximate'] == 'yes') {
 				$meeting['types'] = array_values(array_diff($meeting['types'], ['TC']));
+			}
+
+			//add feedback_url only if present
+			if ($feedback_url = tsml_feedback_url($meeting)) {
+				$meeting['feedback_url'] = $feedback_url;
 			}
 
 			$meetings[] = $meeting;
