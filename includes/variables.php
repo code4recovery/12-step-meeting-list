@@ -5,9 +5,6 @@ if you need to customize your site, please follow the instructions on our FAQ:
 👉 https://wordpress.org/plugins/12-step-meeting-list/
 */
 
-//activity log
-$tsml_activity = get_option('tsml_activity', []);
-
 //get the current boundaries of the coverage map
 $tsml_bounds = get_option('tsml_bounds');
 

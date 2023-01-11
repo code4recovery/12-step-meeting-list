@@ -1,48 +1,53 @@
 <?php
 //ajax functions
 
-//ajax for the search typeahead and the location typeahead on the meeting edit page
-add_action('wp_ajax_tsml_debug', 'tsml_ajax_debug');
-add_action('wp_ajax_nopriv_tsml_debug', 'tsml_ajax_debug');
-function tsml_ajax_debug()
-{
-	global $tsml_sharing, $tsml_program, $tsml_data_sources, $tsml_google_maps_key, $tsml_mapbox_key, $tsml_sharing_keys,
-		$tsml_contact_display, $tsml_cache_writable, $tsml_feedback_addresses, $tsml_user_interface, $tsml_notification_addresses;
-
-	$my_theme = wp_get_theme();
-
-	wp_send_json([
-		'versions' => [
-			'php' => phpversion(),
-			'tsml' => TSML_VERSION,
-			'wordpress' => get_bloginfo('version'),
-		],
-		'settings' => [
-			'cache_writable' => $tsml_cache_writable,
-			'contact_display' => $tsml_contact_display,
-			'data_source_count' => count($tsml_data_sources),
-			'feedback_addresses' => count($tsml_feedback_addresses),
-			'google_key' => !!$tsml_google_maps_key,
-			'mapbox_key' => !!$tsml_mapbox_key,
-			'notification_addresses_count' => count($tsml_notification_addresses),
-			'program' => strToUpper($tsml_program),
-			'sharing' => $tsml_sharing,
-			'sharing_keys_count' => count($tsml_sharing_keys),
-			'user_interface' => $tsml_user_interface,
-		],
-		'theme' => $my_theme->get_stylesheet(),
-		'plugins' => array_map(function ($key) {
-			return explode('/', $key)[0];
-		}, array_keys(get_plugins())),
-	]);
-}
-
 //delete all meetings and locations
 add_action('wp_ajax_tsml_delete', function () {
 	tsml_delete('everything');
 	die('deleted');
 });
 
+//debug info
+add_action('wp_ajax_tsml_info', 'tsml_ajax_info');
+add_action('wp_ajax_nopriv_tsml_info', 'tsml_ajax_info');
+function tsml_ajax_info()
+{
+	global $tsml_sharing, $tsml_program, $tsml_data_sources, $tsml_google_maps_key, $tsml_mapbox_key, $tsml_sharing_keys,
+		$tsml_contact_display, $tsml_cache_writable, $tsml_feedback_addresses, $tsml_user_interface, $tsml_notification_addresses,
+		$tsml_google_geocoding_key;
+
+	$theme = wp_get_theme();
+
+	wp_send_json([
+		'language' => get_bloginfo('language'),
+		'log' => array_slice(get_option('tsml_log', []), 0, 25), //limit to 25 events
+		'plugins' => array_map(function ($key) {
+			return explode('/', $key)[0];
+		}, array_keys(get_plugins())),
+		'settings' => [
+			'cache_writable' => $tsml_cache_writable,
+			'contact_display' => $tsml_contact_display,
+			'data_source_count' => count($tsml_data_sources),
+			'feedback_addresses' => count($tsml_feedback_addresses),
+			'has_google_geocoding_key' => !!$tsml_google_geocoding_key,
+			'has_google_maps_key' => !!$tsml_google_maps_key,
+			'has_mapbox_key' => !!$tsml_mapbox_key,
+			'notification_addresses_count' => count($tsml_notification_addresses),
+			'program' => strToUpper($tsml_program),
+			'sharing' => $tsml_sharing,
+			'sharing_keys_count' => count($tsml_sharing_keys),
+			'user_interface' => $tsml_user_interface,
+		],
+		'theme' => $theme->get_stylesheet(),
+		'theme_parent' => $theme->exists() && $theme->parent() ? $theme->parent()->get_stylesheet() : null,
+		'timezone' => wp_timezone_string(),
+		'versions' => [
+			'php' => phpversion(),
+			'tsml' => TSML_VERSION,
+			'wordpress' => get_bloginfo('version'),
+		],
+	]);
+}
 
 //ajax for the search typeahead and the location typeahead on the meeting edit page
 add_action('wp_ajax_tsml_locations', 'tsml_ajax_locations');
