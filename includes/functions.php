@@ -939,7 +939,8 @@ function tsml_get_locations()
 			'region' => $region,
 			'sub_region' => $sub_region,
 			'regions' => array_reverse(array_map(function ($region_id) {
-				return get_term($region_id, 'tsml_region')->name;
+				$term = get_term($region_id, 'tsml_region');
+				return $term ? $term->name : null;
 			}, array_merge([$region_id], get_ancestors($region_id, 'tsml_region')))),
 		];
 	}
