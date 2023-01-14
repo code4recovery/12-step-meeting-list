@@ -82,27 +82,44 @@ function tsml_ajax_groups()
 	$results = [];
 	foreach ($groups as $group) {
 		$group_custom = get_post_meta($group->ID);
-		$results[] = [
+
+		//basic group info
+		$result = [
 			'value'				=> $group->post_title,
 			'website'			=> @$group_custom['website'][0],
 			'website_2'			=> @$group_custom['website_2'][0],
 			'email'				=> @$group_custom['email'][0],
 			'phone'				=> @$group_custom['phone'][0],
 			'mailing_address'	=> @$group_custom['mailing_address'][0],
-			'contact_1_name'	=> @$group_custom['contact_1_name'][0],
-			'contact_1_email'	=> @$group_custom['contact_1_email'][0],
-			'contact_1_phone'	=> @$group_custom['contact_1_phone'][0],
-			'contact_2_name'	=> @$group_custom['contact_2_name'][0],
-			'contact_2_email'	=> @$group_custom['contact_2_email'][0],
-			'contact_2_phone'	=> @$group_custom['contact_2_phone'][0],
-			'contact_3_name'	=> @$group_custom['contact_3_name'][0],
-			'contact_3_email'	=> @$group_custom['contact_3_email'][0],
-			'contact_3_phone'	=> @$group_custom['contact_3_phone'][0],
 			'last_contact'		=> @$group_custom['last_contact'][0],
 			'notes'				=> $group->post_content,
 			'tokens'			=> tsml_string_tokens($group->post_title),
 			'type'				=> 'group',
 		];
+
+		//potentially-private contact info
+		if (is_user_logged_in()) {
+			$result += [
+				'contact_1_name'	=> @$group_custom['contact_1_name'][0],
+				'contact_1_email'	=> @$group_custom['contact_1_email'][0],
+				'contact_1_phone'	=> @$group_custom['contact_1_phone'][0],
+				'contact_2_name'	=> @$group_custom['contact_2_name'][0],
+				'contact_2_email'	=> @$group_custom['contact_2_email'][0],
+				'contact_2_phone'	=> @$group_custom['contact_2_phone'][0],
+				'contact_3_name'	=> @$group_custom['contact_3_name'][0],
+				'contact_3_email'	=> @$group_custom['contact_3_email'][0],
+				'contact_3_phone'	=> @$group_custom['contact_3_phone'][0],
+			];
+		}
+
+		//district
+		if ($district = get_the_terms($group, 'tsml_district')) {
+			$result += [
+				'district' => $district[0]->term_id,
+			];
+		}
+
+		$results[] = $result;
 	}
 	wp_send_json($results);
 }
