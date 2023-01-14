@@ -645,9 +645,11 @@ function tsml_geocode_google($address)
 
 	//could not connect error
 	if ($result === false) {
+		$error = curl_error($tsml_curl_handle);
+		tsml_log('geocode_connection_error', $error, $address);
 		return [
 			'status' => 'error',
-			'reason' => 'Google could not validate the address <code>' . $address . '</code>. Response was <code>' . curl_error($tsml_curl_handle) . '</code>',
+			'reason' => 'Google could not validate the address <code>' . $address . '</code>. Response was <code>' . $error . '</code>',
 		];
 	}
 
@@ -672,6 +674,7 @@ function tsml_geocode_google($address)
 
 		//if we're still over the limit, stop
 		if ($data->status === 'OVER_QUERY_LIMIT') {
+			tsml_log('geocode_error', 'OVER_QUERY_LIMIT', $address);
 			return [
 				'status' => 'error',
 				'reason' => 'We are over the rate limit for the Google Geocoding API.'
@@ -681,16 +684,16 @@ function tsml_geocode_google($address)
 
 	//if there are no results report it
 	if ($data->status === 'ZERO_RESULTS') {
-		if (empty($result)) {
-			return [
-				'status' => 'error',
-				'reason' => 'Google could not validate the address <code>' . $address . '</code>',
-			];
-		}
+		tsml_log('geocode_error', 'ZERO_RESULTS', $address);
+		return [
+			'status' => 'error',
+			'reason' => 'Google could not validate the address <code>' . $address . '</code>',
+		];
 	}
 
 	//if result is otherwise bad, stop
 	if (($data->status !== 'OK') || empty($data->results[0]->formatted_address)) {
+		tsml_log('geocode_error', $data->status, $address);
 		return [
 			'status' => 'error',
 			'reason' => 'Google gave an unexpected response for address <code>' . $address . '</code>. Response was <pre>' . var_export($data, true) . '</pre>',
@@ -704,8 +707,8 @@ function tsml_geocode_google($address)
 			$response['approximate'] = 'no';
 		}
 	} else {
+		tsml_log('geocode_success', $data->results[0]->formatted_address, $address);
 		//start building response
-		// $myfile = fopen("./newfile.txt", "a") or die("Unable to open file!");
 		$response = [
 			'formatted_address' => $data->results[0]->formatted_address,
 			'latitude' => $data->results[0]->geometry->location->lat,
@@ -1756,6 +1759,33 @@ function tsml_link($url, $string, $exclude = '', $class = false)
 	if ($class) $return .= ' class="' . $class . '"';
 	$return .= '>' . $string . '</a>';
 	return $return;
+}
+
+//function: add an entry to the activity log
+//$type is something short you can filter by, eg 'geocode_error'
+//$info is the bad result you got back
+//$input is any input that might have contributed to the result
+//used in tsml_ajax_info, tsml_geocode and anywhere else something could go wrong
+function tsml_log($type, $info = null, $input = null)
+{
+	//load
+	$tsml_log = get_option('tsml_log', []);
+
+	//default variables
+	$entry = [
+		'type' => $type,
+		'timestamp' => current_time('mysql'),
+	];
+
+	//optional variables
+	if ($info) $entry['info'] = $info;
+	if ($input) $entry['input'] = $input;
+
+	//prepend to array
+	array_unshift($tsml_log, $entry);
+
+	//save
+	update_option('tsml_log', $tsml_log);
 }
 
 //function: link to meetings page with parameters (added to link dropdown menus for SEO)

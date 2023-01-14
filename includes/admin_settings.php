@@ -453,7 +453,7 @@ if (!function_exists('tsml_settings_page')) {
 								) ?></p>
 						</div>
 						<p class="row">
-							<a href="https://code4recovery.org/docs/12-step-meeting-list" target="_blank" class="button">
+							<a href="https://wordpress.org/plugins/12-step-meeting-list/#faq-header" target="_blank" class="button">
 								<?php _e('View Documentation', '12-step-meeting-list') ?>
 							</a>
 							<a href="https://github.com/code4recovery/12-step-meeting-list/discussions" target="_blank" class="button">
