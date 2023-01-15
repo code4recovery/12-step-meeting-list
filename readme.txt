@@ -282,9 +282,9 @@ Yes, add the following to your theme's functions.php. Make sure you've enabled t
 * Fix missing file warning
 
 = 3.14.10 =
-* Split Import & Settings into separate pages
-* Fix bugs when rendering Appointment meetings
-* Add more options for linking TSML UI to a feedback URL
+* Split Import & Settings into separate pages - [more info](https://github.com/code4recovery/12-step-meeting-list/issues/1028)
+* Fix bugs when rendering Appointment meetings - [more info](https://github.com/code4recovery/12-step-meeting-list/issues/1026)
+* Add more options for linking TSML UI to a feedback URL - [more info](https://github.com/code4recovery/12-step-meeting-list/issues/849)
 * Use TSML's geocoding key except when specified in code
 
 = 3.14.9 =
