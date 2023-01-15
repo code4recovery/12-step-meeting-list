@@ -1,3 +1,5 @@
-name: Bug Report (Developers Only)
+name: Feature Request (Developers Only)
 description: For developers only, please. End-users should ask a question in our Discussions Q&A for support.
 labels: [new feature/enhancement]
+body:
+  - type: markdown
