@@ -18,31 +18,6 @@ body:
   - type: textarea
     id: request
     attributes:
-      label: Requested Feature/Enhancment
-      description: Explicitly state what you would like too see in TSML
+      label: Requested Feature/Enhancement
+      description: Explicitly state what you would like to see in TSML
       placeholder: Describe specifics and alternatives
-      value: 'Please add this cool feature!'
-    validations:
-      required: true
-  - type: dropdown
-    id: tsmlVersion
-    attributes:
-      label: TSML Version
-      description: What version of TSML are you running?
-      options:
-        - Latest (default)
-        - beta
-        - Other (Identify version in text above)
-    validations:
-      required: true
-  - type: dropdown
-    id: wordperssVersion
-    attributes:
-      label: Wordpress Version
-      description: What version of Wordpress is on the site?
-      options:
-        - Latest (default)
-        - Other (Identify version in text above)
-    validations:
-      required: true
-      render: shell
