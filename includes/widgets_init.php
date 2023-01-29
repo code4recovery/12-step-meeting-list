@@ -17,7 +17,7 @@ add_action('widgets_init', function () {
         ],
         'tsml_location_bottom' => [
             __('Location Detail Bottom', '12-step-meeting-list'),
-            __('Shown at the top of the location detail screen (Legacy UI only)', '12-step-meeting-list'),
+            __('Shown at the bottom of the location detail screen (Legacy UI only)', '12-step-meeting-list'),
         ],
     ];
 
