@@ -13,481 +13,479 @@ $margin: 15px; //spacing between elements
 $height: 550px; //height of map and min-height of list
 
 #tsml {
-    @import '../../node_modules/bootstrap-sass/assets/stylesheets/_bootstrap.scss';
-
-    li.attendance-online div.attendance-option,
-    li.attendance-hybrid div.attendance-option {
-        color: $color_online;
-    }
-
-    li.attendance-inactive div.attendance-option {
-        color: $color_alert;
-    }
-
-    div.attendance-option {
-        font-weight: bold;
-    }
-
-    a.btn {
-        overflow: hidden;
-        text-overflow: ellipsis;
-    }
-
-    mark {
-        background-color: $color_highlight;
-    }
-
-    input:focus,
-    button:focus {
-        outline: 0;
-    }
-
-    .container {
-        max-width: 100%;
-    }
-
-    .spinning {
-        animation: spin .7s infinite linear;
-    }
-
-    svg.icon {
-        margin: 0 3px -2px 0 !important;
-        display:inline;
-    }
-
-    @keyframes spin {
-        from {
-            transform: scale(1) rotate(0deg);
-        }
-
-        to {
-            transform: scale(1) rotate(360deg);
-        }
-    }
-
-    #map {
-        background-color: #eee;
-        border: 1px solid #ddd;
-        border-radius: 4px;
-        font-family: inherit;
-        font-size: 85%;
-
-        button.mapboxgl-ctrl-icon {
-            &:focus {
-                background-color: rgba(0, 0, 0, 0);
-            }
-
-            &:hover {
-                background-color: rgba(0, 0, 0, .05);
-            }
-
-            &:active {
-                background-color: rgba(0, 0, 0, 0.1);
-            }
-        }
-
-        .mapboxgl-popup-content-wrapper {
-            border-radius: 4px;
-        }
-
-        .mapboxgl-popup-content {
-            border-radius: 5px;
-            overflow: auto;
-            width: 260px;
-        }
-
-        .mapboxgl-ctrl-attrib {
-            font-size: 11px;
-
-            a {
-                color: #777;
-            }
-        }
-
-        button.mapboxgl-popup-close-button {
-            background-color: transparent;
-            color: #c3c3c3;
-            font-size: 1.5rem;
-            padding: 4px 8px;
-
-            &:hover {
-                background-color: transparent;
-                color: #777;
-                text-decoration: none;
-            }
-        }
-
-        .mapboxgl-ctrl-group>button {
-            background-color: transparent;
-        }
-
-        .marker {
-            cursor: pointer;
-        }
-
-        .tsml_infowindow {
-            width: 200px;
-        }
-
-        .tsml_infowindow,
-        .mapboxgl-popup-content {
-            max-height: 250px;
-
-            h3 {
-                font-size: 20px;
-                font-weight: 600;
-                margin: 5px 0 15px 0;
-                padding: 0;
-            }
-
-            h5 {
-                font-size: 14px;
-                font-weight: bold;
-                margin: $margin 0 0 0;
-            }
-
-            address {
-                font-style: normal;
-                margin: 0;
-            }
-
-            a {
-                color: inherit;
-
-                &.btn {
-                    margin: $margin 0 0;
-                }
-
-                small::before {
-                    content: " / "
-                }
-            }
-
-            p {
-                margin-bottom: $margin;
-
-                &:last-child {
-                    margin-bottom: 0;
-                }
-            }
-
-            dl {
-                margin: 0;
-                overflow: auto;
-
-                dt,
-                dd {
-                    float: left;
-                    margin: 0;
-                    padding: 0;
-                }
-
-                dt {
-                    clear: left;
-                    color: $color_gray;
-                    font-size: 12px;
-                    font-weight: normal;
-                    margin-right: 6px;
-                    overflow: hidden;
-                    text-align: right;
-                    text-overflow: ellipsis;
-                    width: 62px;
-                    word-wrap: nowrap;
-                }
-
-                dd {
-                    width: 132px;
-                }
-            }
-        }
-    }
-
-    #meetings,
-    #meeting,
-    #location {
-        text-align: left;
-
-        a {
-            cursor: pointer;
-        }
-    }
-  
-    /* meetings */
-    #meetings {
-        clear: both;
-        min-height: $height;
-        padding: $margin;
-
-        .row.title {
-            display: none;
-        }
-
-        .controls {
-            min-height: 34px;
-
-            form,
-            .dropdown,
-            .btn-group {
-                height: 34px;
-                margin-bottom: $margin;
-            }
-
-            /* need to have this button, and display: none will not work */
-            input[type=submit] {
-                left: -1000px;
-                position: absolute;
-                visibility: hidden;
-            }
-
-            input,
-            .btn {
-                height: 34px;
-                margin: 0;
-                padding: 6px 12px;
-                text-transform: none;
-            }
-
-            input {
-                border-radius: 4px 0 0 4px;
-                font-size: 16px; //this might seem big, but it prevents zooming on focus
-                margin: 0;
-                min-height: 0;
-                padding-right: 0;
-            }
-
-            .input-group-btn:last-child>.btn {
-                border-radius: 0 4px 4px 0;
-                margin-left: -1px;
-                position: static;
-
-                &:after {
-                    display: none;
-                }
-            }
-
-            .tt-menu {
-                min-width: 270px;
-
-                .tt-dataset {
-                    h3 {
-                        margin-top: 10px;
-                    }
-
-                    &:first-child h3 {
-                        margin-top: 0;
-                    }
-                }
-
-                h3 {
-                    border-bottom: 1px solid #ccc;
-                    font-size: .8em;
-                    font-weight: bold;
-                    margin: 0;
-                    padding: 6px 20px;
-                    text-transform: uppercase;
-                }
-            }
-
-            ul {
-                max-width: 100%;
-                min-width: 100%;
-
-                li {
-                    margin: 2px 0 0;
-                    position: relative;
-
-                    &.divider {
-                        margin: 9px 0;
-                    }
-
-                    a {
-                        display: block;
-                        padding-bottom: 5px;
-                        padding-top: 5px;
-                    }
-
-                    div.expand {
-                        background: url(../img/ionicons-plus.svg) no-repeat center 4px;
-                        background-size: 24px 24px;
-                        box-sizing: content-box;
-                        cursor: pointer;
-                        height: 100%;
-                        position: absolute;
-                        right: 0;
-                        top: 0;
-                        width: 40px;
-
-                        &.expanded {
-                            background-image: url(../img/ionicons-minus.svg);
-                        }
-                    }
-                }
-
-                &.dropdown-menu-right {
-                    max-width: none;
-                }
-
-                &.children {
-                    height: 0;
-                    list-style-type: none;
-                    margin: 0;
-                    overflow: hidden;
-                    padding: 0;
-
-                    li {
-                        a {
-                            clear: both;
-                            color: $color_black;
-                            display: block;
-                            font-weight: 400;
-                            line-height: 1.42857143;
-                            padding-left: 35px;
-                            padding-right: 35px;
-
-                            &:hover {
-                                background-color: #f5f5f5;
-                                color: #262626;
-                                text-decoration: none;
-                            }
-                        }
-
-                        .children li a {
-                            padding-left: 50px;
-                        }
-
-                        .children li .children li a {
-                            padding-left: 65px;
-                        }
-
-                        &.active>a {
-                            background-color: #337ab7;
-                            color: #fff;
-                        }
-                    }
-
-                    &.expanded {
-                        height: auto;
-                    }
-                }
-            }
-
-            a {
-                overflow: hidden;
-            }
-        }
-
-        #region {
-            display: none;
-        }
-
-        .results {
-
-            h1 small {
-                font-size: inherit;
-
-                &::before {
-                    content: " / ";
-                }
-            }
-
-            #table-wrapper {
-                margin: 0 -#{$margin};
-                overflow: hidden;
-            }
-
-            #table-wrapper table {
-                margin: 0;
-            }
-
-            table {
-                border: 0;
-                display: none;
-
-                thead {
-                    display: none;
-                }
-
-                tbody {
-                    tr {
-                        border-top: 1px solid #ddd;
-                        display: block;
-                        padding: 10px $margin 10px 110px;
-                        position: relative;
-
-                        td {
-                            border: 0;
-                            display: inline;
-                            overflow: hidden;
-                            padding: 0;
-                            text-align: left;
-
-                            &.time {
-                                left: $margin;
-                                overflow: hidden;
-                                position: absolute;
-                                top: 10px;
-                                width: 90px;
-
-                                span {
-                                    display: block;
-                                }
-                            }
-
-                            &.distance {
-                                bottom: 10px;
-                                font-size: 22px;
-                                font-weight: bold;
-                                left: $margin;
-                                line-height: 1.2;
-                                position: absolute;
-                            }
-
-                            &.name,
-                            &.location,
-                            &.address,
-                            &.region,
-                            &.district {
-                                display: block;
-                                text-overflow: ellipsis;
-                                white-space: nowrap;
-                            }
-
-                            &.name {
-                                width: auto;
-                                white-space: normal;
-
-                                @include breakpoint-768() {
-                                    width: 175px;
-                                    white-space: nowrap;
-                                }
-
-                                small {
-                                    display: inline-block;
-                                    color: $color_black;
-                                    font-size: 0.7em;
-                                    white-space: nowrap;
-
-                                }
-                            }
-
-                            &.location,
-                            &.address,
-                            &.region,
-                            &.district {
-                                width: auto;
-
-                                @include breakpoint-768() {
-                                    width: 220px;
-                                }
-                            }
-
-                            &.types,
-                            &.district {
-                                display: none;
-                            }
-                        }
-
-/*
+	@import '../../node_modules/bootstrap-sass/assets/stylesheets/_bootstrap.scss';
+
+	li.attendance-online div.attendance-option,
+	li.attendance-hybrid div.attendance-option {
+		color: $color_online;
+	}
+
+	li.attendance-inactive div.attendance-option {
+		color: $color_alert;
+	}
+
+	div.attendance-option {
+		font-weight: bold;
+	}
+
+	a.btn {
+		overflow: hidden;
+		text-overflow: ellipsis;
+	}
+
+	mark {
+		background-color: $color_highlight;
+	}
+
+	input:focus,
+	button:focus {
+		outline: 0;
+	}
+
+	.container {
+		max-width: 100%;
+	}
+
+	.spinning {
+		animation: spin 0.7s infinite linear;
+	}
+
+	svg.icon {
+		margin: 0 3px -2px 0 !important;
+		display: inline;
+	}
+
+	@keyframes spin {
+		from {
+			transform: scale(1) rotate(0deg);
+		}
+
+		to {
+			transform: scale(1) rotate(360deg);
+		}
+	}
+
+	#map {
+		background-color: #eee;
+		border: 1px solid #ddd;
+		border-radius: 4px;
+		font-family: inherit;
+		font-size: 85%;
+
+		button.mapboxgl-ctrl-icon {
+			&:focus {
+				background-color: rgba(0, 0, 0, 0);
+			}
+
+			&:hover {
+				background-color: rgba(0, 0, 0, 0.05);
+			}
+
+			&:active {
+				background-color: rgba(0, 0, 0, 0.1);
+			}
+		}
+
+		.mapboxgl-popup-content-wrapper {
+			border-radius: 4px;
+		}
+
+		.mapboxgl-popup-content {
+			border-radius: 5px;
+			overflow: auto;
+			width: 260px;
+		}
+
+		.mapboxgl-ctrl-attrib {
+			font-size: 11px;
+
+			a {
+				color: #777;
+			}
+		}
+
+		button.mapboxgl-popup-close-button {
+			background-color: transparent;
+			color: #c3c3c3;
+			font-size: 1.5rem;
+			padding: 4px 8px;
+
+			&:hover {
+				background-color: transparent;
+				color: #777;
+				text-decoration: none;
+			}
+		}
+
+		.mapboxgl-ctrl-group > button {
+			background-color: transparent;
+		}
+
+		.marker {
+			cursor: pointer;
+		}
+
+		.tsml_infowindow {
+			width: 200px;
+		}
+
+		.tsml_infowindow,
+		.mapboxgl-popup-content {
+			max-height: 250px;
+
+			h3 {
+				font-size: 20px;
+				font-weight: 600;
+				margin: 5px 0 15px 0;
+				padding: 0;
+			}
+
+			h5 {
+				font-size: 14px;
+				font-weight: bold;
+				margin: $margin 0 0 0;
+			}
+
+			address {
+				font-style: normal;
+				margin: 0;
+			}
+
+			a {
+				color: inherit;
+
+				&.btn {
+					margin: $margin 0 0;
+				}
+
+				small::before {
+					content: ' / ';
+				}
+			}
+
+			p {
+				margin-bottom: $margin;
+
+				&:last-child {
+					margin-bottom: 0;
+				}
+			}
+
+			dl {
+				margin: 0;
+				overflow: auto;
+
+				dt,
+				dd {
+					float: left;
+					margin: 0;
+					padding: 0;
+				}
+
+				dt {
+					clear: left;
+					color: $color_gray;
+					font-size: 12px;
+					font-weight: normal;
+					margin-right: 6px;
+					overflow: hidden;
+					text-align: right;
+					text-overflow: ellipsis;
+					width: 62px;
+					word-wrap: nowrap;
+				}
+
+				dd {
+					width: 132px;
+				}
+			}
+		}
+	}
+
+	#meetings,
+	#meeting,
+	#location {
+		text-align: left;
+
+		a {
+			cursor: pointer;
+		}
+	}
+
+	/* meetings */
+	#meetings {
+		clear: both;
+		min-height: $height;
+		padding: $margin;
+
+		.row.title {
+			display: none;
+		}
+
+		.controls {
+			min-height: 34px;
+
+			form,
+			.dropdown,
+			.btn-group {
+				height: 34px;
+				margin-bottom: $margin;
+			}
+
+			/* need to have this button, and display: none will not work */
+			input[type='submit'] {
+				left: -1000px;
+				position: absolute;
+				visibility: hidden;
+			}
+
+			input,
+			.btn {
+				height: 34px;
+				margin: 0;
+				padding: 6px 12px;
+				text-transform: none;
+			}
+
+			input {
+				border-radius: 4px 0 0 4px;
+				font-size: 16px; //this might seem big, but it prevents zooming on focus
+				margin: 0;
+				min-height: 0;
+				padding-right: 0;
+			}
+
+			.input-group-btn:last-child > .btn {
+				border-radius: 0 4px 4px 0;
+				margin-left: -1px;
+				position: static;
+
+				&:after {
+					display: none;
+				}
+			}
+
+			.tt-menu {
+				min-width: 270px;
+
+				.tt-dataset {
+					h3 {
+						margin-top: 10px;
+					}
+
+					&:first-child h3 {
+						margin-top: 0;
+					}
+				}
+
+				h3 {
+					border-bottom: 1px solid #ccc;
+					font-size: 0.8em;
+					font-weight: bold;
+					margin: 0;
+					padding: 6px 20px;
+					text-transform: uppercase;
+				}
+			}
+
+			ul {
+				max-width: 100%;
+				min-width: 100%;
+
+				li {
+					margin: 2px 0 0;
+					position: relative;
+
+					&.divider {
+						margin: 9px 0;
+					}
+
+					a {
+						display: block;
+						padding-bottom: 5px;
+						padding-top: 5px;
+					}
+
+					div.expand {
+						background: url(../img/ionicons-plus.svg) no-repeat center 4px;
+						background-size: 24px 24px;
+						box-sizing: content-box;
+						cursor: pointer;
+						height: 100%;
+						position: absolute;
+						right: 0;
+						top: 0;
+						width: 40px;
+
+						&.expanded {
+							background-image: url(../img/ionicons-minus.svg);
+						}
+					}
+				}
+
+				&.dropdown-menu-right {
+					max-width: none;
+				}
+
+				&.children {
+					height: 0;
+					list-style-type: none;
+					margin: 0;
+					overflow: hidden;
+					padding: 0;
+
+					li {
+						a {
+							clear: both;
+							color: $color_black;
+							display: block;
+							font-weight: 400;
+							line-height: 1.42857143;
+							padding-left: 35px;
+							padding-right: 35px;
+
+							&:hover {
+								background-color: #f5f5f5;
+								color: #262626;
+								text-decoration: none;
+							}
+						}
+
+						.children li a {
+							padding-left: 50px;
+						}
+
+						.children li .children li a {
+							padding-left: 65px;
+						}
+
+						&.active > a {
+							background-color: #337ab7;
+							color: #fff;
+						}
+					}
+
+					&.expanded {
+						height: auto;
+					}
+				}
+			}
+
+			a {
+				overflow: hidden;
+			}
+		}
+
+		#region {
+			display: none;
+		}
+
+		.results {
+			h1 small {
+				font-size: inherit;
+
+				&::before {
+					content: ' / ';
+				}
+			}
+
+			#table-wrapper {
+				margin: 0 -#{$margin};
+				overflow: hidden;
+			}
+
+			#table-wrapper table {
+				margin: 0;
+			}
+
+			table {
+				border: 0;
+				display: none;
+
+				thead {
+					display: none;
+				}
+
+				tbody {
+					tr {
+						border-top: 1px solid #ddd;
+						display: block;
+						padding: 10px $margin 10px 110px;
+						position: relative;
+
+						td {
+							border: 0;
+							display: inline;
+							overflow: hidden;
+							padding: 0;
+							text-align: left;
+
+							&.time {
+								left: $margin;
+								overflow: hidden;
+								position: absolute;
+								top: 10px;
+								width: 90px;
+
+								span {
+									display: block;
+								}
+							}
+
+							&.distance {
+								bottom: 10px;
+								font-size: 22px;
+								font-weight: bold;
+								left: $margin;
+								line-height: 1.2;
+								position: absolute;
+							}
+
+							&.name,
+							&.location,
+							&.address,
+							&.region,
+							&.district {
+								display: block;
+								text-overflow: ellipsis;
+								white-space: nowrap;
+							}
+
+							&.name {
+								width: auto;
+								white-space: normal;
+
+								@include breakpoint-768() {
+									width: 175px;
+									white-space: nowrap;
+								}
+
+								small {
+									display: inline-block;
+									color: $color_black;
+									font-size: 0.7em;
+									white-space: nowrap;
+								}
+							}
+
+							&.location,
+							&.address,
+							&.region,
+							&.district {
+								width: auto;
+
+								@include breakpoint-768() {
+									width: 220px;
+								}
+							}
+
+							&.types,
+							&.district {
+								display: none;
+							}
+						}
+
+						/*
                         &.type-tc {
                             opacity: .5;
 
@@ -506,51 +504,51 @@ $height: 550px; //height of map and min-height of list
                             }
                         }
 */
-                        &.attendance-inactive {
-                            .location {
-                                small {
-                                    color: $color_alert;
-                                }
-                                div.location-name {
-                                    opacity: .5;
-                                }
-                            }
-                            .address {
-                                font-size: 0%;
-                            }
-                            .region {
-                                opacity: .5;
-                                text-decoration: line-through;
-                            }
-                        }
-                        &.attendance-online {
-                            .location {
-                                small {
-                                    color: $color_online;
-                                }
-                                div.location-name {
-                                    opacity: .5;
-                                }
-                            }
-                            .address {
-                                font-size: 0%;
-                            }
-                            .region {
-                                opacity: .5;
-                            }
-                        }
-                        &.attendance-hybrid {
-                            .location {
-                                small {
-                                    color: $color_online;
-                                }
-                            }
-                        }
+						&.attendance-inactive {
+							.location {
+								small {
+									color: $color_alert;
+								}
+								div.location-name {
+									opacity: 0.5;
+								}
+							}
+							.address {
+								font-size: 0%;
+							}
+							.region {
+								opacity: 0.5;
+								text-decoration: line-through;
+							}
+						}
+						&.attendance-online {
+							.location {
+								small {
+									color: $color_online;
+								}
+								div.location-name {
+									opacity: 0.5;
+								}
+							}
+							.address {
+								font-size: 0%;
+							}
+							.region {
+								opacity: 0.5;
+							}
+						}
+						&.attendance-hybrid {
+							.location {
+								small {
+									color: $color_online;
+								}
+							}
+						}
 
-                        &.type-onl {
-                            opacity: 1 !important;
+						&.type-onl {
+							opacity: 1 !important;
 
-/*
+							/*
                             .name {
 
                                 small {
@@ -559,86 +557,86 @@ $height: 550px; //height of map and min-height of list
                                 }
                             }
 */
-                        }
-                    }
-                }
-            }
+						}
+					}
+				}
+			}
 
-            #map {
-                display: none;
-                height: $height;
-            }
-        }
+			#map {
+				display: none;
+				height: $height;
+			}
+		}
 
-        &[tax-mode="district"] {
-            .results {
-                .district {
-                    display: block;
-                }
+		&[tax-mode='district'] {
+			.results {
+				.district {
+					display: block;
+				}
 
-                .region {
-                    display: none;
-                }
-            }
-        }
+				.region {
+					display: none;
+				}
+			}
+		}
 
-        &[data-view="map"] {
-            #map {
-                display: block;
-            }
+		&[data-view='map'] {
+			#map {
+				display: block;
+			}
 
-            &.empty {
-                #map {
-                    display: none;
-                }
-            }
-        }
+			&.empty {
+				#map {
+					display: none;
+				}
+			}
+		}
 
-        &[data-view="list"] {
-            padding-bottom: 0;
+		&[data-view='list'] {
+			padding-bottom: 0;
 
-            table {
-                display: table;
-            }
+			table {
+				display: table;
+			}
 
-            &.empty {
-                table {
-                    display: none;
-                }
-            }
-        }
+			&.empty {
+				table {
+					display: none;
+				}
+			}
+		}
 
-        &[data-mode="search"] {
-            #distance {
-                display: none;
-            }
+		&[data-mode='search'] {
+			#distance {
+				display: none;
+			}
 
-            #region {
-                display: block;
+			#region {
+				display: block;
 
-                li.district {
-                    display: none;
-                }
-            }
+				li.district {
+					display: none;
+				}
+			}
 
-            &[tax-mode="district"] #region {
-                li.district {
-                    display: block;
-                }
+			&[tax-mode='district'] #region {
+				li.district {
+					display: block;
+				}
 
-                li.region {
-                    display: none;
-                }
-            }
+				li.region {
+					display: none;
+				}
+			}
 
-            th.distance,
-            td.distance {
-                display: none !important;
-            }
-        }
-    }
+			th.distance,
+			td.distance {
+				display: none !important;
+			}
+		}
+	}
 
-    /*#meeting {
+	/*#meeting {
         .tsml-type-tc & {
             .page-header small {
                 color: $color_alert;
@@ -654,554 +652,564 @@ $height: 550px; //height of map and min-height of list
         }
     }*/
 
-    #meeting,
-    #location {
-        .page-header {
-            background-color: transparent;
-            margin-left: 0;
-            margin-right: 0;
-            max-width: none;
-            padding-left: 0;
-            padding-right: 0;
-        }
-
-        .panel,
-        .btn {
-            margin-bottom: $margin;
-        }
-
-        h1 {
-            font-size: 36px;
-            margin-bottom: 4px;
-            display:inline-block;
-        }
-
-        small {
-            color: $color_black;
-        }
-
-        #map {
-            height: 500px;
-        }
-
-        button {
-            font-size: inherit;
-        }
-
-        .panel {
-            .panel-heading {
-                background-color: white;
-                border-color: transparent;
-                border-radius: 3px;
-                color: inherit;
-                display: block;
-                text-decoration: none !important;
-                transition: all .1s;
-
-                .panel-title {
-                    padding-right: 40px;
-                    position: relative;
-
-                    .panel-title-buttons {
-                        position: absolute;
-                        right: 0;
-                        transition: all .1s;
-
-                        a {
-                            color: inherit;
-
-                            &+a {
-                                margin-left: 15px;
-                            }
-                        }
-                    }
-                }
-
-                &:hover {
-                    background-color: #f5f5f5;
-                }
-            }
-
-            ul.list-group {
-                margin: 0;
-                padding: 0;
-
-                .list-group-item {
-                    margin: -1px 0 0;
-                    padding: 10px 15px 15px;
-
-                    * {
-                        background-color: transparent;
-                        line-height: 1.3;
-                        margin: 0 0 8px 0;
-
-                        &:last-child {
-                            margin-bottom: 0;
-                        }
-                    }
-                    div.meeting_types {
-                        margin-bottom: 0;
-                    }
-
-                    h3.list-group-item-heading {
-                        font-size: 107%;
-                        font-weight: bold;
-                        line-height: inherit;
-                        margin-bottom: 4px;
-
-                        &:last-child {
-                            margin-bottom: 0;
-                        }
-                    }
-
-                    ul {
-                        list-style-type: none;
-
-                        li {
-                            list-style-type: none;
-                            margin: 0;
-                        }
-                    }
-
-                    #card-element {
-                        margin-bottom: 0;
-                    }
-
-                    &:first-child {
-                        margin-top: 0;
-                    }
-
-                    &.list-group-item-updated {
-                        padding-bottom: 10px;
-                    }
-
-                    &.has-error {
-                        background-color: $state-danger-bg;
-                        border-color: $state-danger-border;
-                        color: $state-danger-text;
-                    }
-
-                    &.has-info {
-                        background-color: $state-warning-bg;
-                        border-color: $state-warning-border;
-                        color: $state-warning-text;
-                    }
-
-                    &.list-group-item-form {
-                        padding: 0;
-
-                        input,
-                        textarea,
-                        button {
-                            border: 0;
-                            border-radius: 0;
-                            font-size: inherit;
-                            text-transform: none;
-                            width: 100%;
-                        }
-
-                        input,
-                        textarea {
-                            padding: 10px $margin;
-                        }
-
-                        button {
-                            background-color: #eaeaea;
-                            font-size: 85%;
-                            font-weight: bold;
-                            padding: 7px;
-                            text-align: center;
-                            text-transform: uppercase;
-                            width: 100%;
-                        }
-
-                        textarea {
-                            height: 250px;
-                            resize: none;
-                        }
-
-                        #amount {
-                            font-size: 24px;
-                            font-weight: bold;
-                        }
-
-                        &:last-child {
-                            border-radius: 0 0 3px 3px;
-                        }
-                    }
-
-                    &.list-group-item-meetings {
-                        h4 {
-                            font-size: 85%;
-                            font-weight: bold;
-                            margin: $margin 0 5px;
-
-                            &:first-child {
-                                margin-top: 3px;
-                            }
-                        }
-
-                        ul {
-                            list-style-type: none;
-                            padding: 0;
-
-                            li {
-                                padding-left: 90px;
-                                position: relative;
-
-                                span {
-                                    color: #999;
-                                    left: 0;
-                                    position: absolute;
-                                    text-align: right;
-                                    width: 80px;
-                                }
-
-                                &.type-tc {
-                                    opacity: .5;
-
-                                    small {
-                                        color: $color_alert;
-                                        font-weight: bold;
-                                    }
-                                }
-
-                                &.type-onl {
-                                    opacity: 1 !important;
-
-                                    small {
-                                        color: $color_online !important;
-                                        font-weight: bold;
-                                    }
-                                }
-                            }
-
-                            &:last-child {
-                                margin-bottom: 0;
-                            }
-                        }
-
-                    }
-                }
-            }
-
-            &.panel-expandable {
-                .panel-title {
-                    cursor: pointer;
-                }
-
-                ul.list-group {
-                    max-height: 0;
-                    overflow: hidden;
-                    transition: max-height .25s;
-                }
-
-                &.expanded {
-                    .panel-heading {
-                        background-color: #eee;
-                        border-color: #ddd;
-                        border-radius: 3px 3px 0 0;
-                    }
-
-                    .panel-title span.glyphicon {
-                        transform: rotate(-90deg);
-                    }
-
-                    ul.list-group {
-                        max-height: 500px;
-                    }
-                }
-            }
-        }
-    }
-
-    body.tsml_fullscreen {
-        #meetings {
-            background-color: $color_white;
-            bottom: 0;
-            height: 100%;
-            left: 0;
-            max-width: none;
-            position: fixed;
-            right: 0;
-            top: 0;
-            width: 100%;
-            z-index: 9999;
-        }
-
-        &.admin-bar {
-            #meetings {
-                padding-top: 47px;
-            }
-        }
-    }
-
-    /* Small devices (tablets, 768px and up) */
-    @include breakpoint-768() {
-        #meetings {
-            .controls {
-                margin-bottom: 0;
-
-                ul.dropdown-menu {
-                    max-height: 310px;
-                    max-width: none;
-                    overflow: auto;
-
-                    li {
-
-                        &>a,
-                        div.expand {
-                            background-size: 21px 21px;
-                            line-height: 18px;
-                        }
-                    }
-                }
-            }
-
-            .results table {
-                margin: 0;
-
-                thead {
-                    display: table-header-group;
-
-                    th {
-                        border: 0;
-                        cursor: pointer;
-                        line-height: 1;
-                        padding: $margin / 2 $margin;
-                        padding-top: 0;
-                        text-transform: none;
-                        white-space: nowrap;
-
-                        &[data-sort] {
-                            font-weight: bold;
-
-                            &:after {
-                                border-style: solid;
-                                content: "";
-                                display: inline-block;
-                                height: 0;
-                                margin: 0 5px;
-                                width: 0;
-                            }
-                        }
-
-                        &[data-sort="asc"]:after {
-                            border-color: transparent transparent $color_gray transparent;
-                            border-width: 0 4px 8px;
-                        }
-
-                        &[data-sort="desc"]:after {
-                            border-color: $color_gray transparent transparent;
-                            border-width: 8px 4px 0;
-                        }
-
-                        &.address,
-                        &.types,
-                        &.district {
-                            display: none;
-                        }
-
-                        &.distance {
-                            text-align: right;
-                        }
-
-                        &.region[data-sort="asc"]:after,
-                        &.region[data-sort="desc"]:after {
-                            right: $margin;
-                        }
-
-                        &.district[data-sort="asc"]:after,
-                        &.district[data-sort="desc"]:after {
-                            right: $margin;
-                        }
-                    }
-                }
-
-                tbody tr {
-                    display: table-row;
-
-                    td {
-
-                        &.name,
-                        &.location,
-                        &.time,
-                        &.distance,
-                        &.address,
-                        &.region,
-                        &.district,
-                        &.types {
-                            display: table-cell;
-                            padding: 8px 8px 8px $margin;
-                            position: static;
-                            white-space: normal;
-                        }
-
-                        &.time {
-                            white-space: nowrap;
-
-                            span {
-                                display: inline;
-                                font-size: inherit;
-
-                                &:after {
-                                    content: ", ";
-                                }
-
-                                &:last-child:after {
-                                    content: " ";
-                                }
-                            }
-                        }
-
-                        &.distance {
-                            font-size: inherit;
-                            font-weight: inherit;
-                            line-height: inherit;
-                            text-align: right;
-                        }
-
-                        &.name {
-                            width: 35%;
-                        }
-
-                        &.location {
-                            width: 35%;
-                        }
-
-                        &.address,
-                        &.types,
-                        &.district {
-                            display: none;
-                        }
-                    }
-                }
-            }
-        }
-
-        &[tax-mode="district"] {
-
-            th.district,
-            td.district {
-                display: table-cell;
-            }
-
-            th.region,
-            td.region {
-                display: none;
-            }
-        }
-
-        /* little bit of padding on larger screens */
-        #meeting .main,
-        #location .main {
-            padding-bottom: 40px;
-        }
-    }
-
-
-    /* Medium devices (desktops, 992px and up) */
-    @include breakpoint-992() {
-        #meetings .results table {
-
-            thead tr th.address,
-            tbody tr td.address {
-                display: table-cell;
-            }
-
-            thead tr th.name,
-            tbody tr td.name {
-                width: 25%;
-            }
-
-            thead tr th.location,
-            tbody tr td.location {
-                width: 25%;
-            }
-        }
-    }
-
-    /* Large devices (large desktops, 1200px and up) */
-    @include breakpoint-1200() {
-        #meetings .results {
-            table .address {
-                display: table-cell;
-            }
-
-            #map {
-                height: 650px;
-            }
-        }
-    }
-
-    @media print {
-        a[href]:after {
-            content: none !important;
-            /* Remove Bootstrap's (http://) when printing */
-        }
-
-        #meetings .results table {
-            tr {
-                display: block;
-                float: left;
-                min-height: 170px;
-                width: 50%;
-            }
-
-            @-moz-document url-prefix() {
-                tr {
-                    float: none;
-                }
-            }
-
-            td {
-
-                &.name,
-                &.location,
-                &.address,
-                &.region,
-                &.district,
-                &.types {
-                    white-space: normal;
-                    width: auto !important;
-                }
-
-                &.types {
-                    display: block !important;
-                }
-
-                &.name {
-                    font-weight: bold;
-
-                    small {
-                        display: none;
-                    }
-                }
-            }
-        }
-    }
+	#meeting,
+	#location {
+		.page-header {
+			background-color: transparent;
+			margin-left: 0;
+			margin-right: 0;
+			max-width: none;
+			padding-left: 0;
+			padding-right: 0;
+		}
+
+		.panel,
+		.btn {
+			margin-bottom: $margin;
+		}
+
+		h1 {
+			font-size: 36px;
+			margin-bottom: 4px;
+			display: inline-block;
+		}
+
+		small {
+			color: $color_black;
+		}
+
+		#map {
+			height: 500px;
+		}
+
+		button {
+			font-size: inherit;
+		}
+
+		.panel {
+			.panel-heading {
+				background-color: white;
+				border-color: transparent;
+				border-radius: 3px;
+				color: inherit;
+				display: block;
+				text-decoration: none !important;
+				transition: all 0.1s;
+
+				.panel-title {
+					padding-right: 40px;
+					position: relative;
+
+					.panel-title-buttons {
+						position: absolute;
+						right: 0;
+						transition: all 0.1s;
+
+						a {
+							color: inherit;
+
+							& + a {
+								margin-left: 15px;
+							}
+						}
+					}
+				}
+
+				&:hover {
+					background-color: #f5f5f5;
+				}
+			}
+
+			ul.list-group {
+				margin: 0;
+				padding: 0;
+
+				.list-group-item {
+					margin: -1px 0 0;
+					padding: 10px 15px 15px;
+
+					* {
+						background-color: transparent;
+						line-height: 1.3;
+						margin: 0 0 8px 0;
+
+						&:last-child {
+							margin-bottom: 0;
+						}
+					}
+					div.meeting_types {
+						margin-bottom: 0;
+					}
+
+					h3.list-group-item-heading {
+						font-size: 107%;
+						font-weight: bold;
+						line-height: inherit;
+						margin-bottom: 4px;
+
+						&:last-child {
+							margin-bottom: 0;
+						}
+					}
+
+					ul {
+						list-style-type: none;
+
+						li {
+							list-style-type: none;
+							margin: 0;
+						}
+					}
+
+					#card-element {
+						margin-bottom: 0;
+					}
+
+					&:first-child {
+						margin-top: 0;
+					}
+
+					&.list-group-item-updated {
+						padding-bottom: 10px;
+					}
+
+					&.has-error {
+						background-color: $state-danger-bg;
+						border-color: $state-danger-border;
+						color: $state-danger-text;
+					}
+
+					&.has-info {
+						background-color: $state-warning-bg;
+						border-color: $state-warning-border;
+						color: $state-warning-text;
+					}
+
+					&.list-group-item-form {
+						padding: 0;
+
+						input,
+						textarea,
+						button {
+							border: 0;
+							border-radius: 0;
+							font-size: inherit;
+							text-transform: none;
+							width: 100%;
+						}
+
+						input,
+						textarea {
+							padding: 10px $margin;
+						}
+
+						button {
+							background-color: #eaeaea;
+							font-size: 85%;
+							font-weight: bold;
+							padding: 7px;
+							text-align: center;
+							text-transform: uppercase;
+							width: 100%;
+						}
+
+						textarea {
+							height: 250px;
+							resize: none;
+						}
+
+						#amount {
+							font-size: 24px;
+							font-weight: bold;
+						}
+
+						&:last-child {
+							border-radius: 0 0 3px 3px;
+						}
+					}
+
+					&.list-group-item-meetings {
+						h4 {
+							font-size: 85%;
+							font-weight: bold;
+							margin: $margin 0 5px;
+
+							&:first-child {
+								margin-top: 3px;
+							}
+						}
+
+						ul {
+							list-style-type: none;
+							padding: 0;
+
+							li {
+								padding-left: 90px;
+								position: relative;
+
+								span {
+									color: #999;
+									left: 0;
+									position: absolute;
+									text-align: right;
+									width: 80px;
+								}
+
+								&.type-tc {
+									opacity: 0.5;
+
+									small {
+										color: $color_alert;
+										font-weight: bold;
+									}
+								}
+
+								&.type-onl {
+									opacity: 1 !important;
+
+									small {
+										color: $color_online !important;
+										font-weight: bold;
+									}
+								}
+							}
+
+							&:last-child {
+								margin-bottom: 0;
+							}
+						}
+					}
+				}
+			}
+
+			&.panel-expandable {
+				.panel-title {
+					cursor: pointer;
+				}
+
+				ul.list-group {
+					max-height: 0;
+					overflow: hidden;
+					transition: max-height 0.25s;
+				}
+
+				&.expanded {
+					.panel-heading {
+						background-color: #eee;
+						border-color: #ddd;
+						border-radius: 3px 3px 0 0;
+					}
+
+					.panel-title span.glyphicon {
+						transform: rotate(-90deg);
+					}
+
+					ul.list-group {
+						max-height: 500px;
+					}
+				}
+			}
+		}
+	}
+
+	body.tsml_fullscreen {
+		#meetings {
+			background-color: $color_white;
+			bottom: 0;
+			height: 100%;
+			left: 0;
+			max-width: none;
+			position: fixed;
+			right: 0;
+			top: 0;
+			width: 100%;
+			z-index: 9999;
+		}
+
+		&.admin-bar {
+			#meetings {
+				padding-top: 47px;
+			}
+		}
+	}
+
+	/* Small devices (tablets, 768px and up) */
+	@include breakpoint-768() {
+		#meetings {
+			.controls {
+				margin-bottom: 0;
+
+				ul.dropdown-menu {
+					max-height: 310px;
+					max-width: none;
+					overflow: auto;
+
+					li {
+						& > a,
+						div.expand {
+							background-size: 21px 21px;
+							line-height: 18px;
+						}
+					}
+				}
+			}
+
+			.results table {
+				margin: 0;
+
+				thead {
+					display: table-header-group;
+
+					th {
+						border: 0;
+						cursor: pointer;
+						line-height: 1;
+						padding: $margin / 2 $margin;
+						padding-top: 0;
+						text-transform: none;
+						white-space: nowrap;
+
+						&[data-sort] {
+							font-weight: bold;
+
+							&:after {
+								border-style: solid;
+								content: '';
+								display: inline-block;
+								height: 0;
+								margin: 0 5px;
+								width: 0;
+							}
+						}
+
+						&[data-sort='asc']:after {
+							border-color: transparent transparent $color_gray transparent;
+							border-width: 0 4px 8px;
+						}
+
+						&[data-sort='desc']:after {
+							border-color: $color_gray transparent transparent;
+							border-width: 8px 4px 0;
+						}
+
+						&.address,
+						&.types,
+						&.district {
+							display: none;
+						}
+
+						&.distance {
+							text-align: right;
+						}
+
+						&.region[data-sort='asc']:after,
+						&.region[data-sort='desc']:after {
+							right: $margin;
+						}
+
+						&.district[data-sort='asc']:after,
+						&.district[data-sort='desc']:after {
+							right: $margin;
+						}
+					}
+				}
+
+				tbody tr {
+					display: table-row;
+
+					td {
+						&.name,
+						&.location,
+						&.time,
+						&.distance,
+						&.address,
+						&.region,
+						&.district,
+						&.types {
+							display: table-cell;
+							padding: 8px 8px 8px $margin;
+							position: static;
+							white-space: normal;
+						}
+
+						&.time {
+							white-space: nowrap;
+
+							span {
+								display: inline;
+								font-size: inherit;
+
+								&:after {
+									content: ', ';
+								}
+
+								&:last-child:after {
+									content: ' ';
+								}
+							}
+						}
+
+						&.distance {
+							font-size: inherit;
+							font-weight: inherit;
+							line-height: inherit;
+							text-align: right;
+						}
+
+						&.name {
+							width: 35%;
+						}
+
+						&.location {
+							width: 35%;
+						}
+
+						&.address,
+						&.types,
+						&.district {
+							display: none;
+						}
+					}
+				}
+			}
+		}
+
+		&[tax-mode='district'] {
+			th.district,
+			td.district {
+				display: table-cell;
+			}
+
+			th.region,
+			td.region {
+				display: none;
+			}
+		}
+
+		/* little bit of padding on larger screens */
+		#meeting .main,
+		#location .main {
+			padding-bottom: 40px;
+		}
+	}
+
+	/* Medium devices (desktops, 992px and up) */
+	@include breakpoint-992() {
+		#meetings .results table {
+			thead tr th.address,
+			tbody tr td.address {
+				display: table-cell;
+			}
+
+			thead tr th.name,
+			tbody tr td.name {
+				width: 25%;
+			}
+
+			thead tr th.location,
+			tbody tr td.location {
+				width: 25%;
+			}
+		}
+	}
+
+	/* Large devices (large desktops, 1200px and up) */
+	@include breakpoint-1200() {
+		#meetings .results {
+			table .address {
+				display: table-cell;
+			}
+
+			#map {
+				height: 650px;
+			}
+		}
+	}
+
+	@media print {
+		a[href]:after {
+			content: none !important;
+			/* Remove Bootstrap's (http://) when printing */
+		}
+
+		#meetings .results table {
+			tr {
+				display: block;
+				float: left;
+				min-height: 170px;
+				width: 50%;
+			}
+
+			@-moz-document url-prefix() {
+				tr {
+					float: none;
+				}
+			}
+
+			td {
+				&.name,
+				&.location,
+				&.address,
+				&.region,
+				&.district,
+				&.types {
+					white-space: normal;
+					width: auto !important;
+				}
+
+				&.types {
+					display: block !important;
+				}
+
+				&.name {
+					font-weight: bold;
+
+					small {
+						display: none;
+					}
+				}
+			}
+		}
+	}
+}
+
+//tsml ui widgets
+.tsml-ui-widgets {
+	display: none;
+}
+body.tsml-ui-table,
+body.tsml-ui-map {
+	.tsml-ui-widgets-meetings-top,
+	.tsml-ui-widgets-meetings-bottom {
+		display: block;
+	}
+}
+body.tsml-ui-meeting {
+	.tsml-ui-widgets-meeting-bottom {
+		display: block;
+	}
 }
 
 body {
-    &.attendance-online #map,
-    &.attendance-inactive  #map{
-        display: none;
-    }
+	&.attendance-online #map,
+	&.attendance-inactive #map {
+		display: none;
+	}
 
-    &.attendance-hybrid div.attendance-option,
-    &.attendance-online div.attendance-option {
-        color: $color_online;
-    }
-    &.attendance-inactive  div.attendance-option {
-        color: $color_alert;
-    }
-    &.attendance-online.address-specific p.location-address,
-    &.attendance-inactive p.location-address {
-        text-decoration: line-through;
-    }
+	&.attendance-hybrid div.attendance-option,
+	&.attendance-online div.attendance-option {
+		color: $color_online;
+	}
+	&.attendance-inactive div.attendance-option {
+		color: $color_alert;
+	}
+	&.attendance-online.address-specific p.location-address,
+	&.attendance-inactive p.location-address {
+		text-decoration: line-through;
+	}
 
-    /* temporary closure meetings */
-/*
+	/* temporary closure meetings */
+	/*
     &.tsml-meeting.tsml-type-tc {
         p.location-address,
         address {
@@ -1211,59 +1219,59 @@ body {
     }
 */
 
-    /* Special per-theme fixes */
-    &.twentyfourteen {
-        #page::before {
-            display: none;
-        }
+	/* Special per-theme fixes */
+	&.twentyfourteen {
+		#page::before {
+			display: none;
+		}
 
-        #tsml {
-            #meetings {
-                width: 100%;
+		#tsml {
+			#meetings {
+				width: 100%;
 
-                .page-header {
-                    max-width: none;
-                }
-            }
-        }
+				.page-header {
+					max-width: none;
+				}
+			}
+		}
 
-        //don't do huge print header on twenty fourteen
-        @media print {
-            .header-main {
-                padding: 0 10px;
-            }
-        }
-    }
+		//don't do huge print header on twenty fourteen
+		@media print {
+			.header-main {
+				padding: 0 10px;
+			}
+		}
+	}
 
-    &.twentyten {
-        #main {
-            font-size: 14px;
-            padding-top: 5px;
-        }
-    }
+	&.twentyten {
+		#main {
+			font-size: 14px;
+			padding-top: 5px;
+		}
+	}
 
-    &.catch-box {
-        #primary {
-            width: 100%;
+	&.catch-box {
+		#primary {
+			width: 100%;
 
-            #tsml {
-                background-color: white;
-                border-radius: 5px;
+			#tsml {
+				background-color: white;
+				border-radius: 5px;
 
-                .page-header {
-                    margin-top: 0;
-                }
-            }
-        }
-    }
+				.page-header {
+					margin-top: 0;
+				}
+			}
+		}
+	}
 
-    &.lovecraft #tsml #meetings {
-        background-color: white;
-        border: 1px solid #ddd;
-        margin-top: -60px;
+	&.lovecraft #tsml #meetings {
+		background-color: white;
+		border: 1px solid #ddd;
+		margin-top: -60px;
 
-        @include breakpoint-768() {
-            margin-bottom: 35px;
-        }
-    }
+		@include breakpoint-768() {
+			margin-bottom: 35px;
+		}
+	}
 }

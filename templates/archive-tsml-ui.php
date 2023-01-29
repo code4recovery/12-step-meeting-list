@@ -1,27 +1,26 @@
- <!-- USING TSML UI IN A CLASSIC THEME -->
 <?php
 tsml_assets();
 
 get_header();
 
 if (is_active_sidebar('tsml_meetings_top')) {  ?>
-    <div class="widgets meetings-widgets meetings-widgets-top" role="complementary">
+    <aside class="widgets tsml-ui-widgets tsml-ui-widgets-meetings-top">
         <?php dynamic_sidebar('tsml_meetings_top') ?>
-    </div>
-<?php } ?>
+    </aside>
+<?php }
 
-<div class="wp-site-blocks">
+echo tsml_ui();
 
-<?php  
-
-echo tsml_ui();  ?>
-
-</div>
-<?php if (is_active_sidebar('tsml_meetings_bottom')) { ?>
-    <div class="widgets meetings-widgets meetings-widgets-bottom" role="complementary">
+if (is_active_sidebar('tsml_meetings_bottom')) { ?>
+    <aside class="widgets tsml-ui-widgets tsml-ui-widgets-meetings-bottom">
         <?php dynamic_sidebar('tsml_meetings_bottom') ?>
-    </div>
-<?php } 
+    </aside>
+<?php }
+
+if (is_active_sidebar('tsml_meeting_bottom')) {  ?>
+    <aside class="widgets tsml-ui-widgets tsml-ui-widgets-meeting-bottom">
+        <?php dynamic_sidebar('tsml_meeting_bottom') ?>
+    </aside>
+<?php }
 
 get_footer();
-
