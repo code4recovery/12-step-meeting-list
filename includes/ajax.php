@@ -124,31 +124,6 @@ function tsml_ajax_groups()
 	wp_send_json($results);
 }
 
-
-//PDF meeting schedule linked on import & settings
-add_action('wp_ajax_tsml_pdf', 'tsml_ajax_pdf');
-add_action('wp_ajax_nopriv_tsml_pdf', 'tsml_ajax_pdf');
-function tsml_ajax_pdf()
-{
-
-	//include the file, which includes TCPDF
-	include(TSML_PATH . '/includes/pdf.php');
-
-	//create new PDF document
-	$pdf = new TSMLPDF([
-		'margin' => !empty($_GET['margin']) ? floatval($_GET['margin']) : .25,
-		'width' => !empty($_GET['width']) ? floatval($_GET['width']) : 4.25,
-		'height' => !empty($_GET['height']) ? floatval($_GET['height']) : 11,
-	]);
-
-	//send to browser
-	if (!headers_sent()) {
-		$pdf->Output('meeting-schedule.pdf', 'I');
-	}
-
-	exit;
-}
-
 //ajax for the search typeahead
 add_action('wp_ajax_tsml_regions', 'tsml_ajax_regions');
 add_action('wp_ajax_nopriv_tsml_regions', 'tsml_ajax_regions');
