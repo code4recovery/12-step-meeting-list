@@ -227,6 +227,14 @@ function tsml_custom_addresses($custom_overrides)
 	$tsml_google_overrides = array_merge($tsml_google_overrides, $custom_overrides);
 }
 
+//fuction:	define custom type descriptions
+//used:		theme's functions.php
+function tsml_custom_descriptions($descriptions)
+{
+	global $tsml_programs, $tsml_program;
+	$tsml_programs[$tsml_program]['type_descriptions'] = $descriptions;
+}
+
 //fuction:	define custom flags (/men, /women) for your area
 //used:		theme's functions.php
 function tsml_custom_flags($flags)
