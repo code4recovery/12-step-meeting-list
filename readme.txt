@@ -67,6 +67,17 @@ Note you can add multiple entries to the array below.
 		));
 	}
 
+= Can I update the type descriptions? = 
+
+Yes, you can add, update, or remove these descriptions. Adapt this example as needed and add it to your theme's functions.php. Using an empty string `''` will unset the type.
+
+	if (function_exists('tsml_custom_descriptions')) {
+		tsml_custom_descriptions([
+			'C' => 'Special closed type description',
+			'O' => '', //this type has been removed
+		]);
+	}
+
 = What is Change Detection? =
 Change Detection augments our data import utility by periodically polling your data sources and generating email notifications to Change Notification Email recipients who you registered on the Settings page.
 
