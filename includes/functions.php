@@ -2130,8 +2130,8 @@ function tsml_import_changes($feed_meetings, $data_source_url, $data_source_last
 
 	// list changed and new meetings found in the data source feed
 	foreach ($feed_meetings as $meeting) {
-
-		[$day_of_week, $dow_number] = tsml_get_day_of_week_info($meeting['day'], $week_days);
+		
+		list($day_of_week, $dow_number) = tsml_get_day_of_week_info($meeting['day'], $week_days);
 		$meeting_slug =  $meeting['slug'];
 
 		// match feed/database on unique slug
@@ -2165,8 +2165,8 @@ function tsml_import_changes($feed_meetings, $data_source_url, $data_source_last
 
 	// mark as "Remove" those meetings in local database which are not matched with feed
 	foreach ($db_meetings as $db_meeting) {
-
-		[$day_of_week, $dow_number] = tsml_get_day_of_week_info($db_meeting['day'], $week_days);
+		
+		list($day_of_week, $dow_number) = tsml_get_day_of_week_info($db_meeting['day'], $week_days);
 		$meeting_slug = $db_meeting['slug'];
 
 		$is_matched = in_array($meeting_slug, $feed_slugs);
