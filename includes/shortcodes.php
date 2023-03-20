@@ -27,13 +27,14 @@ function tsml_next_meetings($arguments)
 	$meetings = array_slice($meetings, 0, $arguments['count']);
 	$rows = '';
 	foreach ($meetings as $meeting) {
-		$classes = tsml_to_css_classes($meeting['types']);
+		if (array_key_exists('types', $meeting))
+			$classes = tsml_to_css_classes($meeting['types']);
 
 		if (!empty($meeting['notes'])) {
 			$classes .= ' notes';
 		}
 
-		$meeting_types = tsml_format_types($meeting['types']);
+		$meeting_types = array_key_exists('types', $meeting) ? tsml_format_types($meeting['types']) : [];
 		if (!empty($meeting_types)) {
 			$meeting_types = ' <small><span class="meeting_types">' . $meeting_types . '</span></small>';
 		}
@@ -90,9 +91,13 @@ add_shortcode('tsml_next_meetings', 'tsml_next_meetings');
 add_shortcode('tsml_types_list', function () {
 	global $tsml_types_in_use, $tsml_programs, $tsml_program;
 	$types = [];
-	$base = get_post_type_archive_link('tsml_meeting') . '?tsml-day=any&tsml-type=';
-	foreach ($tsml_types_in_use as $type) {
-		$types[$tsml_programs[$tsml_program]['types'][$type]] = '<li><a href="' . $base . $type . '">' . $tsml_programs[$tsml_program]['types'][$type] . '</a></li>';
+	foreach ( $tsml_types_in_use as $type ) {
+		// Make type name URL friendly (replace spaces with dases, urlencode special characters)
+		$sanitized_type = tsml_slugify_type( $tsml_programs[ $tsml_program ]['types'][ $type ] );
+		$types[ $tsml_programs[ $tsml_program ]['types'][ $type ] ] = '<li><a href="' . tsml_meetings_url( [
+				'tsml-day' => 'any',
+				'type'     => $sanitized_type,
+			] ) . '">' . $tsml_programs[ $tsml_program ]['types'][ $type ] . '</a></li>';
 	}
 	ksort($types);
 	return '<h3>Types</h3><ul>' . implode($types) . '</ul>';

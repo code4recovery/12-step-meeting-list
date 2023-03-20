@@ -356,7 +356,7 @@ jQuery(function ($) {
 			}
 		}
 		if (controls.time && controls.time != tsml.defaults.time) query_string['tsml-time'] = controls.time;
-		if (controls.type && controls.type != tsml.defaults.type) query_string['tsml-type'] = controls.type;
+		if (controls.type && controls.type != tsml.defaults.type) query_string['type'] = decodeURIComponent(controls.type);
 		if (controls.view && controls.view != tsml.defaults.view) query_string['tsml-view'] = controls.view;
 		if (controls.attendance_option != null) query_string['tsml-attendance_option'] = controls.attendance_option;
 		query_string = $.param(query_string);

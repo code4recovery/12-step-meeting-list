@@ -41,7 +41,7 @@ if (isset($_GET['r'])) {
 }
 
 if (isset($_GET['t'])) {
-    $_GET['tsml-type'] = $_GET['t'];
+    $_GET['type'] = $_GET['t'];
 }
 
 if (isset($_GET['i'])) {
@@ -87,14 +87,18 @@ if (isset($_GET['tsml-region'])) {
     }
 }
 
+// Only use types that are in the program's types array
 $types = [];
-if (!empty($_GET['tsml-type'])) {
-    $type_queries = explode(',', $_GET['tsml-type']);
-    foreach ($type_queries as $type_query) {
-        if (array_key_exists($type_query, $tsml_programs[$tsml_program]['types'])) {
-            $types[] = $type_query;
-        }
-    }
+if ( ! empty( $_GET['type'] ) ) {
+	$type_queries = explode( ',', $_GET['type'] );
+	// Create a lowercase list of types for the $tsml_program as configured for comparison
+	$lowertypes = array_map( 'tsml_slugify_type', $tsml_programs[ $tsml_program ]['types'] );
+	foreach ( $type_queries as $type_query ) {
+		// If type is in our $lowertypes array, return the urlencoded type query for filtering
+		if ( $key = array_search( $type_query, $lowertypes ) ) {
+			$types[] = $type_query;
+		}
+	}
 }
 
 $attendance_options = [];
@@ -172,11 +176,11 @@ if (!count($types) && (!count($attendance_options))) {
             $type_label[] = $tsml_meeting_attendance_options[$attendance_option];
         }
     }
-    foreach ($types as $type) {
-        if (array_key_exists($type, $tsml_programs[$tsml_program]['types'])) {
-            $type_label[] = $tsml_programs[$tsml_program]['types'][$type];
-        }
-    }
+	foreach ( $types as $type ) {
+		if ( $type_key = array_search( $type, $lowertypes ) ) {
+			$type_label[] = $tsml_programs[ $tsml_program ]['types'][ $type_key ];
+		}
+	}
     $type_label = implode(' + ', $type_label);
 }
 $mode_label = array_key_exists($mode, $modes) ? $modes[$mode]['title'] : $modes[0]['title'];
@@ -488,17 +492,22 @@ get_header();
                                 <?php }
                                 ?>
                                 <li class="divider"></li>
-                                <?php
-                                $types_to_list = array_intersect_key($tsml_programs[$tsml_program]['types'], array_flip($tsml_types_in_use));
-                                foreach ($types_to_list as $key => $thistype) {
-                                    if ($key == 'ONL' || $key == 'TC') continue; //hide "Online Meeting" since it's not manually settable, neither is location Temporarily Closed
-                                ?>
-                                    <li <?php if (in_array($key, $types)) echo ' class="active"' ?>>
-                                        <a href="<?php echo tsml_meetings_url(['tsml-type' => $key]) ?>" data-id="<?php echo $key ?>">
-                                            <?php echo $thistype ?>
-                                        </a>
-                                    </li>
-                                <?php } ?>
+	                        <?php
+	                        $types_to_list           = array_intersect_key( $tsml_programs[ $tsml_program ]['types'], array_flip( $tsml_types_in_use ) );
+	                        $slugified_types_to_list = array_map( 'tsml_slugify_type', $types_to_list );
+	                        foreach ( $slugified_types_to_list as $key => $thistype ) {
+		                        if ( $key == 'ONL' || $key == 'TC' ) {
+			                        continue;
+		                        } //hide "Online Meeting" since it's not manually settable, neither is location Temporarily Closed
+		                        ?>
+                                <li <?php if ( in_array( $thistype, $types ) )
+			                        echo ' class="active"' ?>>
+                                    <a href="<?php echo tsml_meetings_url( [ 'type' => $thistype ] ) ?>"
+                                       data-id="<?php echo $thistype ?>">
+				                        <?php echo $tsml_programs[ $tsml_program ]['types'][ $key ] ?>
+                                    </a>
+                                </li>
+	                        <?php } ?>
                         </ul>
                     </div>
                 <?php } ?>

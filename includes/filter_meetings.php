@@ -17,13 +17,24 @@ class tsml_filter_meetings
     public $region_id;
     public $searchable_keys;
     public $time;
-    public $type;
+	public $type;
+	
+	/**
+	 * Encoded list of all meeting types for the configured fellowship.
+	 *
+	 * @var array $slugified_types
+	 */
+	private $slugified_types;
     public $attendance_option;
 
     //sanitize and save arguments (won't be passed to a database)
     public function __construct($arguments)
     {
-
+	    global $tsml_programs, $tsml_program;
+	    if ( array_key_exists( 'types', $tsml_programs[ $tsml_program ] ) ) {
+		    $this->slugified_types = array_map( 'tsml_slugify_type', $tsml_programs[ $tsml_program ]['types'] );
+		
+	    }
         if (!empty($arguments['day']) || (isset($arguments['day']) && $arguments['day'] == 0)) {
             $this->day = is_array($arguments['day']) ? array_map('intval', $arguments['day']) : [intval($arguments['day'])];
         }
@@ -267,15 +278,26 @@ class tsml_filter_meetings
             }
         }
     }
-
-    //callback function to pass to array_filter
-    public function filter_type($meeting)
-    {
-        if (!isset($meeting['types'])) {
-            return false;
-        }
-        return !count(array_diff($this->type, $meeting['types']));
-    }
+	
+	/**
+	 * Meeting tyoe callback function to pass to array_filter.
+	 *
+	 * Filtera meetings based on type argument
+	 *
+	 * @param object $meeting
+	 *
+	 * @return bool
+	 */
+	public function filter_type( $meeting ) {
+		if ( ! isset( $meeting['types'] ) ) {
+			return FALSE;
+		}
+		foreach ( $this->type as $type_to_match ) {
+			$type_keys[] = array_search( $type_to_match, $this->slugified_types );
+		}
+		
+		return ! empty( array_intersect( $type_keys, $meeting['types'] ) );
+	}
 
     //callback function to pass to array_filter
     public function filter_attendance_option($meeting)
