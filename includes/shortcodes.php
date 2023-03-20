@@ -88,20 +88,21 @@ add_shortcode('tsml_next_meetings', 'tsml_next_meetings');
 
 //output a list of types with links for AA-DC
 
-add_shortcode('tsml_types_list', function () {
+add_shortcode( 'tsml_types_list', function () {
 	global $tsml_types_in_use, $tsml_programs, $tsml_program;
 	$types = [];
 	foreach ( $tsml_types_in_use as $type ) {
 		// Make type name URL friendly (replace spaces with dases, urlencode special characters)
-		$sanitized_type = tsml_slugify_type( $tsml_programs[ $tsml_program ]['types'][ $type ] );
+		$sanitized_type                                             = tsml_slugify_type( $tsml_programs[ $tsml_program ]['types'][ $type ] );
 		$types[ $tsml_programs[ $tsml_program ]['types'][ $type ] ] = '<li><a href="' . tsml_meetings_url( [
 				'tsml-day' => 'any',
 				'type'     => $sanitized_type,
 			] ) . '">' . $tsml_programs[ $tsml_program ]['types'][ $type ] . '</a></li>';
 	}
-	ksort($types);
-	return '<h3>Types</h3><ul>' . implode($types) . '</ul>';
-});
+	ksort( $types );
+	
+	return '<h3>Types</h3><ul>' . implode( $types ) . '</ul>';
+} );
 
 //output a react meeting finder widget https://github.com/code4recovery/tsml-ui
 function tsml_ui()
@@ -154,22 +155,24 @@ add_shortcode('tsml_react', 'tsml_ui');
 add_shortcode('tsml_ui', 'tsml_ui');
 
 //output a list of regions with links for AA-DC
-add_shortcode('tsml_regions_list', function () {
+add_shortcode( 'tsml_regions_list', function () {
 	//run function recursively
-	function get_regions($parent = 0)
-	{
+	function get_regions( $parent = 0 ) {
 		$taxonomy = 'tsml_region';
-		$terms = get_terms(compact('taxonomy', 'parent'));
-		if (!count($terms)) {
+		$terms    = get_terms( compact( 'taxonomy', 'parent' ) );
+		if ( ! count( $terms ) ) {
 			return;
 		}
-
-		$base = get_post_type_archive_link('tsml_meeting') . '?tsml-day=any&tsml-region=';
-		foreach ($terms as &$term) {
-			$term = '<li><a href="' . $base . $term->term_id . '">' . $term->name . '</a>' . get_regions($term->term_id) . '</li>';
+		
+		foreach ( $terms as &$term ) {
+			$term = '<li><a href="' . tsml_meetings_url( [
+					'tsml-day' => 'any',
+					'region'   => $term->slug,
+				] ) . '">' . $term->name . '</a>' . get_regions( $term->term_id ) . '</li>';
 		}
-		return '<ul>' . implode($terms) . '</ul>';
+		
+		return '<ul>' . implode( $terms ) . '</ul>';
 	}
-
+	
 	return '<h3>Regions</h3>' . get_regions();
-});
+} );

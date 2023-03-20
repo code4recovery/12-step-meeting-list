@@ -350,7 +350,7 @@ jQuery(function ($) {
 		if (controls.query && controls.query != tsml.defaults.query) query_string['tsml-query'] = controls.query;
 		if (controls.mode == 'search') {
 			if (controls.region != tsml.defaults.region) {
-				query_string['tsml-region'] = controls.region;
+				query_string['region'] = controls.region;
 			} else if (controls.district != tsml.defaults.district) {
 				query_string['tsml-district'] = controls.district;
 			}

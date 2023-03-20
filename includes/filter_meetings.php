@@ -26,8 +26,12 @@ class tsml_filter_meetings
 	 */
 	private $slugified_types;
     public $attendance_option;
-
-    //sanitize and save arguments (won't be passed to a database)
+	
+	/**
+	 * Sanitize and save arguments (won't be passed to a database).
+	 *
+	 * @param array $arguments
+	 */
     public function __construct($arguments)
     {
 	    global $tsml_programs, $tsml_program;
