@@ -27,13 +27,14 @@ function tsml_next_meetings($arguments)
 	$meetings = array_slice($meetings, 0, $arguments['count']);
 	$rows = '';
 	foreach ($meetings as $meeting) {
-		$classes = tsml_to_css_classes($meeting['types']);
+		if (array_key_exists('types', $meeting))
+			$classes = tsml_to_css_classes($meeting['types']);
 
 		if (!empty($meeting['notes'])) {
 			$classes .= ' notes';
 		}
 
-		$meeting_types = tsml_format_types($meeting['types']);
+		$meeting_types = array_key_exists('types', $meeting) ? tsml_format_types($meeting['types']) : [];
 		if (!empty($meeting_types)) {
 			$meeting_types = ' <small><span class="meeting_types">' . $meeting_types . '</span></small>';
 		}
