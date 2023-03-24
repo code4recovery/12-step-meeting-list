@@ -1548,8 +1548,8 @@ function tsml_import_buffer_set($meetings, $data_source_url = null, $data_source
 		$meetings[$i]['types'] = $unused_types = [];
 		foreach ($types as $type) {
 			$upper_type = trim(strtoupper($type));
-			if (in_array($upper_type, array_map('strtoupper', array_keys($upper_types)))) {
-				$meetings[$i]['types'][] = $type;
+			if (array_key_exists($upper_type, $upper_types)) {
+				$meetings[$i]['types'][] = $upper_type;
 			} elseif (in_array($upper_type, array_values($upper_types))) {
 				$meetings[$i]['types'][] = array_search($upper_type, $upper_types);
 			} else {
