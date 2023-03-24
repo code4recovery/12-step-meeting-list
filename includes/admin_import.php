@@ -179,7 +179,6 @@ if (!function_exists('tsml_import_page')) {
 
 					$tsml_data_sources = get_option('tsml_data_sources', array());
 					$data_source_last_import = (int) $tsml_data_sources[$data_source_url]['last_import'];
-					//tsml_alert($message);
 
 					//get updated feed records only
 					$feed_updates = tsml_get_import_changes_only($body, $data_source_url, $data_source_last_import, $db_ids_to_delete, $message_lines);
