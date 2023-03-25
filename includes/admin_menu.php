@@ -22,7 +22,7 @@ add_action('admin_menu', function () {
         'edit.php?post_type=tsml_meeting',
         __('Import & Export', '12-step-meeting-list'),
         __('Import & Export', '12-step-meeting-list'),
-        'manage_options',
+        'edit_posts',
         'import',
         'tsml_import_page'
     );
