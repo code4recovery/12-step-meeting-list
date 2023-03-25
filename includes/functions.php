@@ -2165,7 +2165,8 @@ function tsml_import_changes($feed_meetings, $data_source_url, $data_source_last
 		$feed_slugs[] = $meeting_slug;
 
 		// has the meeting been updated since the last refresh?
-		$current_meeting_last_update = strtotime($meeting['updated']);
+		$current_meeting_localised_last_update = tsml_date_localised(get_option('date_format') . ' ' . get_option('time_format'), strtotime($meeting['updated']));
+		$current_meeting_last_update = strtotime($current_meeting_localised_last_update);
 		if ($current_meeting_last_update > $data_source_last_refresh) {
 			$permalink = get_permalink($meeting['id']);
 			$meeting_name = '<a href=' . $permalink . '>' . $meeting['name'] . '</a>';
@@ -2293,7 +2294,7 @@ function tsml_date_localised($format, $timestamp = null)
 	// From https://mediarealm.com.au/
 
 	$tz_string = get_option('timezone_string');
-	$tz_offset = get_option('gmt_offset', 0);
+	$tz_offset = get_option('gmt_offset', -6);
 
 	if (!empty($tz_string)) {
 		// If site timezone option string exists, use it
@@ -2371,7 +2372,8 @@ function tsml_get_import_changes_only($feed_meetings, $data_source_url, $data_so
 		$feed_slugs[] = $meeting_slug;
 
 		// has the meeting been updated since the last update?
-		$current_meeting_last_update = strtotime($meeting['updated']);
+		$current_meeting_localised_last_update = tsml_date_localised(get_option('date_format') . ' ' . get_option('time_format'), strtotime($meeting['updated']));
+		$current_meeting_last_update = strtotime($current_meeting_localised_last_update);
 		if ($current_meeting_last_update > $data_source_last_update) {
 			$meeting_name = $meeting['name']; 
 			$meeting_update_date = date('M j, Y  g:i a', $current_meeting_last_update);
