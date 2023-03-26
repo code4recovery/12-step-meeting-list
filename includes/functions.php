@@ -2,7 +2,7 @@
 
 //function:	add an admin screen update message
 //used:		tsml_import() and admin_types.php
-//$type:		can be success, warning or error
+//$type:		can be success, warning, info, or error
 function tsml_alert($message, $type = 'success')
 {
 	echo '<div class="notice notice-' . $type . ' is-dismissible"><p>' . $message . '</p></div>';
@@ -1548,8 +1548,8 @@ function tsml_import_buffer_set($meetings, $data_source_url = null, $data_source
 		$meetings[$i]['types'] = $unused_types = [];
 		foreach ($types as $type) {
 			$upper_type = trim(strtoupper($type));
-			if (array_key_exists($upper_type, $upper_types)) {
-				$meetings[$i]['types'][] = $upper_type;
+			if (in_array($upper_type, array_map('strtoupper', array_keys($upper_types)))) {
+				$meetings[$i]['types'][] = $type;
 			} elseif (in_array($upper_type, array_values($upper_types))) {
 				$meetings[$i]['types'][] = array_search($upper_type, $upper_types);
 			} else {
@@ -2054,7 +2054,7 @@ if (!function_exists('tsml_scan_data_source')) {
 					$message .= "database record count: $data_source_count_meetings <br>";
 					$feedCount = count($meetings);
 					$message .= "data source feed count: $feedCount<br>";
-					$message .= "Last Update: <span style='color:red;'>*</span>" . Date("l F j, Y  h:i a", $data_source_last_import) . '<br>';
+					$message .= "Last Update: <span style='color:red;'>*</span>" . Date(get_option('date_format') . ' ' . get_option('time_format'), $data_source_last_import) . '<br>';
 					$message .= "<br><b><u>Detected Difference</b></u><br>";
 					$message .= "<table border='1' style='width:600px;'><tbody><tr><th>Update Mode</th><th>Meeting Name</th><th>Day of Week</th><th>Last Updated</th></tr>";
 					$message .= implode('', $meetings_updated);
@@ -2165,7 +2165,9 @@ function tsml_import_changes($feed_meetings, $data_source_url, $data_source_last
 		$feed_slugs[] = $meeting_slug;
 
 		// has the meeting been updated since the last refresh?
-		$current_meeting_last_update = strtotime($meeting['updated']);
+		$current_meeting_localised_last_update = tsml_date_localised(get_option('date_format') . ' ' . get_option('time_format'), strtotime($meeting['updated']));
+		//$current_meeting_localised_last_update = strtotime($meeting['updated']);
+		$current_meeting_last_update = strtotime($current_meeting_localised_last_update);
 		if ($current_meeting_last_update > $data_source_last_refresh) {
 			$permalink = get_permalink($meeting['id']);
 			$meeting_name = '<a href=' . $permalink . '>' . $meeting['name'] . '</a>';
@@ -2371,22 +2373,21 @@ function tsml_get_import_changes_only($feed_meetings, $data_source_url, $data_so
 		$feed_slugs[] = $meeting_slug;
 
 		// has the meeting been updated since the last update?
-		$current_meeting_last_update = strtotime($meeting['updated']);
-		if ($current_meeting_last_update > $data_source_last_update) {
+		$current_meeting_localised_last_update = tsml_date_localised(get_option('date_format') . ' ' . get_option('time_format'), strtotime($meeting['updated']));
+		if (strtotime($current_meeting_localised_last_update) > $data_source_last_update) {
 			$meeting_name = $meeting['name']; 
-			$meeting_update_date = date('M j, Y  g:i a', $current_meeting_last_update);
 
 			//output both new and changed records
 			array_push($meetings_updated, $meeting);
 			
 			if ($is_matched) {
-				$message = "<tr style='color:gray;'><td>Change</td><td >$meeting_name</td><td>$day_of_week</td><td>$meeting_update_date</td></tr>";
+				$message = __("<tr style='color:blue;'><td>Change</td><td >$meeting_name</td><td>$day_of_week</td><td>$current_meeting_localised_last_update</td></tr>", '12-step-meeting-list');
 				array_push($message_lines, $message);
 				$meeting_id = array_search($meeting_slug, $db_slugs);
 				//add changed record id to list of db records to be removed
 				array_push($db_ids_to_delete, $meeting_id);
 			} else {
-				$message = "<tr style='color:green;'><td>Add New</td><td >$meeting_name</td><td>$day_of_week</td><td>$meeting_update_date</td></tr>";
+				$message = __("<tr style='color:green;'><td>Add New</td><td >$meeting_name</td><td>$day_of_week</td><td>$current_meeting_localised_last_update</td></tr>", '12-step-meeting-list');
 				array_push($message_lines, $message);
 
 			}
@@ -2413,15 +2414,26 @@ function tsml_get_import_changes_only($feed_meetings, $data_source_url, $data_so
 		}
 
 		if (!$is_matched) {
-			$meeting_update_date = date('M j, Y  g:i a', $data_source_last_update);
+			$meeting_update_date = date(get_option('date_format') . ' ' . get_option('time_format'), $data_source_last_update);
 			$meeting_name = $db_meeting['name'];
-			$message = "<tr style='color:red;'><td>Remove</td><td >$meeting_name</td><td>$day_of_week</td><td>* $meeting_update_date</td></tr>";
+			$message = __("<tr style='color:red;'><td>Remove</td><td >$meeting_name</td><td>$day_of_week</td><td>* $meeting_update_date</td></tr>", '12-step-meeting-list');
 			array_push($message_lines, $message);
 			array_push($db_ids_to_delete, $db_meeting['id']);
 		}
 	}
 
 	return $meetings_updated;
+}
+
+function tsml_check_feed_for_updated_field($body) {
+	foreach ($body as $meeting) {
+		if (array_key_exists('updated',$meeting)) {
+			return 1;
+		} else {
+			return 0;
+		}		
+	}
+	return 0;
 }
 
 /* ******************** end of data_source_change_detection ******************** */

@@ -167,40 +167,50 @@ if (!function_exists('tsml_import_page')) {
 			]);
 			if (is_array($response) && !empty($response['body']) && ($body = json_decode($response['body'], true))) {
 
-				/*When a data source already exists we want to apply changes detected to the local db */  
-
 				//initialize variables 
 				$feed_updates = $db_ids_to_delete = $message_lines = [];
-				$message = "<br><h2>Local Database Updates Being Applied From the $data_source_name Feed</h2><br>";
+				$message = __("<h2>Local Database Updates Applied From the $data_source_name Feed</h2><br>", '12-step-meeting-list');
 				$data_source_last_import = null;
+				$updated_field_is_present = tsml_check_feed_for_updated_field($body);
 
-				//if already set, we want to remove only db records which have been changed or removed from the feed
-				if (array_key_exists($data_source_url, $tsml_data_sources)) {
+				// Bypass change detection code when no "updated" field is available in json feed and then refresh entire data source just like before
+				if (array_key_exists($data_source_url, $tsml_data_sources) &  !$updated_field_is_present) {
+					//if data source already there but there's no updated field, then we do a hard refresh
+					if (array_key_exists($data_source_url, $tsml_data_sources)) {
+						tsml_delete(tsml_get_data_source_ids($data_source_url));
+						tsml_delete_orphans();
+					}
 
-					$tsml_data_sources = get_option('tsml_data_sources', array());
-					$data_source_last_import = (int) $tsml_data_sources[$data_source_url]['last_import'];
-					//tsml_alert($message);
+				} elseif (array_key_exists($data_source_url, $tsml_data_sources)) {
+
+					/*When a data source already exists we want to set up to apply changes detected to the local db */  
+
+					$tsml_data_sources = get_option('tsml_data_sources', []);
+					$data_source_last_import = intval($tsml_data_sources[$data_source_url]['last_import']);
 
 					//get updated feed records only
 					$feed_updates = tsml_get_import_changes_only($body, $data_source_url, $data_source_last_import, $db_ids_to_delete, $message_lines);
 
-					 /* Drop data source database records which have been updated or removed from the feed */
+					 /* Drop database records which are being updated, or removed from the feed */
 					foreach ($db_ids_to_delete as $id) {
-						tsml_delete_by_id($id);
+						//tsml_delete_by_id($id);
+						tsml_delete([$id]);
 					} 
 					tsml_delete_orphans();
 					//rebuild cache
 					tsml_cache_rebuild();
 
 					if (count($feed_updates) === 0) {
-						$last_update_date = date('M j, Y  g:i a', $data_source_last_import);
-						exit('<br><h2>No Updates Available For Your ' . $data_source_name . ' Feed</h2>Your local database meeting list records derived from the ' . $data_source_name . ' feed are already in sync!<br>Press the browser back button to return to the previous screen.<br>' );
+						$message = __('<h2>No Updates Available In Your ' . $data_source_name . ' Feed</h2><p>Your local database meeting list records derived from the ' . $data_source_name . ' feed are already in sync. <br>Press the browser back button to return to the previous screen.</p>', '12-step-meeting-list');
+						tsml_alert($message, 'info');
+						
+						return;				
 					}
 					else {
 						$message .= "<table border='1' style='width:600px;'><tbody><tr><th>Update Mode</th><th>Meeting Name</th><th>Day of Week</th><th>Last Updated</th></tr>";
 						$message .= implode('', $message_lines);
 						$message .= "</tbody></table>";
-						print_r($message);
+						tsml_alert($message, 'info');
 					}
 				}
 
@@ -218,7 +228,7 @@ if (!function_exists('tsml_import_page')) {
 					//import feed
 					tsml_import_buffer_set($body, $data_source_url, $data_source_parent_region_id);
 				}
-				else {
+				else {				
 					//import only the feed updates
 					tsml_import_buffer_set($feed_updates, $data_source_url, $data_source_parent_region_id);
 				}
@@ -333,7 +343,7 @@ if (!function_exists('tsml_import_page')) {
 									<th class="align-left"><?php _e('Parent Region', '12-step-meeting-list') ?></th>
 									<th class="align-left"><?php _e('Change Detection Email', '12-step-meeting-list') ?></th>
 									<th class="align-center"><?php _e('Meetings', '12-step-meeting-list') ?></th>
-									<th class="align-right"><?php _e('Last Update', '12-step-meeting-list') ?></th>
+									<th class="align-right"><?php _e('Last Refresh', '12-step-meeting-list') ?></th>
 									<th class="small"></th>
 								</tr>
 							</thead>
@@ -347,7 +357,7 @@ if (!function_exists('tsml_import_page')) {
 												<input type="hidden" name="tsml_add_data_source_name" value="<?php echo @$properties['name'] ?>">
 												<input type="hidden" name="tsml_add_data_source_parent_region_id" value="<?php echo @$properties['parent_region_id'] ?>">
 												<input type="hidden" name="tsml_add_data_source_change_detect" value="<?php echo @$properties['change_detect'] ?>">
-												<input type="submit" value="Update" class="button button-small">
+												<input type="submit" value="Refresh" class="button button-small">
 											</form>
 										</td>
 										<td>
@@ -362,8 +372,9 @@ if (!function_exists('tsml_import_page')) {
 												$parent_region = __('Top-level region', '12-step-meeting-list');
 											} elseif (empty($regions[$properties['parent_region_id']])) {
 												$term = get_term_by('term_id', $properties['parent_region_id'], 'tsml_region');
-												//$parent_region = $term[3];
-												$parent_region = $term->name;
+												if ($term !== null) {
+													$parent_region = $term->name;
+												}
 												if ($parent_region == null) {
 													$parent_region = __('Top-level region', '12-step-meeting-list');
 													$parent_region = 'Missing Parent Region: ' . $properties['parent_region_id'];
