@@ -27,17 +27,16 @@ function tsml_next_meetings($arguments)
 	$meetings = array_slice($meetings, 0, $arguments['count']);
 	$rows = '';
 	foreach ($meetings as $meeting) {
-		$classes = tsml_to_css_classes($meeting['types']);
-
+		$meeting_types = $classes = '';
+		if ( ! empty( $meeting['types'] ) ) {
+			$classes       = tsml_to_css_classes( $meeting['types'] );
+			$meeting_types = ' <small><span class="meeting_types">' . tsml_format_types( $meeting['types'] ) . '</span></small>';
+		}
+		
 		if (!empty($meeting['notes'])) {
 			$classes .= ' notes';
 		}
-
-		$meeting_types = tsml_format_types($meeting['types']);
-		if (!empty($meeting_types)) {
-			$meeting_types = ' <small><span class="meeting_types">' . $meeting_types . '</span></small>';
-		}
-
+		
 		$meeting_location = $meeting['location'];
 		if ($meeting['attendance_option'] == 'online' || $meeting['attendance_option'] == 'inactive') {
 			$meeting_location = !empty($meeting['group']) ? $meeting['group'] : '';
@@ -86,16 +85,21 @@ function tsml_next_meetings($arguments)
 add_shortcode('tsml_next_meetings', 'tsml_next_meetings');
 
 //output a list of types with links for AA-DC
-
 add_shortcode('tsml_types_list', function () {
-	global $tsml_types_in_use, $tsml_programs, $tsml_program;
-	$types = [];
-	$base = get_post_type_archive_link('tsml_meeting') . '?tsml-day=any&tsml-type=';
-	foreach ($tsml_types_in_use as $type) {
-		$types[$tsml_programs[$tsml_program]['types'][$type]] = '<li><a href="' . $base . $type . '">' . $tsml_programs[$tsml_program]['types'][$type] . '</a></li>';
-	}
-	ksort($types);
-	return '<h3>Types</h3><ul>' . implode($types) . '</ul>';
+    global $tsml_types_in_use, $tsml_programs, $tsml_program, $tsml_user_interface;
+    $types = [];
+    foreach ($tsml_types_in_use as $type) {
+        if ($tsml_user_interface === 'tsml_ui') {
+            $filter_url = tsml_meetings_url([
+                'type' => str_replace(' ', '-', strtolower($tsml_programs[$tsml_program]['types'][$type]))
+            ]);
+        } else {
+            $filter_url = tsml_meetings_url(['tsml-day' => 'any', 'tsml-type' => $type]);
+        }
+        $types[$tsml_programs[$tsml_program]['types'][$type]] = '<li><a href="' . $filter_url . '">' . $tsml_programs[$tsml_program]['types'][$type] . '</a></li>';
+    }
+    ksort($types);
+    return '<h3>Types</h3><ul>' . implode($types) . '</ul>';
 });
 
 //output a react meeting finder widget https://github.com/code4recovery/tsml-ui
@@ -150,21 +154,28 @@ add_shortcode('tsml_ui', 'tsml_ui');
 
 //output a list of regions with links for AA-DC
 add_shortcode('tsml_regions_list', function () {
-	//run function recursively
-	function get_regions($parent = 0)
-	{
-		$taxonomy = 'tsml_region';
-		$terms = get_terms(compact('taxonomy', 'parent'));
-		if (!count($terms)) {
-			return;
-		}
+    //run function recursively
+    function get_regions($parent = 0)
+    {
+        global $tsml_user_interface;
+        $taxonomy = 'tsml_region';
+        $terms    = get_terms(compact('taxonomy', 'parent'));
+        if (!count($terms)) {
+            return;
+        }
 
-		$base = get_post_type_archive_link('tsml_meeting') . '?tsml-day=any&tsml-region=';
-		foreach ($terms as &$term) {
-			$term = '<li><a href="' . $base . $term->term_id . '">' . $term->name . '</a>' . get_regions($term->term_id) . '</li>';
-		}
-		return '<ul>' . implode($terms) . '</ul>';
-	}
+        foreach ($terms as &$term) {
+            if ($tsml_user_interface === 'tsml_ui') {
+                $filter_url = tsml_meetings_url(['region' => $term->slug]);
+            } else {
+                $filter_url = tsml_meetings_url(
+                    ['tsml-day' => 'any', 'tsml-region' => $term->slug]
+                );
+            }
+            $term = '<li><a href="' . $filter_url . '">' . $term->name . '</a>' . get_regions($term->term_id) . '</li>';
+        }
+        return '<ul>' . implode($terms) . '</ul>';
+    }
 
-	return '<h3>Regions</h3>' . get_regions();
+    return '<h3>Regions</h3>' . get_regions();
 });
