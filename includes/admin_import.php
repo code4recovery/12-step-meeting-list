@@ -171,7 +171,7 @@ if (!function_exists('tsml_import_page')) {
 				$feed_updates = $db_ids_to_delete = $message_lines = [];
 				$message = __("<h2>Local Database Updates Applied From the $data_source_name Feed</h2><br>", '12-step-meeting-list');
 				$data_source_last_import = null;
-				$updated_field_is_present = tsml_check_feed_for_updated_field($body);
+				$updated_field_is_present = array_key_exists('updated',$body[0]) ? 1 : 0;
 
 				// Bypass change detection code when no "updated" field is available in json feed and then refresh entire data source just like before
 				if (array_key_exists($data_source_url, $tsml_data_sources) &  !$updated_field_is_present) {
@@ -193,8 +193,8 @@ if (!function_exists('tsml_import_page')) {
 
 					 /* Drop database records which are being updated, or removed from the feed */
 					foreach ($db_ids_to_delete as $id) {
-						//tsml_delete_by_id($id);
-						tsml_delete([$id]);
+						tsml_delete_by_id($id);
+						//tsml_delete([$id]);
 					} 
 					tsml_delete_orphans();
 					//rebuild cache
@@ -372,9 +372,9 @@ if (!function_exists('tsml_import_page')) {
 												$parent_region = __('Top-level region', '12-step-meeting-list');
 											} elseif (empty($regions[$properties['parent_region_id']])) {
 												$term = get_term_by('term_id', $properties['parent_region_id'], 'tsml_region');
-												if ($term !== null) {
+												//if ($term !== null) {
 													$parent_region = $term->name;
-												}
+												//}
 												if ($parent_region == null) {
 													$parent_region = __('Top-level region', '12-step-meeting-list');
 													$parent_region = 'Missing Parent Region: ' . $properties['parent_region_id'];
