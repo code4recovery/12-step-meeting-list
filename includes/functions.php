@@ -1,5 +1,8 @@
 <?php
 
+//initialize global variable
+$tsml_data_source_ids = null;
+
 //function:	add an admin screen update message
 //used:		tsml_import() and admin_types.php
 //$type:		can be success, warning, info, or error
@@ -2116,6 +2119,7 @@ if (!function_exists('tsml_scan_data_source')) {
 //function:	Returns summary list of modified records when data source changes detected
 function tsml_import_changes($feed_meetings, $data_source_url, $data_source_last_refresh)
 {
+	global $tsml_data_source_ids;
 	$db_meetings = $feed_slugs = $message_lines = [];
 	$week_days	= [
 		__('Sunday', '12-step-meeting-list'),
@@ -2127,18 +2131,10 @@ function tsml_import_changes($feed_meetings, $data_source_url, $data_source_last
 		__('Saturday', '12-step-meeting-list'),
 	];
 
-	// get local meetings 
-	$all_db_meetings = tsml_get_meetings();
-	$ds_ids = tsml_get_data_source_ids($data_source_url);
-	sort($ds_ids);
-
-	/* filter out all but the data source meetings  */
-	foreach ($all_db_meetings as $db_meeting) {
-		$db_id = $db_meeting['id'];
-		if (in_array($db_id, $ds_ids)) {
-			array_push($db_meetings, $db_meeting);
-		}
-	}
+	/* get local meetings and filter out all but the data source meetings  */
+	$tsml_data_source_ids = tsml_get_data_source_ids($data_source_url);
+	sort($tsml_data_source_ids);
+	$db_meetings = array_filter(tsml_get_meetings(), function ($meeting) { global $tsml_data_source_ids;  return in_array($meeting['id'], $tsml_data_source_ids); });
 
 	// create array of database slugs for matching
 	$db_slugs = array_column($db_meetings, 'slug', 'id');
@@ -2318,7 +2314,6 @@ function tsml_date_localised($format, $timestamp = null)
 	return $datetime->format($format);
 }
 
-
 //function:	return array of updated feed records only when difference detected between matched feed record and the local db record
 function tsml_get_import_changes_only($feed_meetings, $data_source_url, $data_source_last_update, &$db_ids_to_delete, &$message_lines)
 {
@@ -2335,20 +2330,12 @@ function tsml_get_import_changes_only($feed_meetings, $data_source_url, $data_so
 
 	// get local meetings 
 	$all_db_meetings = tsml_get_meetings();
-	$ds_ids = tsml_get_data_source_ids($data_source_url);
-	sort($ds_ids);
+	global $tsml_data_source_ids; 
+	$tsml_data_source_ids = tsml_get_data_source_ids($data_source_url);
+	sort($tsml_data_source_ids);
 
-	/* filter out all but the data source meetings  *//*
-	$db_meetings = array_filter($all_db_meetings, function ($meeting) {
-	  return in_array($meeting['id'], $ds_ids);
-	}); */
-	
-	foreach ($all_db_meetings as $db_meeting) {
-		$db_id = $db_meeting['id'];
-		if (in_array($db_id, $ds_ids)) {
-			array_push($db_meetings, $db_meeting);
-		}
-	}
+	/* filter out all but the data source meetings  */
+	$db_meetings = array_filter(tsml_get_meetings(), function ($meeting) { global $tsml_data_source_ids;  return in_array($meeting['id'], $tsml_data_source_ids); });
 
 	// create array of database slugs for matching
 	$db_slugs = array_column($db_meetings, 'slug', 'id');

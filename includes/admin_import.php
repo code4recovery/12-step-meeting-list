@@ -157,7 +157,7 @@ if (!function_exists('tsml_import_page')) {
 			//sanitize URL, name, parent region id, and Change Detection values
 			$data_source_url = trim(esc_url_raw($_POST['tsml_add_data_source'], array('http', 'https')));
 			$data_source_name = sanitize_text_field($_POST['tsml_add_data_source_name']);
-			$data_source_parent_region_id = (int) $_POST['tsml_add_data_source_parent_region_id'];
+			$data_source_parent_region_id = intval($_POST['tsml_add_data_source_parent_region_id']);
 			$data_source_change_detect = sanitize_text_field($_POST['tsml_add_data_source_change_detect']);
 
 			//try fetching	
@@ -191,10 +191,9 @@ if (!function_exists('tsml_import_page')) {
 					//get updated feed records only
 					$feed_updates = tsml_get_import_changes_only($body, $data_source_url, $data_source_last_import, $db_ids_to_delete, $message_lines);
 
-					 /* Drop database records which are being updated, or removed from the feed */
+					/* Drop database records which are being updated, or removed from the feed */
 					foreach ($db_ids_to_delete as $id) {
 						tsml_delete_by_id($id);
-						//tsml_delete([$id]);
 					} 
 					tsml_delete_orphans();
 					//rebuild cache
