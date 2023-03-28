@@ -199,10 +199,31 @@ if (!function_exists('tsml_import_page')) {
 					//rebuild cache
 					tsml_cache_rebuild();
 
-					if (count($feed_updates) === 0) {
-						$message = __('<h2>No Updates Available In Your ' . $data_source_name . ' Feed</h2><p>Your local database meeting list records derived from the ' . $data_source_name . ' feed are already in sync. <br>Press the browser back button to return to the previous screen.</p>', '12-step-meeting-list');
+					if (count($feed_updates) === 0 ) {
+						if (count($db_ids_to_delete) !==0) {
+							$message = __('<h2>No Additions or Changes Available In Your ' . $data_source_name . ' Feed</h2><p>Your local database meeting list records derived from the ' . $data_source_name . ' feed only required the following record removals to be in sync.</p>', '12-step-meeting-list');
+							$message .= "<table border='1' style='width:600px;'><tbody><tr><th>Update Mode</th><th>Meeting Name</th><th>Day of Week</th><th>Last Updated</th></tr>";
+							$message .= implode('', $message_lines);
+							$message .= "</tbody></table>";
+							$message .= __('<p>You can Press the browser back button to return to the previous screen.</p>', '12-step-meeting-list');
+
+							$tsml_data_sources[$data_source_url] = [
+								'status' => 'OK',
+								'last_import' => current_time('timestamp'),
+								'count_meetings' => tsml_count_meetings(),
+								'name' => $data_source_name,
+								'parent_region_id' => $data_source_parent_region_id,
+								'change_detect' => $data_source_change_detect,
+								'type' => 'JSON',
+							];
+							//save data source configuration
+							update_option('tsml_data_sources', $tsml_data_sources);
+
+
+						} else {
+							$message = __('<h2>No Updates Available In Your ' . $data_source_name . ' Feed</h2><p>Your local database meeting list records derived from the ' . $data_source_name . ' feed are already in sync. <br>Press the browser back button to return to the previous screen.</p>', '12-step-meeting-list');
+						}
 						tsml_alert($message, 'info');
-						
 						return;				
 					}
 					else {

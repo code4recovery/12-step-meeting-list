@@ -2370,13 +2370,13 @@ function tsml_get_import_changes_only($feed_meetings, $data_source_url, $data_so
 			
 			if ($is_matched) {
 				$message = __("<tr style='color:#A9A9A9;'><td>Change</td><td >$meeting_name</td><td>$day_of_week</td><td>$current_meeting_localised_last_update</td></tr>", '12-step-meeting-list');
-				array_push($message_lines, $message);
+				$message_lines[] = $message;
 				$meeting_id = array_search($meeting_slug, $db_slugs);
 				//add changed record id to list of db records to be removed
-				array_push($db_ids_to_delete, $meeting_id);
+				$db_ids_to_delete[] = $meeting_id;
 			} else {
 				$message = __("<tr style='color:green;'><td>Add New</td><td >$meeting_name</td><td>$day_of_week</td><td>$current_meeting_localised_last_update</td></tr>", '12-step-meeting-list');
-				array_push($message_lines, $message);
+				$message_lines[] = $message;
 
 			}
 		}
@@ -2405,8 +2405,8 @@ function tsml_get_import_changes_only($feed_meetings, $data_source_url, $data_so
 			$meeting_update_date = date(get_option('date_format') . ' ' . get_option('time_format'), $data_source_last_update);
 			$meeting_name = $db_meeting['name'];
 			$message = __("<tr style='color:red;'><td>Remove</td><td >$meeting_name</td><td>$day_of_week</td><td>* $meeting_update_date</td></tr>", '12-step-meeting-list');
-			array_push($message_lines, $message);
-			array_push($db_ids_to_delete, $db_meeting['id']);
+			$message_lines[] = $message;
+			$db_ids_to_delete[] = $db_meeting['id'];
 		}
 	}
 
