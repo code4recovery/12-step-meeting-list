@@ -1,6 +1,6 @@
 <?php
 
-//import and settings
+//Import & Export
 
 if (!function_exists('tsml_import_page')) {
 
@@ -159,6 +159,7 @@ if (!function_exists('tsml_import_page')) {
 			$data_source_name = sanitize_text_field($_POST['tsml_add_data_source_name']);
 			$data_source_parent_region_id = intval($_POST['tsml_add_data_source_parent_region_id']);
 			$data_source_change_detect = sanitize_text_field($_POST['tsml_add_data_source_change_detect']);
+			$contine_processing = false; //boolean used to avoid early script termination.
 
 			//try fetching	
 			$response = wp_remote_get($data_source_url, [
@@ -169,18 +170,22 @@ if (!function_exists('tsml_import_page')) {
 
 				//initialize variables 
 				$feed_updates = $db_ids_to_delete = $message_lines = [];
-				$message = __("<h2>Local Database Updates Applied</h2><br>", '12-step-meeting-list');
+				$header_txt = __('Data Source Refresh');
+				$message = "<h2>$header_txt → $data_source_name</h2>";
 				$data_source_last_import = null;
 				$updated_field_is_present = array_key_exists('updated', $body[0]) ? 1 : 0;
 
 				// Bypass change detection code when no "updated" field is available in json feed and then refresh entire data source just like before
 				if (array_key_exists($data_source_url, $tsml_data_sources) && !$updated_field_is_present) {
-					//if data source already there but there's no updated field, then we do a hard refresh
+					//when the data source is already there but there's no updated field, then we do a hard refresh
 					if (array_key_exists($data_source_url, $tsml_data_sources)) {
 						tsml_delete(tsml_get_data_source_ids($data_source_url));
 						tsml_delete_orphans();
+						$message .= __('<p>All your database records for this feed are being reloaded.</p>', '12-step-meeting-list');
+						tsml_alert($message, 'info');
+						$contine_processing = true; 
 					}
-				} elseif (array_key_exists($data_source_url, $tsml_data_sources)) {
+				} elseif (array_key_exists($data_source_url, $tsml_data_sources) && $updated_field_is_present) {
 
 					/*When a data source already exists we want to set up to apply changes detected to the local db */
 
@@ -192,68 +197,61 @@ if (!function_exists('tsml_import_page')) {
 
 					// Drop database records which are being updated, or removed from the feed 
 					tsml_delete($db_ids_to_delete);
-
 					tsml_delete_orphans();
-					tsml_cache_rebuild();
 
 					if (count($feed_updates) === 0) {
 						if (count($db_ids_to_delete) !== 0) {
-							$message = __('<h2>No Additions or Changes Available In Your Feed</h2><p>Your local database meeting list records only required the following record removals to be in sync.</p>', '12-step-meeting-list');
+							$message .= __('<p>The following meeting record(s) are being removed during the refresh. Your database will now be in sync with this feed.</p>', '12-step-meeting-list');
 							$message .= "<table border='1' style='width:600px;'><tbody><tr><th>Update Mode</th><th>Meeting Name</th><th>Day of Week</th><th>Last Updated</th></tr>";
 							$message .= implode('', $message_lines);
 							$message .= "</tbody></table>";
-							$message .= __('<p>You can Press the browser back button to return to the previous screen.</p>', '12-step-meeting-list');
 
-							$tsml_data_sources[$data_source_url] = [
-								'status' => 'OK',
-								'last_import' => current_time('timestamp'),
-								'count_meetings' => tsml_count_meetings(),
-								'name' => $data_source_name,
-								'parent_region_id' => $data_source_parent_region_id,
-								'change_detect' => $data_source_change_detect,
-								'type' => 'JSON',
-							];
-							//save data source configuration
-							update_option('tsml_data_sources', $tsml_data_sources);
 						} else {
-							$message = __('<h2>No Updates Available In Your Feed</h2><p>Your local database meeting list records are already in sync. <br>Press the browser back button to return to the previous screen.</p>', '12-step-meeting-list');
+							$message .= __('<p>Your local database meeting records are already in sync with this feed.<p>', '12-step-meeting-list');
 						}
 						tsml_alert($message, 'info');
-						return;				
+										
 					}
 					else {
+						$message .= __('<p>The following meeting record(s) are being updated during the refresh. Your database will now be in sync with this feed.</p>', '12-step-meeting-list');
 						$message .= "<table border='1' style='width:600px;'><tbody><tr><th>Update Mode</th><th>Meeting Name</th><th>Day of Week</th><th>Last Updated</th></tr>";
 						$message .= implode('', $message_lines);
 						$message .= "</tbody></table>";
 						tsml_alert($message, 'info');
+						$contine_processing = true;
+					}
+				} else {
+					$header_txt = __('Data Source Add');
+					$message = "<h2>$header_txt → $data_source_name</h2>";
+					tsml_alert($message, 'info');
+					$contine_processing = true;
+				}
+
+				if ($contine_processing === true) {
+					$tsml_data_sources[$data_source_url] = [
+						'status' => 'OK',
+						'last_import' => current_time('timestamp'),
+						'count_meetings' => 0,
+						'name' => $data_source_name,
+						'parent_region_id' => $data_source_parent_region_id,
+						'change_detect' => $data_source_change_detect,
+						'type' => 'JSON',
+					];
+
+					if (count($feed_updates) === 0) {
+						//import feed
+						tsml_import_buffer_set($body, $data_source_url, $data_source_parent_region_id);
+					} else {
+						//import only the feed updates
+						tsml_import_buffer_set($feed_updates, $data_source_url, $data_source_parent_region_id);
 					}
 				}
 
-				$tsml_data_sources[$data_source_url] = [
-					'status' => 'OK',
-					'last_import' => current_time('timestamp'),
-					'count_meetings' => 0,
-					'name' => $data_source_name,
-					'parent_region_id' => $data_source_parent_region_id,
-					'change_detect' => $data_source_change_detect,
-					'type' => 'JSON',
-				];
-
-				if (count($feed_updates) === 0) {
-					//import feed
-					tsml_import_buffer_set($body, $data_source_url, $data_source_parent_region_id);
-				} else {
-					//import only the feed updates
-					tsml_import_buffer_set($feed_updates, $data_source_url, $data_source_parent_region_id);
-				}
-
-				//save data source configuration
-				update_option('tsml_data_sources', $tsml_data_sources);
-
 				// Create a cron job to run daily when Change Detection is enabled for the new data source
-				if ((count($feed_updates) === 0) && ($data_source_change_detect === 'enabled')) {
+				if ($contine_processing === true && (count($feed_updates) === 0) && ($data_source_change_detect === 'enabled')) {
 					tsml_schedule_import_scan($data_source_url, $data_source_name);
 				}
+
 			} elseif (!is_array($response)) {
 
 				tsml_alert(__('Invalid response, <pre>' . print_r($response, true) . '</pre>.', '12-step-meeting-list'), 'error');

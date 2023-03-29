@@ -1,8 +1,5 @@
 <?php
 
-//initialize global variable
-$tsml_data_source_ids = null;
-
 //function:	add an admin screen update message
 //used:		tsml_import() and admin_types.php
 //$type:		can be success, warning, info, or error
@@ -2103,7 +2100,6 @@ if (!function_exists('tsml_scan_data_source')) {
 //function:	Returns summary list of modified records when data source changes detected
 function tsml_import_changes($feed_meetings, $data_source_url, $data_source_last_refresh)
 {
-	global $tsml_data_source_ids;
 	$db_meetings = $feed_slugs = $message_lines = [];
 	$week_days	= [
 		__('Sunday', '12-step-meeting-list'),
@@ -2116,11 +2112,10 @@ function tsml_import_changes($feed_meetings, $data_source_url, $data_source_last
 	];
 
 	/* get local meetings and filter out all but the data source meetings  */
-	$tsml_data_source_ids = tsml_get_data_source_ids($data_source_url);
-	sort($tsml_data_source_ids);
-	$db_meetings = array_filter(tsml_get_meetings(), function ($meeting) {
-		global $tsml_data_source_ids;
-		return in_array($meeting['id'], $tsml_data_source_ids);
+	$data_source_ids = tsml_get_data_source_ids($data_source_url);
+	sort($data_source_ids);
+	$db_meetings = array_filter(tsml_get_meetings(), function ($meeting) use ($data_source_ids) {
+		return in_array($meeting['id'], $data_source_ids);
 	});
 
 	// create array of database slugs for matching
@@ -2317,14 +2312,12 @@ function tsml_get_import_changes_only($feed_meetings, $data_source_url, $data_so
 
 	// get local meetings 
 	$all_db_meetings = tsml_get_meetings();
-	global $tsml_data_source_ids;
-	$tsml_data_source_ids = tsml_get_data_source_ids($data_source_url);
-	sort($tsml_data_source_ids);
+	$data_source_ids = tsml_get_data_source_ids($data_source_url);
+	sort($data_source_ids);
 
 	/* filter out all but the data source meetings  */
-	$db_meetings = array_filter(tsml_get_meetings(), function ($meeting) {
-		global $tsml_data_source_ids;
-		return in_array($meeting['id'], $tsml_data_source_ids);
+	$db_meetings = array_filter(tsml_get_meetings(), function ($meeting) use ($data_source_ids) {
+		return in_array($meeting['id'], $data_source_ids);
 	});
 
 	// create array of database slugs for matching
