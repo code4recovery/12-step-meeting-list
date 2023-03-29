@@ -362,7 +362,7 @@ function tsml_delete($post_ids)
 	global $wpdb;
 
 	//special case
-	if ($post_ids == 'everything') {
+	if ($post_ids === 'everything') {
 
 		$post_ids = get_posts([
 			'post_type' => ['tsml_meeting', 'tsml_location', 'tsml_group'],
@@ -392,22 +392,6 @@ function tsml_delete($post_ids)
 
 	//rebuild cache
 	tsml_cache_rebuild();
-}
-
-//function:	remove a meeting
-//used:	admin-import.php
-function tsml_delete_by_id($meeting_id)
-{
-	global $wpdb;
-	$meeting_id ;
-
-	if (empty($meeting_id)) return;
-
-	//run deletes
-	$wpdb->query('DELETE FROM ' . $wpdb->posts . ' WHERE ID = ' . $meeting_id);
-	$wpdb->query('DELETE FROM ' . $wpdb->postmeta . ' WHERE post_id =' . $meeting_id );
-	$wpdb->query('DELETE FROM ' . $wpdb->term_relationships . ' WHERE object_id = ' . $meeting_id);
-
 }
 
 //function: efficiently deletes all orphaned locations and groups (have no meetings associated)
@@ -2134,7 +2118,10 @@ function tsml_import_changes($feed_meetings, $data_source_url, $data_source_last
 	/* get local meetings and filter out all but the data source meetings  */
 	$tsml_data_source_ids = tsml_get_data_source_ids($data_source_url);
 	sort($tsml_data_source_ids);
-	$db_meetings = array_filter(tsml_get_meetings(), function ($meeting) { global $tsml_data_source_ids;  return in_array($meeting['id'], $tsml_data_source_ids); });
+	$db_meetings = array_filter(tsml_get_meetings(), function ($meeting) {
+		global $tsml_data_source_ids;
+		return in_array($meeting['id'], $tsml_data_source_ids);
+	});
 
 	// create array of database slugs for matching
 	$db_slugs = array_column($db_meetings, 'slug', 'id');
@@ -2330,12 +2317,15 @@ function tsml_get_import_changes_only($feed_meetings, $data_source_url, $data_so
 
 	// get local meetings 
 	$all_db_meetings = tsml_get_meetings();
-	global $tsml_data_source_ids; 
+	global $tsml_data_source_ids;
 	$tsml_data_source_ids = tsml_get_data_source_ids($data_source_url);
 	sort($tsml_data_source_ids);
 
 	/* filter out all but the data source meetings  */
-	$db_meetings = array_filter(tsml_get_meetings(), function ($meeting) { global $tsml_data_source_ids;  return in_array($meeting['id'], $tsml_data_source_ids); });
+	$db_meetings = array_filter(tsml_get_meetings(), function ($meeting) {
+		global $tsml_data_source_ids;
+		return in_array($meeting['id'], $tsml_data_source_ids);
+	});
 
 	// create array of database slugs for matching
 	$db_slugs = array_column($db_meetings, 'slug', 'id');
@@ -2363,11 +2353,11 @@ function tsml_get_import_changes_only($feed_meetings, $data_source_url, $data_so
 		// has the meeting been updated since the last update?
 		$current_meeting_localised_last_update = tsml_date_localised(get_option('date_format') . ' ' . get_option('time_format'), strtotime($meeting['updated']));
 		if (strtotime($current_meeting_localised_last_update) > $data_source_last_update) {
-			$meeting_name = $meeting['name']; 
+			$meeting_name = $meeting['name'];
 
 			//output both new and changed records
 			array_push($meetings_updated, $meeting);
-			
+
 			if ($is_matched) {
 				$message = __("<tr style='color:#A9A9A9;'><td>Change</td><td >$meeting_name</td><td>$day_of_week</td><td>$current_meeting_localised_last_update</td></tr>", '12-step-meeting-list');
 				$message_lines[] = $message;
@@ -2377,7 +2367,6 @@ function tsml_get_import_changes_only($feed_meetings, $data_source_url, $data_so
 			} else {
 				$message = __("<tr style='color:green;'><td>Add New</td><td >$meeting_name</td><td>$day_of_week</td><td>$current_meeting_localised_last_update</td></tr>", '12-step-meeting-list');
 				$message_lines[] = $message;
-
 			}
 		}
 	}
