@@ -359,7 +359,7 @@ function tsml_delete($post_ids)
 	global $wpdb;
 
 	//special case
-	if ($post_ids == 'everything') {
+	if ($post_ids === 'everything') {
 
 		$post_ids = get_posts([
 			'post_type' => ['tsml_meeting', 'tsml_location', 'tsml_group'],
@@ -389,22 +389,6 @@ function tsml_delete($post_ids)
 
 	//rebuild cache
 	tsml_cache_rebuild();
-}
-
-//function:	remove a meeting
-//used:	admin-import.php
-function tsml_delete_by_id($meeting_id)
-{
-	global $wpdb;
-	$meeting_id ;
-
-	if (empty($meeting_id)) return;
-
-	//run deletes
-	$wpdb->query('DELETE FROM ' . $wpdb->posts . ' WHERE ID = ' . $meeting_id);
-	$wpdb->query('DELETE FROM ' . $wpdb->postmeta . ' WHERE post_id =' . $meeting_id );
-	$wpdb->query('DELETE FROM ' . $wpdb->term_relationships . ' WHERE object_id = ' . $meeting_id);
-
 }
 
 //function: efficiently deletes all orphaned locations and groups (have no meetings associated)
@@ -2054,7 +2038,7 @@ if (!function_exists('tsml_scan_data_source')) {
 					$message .= "database record count: $data_source_count_meetings <br>";
 					$feedCount = count($meetings);
 					$message .= "data source feed count: $feedCount<br>";
-					$message .= "Last Update: <span style='color:red;'>*</span>" . Date(get_option('date_format') . ' ' . get_option('time_format'), $data_source_last_import) . '<br>';
+					$message .= "Last Refresh: <span style='color:red;'>*</span>" . Date(get_option('date_format') . ' ' . get_option('time_format'), $data_source_last_import) . '<br>';
 					$message .= "<br><b><u>Detected Difference</b></u><br>";
 					$message .= "<table border='1' style='width:600px;'><tbody><tr><th>Update Mode</th><th>Meeting Name</th><th>Day of Week</th><th>Last Updated</th></tr>";
 					$message .= implode('', $meetings_updated);
@@ -2127,18 +2111,12 @@ function tsml_import_changes($feed_meetings, $data_source_url, $data_source_last
 		__('Saturday', '12-step-meeting-list'),
 	];
 
-	// get local meetings 
-	$all_db_meetings = tsml_get_meetings();
-	$ds_ids = tsml_get_data_source_ids($data_source_url);
-	sort($ds_ids);
-
-	/* filter out all but the data source meetings  */
-	foreach ($all_db_meetings as $db_meeting) {
-		$db_id = $db_meeting['id'];
-		if (in_array($db_id, $ds_ids)) {
-			array_push($db_meetings, $db_meeting);
-		}
-	}
+	/* get local meetings and filter out all but the data source meetings  */
+	$data_source_ids = tsml_get_data_source_ids($data_source_url);
+	sort($data_source_ids);
+	$db_meetings = array_filter(tsml_get_meetings(), function ($meeting) use ($data_source_ids) {
+		return in_array($meeting['id'], $data_source_ids);
+	});
 
 	// create array of database slugs for matching
 	$db_slugs = array_column($db_meetings, 'slug', 'id');
@@ -2166,17 +2144,14 @@ function tsml_import_changes($feed_meetings, $data_source_url, $data_source_last
 
 		// has the meeting been updated since the last refresh?
 		$current_meeting_localised_last_update = tsml_date_localised(get_option('date_format') . ' ' . get_option('time_format'), strtotime($meeting['updated']));
-		//$current_meeting_localised_last_update = strtotime($meeting['updated']);
-		$current_meeting_last_update = strtotime($current_meeting_localised_last_update);
-		if ($current_meeting_last_update > $data_source_last_refresh) {
+		if (strtotime($current_meeting_localised_last_update) > $data_source_last_refresh) {
 			$permalink = get_permalink($meeting['id']);
 			$meeting_name = '<a href=' . $permalink . '>' . $meeting['name'] . '</a>';
-			$meeting_update_date = date('M j, Y  g:i a', $current_meeting_last_update);
 
 			if ($is_matched) {
-				$message_lines[] = "<tr style='color:gray;'><td>Change</td><td >$meeting_name</td><td>$day_of_week</td><td>$meeting_update_date</td></tr>";
+				$message_lines[] = "<tr style='color:gray;'><td>Change</td><td >$meeting_name</td><td>$day_of_week</td><td>$current_meeting_localised_last_update</td></tr>";
 			} else {
-				$message_lines[] = "<tr style='color:green;'><td>Add New</td><td >$meeting_name</td><td>$day_of_week</td><td>$meeting_update_date</td></tr>";
+				$message_lines[] = "<tr style='color:green;'><td>Add New</td><td >$meeting_name</td><td>$day_of_week</td><td>$current_meeting_localised_last_update</td></tr>";
 			}
 		}
 	}
@@ -2201,7 +2176,7 @@ function tsml_import_changes($feed_meetings, $data_source_url, $data_source_last
 		}
 
 		if (!$is_matched) {
-			$meeting_update_date = date('M j, Y  g:i a', $data_source_last_refresh);
+			$meeting_update_date = date(get_option('date_format') . ' ' . get_option('time_format'), $data_source_last_refresh);
 			$permalink = get_permalink($db_meeting['id']);
 			$meeting_name = '<a href=' . $permalink . '>' . $db_meeting['name'] . '</a>';
 			$message_lines[] = "<tr style='color:red;'><td>Remove</td><td >$meeting_name</td><td>$day_of_week</td><td>* $meeting_update_date</td></tr>";
@@ -2321,11 +2296,10 @@ function tsml_date_localised($format, $timestamp = null)
 	return $datetime->format($format);
 }
 
-
 //function:	return array of updated feed records only when difference detected between matched feed record and the local db record
 function tsml_get_import_changes_only($feed_meetings, $data_source_url, $data_source_last_update, &$db_ids_to_delete, &$message_lines)
 {
-	$db_meetings = $feed_slugs = $meetings_updated = [];
+	$db_meetings = $feed_slugs = $meetings_updated = $ds_ids = $all_db_meetings = [];
 	$week_days	= [
 		__('Sunday', '12-step-meeting-list'),
 		__('Monday', '12-step-meeting-list'),
@@ -2338,16 +2312,13 @@ function tsml_get_import_changes_only($feed_meetings, $data_source_url, $data_so
 
 	// get local meetings 
 	$all_db_meetings = tsml_get_meetings();
-	$ds_ids = tsml_get_data_source_ids($data_source_url);
-	sort($ds_ids);
+	$data_source_ids = tsml_get_data_source_ids($data_source_url);
+	sort($data_source_ids);
 
 	/* filter out all but the data source meetings  */
-	foreach ($all_db_meetings as $db_meeting) {
-		$db_id = $db_meeting['id'];
-		if (in_array($db_id, $ds_ids)) {
-			array_push($db_meetings, $db_meeting);
-		}
-	}
+	$db_meetings = array_filter(tsml_get_meetings(), function ($meeting) use ($data_source_ids) {
+		return in_array($meeting['id'], $data_source_ids);
+	});
 
 	// create array of database slugs for matching
 	$db_slugs = array_column($db_meetings, 'slug', 'id');
@@ -2375,21 +2346,20 @@ function tsml_get_import_changes_only($feed_meetings, $data_source_url, $data_so
 		// has the meeting been updated since the last update?
 		$current_meeting_localised_last_update = tsml_date_localised(get_option('date_format') . ' ' . get_option('time_format'), strtotime($meeting['updated']));
 		if (strtotime($current_meeting_localised_last_update) > $data_source_last_update) {
-			$meeting_name = $meeting['name']; 
+			$meeting_name = $meeting['name'];
 
 			//output both new and changed records
 			array_push($meetings_updated, $meeting);
-			
+
 			if ($is_matched) {
-				$message = __("<tr style='color:blue;'><td>Change</td><td >$meeting_name</td><td>$day_of_week</td><td>$current_meeting_localised_last_update</td></tr>", '12-step-meeting-list');
-				array_push($message_lines, $message);
+				$message = __("<tr style='color:#A9A9A9;'><td>Change</td><td >$meeting_name</td><td>$day_of_week</td><td>$current_meeting_localised_last_update</td></tr>", '12-step-meeting-list');
+				$message_lines[] = $message;
 				$meeting_id = array_search($meeting_slug, $db_slugs);
 				//add changed record id to list of db records to be removed
-				array_push($db_ids_to_delete, $meeting_id);
+				$db_ids_to_delete[] = $meeting_id;
 			} else {
 				$message = __("<tr style='color:green;'><td>Add New</td><td >$meeting_name</td><td>$day_of_week</td><td>$current_meeting_localised_last_update</td></tr>", '12-step-meeting-list');
-				array_push($message_lines, $message);
-
+				$message_lines[] = $message;
 			}
 		}
 	}
@@ -2417,23 +2387,12 @@ function tsml_get_import_changes_only($feed_meetings, $data_source_url, $data_so
 			$meeting_update_date = date(get_option('date_format') . ' ' . get_option('time_format'), $data_source_last_update);
 			$meeting_name = $db_meeting['name'];
 			$message = __("<tr style='color:red;'><td>Remove</td><td >$meeting_name</td><td>$day_of_week</td><td>* $meeting_update_date</td></tr>", '12-step-meeting-list');
-			array_push($message_lines, $message);
-			array_push($db_ids_to_delete, $db_meeting['id']);
+			$message_lines[] = $message;
+			$db_ids_to_delete[] = $db_meeting['id'];
 		}
 	}
 
 	return $meetings_updated;
-}
-
-function tsml_check_feed_for_updated_field($body) {
-	foreach ($body as $meeting) {
-		if (array_key_exists('updated',$meeting)) {
-			return 1;
-		} else {
-			return 0;
-		}		
-	}
-	return 0;
 }
 
 /* ******************** end of data_source_change_detection ******************** */
