@@ -183,7 +183,7 @@ if (!function_exists('tsml_import_page')) {
 
 				} elseif (array_key_exists($data_source_url, $tsml_data_sources)) {
 
-					/*When a data source already exists we want to set up to apply changes detected to the local db */  
+					/* When a data source already exists we want to set up to apply changes detected to the local db */  
 
 					$tsml_data_sources = get_option('tsml_data_sources', []);
 					$data_source_last_import = intval($tsml_data_sources[$data_source_url]['last_import']);
@@ -191,7 +191,7 @@ if (!function_exists('tsml_import_page')) {
 					//get updated feed records only
 					$feed_updates = tsml_get_import_changes_only($body, $data_source_url, $data_source_last_import, $db_ids_to_delete, $message_lines);
 
-					/* Drop database records which are being updated, or removed from the feed */
+					/* drop database records which are being updated or removed from the feed */
 					foreach ($db_ids_to_delete as $id) {
 						tsml_delete_by_id($id);
 					} 
@@ -200,6 +200,7 @@ if (!function_exists('tsml_import_page')) {
 					tsml_cache_rebuild();
 
 					if (count($feed_updates) === 0 ) {
+						//no new or changed records, but may need to list any removed records on screen before shutting down
 						if (count($db_ids_to_delete) !==0) {
 							$message = __('<h2>No Additions or Changes Available In Your ' . $data_source_name . ' Feed</h2><p>Your local database meeting list records derived from the ' . $data_source_name . ' feed only required the following record removals to be in sync.</p>', '12-step-meeting-list');
 							$message .= "<table border='1' style='width:600px;'><tbody><tr><th>Update Mode</th><th>Meeting Name</th><th>Day of Week</th><th>Last Updated</th></tr>";
@@ -224,6 +225,7 @@ if (!function_exists('tsml_import_page')) {
 							$message = __('<h2>No Updates Available In Your ' . $data_source_name . ' Feed</h2><p>Your local database meeting list records derived from the ' . $data_source_name . ' feed are already in sync. <br>Press the browser back button to return to the previous screen.</p>', '12-step-meeting-list');
 						}
 						tsml_alert($message, 'info');
+						//shutdown running script
 						return;				
 					}
 					else {
