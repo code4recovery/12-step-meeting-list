@@ -170,7 +170,11 @@ if (!function_exists('tsml_import_page')) {
 
 				//initialize variables 
 				$feed_updates = $db_ids_to_delete = $message_lines = [];
-				$header_txt = __('Data Source Refresh');
+				$header_txt = __('Data Source Refresh', '12-step-meeting-list');
+				$tbl_col1_txt = __('Update Mode', '12-step-meeting-list');
+				$tbl_col2_txt = __('Meeting Name', '12-step-meeting-list');
+				$tbl_col3_txt = __('Day of Week', '12-step-meeting-list');
+				$tbl_col4_txt = __('Last Updated', '12-step-meeting-list');
 				$message = "<h2>$header_txt → $data_source_name</h2>";
 				$data_source_last_import = null;
 				$updated_field_is_present = array_key_exists('updated', $body[0]) ? 1 : 0;
@@ -202,7 +206,7 @@ if (!function_exists('tsml_import_page')) {
 					if (count($feed_updates) === 0) {
 						if (count($db_ids_to_delete) !== 0) {
 							$message .= __('<p>The following meeting record(s) are being removed during the refresh. Your database will now be in sync with this feed.</p>', '12-step-meeting-list');
-							$message .= "<table border='1' style='width:600px;'><tbody><tr><th>Update Mode</th><th>Meeting Name</th><th>Day of Week</th><th>Last Updated</th></tr>";
+							$message .= "<table border='1'><tbody><tr><th>$tbl_col1_txt</th><th>$tbl_col2_txt</th><th>$tbl_col3_txt</th><th>$tbl_col4_txt</th></tr>";
 							$message .= implode('', $message_lines);
 							$message .= "</tbody></table>";
 
@@ -214,7 +218,7 @@ if (!function_exists('tsml_import_page')) {
 					}
 					else {
 						$message .= __('<p>The following meeting record(s) are being updated during the refresh. Your database will now be in sync with this feed.</p>', '12-step-meeting-list');
-						$message .= "<table border='1' style='width:600px;'><tbody><tr><th>Update Mode</th><th>Meeting Name</th><th>Day of Week</th><th>Last Updated</th></tr>";
+						$message .= "<table border='1'><tbody><tr><th>$tbl_col1_txt</th><th>$tbl_col2_txt</th><th>$tbl_col3_txt</th><th>$tbl_col4_txt</th></tr>";
 						$message .= implode('', $message_lines);
 						$message .= "</tbody></table>";
 						tsml_alert($message, 'info');
