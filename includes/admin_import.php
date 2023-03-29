@@ -169,21 +169,20 @@ if (!function_exists('tsml_import_page')) {
 
 				//initialize variables 
 				$feed_updates = $db_ids_to_delete = $message_lines = [];
-				$message = __("<h2>Local Database Updates Applied From the $data_source_name Feed</h2><br>", '12-step-meeting-list');
+				$message = __("<h2>Local Database Updates Applied</h2><br>", '12-step-meeting-list');
 				$data_source_last_import = null;
-				$updated_field_is_present = array_key_exists('updated',$body[0]) ? 1 : 0;
+				$updated_field_is_present = array_key_exists('updated', $body[0]) ? 1 : 0;
 
 				// Bypass change detection code when no "updated" field is available in json feed and then refresh entire data source just like before
-				if (array_key_exists($data_source_url, $tsml_data_sources) &  !$updated_field_is_present) {
+				if (array_key_exists($data_source_url, $tsml_data_sources) && !$updated_field_is_present) {
 					//if data source already there but there's no updated field, then we do a hard refresh
 					if (array_key_exists($data_source_url, $tsml_data_sources)) {
 						tsml_delete(tsml_get_data_source_ids($data_source_url));
 						tsml_delete_orphans();
 					}
-
 				} elseif (array_key_exists($data_source_url, $tsml_data_sources)) {
 
-					/*When a data source already exists we want to set up to apply changes detected to the local db */  
+					/*When a data source already exists we want to set up to apply changes detected to the local db */
 
 					$tsml_data_sources = get_option('tsml_data_sources', []);
 					$data_source_last_import = intval($tsml_data_sources[$data_source_url]['last_import']);
@@ -191,17 +190,15 @@ if (!function_exists('tsml_import_page')) {
 					//get updated feed records only
 					$feed_updates = tsml_get_import_changes_only($body, $data_source_url, $data_source_last_import, $db_ids_to_delete, $message_lines);
 
-					/* Drop database records which are being updated, or removed from the feed */
-					foreach ($db_ids_to_delete as $id) {
-						tsml_delete_by_id($id);
-					} 
+					// Drop database records which are being updated, or removed from the feed 
+					tsml_delete($db_ids_to_delete);
+
 					tsml_delete_orphans();
-					//rebuild cache
 					tsml_cache_rebuild();
 
-					if (count($feed_updates) === 0 ) {
-						if (count($db_ids_to_delete) !==0) {
-							$message = __('<h2>No Additions or Changes Available In Your ' . $data_source_name . ' Feed</h2><p>Your local database meeting list records derived from the ' . $data_source_name . ' feed only required the following record removals to be in sync.</p>', '12-step-meeting-list');
+					if (count($feed_updates) === 0) {
+						if (count($db_ids_to_delete) !== 0) {
+							$message = __('<h2>No Additions or Changes Available In Your Feed</h2><p>Your local database meeting list records only required the following record removals to be in sync.</p>', '12-step-meeting-list');
 							$message .= "<table border='1' style='width:600px;'><tbody><tr><th>Update Mode</th><th>Meeting Name</th><th>Day of Week</th><th>Last Updated</th></tr>";
 							$message .= implode('', $message_lines);
 							$message .= "</tbody></table>";
@@ -218,15 +215,12 @@ if (!function_exists('tsml_import_page')) {
 							];
 							//save data source configuration
 							update_option('tsml_data_sources', $tsml_data_sources);
-
-
 						} else {
-							$message = __('<h2>No Updates Available In Your ' . $data_source_name . ' Feed</h2><p>Your local database meeting list records derived from the ' . $data_source_name . ' feed are already in sync. <br>Press the browser back button to return to the previous screen.</p>', '12-step-meeting-list');
+							$message = __('<h2>No Updates Available In Your Feed</h2><p>Your local database meeting list records are already in sync. <br>Press the browser back button to return to the previous screen.</p>', '12-step-meeting-list');
 						}
 						tsml_alert($message, 'info');
-						return;				
-					}
-					else {
+						return;
+					} else {
 						$message .= "<table border='1' style='width:600px;'><tbody><tr><th>Update Mode</th><th>Meeting Name</th><th>Day of Week</th><th>Last Updated</th></tr>";
 						$message .= implode('', $message_lines);
 						$message .= "</tbody></table>";
@@ -247,8 +241,7 @@ if (!function_exists('tsml_import_page')) {
 				if (count($feed_updates) === 0) {
 					//import feed
 					tsml_import_buffer_set($body, $data_source_url, $data_source_parent_region_id);
-				}
-				else {				
+				} else {
 					//import only the feed updates
 					tsml_import_buffer_set($feed_updates, $data_source_url, $data_source_parent_region_id);
 				}
@@ -257,14 +250,13 @@ if (!function_exists('tsml_import_page')) {
 				update_option('tsml_data_sources', $tsml_data_sources);
 
 				// Create a cron job to run daily when Change Detection is enabled for the new data source
-				if ( (count($feed_updates) === 0) && ($data_source_change_detect === 'enabled') ) {
+				if ((count($feed_updates) === 0) && ($data_source_change_detect === 'enabled')) {
 					tsml_schedule_import_scan($data_source_url, $data_source_name);
 				}
 			} elseif (!is_array($response)) {
 
 				tsml_alert(__('Invalid response, <pre>' . print_r($response, true) . '</pre>.', '12-step-meeting-list'), 'error');
 			} elseif (empty($response['body'])) {
-
 				tsml_alert(__('Data source gave an empty response, you might need to try again.', '12-step-meeting-list'), 'error');
 			} else {
 
@@ -392,9 +384,9 @@ if (!function_exists('tsml_import_page')) {
 												$parent_region = __('Top-level region', '12-step-meeting-list');
 											} elseif (empty($regions[$properties['parent_region_id']])) {
 												$term = get_term_by('term_id', $properties['parent_region_id'], 'tsml_region');
-												//if ($term !== null) {
+												if ($term !== null) {
 													$parent_region = $term->name;
-												//}
+												}
 												if ($parent_region == null) {
 													$parent_region = __('Top-level region', '12-step-meeting-list');
 													$parent_region = 'Missing Parent Region: ' . $properties['parent_region_id'];
