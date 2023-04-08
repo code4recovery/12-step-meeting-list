@@ -177,11 +177,11 @@ if (!function_exists('tsml_import_page')) {
 				$tbl_col4_txt = __('Last Updated', '12-step-meeting-list');
 				$message = "<h2>$header_txt → $data_source_name</h2>";
 				$data_source_last_import = null;
-				$updated_field_is_present = array_key_exists('updated', $body[0]) ? 1 : 0;
+				$import_update_bypass = !array_key_exists('updated', $body[0]) ? 1 : 0;
 
-				// Bypass change detection code when no "updated" field is available in json feed and then refresh entire data source just like before
-				if (array_key_exists($data_source_url, $tsml_data_sources) && !$updated_field_is_present) {
-					//when the data source is already there but there's no updated field, then we do a hard refresh
+				// Bypass change detection code to force import of entire data source just like before
+				if (array_key_exists($data_source_url, $tsml_data_sources) && $import_update_bypass) {
+					//do a hard refresh
 					if (array_key_exists($data_source_url, $tsml_data_sources)) {
 						tsml_delete(tsml_get_data_source_ids($data_source_url));
 						tsml_delete_orphans();
@@ -189,7 +189,7 @@ if (!function_exists('tsml_import_page')) {
 						tsml_alert($message, 'info');
 						$contine_processing = true; 
 					}
-				} elseif (array_key_exists($data_source_url, $tsml_data_sources) && $updated_field_is_present) {
+				} elseif (array_key_exists($data_source_url, $tsml_data_sources) && !$import_update_bypass) {
 
 					/*When a data source already exists we want to set up to apply changes detected to the local db */
 
