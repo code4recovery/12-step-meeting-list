@@ -343,7 +343,6 @@ if (!function_exists('tsml_import_page')) {
 									<th class="small align-center"></th>
 									<th><?php _e('Feed', '12-step-meeting-list') ?></th>
 									<th class="align-left"><?php _e('Parent Region', '12-step-meeting-list') ?></th>
-									<th class="align-left"><?php _e('Change Detection Email', '12-step-meeting-list') ?></th>
 									<th class="align-center"><?php _e('Meetings', '12-step-meeting-list') ?></th>
 									<th class="align-right"><?php _e('Last Refresh', '12-step-meeting-list') ?></th>
 									<th class="small"></th>
@@ -417,12 +416,12 @@ if (!function_exists('tsml_import_page')) {
 							</tbody>
 						</table>
 					<?php } ?>
-					<form class="row" method="post" action="<?php echo $_SERVER['REQUEST_URI'] ?>">
+					<form id="frm_data_source "class="row" method="post" action="<?php echo $_SERVER['REQUEST_URI'] ?>">
 						<?php wp_nonce_field($tsml_nonce, 'tsml_nonce', false) ?>
 
-						<input type="text" name="tsml_add_data_source_name" placeholder="<?php _e('District 02', '12-step-meeting-list') ?>">
+						<input type="text" name="tsml_add_data_source_name" placeholder="<?php _e('Name: i.e.District 02', '12-step-meeting-list') ?>">
 
-						<input type="text" name="tsml_add_data_source" placeholder="https://">
+						<input type="text" name="tsml_add_data_source" placeholder="URL: https://feed_domain/wp-admin/admin-ajax.php?action=meetings">
 
 						<?php wp_dropdown_categories(array(
 							'name' => 'tsml_add_data_source_parent_region_id',
@@ -435,50 +434,37 @@ if (!function_exists('tsml_import_page')) {
 							'show_option_none' => __('Parent Region…', '12-step-meeting-list'),
 						)) ?>
 
-						<select name="tsml_add_data_source_change_detect" id="tsml_change_detect">
-							<?php
-							foreach (array(
-								'disabled' => __('Change Detection Disabled', '12-step-meeting-list'),
-								'enabled' => __('Change Detection Enabled', '12-step-meeting-list'),
-							) as $key => $value) { ?>
-								<option value="<?php echo $key ?>" <?php selected($tsml_change_detect, $key) ?>><?php echo $value ?></option>
-							<?php } ?>
-						</select>
-
-						<input type="submit" class="button" value="<?php _e('Add Data Source', '12-step-meeting-list') ?>">
+						<input type="submit" class="button" value="<?php _e('Add URL Source', '12-step-meeting-list') ?>">
 					</form>
+					<form id="frm_file_source" class="row" method="post" action="<?php echo $_SERVER['REQUEST_URI'] ?>" enctype="multipart/form-data">
+						<?php wp_nonce_field($tsml_nonce, 'tsml_nonce', false) ?>
+						<input type="text" name="tsml_add_file_source_name" placeholder="<?php _e('Name: i.e.District 02', '12-step-meeting-list') ?>">
+
+						<?php wp_nonce_field($tsml_nonce, 'tsml_nonce', false) ?>
+						<input type="file" name="tsml_import" id="tsml_add_file_source_name" >
+
+						<?php wp_dropdown_categories(array(
+							'name' => 'tsml_add_file_source_parent_region_id',
+							'taxonomy' => 'tsml_region',
+							'hierarchical' => true,
+							'hide_empty' => false,
+							'orderby' => 'name',
+							'selected' => null,
+							'title' => __('Append regions created by this data file to… (top-level, if none selected)', '12-step-meeting-list'),
+							'show_option_none' => __('Parent Region…', '12-step-meeting-list'),
+						)) ?>
+
+						<label>
+							<input type="checkbox" name="tsml_is_source_maintainable" value="checkox_value">Is Mainatinable?
+						</label>
+
+						<input type="submit" class="button" value="<?php _e('Add File Source', '12-step-meeting-list') ?>">
+					</form>
+
 				</div>
 
 				<div class="three-column">
 					<div class="stack">
-						<div class="postbox stack">
-							<h2><?php _e('Import CSV', '12-step-meeting-list') ?></h2>
-							<form method="post" class="radio stack" action="<?php echo $_SERVER['REQUEST_URI'] ?>" enctype="multipart/form-data">
-								<?php wp_nonce_field($tsml_nonce, 'tsml_nonce', false) ?>
-								<input type="file" name="tsml_import">
-								<p>
-									<?php _e('When importing...', '12-step-meeting-list') ?>
-									<?php
-									$delete_options = [
-										'nothing'	=> __('don\'t delete anything', '12-step-meeting-list'),
-										'regions'	=> __('delete only the meetings, locations, and groups for the regions present in this CSV', '12-step-meeting-list'),
-										'all' 		=> __('delete all meetings, locations, groups, districts, and regions', '12-step-meeting-list'),
-									];
-									if (!empty($tsml_data_sources)) {
-										$delete_options['no_data_source'] = __('delete all meetings, locations, and groups not from a data source', '12-step-meeting-list');
-									}
-									$delete_selected = (empty($_POST['delete']) || !array_key_exists($_POST['delete'], $delete_options)) ? 'nothing' : $_POST['delete'];
-									foreach ($delete_options as $key => $value) { ?>
-										<label>
-											<input type="radio" name="delete" value="<?php echo $key ?>" <?php checked($key, $delete_selected) ?>>
-											<?php echo $value ?>
-										</label>
-									<?php } ?>
-								</p>
-								<input type="submit" class="button" value="<?php _e('Begin', '12-step-meeting-list') ?>">
-							</form>
-						</div>
-
 						<div class="postbox stack">
 							<h2><?php _e('Example CSV', '12-step-meeting-list') ?></h2>
 
