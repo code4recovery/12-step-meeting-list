@@ -13,6 +13,30 @@ if (!function_exists('tsml_import_page')) {
 		$tsml_data_sources = get_option('tsml_data_sources', []);
 		$meetings = [];
 
+		//database cleanup
+		if (isset($_POST['delete']) && isset($_POST['tsml_nonce']) && wp_verify_nonce($_POST['tsml_nonce'], $tsml_nonce)) {
+			//run deletes
+			if ($_POST['delete'] == 'no_data_source') {
+
+				tsml_delete(get_posts([
+					'post_type' => 'tsml_meeting',
+					'numberposts' => -1,
+					'fields' => 'ids',
+					'meta_query' => [
+						[
+							'key' => 'data_source',
+							'compare' => 'NOT EXISTS',
+							'value' => '',
+						],
+					],
+				]));
+
+				tsml_delete_orphans();
+			} elseif ($_POST['delete'] == 'all') {
+				tsml_delete('everything');
+			}		
+		}
+
 		//if posting a CSV, check for errors and add it to the import buffer
 		if (isset($_FILES['tsml_import']) && isset($_POST['tsml_nonce']) && wp_verify_nonce($_POST['tsml_nonce'], $tsml_nonce)) {
 			ini_set('auto_detect_line_endings', 1); //to handle mac \r line endings
@@ -148,7 +172,7 @@ if (!function_exists('tsml_import_page')) {
 				} elseif (!array_key_exists($data_source_url, $tsml_data_sources) && isset($_FILES['tsml_import']) && $data_source_parent_region_id === -1) {
 					$header_txt = __('Meetings Upload', '12-step-meeting-list');
 					$message = "<h2>$header_txt → $data_source_name</h2>";
-					$message .= "<p>The files being loaded now can be edited and saved through the WordPress Admin Meetings interface.</p>";
+					$message .= "<p>The meeting records from the file being loaded now can be edited and saved through the WordPress Admin Meetings interface.</p>";
 					tsml_alert($message, 'info');
 					$contine_processing = true;
 				} elseif (!array_key_exists($data_source_url, $tsml_data_sources)) {
@@ -304,7 +328,7 @@ if (!function_exists('tsml_import_page')) {
 		//check for existing import buffer
 		$meetings = get_option('tsml_import_buffer', []);
 
-		//remove data source
+		//remove a data source
 		if (!empty($_POST['tsml_remove_data_source'])) {
 
 			//sanitize URL
@@ -361,8 +385,9 @@ if (!function_exists('tsml_import_page')) {
 				<?php printf(__('You can choose to import your meeting list data from either a CSV file or an external JSON feed, either of which contains a website\'s public meeting information. These sources can be used 
 				to aggregate meetings from different sites into a single master list. The data sources listed below will pull meeting information into this website. A configurable schedule allows for each JSON data   
 				source to be scanned at least once per day looking for updates to the listing. Change Notification email addresses are sent an email when action is required to re-sync a data source with its meeting list information. 
-				Please note: records that you intend to maintain on your website should always be imported using the <u>CSV File Upload</u> feature with the Parent Region set to the default top-level. <b>Data Source records will be overwritten when an update from the data  
-				source is applied.</b> More information is available at the <a href="%s" target="_blank">Meeting Guide API Specification</a>.', '12-step-meeting-list'), 'https://github.com/code4recovery/spec') ?>
+				Please note: records that you intend to maintain on your website should always be imported using the <u>File Upload</u> feature with the Parent Region set to the default top-level. <b>All other Data Source imported   
+				records will be overwritten when an update from the data source is applied.</b> More information is available at the <a href="%s" target="_blank">Meeting Guide API Specification</a>.', 
+				'12-step-meeting-list'), 'https://github.com/code4recovery/spec') ?>
 					</p>
 					<?php if (!empty($tsml_data_sources)) { ?>
 					
@@ -563,7 +588,33 @@ if (!function_exists('tsml_import_page')) {
 
 							</details>
 						</div>
+
+						<div class="postbox stack">
+							<h2><?php _e('Database Cleanup', '12-step-meeting-list') ?></h2>
+							<form method="post" class="radio stack" action="<?php echo $_SERVER['REQUEST_URI'] ?>" enctype="multipart/form-data">
+							<?php wp_nonce_field($tsml_nonce, 'tsml_nonce', false) ?>
+								<p>
+									<?php _e('What is it that you want to do?', '12-step-meeting-list') ?>
+									<?php
+									$delete_options = [
+										'all' 		=> __('Delete Everything', '12-step-meeting-list'),
+									];
+									if (!empty($tsml_data_sources)) {
+										$delete_options['no_data_source'] = __('Delete only meeting information <u>not from a listed data source</u>', '12-step-meeting-list');
+									}
+									$delete_selected = (empty($_POST['delete']) || !array_key_exists($_POST['delete'], $delete_options)) ? 'no_data_source' : 'all';
+									foreach ($delete_options as $key => $value) { ?>
+										<label>
+											<input type="radio" name="delete" value="<?php echo $key ?>" <?php checked($key, $delete_selected) ?>>
+											<?php echo $value ?>
+										</label>
+									<?php } ?>
+								</p>
+								<input type="submit" class="button" value="<?php _e('Begin Cleanup', '12-step-meeting-list') ?>">
+							</form>
+						</div>
 					</div>
+
 
 					<!-- Wheres My Info? -->
 					<div class="postbox stack">

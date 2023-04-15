@@ -2389,7 +2389,7 @@ function tsml_get_import_changes_only($feed_meetings, $data_source_url, $data_so
 
 //function:	return boolean indicating whether or not the matched database and import records are in sync
 //used:		here (called from tsml_get_import_changes_only)
-function tsml_verify_identical_records($db_meeting, &$import_meeting, $data_source_last_update, $test_mode = true) {
+function tsml_verify_identical_records($db_meeting, &$import_meeting, $data_source_last_update, $test_mode = false) {
 	global $tsml_days, $tsml_programs, $tsml_program;
 
 	//compare db record to import record, field by field
