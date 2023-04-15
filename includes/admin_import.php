@@ -1,3 +1,4 @@
+
 <?php
 
 //Import & Export
@@ -6,10 +7,11 @@ if (!function_exists('tsml_import_page')) {
 
 	function tsml_import_page()
 	{
-		global $tsml_data_sources, $tsml_programs, $tsml_program, $tsml_nonce, $tsml_sharing, $tsml_slug, $tsml_change_detect;
-
+		global $tsml_data_sources, $tsml_programs, $tsml_program, $tsml_nonce, $tsml_sharing, $tsml_slug;
+		
 		$error = false;
-		$tsml_data_sources = get_option('tsml_data_sources', array());
+		$tsml_data_sources = get_option('tsml_data_sources', []);
+		$meetings = [];
 
 		//if posting a CSV, check for errors and add it to the import buffer
 		if (isset($_FILES['tsml_import']) && isset($_POST['tsml_nonce']) && wp_verify_nonce($_POST['tsml_nonce'], $tsml_nonce)) {
@@ -41,7 +43,7 @@ if (!function_exists('tsml_import_page')) {
 			} elseif (!$handle = fopen($_FILES['tsml_import']['tmp_name'], 'r')) {
 				$error = __('Error opening CSV file', '12-step-meeting-list');
 			} else {
-
+							
 				//extract meetings from CSV
 				while (($data = fgetcsv($handle, 3000, ',')) !== false) {
 					//skip empty rows
@@ -91,157 +93,180 @@ if (!function_exists('tsml_import_page')) {
 						}
 
 						//import into buffer, also done this way in data source import
-						tsml_import_buffer_set($meetings);
-
-						//run deletes
-						if ($_POST['delete'] == 'regions') {
-
-							//get all regions present in array
-							$regions = [];
-							foreach ($meetings as $meeting) {
-								$regions[] = empty($meeting['sub_region']) ? $meeting['region'] : $meeting['sub_region'];
-							}
-
-							//get locations for those meetings
-							$location_ids = get_posts([
-								'post_type' => 'tsml_location',
-								'numberposts' => -1,
-								'fields' => 'ids',
-								'tax_query' => [
-									[
-										'taxonomy' => 'tsml_region',
-										'field' => 'name',
-										'terms' => array_unique($regions),
-									],
-								],
-							]);
-
-							//get posts for those meetings
-							$meeting_ids = get_posts([
-								'post_type' => 'tsml_meeting',
-								'numberposts' => -1,
-								'fields' => 'ids',
-								'post_parent__in' => $location_ids,
-							]);
-
-							tsml_delete($meeting_ids);
-
-							tsml_delete_orphans();
-						} elseif ($_POST['delete'] == 'no_data_source') {
-
-							tsml_delete(get_posts([
-								'post_type' => 'tsml_meeting',
-								'numberposts' => -1,
-								'fields' => 'ids',
-								'meta_query' => [
-									[
-										'key' => 'data_source',
-										'compare' => 'NOT EXISTS',
-										'value' => '',
-									],
-								],
-							]));
-
-							tsml_delete_orphans();
-						} elseif ($_POST['delete'] == 'all') {
-							tsml_delete('everything');
-						}
+						//tsml_import_buffer_set($meetings);
 					}
 				}
 			}
 		}
 
 		//add data source
-		if (!empty($_POST['tsml_add_data_source']) && isset($_POST['tsml_nonce']) && wp_verify_nonce($_POST['tsml_nonce'], $tsml_nonce)) {
+		if ( (!empty($_POST['tsml_add_data_source']) && isset($_POST['tsml_nonce']) && wp_verify_nonce($_POST['tsml_nonce'], $tsml_nonce)) || ( isset($_FILES['tsml_import']) ) ) {
 
-			//sanitize URL, name, parent region id, and Change Detection values
-			$data_source_url = trim(esc_url_raw($_POST['tsml_add_data_source'], array('http', 'https')));
-			$data_source_name = sanitize_text_field($_POST['tsml_add_data_source_name']);
-			$data_source_parent_region_id = intval($_POST['tsml_add_data_source_parent_region_id']);
-			$data_source_change_detect = sanitize_text_field($_POST['tsml_add_data_source_change_detect']);
-			$contine_processing = false; //boolean used to avoid early script termination.
+			//initialize variables 
+			$import_updates = $db_ids_to_delete = $message_lines = [];
+			$header_txt = __('Data Source Refresh', '12-step-meeting-list');
+			$tbl_col1_txt = __('Update Mode', '12-step-meeting-list');
+			$tbl_col2_txt = __('Meeting Name', '12-step-meeting-list');
+			$tbl_col3_txt = __('Day of Week', '12-step-meeting-list');
+			$tbl_col4_txt = __('Last Updated', '12-step-meeting-list');
+			$import_update_bypass = false;
+			$data_source_url = $data_source_name = $data_source_parent_region_id = null;
 
-			//try fetching	
-			$response = wp_remote_get($data_source_url, [
-				'timeout' => 30,
-				'sslverify' => false,
-			]);
-			if (is_array($response) && !empty($response['body']) && ($body = json_decode($response['body'], true))) {
+			//sanitize URL, name and parent region id values
+			if ( isset($_FILES['tsml_import']) ) {
+				
+				$data_source_url = trim(esc_url_raw(tsml_clean_file_name($_FILES["tsml_import"]["name"]), array('http', 'https')));
+				$data_source_name = sanitize_text_field($_POST['tsml_add_data_source_name']);
+				$data_source_parent_region_id = intval($_POST['tsml_add_data_source_parent_region_id']);
 
-				//initialize variables 
-				$feed_updates = $db_ids_to_delete = $message_lines = [];
-				$message = __("<h2>Local Database Updates Applied From the $data_source_name Feed</h2><br>", '12-step-meeting-list');
-				$data_source_last_import = null;
+			} else {
+				
+				$data_source_url = trim(esc_url_raw($_POST['tsml_add_data_source'], array('http', 'https')));
+				$data_source_name = sanitize_text_field($_POST['tsml_add_data_source_name']);
+				$data_source_parent_region_id = intval($_POST['tsml_add_data_source_parent_region_id']);
+				
+				//try fetching	
+				$response = wp_remote_get($data_source_url, [
+					'timeout' => 30,
+					'sslverify' => false,
+				]);
+				
+				$body = json_decode($response['body'], true);
 				$import_update_bypass = !array_key_exists('updated', $body[0]) ? 1 : 0;
 
-				// Bypass change detection code to force import of entire data source just like before
-				if (array_key_exists($data_source_url, $tsml_data_sources) && $import_update_bypass) {
-					//do a hard refresh
-					if (array_key_exists($data_source_url, $tsml_data_sources)) {
+			}
+			/* ----------------------------------------------------------------------- */
+			$contine_processing = false; //boolean used to allow/avoid early script termination
+
+			if ( is_array($meetings) || (is_array($response) && !empty($response['body']) ) ) {
+
+				if ( !array_key_exists($data_source_url, $tsml_data_sources) && isset($_FILES['tsml_import']) && $data_source_parent_region_id !== -1) {
+					$header_txt = __('File Upload', '12-step-meeting-list');
+					$message = "<h2>$header_txt → $data_source_name</h2>";
+					tsml_alert($message, 'info');
+					$contine_processing = true;
+				} elseif (!array_key_exists($data_source_url, $tsml_data_sources) && isset($_FILES['tsml_import']) && $data_source_parent_region_id === -1) {
+					$header_txt = __('Meetings Upload', '12-step-meeting-list');
+					$message = "<h2>$header_txt → $data_source_name</h2>";
+					$message .= "<p>The files being loaded now can be edited and saved through the WordPress Admin Meetings interface.</p>";
+					tsml_alert($message, 'info');
+					$contine_processing = true;
+				} elseif (!array_key_exists($data_source_url, $tsml_data_sources)) {
+					$header_txt = __('Data Source Add');
+					$message = "<h2>$header_txt → $data_source_name</h2>";
+					tsml_alert($message, 'info');
+					$contine_processing = true;
+				} elseif (array_key_exists($data_source_url, $tsml_data_sources)) {
+					// Bypass change detection code to force import of entire data source just like before
+					if ($import_update_bypass) {
 						tsml_delete(tsml_get_data_source_ids($data_source_url));
 						tsml_delete_orphans();
-					}
-				} elseif (array_key_exists($data_source_url, $tsml_data_sources) && !$import_update_bypass) {
-
-				} elseif (array_key_exists($data_source_url, $tsml_data_sources)) {
-
-					/*When a data source already exists we want to set up to apply changes detected to the local db */  
-
-					$tsml_data_sources = get_option('tsml_data_sources', []);
-					$data_source_last_import = intval($tsml_data_sources[$data_source_url]['last_import']);
-
-					//get updated feed records only
-					$feed_updates = tsml_get_import_changes_only($body, $data_source_url, $data_source_last_import, $db_ids_to_delete, $message_lines);
-
-					 /* Drop database records which are being updated, or removed from the feed */
-					foreach ($db_ids_to_delete as $id) {
-						//tsml_delete_by_id($id);
-						tsml_delete([$id]);
-					} 
-					tsml_delete_orphans();
-					//rebuild cache
-					tsml_cache_rebuild();
-
-					if (count($feed_updates) === 0) {
-						$message = __('<h2>No Updates Available In Your ' . $data_source_name . ' Feed</h2><p>Your local database meeting list records derived from the ' . $data_source_name . ' feed are already in sync. <br>Press the browser back button to return to the previous screen.</p>', '12-step-meeting-list');
+						$header_txt = __('Data Source Refresh');
+						$message = "<h2>$header_txt → $data_source_name</h2>";
+						$message .= __('<p>All your database records for this feed are being reloaded.</p>', '12-step-meeting-list');
 						tsml_alert($message, 'info');
+						$contine_processing = true; 
+					} else { //if (array_key_exists($data_source_url, $tsml_data_sources) && !$import_update_bypass) {
+
+						/* this is the normal feed refresh operation
+						When a data source already exists we want to set up to apply changes detected to the local db */  
+					
+						$tsml_data_sources = get_option('tsml_data_sources', []);
+						$data_source_last_import = intval($tsml_data_sources[$data_source_url]['last_import']);
+
+						//get updated feed records only
+						if (isset($_FILES['tsml_import'])) { //csv file import
+							$import_updates = tsml_get_import_changes_only($meetings, $data_source_url, $data_source_last_import, $db_ids_to_delete, $message_lines);
+						} else { //feed import
+							$import_updates = tsml_get_import_changes_only($body, $data_source_url, $data_source_last_import, $db_ids_to_delete, $message_lines);
+						}
+
+						 /* Drop database records which are being updated, or removed from the feed */
+						 tsml_delete($db_ids_to_delete);
+					
+						tsml_delete_orphans();
+
+						if (count($import_updates) === 0) {
+							$header_txt = __('Data Source Import');
+							$message = "<h2>$header_txt → $data_source_name</h2>";
+							if (count($db_ids_to_delete) !== 0) {
+								$message .= __('<p>The following meeting record(s) are being removed during the refresh. Your database will now be in sync with this import.</p>', '12-step-meeting-list');
+								$message .= "<table border='1'><tbody><tr><th>$tbl_col1_txt</th><th>$tbl_col2_txt</th><th>$tbl_col3_txt</th><th>$tbl_col4_txt</th></tr>";
+								$message .= implode('', $message_lines);
+								$message .= "</tbody></table>";
+							} else {
+								$message .= __('<p>Your local database meeting records are already in sync with this import or upload.<p>', '12-step-meeting-list');
+							}
+							tsml_alert($message, 'info');
+							$contine_processing = false;
+										
+						}
+						else {
+							$header_txt = __('Data Source Import');
+							$message = "<h2>$header_txt → $data_source_name</h2>";
+							$message .= __('<p>The following meeting record(s) are being updated during the refresh or upload. Your database will now be in sync with this import.</p>', '12-step-meeting-list');
+							$message .= "<table border='1'><tbody><tr><th>$tbl_col1_txt</th><th>$tbl_col2_txt</th><th>$tbl_col3_txt</th><th>$tbl_col4_txt</th></tr>";
+							$message .= implode('', $message_lines);
+							$message .= "</tbody></table>";
+							tsml_alert($message, 'info');
+							$contine_processing = true;
+						}
+					}
+				} 
+
+				if ($contine_processing === true) {
+
+					if (count($import_updates) === 0) {
 						
-						return;				
-					}
-					else {
-						$message .= "<table border='1' style='width:600px;'><tbody><tr><th>Update Mode</th><th>Meeting Name</th><th>Day of Week</th><th>Last Updated</th></tr>";
-						$message .= implode('', $message_lines);
-						$message .= "</tbody></table>";
-						tsml_alert($message, 'info');
-					}
-				}
+						if (isset($_FILES['tsml_import'])) {
+							if ($data_source_parent_region_id === -1) {
 
-				$tsml_data_sources[$data_source_url] = [
-					'status' => 'OK',
-					'last_import' => current_time('timestamp'),
-					'count_meetings' => 0,
-					'name' => $data_source_name,
-					'parent_region_id' => $data_source_parent_region_id,
-					'change_detect' => $data_source_change_detect,
-					'type' => 'JSON',
-				];
+								//don't allow the data_source field to be set in the called function
+								tsml_import_buffer_set($meetings);
 
-				if (count($feed_updates) === 0) {
-					//import feed
-					tsml_import_buffer_set($body, $data_source_url, $data_source_parent_region_id);
-				}
-				else {				
-					//import only the feed updates
-					tsml_import_buffer_set($feed_updates, $data_source_url, $data_source_parent_region_id);
+							} else {
+
+								$tsml_data_sources[$data_source_url] = [
+									'status' => 'OK',
+									'last_import' => current_time('timestamp'),
+									'count_meetings' => 0,
+									'name' => $data_source_name,
+									'parent_region_id' => $data_source_parent_region_id,
+									'change_detect' => 'enabled',
+									'type' => 'CSV',
+								];
+
+								tsml_import_buffer_set($meetings, $data_source_url, $data_source_parent_region_id);
+							}
+						} else {
+
+							$tsml_data_sources[$data_source_url] = [
+								'status' => 'OK',
+								'last_import' => current_time('timestamp'),
+								'count_meetings' => 0,
+								'name' => $data_source_name,
+								'parent_region_id' => $data_source_parent_region_id,
+								'change_detect' => 'enabled',
+								'type' => 'JSON',
+							];
+
+							tsml_import_buffer_set($body, $data_source_url, $data_source_parent_region_id);
+
+							// Create a cron job to run daily for the new data source
+							if ( !array_key_exists($data_source_url, $tsml_data_sources) ) {
+								tsml_schedule_import_scan($data_source_url, $data_source_name);
+							}
+						}
+
+					} else {
+						//import only the feed updates
+						tsml_import_buffer_set($import_updates, $data_source_url, $data_source_parent_region_id);
+					}
 				}
 
 				//save data source configuration
 				update_option('tsml_data_sources', $tsml_data_sources);
 
-				// Create a cron job to run daily when Change Detection is enabled for the new data source
-				if ( (count($feed_updates) === 0) && ($data_source_change_detect === 'enabled') ) {
-					tsml_schedule_import_scan($data_source_url, $data_source_name);
-				}
 			} elseif (!is_array($response)) {
 
 				tsml_alert(__('Invalid response, <pre>' . print_r($response, true) . '</pre>.', '12-step-meeting-list'), 'error');
@@ -284,7 +309,7 @@ if (!function_exists('tsml_import_page')) {
 
 			//sanitize URL
 			$_POST['tsml_remove_data_source'] = esc_url_raw($_POST['tsml_remove_data_source'], ['http', 'https']);
-
+			 
 			if (array_key_exists($_POST['tsml_remove_data_source'], $tsml_data_sources)) {
 
 				//remove all meetings for this data source
@@ -297,7 +322,10 @@ if (!function_exists('tsml_import_page')) {
 				unset($tsml_data_sources[$_POST['tsml_remove_data_source']]);
 				update_option('tsml_data_sources', $tsml_data_sources);
 
-				tsml_alert(__('Data source removed.', '12-step-meeting-list'));
+				tsml_alert(__(' Data source removed.', '12-step-meeting-list'));
+			}
+			else {
+				tsml_alert(__(' Data source removal failed! ' . $_POST['tsml_remove_data_source'], '12-step-meeting-list'), 'error');
 			}
 		}
 
@@ -309,7 +337,7 @@ if (!function_exists('tsml_import_page')) {
 ?>
 
 		<!-- Admin page content should all be inside .wrap -->
-		<div class="wrap">
+		<div class="wrap ">
 
 			<h1></h1> <!-- Set alerts here -->
 
@@ -330,18 +358,19 @@ if (!function_exists('tsml_import_page')) {
 				<div class="postbox stack">
 					<h2><?php _e('Import Data Sources', '12-step-meeting-list') ?></h2>
 					<p>
-						<?php printf(__('Data sources are JSON feeds that contain a website\'s public meeting data. They can be used to aggregate meetings from different sites into a single master list. 
-				Data sources listed below will pull meeting information into this website. A configurable schedule allows for each enabled data source to be scanned at least once per day looking 
-				for updates to the listing. Change Notification email addresses are sent an email when action is required to re-sync a data source with its meeting list information. 
-				Please note: records that you intend to maintain on your website should always be imported using the Import CSV feature below. <b>Data Source records will be overwritten when an update from the 
-				parent data source is applied.</b> More information is available at the <a href="%s" target="_blank">Meeting Guide API Specification</a>.', '12-step-meeting-list'), 'https://github.com/code4recovery/spec') ?>
+				<?php printf(__('You can choose to import your meeting list data from either a CSV file or an external JSON feed, either of which contains a website\'s public meeting information. These sources can be used 
+				to aggregate meetings from different sites into a single master list. The data sources listed below will pull meeting information into this website. A configurable schedule allows for each JSON data   
+				source to be scanned at least once per day looking for updates to the listing. Change Notification email addresses are sent an email when action is required to re-sync a data source with its meeting list information. 
+				Please note: records that you intend to maintain on your website should always be imported using the <u>CSV File Upload</u> feature with the Parent Region set to the default top-level. <b>Data Source records will be overwritten when an update from the data  
+				source is applied.</b> More information is available at the <a href="%s" target="_blank">Meeting Guide API Specification</a>.', '12-step-meeting-list'), 'https://github.com/code4recovery/spec') ?>
 					</p>
 					<?php if (!empty($tsml_data_sources)) { ?>
+					
 						<table>
 							<thead>
 								<tr>
-									<th class="small align-center"></th>
-									<th><?php _e('Feed', '12-step-meeting-list') ?></th>
+									<th class="small align-left"></th>
+									<th><?php _e('Name/Link', '12-step-meeting-list') ?></th>
 									<th class="align-left"><?php _e('Parent Region', '12-step-meeting-list') ?></th>
 									<th class="align-center"><?php _e('Meetings', '12-step-meeting-list') ?></th>
 									<th class="align-right"><?php _e('Last Refresh', '12-step-meeting-list') ?></th>
@@ -353,12 +382,17 @@ if (!function_exists('tsml_import_page')) {
 									<tr data-source="<?php echo $feed ?>">
 										<td class="small ">
 											<form method="post" action="<?php echo $_SERVER['REQUEST_URI'] ?>">
+												
 												<?php wp_nonce_field($tsml_nonce, 'tsml_nonce', false) ?>
 												<input type="hidden" name="tsml_add_data_source" value="<?php echo $feed ?>">
 												<input type="hidden" name="tsml_add_data_source_name" value="<?php echo @$properties['name'] ?>">
 												<input type="hidden" name="tsml_add_data_source_parent_region_id" value="<?php echo @$properties['parent_region_id'] ?>">
-												<input type="hidden" name="tsml_add_data_source_change_detect" value="<?php echo @$properties['change_detect'] ?>">
-												<input type="submit" value="Refresh" class="button button-small">
+												<?php
+													if($properties['type']!=='CSV')	{ ?>
+														<input type="submit" value="Refresh" class="button button-small" style="display: block"; > 
+												<?php } else { ?>  
+														<input type="submit" value="Refresh" class="button button-small" style="display: none"; > 
+												<?php } ?>													
 											</form>
 										</td>
 										<td>
@@ -386,18 +420,6 @@ if (!function_exists('tsml_import_page')) {
 											echo $parent_region;
 											?>
 										</td>
-										<td>
-											<?php
-											$change_detect = null;
-											if (empty($properties['change_detect']) || $properties['change_detect'] == -1) {
-												$change_detect = __('Disabled', '12-step-meeting-list');
-											} else {
-												$change_detect = ucfirst($properties['change_detect']);
-											}
-
-											echo $change_detect;
-											?>
-										</td>
 										<td class="align-center count_meetings"><?php echo number_format($properties['count_meetings']) ?></td>
 
 										<td class="align-right">
@@ -416,51 +438,72 @@ if (!function_exists('tsml_import_page')) {
 							</tbody>
 						</table>
 					<?php } ?>
-					<form id="frm_data_source "class="row" method="post" action="<?php echo $_SERVER['REQUEST_URI'] ?>">
-						<?php wp_nonce_field($tsml_nonce, 'tsml_nonce', false) ?>
+					<div style="background-color:#F8F8F8; border: 1px solid lightgray; margin:20px; padding:20px; ">
+						<div id="import-radio-group" style="display:block; margin-bottom:20px;">
+							<b><label for="import_json" class="btn btn-primary">Feed Import</label></b>
+							<input type="radio" name="import" id="import_json" value="json" onclick="toggle_import_source('json')" checked >
+							<b><label for="import_csv" class="btn btn-primary" style="margin-left:30px;">File Upload</label></b>
+							<input type="radio" name="import" id="import_csv" value="csv" onclick="toggle_import_source('csv')" >
+						</div>
 
-						<input type="text" name="tsml_add_data_source_name" placeholder="<?php _e('Name: i.e.District 02', '12-step-meeting-list') ?>">
+						<div id="dv_data_source" style="display:block;" >
+							<form id="frm_data_source "class="row" method="post" action="<?php echo $_SERVER['REQUEST_URI'] ?>">
+								<?php wp_nonce_field($tsml_nonce, 'tsml_nonce', false) ?>
 
-						<input type="text" name="tsml_add_data_source" placeholder="URL: https://feed_domain/wp-admin/admin-ajax.php?action=meetings">
+								<div class="small" style="display:inline-block;margin-right:20px;">
+									<label for="tsml_add_data_source_name" style="font-size:12px;" >Name</label><br>
+									<input type="text" name="tsml_add_data_source_name" id="tsml_add_data_source_name" class="small" placeholder="<?php _e('i.e.District 02', '12-step-meeting-list') ?>">
+								</div>
+								<div id="dv_json_feed" class="small" style="display:inline-block;margin-right:20px;">
+									<label for="tsml_add_data_source" style="font-size:12px;">Link URL</label><br>
+									<input type="text" name="tsml_add_data_source" id="tsml_add_data_source" class="small" placeholder="https://feed_domain/wp-admin/admin-ajax.php?action=meetings">
+								</div>
+								<div class="small" style="display:inline-block;margin-right:20px;" class="small" >
+									<label for="tsml_add_data_source_parent_region_id" style="font-size:12px;" >Parent Region</label><br>
+									<?php wp_dropdown_categories(array(
+										'id' => 'tsml_add_data_source_parent_region_id',
+										'name' => 'tsml_add_data_source_parent_region_id',
+										'taxonomy' => 'tsml_region',
+										'hierarchical' => true,
+										'hide_empty' => false,
+										'orderby' => 'name',
+										'selected' => null,
+										'title' => __('Append regions created by this data source to… (top-level, if none selected)', '12-step-meeting-list'),
+										'show_option_none' => __('top-level, if none selected…', '12-step-meeting-list'),
+									)) ?>
+								</div>
+								<input type="submit" class="button" value="<?php _e('Add Source', '12-step-meeting-list') ?>">
+							</form>
+						</div>					
+						<div id="dv_file_source" style="display:none;" >
+							<form id="frm_file_source "class="row" method="post" action="<?php echo $_SERVER['REQUEST_URI'] ?>" enctype="multipart/form-data">
+								<div class="small" style="display:inline-block;margin-right:20px;">
+									<label for="tsml_add_file_source_name" style="font-size:12px;" >Name</label><br>
+									<input type="text" name="tsml_add_data_source_name" id="tsml_add_file_source_name" class="small" placeholder="<?php _e('i.e.District 02', '12-step-meeting-list') ?>">
+								</div>
+								<div id="dv_csv_file" class="small" style="display:block;margin-right:20px;">
+									<?php wp_nonce_field($tsml_nonce, 'tsml_nonce', false) ?><br>
+									<input type="file" name="tsml_import" id="tsml_import" >
+								</div>
+								<div class="small" style="display:inline-block;margin-right:20px;" class="small" >
+									<label for="tsml_add_file_source_parent_region_id" style="font-size:12px;" >Parent Region</label><br>
+									<?php wp_dropdown_categories(array(
+										'id' => 'tsml_add_file_source_parent_region_id',
+										'name' => 'tsml_add_data_source_parent_region_id',
+										'taxonomy' => 'tsml_region',
+										'hierarchical' => true,
+										'hide_empty' => false,
+										'orderby' => 'name',
+										'selected' => null,
+										'title' => __('Append regions created by this data source to… (top-level, if none selected)', '12-step-meeting-list'),
+										'show_option_none' => __('top-level, if none selected…', '12-step-meeting-list'),
+									)) ?>
+								</div>
 
-						<?php wp_dropdown_categories(array(
-							'name' => 'tsml_add_data_source_parent_region_id',
-							'taxonomy' => 'tsml_region',
-							'hierarchical' => true,
-							'hide_empty' => false,
-							'orderby' => 'name',
-							'selected' => null,
-							'title' => __('Append regions created by this data source to… (top-level, if none selected)', '12-step-meeting-list'),
-							'show_option_none' => __('Parent Region…', '12-step-meeting-list'),
-						)) ?>
-
-						<input type="submit" class="button" value="<?php _e('Add URL Source', '12-step-meeting-list') ?>">
-					</form>
-					<form id="frm_file_source" class="row" method="post" action="<?php echo $_SERVER['REQUEST_URI'] ?>" enctype="multipart/form-data">
-						<?php wp_nonce_field($tsml_nonce, 'tsml_nonce', false) ?>
-						<input type="text" name="tsml_add_file_source_name" placeholder="<?php _e('Name: i.e.District 02', '12-step-meeting-list') ?>">
-
-						<?php wp_nonce_field($tsml_nonce, 'tsml_nonce', false) ?>
-						<input type="file" name="tsml_import" id="tsml_add_file_source_name" >
-
-						<?php wp_dropdown_categories(array(
-							'name' => 'tsml_add_file_source_parent_region_id',
-							'taxonomy' => 'tsml_region',
-							'hierarchical' => true,
-							'hide_empty' => false,
-							'orderby' => 'name',
-							'selected' => null,
-							'title' => __('Append regions created by this data file to… (top-level, if none selected)', '12-step-meeting-list'),
-							'show_option_none' => __('Parent Region…', '12-step-meeting-list'),
-						)) ?>
-
-						<label>
-							<input type="checkbox" name="tsml_is_source_maintainable" value="checkox_value">Is Mainatinable?
-						</label>
-
-						<input type="submit" class="button" value="<?php _e('Add File Source', '12-step-meeting-list') ?>">
-					</form>
-
+								<input type="submit" class="button" value="<?php _e('Begin', '12-step-meeting-list') ?>">
+							</form>
+						</div>					
+					</div>
 				</div>
 
 				<div class="three-column">
