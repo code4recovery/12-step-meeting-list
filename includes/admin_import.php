@@ -18,18 +18,7 @@ if (!function_exists('tsml_import_page')) {
 			//run deletes
 			if ($_POST['delete'] == 'no_data_source') {
 
-				tsml_delete(get_posts([
-					'post_type' => 'tsml_meeting',
-					'numberposts' => -1,
-					'fields' => 'ids',
-					'meta_query' => [
-						[
-							'key' => 'data_source',
-							'compare' => 'NOT EXISTS',
-							'value' => '',
-						],
-					],
-				]));
+				tsml_delete(tsml_get_non_data_source_ids());
 
 				tsml_delete_orphans();
 			} elseif ($_POST['delete'] == 'all') {
@@ -135,6 +124,7 @@ if (!function_exists('tsml_import_page')) {
 			$tbl_col4_txt = __('Last Updated', '12-step-meeting-list');
 			$import_update_bypass = false;
 			$data_source_url = $data_source_name = $data_source_parent_region_id = null;
+			$nbr_internal_records = count(tsml_get_non_data_source_ids());
 
 			//sanitize URL, name and parent region id values
 			if ( isset($_FILES['tsml_import']) ) {
@@ -162,25 +152,46 @@ if (!function_exists('tsml_import_page')) {
 			/* ----------------------------------------------------------------------- */
 			$contine_processing = false; //boolean used to allow/avoid early script termination
 
-			if ( is_array($meetings) || (is_array($response) && !empty($response['body']) ) ) {
+			if ( is_array($meetings) || (is_array($response) && !empty($response['body']) ) ) { //we have import from either an upload or a feed
 
-				if ( !array_key_exists($data_source_url, $tsml_data_sources) && isset($_FILES['tsml_import']) && $data_source_parent_region_id !== -1) {
-					$header_txt = __('File Upload', '12-step-meeting-list');
-					$message = "<h2>$header_txt → $data_source_name</h2>";
-					tsml_alert($message, 'info');
-					$contine_processing = true;
-				} elseif (!array_key_exists($data_source_url, $tsml_data_sources) && isset($_FILES['tsml_import']) && $data_source_parent_region_id === -1) {
-					$header_txt = __('Meetings Upload', '12-step-meeting-list');
-					$message = "<h2>$header_txt → $data_source_name</h2>";
-					$message .= "<p>The meeting records from the file being loaded now can be edited and saved through the WordPress Admin Meetings interface.</p>";
-					tsml_alert($message, 'info');
-					$contine_processing = true;
-				} elseif (!array_key_exists($data_source_url, $tsml_data_sources)) {
-					$header_txt = __('Data Source Add');
-					$message = "<h2>$header_txt → $data_source_name</h2>";
-					tsml_alert($message, 'info');
-					$contine_processing = true;
-				} elseif (array_key_exists($data_source_url, $tsml_data_sources)) {
+				if ( !array_key_exists($data_source_url, $tsml_data_sources) ) { //when the import has not been registered yet
+
+					if ( isset($_FILES['tsml_import']) ){ //process a file upload
+
+						if ( $data_source_parent_region_id !== -1 ) { //file upload of records for a parent region
+
+							$header_txt = __('File Upload', '12-step-meeting-list');
+							$message = "<h2>$header_txt → $data_source_name</h2>";
+							$message .= "<p>The meeting records from the file being loaded may be over-written during future file uploads.</p>";
+							tsml_alert($message, 'info');
+							$contine_processing = true;
+
+						} else { //file upload - top-level internal meetings
+
+							$header_txt = __('Internal Meetings Upload', '12-step-meeting-list');
+							$message = "<h2>$header_txt → $data_source_name</h2>";
+							$message .= "<p>The meeting records from this file being loaded can safely be edited and saved through your WordPress menu Meetings screen.</p>";
+							tsml_alert($message, 'info');
+							$contine_processing = true;
+
+							if ($nbr_internal_records !== 0 ) { //new top-level file upload
+
+								/* this is the normal file upload refresh operation for top-level uploads which drops all internal records before uploading new ones */
+
+								tsml_delete(tsml_get_non_data_source_ids());
+								tsml_delete_orphans();
+							}
+						} 					
+
+					} else { //new feed records
+						$header_txt = __('Data Source Add');
+						$message = "<h2>$header_txt → $data_source_name</h2>";
+						$message .= "<p>The meeting records from the feed being loaded may be over-written during future feed refreshes.</p>";
+						tsml_alert($message, 'info');
+						$contine_processing = true;
+					}
+				} else { //process a registered import
+
 					// Bypass change detection code to force import of entire data source just like before
 					if ($import_update_bypass) {
 						tsml_delete(tsml_get_data_source_ids($data_source_url));
@@ -190,6 +201,7 @@ if (!function_exists('tsml_import_page')) {
 						$message .= __('<p>All your database records for this feed are being reloaded.</p>', '12-step-meeting-list');
 						tsml_alert($message, 'info');
 						$contine_processing = true; 
+
 					} else { //if (array_key_exists($data_source_url, $tsml_data_sources) && !$import_update_bypass) {
 
 						/* this is the normal feed refresh operation
@@ -198,15 +210,15 @@ if (!function_exists('tsml_import_page')) {
 						$tsml_data_sources = get_option('tsml_data_sources', []);
 						$data_source_last_import = intval($tsml_data_sources[$data_source_url]['last_import']);
 
-						//get updated feed records only
+						//get updated file upload records only
 						if (isset($_FILES['tsml_import'])) { //csv file import
 							$import_updates = tsml_get_import_changes_only($meetings, $data_source_url, $data_source_last_import, $db_ids_to_delete, $message_lines);
-						} else { //feed import
+						} else { //get updated feed import record set
 							$import_updates = tsml_get_import_changes_only($body, $data_source_url, $data_source_last_import, $db_ids_to_delete, $message_lines);
 						}
 
-						 /* Drop database records which are being updated, or removed from the feed */
-						 tsml_delete($db_ids_to_delete);
+						/* Drop database records which are being updated, or removed from the feed */
+						tsml_delete($db_ids_to_delete);
 					
 						tsml_delete_orphans();
 
@@ -228,7 +240,7 @@ if (!function_exists('tsml_import_page')) {
 						else {
 							$header_txt = __('Data Source Import');
 							$message = "<h2>$header_txt → $data_source_name</h2>";
-							$message .= __('<p>The following meeting record(s) are being updated during the refresh or upload. Your database will now be in sync with this import.</p>', '12-step-meeting-list');
+							$message .= __('<p>The following meeting record(s) are being updated during this refresh or upload operation. Your database will now be in sync with this import.</p>', '12-step-meeting-list');
 							$message .= "<table border='1'><tbody><tr><th>$tbl_col1_txt</th><th>$tbl_col2_txt</th><th>$tbl_col3_txt</th><th>$tbl_col4_txt</th></tr>";
 							$message .= implode('', $message_lines);
 							$message .= "</tbody></table>";
@@ -240,16 +252,16 @@ if (!function_exists('tsml_import_page')) {
 
 				if ($contine_processing === true) {
 
-					if (count($import_updates) === 0) {
+					if (count($import_updates) === 0) { //there are no altered records, so
 						
 						if (isset($_FILES['tsml_import'])) {
-							if ($data_source_parent_region_id === -1) {
+							if ($data_source_parent_region_id === -1) {  //baseline upload
 
 								//don't allow the data_source field to be set in the called function
 								tsml_import_buffer_set($meetings);
 
 							} else {
-
+								//register the file upload in the Import Data Sources listing
 								$tsml_data_sources[$data_source_url] = [
 									'status' => 'OK',
 									'last_import' => current_time('timestamp'),
@@ -262,8 +274,8 @@ if (!function_exists('tsml_import_page')) {
 
 								tsml_import_buffer_set($meetings, $data_source_url, $data_source_parent_region_id);
 							}
-						} else {
-
+						} else { 
+							//register feed import in the Import Data Sources listing
 							$tsml_data_sources[$data_source_url] = [
 								'status' => 'OK',
 								'last_import' => current_time('timestamp'),
@@ -283,8 +295,46 @@ if (!function_exists('tsml_import_page')) {
 						}
 
 					} else {
-						//import only the feed updates
-						tsml_import_buffer_set($import_updates, $data_source_url, $data_source_parent_region_id);
+
+						if (isset($_FILES['tsml_import'])) {
+							if ($data_source_parent_region_id === -1) {  //baseline upload
+
+								//don't allow the data_source field to be set in the called function
+								tsml_import_buffer_set($import_updates);
+
+							} else {
+								//register the file upload in the Import Data Sources listing
+								$tsml_data_sources[$data_source_url] = [
+									'status' => 'OK',
+									'last_import' => current_time('timestamp'),
+									'count_meetings' => 0,
+									'name' => $data_source_name,
+									'parent_region_id' => $data_source_parent_region_id,
+									'change_detect' => 'enabled',
+									'type' => 'CSV',
+								];
+
+								tsml_import_buffer_set($import_updates, $data_source_url, $data_source_parent_region_id);
+							}
+						} else { 
+							//register feed import in the Import Data Sources listing
+							$tsml_data_sources[$data_source_url] = [
+								'status' => 'OK',
+								'last_import' => current_time('timestamp'),
+								'count_meetings' => 0,
+								'name' => $data_source_name,
+								'parent_region_id' => $data_source_parent_region_id,
+								'change_detect' => 'enabled',
+								'type' => 'JSON',
+							];
+
+							tsml_import_buffer_set($import_updates, $data_source_url, $data_source_parent_region_id);
+
+							// Create a cron job to run daily for the new data source
+							if ( !array_key_exists($data_source_url, $tsml_data_sources) ) {
+								tsml_schedule_import_scan($data_source_url, $data_source_name);
+							}
+						}
 					}
 				}
 

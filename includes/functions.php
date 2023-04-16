@@ -811,6 +811,24 @@ function tsml_get_data_source_ids($source)
 	]);
 }
 
+//function: get meeting ids for a non data source
+//used:		tsml_ajax_import, import/export page
+function tsml_get_non_data_source_ids()
+{
+	return get_posts([
+		'post_type' => 'tsml_meeting',
+		'numberposts' => -1,
+		'fields' => 'ids',
+		'meta_query' => [
+			[
+				'key' => 'data_source',
+				'compare' => 'NOT EXISTS',
+				'value' => '',
+			],
+		],
+	]);
+}
+
 //function: get all locations with full location information
 //used: tsml_get_meetings()
 function tsml_get_groups()
@@ -2294,10 +2312,9 @@ function tsml_date_localised($format, $timestamp = null)
 function tsml_get_import_changes_only($feed_meetings, $data_source_url, $data_source_last_update, &$db_ids_to_delete, &$message_lines)
 {
 	global $tsml_days;
-	$db_meetings = $feed_slugs = $meetings_updated = $ds_ids = $all_db_meetings = $db_meeting = [];
+	$db_meetings = $feed_slugs = $meetings_updated = $ds_ids = $db_meeting = [];
 
 	// get local meetings 
-	$all_db_meetings = tsml_get_meetings();
 	$data_source_ids = tsml_get_data_source_ids($data_source_url);
 	sort($data_source_ids);
 
@@ -2336,21 +2353,16 @@ function tsml_get_import_changes_only($feed_meetings, $data_source_url, $data_so
 			//output both new and changed records
 			array_push($meetings_updated, $meeting);
 
-			if ( !empty($meeting['updated']) ) {
-				$current_meeting_localised_last_update = tsml_date_localised(get_option('date_format') . ' ' . get_option('time_format'), current_time('timestamp'));
-			} else {
-				$current_meeting_localised_last_update = '';
-			}
-
+			$last_update = date(get_option('date_format') . ' ' . get_option('time_format'), current_time('timestamp'));
 			$meeting_name = $meeting['name'];
 
 			if ($is_matched) {
-				$message = __("<tr style='color:#A9A9A9;'><td>Change</td><td >$meeting_name</td><td>$day_of_week</td><td>$current_meeting_localised_last_update</td></tr>", '12-step-meeting-list');
+				$message = __("<tr style='color:#A9A9A9;'><td>Change</td><td >$meeting_name</td><td>$day_of_week</td><td>$last_update</td></tr>", '12-step-meeting-list');
 				$message_lines[] = $message;
 				//add changed record id to list of db records to be removed
 				$db_ids_to_delete[] = $db_meeting_id;
 			} else {
-				$message = __("<tr style='color:green;'><td>Add New</td><td >$meeting_name</td><td>$day_of_week</td><td>$current_meeting_localised_last_update</td></tr>", '12-step-meeting-list');
+				$message = __("<tr style='color:green;'><td>Add New</td><td >$meeting_name</td><td>$day_of_week</td><td>$last_update</td></tr>", '12-step-meeting-list');
 				$message_lines[] = $message;
 			}
 		}
@@ -2389,7 +2401,7 @@ function tsml_get_import_changes_only($feed_meetings, $data_source_url, $data_so
 
 //function:	return boolean indicating whether or not the matched database and import records are in sync
 //used:		here (called from tsml_get_import_changes_only)
-function tsml_verify_identical_records($db_meeting, &$import_meeting, $data_source_last_update, $test_mode = false) {
+function tsml_verify_identical_records($db_meeting, &$import_meeting, $data_source_last_update, $test_mode = true) {
 	global $tsml_days, $tsml_programs, $tsml_program;
 
 	//compare db record to import record, field by field
@@ -3037,7 +3049,7 @@ function tsml_verify_identical_records($db_meeting, &$import_meeting, $data_sour
 			}
 
 			return false; 
-			//$db_meeting['post_date']
+
 		}
 	}
 
@@ -3049,7 +3061,7 @@ function tsml_verify_identical_records($db_meeting, &$import_meeting, $data_sour
   //used:	here (called from tsml_verify_identical_records)
   function tsml_remove_special_char($str) {
 
-      $result = str_replace( array( '\'', '"', ',', ';', '<', '>', '&', '"', "'", "’", " ", "#039", "amp", "rsquo", "quot"), '', $str);
+      $result = str_replace( array( '\'', '"', ',', '.', ';', '<', '>', '&', '"', "'", "’", " ", "#039", "amp", "rsquo", "quot"), '', $str);
  
       return $result; 
   }
