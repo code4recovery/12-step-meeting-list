@@ -240,7 +240,7 @@ if (!function_exists('tsml_import_page')) {
 						else {
 							$header_txt = __('Data Source Import');
 							$message = "<h2>$header_txt → $data_source_name</h2>";
-							$message .= __('<p>The following meeting record(s) are being updated during this refresh or upload operation. Your database will now be in sync with this import.</p>', '12-step-meeting-list');
+							$message .= __('<p>The following meeting record(s) are being updated during this feed refresh or or file upload operation. Your database will now be in sync with this import.</p>', '12-step-meeting-list');
 							$message .= "<table border='1'><tbody><tr><th>$tbl_col1_txt</th><th>$tbl_col2_txt</th><th>$tbl_col3_txt</th><th>$tbl_col4_txt</th></tr>";
 							$message .= implode('', $message_lines);
 							$message .= "</tbody></table>";
@@ -650,7 +650,7 @@ if (!function_exists('tsml_import_page')) {
 										'all' 		=> __('Delete Everything', '12-step-meeting-list'),
 									];
 									if (!empty($tsml_data_sources)) {
-										$delete_options['no_data_source'] = __('Delete only meeting information <u>not from a listed data source</u>', '12-step-meeting-list');
+										$delete_options['no_data_source'] = __('Delete only internal meeting information not from a listed data source', '12-step-meeting-list');
 									}
 									$delete_selected = (empty($_POST['delete']) || !array_key_exists($_POST['delete'], $delete_options)) ? 'no_data_source' : 'all';
 									foreach ($delete_options as $key => $value) { ?>

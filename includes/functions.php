@@ -2317,7 +2317,7 @@ function tsml_get_import_changes_only($feed_meetings, $data_source_url, $data_so
 	// get local meetings 
 	$data_source_ids = tsml_get_data_source_ids($data_source_url);
 	sort($data_source_ids);
-
+	
 	/* filter out all but the data source meetings  */
 	$db_meetings = array_filter(tsml_get_meetings(), function ($meeting) use ($data_source_ids) {
 		return in_array($meeting['id'], $data_source_ids);
@@ -2401,14 +2401,14 @@ function tsml_get_import_changes_only($feed_meetings, $data_source_url, $data_so
 
 //function:	return boolean indicating whether or not the matched database and import records are in sync
 //used:		here (called from tsml_get_import_changes_only)
-function tsml_verify_identical_records($db_meeting, &$import_meeting, $data_source_last_update, $test_mode = true) {
+function tsml_verify_identical_records($db_meeting, &$import_meeting, $data_source_last_update, $test_mode = false) {
 	global $tsml_days, $tsml_programs, $tsml_program;
 
 	//compare db record to import record, field by field
 	if (!empty($db_meeting['post_title']) && !empty($import_meeting['name']) ) {
 
-		$post_title = tsml_remove_special_char($db_meeting['post_title']);
-		$import_name = tsml_remove_special_char($import_meeting['name']);
+		$post_title = trim(tsml_remove_special_char($db_meeting['post_title']));
+		$import_name = trim(tsml_remove_special_char($import_meeting['name']));
 
 		if ($post_title !== $import_name) {	
 
@@ -2426,7 +2426,7 @@ function tsml_verify_identical_records($db_meeting, &$import_meeting, $data_sour
 		if ($db_meeting['post_name'] !== $import_meeting['slug']) {
 
 			if ($test_mode) {
-				echo 'Name --→ ' . $import_meeting['name'] . '<br>';
+				echo 'Slug --→ ' . $import_meeting['name'] . '<br>';
 				echo $db_meeting['post_name'] . '  <br>';
 				echo $import_meeting['slug'] . ' <br><br>';
 			}
@@ -2442,7 +2442,7 @@ function tsml_verify_identical_records($db_meeting, &$import_meeting, $data_sour
 		if ( intval($db_meeting['day']) !== intval($day_of_week) ) {
 
 			if ($test_mode) {
-				echo 'Name --→ ' . $import_meeting['name'] . '<br>';
+				echo 'Day --→ ' . $import_meeting['name'] . '<br>';
 				echo 'db day: ' . $db_meeting['day'] . '  <br>';
 				echo 'import: ' . $day_of_week . ' <br><br>';
 			}
@@ -2457,7 +2457,7 @@ function tsml_verify_identical_records($db_meeting, &$import_meeting, $data_sour
 		if ($db_meeting['time'] !== $time) {
 
 			if ($test_mode) {
-				echo 'Name --→ ' . $import_meeting['name'] . '<br>';
+				echo 'Time --→ ' . $import_meeting['name'] . '<br>';
 				echo 'db time: ' . $db_meeting['time'] . '  <br>';
 				echo  'import: ' . $time . ' <br><br>';
 			}
@@ -2471,7 +2471,7 @@ function tsml_verify_identical_records($db_meeting, &$import_meeting, $data_sour
 		if ($db_meeting['end_time'] !== $end_time) {
 			
 			if ($test_mode) {
-				echo 'Name --→ ' . $import_meeting['name'] . '<br>';
+				echo 'End Time --→ ' . $import_meeting['name'] . '<br>';
 				echo 'db end_time: ' . $db_meeting['end_time'] . '  <br>';
 				echo 'import time: ' . $end_time . ' <br><br>';
 			}
@@ -2483,11 +2483,11 @@ function tsml_verify_identical_records($db_meeting, &$import_meeting, $data_sour
 		//uppercasing for value matching later
 		$upper_types = array_map('strtoupper', $tsml_programs[$tsml_program]['types']);
 		$import_type_keys = [];
-		$db_types_str = implode(' ', $db_meeting['types']);
+		$db_types_str = trim(implode(' ', $db_meeting['types']));
 
 		if (is_array($import_meeting['types'])) {
 			$import_type_keys = $import_meeting['types'];
-			$import_types_str = implode(', ', $import_meeting['types']);
+			$import_types_str = trim(implode(', ', $import_meeting['types']));
 		} else {
 			
 			//make string an array
@@ -2506,9 +2506,9 @@ function tsml_verify_identical_records($db_meeting, &$import_meeting, $data_sour
 		if (count($result) !== 0) {
 
 			if ($test_mode) {
-				echo 'Name --→ ' . $import_meeting['name'] . '<br>';
+				echo 'Types --→ ' . $import_meeting['name'] . '<br>';
 				echo 'db types: ' .  $db_types_str . '  <br>';
-				echo '  import: ' .  $import_types_str . ' <br><br>';
+				echo '__import: ' .  $import_types_str . ' <br><br>';
 			}
 			
 			return false;
@@ -2523,12 +2523,6 @@ function tsml_verify_identical_records($db_meeting, &$import_meeting, $data_sour
 		$import_notes = stripslashes( sanitize_text_field($import_meeting['notes']));
 		$import_notes = tsml_remove_special_char($import_notes);
 
-	/*	$a_array = explode (" ", $post_content);
-		$b_array = explode (" ", $import_notes);
-		$arraysAreEqual = ($a_array == $b_array);
-
-		if ( $arraysAreEqual != True) { */
-
 		if ($post_content !== $import_notes) {
 
 			if ($test_mode) {
@@ -2541,17 +2535,16 @@ function tsml_verify_identical_records($db_meeting, &$import_meeting, $data_sour
 	}
 
 	if (!empty($db_meeting['conference_url']) && !empty($import_meeting['conference_url']) ) {
-		$db_conf_url = str_replace('&amp;', '&', $db_meeting['conference_url']);
-		$db_conf_url = tsml_remove_special_char($db_conf_url);
-		$import_conf_url = str_replace('&amp;', '&', $import_meeting['conference_url']);
-		$import_conf_url = tsml_remove_special_char($import_conf_url);
+		$db_conf_url = trim(tsml_remove_special_char($db_meeting['conference_url']));
+		$import_conf_url = trim(tsml_remove_special_char($import_meeting['conference_url']));
 
-		if ($db_conf_url !== $import_conf_url) {
+		//if ($db_conf_url !== $import_conf_url) {
+		if (strcmp($db_conf_url, $import_conf_url) !== 0) {
 			
 			if ($test_mode) {
 				echo 'Conf URL --→ ' . $import_meeting['name'] . '<br>';
-				echo $db_conf_url . '  <br>';
-				echo $import_conf_url . ' <br><br>';
+				echo 'db conference_url: ' .  $db_conf_url . '  <br>';
+				echo 'im conference_url: ' .   $import_conf_url . ' <br><br>';
 			}
 			
 			return false;
@@ -2590,12 +2583,14 @@ function tsml_verify_identical_records($db_meeting, &$import_meeting, $data_sour
 	}
 
 	if (!empty($db_meeting['conference_phone_notes']) && !empty($import_meeting['conference_phone_notes']) ) {
-		if ( $db_meeting['conference_phone_notes'] !== $import_meeting['conference_phone_notes']) {
+		$db_conference_phone_notes = tsml_remove_special_char($db_meeting['conference_phone_notes']);
+		$import_conference_phone_notes = tsml_remove_special_char($import_meeting['conference_phone_notes']);
+		if ( $db_conference_phone_notes !== $import_conference_phone_notes ) {
 			
 			if ($test_mode) {
-				echo 'Phone Notes --→ ' . $import_meeting['name'] . '<br>';
-				echo $db_meeting['conference_phone_notes'] . '  <br>';
-				echo $import_meeting['conference_phone_notes'] . ' <br><br>';
+				echo 'Conf Phone Notes --→ ' . $import_meeting['name'] . '<br>';
+				echo $db_conference_phone_notes . '  <br>';
+				echo $import_conference_phone_notes . ' <br><br>';
 			}
 			
 			return false;
@@ -2609,7 +2604,7 @@ function tsml_verify_identical_records($db_meeting, &$import_meeting, $data_sour
 		if ($db_location !== $import_location) {
 			
 			if ($test_mode) {
-				echo 'Name -----→ ' . $import_meeting['name'] . '<br>';
+				echo 'Location -----→ ' . $import_meeting['name'] . '<br>';
 				echo 'Location --→ ' . $import_meeting['location'] . '<br>';
 				echo $db_location . '  <br>';
 				echo $import_location . ' <br><br>';
@@ -2642,7 +2637,6 @@ function tsml_verify_identical_records($db_meeting, &$import_meeting, $data_sour
 		if ($db_formatted_address !== $import_formatted_address) {
 			
 			if ($test_mode) {
-				echo 'Name --------------→ ' . $import_meeting['name'] . '<br>';
 				echo 'Formatted Address --→ ' . $import_meeting['name'] . '<br>';
 				echo $db_formatted_address . '  <br>';
 				echo $import_formatted_address . ' <br><br>';
@@ -2764,12 +2758,14 @@ function tsml_verify_identical_records($db_meeting, &$import_meeting, $data_sour
 		}
 	}
 	if (!empty($db_meeting['website']) && !empty($import_meeting['website']) ) {
-		if ($db_meeting['website'] !== $import_meeting['website']) {
+		$db_website = tsml_remove_special_char($db_meeting['website']);
+		$import_website = tsml_remove_special_char($import_meeting['website']);
+		if ($db_website !== $import_website) {
 			
 			if ($test_mode) {
 				echo 'Website --→ ' . $import_meeting['name'] . '<br>';
-				echo $db_meeting['website'] . '  <br>';
-				echo $import_meeting['website'] . ' <br><br>';
+				echo $db_website . '  <br>';
+				echo $import_website . ' <br><br>';
 			}
 
 			return false;
@@ -2777,12 +2773,14 @@ function tsml_verify_identical_records($db_meeting, &$import_meeting, $data_sour
 	}
 
 	if (!empty($db_meeting['website_2']) && !empty($import_meeting['website_2']) ) {
-		if ($db_meeting['website_2'] !== $import_meeting['website_2']) {
+		$db_website_2 = tsml_remove_special_char($db_meeting['website_2']);
+		$import_website_2 = tsml_remove_special_char($import_meeting['website_2']);
+		if ($db_website_2 !== $import_website_2) {
 			
 			if ($test_mode) {
 				echo 'Website 2 --→ ' . $import_meeting['name'] . '<br>';
-				echo $db_meeting['website_2'] . '  <br>';
-				echo $import_meeting['website_2'] . ' <br><br>';
+				echo $db_website_2 . '  <br>';
+				echo $import_website_2 . ' <br><br>';
 			}
 
 			return false;
@@ -3061,10 +3059,11 @@ function tsml_verify_identical_records($db_meeting, &$import_meeting, $data_sour
   //used:	here (called from tsml_verify_identical_records)
   function tsml_remove_special_char($str) {
 
-      $result = str_replace( array( '\'', '"', ',', '.', ';', '<', '>', '&', '"', "'", "’", " ", "#039", "amp", "rsquo", "quot"), '', $str);
- 
-      return $result; 
-  }
+	$str = stripslashes($str);	
+	$result = str_replace( array( '\'', '\’', '"', ',', '.', ';', '<', '>', '&', '"', "'", "’", " ", "Â", "Â’", "%c2%92", "%20", "#nbsp", "#039", "amp", "nbsp", "rsquo", "quot"), '', $str);
+	
+	return $result; 
+  } 
 
   //function to convert a class object to an array
   //used:	here (called from tsml_verify_identical_records)
