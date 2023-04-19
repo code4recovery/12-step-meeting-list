@@ -137,7 +137,7 @@ if (!function_exists('tsml_import_page')) {
 				$data_source_parent_region_id = intval($_POST['tsml_add_data_source_parent_region_id']);
 				
 				//check internet connection
-				fopen($data_source_url,"r")
+				fopen("https://code4recovery.org/","r")
 				or tsml_alert("Unable to connect to $data_source_url", 'error');
 
 				//try fetching	
