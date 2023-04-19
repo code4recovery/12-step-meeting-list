@@ -582,6 +582,9 @@ $tsml_timestamp = microtime(true);
 //for customizing TSML-UI
 $tsml_ui_config = [];
 
+//get the data sources change detection debug policy
+$tsml_detection_test_mode = get_option('tsml_detection_test_mode', 'off');
+
 //these are empty now because polylang might change the language. gets set in the plugins_loaded hook
 $tsml_days = $tsml_days_order = $tsml_programs = $tsml_types_in_use = $tsml_strings = [];
 

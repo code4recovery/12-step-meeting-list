@@ -7,7 +7,7 @@ if (!function_exists('tsml_import_page')) {
 
 	function tsml_import_page()
 	{
-		global $tsml_data_sources, $tsml_programs, $tsml_program, $tsml_nonce, $tsml_sharing, $tsml_slug;
+		global $tsml_data_sources, $tsml_programs, $tsml_program, $tsml_nonce, $tsml_sharing, $tsml_slug, $tsml_detection_test_mode;
 		
 		$error = false;
 		$tsml_data_sources = get_option('tsml_data_sources', []);
@@ -104,9 +104,6 @@ if (!function_exists('tsml_import_page')) {
 							//associate
 							$meeting = array_combine($header, $meeting);
 						}
-
-						//import into buffer, also done this way in data source import
-						//tsml_import_buffer_set($meetings);
 					}
 				}
 			}
@@ -139,12 +136,16 @@ if (!function_exists('tsml_import_page')) {
 				$data_source_name = sanitize_text_field($_POST['tsml_add_data_source_name']);
 				$data_source_parent_region_id = intval($_POST['tsml_add_data_source_parent_region_id']);
 				
+				//check internet connection
+				fopen($data_source_url,"r")
+				or tsml_alert("Unable to connect to $data_source_url", 'error');
+
 				//try fetching	
 				$response = wp_remote_get($data_source_url, [
 					'timeout' => 30,
 					'sslverify' => false,
 				]);
-				
+
 				$body = json_decode($response['body'], true);
 				$import_update_bypass = !array_key_exists('updated', $body[0]) ? 1 : 0;
 
@@ -240,7 +241,7 @@ if (!function_exists('tsml_import_page')) {
 						else {
 							$header_txt = __('Data Source Import');
 							$message = "<h2>$header_txt → $data_source_name</h2>";
-							$message .= __('<p>The following meeting record(s) are being updated during this feed refresh or or file upload operation. Your database will now be in sync with this import.</p>', '12-step-meeting-list');
+							$message .= __('<p>The following meeting record(s) are being updated during this feed refresh or file upload operation. Your database will now be in sync with this import.</p>', '12-step-meeting-list');
 							$message .= "<table border='1'><tbody><tr><th>$tbl_col1_txt</th><th>$tbl_col2_txt</th><th>$tbl_col3_txt</th><th>$tbl_col4_txt</th></tr>";
 							$message .= implode('', $message_lines);
 							$message .= "</tbody></table>";
@@ -402,6 +403,14 @@ if (!function_exists('tsml_import_page')) {
 				tsml_alert(__(' Data source removal failed! ' . $_POST['tsml_remove_data_source'], '12-step-meeting-list'), 'error');
 			}
 		}
+
+		//set change detection test_mode setting on/off
+		if (!empty($_POST['tsml_detection_test_mode']) && isset($_POST['tsml_nonce']) && wp_verify_nonce($_POST['tsml_nonce'], $tsml_nonce)) {
+			$tsml_detection_test_mode = ($_POST['tsml_detection_test_mode'] == 'on') ? 'on' : 'off';
+			update_option('tsml_detection_test_mode', $tsml_detection_test_mode);
+			tsml_alert(__('Data Sources Debug Mode setting changed.', '12-step-meeting-list'));
+		}
+
 
 		/*debugging
 		delete_option('tsml_data_sources');
@@ -650,7 +659,7 @@ if (!function_exists('tsml_import_page')) {
 										'all' 		=> __('Delete Everything', '12-step-meeting-list'),
 									];
 									if (!empty($tsml_data_sources)) {
-										$delete_options['no_data_source'] = __('Delete only internal meeting information not from a listed data source', '12-step-meeting-list');
+										$delete_options['no_data_source'] = __('Delete only internal meeting information not derived from a listed data source', '12-step-meeting-list');
 									}
 									$delete_selected = (empty($_POST['delete']) || !array_key_exists($_POST['delete'], $delete_options)) ? 'no_data_source' : 'all';
 									foreach ($delete_options as $key => $value) { ?>
@@ -665,62 +674,89 @@ if (!function_exists('tsml_import_page')) {
 						</div>
 					</div>
 
+					<div class="stack">
+						<!-- Wheres My Info? -->
+						<div class="postbox stack">
+							<?php
+							$meetings = tsml_count_meetings();
+							$locations = tsml_count_locations();
+							$regions = tsml_count_regions();
+							$groups = tsml_count_groups();
 
-					<!-- Wheres My Info? -->
-					<div class="postbox stack">
-						<?php
-						$meetings = tsml_count_meetings();
-						$locations = tsml_count_locations();
-						$regions = tsml_count_regions();
-						$groups = tsml_count_groups();
+							$pdf_link = 'https://pdf.code4recovery.org/?' . http_build_query([
+								'json' => admin_url('admin-ajax.php') . '?' . http_build_query([
+									'action' => 'meetings',
+									'nonce' => $tsml_sharing === 'restricted' ? wp_create_nonce($tsml_nonce) : null
+								])
+							]);
+							?>
+							<h2><?php _e('Where\'s My Info?', '12-step-meeting-list') ?></h2>
+							<?php if ($tsml_slug) { ?>
+								<p><?php printf(__('Your public meetings page is <a href="%s">right here</a>. Link that page from your site\'s nav menu to make it visible to the public.', '12-step-meeting-list'), get_post_type_archive_link('tsml_meeting')) ?></p>
+							<?php
+							} ?>
 
-						$pdf_link = 'https://pdf.code4recovery.org/?' . http_build_query([
-							'json' => admin_url('admin-ajax.php') . '?' . http_build_query([
-								'action' => 'meetings',
-								'nonce' => $tsml_sharing === 'restricted' ? wp_create_nonce($tsml_nonce) : null
-							])
-						]);
-						?>
-						<h2><?php _e('Where\'s My Info?', '12-step-meeting-list') ?></h2>
-						<?php if ($tsml_slug) { ?>
-							<p><?php printf(__('Your public meetings page is <a href="%s">right here</a>. Link that page from your site\'s nav menu to make it visible to the public.', '12-step-meeting-list'), get_post_type_archive_link('tsml_meeting')) ?></p>
-						<?php
-						} ?>
-
-						<div id="tsml_counts" <?php if (!($meetings + $locations + $groups + $regions)) { ?> class="hidden" <?php } ?>>
-							<p><?php _e('You have:', '12-step-meeting-list') ?></p>
-							<div class="table">
-								<ul class="ul-disc">
-									<li class="meetings<?php if (!$meetings) { ?> hidden<?php } ?>">
-										<?php printf(_n('%s meeting', '%s meetings', $meetings, '12-step-meeting-list'), number_format_i18n($meetings)) ?>
-									</li>
-									<li class="locations<?php if (!$locations) { ?> hidden<?php } ?>">
-										<?php printf(_n('%s location', '%s locations', $locations, '12-step-meeting-list'), number_format_i18n($locations)) ?>
-									</li>
-									<li class="groups<?php if (!$groups) { ?> hidden<?php } ?>">
-										<?php printf(_n('%s group', '%s groups', $groups, '12-step-meeting-list'), number_format_i18n($groups)) ?>
-									</li>
-									<li class="regions<?php if (!$regions) { ?> hidden<?php } ?>">
-										<?php printf(_n('%s region', '%s regions', $regions, '12-step-meeting-list'), number_format_i18n($regions)) ?>
-									</li>
-								</ul>
+							<div id="tsml_counts" <?php if (!($meetings + $locations + $groups + $regions)) { ?> class="hidden" <?php } ?>>
+								<p><?php _e('You have:', '12-step-meeting-list') ?></p>
+								<div class="table">
+									<ul class="ul-disc">
+										<li class="meetings<?php if (!$meetings) { ?> hidden<?php } ?>">
+											<?php printf(_n('%s meeting', '%s meetings', $meetings, '12-step-meeting-list'), number_format_i18n($meetings)) ?>
+										</li>
+										<li class="locations<?php if (!$locations) { ?> hidden<?php } ?>">
+											<?php printf(_n('%s location', '%s locations', $locations, '12-step-meeting-list'), number_format_i18n($locations)) ?>
+										</li>
+										<li class="groups<?php if (!$groups) { ?> hidden<?php } ?>">
+											<?php printf(_n('%s group', '%s groups', $groups, '12-step-meeting-list'), number_format_i18n($groups)) ?>
+										</li>
+										<li class="regions<?php if (!$regions) { ?> hidden<?php } ?>">
+											<?php printf(_n('%s region', '%s regions', $regions, '12-step-meeting-list'), number_format_i18n($regions)) ?>
+										</li>
+									</ul>
+								</div>
 							</div>
 						</div>
 					</div>
 
-					<!-- Export Meeting List -->
-					<div class="postbox stack">
-						<h2><?php _e('Export Meeting List', '12-step-meeting-list') ?></h2>
-						<?php
-						if ($meetings) { ?>
-							<p>
-								<a href="<?php echo admin_url('admin-ajax.php') . '?action=csv' ?>" target="_blank" class="button"><?php _e('Download CSV') ?></a>
-								&nbsp;
-								<a href="<?php echo $pdf_link ?>" target="_blank" class="button"><?php _e('Generate PDF') ?></a>
-							</p>
+					<div class="stack">
+						<!-- Export Meeting List -->
+						<div class="postbox stack">
+							<h2><?php _e('Export Meeting List', '12-step-meeting-list') ?></h2>
+							<?php
+							if ($meetings) { ?>
+								<p>
+									<a href="<?php echo admin_url('admin-ajax.php') . '?action=csv' ?>" target="_blank" class="button"><?php _e('Download CSV') ?></a>
+									&nbsp;
+									<a href="<?php echo $pdf_link ?>" target="_blank" class="button"><?php _e('Generate PDF') ?></a>
+								</p>
 
-						<?php } ?>
-						<p><?php printf(__('Want to send a mass email to your contacts? <a href="%s" target="_blank">Click here</a> to see their email addresses.', '12-step-meeting-list'), admin_url('admin-ajax.php') . '?action=contacts') ?></p>
+							<?php } ?>
+							<p><?php printf(__('Want to send a mass email to your contacts? <a href="%s" target="_blank">Click here</a> to see their email addresses.', '12-step-meeting-list'), admin_url('admin-ajax.php') . '?action=contacts') ?></p>
+						</div>
+
+						<!-- Data Sources Debug Mode -->
+						<div class="postbox stack">
+							<h2><?php _e('Data Sources Debug Mode', '12-step-meeting-list') ?></h2>
+							<?php
+							if ($meetings) { ?>
+								<form class="stack compact" method="post" action="<?php echo $_SERVER['REQUEST_URI'] ?>">
+									<h3><?php _e('Change Detection', '12-step-meeting-list') ?></h3>
+									<p><?php printf(__('Turn test_mode on to see first change detected on an import record.', '12-step-meeting-list')) ?></p>
+									<?php wp_nonce_field($tsml_nonce, 'tsml_nonce', false) ?>
+									<select name="tsml_detection_test_mode" onchange="this.form.submit()">
+										<?php
+										foreach ([
+											'on' => __('On', '12-step-meeting-list'),
+											'off' => __('Off', '12-step-meeting-list'),
+										] as $key => $value) { ?>
+											<option value="<?php echo $key ?>" <?php selected($tsml_detection_test_mode, $key) ?>>
+												<?php echo $value ?>
+											</option>
+										<?php } ?>
+									</select>
+								</form>
+							<?php } ?>
+						</div>
 					</div>
 				</div>
 			</div>

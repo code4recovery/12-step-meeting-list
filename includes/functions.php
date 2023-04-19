@@ -2338,7 +2338,7 @@ function tsml_get_import_changes_only($feed_meetings, $data_source_url, $data_so
 		}
 
 		$is_matched = in_array($meeting_slug, $db_slugs);
-			
+		
 		//add slug to feed array to help determine database removals later on...
 		$feed_slugs[] = $meeting_slug;
 
@@ -2401,9 +2401,11 @@ function tsml_get_import_changes_only($feed_meetings, $data_source_url, $data_so
 
 //function:	return boolean indicating whether or not the matched database and import records are in sync
 //used:		here (called from tsml_get_import_changes_only)
-function tsml_verify_identical_records($db_meeting, &$import_meeting, $data_source_last_update, $test_mode = false) {
-	global $tsml_days, $tsml_programs, $tsml_program;
+function tsml_verify_identical_records($db_meeting, &$import_meeting, $data_source_last_update) {
+	global $tsml_days, $tsml_programs, $tsml_program, $tsml_detection_test_mode;
 
+	$test_mode = ($tsml_detection_test_mode === 'on') ? -1 : 0;
+	
 	//compare db record to import record, field by field
 	if (!empty($db_meeting['post_title']) && !empty($import_meeting['name']) ) {
 
@@ -2414,8 +2416,8 @@ function tsml_verify_identical_records($db_meeting, &$import_meeting, $data_sour
 
 			if ($test_mode) { //TODO: remove test_mode code before release
 				echo 'Name --→ ' . $import_meeting['name'] . '<br>';
-				echo $post_title . '  <br>';
-				echo $import_name . ' <br><br>';
+				echo 'db Name: ' .  $post_title . '  <br>';
+				echo '_Import: ' .  $import_name . ' <br><br>';
 			}
 			
 			return false;
