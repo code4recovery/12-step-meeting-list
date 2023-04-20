@@ -2228,17 +2228,17 @@ function tsml_schedule_import_scan($data_source_url, $data_source_name)
 	$ts = wp_next_scheduled("tsml_scan_data_source", array($data_source_url));
 	if ($ts) {
 		$mydisplaytime = tsml_date_localised(get_option('date_format') . ' ' . get_option('time_format'), $ts); // Use tsml_date_localised to convert to specified format with local site timezone included.
-		tsml_alert("The $data_source_name data source's next scheduled run is $mydisplaytime.  You can adjust the recurrences and the times that the job ('<b>tsml_scan_data_source</b>') runs with the WP_Crontrol plugin.");
+		tsml_alert("The $data_source_name data source's next scheduled change detection scan is $mydisplaytime.  You can adjust the recurrences and the times that the job ('<b>tsml_scan_data_source</b>') runs with the WP_Crontrol plugin.", 'info');
 	} else {
 		// When adding a data source we schedule its daily cron job
 		register_activation_hook(__FILE__, 'tsml_activate_data_source_scan');
 
 		//Schedule the refresh
 		if (wp_schedule_event($timestamp, "daily", "tsml_scan_data_source", array($data_source_url)) === false) {
-			tsml_alert("$data_source_name data source scan scheduling failed!");
+			tsml_alert("$data_source_name data source scan scheduling failed!", 'error');
 		} else {
 			$mydisplaytime = tsml_date_localised(get_option('date_format') . ' ' . get_option('time_format'), $timestamp); // Use tsml_date_localised to convert to specified format with local site timezone included.
-			tsml_alert("The $data_source_name data source's next scheduled run is $mydisplaytime.  You can adjust the recurrences and the times that the job ('<b>tsml_scan_data_source</b>') runs with the WP_Crontrol plugin.");
+			tsml_alert("The $data_source_name data source's next scheduled change detection scan is $mydisplaytime.  You can adjust the recurrences and the times that the job ('<b>tsml_scan_data_source</b>') runs with the WP_Crontrol plugin.", 'info');
 		}
 	}
 }
