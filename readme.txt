@@ -3,7 +3,7 @@ Contributors: Code for Recovery
 Requires at least: 3.2
 Requires PHP: 5.6
 Tested up to: 6.0
-Stable tag: 3.14.13
+Stable tag: 3.15
 
 This plugin helps twelve step recovery programs list their meetings. It standardizes addresses, and displays results in a searchable list and map.
 
@@ -86,8 +86,8 @@ Change Detection can only be enabled when adding a data source to your list of D
 * To be safe, always make a backup of your existing meeting list by using the link on the Import tab to export your Meeting List.
 * If you are going to have change detection on multple data sources, you may choose to add the parent organization(s) to your list of Regions first (i.e. District 1, YourCity Intergroup, etc.).
 * Remove the data source (click on the X next to its Last Refresh timestamp) We suggest first noting the json feed URL (hover over the feed name to view the URL) for use when adding it back.
-* Set data source options: enter a name for your feed, set the feed URL, select the parent region from the Parent Region dropdown, and lastly choose the "Change Detection Enabled" option.
-* Pressing the "Add Data Source" button will register a WordPress Cron Job (tsml_scan_data_source) for the newly added and enabled data source. By default, this cron job is scheduled to run "Once Daily" starting at midnight (12:00 AM).
+* Set data source options: enter a name for your feed, set the feed URL, and select the parent region from the Parent Region dropdown.
+* Pressing the "Add Data Source" button will register a WordPress Cron Job (tsml_scan_data_source) for the newly added data source. By default, this cron job is scheduled to run "Once Daily" starting at midnight (12:00 AM).
 The frequency and time that the cron job runs is optionally configurable with the [WP Crontrol[(https://wordpress.org/plugins/wp-crontrol/)] plugin.
 
 = How can I convert a data source into a maintainable list for my new website? =
@@ -282,6 +282,10 @@ Yes, add the following to your theme's functions.php. Make sure you've enabled t
 1. Edit location
 
 == Changelog ==
+
+= 3.15 =
+* Redesign of Import Data Sources feature to apply DB record updates only when changes detected. - [more info](https://github.com/code4recovery/12-step-meeting-list/issues/1075)
+* 
 
 = 3.14.13 =
 * `[tsml_types_list]` and `[tsml_regions_list]` shortcode links now work with TSML UI - [more info](https://github.com/code4recovery/12-step-meeting-list/issues/1091)
