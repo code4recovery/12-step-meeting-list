@@ -12,20 +12,16 @@ if (!function_exists('tsml_import_page')) {
 		$tsml_data_sources = get_option('tsml_data_sources', []);
 		$meetings = [];
 
-		//database cleanup
+		//meeting data cleanup
 		if (isset($_POST['delete']) && isset($_POST['tsml_nonce']) && wp_verify_nonce($_POST['tsml_nonce'], $tsml_nonce)) {
-			//run deletes
-			if ($_POST['delete'] == 'no_data_source') {
-
-				tsml_delete(tsml_get_non_data_source_ids());
-				tsml_delete_orphans();
-				$message = __('The database cleanup of internal meeting information is complete!', '12-step-meeting-list');
+			$nbr_of_deletable_records = intval( count( tsml_get_non_data_source_ids() ) );
+			//run top-level delete
+			tsml_delete(tsml_get_non_data_source_ids());
+			tsml_delete_orphans();
+			$message = __("Removal of the $nbr_of_deletable_records records in the parent region recordset is complete!", '12-step-meeting-list');
+			if ($nbr_of_deletable_records > 0) {
 				tsml_alert($message, 'success');
-			} elseif ($_POST['delete'] == 'all') {
-				tsml_delete('everything');
-				$message = __('The database cleanup of everything is complete!', '12-step-meeting-list');
-				tsml_alert($message, 'success');
-			}		
+			}
 		}
 
 		//if posting a CSV, check for errors and add it to the import buffer
@@ -570,6 +566,8 @@ if (!function_exists('tsml_import_page')) {
 
 			<div class="three-column">
 				<div class="stack">
+
+					<!-- Example CSV -->
 					<div class="postbox stack">
 						<h2><?php _e('Example CSV', '12-step-meeting-list') ?></h2>
 
@@ -626,33 +624,28 @@ if (!function_exists('tsml_import_page')) {
 						</details>
 					</div>
 
+					<!-- Bulk Removal → Meeting List Data -->
 					<div class="postbox stack">
-						<h2><?php _e('Database Cleanup', '12-step-meeting-list') ?></h2>
+						<h2><?php _e('Bulk Removal → Meeting List Data', '12-step-meeting-list') ?></h2>
 						<form method="post" class="radio stack" action="<?php echo $_SERVER['REQUEST_URI'] ?>" enctype="multipart/form-data">
 						<?php wp_nonce_field($tsml_nonce, 'tsml_nonce', false) ?>
 							<p>
-								<?php _e('What is it that you want to do?', '12-step-meeting-list') ?>
-								<?php
-								$delete_options = [
-									'all' 		=> __('Delete Everything', '12-step-meeting-list'),
-								];
-								if (!empty($tsml_data_sources)) {
-									$delete_options['no_data_source'] = __('Delete only internal meeting information not derived from a listed data source', '12-step-meeting-list');
-								}
-								$delete_selected = (empty($_POST['delete']) || !array_key_exists($_POST['delete'], $delete_options)) ? 'no_data_source' : 'all';
-								foreach ($delete_options as $key => $value) { ?>
-									<label>
-										<input type="radio" name="delete" value="<?php echo $key ?>" <?php checked($key, $delete_selected) ?> >
-										<?php echo $value ?>
-									</label>
-								<?php } ?>
+								<?php _e('Individual data source recordsets can be removed by simply clicking on the removal button (X) to the far right of the listed data source.<br><br>', '12-step-meeting-list') ?>
+								<?php _e('When a maintainable top-level parent region recordset is present it can be removed here. To be safe, consider exporting a backup CSV file first.<br>', '12-step-meeting-list') ?>
 							</p>
-							<input type="submit" class="button" value="<?php _e('Begin Cleanup', '12-step-meeting-list') ?>">
+							<?php
+							$nbr_of_deletable_records = intval( count( tsml_get_non_data_source_ids() ) );
+							if ( $nbr_of_deletable_records > 0 ) { ?>
+								<input type="submit" name="delete" class="button" value="<?php _e('Remove this recordset now!', '12-step-meeting-list') ?>" style="width:180px;">
+							<?php } else { ?>
+								<input type="text" name="delete" value="<?php echo __('No recordset present!', '12-step-meeting-list') ?>" readonly="readonly" style="width:180px;"> 
+							<?php } ?>
 						</form>
 					</div>
 				</div>
 
 				<div class="stack">
+
 					<!-- Wheres My Info? -->
 					<div class="postbox stack">
 						<?php
@@ -739,6 +732,9 @@ if (!function_exists('tsml_import_page')) {
 			</div>
 		</div>
 	</div>
+</div>
+
+
 <?php
 	}
 }
