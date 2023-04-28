@@ -2329,6 +2329,12 @@ function tsml_get_import_changes_only($feed_meetings, $data_source_url, $data_so
 	// list changed and new meetings found in the data source feed
 	foreach ($feed_meetings as $meeting) {
 
+		//when a regions array is used, we need to populate the region and subregion fields from it
+		if (is_array($meeting['regions']) !== false) {
+			$meeting['region'] = $meeting['regions'][0];
+			$meeting['sub_region'] = $meeting['regions'][1];
+		}
+
 		list($day_of_week, $dow_number) = tsml_get_day_of_week_info($meeting['day'], $tsml_days);
 		$meeting_slug =  $meeting['slug'];
 		$db_meeting_id = array_search($meeting_slug, $db_slugs);
