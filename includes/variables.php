@@ -1076,6 +1076,7 @@ add_action('plugins_loaded', function () {
 				'QA' => __('Questions & Answers', '12-step-meeting-list'),
 				'RA' => __('Restricted Access', '12-step-meeting-list'),
 				'SMOK' => __('Smoking', '12-step-meeting-list'),
+				'SPAD' => __('Spiritual Principle a Day', '12-step-meeting-list'),
 				'SPK' => __('Speaker', '12-step-meeting-list'),
 				'STEP' => __('Step', '12-step-meeting-list'),
 				'SWG' => __('Step Working Guide Study', '12-step-meeting-list'),
