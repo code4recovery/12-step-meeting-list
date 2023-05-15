@@ -3111,17 +3111,8 @@ function tsml_clean_file_name($file_name){
 }
 
 //admin footer text removal (i.e.Thank you and version #)
-//add_filter( 'admin_footer_text', '__return_empty_string', 11 );
-//add_filter( 'update_footer',     '__return_empty_string', 11 );
-
-//admin footer text modification
- if (!function_exists('change_admin_footer')) {
-	function change_admin_footer () 
-	{
-		echo '<span id="footer-thankyou">Developed by <a href="http://code4recovery.org" target="_blank">Code For Recovery</a></span>';
-	}
- } 
-add_filter('admin_footer_text', 'change_admin_footer'); 
+add_filter( 'admin_footer_text', '__return_empty_string', 11 );
+add_filter( 'update_footer',     '__return_empty_string', 11 );
 
 /* ******************** end of import_data_sources_redesign ******************** */
 

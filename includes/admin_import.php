@@ -618,7 +618,7 @@ if (!function_exists('tsml_import_page')) {
 										<li><?php echo $value ?></li>
 									<?php } ?>
 								</ul>
-								</li>
+								
 							<?php } ?>
 
 						</details>
