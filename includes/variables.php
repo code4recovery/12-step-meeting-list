@@ -589,10 +589,10 @@ $tsml_detection_test_mode = get_option('tsml_detection_test_mode', 'off');
 $tsml_days = $tsml_days_order = $tsml_programs = $tsml_types_in_use = $tsml_strings = [];
 
 //string url for the meeting finder, or false for no automatic archive page
-if (!isset($tsml_slug)) $tsml_slug = null;
+if (empty($tsml_slug)) $tsml_slug = 'meetings';
 
 add_action('plugins_loaded', function () {
-	global $tsml_days, $tsml_days_order, $tsml_programs, $tsml_slug, $tsml_strings, $tsml_user_interface, $tsml_types_in_use;
+	global $tsml_days, $tsml_days_order, $tsml_programs, $tsml_strings, $tsml_user_interface, $tsml_types_in_use;
 
 	//load internationalization
 	load_plugin_textdomain('12-step-meeting-list', false, '12-step-meeting-list/languages');
@@ -1076,6 +1076,7 @@ add_action('plugins_loaded', function () {
 				'QA' => __('Questions & Answers', '12-step-meeting-list'),
 				'RA' => __('Restricted Access', '12-step-meeting-list'),
 				'SMOK' => __('Smoking', '12-step-meeting-list'),
+				'SPAD' => __('Spiritual Principle a Day', '12-step-meeting-list'),
 				'SPK' => __('Speaker', '12-step-meeting-list'),
 				'STEP' => __('Step', '12-step-meeting-list'),
 				'SWG' => __('Step Working Guide Study', '12-step-meeting-list'),
@@ -1326,11 +1327,6 @@ add_action('plugins_loaded', function () {
 		foreach ($tsml_programs as $key => $value) {
 			$tsml_programs[$key]['flags'] = array_diff($value['flags'], ['TC', 'ONL']);
 		}
-	}
-
-	//the location where the list will show up, eg https://intergroup.org/meetings
-	if ($tsml_slug === null) {
-		$tsml_slug = sanitize_title(__('meetings', '12-step-meeting-list'));
 	}
 
 	//strings that must be synced between the javascript and the PHP

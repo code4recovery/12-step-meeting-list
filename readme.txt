@@ -3,7 +3,7 @@ Contributors: Code for Recovery
 Requires at least: 3.2
 Requires PHP: 5.6
 Tested up to: 6.0
-Stable tag: 3.15
+Stable tag: 3.14.14
 
 This plugin helps twelve step recovery programs list their meetings. It standardizes addresses, and displays results in a searchable list and map.
 
@@ -283,9 +283,9 @@ Yes, add the following to your theme's functions.php. Make sure you've enabled t
 
 == Changelog ==
 
-= 3.15 =
-* Redesign of Import Data Sources feature to apply DB record updates only when changes detected. - [more info](https://github.com/code4recovery/12-step-meeting-list/issues/1075)
-* 
+= 3.14.14 =
+* Fix localization problems when site is in language other than English [more info](https://github.com/code4recovery/12-step-meeting-list/issues/1106)
+* Add new meeting type for NA [more info](https://github.com/code4recovery/12-step-meeting-list/pull/1124)
 
 = 3.14.13 =
 * `[tsml_types_list]` and `[tsml_regions_list]` shortcode links now work with TSML UI - [more info](https://github.com/code4recovery/12-step-meeting-list/issues/1091)
