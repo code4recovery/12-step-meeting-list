@@ -24,9 +24,9 @@ if (!function_exists('tsml_import_page')) {
 			}
 		}
 
-		//if posting a CSV, check for errors and add it to the import buffer
+		//if posting a CSV, check for errors and add it to an array
 		if (isset($_FILES['tsml_import']) && isset($_POST['tsml_nonce']) && wp_verify_nonce($_POST['tsml_nonce'], $tsml_nonce)) {
-			ini_set('auto_detect_line_endings', 1); //to handle mac \r line endings
+			//ini_set('auto_detect_line_endings', 1); //to handle mac \r line endings //is deprecated and will be removed in PHP 9
 			$extension = explode('.', strtolower($_FILES['tsml_import']['name']));
 			$extension = end($extension);
 			if ($_FILES['tsml_import']['error'] > 0) {
@@ -99,7 +99,7 @@ if (!function_exists('tsml_import_page')) {
 								$meeting = array_slice($meeting, 0, $header_count);
 							}
 
-							//associate
+							//associate array converted from CSV Import
 							$meeting = array_combine($header, $meeting);
 						}
 					}
@@ -107,7 +107,7 @@ if (!function_exists('tsml_import_page')) {
 			}
 		}
 
-		//add data source
+		//process data source import arrays 
 		if ( (!empty($_POST['tsml_add_data_source']) && isset($_POST['tsml_nonce']) && wp_verify_nonce($_POST['tsml_nonce'], $tsml_nonce)) || ( isset($_FILES['tsml_import']) ) ) {
 
 			//initialize variables 
@@ -170,10 +170,8 @@ if (!function_exists('tsml_import_page')) {
 
 							if ($nbr_internal_records !== 0 ) { //new top-level file upload
 
-								/* this is the normal file upload refresh operation for top-level loads where it drops all records with no data_source before uploading new ones */
+								/* this is the normal file upload refresh operation for top-level loads */
 
-								tsml_delete(tsml_get_non_data_source_ids());
-								tsml_delete_orphans();
 							}
 						} 					
 
@@ -439,19 +437,21 @@ if (!function_exists('tsml_import_page')) {
 							<?php foreach ($tsml_data_sources as $feed => $properties) { ?>
 								<tr data-source="<?php echo $feed ?>">
 									<td class="small ">
-										<form method="post" action="<?php echo $_SERVER['REQUEST_URI'] ?>">
+										<?php if ($properties['type'] !== 'CSV') { ?>
+											<form method="post" action="<?php echo $_SERVER['REQUEST_URI'] ?>">
 												
-											<?php wp_nonce_field($tsml_nonce, 'tsml_nonce', false) ?>
-											<input type="hidden" name="tsml_add_data_source" value="<?php echo $feed ?>">
-											<input type="hidden" name="tsml_add_data_source_name" value="<?php echo @$properties['name'] ?>">
-											<input type="hidden" name="tsml_add_data_source_parent_region_id" value="<?php echo @$properties['parent_region_id'] ?>">
-											<?php
-												if($properties['type']!=='CSV')	{ ?>
-													<input type="submit" value="Refresh" class="button button-small" style="display: block"; > 
-											<?php } else { ?>  
-													<input type="submit" value="Refresh" class="button button-small" style="display: none"; > 
-											<?php } ?>													
-										</form>
+												<?php wp_nonce_field($tsml_nonce, 'tsml_nonce', false) ?>
+												<input type="hidden" name="tsml_add_data_source" value="<?php echo $feed ?>">
+												<input type="hidden" name="tsml_add_data_source_name" value="<?php echo @$properties['name'] ?>">
+												<input type="hidden" name="tsml_add_data_source_parent_region_id" value="<?php echo @$properties['parent_region_id'] ?>">
+												<?php
+													if($properties['type']!=='CSV')	{ ?>
+														<input type="submit" value="Refresh" class="button button-small" style="display: block"; > 
+												<?php } else { ?>  
+														<input type="submit" value="Refresh" class="button button-small" style="display: none"; > 
+												<?php } ?>													
+											</form>
+										<?php } ?>
 									</td>
 									<td>
 										<a href="<?php echo $feed ?>" target="_blank">
@@ -732,7 +732,6 @@ if (!function_exists('tsml_import_page')) {
 			</div>
 		</div>
 	</div>
-</div>
 
 
 <?php

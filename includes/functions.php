@@ -1360,8 +1360,7 @@ function tsml_import_buffer_set($meetings, $data_source_url = null, $data_source
 {
 	global $tsml_programs, $tsml_program, $tsml_days, $tsml_meeting_attendance_options, $tsml_data_sources;
 
-	//if (strpos($data_source_url, "sheets.googleapis.com") !== false) { refactored to be PHP 8.0 compliant
-	if (str_contains($data_source_url, "sheets.googleapis.com") !== false) {
+	if (!empty($data_source_url) && str_contains($data_source_url, "sheets.googleapis.com") !== false) {
 		$meetings = tsml_import_reformat_googlesheet($meetings);
 	}
 
@@ -1552,7 +1551,7 @@ function tsml_import_buffer_set($meetings, $data_source_url = null, $data_source
 		foreach ($types as $type) {
 			$upper_type = trim(strtoupper($type));
 			if (in_array($upper_type, array_map('strtoupper', array_keys($upper_types)))) {
-				$meetings[$i]['types'][] = $type;
+				$meetings[$i]['types'][] = trim($type);
 			} elseif (in_array($upper_type, array_values($upper_types))) {
 				$meetings[$i]['types'][] = array_search($upper_type, $upper_types);
 			} else {
@@ -2307,6 +2306,10 @@ function tsml_date_localised($format, $timestamp = null)
 	return $datetime->format($format);
 }
 
+/* ******************** end of data_source_change_detection ******************** */
+
+/* ******************** start of import_data_sources_redesign ******************** */
+
 //function:	return array of updated feed records where only a difference is detected between the matched feed and database records
 //used:		admin-import.php
 function tsml_get_import_changes_only($feed_meetings, $data_source_url, $data_source_last_update, &$db_ids_to_delete, &$message_lines)
@@ -2330,7 +2333,7 @@ function tsml_get_import_changes_only($feed_meetings, $data_source_url, $data_so
 	foreach ($feed_meetings as $meeting) {
 
 		//when a regions array is used, we need to populate the region and subregion fields from it
-		if (is_array($meeting['regions']) !== false) {
+		if ( in_array('regions', array_keys($meeting) ) ) {
 			$meeting['region'] = $meeting['regions'][0];
 			$meeting['sub_region'] = $meeting['regions'][1];
 		}
@@ -3107,4 +3110,18 @@ function tsml_clean_file_name($file_name){
     return $clean_file_name; 
 }
 
-/* ******************** end of data_source_change_detection ******************** */
+//admin footer text removal (i.e.Thank you and version #)
+//add_filter( 'admin_footer_text', '__return_empty_string', 11 );
+//add_filter( 'update_footer',     '__return_empty_string', 11 );
+
+//admin footer text modification
+ if (!function_exists('change_admin_footer')) {
+	function change_admin_footer () 
+	{
+		echo '<span id="footer-thankyou">Developed by <a href="http://code4recovery.org" target="_blank">Code For Recovery</a></span>';
+	}
+ } 
+add_filter('admin_footer_text', 'change_admin_footer'); 
+
+/* ******************** end of import_data_sources_redesign ******************** */
+
