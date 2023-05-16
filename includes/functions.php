@@ -2320,7 +2320,7 @@ function tsml_get_import_changes_only($feed_meetings, $data_source_url, $data_so
 	// get local meetings 
 	$data_source_ids = tsml_get_data_source_ids($data_source_url);
 	sort($data_source_ids);
-	
+
 	/* filter out all but the data source meetings  */
 	$db_meetings = array_filter(tsml_get_meetings(), function ($meeting) use ($data_source_ids) {
 		return in_array($meeting['id'], $data_source_ids);

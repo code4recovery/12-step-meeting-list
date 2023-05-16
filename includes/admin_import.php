@@ -123,8 +123,8 @@ if (!function_exists('tsml_import_page')) {
 			//sanitize URL, name and parent region id values
 			if ( isset($_FILES['tsml_import']) ) {
 				
-				$data_source_url = trim(esc_url_raw(tsml_clean_file_name($_FILES["tsml_import"]["name"]), array('http', 'https')));
-				$data_source_name = sanitize_text_field($_POST['tsml_add_data_source_name']);
+				$data_source_url = trim(esc_url_raw(tsml_clean_file_name($_FILES["tsml_import"]["name"])));
+				$data_source_name = $filename = tsml_clean_file_name($_FILES["tsml_import"]["name"]);
 				$data_source_parent_region_id = intval($_POST['tsml_add_data_source_parent_region_id']);
 
 			} else {
@@ -156,22 +156,29 @@ if (!function_exists('tsml_import_page')) {
 
 							$is_new_child_file_upload = true;
 							$header_txt = __('File Upload', '12-step-meeting-list');
-							$message = "<h2>$header_txt → $data_source_name</h2>";
-							$message .= "<p>The meeting records from the file being loaded may be over-written during future file uploads.</p>";
+							$message = "<h2>$header_txt → $filename</h2>";
+							$message .= __("<p>The meeting records from the file being loaded may be over-written during future file uploads.</p>", '12-step-meeting-list');
 							tsml_alert($message, 'info');
 
 						} else { //new file upload for top-level (parent region) meetings
 
-							$is_new_parent_file_upload = true;
-							$header_txt = __('Internal Meetings Upload', '12-step-meeting-list');
-							$message = "<h2>$header_txt → $data_source_name</h2>";
-							$message .= "<p>The meeting records from this file being loaded can safely be edited and saved through your WordPress menu Meetings screen.</p>";
-							tsml_alert($message, 'info');
-
 							if ($nbr_internal_records !== 0 ) { //new top-level file upload
 
-								/* this is the normal file upload refresh operation for top-level loads */
+								/* this is the file upload operation for multiple top-level loads */
+								$header_txt = __('Secondary Top-level Meeting Recordset Upload', '12-step-meeting-list');
+								$message = "<h2>$header_txt → $filename</h2>";
+								$message .=  __("<p>The meeting recordset from this file being loaded can safely be edited and saved through your WordPress menu Meetings screen. The recordset will not be listed under 'Import Data Sources'.</p>", '12-step-meeting-list');
+								tsml_alert($message, 'info');
+								$is_new_parent_file_upload = true;
 
+
+							} else {
+
+								$header_txt = __('Initial Top-level Meeting Recordset Upload', '12-step-meeting-list');
+								$message = "<h2>$header_txt → $filename</h2>";
+								$message .=  __("<p>The meeting recordset from this file being loaded can safely be edited and saved through your WordPress menu Meetings screen. The recordset will not be listed under 'Import Data Sources'.</p>", '12-step-meeting-list');
+								tsml_alert($message, 'info');
+								$is_new_parent_file_upload = true;
 							}
 						} 					
 
@@ -180,7 +187,7 @@ if (!function_exists('tsml_import_page')) {
 						$is_new_parent_feed_import = true;
 						$header_txt = __('Data Source Add');
 						$message = "<h2>$header_txt → $data_source_name</h2>";
-						$message .= "<p>The meeting records from the feed being loaded may be over-written during future feed refreshes.</p>";
+						$message .= __("<p>The meeting records from the feed being loaded may be over-written during future feed refreshes.</p>", '12-step-meeting-list');
 						tsml_alert($message, 'info');
 					}
 
@@ -426,7 +433,7 @@ if (!function_exists('tsml_import_page')) {
 						<thead>
 							<tr>
 								<th class="small align-left"></th>
-								<th><?php _e('Name/Link', '12-step-meeting-list') ?></th>
+								<th><?php _e('CSV File or Data Feed Link', '12-step-meeting-list') ?></th>
 								<th class="align-left"><?php _e('Parent Region', '12-step-meeting-list') ?></th>
 								<th class="align-center"><?php _e('Meetings', '12-step-meeting-list') ?></th>
 								<th class="align-right"><?php _e('Last Refresh', '12-step-meeting-list') ?></th>
@@ -454,9 +461,13 @@ if (!function_exists('tsml_import_page')) {
 										<?php } ?>
 									</td>
 									<td>
-										<a href="<?php echo $feed ?>" target="_blank">
-											<?php echo !empty($properties['name']) ? $properties['name'] : __('Unnamed Feed', '12-step-meeting-list') ?>
-										</a>
+										<?php if ($properties['type'] !== 'CSV') { ?>
+											<a href="<?php echo $feed ?>" target="_blank">
+												<?php echo !empty($properties['name']) ? $properties['name'] : __('Unnamed Feed', '12-step-meeting-list') ?>
+											</a>
+										<?php } else { ?>
+											<?php echo str_replace("http://", "", $feed); ?>
+										<?php } ?>
 									</td>
 									<td>
 										<?php
@@ -535,9 +546,9 @@ if (!function_exists('tsml_import_page')) {
 					</div>					
 					<div id="dv_file_source" style="display:none;" >
 						<form id="frm_file_source "class="row" method="post" action="<?php echo $_SERVER['REQUEST_URI'] ?>" enctype="multipart/form-data">
-							<div class="small" style="display:inline-block;margin-right:20px;">
+							<div class="small" style="display:none;margin-right:20px;">
 								<label for="tsml_add_file_source_name" style="font-size:12px;" >Name</label><br>
-								<input type="text" name="tsml_add_data_source_name" id="tsml_add_file_source_name" class="small" placeholder="<?php _e('i.e.District 02', '12-step-meeting-list') ?>">
+								<input type="text" name="tsml_add_data_source_name" id="tsml_add_file_source_name" class="small" value="File Upload" ?>">
 							</div>
 							<div id="dv_csv_file" class="small" style="display:block;margin-right:20px;">
 								<?php wp_nonce_field($tsml_nonce, 'tsml_nonce', false) ?><br>
