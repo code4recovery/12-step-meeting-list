@@ -1,16 +1,9 @@
 <?php
 
-// Rebuild tsml cache when using bulk actions (edit status or trash)
-add_action('transition_post_status', function ($new_status, $old_status, $post) {
-    if ($post->post_type === 'tsml_meeting') {
-        tsml_cache_rebuild();
-    }
-}, 10, 3);
-
 # Adding region dropdown to filter
 add_action('restrict_manage_posts', function ($post_type) {
 
-    if( $post_type !== 'tsml_meeting' ) {
+    if($post_type !== 'tsml_meeting') {
         return;
     }
 
