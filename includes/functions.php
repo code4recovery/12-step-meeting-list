@@ -2335,7 +2335,7 @@ function tsml_get_import_changes_only($feed_meetings, $data_source_url, $data_so
 		//when a regions array is used, we need to populate the region and subregion fields from it
 		if ( in_array('regions', array_keys($meeting) ) ) {
 			$meeting['region'] = $meeting['regions'][0];
-			$meeting['sub_region'] = $meeting['regions'][1];
+			if (count($meeting['regions']) > 1) {$meeting['sub_region'] = $meeting['regions'][1];}
 		}
 
 		list($day_of_week, $dow_number) = tsml_get_day_of_week_info($meeting['day'], $tsml_days);
