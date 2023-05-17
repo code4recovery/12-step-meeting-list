@@ -82,11 +82,12 @@ add_action('init', function () {
 });
 
 if (is_admin()) {
-    // Rebuild tsml cache when using bulk actions (edit status or trash)
+    // Rebuild tsml cache when using bulk actions to edit status.
+    // Uses a transient to keep track the array of post ids that are being processed
     add_action('transition_post_status', function ($new_status, $old_status, $post) {
         global $pagenow;
         if ($post->post_type === 'tsml_meeting' && $new_status === 'publish' && $pagenow !== 'post.php' && $pagenow !== 'admin-ajax.php') {
-            // Look for transient first. Get it from $_GET if it doesn't exist
+            // Try to load transient first or $_GET['post'] if it doesn't exist
             if ($bulk_ids = get_transient('tsml_bulk_process')) {
                 // Remove current post ID from array
                 if (($key = array_search($post->ID, $bulk_ids)) !== false) {
