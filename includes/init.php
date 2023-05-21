@@ -82,6 +82,38 @@ add_action('init', function () {
 });
 
 if (is_admin()) {
+    // Rebuild tsml cache when using bulk actions to edit status.
+    // Uses a transient to keep track the array of post ids that are being processed
+    add_action('transition_post_status', function ($new_status, $old_status, $post) {
+        global $pagenow;
+        if ($post->post_type === 'tsml_meeting' && $new_status === 'publish' && $pagenow !== 'post.php' && $pagenow !== 'admin-ajax.php') {
+            // Try to load transient first or $_GET['post'] if it doesn't exist
+            if ($bulk_ids = get_transient('tsml_bulk_process')) {
+                // Remove current post ID from array
+                if (($key = array_search($post->ID, $bulk_ids)) !== false) {
+                    unset($bulk_ids[$key]);
+                }
+                // Resave transient
+                set_transient('tsml_bulk_process', $bulk_ids, HOUR_IN_SECONDS);
+                // If the array is empty, we are done. Process now.
+                if (empty($bulk_ids)) {
+                    tsml_update_types_in_use();
+                    tsml_cache_rebuild();
+                    delete_transient('tsml_bulk_process');
+                }
+            } else {
+                if (!empty($_GET['post'])) {
+                    $bulk_ids = $_GET['post'];
+                    // Remove current post ID from array
+                    if (($key = array_search($post->ID, $bulk_ids)) !== false) {
+                        unset($bulk_ids[$key]);
+                    }
+                    // Set transient. Expire in 5 minutes.
+                    set_transient('tsml_bulk_process', $bulk_ids, 5 * MINUTE_IN_SECONDS);
+                }
+            }
+        }
+    }, 10, 3);
     //rebuild cache when trashing or untrashing posts
     add_action('trashed_post', 'tsml_trash_change');
     add_action('untrashed_post', 'tsml_trash_change');
