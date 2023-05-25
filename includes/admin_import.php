@@ -141,7 +141,6 @@ if (!function_exists('tsml_import_page')) {
 
 				//set response body to an empty array rather than erroring
 				$body = (is_array($response) ? json_decode($response['body'], true) : []);
-				//$body = json_decode($response['body'], true) ?? [];
 
 			}
 			/* ----------------------------------------------------------------------- */
@@ -590,6 +589,10 @@ if (!function_exists('tsml_import_page')) {
 							</div>
 
 							<input type="submit" class="button" value="<?php _e('Begin', '12-step-meeting-list') ?>">
+							<p style="margin-left:20px;">
+								<?php _e('<b>Please Note</b><br> Top-level file upload recordsets will not appear in the above Import Data Sources listing <br>and all of its associated regions will appear at the top level in the Regions hierarchy. <br>', '12-step-meeting-list') ?>
+							</p>
+
 						</form>
 					</div>					
 				</div>
@@ -597,6 +600,89 @@ if (!function_exists('tsml_import_page')) {
 
 			<div class="three-column">
 				<div class="stack">
+
+					<!-- Top-level CSV Meeting List Data Removal -->
+					<div class="postbox stack">
+						<h2><?php _e('Top-level CSV Meeting List Data Removal', '12-step-meeting-list') ?></h2>
+						
+							<form class="stack compact" method="post" action="<?php echo $_SERVER['REQUEST_URI'] ?>">
+								<p><?php _e('A top-level CSV imported recordset should be deleted whenever you intend to replace it with a CSV File Upload. If your intention is to append a CSV imported recordset to the existing top-level recordset, then the following setting should indicate that it can only be deleted through this feature.', '12-step-meeting-list') ?></p>
+								<p><?php printf(__('Delete maintainable top-level recordset', '12-step-meeting-list')) ?></p>
+								<?php wp_nonce_field($tsml_nonce, 'tsml_nonce', false) ?>
+								<select name="tsml_delete_top_level" onchange="this.form.submit()">
+									<?php
+									foreach ([
+										'whenever' => __('whenever uploading a top-level CSV file', '12-step-meeting-list'),
+										'only' => __('only through this Data Removal feature', '12-step-meeting-list'),
+									] as $key => $value) { ?>
+										<option value="<?php echo $key ?>" <?php selected($tsml_delete_top_level, $key) ?> >
+											<?php echo $value ?>
+										</option>
+									<?php } ?>
+								</select>
+							</form>
+
+							<form method="post" class="radio stack" action="<?php echo $_SERVER['REQUEST_URI'] ?>" enctype="multipart/form-data">
+							<?php wp_nonce_field($tsml_nonce, 'tsml_nonce', false) ?>
+								<p>
+									<?php _e('When a maintainable top-level parent region recordset is present it can be removed here. To be safe, consider exporting a backup CSV file first.<br>', '12-step-meeting-list') ?>
+								</p>
+								<?php
+								$nbr_of_deletable_records = intval( count( tsml_get_non_data_source_ids() ) );
+								if ( $nbr_of_deletable_records > 0 ) { ?>
+									<input type="submit" name="delete" class="button" value="<?php _e('Remove the maintainable top-level recordset now!', '12-step-meeting-list') ?>" style="width:360px;">
+								<?php } else { ?>
+									<input type="text" name="delete" value="<?php echo __('No maintainable top-level recordset present!', '12-step-meeting-list') ?>" readonly="readonly" style="width:360px;"> 
+								<?php } ?>
+							</form>
+						<h3><?php _e('Data Sources Meeting List Data Removal', '12-step-meeting-list') ?></h3>
+						<p><?php _e('Individual data source recordsets can be removed by simply clicking on the removal button (X) to the far right of the listed data source.<br><br>', '12-step-meeting-list') ?></p>
+					</div>
+				</div>
+
+				<div class="stack">
+
+					<!-- Wheres My Info? -->
+					<div class="postbox stack">
+						<?php
+						$meetings = tsml_count_meetings();
+						$locations = tsml_count_locations();
+						$regions = tsml_count_regions();
+						$groups = tsml_count_groups();
+
+						$pdf_link = 'https://pdf.code4recovery.org/?' . http_build_query([
+							'json' => admin_url('admin-ajax.php') . '?' . http_build_query([
+								'action' => 'meetings',
+								'nonce' => $tsml_sharing === 'restricted' ? wp_create_nonce($tsml_nonce) : null
+							])
+						]);
+						?>
+						<h2><?php _e('Where\'s My Info?', '12-step-meeting-list') ?></h2>
+						<?php if ($tsml_slug) { ?>
+							<p><?php printf(__('Your public meetings page is <a href="%s">right here</a>. Link that page from your site\'s nav menu to make it visible to the public.', '12-step-meeting-list'), get_post_type_archive_link('tsml_meeting')) ?></p>
+						<?php
+						} ?>
+
+						<div id="tsml_counts" <?php if (!($meetings + $locations + $groups + $regions)) { ?> class="hidden" <?php } ?> >
+							<p><?php _e('You have:', '12-step-meeting-list') ?></p>
+							<div class="table">
+								<ul class="ul-disc">
+									<li class="meetings<?php if (!$meetings) { ?> hidden<?php } ?>">
+										<?php printf(_n('%s meeting', '%s meetings', $meetings, '12-step-meeting-list'), number_format_i18n($meetings)) ?>
+									</li>
+									<li class="locations<?php if (!$locations) { ?> hidden<?php } ?>">
+										<?php printf(_n('%s location', '%s locations', $locations, '12-step-meeting-list'), number_format_i18n($locations)) ?>
+									</li>
+									<li class="groups<?php if (!$groups) { ?> hidden<?php } ?>">
+										<?php printf(_n('%s group', '%s groups', $groups, '12-step-meeting-list'), number_format_i18n($groups)) ?>
+									</li>
+									<li class="regions<?php if (!$regions) { ?> hidden<?php } ?>">
+										<?php printf(_n('%s region', '%s regions', $regions, '12-step-meeting-list'), number_format_i18n($regions)) ?>
+									</li>
+								</ul>
+							</div>
+						</div>
+					</div>
 
 					<!-- Example CSV -->
 					<div class="postbox stack">
@@ -655,88 +741,7 @@ if (!function_exists('tsml_import_page')) {
 						</details>
 					</div>
 
-					<!-- Bulk Removal → Meeting List Data -->
-					<div class="postbox stack">
-						<h2><?php _e('Bulk Removal → Meeting List Data', '12-step-meeting-list') ?></h2>
-						
-							<form class="stack compact" method="post" action="<?php echo $_SERVER['REQUEST_URI'] ?>">
-								<h3><?php _e('Top-level Recordset Delete', '12-step-meeting-list') ?></h3>
-								<p><?php printf(__('Delete maintainable top-level recordset', '12-step-meeting-list')) ?></p>
-								<?php wp_nonce_field($tsml_nonce, 'tsml_nonce', false) ?>
-								<select name="tsml_delete_top_level" onchange="this.form.submit()">
-									<?php
-									foreach ([
-										'whenever' => __('whenever uploading a top-level CSV file', '12-step-meeting-list'),
-										'only' => __('only through this Bulk Removal feature', '12-step-meeting-list'),
-									] as $key => $value) { ?>
-										<option value="<?php echo $key ?>" <?php selected($tsml_delete_top_level, $key) ?> >
-											<?php echo $value ?>
-										</option>
-									<?php } ?>
-								</select>
-							</form>
 
-							<form method="post" class="radio stack" action="<?php echo $_SERVER['REQUEST_URI'] ?>" enctype="multipart/form-data">
-							<?php wp_nonce_field($tsml_nonce, 'tsml_nonce', false) ?>
-								<p>
-									<?php _e('Individual data source recordsets can be removed by simply clicking on the removal button (X) to the far right of the listed data source.<br><br>', '12-step-meeting-list') ?>
-									<?php _e('When a maintainable top-level parent region recordset is present it can be removed here. To be safe, consider exporting a backup CSV file first.<br>', '12-step-meeting-list') ?>
-								</p>
-								<?php
-								$nbr_of_deletable_records = intval( count( tsml_get_non_data_source_ids() ) );
-								if ( $nbr_of_deletable_records > 0 ) { ?>
-									<input type="submit" name="delete" class="button" value="<?php _e('Remove the maintainable top-level recordset now!', '12-step-meeting-list') ?>" style="width:360px;">
-								<?php } else { ?>
-									<input type="text" name="delete" value="<?php echo __('No maintainable top-level recordset present!', '12-step-meeting-list') ?>" readonly="readonly" style="width:360px;"> 
-								<?php } ?>
-							</form>
-						
-					</div>
-				</div>
-
-				<div class="stack">
-
-					<!-- Wheres My Info? -->
-					<div class="postbox stack">
-						<?php
-						$meetings = tsml_count_meetings();
-						$locations = tsml_count_locations();
-						$regions = tsml_count_regions();
-						$groups = tsml_count_groups();
-
-						$pdf_link = 'https://pdf.code4recovery.org/?' . http_build_query([
-							'json' => admin_url('admin-ajax.php') . '?' . http_build_query([
-								'action' => 'meetings',
-								'nonce' => $tsml_sharing === 'restricted' ? wp_create_nonce($tsml_nonce) : null
-							])
-						]);
-						?>
-						<h2><?php _e('Where\'s My Info?', '12-step-meeting-list') ?></h2>
-						<?php if ($tsml_slug) { ?>
-							<p><?php printf(__('Your public meetings page is <a href="%s">right here</a>. Link that page from your site\'s nav menu to make it visible to the public.', '12-step-meeting-list'), get_post_type_archive_link('tsml_meeting')) ?></p>
-						<?php
-						} ?>
-
-						<div id="tsml_counts" <?php if (!($meetings + $locations + $groups + $regions)) { ?> class="hidden" <?php } ?> >
-							<p><?php _e('You have:', '12-step-meeting-list') ?></p>
-							<div class="table">
-								<ul class="ul-disc">
-									<li class="meetings<?php if (!$meetings) { ?> hidden<?php } ?>">
-										<?php printf(_n('%s meeting', '%s meetings', $meetings, '12-step-meeting-list'), number_format_i18n($meetings)) ?>
-									</li>
-									<li class="locations<?php if (!$locations) { ?> hidden<?php } ?>">
-										<?php printf(_n('%s location', '%s locations', $locations, '12-step-meeting-list'), number_format_i18n($locations)) ?>
-									</li>
-									<li class="groups<?php if (!$groups) { ?> hidden<?php } ?>">
-										<?php printf(_n('%s group', '%s groups', $groups, '12-step-meeting-list'), number_format_i18n($groups)) ?>
-									</li>
-									<li class="regions<?php if (!$regions) { ?> hidden<?php } ?>">
-										<?php printf(_n('%s region', '%s regions', $regions, '12-step-meeting-list'), number_format_i18n($regions)) ?>
-									</li>
-								</ul>
-							</div>
-						</div>
-					</div>
 				</div>
 
 				<div class="stack">
