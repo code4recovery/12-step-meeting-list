@@ -2498,7 +2498,7 @@ function tsml_verify_identical_records($db_meeting, &$import_meeting, $data_sour
 
 		if (is_array($import_meeting['types'])) {
 			$import_type_keys = $import_meeting['types'];
-			$import_types_str = trim(implode(', ', $import_meeting['types']));
+			$import_types_str = trim(implode(' ', $import_meeting['types']));
 		} else {
 			
 			//make string an array
@@ -2512,7 +2512,7 @@ function tsml_verify_identical_records($db_meeting, &$import_meeting, $data_sour
 			}
 			$import_types_str = implode(' ', $import_type_keys); 
 		} 
-		
+
 		$result = array_diff($db_meeting['types'], $import_type_keys);
 		if (count($result) !== 0) {
 
