@@ -438,14 +438,38 @@ if (!function_exists('tsml_import_page')) {
 			<!-- Import Data Sources -->
 			<div class="postbox stack">
 				<h2><?php _e('Import Data Sources', '12-step-meeting-list') ?></h2>
-				<p>
-			<?php printf(__('You can choose to import your meeting list data from either a CSV file or an external JSON feed, either of which contains a website\'s public meeting information. These sources can be used 
-			to aggregate meetings from different sites into a single master list. The data sources listed below will pull meeting information into this website. A configurable schedule allows for each JSON data   
-			source to be scanned at least once per day looking for updates to the listing. Change Notification email addresses are sent an email when action is required to re-sync a data source with its meeting list information. 
-			Please note: records that you intend to maintain on your website should always be imported using the <u>File Upload</u> feature with the Parent Region set to the default top-level. <b>All other Data Source imported   
-			records will be overwritten when an update from the data source is applied.</b> More information is available at the <a href="%s" target="_blank">Meeting Guide API Specification</a>.', 
-			'12-step-meeting-list'), 'https://github.com/code4recovery/spec') ?>
-				</p>
+				<p><?php printf(__('There are 2 ways to import meetings; both require that your import contain public meeting information which follows the <a href="https://github.com/code4recovery/spec" target="_blank">Meeting Guide API Specification</a>.  
+								Either method can be used to combine meetings from different sites or sources into a single master list. &ensp;<b>NOTE: Either method will add meetings to this website.</b>', '12-step-meeting-list') ) ?> </p>
+				<details style="background-color:#F8F8F8; border: 1px solid lightgray; ">
+					<summary>Read more...</summary>
+					
+					<ol><p>
+						<li><?php _e('&ensp;<u>CSV File Upload</u> - import meetings by uploading a properly formatted CSV file. Use this method if you want to: <br><br>
+							&emsp;&#8226;&ensp;import once and then edit/maintain the meetings in <b>Wordpress</b>, or <br>
+							&emsp;&#8226;&ensp;import separate CSV’s per region or district with updated information from time to time...', '12-step-meeting-list') ?></li>
+							<ul>
+								<li><?php _e('a.  If you want to maintain meetings in Wordpress, leave the default Parent Region option set to “<b>top-level, if none selected…</b>”<br>&emsp;<b>For future imports:</b><br>&emsp;Set the “<b>Delete maintainable top-level recordset</b>” setting (below, in the “Top-level CSV Meeting List Data Removal” box)  to “<b>whenever uploading a top-level CSV file</b>”. <br>&emsp;This replaces all the top-level meetings when re-importing.', '12-step-meeting-list') ?></li>
+								<li><?php _e('b.  If you want to periodically update meetings from an updated CSV file, choose a region from the “Parent Region” dropdown.<br>&emsp;<b>For future imports:</b><br>&emsp;Upload a CSV with the same filename and parent region selected. The importer will only make changes to your existing meeting records when a difference is detected.', '12-step-meeting-list') ?></li>
+							</ul>
+							
+						</li>
+						</p><br>
+						<p>
+						<li><?php _e('&ensp;<u>JSON Feed Import</u> - import meetings which are maintained on a remote source (like another site running 12 Step Meeting List, a Google Sheet, or a manually created JSON file).', '12-step-meeting-list') ?></li>
+							<ul>
+								<li><?php _e('a.&ensp;Enter a unique name for the feed, the feed URL, and optionally select a Parent Region.', '12-step-meeting-list') ?></li>
+								<li><?php _e('b.&ensp;JSON data sources are scanned at least once per day to detect any changes. When changes are found, an email is sent to the “Change Notification Emails” (found on the Settings page) alerting site admins to re-sync the feed to get the latest changes.', '12-step-meeting-list') ?></li>
+							</ul>
+						</li>
+						</p>
+					</ol>
+					
+					<p><?php _e('Data sources can be removed by clicking the “X” on the right side of a data source. NOTE: This will delete only the imported meetings from that data source.', '12-step-meeting-list') ?></p>
+					<p><?php _e('More information is available at the <a href="https://github.com/code4recovery/spec" target="_blank">Meeting Guide API Specification</a>.', '12-step-meeting-list') ?></p>
+					<br>
+				</details>
+
+				
 				<?php if (!empty($tsml_data_sources)) { ?>
 					
 					<table>
@@ -606,8 +630,10 @@ if (!function_exists('tsml_import_page')) {
 						<h2><?php _e('Top-level CSV Meeting List Data Removal', '12-step-meeting-list') ?></h2>
 						
 							<form class="stack compact" method="post" action="<?php echo $_SERVER['REQUEST_URI'] ?>">
-								<p><?php _e('A top-level CSV imported recordset should be deleted whenever you intend to replace it with a CSV File Upload. If your intention is to append a CSV imported recordset to the existing top-level recordset, then the following setting should indicate that it can only be deleted through this feature.', '12-step-meeting-list') ?></p>
-								<p><?php printf(__('Delete maintainable top-level recordset', '12-step-meeting-list')) ?></p>
+								<p><?php _e('Top-level meetings are all meetings previously imported using “File Upload”, with the “Parent Region” dropdown set to “top-level, if none selected…“.', '12-step-meeting-list') ?></p>
+								<p><?php _e('If you intend to replace all of your top-level meetings with a new “File Upload”, set the “Delete maintainable top-level recordset” dropdown to “<b>whenever uploading a top-level CSV file</b>”. This will replace all top-level meetings during the import of your file.', '12-step-meeting-list') ?></p>
+								<p><?php _e('If you intend to append new meetings with a new “File Upload”, set the  “Delete maintainable top-level recordset” dropdown to the default “<b>only through this Data Removal feature</b>”. This will allow the addition of all the meetings from your CSV to your site during the import process. NOTE: To avoid duplicate meetings, ensure your CSV does not contain meetings you already have on your site.', '12-step-meeting-list') ?></p>
+								<p><?php printf(__('<b>Delete maintainable top-level recordset</b>', '12-step-meeting-list')) ?></p>
 								<?php wp_nonce_field($tsml_nonce, 'tsml_nonce', false) ?>
 								<select name="tsml_delete_top_level" onchange="this.form.submit()">
 									<?php
