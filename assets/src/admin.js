@@ -10,7 +10,7 @@ jQuery(function ($) {
 
 			//update the counts on the right
 			var $counts = $('#tsml_counts');
-			var types = ['meetings', 'locations', 'groups', 'regions'];
+			var types = ['top_level_meetings', 'meetings', 'locations', 'groups', 'regions'];
 			for (var i = 0; i < types.length; i++) {
 				var type = types[i];
 				if (data.counts[type] > 0) {
@@ -344,3 +344,12 @@ jQuery(function ($) {
 		if ($('input#formatted_address').val()) $('input#formatted_address').trigger('change');
 	}
 });
+function toggle_import_source(selected) {
+	if (selected == 'csv') {
+		document.getElementById('dv_file_source').style.display = 'block';
+		document.getElementById('dv_data_source').style.display = 'none';
+	} else {
+		document.getElementById('dv_file_source').style.display = 'none';
+		document.getElementById('dv_data_source').style.display = 'block';
+	}
+}

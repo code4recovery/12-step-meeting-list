@@ -713,7 +713,7 @@ if (!function_exists('tsml_import_page')) {
 						<?php
 						} ?>
 
-						<div id="tsml_counts" <?php if (!($meetings + $locations + $groups + $regions)) { ?> class="hidden" <?php } ?> >
+						<div id="tsml_counts" <?php if (!($top_level_meetings + $meetings + $locations + $groups + $regions)) { ?> class="hidden" <?php } ?> >
 							<p><?php _e('You have:', '12-step-meeting-list') ?></p>
 							<div class="table">
 								<ul class="ul-disc">
