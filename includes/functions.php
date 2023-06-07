@@ -212,6 +212,13 @@ function tsml_count_meetings()
 	return count(tsml_get_all_meetings('publish'));
 }
 
+//function:	return integer number of live top-level meetings
+//used:		admin-import.php
+function tsml_count_top_level()
+{
+	return count( tsml_get_non_data_source_ids() );
+}
+
 //function:	return integer number of live regions
 //used:		shortcode, admin-import.php, tsml_ajax_import()
 function tsml_count_regions()
@@ -1427,6 +1434,19 @@ function tsml_import_buffer_set($meetings, $data_source_url = null, $data_source
 
 	$meetings = array_merge($meetings, $meetings_to_add);
 
+	/*when top-level recordset, register in options table!
+	if ($data_source_url === null) {
+		$tsml_csv_top_level = [
+			'status' => 'OK',
+			'last_import' => current_time('timestamp'),
+			'count_meetings' => 0,
+			'name' => 'top-level maintainable recordset',
+			'parent_region_id' => 0,
+			'change_detect' => 'disabled',
+			'type' => 'CSV',
+		];
+	} */
+
 	//prepare array for import buffer
 	$count_meetings = count($meetings);
 	for ($i = 0; $i < $count_meetings; $i++) {
@@ -2491,29 +2511,32 @@ function tsml_verify_identical_records($db_meeting, &$import_meeting, $data_sour
 	}
 
 	if (!empty($db_meeting['types']) && !empty($import_meeting['types']) ) {
-		//uppercasing for value matching later
-		$upper_types = array_map('strtoupper', $tsml_programs[$tsml_program]['types']);
-		$import_type_keys = [];
-		$db_types_str = trim(implode(' ', $db_meeting['types']));
+
+		$db_types_str = implode(",", $db_meeting['types']);
 
 		if (is_array($import_meeting['types'])) {
-			$import_type_keys = $import_meeting['types'];
-			$import_types_str = trim(implode(' ', $import_meeting['types']));
+			//make sure we have no empty spaces in the array (e.g. "types":["G"," LGBTQ","O","ONL"])
+			$import_types_str =  str_replace(" ", "", implode(",", $import_meeting['types']));
+			$import_meeting['types'] = explode(",",$import_types_str);
 		} else {
-			
-			//make string an array
-			$arr_import_types = array_map('strtoupper', explode(', ', $import_meeting['types']));
-			//populate the import key array to match with the db
+			//convert type values string to array keys (e.g. "types":"Gay, LGBTQ, Open, Online Meeting" to ["G","LGBTQ","O","ONL"])
+			$upper_types = array_map('strtoupper', $tsml_programs[$tsml_program]['types']);
+			$import_type_keys = [];
+			$arr_import_types = array_map('strtoupper', explode(',', $import_meeting['types']));
+			//populate the import key array to match against the db array
 			foreach ($arr_import_types as $type_value) {
-				$key = array_search($type_value, $upper_types); 
-				if ($key !== '') {
-					array_push($import_type_keys, $key);
+				$type_value = trim($type_value);
+				$type_key = array_search($type_value, $upper_types); 
+				if ($type_key !== '') {
+					$import_type_keys[] = $type_key . ',';
 				}
 			}
-			$import_types_str = implode(' ', $import_type_keys); 
+			$import_types_str = implode($import_type_keys); 
+			$import_meeting['types'] = explode(",",$import_types_str);
 		} 
 
-		$result = array_diff($db_meeting['types'], $import_type_keys);
+		$result = array_diff($db_meeting['types'], $import_meeting['types']);
+
 		if (count($result) !== 0) {
 
 			if ($test_mode) {
