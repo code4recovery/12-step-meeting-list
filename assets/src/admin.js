@@ -1,62 +1,25 @@
+/* Javascript for admin pages */
 jQuery(function ($) {
-	//recursively run import
-	function runImport() {
-		$.getJSON(tsml.ajaxurl + '?action=tsml_import', function (data) {
-			//update progress bar
-			var $progress = $('body.tsml_meeting_page_import div#tsml_import_progress');
-			var total = $progress.attr('data-total');
-			var percentage = Math.floor(((total - data.remaining) / total) * 95) + 5 + '%';
-			$progress.find('.progress-bar').css({width: percentage}).text(percentage);
+	/********************
+	a) procedural logic
+	********************/
 
-			//update the counts on the right
-			var $counts = $('#tsml_counts');
-			var types = ['top_level_meetings', 'meetings', 'locations', 'groups', 'regions'];
-			for (var i = 0; i < types.length; i++) {
-				var type = types[i];
-				if (data.counts[type] > 0) {
-					if ($counts.hasClass('hidden')) $counts.removeClass('hidden');
-					$li = $counts.find('li.' + type);
-					if ($li.hasClass('hidden')) $li.removeClass('hidden');
-					if ($li.text(data.descriptions[type]));
-				}
-			}
-
-			//update the counts in the data sources
-			if (data.data_sources) {
-				$.each(data.data_sources, function (url, props) {
-					$('tr[data-source="' + url + '"] td.count_meetings').text(props.count_meetings);
-				});
-			}
-
-			//if there are errors, display message and append them to it
-			if (data.errors.length) {
-				$errors = $('#tsml_import_errors');
-				if ($errors.hasClass('hidden')) $errors.removeClass('hidden');
-				for (var i = 0; i < data.errors.length; i++) $errors.append(data.errors[i]);
-			}
-
-			//if there are more to import, go again
-			if (data.remaining) runImport();
-		}).fail(function (jqxhr, textStatus, error) {
-			console.warn(textStatus, error);
-		});
-	}
-
-	//import & settings page
+	//Import & Export page
 	if ($('div#tsml_import_progress').length) {
-		$('div#tsml_import_progress div.progress-bar').css({width: '5%'});
+		$('div#tsml_import_progress div.progress-bar').css({ width: '5%' });
 		$('#tsml_import_errors').addClass('hidden');
+		
 		runImport();
 	}
 
-	//delete data source or email contact
-	$('table form span').click(function () {
-		$(this).parent().submit();
-	});
+	/***********************
+	b) jQuery event handlers
+	***********************/
 
 	//meeting add / edit page
 	var $post_type = $('input#post_type');
 	if ($post_type.length && $post_type.val() == 'tsml_meeting') {
+		//alert('meeting add / edit page');
 		//make sure geocoding is finished (basic form validation)
 		var form_valid = true;
 
@@ -247,7 +210,7 @@ jQuery(function ($) {
 						//set lat + lng
 						$('input#latitude').val(geocoded.latitude);
 						$('input#longitude').val(geocoded.longitude);
-						createMap(false, {0: geocoded});
+						createMap(false, { 0: geocoded });
 
 						//guess region if not set
 						var region_id = false;
@@ -342,5 +305,147 @@ jQuery(function ($) {
 
 		//when page loads, run lookup
 		if ($('input#formatted_address').val()) $('input#formatted_address').trigger('change');
+	}
+
+	//delete data source or email contact
+	$('table form span').click(function () {
+		$(this).parent().submit();
+	});
+
+	//fire count reset
+	$(document).ready(function () {
+		$("#tsml_removal").click(function () {
+			reset_counts();
+		});
+	});
+
+	//disable data removal button when recordset not present
+	$(document).ready( function () {
+		let removal_input = document.querySelector("#tsml_removal_input");
+		let removal_button = document.querySelector("#tsml_removal.button");
+
+		delete_input.addEventListener("change", state_handler());
+	});
+
+	//toggle between the feed import and file upload divs
+	$('#import_radio_group input:radio').click(function () {
+		toggle_import_source($(this).val());
+	});
+
+	/******************** 
+	c) functions
+	********************/
+
+	//reset "Where's My Info" counts
+	function reset_counts() {
+
+		$.getJSON(tsml.ajaxurl + '?action=tsml_removal', function (data) {
+
+			//update the counts on the "Where's My Info?" card
+			var $counts = $('#tsml_counts');
+			var $removal_button = $('#tsml_removal.button');
+			var types = ['top_level_meetings', 'meetings', 'locations', 'groups', 'regions'];
+			for (var i = 0; i < types.length; i++) {
+				var type = types[i];
+				//alert('Reset Count Update: ' + type + ' = ' + data.counts[type]);
+				if ((type === 'top_level_meetings') && (data.counts[type] == 0)) {
+					if ($removal_button.hasClass('disabled')) $removal_button.addClass('disabled');
+					if ($counts.hasClass('hidden')) $counts.removeClass('hidden');
+					$li = $counts.find('li.' + type);
+					if (!$li.hasClass('hidden')) $li.addClass('hidden');
+					if ($li.text(data.descriptions[type]));
+
+				} else if (data.counts[type] > 0) {
+					if ($counts.hasClass('hidden')) $counts.removeClass('hidden');
+					$li = $counts.find('li.' + type);
+					if ($li.hasClass('hidden')) $li.removeClass('hidden');
+					if ($li.text(data.descriptions[type]));
+				}
+			}
+
+			//if there are errors, display message and append them to it
+			if (data.errors.length) {
+				$errors = $('#tsml_import_errors');
+				if ($errors.hasClass('hidden')) $errors.removeClass('hidden');
+				for (var i = 0; i < data.errors.length; i++) $errors.append(data.errors[i]);
+			}
+
+			//alert('End of Reset Count');
+
+		}).fail(function (jqxhr, textStatus, error) {
+			console.warn(textStatus, error);
+		});
+	}
+
+	//recursively run import
+	function runImport() {
+		$.getJSON(tsml.ajaxurl + '?action=tsml_import', function (data) {
+			//update progress bar
+			var $progress = $('body.tsml_meeting_page_import div#tsml_import_progress');
+			var total = $progress.attr('data-total');
+			var percentage = Math.floor(((total - data.remaining) / total) * 95) + 5 + '%';
+			$progress.find('.progress-bar').css({ width: percentage }).text(percentage);
+
+			//update the counts on the "Where's My Info?" card
+			var $counts = $('#tsml_counts');
+			var $removal_button = $('#tsml_removal.button');
+			var types = ['top_level_meetings', 'meetings', 'locations', 'groups', 'regions'];
+			for (var i = 0; i < types.length; i++) {
+				var type = types[i];
+				//alert('Run Import Update: ' + type + ' = ' + data.counts[type]);
+				if (type === 'top_level_meetings') {
+					if ($removal_button.hasClass('disabled')) $removal_button.removeClass('disabled');
+					if ($counts.hasClass('hidden')) $counts.removeClass('hidden');
+					$li = $counts.find('li.' + type);
+					if ($li.hasClass('hidden')) $li.removeClass('hidden');
+					if ($li.text(data.descriptions[type]));
+					
+				} else if (data.counts[type] > 0) {
+					if ($counts.hasClass('hidden')) $counts.removeClass('hidden');
+					$li = $counts.find('li.' + type);
+					if ($li.hasClass('hidden')) $li.removeClass('hidden');
+					if ($li.text(data.descriptions[type]));
+				}
+			}
+
+			//update the counts in the "Import Data Sources" card
+			if (data.data_sources) {
+				$.each(data.data_sources, function (url, props) {
+					$('tr[data-source="' + url + '"] td.count_meetings').text(props.count_meetings);
+				});
+			}
+
+			//if there are errors, display message and append them to it
+			if (data.errors.length) {
+				$errors = $('#tsml_import_errors');
+				if ($errors.hasClass('hidden')) $errors.removeClass('hidden');
+				for (var i = 0; i < data.errors.length; i++) $errors.append(data.errors[i]);
+			}
+
+			//if there are more to import, go again
+			if (data.remaining) runImport();
+		}).fail(function (jqxhr, textStatus, error) {
+			console.warn(textStatus, error);
+		});
+	}
+
+	//enable or disable data removal button
+	function state_handler() {
+		if (document.querySelector(".removal_input").value == "") {
+			removal_button.prop('disabled', true); //button remains disabled
+		} else {
+			removal_button.prop('disabled', false); //button is enabled
+		}
+	}
+
+	//called from admin_import.php
+	function toggle_import_source(selected) {
+		if (selected == 'csv') {
+			document.getElementById('dv_file_source').style.display = 'block';
+			document.getElementById('dv_data_source').style.display = 'none';
+		} else {
+			document.getElementById('dv_file_source').style.display = 'none';
+			document.getElementById('dv_data_source').style.display = 'block';
+		}
 	}
 });

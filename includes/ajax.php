@@ -7,6 +7,12 @@ add_action('wp_ajax_tsml_delete', function () {
 	die('deleted');
 });
 
+//delete only top-level maintainable meetings and locations
+add_action('wp_ajax_tsml_delete_top_level', function () {
+    tsml_delete(tsml_get_non_data_source_ids());
+    die('deleted');
+});
+
 //debug info
 add_action('wp_ajax_tsml_info', 'tsml_ajax_info');
 add_action('wp_ajax_nopriv_tsml_info', 'tsml_ajax_info');
@@ -309,8 +315,8 @@ function tsml_ajax_feedback()
 }
 
 
-//function: receives user feedback, sends email to admin
-//used:		single-meetings.php
+//function: Get GeoCoded Address
+//used:	here
 add_action('wp_ajax_tsml_geocode', 'tsml_ajax_geocode');
 add_action('wp_ajax_nopriv_tsml_geocode', 'tsml_ajax_geocode');
 function tsml_ajax_geocode()
@@ -323,6 +329,7 @@ function tsml_ajax_geocode()
 //ajax function to import the meetings in the import buffer
 //used by admin_import.php
 add_action('wp_ajax_tsml_import', function () {
+
 	global $tsml_data_sources;
 
 	$meetings	= get_option('tsml_import_buffer', []);
@@ -538,7 +545,8 @@ add_action('wp_ajax_tsml_import', function () {
 	remove_filter('wp_insert_post_data', 'tsml_import_post_modified', 99);
 
 	//send json result to browser
-	$meetings  = tsml_count_meetings();
+    $top_level_meetings = tsml_count_top_level();
+    $meetings  = tsml_count_meetings();
 	$locations = tsml_count_locations();
 	$regions   = tsml_count_regions();
 	$groups	= tsml_count_groups();
@@ -557,16 +565,40 @@ add_action('wp_ajax_tsml_import', function () {
 	wp_send_json([
 		'errors' => $errors,
 		'remaining' => count($remaining),
-		'counts' => compact('meetings', 'locations', 'regions', 'groups'),
+		'counts' => compact('top_level_meetings', 'meetings', 'locations', 'regions', 'groups'),
 		'data_sources' => $tsml_data_sources,
 		'descriptions' => [
-			'meetings' => sprintf(_n('%s meeting', '%s meetings', $meetings, '12-step-meeting-list'), number_format_i18n($meetings)),
+            'top_level_meetings' => sprintf(_n('%s top-level maintainable meeting', '%s top-level maintainable meetings', $top_level_meetings, '12-step-meeting-list'), number_format_i18n($top_level_meetings)),
+            'meetings' => sprintf(_n('%s meeting', '%s meetings', $meetings, '12-step-meeting-list'), number_format_i18n($meetings)),
 			'locations' => sprintf(_n('%s location', '%s locations', $locations, '12-step-meeting-list'), number_format_i18n($locations)),
 			'groups' => sprintf(_n('%s group', '%s groups', $groups, '12-step-meeting-list'), number_format_i18n($groups)),
 			'regions' => sprintf(_n('%s region', '%s regions', $regions, '12-step-meeting-list'), number_format_i18n($regions)),
 		],
 	]);
 });
+
+//ajax fucntion to update the "Where's My Info?" counts after removal of top-level maintainable meetings
+//used by admin_import.php
+add_action('wp_ajax_tsml_removal', function () {
+    //send json result to browser
+    $top_level_meetings = 0;
+    $meetings = tsml_count_meetings();
+    $locations = tsml_count_locations();
+    $regions = tsml_count_regions();
+    $groups = tsml_count_groups();
+
+    wp_send_json([
+        'counts' => compact('top_level_meetings', 'meetings', 'locations', 'regions', 'groups'),
+        'descriptions' => [
+            'top_level_meetings' => sprintf(_n('%s top-level meeting', '%s top-level maintainable meetings', $top_level_meetings, '12-step-meeting-list'), number_format_i18n($top_level_meetings)),
+            'meetings' => sprintf(_n('%s meeting', '%s meetings', $meetings, '12-step-meeting-list'), number_format_i18n($meetings)),
+            'locations' => sprintf(_n('%s location', '%s locations', $locations, '12-step-meeting-list'), number_format_i18n($locations)),
+            'groups' => sprintf(_n('%s group', '%s groups', $groups, '12-step-meeting-list'), number_format_i18n($groups)),
+            'regions' => sprintf(_n('%s region', '%s regions', $regions, '12-step-meeting-list'), number_format_i18n($regions)),
+        ],
+    ]);
+});
+
 
 //api ajax function
 //used by theme, web app, mobile app
