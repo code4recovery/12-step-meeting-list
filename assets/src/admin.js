@@ -347,7 +347,7 @@ jQuery(function ($) {
 			var types = ['top_level_meetings', 'meetings', 'locations', 'groups', 'regions'];
 			for (var i = 0; i < types.length; i++) {
 				var type = types[i];
-				//alert('Reset Count Update: ' + type + ' = ' + data.counts[type]);
+				
 				if ((type === 'top_level_meetings') && (data.counts[type] == 0)) {
 					if ($removal_button.hasClass('disabled')) $removal_button.addClass('disabled');
 					if ($counts.hasClass('hidden')) $counts.removeClass('hidden');

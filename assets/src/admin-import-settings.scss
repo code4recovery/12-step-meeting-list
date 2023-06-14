@@ -66,6 +66,46 @@ a.button-large {
 	flex-direction: column;
 }
 
+.add-import-container {
+	background-color: #F8F8F8;
+	border: 1px solid lightgray;
+	margin: 20px 0 0 0;
+	padding: 20px;
+}
+
+.import-radio-group {
+	display: block;
+	margin: 20px;
+}
+
+.thirty-pixel-spacer-left {
+	padding-left: 30px;
+}
+
+.twenty-pixel-spacer-right {
+	margin-right: 20px;
+}
+
+.details {
+	padding: 10px;
+}
+
+.read-more-ol {
+	padding-left: 20px;
+}
+
+.hide {
+	display: none;
+}
+
+.show {
+	display: inline-block;
+}
+
+.import-label-setting {
+	font-size: 12px;
+}
+
 @media (min-width: 1200px) {
 	.three-column {
 		align-items: flex-start;
