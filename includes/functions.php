@@ -224,6 +224,7 @@ function tsml_count_top_level()
 function tsml_count_regions()
 {
 	return count(tsml_get_all_regions());
+    //return wp_count_terms('tsml_region', ['hide_empty' => false, 'parent' => 1]);
 }
 
 //function:	add local overrides to google (this may someday be removed)
@@ -258,6 +259,7 @@ function tsml_custom_post_types()
 
 	$is_public = !empty($tsml_slug);
 
+	// Add new taxonomy, make it hierarchical (like categories)
 	register_taxonomy('tsml_region', 'tsml_location', [
 		'labels' => [
 			'name' => __('Regions', '12-step-meeting-list'),
@@ -359,43 +361,265 @@ function tsml_custom_types($types)
 	asort($tsml_programs[$tsml_program]['types']);
 }
 
-//function:	efficiently remove an array of post_ids
-//used:		tsml_delete_orphans(), admin-import.php
-function tsml_delete($post_ids)
-{
-	global $wpdb;
 
-	//special case
+//function:	remove an array of post_ids and associated regions
+//used:		tsml_delete_orphans(), admin-import.php
+function tsml_delete($post_ids, $data_source_url = null, $data_source_parent_region_id = null)
+{
+    global $wpdb, $tsml_data_sources, $tsml_csv_top_level, $tsml_detection_test_mode;
+    $test_mode = ($tsml_detection_test_mode === 'on') ? -1 : 0;
+
+    //get options table info
+    $tsml_csv_top_level = get_option('tsml_csv_top_level');
+    $tsml_data_sources = get_option('tsml_data_sources', []);
+
+	//initialize processing booleans
+    $is_delete_everything = $is_delete_nothing = $is_delete_no_data_source = $is_delete_data_source_only = false;
+
 	if ($post_ids === 'everything') {
 
-		$post_ids = get_posts([
-			'post_type' => ['tsml_meeting', 'tsml_location', 'tsml_group'],
-			'post_status' => 'any',
-			'fields' => 'ids',
-			'numberposts' => -1,
-		]);
+		$is_delete_everything = true;
+        if ($test_mode) {
+            echo 'is_delete_everything = true<br>';
+        }
 
-		//when we're deleting *everything*, also delete regions & districts
-		if ($term_ids = implode(',', $wpdb->get_col('SELECT term_id FROM ' . $wpdb->term_taxonomy . ' WHERE taxonomy IN ("tsml_district", "tsml_region")'))) {
-			$wpdb->query('DELETE FROM ' . $wpdb->terms . ' WHERE term_id IN (' . $term_ids . ')');
-			$wpdb->query('DELETE FROM ' . $wpdb->term_taxonomy . ' WHERE term_id IN (' . $term_ids . ')');
+    } elseif ($post_ids === 'no_data_source') {
+        $is_delete_no_data_source = true;
+
+        if ($test_mode) {
+			echo 'is_delete_no_data_source = true<br>';
+        }
+
+    } elseif ($post_ids === 'data_source_only') {
+        if ($data_source_url == null || $data_source_parent_region_id == null) {
+            tsml_alert(__('tsml_delete error: Required parameter missing...', '12-step-meeting-list'), 'error');
+            return;
+        }
+		$is_delete_data_source_only = true;
+        if ($test_mode) {
+			echo 'is_delete_data_source_only = true<br>';
+        }
+
+    } elseif (is_array($post_ids)) {
+
+        //when only an array of post_ids passed, simply delete the meeting records
+
+        $is_delete_nothing = true;
+        if ($test_mode) {
+            echo 'is_delete_nothing = true<br>';
+        }
+
+    } else {
+
+        tsml_alert(__('tsml_delete error: Invalid Parameter passed.', '12-step-meeting-list'), 'error');
+        return;
+    }
+
+
+	//***********************>
+	if ($is_delete_everything) {
+	//***********************>
+        //step 1: Get ids for all meeting records
+        //-------
+        $post_ids = get_posts([
+            'post_type' => ['tsml_meeting', 'tsml_location', 'tsml_group'],
+            'post_status' => 'any',
+            'fields' => 'ids',
+            'numberposts' => -1,
+        ]);
+
+        //step 2: Create array of term ids used to delete all the region or district terms and term_taxonomy records
+        //-------
+        if ($term_ids = implode(',', $wpdb->get_col('SELECT term_id FROM ' . $wpdb->term_taxonomy . ' WHERE taxonomy IN ("tsml_district", "tsml_region")'))) {
+            @$wpdb->query('DELETE FROM ' . $wpdb->terms . ' WHERE term_id IN (' . $term_ids . ')');
+            @$wpdb->query('DELETE FROM ' . $wpdb->term_taxonomy . ' WHERE term_id IN (' . $term_ids . ')');
+        }
+
+        if (empty($post_ids) || !is_array($post_ids))
+            return;
+
+        //step 3: delete meeting info from the posts & postmeta tables
+        //-------
+        $post_ids = array_map('intval', $post_ids);
+        $post_ids = array_unique($post_ids);
+        $post_ids = implode(', ', $post_ids);
+        @$wpdb->query('DELETE FROM ' . $wpdb->posts . ' WHERE ID IN (' . $post_ids . ')');
+        @$wpdb->query('DELETE FROM ' . $wpdb->postmeta . ' WHERE post_id IN (' . $post_ids . ')');
+
+		//step 4: cleanup term_relationhips & orphaned locations and groups
+        //-------
+		@$wpdb->query('DELETE FROM ' . $wpdb->term_relationships . ' WHERE object_id IN (' . $post_ids . ')');
+		tsml_delete_orphans();
+
+		//step 5: remove registrations from wp_options table
+        //-------
+        if (get_option('tsml_csv_top_level')) {
+            unset($tsml_csv_top_level);
+            delete_option('tsml_csv_top_level');
+        }
+        if (get_option('tsml_data_sources')) {
+            unset($tsml_data_sources[$data_source_url]);
+            delete_option('tsml_data_sources');
+        }
+
+    //***********************************>
+	} elseif ($is_delete_no_data_source) {
+	//***********************************>
+
+        //step 1: create array of term ids and delete top-level CSV input region or district terms and term_taxonomy records
+		//-------
+
+		$term_ids = $data_source_region_ids = [];
+
+		//create array of data source parent region term ids to be excluded from the selection process
+        if (get_option('tsml_data_sources')) {
+
+			foreach ($tsml_data_sources as $ds_url => $props) {
+				//build exclusion array from Import Data Sources parent ids
+				if (intval($tsml_data_sources[$ds_url]['parent_region_id']) !== -1) {
+					$data_source_region_ids[] = intval($tsml_data_sources[$ds_url]['parent_region_id']);
+                }
+            }
+        }
+
+		//construct sql to select top-level parent term ids
+		$sql = 'SELECT a.term_id FROM ' . $wpdb->terms . ' a ' .
+			'INNER JOIN ' . $wpdb->term_taxonomy . ' b ON a.term_id = b.term_id ' .
+			'WHERE b.taxonomy IN ("tsml_region", "tsml_district") AND b.parent = 0 ';
+		$parent_term_ids = $wpdb->get_col($sql);
+
+		if (count($data_source_region_ids) > 0) {
+            //apply exclusion array of data source parent ids from the selected top-level parent terms
+            $parent_term_ids = array_diff($parent_term_ids, $data_source_region_ids);
+        }
+
+		//combine remaining top-level parent term_id's with their children
+		$term_ids = $parent_term_ids;
+		foreach ($parent_term_ids as $pterm) {
+			//add the child term ids to the parents for removal
+			if (taxonomy_exists('tsml_region', $pterm)) {
+				$children = get_term_children($pterm, 'tsml_region');
+				$term_ids = array_merge($term_ids, $children);
+			}
 		}
-	}
 
-	if (empty($post_ids) || !is_array($post_ids)) return;
+        //delete non data source regions from wp_terms and wp_term_taxonomy tables
+		if ($term_ids = implode(',', $term_ids)) {
+			@$wpdb->query('DELETE FROM ' . $wpdb->terms . ' WHERE term_id IN (' . $term_ids . ')');
+			@$wpdb->query('DELETE FROM ' . $wpdb->term_taxonomy . ' WHERE term_id IN (' . $term_ids . ')');
+		}
 
-	//sanitize
-	$post_ids = array_map('intval', $post_ids);
-	$post_ids = array_unique($post_ids);
-	$post_ids = implode(', ', $post_ids);
+        $post_ids = tsml_get_non_data_source_ids();
 
-	//run deletes
-	$wpdb->query('DELETE FROM ' . $wpdb->posts . ' WHERE ID IN (' . $post_ids . ')');
-	$wpdb->query('DELETE FROM ' . $wpdb->postmeta . ' WHERE post_id IN (' . $post_ids . ')');
-	$wpdb->query('DELETE FROM ' . $wpdb->term_relationships . ' WHERE object_id IN (' . $post_ids . ')');
+        if (empty($post_ids) || !is_array($post_ids)) return;
 
-	//rebuild cache
-	tsml_cache_rebuild();
+		//step 2: Update the Term Counts
+        //-------
+		@$wpdb->query('UPDATE wp_term_taxonomy tt SET count = (SELECT count(p.ID) FROM wp_term_relationships tr LEFT JOIN wp_posts p ON p.ID = tr.object_id WHERE tr.term_taxonomy_id = tt.term_taxonomy_id);');
+
+		//step 3: delete meeting info from the posts & postmeta tables
+        //-------
+		$post_ids = array_map('intval', $post_ids);
+		$post_ids = array_unique($post_ids);
+		$post_ids = implode(', ', $post_ids);
+		@$wpdb->query('DELETE FROM ' . $wpdb->posts . ' WHERE ID IN (' . $post_ids . ')');
+		@$wpdb->query('DELETE FROM ' . $wpdb->postmeta . ' WHERE post_id IN (' . $post_ids . ')');
+
+		//step 4: cleanup term_relationhips & orphaned locations and groups
+        //-------
+        if (!empty($post_ids)) {
+            @$wpdb->query('DELETE FROM ' . $wpdb->term_relationships . ' WHERE object_id IN (' . $post_ids . ')');
+            tsml_delete_orphans();
+            tsml_cache_rebuild();
+        }
+
+		//step 5: remove top level registration from wp_options table
+        //-------
+		if (get_option('tsml_csv_top_level')) {
+			unset($tsml_csv_top_level);
+			delete_option('tsml_csv_top_level');
+		}
+
+        tsml_cache_rebuild();
+
+    //**************************************>
+	} elseif ($is_delete_data_source_only) {
+	//**************************************>
+        //step 1: create array of term ids used to delete only the selected data source region or district terms and term_taxonomy records
+        //-------
+        //sql for parent and child term ids to delete
+        $sql = 'SELECT a.term_id FROM ' . $wpdb->terms . ' a ' .
+            'INNER JOIN ' . $wpdb->term_taxonomy . ' b ON a.term_id = b.term_id ' .
+            'WHERE b.taxonomy IN ("tsml_region", "tsml_district") AND (b.parent = ' . $data_source_parent_region_id . ')';
+
+        $parent_term_ids = $wpdb->get_col($sql);
+
+        //combine top-level parent term_id's with their children
+        $term_ids = [];
+
+        foreach ($parent_term_ids as $pterm) {
+			//add the child term ids to the parents for removal
+			if (taxonomy_exists('tsml_region', $pterm)) {
+				$children = get_term_children($pterm, 'tsml_region');
+				$term_ids = array_merge($term_ids, $children);
+			}
+        }
+        $term_ids = array_merge($term_ids, $parent_term_ids);
+
+        if ($term_ids = implode(',', $parent_term_ids)) {
+
+			@$wpdb->query('DELETE FROM ' . $wpdb->terms . ' WHERE term_id IN (' . $term_ids . ')');
+            @$wpdb->query('DELETE FROM ' . $wpdb->term_taxonomy . ' WHERE term_id IN (' . $term_ids . ')');
+        }
+
+        //step 2: Update the Term Counts
+        //-------
+        @$wpdb->query('UPDATE ' . $wpdb->term_taxonomy . ' tt SET count = (SELECT count(p.ID) FROM ' . $wpdb->term_relationships . ' tr LEFT JOIN ' . $wpdb->posts . ' p ON p.ID = tr.object_id WHERE tr.term_taxonomy_id = tt.term_taxonomy_id);');
+
+        $post_ids = tsml_get_data_source_ids($data_source_url);
+
+		if (empty($post_ids) || !is_array($post_ids))
+            return;
+
+        //step 3: fetch post_ids array to delete meeting info from the posts & postmeta tables
+        //-------
+        $post_ids = array_map('intval', $post_ids);
+        $post_ids = array_unique($post_ids);
+        $post_ids = implode(', ', $post_ids);
+        @$wpdb->query('DELETE FROM ' . $wpdb->posts . ' WHERE ID IN (' . $post_ids . ')');
+        @$wpdb->query('DELETE FROM ' . $wpdb->postmeta . ' WHERE post_id IN (' . $post_ids . ')');
+
+        //step 4: cleanup term_relationhips & orphaned locations and groups
+        //-------
+        if (!empty($post_ids)) {
+            @$wpdb->query('DELETE FROM ' . $wpdb->term_relationships . ' WHERE object_id IN (' . $post_ids . ')');
+            tsml_delete_orphans();
+            tsml_cache_rebuild();
+        }
+
+        //step 5: remove this data source registration from wp_options table
+        //-------
+        if (get_option('tsml_data_sources')) {
+            unset($tsml_data_sources[$data_source_url]);
+            update_option('tsml_data_sources', $tsml_data_sources);
+        }
+
+
+	//***************************>
+    } else { // is_delete_nothing
+	//***************************>
+        //step 1: delete meeting info from the posts & postmeta tables
+        //-------
+        if (empty($post_ids) || !is_array($post_ids))
+            return;
+
+        $post_ids = array_map('intval', $post_ids);
+        $post_ids = array_unique($post_ids);
+        $post_ids = implode(', ', $post_ids);
+        @$wpdb->query('DELETE FROM ' . $wpdb->posts . ' WHERE ID IN (' . $post_ids . ')');
+        @$wpdb->query('DELETE FROM ' . $wpdb->postmeta . ' WHERE post_id IN (' . $post_ids . ')');
+
+    }
 }
 
 //function: efficiently deletes all orphaned locations and groups (have no meetings associated)
@@ -3125,4 +3349,3 @@ add_filter( 'admin_footer_text', '__return_empty_string', 11 );
 add_filter( 'update_footer',     '__return_empty_string', 11 );
 
 /* ******************** end of import_data_sources_redesign ******************** */
-

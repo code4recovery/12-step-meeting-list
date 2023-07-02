@@ -7,11 +7,6 @@ add_action('wp_ajax_tsml_delete', function () {
 	die('deleted');
 });
 
-//delete only top-level maintainable meetings and locations
-add_action('wp_ajax_tsml_delete_top_level', function () {
-    tsml_delete(tsml_get_non_data_source_ids());
-    die('deleted');
-});
 
 //debug info
 add_action('wp_ajax_tsml_info', 'tsml_ajax_info');
@@ -371,14 +366,19 @@ add_action('wp_ajax_tsml_import', function () {
 		//geocode address
 		$geocoded = tsml_geocode($meeting['formatted_address']);
 
+		/* PHP Warning:  Undefined array key "status"
 		if ($geocoded['status'] == 'error') {
 			$errors[] = '<li value="' . $meeting['row'] . '">' . $geocoded['reason'] . '</li>';
 			continue;
-		}
+		} */
 
 		if ($data_source_parent_region_id == 0 && array_key_exists($meeting['data_source'], $tsml_data_sources)) {
 			$data_source_parent_region_id = intval($tsml_data_sources[$meeting['data_source']]['parent_region_id']) != -1 ? intval($tsml_data_sources[$meeting['data_source']]['parent_region_id']) : 0;
 		}
+
+        if (!array_key_exists($meeting['data_source'], $tsml_data_sources)) {
+            $args = ['term_group' => 1,];
+        }
 
 		//try to guess region from geocode
 		if (empty($meeting['region']) && !empty($geocoded['city'])) $meeting['region'] = $geocoded['city'];
@@ -577,11 +577,16 @@ add_action('wp_ajax_tsml_import', function () {
 	]);
 });
 
-//ajax fucntion to update the "Where's My Info?" counts after removal of top-level maintainable meetings
+//update the "Where's My Info?" counts after a delete
 //used by admin_import.php
 add_action('wp_ajax_tsml_removal', function () {
+
+	if (tsml_count_top_level() > 0) {
+        tsml_delete('no_data_source');
+    }
+
     //send json result to browser
-    $top_level_meetings = 0;
+    $top_level_meetings = tsml_count_top_level();
     $meetings = tsml_count_meetings();
     $locations = tsml_count_locations();
     $regions = tsml_count_regions();

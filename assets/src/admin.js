@@ -315,16 +315,22 @@ jQuery(function ($) {
 	//fire count reset
 	$(document).ready(function () {
 		$("#tsml_removal").click(function () {
+			alert('reset_counts 1');
 			reset_counts();
+		});
+	});
+	$(document).ready(function () {
+		$('#frm_data_source_removal').on('submit', function (e) {
+			reset_counts();
+			alert('reset_counts 2');
 		});
 	});
 
 	//disable data removal button when recordset not present
 	$(document).ready( function () {
 		let removal_input = document.querySelector("#tsml_removal_input");
-		let removal_button = document.querySelector("#tsml_removal.button");
 
-		delete_input.addEventListener("change", state_handler());
+		removal_input.addEventListener("change", state_handler());
 	});
 
 	//toggle between the feed import and file upload divs
@@ -337,6 +343,46 @@ jQuery(function ($) {
 	********************/
 
 	//reset "Where's My Info" counts
+	function partial_reset_counts() {
+
+		$.getJSON(tsml.ajaxurl + '?action=tsml_removal', function (data) {
+
+			//update the counts on the "Where's My Info?" card
+			var $counts = $('#tsml_counts');
+			var $removal_button = $('#tsml_removal.button');
+			var types = ['top_level_meetings', 'meetings', 'locations', 'groups', 'regions'];
+			for (var i = 0; i < types.length; i++) {
+				var type = types[i];
+
+				if ((type === 'top_level_meetings') && (data.counts[type] == 0)) {
+					if ($removal_button.hasClass('disabled')) $removal_button.addClass('disabled');
+					if ($counts.hasClass('hidden')) $counts.removeClass('hidden');
+					$li = $counts.find('li.' + type);
+					if (!$li.hasClass('hidden')) $li.addClass('hidden');
+					if ($li.text(data.descriptions[type]));
+
+				} else if (data.counts[type] > 0) {
+					if ($counts.hasClass('hidden')) $counts.removeClass('hidden');
+					$li = $counts.find('li.' + type);
+					if ($li.hasClass('hidden')) $li.removeClass('hidden');
+					if ($li.text(data.descriptions[type]));
+				}
+			}
+
+			//if there are errors, display message and append them to it
+			if (data.errors.length) {
+				$errors = $('#tsml_import_errors');
+				if ($errors.hasClass('hidden')) $errors.removeClass('hidden');
+				for (var i = 0; i < data.errors.length; i++) $errors.append(data.errors[i]);
+			}
+
+			//alert('End of Partial Reset Count');
+
+		}).fail(function (jqxhr, textStatus, error) {
+			console.warn(textStatus, error);
+		});
+	}
+
 	function reset_counts() {
 
 		$.getJSON(tsml.ajaxurl + '?action=tsml_removal', function (data) {
@@ -347,15 +393,7 @@ jQuery(function ($) {
 			var types = ['top_level_meetings', 'meetings', 'locations', 'groups', 'regions'];
 			for (var i = 0; i < types.length; i++) {
 				var type = types[i];
-				
-				if ((type === 'top_level_meetings') && (data.counts[type] == 0)) {
-					if ($removal_button.hasClass('disabled')) $removal_button.addClass('disabled');
-					if ($counts.hasClass('hidden')) $counts.removeClass('hidden');
-					$li = $counts.find('li.' + type);
-					if (!$li.hasClass('hidden')) $li.addClass('hidden');
-					if ($li.text(data.descriptions[type]));
-
-				} else if (data.counts[type] > 0) {
+				if (data.counts[type] > 0) {
 					if ($counts.hasClass('hidden')) $counts.removeClass('hidden');
 					$li = $counts.find('li.' + type);
 					if ($li.hasClass('hidden')) $li.removeClass('hidden');
@@ -431,8 +469,10 @@ jQuery(function ($) {
 
 	//enable or disable data removal button
 	function state_handler() {
+		let removal_button = document.querySelector("#tsml_removal.button");
+
 		if (document.querySelector(".removal_input").value == "") {
-			removal_button.prop('disabled', true); //button remains disabled
+			removal_button.prop('disabled', true); //button is disabled
 		} else {
 			removal_button.prop('disabled', false); //button is enabled
 		}

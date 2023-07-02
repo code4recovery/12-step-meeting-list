@@ -6,7 +6,7 @@ if (!function_exists('tsml_import_page')) {
 
 	function tsml_import_page()
 	{
-		global $tsml_data_sources, $tsml_programs, $tsml_program, $tsml_nonce, $tsml_sharing, $tsml_slug, $tsml_delete_top_level, $tsml_detection_test_mode, $tsml_csv_top_level;
+		global $tsml_data_sources, $tsml_programs, $tsml_program, $tsml_nonce, $tsml_sharing, $tsml_slug, $tsml_delete_top_level_option, $tsml_detection_test_mode, $tsml_csv_top_level;
 		
 		$error = false;
 		$tsml_data_sources = get_option('tsml_data_sources', []);
@@ -153,13 +153,12 @@ if (!function_exists('tsml_import_page')) {
 						} else { //new file upload for top-level (parent region) meetings
 
 							$is_new_parent_file_upload = true;
-
-							if ($nbr_internal_records !== 0 ) { //new top-level file upload
+                           
+                            if ($nbr_internal_records !== 0 ) { //new top-level file upload
 								
-								if ($tsml_delete_top_level==='whenever') {
-									//run top-level delete before setting as a new feed import 
-									tsml_delete(tsml_get_non_data_source_ids());
-									tsml_delete_orphans();
+								if ($tsml_delete_top_level_option === 'whenever') {
+									//run top-level maintainable recordset delete  
+                                    tsml_delete('no_data_source');
 
 									$header_txt = __('Primary Top-level Meeting Recordset Reload', '12-step-meeting-list');
 									$message = "<h2>$header_txt → $filename</h2>";
@@ -182,7 +181,7 @@ if (!function_exists('tsml_import_page')) {
 								tsml_alert($message, 'info');
 							}
 
-							$tsml_csv_top_level = ['status' => 'OK', 'last_import' => current_time('timestamp'), 'count_meetings' => count($meetings), 'name' => $data_source_name, 'parent_region_id' => 0, 'change_detect' => 'disabled', 'type' => 'CSV', ];
+							$tsml_csv_top_level = ['status' => 'OK', 'last_import' => current_time('timestamp'), 'count_meetings' => count($meetings), 'name' => $data_source_name, 'parent_region_id' => 0, 'change_detect' => 'enabled', 'type' => 'CSV', ];
 							update_option('tsml_csv_top_level', $tsml_csv_top_level);
 
 						} 					
@@ -215,7 +214,6 @@ if (!function_exists('tsml_import_page')) {
 
 					/* Drop database records which are being updated, or removed from the feed */
 					tsml_delete($db_ids_to_delete);
-					tsml_delete_orphans();
 
 					if (count($import_updates) === 0) {
 						$header_txt = __('Data Source Refresh');
@@ -250,8 +248,8 @@ if (!function_exists('tsml_import_page')) {
 							'last_import' => current_time('timestamp'),
 							'count_meetings' => count($meetings),
 							'name' => $data_source_name,
-							'parent_region_id' => 0,
-							'change_detect' => 'disabled',
+							'parent_region_id' => -1,
+							'change_detect' => 'enabled',
 							'type' => 'CSV',
 						];
 
@@ -370,13 +368,10 @@ if (!function_exists('tsml_import_page')) {
 			}
 		}
 
-		//check for existing import buffer
-		$meetings = get_option('tsml_import_buffer', []);
-
         //set top-level records delete default setting whenever/only
-        if (!empty($_POST['tsml_delete_top_level']) && isset($_POST['tsml_nonce']) && wp_verify_nonce($_POST['tsml_nonce'], $tsml_nonce)) {
-            $tsml_delete_top_level = ($_POST['tsml_delete_top_level'] == 'whenever') ? 'whenever' : 'only';
-            update_option('tsml_delete_top_level', $tsml_delete_top_level);
+        if (!empty($_POST['tsml_delete_top_level_option']) && isset($_POST['tsml_nonce']) && wp_verify_nonce($_POST['tsml_nonce'], $tsml_nonce)) {
+            $tsml_delete_top_level_option = ($_POST['tsml_delete_top_level_option'] == 'whenever') ? 'whenever' : 'only';
+            update_option('tsml_delete_top_level_option', $tsml_delete_top_level_option);
             tsml_alert(__('Top-level Recordset Delete setting changed.', '12-step-meeting-list'));
         }
 
@@ -387,57 +382,35 @@ if (!function_exists('tsml_import_page')) {
             tsml_alert(__('Data Sources Debug Mode setting changed.', '12-step-meeting-list'));
         }
 
+        //check for existing import buffer
+        $meetings = get_option('tsml_import_buffer', []);
+
         //data sources meeting list data removal
 		if (!empty($_POST['tsml_remove_data_source'])) {
 
-			//sanitize URL
-			$_POST['tsml_remove_data_source'] = esc_url_raw($_POST['tsml_remove_data_source'], ['http', 'https']);
-			 
-			if (array_key_exists($_POST['tsml_remove_data_source'], $tsml_data_sources)) {
+            //sanitize URL
+            $data_source_url = esc_url_raw($_POST['tsml_remove_data_source'], ['http', 'https']);
 
-				//remove all meetings for this data source
-				tsml_delete(tsml_get_data_source_ids($_POST['tsml_remove_data_source']));
+            if (array_key_exists($data_source_url, $tsml_data_sources)) {
 
-				//clean up orphaned locations & groups
-				tsml_delete_orphans();
+                $data_source_name = $tsml_data_sources[$data_source_url]['name'];
+                $data_source_parent_region_id = $tsml_data_sources[$data_source_url]['parent_region_id'];
+                $data_source_type = $tsml_data_sources[$data_source_url]['type'];
+                
+                //remove all meetings for this data source
+                tsml_delete('data_source_only', $data_source_url, $data_source_parent_region_id);
 
-				//remove data source
-				unset($tsml_data_sources[$_POST['tsml_remove_data_source']]);
-				update_option('tsml_data_sources', $tsml_data_sources);
-
-				tsml_alert(__(' Data source removed.', '12-step-meeting-list'));
+                tsml_alert(__('Your ' . $data_source_name . ' data source and its meeting information have been removed!', '12-step-meeting-list'));
 			}
 			else {
 				tsml_alert(__(' Data source removal failed! ' . $_POST['tsml_remove_data_source'], '12-step-meeting-list'), 'error');
 			}
 		}
 
-        //top-level csv meeting list data removal
-        if (isset($_POST['tsml_removal']) && isset($_POST['tsml_nonce']) && wp_verify_nonce($_POST['tsml_nonce'], $tsml_nonce)) {
-            //run top-level delete
-            $nbr_of_deletable = tsml_count_top_level();
-            tsml_delete(tsml_get_non_data_source_ids());
-            tsml_delete_orphans();
-            tsml_cache_rebuild();
-            
-            $new_nbr_of_records = tsml_count_top_level();
-			if ($new_nbr_of_records > 0) {
-                $records = _n('record', 'records', $nbr_of_deletable, '12-step-meeting-list');
-                $message = __(" Removal of the $new_nbr_of_records $records in the top-level recordset is complete!", '12-step-meeting-list');
-                $tsml_csv_top_level = ['status' => 'OK', 'last_import' => current_time('timestamp'), 'count_meetings' => 0,];
-                update_option('tsml_csv_top_level', $tsml_csv_top_level);
-
-                tsml_alert($message, 'success');
-                //TODO: need some kind of hack to reload the current page automatically or prevent postback resetting
-            }
+		if ( array_key_exists('delete_everyting_button', $_POST) && isset($_POST['tsml_nonce']) && wp_verify_nonce($_POST['tsml_nonce'], $tsml_nonce) ) {
+            tsml_delete('everything');
         }
 
-
-		/*debugging
-		delete_option('tsml_data_sources');
-		tsml_delete('everything');
-		tsml_delete_orphans();
-		*/
 ?>
 
 	<!-- Admin page content should all be inside .wrap -->
@@ -495,7 +468,7 @@ if (!function_exists('tsml_import_page')) {
 				
 				<?php if (!empty($tsml_data_sources)) { ?>
 					
-					<table>
+					<table id="tbl_import_data_sources">
 						<thead>
 							<tr>
 								<th class="small align-left"></th>
@@ -511,7 +484,7 @@ if (!function_exists('tsml_import_page')) {
 								<tr data-source="<?php echo $feed_or_filename ?>">
 									<td>
 										<?php if ($properties['type'] !== 'CSV') { ?>
-											<form method="post" action="<?php echo $_SERVER['REQUEST_URI'] ?>">
+											<form method="post" action="<?php echo $_SERVER['REQUEST_URI'] ?>" id="frm_import_data_sources_list">
 												
 												<?php wp_nonce_field($tsml_nonce, 'tsml_nonce', false) ?>
 												<input type="hidden" name="tsml_add_data_source" value="<?php echo $feed_or_filename ?>">
@@ -521,7 +494,7 @@ if (!function_exists('tsml_import_page')) {
 													if($properties['type']!=='CSV')	{ ?>
 														<input type="submit" value="Refresh" class="button button-small" > 
 												<?php } else { ?>  
-														<input type="submit" value="Refresh" class="hide"> 
+														<input type="submit" value="No Refresh" class="hide"> 
 												<?php } ?>													
 											</form>
 										<?php } ?>
@@ -540,16 +513,11 @@ if (!function_exists('tsml_import_page')) {
 										$parent_region = null;
 										if (empty($properties['parent_region_id']) || $properties['parent_region_id'] == -1) {
 											$parent_region = __('Top-level region', '12-step-meeting-list');
+											
 										} elseif (empty($regions[$properties['parent_region_id']])) {
 											$term = get_term_by('term_id', $properties['parent_region_id'], 'tsml_region');
-											if ($term !== null) {
-												$parent_region = $term->name;
-											}
-											if ($parent_region == null) {
-												$parent_region = __('Top-level region', '12-step-meeting-list');
-                                            } else {
-												$parent_region = 'Missing Parent Region: ' . $properties['parent_region_id'];
-											}
+                                            $parent_region = ($term !== false) ? $term->name : 'Missing Parent Region: ' . $properties['parent_region_id'];
+
 										} else {
 											$parent_region = $regions[$properties['parent_region_id']];
 										}
@@ -563,7 +531,7 @@ if (!function_exists('tsml_import_page')) {
 									</td>
 
 									<td >
-										<form method="post" action="<?php echo $_SERVER['REQUEST_URI'] ?>">
+										<form method="post" action="<?php echo $_SERVER['REQUEST_URI'] ?>" id="frm_data_source_removal" onSubmit='return confirm("Are you sure that you want to delete the selected data source and all of its related meeting data?")'  /> 
 											<?php wp_nonce_field($tsml_nonce, 'tsml_nonce', false) ?>
 											<input type="hidden" name="tsml_remove_data_source" value="<?php echo $feed_or_filename ?>">
 											<span class="dashicons dashicons-no-alt"></span>
@@ -583,7 +551,7 @@ if (!function_exists('tsml_import_page')) {
 					</div>
 					<br />
 					<div id="dv_data_source" >
-						<form id="frm_data_source "class="row" method="post" action="<?php echo $_SERVER['REQUEST_URI'] ?>">
+						<form method="post" class="row" action="<?php echo $_SERVER['REQUEST_URI'] ?>" id="frm_data_source" >
 							<?php wp_nonce_field($tsml_nonce, 'tsml_nonce', false) ?>
 
 							<div class="small show twenty-pixel-spacer-right" >
@@ -612,7 +580,7 @@ if (!function_exists('tsml_import_page')) {
 						</form>
 					</div>					
 					<div id="dv_file_source" class="hide" >
-						<form id="frm_file_source "class="row" method="post" action="<?php echo $_SERVER['REQUEST_URI'] ?>" enctype="multipart/form-data">
+						<form method="post" class="row" action="<?php echo $_SERVER['REQUEST_URI'] ?>" enctype="multipart/form-data" id="frm_file_source" >
 							<div class="small hide twenty-pixel-spacer-right">
 								<label for="tsml_add_file_source_name" class="import-label-setting" >Name</label><br>
 								<input type="text" name="tsml_add_data_source_name" id="tsml_add_file_source_name" class="small" value="File Upload" ?>">
@@ -653,29 +621,29 @@ if (!function_exists('tsml_import_page')) {
 					<div class="postbox stack">
 						<h2><?php _e('Top-level CSV Meeting List Data Removal', '12-step-meeting-list') ?></h2>
 						
-							<form class="stack compact" method="post" >
+							<form method="post" class="stack compact" id="frm_top_level_removal">
 								<p><?php _e('Top-level maintainable meetings are all meetings previously imported using “File Upload”, with the “Parent Region” dropdown set to “top-level…“.', '12-step-meeting-list') ?></p>
 								<details>
 									<summary class="small">Read more...</summary>
-									<p><?php _e('If you intend to replace all of your listed top-level meetings with a CSV “File Upload”, set the “Delete maintainable top-level recordset” dropdown to “<b>whenever uploading a top-level CSV file</b>”. This will replace all top-level meetings during the import of your file.', '12-step-meeting-list') ?></p>
-									<p><?php _e('If you intend to append new meetings with a CSV “File Upload”, set the  “Delete maintainable top-level recordset” dropdown to the default “<b>only through this Data Removal feature</b>”. This will allow the adding of all your CSV meetings to the list of those already on your site during the import process. NOTE: To avoid duplicate meetings, ensure your CSV does not contain meetings you already have on your site.', '12-step-meeting-list') ?></p>
-								</details>
+									<p><?php _e('If you intend to replace all of your listed top-level meetings with a CSV “File Upload”, set the “Delete maintainable top-level recordset” dropdown to “<b>whenever uploading a top-level CSV file</b>”. This will replace all top-level meetings during the import of your file.', '12-step-meeting-list') ?><br />
+									<?php _e('If you intend to append new meetings with a CSV “File Upload”, set the  “Delete maintainable top-level recordset” option to the default “<b>only through this Data Removal feature</b>”. This will allow the adding of all your CSV meetings to the list of those already on your site during the import process. NOTE: To avoid duplicate meetings, ensure your CSV does not contain meetings you already have on your site.', '12-step-meeting-list') ?>
+								</details></p>
 								<p><?php printf(__('<b>Delete maintainable top-level recordset</b>', '12-step-meeting-list')) ?></p>
 								<?php wp_nonce_field($tsml_nonce, 'tsml_nonce', false) ?>
-								<select name="tsml_delete_top_level" onchange="this.form.submit()">
+								<select name="tsml_delete_top_level_option" onchange="this.form.submit()">
 									<?php
 									foreach ([
 										'whenever' => __('whenever uploading a top-level CSV file', '12-step-meeting-list'),
 										'only' => __('only through this Data Removal feature', '12-step-meeting-list'),
 									] as $key => $value) { ?>
-										<option value="<?php echo $key ?>" <?php selected($tsml_delete_top_level, $key) ?> >
+										<option value="<?php echo $key ?>" <?php selected($tsml_delete_top_level_option, $key) ?> >
 											<?php echo $value ?>
 										</option>
 									<?php } ?>
 								</select>
 							</form>
 
-							<form id="data_removal_form" method="post" class="radio stack">
+							<form method="post" class="stack compact" onSubmit='return confirm("Are you sure you want to delete all your maintainable meetings?")' id="frm_data_removal" >
 							<?php wp_nonce_field($tsml_nonce, 'tsml_nonce', false) ?>
 								<p>
 									<?php _e('When a maintainable top-level parent region recordset is present it can be removed here. To be safe, consider exporting a backup CSV file first.<br>', '12-step-meeting-list') ?>
@@ -702,10 +670,10 @@ if (!function_exists('tsml_import_page')) {
 						$top_level_meetings = tsml_count_top_level();
 						$meetings = tsml_count_meetings();
 						$locations = tsml_count_locations();
-						$regions = tsml_count_regions();
 						$groups = tsml_count_groups();
+                        $regions = tsml_count_regions();
 
-						$pdf_link = 'https://pdf.code4recovery.org/?' . http_build_query([
+                        $pdf_link = 'https://pdf.code4recovery.org/?' . http_build_query([
 							'json' => admin_url('admin-ajax.php') . '?' . http_build_query([
 								'action' => 'meetings',
 								'nonce' => $tsml_sharing === 'restricted' ? wp_create_nonce($tsml_nonce) : null
@@ -741,6 +709,13 @@ if (!function_exists('tsml_import_page')) {
 								</ul>
 							</div>
 						</div>
+						<?php
+						if ($tsml_detection_test_mode === 'on') { ?>
+						<form method="post" <?php if (!($top_level_meetings + $meetings + $locations + $groups + $regions)) { ?> class="hidden" <?php } ?> >
+							<?php wp_nonce_field($tsml_nonce, 'tsml_nonce', false) ?>
+							<input type="submit" name="delete_everyting_button" class="button"   value="Delete Everything!" style="display:block;" onSubmit='return confirm("Are you really sure you want to delete all your meetings?")'  />
+						</form>
+						<?php } ?>
 					</div>
 
 					<!-- Example CSV -->
@@ -799,8 +774,6 @@ if (!function_exists('tsml_import_page')) {
 
 						</details>
 					</div>
-
-
 				</div>
 
 				<div class="stack">
@@ -824,7 +797,7 @@ if (!function_exists('tsml_import_page')) {
 						<h2><?php _e('Data Sources Debug Mode', '12-step-meeting-list') ?></h2>
 						<?php
 						if ($meetings) { ?>
-							<form class="stack compact" method="post" action="<?php echo $_SERVER['REQUEST_URI'] ?>">
+							<form method="post" class="stack compact" action="<?php echo $_SERVER['REQUEST_URI'] ?>" id="frm_debug_mode">
 								<h3><?php _e('Change Detection', '12-step-meeting-list') ?></h3>
 								<p><?php printf(__('Turn test_mode on to see first change detected on an import record.', '12-step-meeting-list')) ?></p>
 								<?php wp_nonce_field($tsml_nonce, 'tsml_nonce', false) ?>
