@@ -69,17 +69,26 @@ a.button-large {
 .add-import-container {
 	background-color: #F8F8F8;
 	border: 1px solid lightgray;
-	margin: 20px 0 0 0;
+	margin: 20px 0 20px;
 	padding: 20px;
+	min-width: 1100px;
+	position: relative;
 }
 
 .import-radio-group {
 	display: block;
-	margin: 20px;
+	margin: 20px 0 20px;
+}
+
+.form_submit_bottom_right {
+	text-align: right;
+	position: absolute;
+	bottom: 20px;
+	right: 20px;
 }
 
 .thirty-pixel-spacer-left {
-	padding-left: 30px;
+	padding-left: 180px;
 }
 
 .twenty-pixel-spacer-right {
@@ -100,6 +109,19 @@ a.button-large {
 
 .show {
 	display: inline-block;
+}
+
+.circle {
+	border-radius: 50%;
+	width: 25px;
+	height: 12px;
+	padding: 7px;
+	background: #fff;
+	border: 1px solid #000;
+	color: #000;
+	text-align: center;
+	font: 12px Arial, sans-serif;
+	font-weight: bold;
 }
 
 .import-label-setting {
@@ -150,6 +172,7 @@ a.button-large {
 		display: block;
 		float: right;
 		margin: -30px 0 0 10px;
+
 		img {
 			display: block;
 			height: auto;
@@ -163,6 +186,7 @@ a.button-large {
 			font-size: 1rem;
 			font-weight: bold;
 		}
+
 		p {
 			margin: 10px 0 0;
 		}
@@ -170,9 +194,11 @@ a.button-large {
 
 	ul {
 		margin: 10px 0 0 20px;
+
 		li + li {
 			margin-top: 10px;
 		}
+
 		&.types {
 			column-gap: 40px;
 			columns: 2 auto;
@@ -184,7 +210,6 @@ a.button-large {
 	select {
 		width: 100%;
 	}
-
 	//radio import options
 	form {
 		input {
@@ -209,12 +234,12 @@ a.button-large {
 			display: flex;
 			justify-content: flex-start;
 			gap: 0.25rem;
+
 			input[type='radio'] {
 				margin-top: 3px;
 			}
 		}
 	}
-
 	//get feedback & get notified
 	table {
 		margin: 0 0 10px;
@@ -222,6 +247,7 @@ a.button-large {
 		border: 0;
 		border-spacing: 0;
 		border-collapse: collapse;
+		font-family: monospace;
 
 		tr {
 			th,
@@ -248,7 +274,6 @@ a.button-large {
 				}
 
 				&:first-child {
-					font-family: monospace;
 				}
 
 				&:last-child {
@@ -276,7 +301,6 @@ a.button-large {
 			}
 		}
 	}
-
 	//try the apps app store buttons
 	&#try_the_apps {
 		p.buttons {

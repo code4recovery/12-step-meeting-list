@@ -586,7 +586,7 @@ $tsml_timestamp = microtime(true);
 $tsml_ui_config = [];
 
 //get the bulk removal default delete policy
-$tsml_delete_top_level_option = get_option('tsml_delete_top_level_option', 'only');
+$tsml_delete_top_level_option = get_option('tsml_delete_top_level_option', 'never'); 
 
 //get the data sources change detection debug policy
 $tsml_detection_test_mode = get_option('tsml_detection_test_mode', 'off');

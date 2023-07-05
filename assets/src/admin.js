@@ -315,25 +315,19 @@ jQuery(function ($) {
 	//fire count reset
 	$(document).ready(function () {
 		$("#tsml_removal").click(function () {
-			alert('reset_counts 1');
+
 			reset_counts();
 		});
 	});
 	$(document).ready(function () {
 		$('#frm_data_source_removal').on('submit', function (e) {
+
 			reset_counts();
-			alert('reset_counts 2');
+
 		});
 	});
 
-	//disable data removal button when recordset not present
-	$(document).ready( function () {
-		let removal_input = document.querySelector("#tsml_removal_input");
-
-		removal_input.addEventListener("change", state_handler());
-	});
-
-	//toggle between the feed import and file upload divs
+	//toggle between the Import radio button divs
 	$('#import_radio_group input:radio').click(function () {
 		toggle_import_source($(this).val());
 	});
@@ -343,54 +337,13 @@ jQuery(function ($) {
 	********************/
 
 	//reset "Where's My Info" counts
-	function partial_reset_counts() {
-
-		$.getJSON(tsml.ajaxurl + '?action=tsml_removal', function (data) {
-
-			//update the counts on the "Where's My Info?" card
-			var $counts = $('#tsml_counts');
-			var $removal_button = $('#tsml_removal.button');
-			var types = ['top_level_meetings', 'meetings', 'locations', 'groups', 'regions'];
-			for (var i = 0; i < types.length; i++) {
-				var type = types[i];
-
-				if ((type === 'top_level_meetings') && (data.counts[type] == 0)) {
-					if ($removal_button.hasClass('disabled')) $removal_button.addClass('disabled');
-					if ($counts.hasClass('hidden')) $counts.removeClass('hidden');
-					$li = $counts.find('li.' + type);
-					if (!$li.hasClass('hidden')) $li.addClass('hidden');
-					if ($li.text(data.descriptions[type]));
-
-				} else if (data.counts[type] > 0) {
-					if ($counts.hasClass('hidden')) $counts.removeClass('hidden');
-					$li = $counts.find('li.' + type);
-					if ($li.hasClass('hidden')) $li.removeClass('hidden');
-					if ($li.text(data.descriptions[type]));
-				}
-			}
-
-			//if there are errors, display message and append them to it
-			if (data.errors.length) {
-				$errors = $('#tsml_import_errors');
-				if ($errors.hasClass('hidden')) $errors.removeClass('hidden');
-				for (var i = 0; i < data.errors.length; i++) $errors.append(data.errors[i]);
-			}
-
-			//alert('End of Partial Reset Count');
-
-		}).fail(function (jqxhr, textStatus, error) {
-			console.warn(textStatus, error);
-		});
-	}
-
 	function reset_counts() {
 
 		$.getJSON(tsml.ajaxurl + '?action=tsml_removal', function (data) {
 
 			//update the counts on the "Where's My Info?" card
 			var $counts = $('#tsml_counts');
-			var $removal_button = $('#tsml_removal.button');
-			var types = ['top_level_meetings', 'meetings', 'locations', 'groups', 'regions'];
+			var types = ['meetings', 'locations', 'groups', 'regions'];
 			for (var i = 0; i < types.length; i++) {
 				var type = types[i];
 				if (data.counts[type] > 0) {
@@ -426,19 +379,11 @@ jQuery(function ($) {
 
 			//update the counts on the "Where's My Info?" card
 			var $counts = $('#tsml_counts');
-			var $removal_button = $('#tsml_removal.button');
-			var types = ['top_level_meetings', 'meetings', 'locations', 'groups', 'regions'];
+			var types = ['meetings', 'locations', 'groups', 'regions'];
 			for (var i = 0; i < types.length; i++) {
 				var type = types[i];
 				//alert('Run Import Update: ' + type + ' = ' + data.counts[type]);
-				if (type === 'top_level_meetings') {
-					if ($removal_button.hasClass('disabled')) $removal_button.removeClass('disabled');
-					if ($counts.hasClass('hidden')) $counts.removeClass('hidden');
-					$li = $counts.find('li.' + type);
-					if ($li.hasClass('hidden')) $li.removeClass('hidden');
-					if ($li.text(data.descriptions[type]));
-					
-				} else if (data.counts[type] > 0) {
+				if (data.counts[type] > 0) {
 					if ($counts.hasClass('hidden')) $counts.removeClass('hidden');
 					$li = $counts.find('li.' + type);
 					if ($li.hasClass('hidden')) $li.removeClass('hidden');
@@ -446,7 +391,7 @@ jQuery(function ($) {
 				}
 			}
 
-			//update the counts in the "Import Data Sources" card
+			//update the counts in the "Your Data" card
 			if (data.data_sources) {
 				$.each(data.data_sources, function (url, props) {
 					$('tr[data-source="' + url + '"] td.count_meetings').text(props.count_meetings);
@@ -483,9 +428,15 @@ jQuery(function ($) {
 		if (selected == 'csv') {
 			document.getElementById('dv_file_source').style.display = 'block';
 			document.getElementById('dv_data_source').style.display = 'none';
-		} else {
+			document.getElementById('dv_direct_entry').style.display = 'none';
+		} else if (selected == 'json') {
 			document.getElementById('dv_file_source').style.display = 'none';
 			document.getElementById('dv_data_source').style.display = 'block';
+			document.getElementById('dv_direct_entry').style.display = 'none';
+		} else {
+			document.getElementById('dv_file_source').style.display = 'none';
+			document.getElementById('dv_data_source').style.display = 'none';
+			document.getElementById('dv_direct_entry').style.display = 'block';
 		}
 	}
-});
+}); 

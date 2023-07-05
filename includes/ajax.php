@@ -545,7 +545,6 @@ add_action('wp_ajax_tsml_import', function () {
 	remove_filter('wp_insert_post_data', 'tsml_import_post_modified', 99);
 
 	//send json result to browser
-    $top_level_meetings = tsml_count_top_level();
     $meetings  = tsml_count_meetings();
 	$locations = tsml_count_locations();
 	$regions   = tsml_count_regions();
@@ -565,10 +564,9 @@ add_action('wp_ajax_tsml_import', function () {
 	wp_send_json([
 		'errors' => $errors,
 		'remaining' => count($remaining),
-		'counts' => compact('top_level_meetings', 'meetings', 'locations', 'regions', 'groups'),
+		'counts' => compact('meetings', 'locations', 'regions', 'groups'),
 		'data_sources' => $tsml_data_sources,
 		'descriptions' => [
-            'top_level_meetings' => sprintf(_n('%s top-level maintainable meeting', '%s top-level maintainable meetings', $top_level_meetings, '12-step-meeting-list'), number_format_i18n($top_level_meetings)),
             'meetings' => sprintf(_n('%s meeting', '%s meetings', $meetings, '12-step-meeting-list'), number_format_i18n($meetings)),
 			'locations' => sprintf(_n('%s location', '%s locations', $locations, '12-step-meeting-list'), number_format_i18n($locations)),
 			'groups' => sprintf(_n('%s group', '%s groups', $groups, '12-step-meeting-list'), number_format_i18n($groups)),
@@ -586,7 +584,6 @@ add_action('wp_ajax_tsml_removal', function () {
     }
 
     //send json result to browser
-    $top_level_meetings = tsml_count_top_level();
     $meetings = tsml_count_meetings();
     $locations = tsml_count_locations();
     $regions = tsml_count_regions();
@@ -595,7 +592,6 @@ add_action('wp_ajax_tsml_removal', function () {
     wp_send_json([
         'counts' => compact('top_level_meetings', 'meetings', 'locations', 'regions', 'groups'),
         'descriptions' => [
-            'top_level_meetings' => sprintf(_n('%s top-level meeting', '%s top-level maintainable meetings', $top_level_meetings, '12-step-meeting-list'), number_format_i18n($top_level_meetings)),
             'meetings' => sprintf(_n('%s meeting', '%s meetings', $meetings, '12-step-meeting-list'), number_format_i18n($meetings)),
             'locations' => sprintf(_n('%s location', '%s locations', $locations, '12-step-meeting-list'), number_format_i18n($locations)),
             'groups' => sprintf(_n('%s group', '%s groups', $groups, '12-step-meeting-list'), number_format_i18n($groups)),

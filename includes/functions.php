@@ -540,7 +540,7 @@ function tsml_delete($post_ids, $data_source_url = null, $data_source_parent_reg
 			delete_option('tsml_csv_top_level');
 		}
 
-        tsml_cache_rebuild();
+        tsml_cache_rebuild(); 
 
     //**************************************>
 	} elseif ($is_delete_data_source_only) {
