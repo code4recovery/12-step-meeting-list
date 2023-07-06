@@ -380,14 +380,14 @@ function tsml_delete($post_ids, $data_source_url = null, $data_source_parent_reg
 
 		$is_delete_everything = true;
         if ($test_mode) {
-            echo 'is_delete_everything = true<br>';
+            //echo 'is_delete_everything = true<br>';
         }
 
     } elseif ($post_ids === 'no_data_source') {
         $is_delete_no_data_source = true;
 
         if ($test_mode) {
-			echo 'is_delete_no_data_source = true<br>';
+			//echo 'is_delete_no_data_source = true<br>';
         }
 
     } elseif ($post_ids === 'data_source_only') {
@@ -397,7 +397,7 @@ function tsml_delete($post_ids, $data_source_url = null, $data_source_parent_reg
         }
 		$is_delete_data_source_only = true;
         if ($test_mode) {
-			echo 'is_delete_data_source_only = true<br>';
+			//echo 'is_delete_data_source_only = true<br>';
         }
 
     } elseif (is_array($post_ids)) {
@@ -406,7 +406,7 @@ function tsml_delete($post_ids, $data_source_url = null, $data_source_parent_reg
 
         $is_delete_nothing = true;
         if ($test_mode) {
-            echo 'is_delete_nothing = true<br>';
+            //echo 'is_delete_nothing = true<br>';
         }
 
     } else {

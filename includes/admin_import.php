@@ -433,7 +433,7 @@ if (!function_exists('tsml_import_page')) {
             
                     <div class="postbox stack">
                         <h2><?php _e('Your Data', '12-step-meeting-list') ?></h2>
-                        <p><?php printf(__('You can add data to the 12 Step Meeting List by <span>(1)</span> <a href="/wp-admin/post-new.php?post_type=tsml_meeting" target="_blank">direct entry</a>, <span>(2)</span> uploading a CSV spreadsheet, or <span>(3)</span> importing a JSON feed from another website. ' .
+                        <p><?php printf(__('You can add data to the 12 Step Meeting List by <span>(1)</span> <a href="/wp-admin/post-new.php?post_type=tsml_meeting" target="_blank">direct entry</a>, <span>(2)</span> upload of a CSV spreadsheet, or <span>(3)</span> the pull of a JSON feed from another website. ' .
                             'More information is available at the <a href="https://github.com/code4recovery/spec" target="_blank">Meeting Guide API Specification</a>.', '12-step-meeting-list')) ?> </p>
                 
                        
@@ -453,7 +453,7 @@ if (!function_exists('tsml_import_page')) {
                                     <div id="dv_direct_entry_records">
                                         <tr data-source="<?php echo 'Direct Entry' ?>">
                                             <td>
-                                                <?php echo '<b><i>Direct Entry</i></b>'; ?>
+                                                <?php echo '<b><i>Direct Entry (local)</i></b>'; ?>
                                             </td>
                                             <td>
                                                 <?php echo 'None'; ?>
@@ -557,11 +557,11 @@ if (!function_exists('tsml_import_page')) {
                         <div class="add-import-container" >
                             <div id="import_radio_group" class="import-radio-group"  >
 
-                                <b><label for="import_direct" > Direct Entry CSV Upload </label></b>
+                                <b><label for="import_direct" > Local Data CSV Import </label></b>
                                 <input type="radio" name="import" id="import_direct" value="direct_entry" checked >
-                                <b><label for="import_csv" class="thirty-pixel-spacer-left"> External CSV Upload </label></b>
+                                <b><label for="import_csv" class="thirty-pixel-spacer-left"> External Data CSV Import </label></b>
                                 <input type="radio" name="import" id="import_csv" value="csv" >
-                                <b><label for="import_json" class="thirty-pixel-spacer-left" > External Feed Import </label></b>
+                                <b><label for="import_json" class="thirty-pixel-spacer-left" > External Data JSON Import </label></b>
                                 <input type="radio" name="import" id="import_json" value="json" >
                             </div>
                             <br />
@@ -646,22 +646,30 @@ if (!function_exists('tsml_import_page')) {
                     <div class="three-column">
                         <div class="stack">
 
-                            <!-- Import CSV -->
+                            <!-- About Importing -->
                             <div class="postbox stack">
-                                <h2><?php _e('Import CSV', '12-step-meeting-list') ?></h2>
+                                <h2><?php _e('About Importing...', '12-step-meeting-list') ?></h2>
                         
                                     <form method="post" class="stack compact" id="frm_top_level_removal">
-                                        <p><?php _e('All imports are now done on the above "Your Data" card. There, you can do bulk updates to both the local & externally sourced meetings.', '12-step-meeting-list') ?></p>
+                                        <p><?php _e('Your meeting data may consist of a single local data set or it may include an additional number of external data sets. External data sets provide a means to aggregate meetings from different sites into a single master list which can be managed through the features on this page.', '12-step-meeting-list') ?></p>
                                         <details>
-                                            <summary class="small">Read more...</summary>
-                                            <p><?php _e( 'To replace the Direct Entry records when doing a "Direct Entry CSV Upload", set the “Delete direct entry records” dropdown to “<b>whenever uploading a direct entry CSV file</b>”. ', '12-step-meeting-list') ?><br />
-                                            <?php _e('If you intend to append new meetings with a “Direct Entry CSV Upload”, set the  “Delete direct entry records” option to the default “<b>never</b>”. This will allow the adding of all your CSV meetings to the list of those already on your site during the import process. NOTE: To avoid duplicate meetings, ensure your CSV does not contain meetings you already have on your site.', '12-step-meeting-list') ?>
-                                        </details></p>
-                                        <p><?php printf(__('<b>Delete direct entry records</b>', '12-step-meeting-list')) ?></p>
+                                            <summary class="small">Local Data Import...</summary>
+                                            <p><?php _e( "To replace all your records, set the “Delete local records” dropdown to <b>whenever uploading a local CSV file</b>.", '12-step-meeting-list') ?></p>
+                                            <p><?php _e( "To append new meetings, set <b>never</b>. This will allow the adding of new meetings to the list of those local meetings already on your site.", '12-step-meeting-list') ?> </p>
+                                            <p><?php _e( 'NOTE: To avoid duplicate meetings when appending, ensure your CSV does not contain meetings you already have on your site.', '12-step-meeting-list') ?></p>
+                                        </details>
+                                       <details>
+                                            <summary class="small">External Data Imports...</summary>
+                                            <p><?php _e('The sources below the <b><i>Direct Entry (local)</i></b> listing provide information on external data sets imported into this website. ', '12-step-meeting-list') ?></p>
+                                            <p><?php _e( 'Please note that only external imports go through our change detection process, where just the records in the database which are different from those being imported are actually updated.', '12-step-meeting-list') ?></p><br />
+                                            <p><?php _e( "The <b><i>External Data CSV Import</i></b> option needs to use the exact same filename and parent region to update a particular record set during the import process.", '12-step-meeting-list') ?> </p>
+                                       </details>
+                                        <br />
+                                        <p><?php printf(__('<b>Delete local records</b>', '12-step-meeting-list')) ?></p>
                                         <?php wp_nonce_field($tsml_nonce, 'tsml_nonce', false) ?>
                                         <select name="tsml_delete_top_level_option" onchange="this.form.submit()">
                                             <?php
-                                            foreach (['whenever' => __('whenever uploading a direct entry CSV file', '12-step-meeting-list'), 'only' => __('never', '12-step-meeting-list'),] as $key => $value) { ?>
+                                            foreach (['whenever' => __('whenever uploading a CSV file for local updating', '12-step-meeting-list'), 'only' => __('never', '12-step-meeting-list'),] as $key => $value) { ?>
                                                     <option value="<?php echo $key ?>" <?php selected($tsml_delete_top_level_option, $key) ?> >
                                                         <?php echo $value ?>
                                                     </option>
