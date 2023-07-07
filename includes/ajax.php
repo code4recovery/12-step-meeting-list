@@ -553,12 +553,13 @@ add_action('wp_ajax_tsml_import', function () {
 
 	//update the data source counts for the database
 	foreach ($tsml_data_sources as $url => $props) {
-		$tsml_data_sources[$url]['count_meetings'] = count(tsml_get_data_source_ids($url));
+		if ($url === 'http://csv-top-level.local') {
+			$tsml_data_sources[$url]['count_meetings'] = count(tsml_get_non_data_source_ids());
+        } else {
+            $tsml_data_sources[$url]['count_meetings'] = count(tsml_get_data_source_ids($url));
+        }
 	}
 	update_option('tsml_data_sources', $tsml_data_sources);
-
-	$tsml_csv_top_level['count_meetings'] = count(tsml_get_non_data_source_ids());
-    update_option('tsml_csv_top_level', $tsml_csv_top_level);
 
     //now format the counts for JSON output
 	foreach ($tsml_data_sources as $url => $props) {
@@ -584,6 +585,8 @@ add_action('wp_ajax_tsml_import', function () {
 //used by admin_import.php
 add_action('wp_ajax_tsml_removal', function () {
 
+	global $tsml_data_sources;
+
     //send json result to browser
     $local_meetings = tsml_count_top_level();
     $meetings = tsml_count_meetings();
@@ -591,8 +594,8 @@ add_action('wp_ajax_tsml_removal', function () {
     $regions = tsml_count_regions();
     $groups = tsml_count_groups();
 
-    $tsml_csv_top_level['count_meetings'] = count(tsml_get_non_data_source_ids());
-    update_option('tsml_csv_top_level', $tsml_csv_top_level);
+	$tsml_data_sources['http://csv-top-level.local']['count_meetings'] = count(tsml_get_non_data_source_ids());
+    update_option('tsml_data_sources', $tsml_data_sources);
 
     wp_send_json([
         'counts' => compact('local_meetings', 'meetings', 'locations', 'regions', 'groups'),

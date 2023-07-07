@@ -82,9 +82,6 @@ $tsml_curl_handle = null;
 //load the array of URLs that we're using
 $tsml_data_sources = get_option('tsml_data_sources', []);
 
-//load the settings for the top level maintainable recordset
-$tsml_csv_top_level = get_option('tsml_csv_top_level', []);
-
 //meeting search defaults
 $tsml_defaults = [
 	'distance' => 2,

@@ -4,29 +4,13 @@
 
 if (!function_exists('tsml_import_page')) {
 
-    function tsml_import_page()
-    {
-        global $tsml_data_sources, $tsml_programs, $tsml_program, $tsml_nonce, $tsml_sharing, $tsml_slug, $tsml_delete_top_level_option, $tsml_detection_test_mode, $tsml_csv_top_level;
+    function tsml_import_page() {
+    
+        global $tsml_data_sources, $tsml_programs, $tsml_program, $tsml_nonce, $tsml_sharing, $tsml_slug, $tsml_delete_top_level_option, $tsml_detection_test_mode;
         $meetings = $local_meetings = [];
         $error = false;
         $tsml_data_sources = get_option('tsml_data_sources', []);
-        $tsml_csv_top_level = get_option('tsml_csv_top_level', []);
         
-        if (empty($tsml_csv_top_level)) {
-            //register an empty top-level file upload in the Options table
-            $tsml_csv_top_level = [
-                'status' => 'OK',
-                'file_name' => 'Direct Entry (local)',
-                'last_import' => current_time('timestamp'),
-                'count_meetings' => 0,
-                'name' => 'Direct Entry (local)',
-                'parent_region_id' => 0,
-                'type' => 'CSV',
-            ];
-            update_option('tsml_csv_top_level', $tsml_csv_top_level);
-        }
-
-
         //if posting a CSV, check for errors and add it to an array
         if (isset($_FILES['tsml_import']) && isset($_POST['tsml_nonce']) && wp_verify_nonce($_POST['tsml_nonce'], $tsml_nonce)) {
             //ini_set('auto_detect_line_endings', 1); //to handle mac \r line endings //is deprecated and will be removed in PHP 9
@@ -121,7 +105,7 @@ if (!function_exists('tsml_import_page')) {
             $tbl_col3_txt = __('Day of Week', '12-step-meeting-list');
             $tbl_col4_txt = __('Last Updated', '12-step-meeting-list');
             $data_source_url = $data_source_name = $data_source_parent_region_id = null;
-            $nbr_internal_records = count(tsml_get_non_data_source_ids());
+            $nbr_local_records = count(tsml_get_non_data_source_ids());
 
             //sanitize URL, name and parent region id values
             if (isset($_FILES['tsml_import'])) {
@@ -171,22 +155,22 @@ if (!function_exists('tsml_import_page')) {
 
                             $is_new_parent_file_upload = true;
 
-                            if ($nbr_internal_records !== 0) { //new top-level file upload
+                            if ($nbr_local_records !== 0) { //new top-level file upload
 
                                 if ($tsml_delete_top_level_option === 'whenever') {
-                                    //run top-level maintainable recordset delete  
+                                    //run top-level maintainable record set delete  
                                     tsml_delete('no_data_source');
 
                                     $header_txt = __('Local Meetings Reload', '12-step-meeting-list');
                                     $message = "<h2>$header_txt → $filename</h2>";
-                                    $message .= __("<p>The meeting recordset from this file being loaded can safely be edited and saved through your WordPress menu Meetings screen.</p>", '12-step-meeting-list');
+                                    $message .= __("<p>The meeting record set from this file being loaded can be saved through your WordPress admin menu Meetings edit screen.</p>", '12-step-meeting-list');
                                     tsml_alert($message, 'info');
 
                                 } else {
                                     /* this is the file upload operation for multiple top-level loads */
                                     $header_txt = __('Another Local Meetings Upload', '12-step-meeting-list');
                                     $message = "<h2>$header_txt → $filename</h2>";
-                                    $message .= __("<p>The meeting recordset from this file being loaded can safely be edited and saved through your WordPress menu Meetings screen.</p>", '12-step-meeting-list');
+                                    $message .= __("<p>The meeting record set from this file being loaded can be saved through your WordPress admin menu Meetings edit screen.</p>", '12-step-meeting-list');
                                     tsml_alert($message, 'info');
                                 }
 
@@ -194,13 +178,9 @@ if (!function_exists('tsml_import_page')) {
 
                                 $header_txt = __('Initial Local Meeting Upload', '12-step-meeting-list');
                                 $message = "<h2>$header_txt → $filename</h2>";
-                                $message .= __("<p>The meeting recordset from this file being loaded can safely be edited and saved through your WordPress menu Meetings screen.</p>", '12-step-meeting-list');
+                                $message .= __("<p>The meeting record set from this file being loaded can be saved through your WordPress admin menu Meetings edit screen.</p>", '12-step-meeting-list');
                                 tsml_alert($message, 'info');
                             }
-
-                            $tsml_csv_top_level = ['status' => 'OK', 'file_name' => $data_source_name, 'last_import' => current_time('timestamp'), 'count_meetings' => count($meetings), 'name' => $data_source_name, 'parent_region_id' => 0, 'type' => 'CSV',];
-                            update_option('tsml_csv_top_level', $tsml_csv_top_level);
-
                         }
 
                     } else { //new feed import
@@ -208,7 +188,7 @@ if (!function_exists('tsml_import_page')) {
                         $is_new_parent_feed_import = true;
                         $header_txt = __('Data Source Add');
                         $message = "<h2>$header_txt → $data_source_name</h2>";
-                        $message .= __("<p>The meeting recordset from the feed being loaded may be over-written during future feed refreshes.</p>", '12-step-meeting-list');
+                        $message .= __("<p>The meeting record set from the feed being loaded may be over-written during future feed refreshes.</p>", '12-step-meeting-list');
                         tsml_alert($message, 'info');
                     }
 
@@ -260,24 +240,26 @@ if (!function_exists('tsml_import_page')) {
 
                     if ($is_new_parent_file_upload) { //direct entry batch upload
                         //register the top-level file upload in the Options table
-                        $tsml_csv_top_level = [
+                        $tsml_data_sources['http://csv-top-level.local'] = [
                             'status' => 'OK',
-                            'file_name' => $data_source_name,
+                            'is_local' => true,
                             'last_import' => current_time('timestamp'),
                             'count_meetings' => count($meetings),
                             'name' => 'Direct Entry (local)',
                             'parent_region_id' => 0,
                             'type' => 'CSV',
                         ];
+                        update_option('tsml_data_sources', $tsml_data_sources);
 
                         //don't allow the data_source field to be set in the called function
                         tsml_import_buffer_set($meetings);
-                        update_option('tsml_csv_top_level', $tsml_csv_top_level);
+                        
 
                     } elseif ($is_new_child_file_upload) { //child upload
                         //register the file upload in the Your Data listing
                         $tsml_data_sources[$data_source_url] = [
                             'status' => 'OK',
+                            'is_local' => false,
                             'last_import' => current_time('timestamp'),
                             'count_meetings' => count($meetings),
                             'name' => $data_source_name,
@@ -292,6 +274,7 @@ if (!function_exists('tsml_import_page')) {
                         //register feed import in the Your Data listing
                         $tsml_data_sources[$data_source_url] = [
                             'status' => 'OK',
+                            'is_local' => false,
                             'last_import' => current_time('timestamp'),
                             'count_meetings' => 0,
                             'name' => $data_source_name,
@@ -317,6 +300,7 @@ if (!function_exists('tsml_import_page')) {
                                 //register the file upload in the Your Data listing
                                 $tsml_data_sources[$data_source_url] = [
                                     'status' => 'OK',
+                                    'is_local' => false,
                                     'last_import' => current_time('timestamp'),
                                     'count_meetings' => 0,
                                     'name' => $data_source_name,
@@ -332,6 +316,7 @@ if (!function_exists('tsml_import_page')) {
                             //initialize registry settings for a feed import
                             $tsml_data_sources[$data_source_url] = [
                                 'status' => 'OK',
+                                'is_local' => false,
                                 'last_import' => current_time('timestamp'),
                                 'count_meetings' => 0,
                                 'name' => $data_source_name,
@@ -409,17 +394,19 @@ if (!function_exists('tsml_import_page')) {
                 $data_source_name = $tsml_data_sources[$data_source_url]['name'];
                 $data_source_parent_region_id = $tsml_data_sources[$data_source_url]['parent_region_id'];
                 $data_source_type = $tsml_data_sources[$data_source_url]['type'];
+                $is_data_source_local = $tsml_data_sources[$data_source_url]['is_local'];
 
-                //remove all meetings for this data source
-                tsml_delete('data_source_only', $data_source_url, $data_source_parent_region_id);
-
-                tsml_alert(__('Your ' . $data_source_name . ' data source and its meeting information have been removed!', '12-step-meeting-list'));
+                if ($is_data_source_local) {
+                    tsml_delete('no_data_source');
+                    tsml_alert(__('Your local meeting information has been removed!', '12-step-meeting-list'));
+                } else {
+                    //remove all meetings for this data source
+                    tsml_delete('data_source_only', $data_source_url, $data_source_parent_region_id);
+                    tsml_alert(__('Your ' . $data_source_name . ' data source and its meeting information have been removed!', '12-step-meeting-list'));
+                }
             } else {
                 tsml_alert(__(' Data source removal failed! ' . $_POST['tsml_remove_data_source'], '12-step-meeting-list'), 'error');
             }
-        } else if (!empty($_POST['tsml_removal'])) {
-            tsml_delete('no_data_source');
-            tsml_alert(__('Your local meeting information has been removed!', '12-step-meeting-list'));
         }
         
         if (array_key_exists('delete_everyting_button', $_POST) && isset($_POST['tsml_nonce']) && wp_verify_nonce($_POST['tsml_nonce'], $tsml_nonce)) {
@@ -466,106 +453,77 @@ if (!function_exists('tsml_import_page')) {
                                 </tr>
                             </thead>
                             <tbody>
-                            
-                                <div id="dv_direct_entry_records">
-                                    <tr data-source="<?php echo 'Direct Entry' ?>">
-                                        <td>
-                                            <?php echo '<b><i>Direct Entry (local)</i></b>'; ?>
-                                        </td>
-                                        <td>
-                                            <?php echo 'None'; ?>
-                                        </td>
-                                        <td class="align-center count_meetings"><?php echo number_format($tsml_csv_top_level['count_meetings']) ?></td>
-                                        <td class="align-center">
-                                            <form method="post" action="<?php echo $_SERVER['REQUEST_URI'] ?>" id="frm_direct_entry_record_set">
-                                                
-                                                <?php wp_nonce_field($tsml_nonce, 'tsml_nonce', false) ?>
-                                                <input type="hidden" name="tsml_add_data_source" value="">
-                                                <input type="hidden" name="tsml_add_data_source_name" value="<?php echo @$tsml_csv_top_level['name'] ?>">
-                                                <input type="hidden" name="tsml_add_data_source_parent_region_id" value='0'>
+                            <?php if (!empty($tsml_data_sources)) { ?>
+
+                                <?php foreach ($tsml_data_sources as $feed_or_filename => $properties) { ?>
+                                       <?php if ($properties['is_local']) {  
                                         
-                                            </form>
-                                        </td>
-                                        <td class="align-right">
-                                            <?php $last_import = (@$tsml_csv_top_level['last_import']) ? Date(get_option('date_format') . ' ' . get_option('time_format'), intval(@$tsml_csv_top_level['last_import'])) : ''; ?>
-                                            <?php echo $last_import ?>
-                                        </td>
-                                        <td <td class="align-right">
-                                            <?php $delete_local_confirm_msg = __("Are you sure that you want to delete all your local meeting data? To be safe, you might consider exporting a backup CSV file first.", "12-step-meeting-list"); ?>
-                                            <form method="post" action="<?php echo $_SERVER['REQUEST_URI'] ?>" id="frm_tsml_removal" onsubmit="return confirm('<?php echo $delete_local_confirm_msg ?>')" > 
-                                                <?php wp_nonce_field($tsml_nonce, 'tsml_nonce', false) ?>
-                                                <?php
-                                                $local_meetings = (tsml_count_top_level() != 0) ? tsml_count_top_level() : 0;
-                                                $removal_classes = (tsml_count_top_level() != 0) ? "dashicons dashicons-no-alt" : "dashicons dashicons-no-alt disabled";
+                                       } ?>
+                                        <tr data-source="<?php echo $feed_or_filename ?>">
+                                            <td>
+                                                <?php if ($properties['type'] !== 'CSV') { ?>
+                                                        <a href="<?php echo $feed_or_filename ?>" target="_blank">
+                                                            <?php echo !empty($properties['name']) ? $properties['name'] : __('Unnamed Feed', '12-step-meeting-list') ?>
+                                                        </a>
+                                                <?php } else if ($properties['is_local'] === true) { ?>
+                                                        <?php echo '<b><i>Direct Entry (local)</i></b>'; ?>
+                                                <?php } else { ?>
+                                                        <?php echo str_replace("http://", "", $feed_or_filename); ?>
+                                                <?php } ?>
+                                            </td>
+                                            <td>
+                                                <?php if ($properties['type'] === 'CSV' && $properties['is_local'] === true) { ?>
+                                                        <?php echo 'None'; ?>
+                                                <?php } else { ?>
+                                                    
+                                                <?php   $parent_region = null;
+                                                        if (empty($properties['parent_region_id']) || $properties['parent_region_id'] == -1) {
+                                                            $parent_region = __('Top-level region', '12-step-meeting-list');
+
+                                                        } elseif (empty($regions[$properties['parent_region_id']])) {
+                                                            $term = get_term_by('term_id', $properties['parent_region_id'], 'tsml_region');
+                                                            $parent_region = ($term !== false) ? $term->name : 'Missing Parent Region: ' . $properties['parent_region_id'];
+
+                                                        } else {
+                                                            $parent_region = $regions[$properties['parent_region_id']];
+                                                        }
+                                                        echo $parent_region;
                                                 ?>
-                                                <input type="hidden" name="tsml_removal" id="tsml_removal" value="<?php echo '$local_meetings' ?>">
-                                                <span class="<?php echo $removal_classes ?>" title="remove"></span>
-                                            </form>
+                                                <?php } ?>
 
-                                        </td>
-                                    </tr>
-                                </div>
-                            
-                        <?php if (!empty($tsml_data_sources)) { ?>
-                            <?php foreach ($tsml_data_sources as $feed_or_filename => $properties) { ?>
-                                    <tr data-source="<?php echo $feed_or_filename ?>">
-                                        <td>
-                                            <?php if ($properties['type'] !== 'CSV') { ?>
-                                                    <a href="<?php echo $feed_or_filename ?>" target="_blank">
-                                                        <?php echo !empty($properties['name']) ? $properties['name'] : __('Unnamed Feed', '12-step-meeting-list') ?>
-                                                    </a>
-                                            <?php } else { ?>
-                                                    <?php echo str_replace("http://", "", $feed_or_filename); ?>
-                                            <?php } ?>
-                                        </td>
-                                        <td>
-                                            <?php
-                                            $parent_region = null;
-                                            if (empty($properties['parent_region_id']) || $properties['parent_region_id'] == -1) {
-                                                $parent_region = __('Top-level region', '12-step-meeting-list');
-
-                                            } elseif (empty($regions[$properties['parent_region_id']])) {
-                                                $term = get_term_by('term_id', $properties['parent_region_id'], 'tsml_region');
-                                                $parent_region = ($term !== false) ? $term->name : 'Missing Parent Region: ' . $properties['parent_region_id'];
-
-                                            } else {
-                                                $parent_region = $regions[$properties['parent_region_id']];
-                                            }
-                                            echo $parent_region;
-                                            ?>
-                                        </td>
-                                        <td class="align-center count_meetings"><?php echo number_format($properties['count_meetings']) ?></td>
-                                        <td class="align-center">
-                                            <form method="post" action="<?php echo $_SERVER['REQUEST_URI'] ?>" id="frm_import_data_sources_list">
+                                            </td>
+                                            <td class="align-center count_meetings"><?php echo number_format($properties['count_meetings']) ?></td>
+                                            <td class="align-center">
+                                                <form method="post" action="<?php echo $_SERVER['REQUEST_URI'] ?>" id="frm_import_data_sources_list">
                                                 
-                                                <?php wp_nonce_field($tsml_nonce, 'tsml_nonce', false) ?>
-                                                <input type="hidden" name="tsml_add_data_source" value="<?php echo $feed_or_filename ?>">
-                                                <input type="hidden" name="tsml_add_data_source_name" value="<?php echo @$properties['name'] ?>">
-                                                <input type="hidden" name="tsml_add_data_source_parent_region_id" value="<?php echo @$properties['parent_region_id'] ?>">
+                                                    <?php wp_nonce_field($tsml_nonce, 'tsml_nonce', false) ?>
+                                                    <input type="hidden" name="tsml_add_data_source" value="<?php echo $feed_or_filename ?>">
+                                                    <input type="hidden" name="tsml_add_data_source_name" value="<?php echo @$properties['name'] ?>">
+                                                    <input type="hidden" name="tsml_add_data_source_parent_region_id" value="<?php echo @$properties['parent_region_id'] ?>">
 
-                                                <?php
-                                                if ($properties['type'] !== 'CSV') { ?>
-                                                            <input type="submit" value="Update" class="button button-small" > 
-                                                <?php } else { ?>  
-                                                            <input type="button" name="file_upload_way" value="File Upload" class="button button-small disabled" style="display:none;"> 
-                                                <?php } ?>                                                    
-                                            </form>
-                                        </td>
+                                                    <?php
+                                                    if ($properties['type'] !== 'CSV') { ?>
+                                                                <input type="submit" value="Update" class="button button-small" > 
+                                                    <?php } else { ?>  
+                                                                <input type="button" name="file_upload_way" value="File Upload" class="button button-small disabled" style="display:none;"> 
+                                                    <?php } ?>                                                    
+                                                </form>
+                                            </td>
 
-                                        <td class="align-right">
-                                            <?php echo Date(get_option('date_format') . ' ' . get_option('time_format'), $properties['last_import']) ?>
-                                        </td>
+                                            <td class="align-right">
+                                                <?php echo Date(get_option('date_format') . ' ' . get_option('time_format'), $properties['last_import']) ?>
+                                            </td>
 
-                                        <td class="align-right">
-                                            <?php $delete_source_confirm_msg = __("Are you sure that you want to delete the selected data source and all of its related meeting data?", "12-step-meeting-list"); ?>
-                                            <form method="post" action="<?php echo $_SERVER['REQUEST_URI'] ?>" id="frm_data_source_removal" onsubmit="return confirm('<?php echo $delete_source_confirm_msg ?>')" />
-                                                <?php wp_nonce_field($tsml_nonce, 'tsml_nonce', false) ?>
-                                                <input type="hidden" name="tsml_remove_data_source" value="<?php echo $feed_or_filename ?>">
-                                                <span class="dashicons dashicons-no-alt" title="remove"></span>
-                                            </form>
-                                        </td>
-                                    </tr>
-                            <?php }} ?>
+                                            <td class="align-right">
+                                                <?php $delete_source_confirm_msg = __("Are you sure that you want to delete the selected data source and all of its related meeting data?", "12-step-meeting-list"); ?>
+                                                <form method="post" action="<?php echo $_SERVER['REQUEST_URI'] ?>" id="frm_data_source_removal" onsubmit="return confirm('<?php echo $delete_source_confirm_msg ?>')" />
+                                                    <?php wp_nonce_field($tsml_nonce, 'tsml_nonce', false) ?>
+                                                    <input type="hidden" name="tsml_remove_data_source" value="<?php echo $feed_or_filename ?>">
+                                                    <span class="dashicons dashicons-no-alt" title="remove"></span>
+                                                </form>
+                                            </td>
+                                        </tr>
+                                <?php }} ?>
                             </tbody>
                         </table>
                         

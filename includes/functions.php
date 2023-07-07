@@ -366,11 +366,10 @@ function tsml_custom_types($types)
 //used:		tsml_delete_orphans(), admin-import.php
 function tsml_delete($post_ids, $data_source_url = null, $data_source_parent_region_id = null)
 {
-    global $wpdb, $tsml_data_sources, $tsml_csv_top_level, $tsml_detection_test_mode;
+    global $wpdb, $tsml_data_sources, $tsml_detection_test_mode;
     $test_mode = ($tsml_detection_test_mode === 'on') ? -1 : 0;
 
     //get options table info
-    $tsml_csv_top_level = get_option('tsml_csv_top_level');
     $tsml_data_sources = get_option('tsml_data_sources', []);
 
 	//initialize processing booleans
@@ -451,14 +450,14 @@ function tsml_delete($post_ids, $data_source_url = null, $data_source_parent_reg
 		@$wpdb->query('DELETE FROM ' . $wpdb->term_relationships . ' WHERE object_id IN (' . $post_ids . ')');
 		tsml_delete_orphans();
 
-		//step 5: remove registrations from wp_options table
+		//step 5: remove all registrations from wp_options table
         //-------
-        if (get_option('tsml_csv_top_level')) {
+        if (get_option('tsml_csv_top_level')) { //TODO: remove this before push to production
             unset($tsml_csv_top_level);
             delete_option('tsml_csv_top_level');
         }
         if (get_option('tsml_data_sources')) {
-            unset($tsml_data_sources[$data_source_url]);
+            unset($tsml_data_sources);
             delete_option('tsml_data_sources');
         }
 
@@ -533,14 +532,28 @@ function tsml_delete($post_ids, $data_source_url = null, $data_source_parent_reg
             tsml_cache_rebuild();
         }
 
-		//step 5: remove top level registration from wp_options table
+		//step 5: update top level local registration in the wp_options table
         //-------
-		if (get_option('tsml_csv_top_level')) {
-			unset($tsml_csv_top_level);
-			delete_option('tsml_csv_top_level');
-		}
+        if (get_option('tsml_data_sources')) {
+            $is_local = $tsml_data_sources[$data_source_url]['is_local'];
+            if ($is_local) {
+                $tsml_data_sources['http://csv-top-level.local'] = [
+                    'status' => 'OK',
+                    'is_local' => true,
+                    'last_import' => current_time('timestamp'),
+                    'count_meetings' => 0,
+                    'name' => 'Direct Entry (local)',
+                    'parent_region_id' => 0,
+                    'type' => 'CSV',
+                ];
 
-        tsml_cache_rebuild(); 
+            } else {
+                unset($tsml_data_sources[$data_source_url]);
+            }
+            update_option('tsml_data_sources', $tsml_data_sources);
+        }
+
+        tsml_cache_rebuild();
 
     //**************************************>
 	} elseif ($is_delete_data_source_only) {
@@ -600,7 +613,7 @@ function tsml_delete($post_ids, $data_source_url = null, $data_source_parent_reg
         //step 5: remove this data source registration from wp_options table
         //-------
         if (get_option('tsml_data_sources')) {
-            unset($tsml_data_sources[$data_source_url]);
+			unset($tsml_data_sources[$data_source_url]);
             update_option('tsml_data_sources', $tsml_data_sources);
         }
 
