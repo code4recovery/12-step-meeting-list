@@ -320,7 +320,7 @@ jQuery(function ($) {
 		});
 	});
 	$(document).ready(function () {
-		$('#frm_data_source_removal').on('submit', function (e) {
+		$('#frm_tsml_removal').on('submit', function (e) {
 
 			reset_counts();
 

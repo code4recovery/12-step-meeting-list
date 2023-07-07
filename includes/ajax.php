@@ -545,6 +545,7 @@ add_action('wp_ajax_tsml_import', function () {
 	remove_filter('wp_insert_post_data', 'tsml_import_post_modified', 99);
 
 	//send json result to browser
+    $local_meetings = tsml_count_top_level();
     $meetings  = tsml_count_meetings();
 	$locations = tsml_count_locations();
 	$regions   = tsml_count_regions();
@@ -556,7 +557,10 @@ add_action('wp_ajax_tsml_import', function () {
 	}
 	update_option('tsml_data_sources', $tsml_data_sources);
 
-	//now format the counts for JSON output
+	$tsml_csv_top_level['count_meetings'] = count(tsml_get_non_data_source_ids());
+    update_option('tsml_csv_top_level', $tsml_csv_top_level);
+
+    //now format the counts for JSON output
 	foreach ($tsml_data_sources as $url => $props) {
 		$tsml_data_sources[$url]['count_meetings'] = number_format($props['count_meetings']);
 	}
@@ -564,9 +568,10 @@ add_action('wp_ajax_tsml_import', function () {
 	wp_send_json([
 		'errors' => $errors,
 		'remaining' => count($remaining),
-		'counts' => compact('meetings', 'locations', 'regions', 'groups'),
-		'data_sources' => $tsml_data_sources,
+        'counts' => compact('local_meetings', 'meetings', 'locations', 'regions', 'groups'),
+        'data_sources' => $tsml_data_sources,
 		'descriptions' => [
+            'local_meetings' => sprintf(_n('%s local meeting', '%s local meetings', $local_meetings, '12-step-meeting-list'), number_format_i18n($local_meetings)),
             'meetings' => sprintf(_n('%s meeting', '%s meetings', $meetings, '12-step-meeting-list'), number_format_i18n($meetings)),
 			'locations' => sprintf(_n('%s location', '%s locations', $locations, '12-step-meeting-list'), number_format_i18n($locations)),
 			'groups' => sprintf(_n('%s group', '%s groups', $groups, '12-step-meeting-list'), number_format_i18n($groups)),
@@ -579,19 +584,20 @@ add_action('wp_ajax_tsml_import', function () {
 //used by admin_import.php
 add_action('wp_ajax_tsml_removal', function () {
 
-	if (tsml_count_top_level() > 0) {
-        tsml_delete('no_data_source');
-    }
-
     //send json result to browser
+    $local_meetings = tsml_count_top_level();
     $meetings = tsml_count_meetings();
     $locations = tsml_count_locations();
     $regions = tsml_count_regions();
     $groups = tsml_count_groups();
 
+    $tsml_csv_top_level['count_meetings'] = count(tsml_get_non_data_source_ids());
+    update_option('tsml_csv_top_level', $tsml_csv_top_level);
+
     wp_send_json([
-        'counts' => compact('top_level_meetings', 'meetings', 'locations', 'regions', 'groups'),
+        'counts' => compact('local_meetings', 'meetings', 'locations', 'regions', 'groups'),
         'descriptions' => [
+            'local_meetings' => sprintf(_n('%s local meeting', '%s local meetings', $local_meetings, '12-step-meeting-list'), number_format_i18n($local_meetings)),
             'meetings' => sprintf(_n('%s meeting', '%s meetings', $meetings, '12-step-meeting-list'), number_format_i18n($meetings)),
             'locations' => sprintf(_n('%s location', '%s locations', $locations, '12-step-meeting-list'), number_format_i18n($locations)),
             'groups' => sprintf(_n('%s group', '%s groups', $groups, '12-step-meeting-list'), number_format_i18n($groups)),
