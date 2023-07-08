@@ -370,7 +370,7 @@ if (!function_exists('tsml_import_page')) {
         if (!empty($_POST['tsml_delete_top_level_option']) && isset($_POST['tsml_nonce']) && wp_verify_nonce($_POST['tsml_nonce'], $tsml_nonce)) {
             $tsml_delete_top_level_option = ($_POST['tsml_delete_top_level_option'] == 'whenever') ? 'whenever' : 'never';
             update_option('tsml_delete_top_level_option', $tsml_delete_top_level_option);
-            tsml_alert(__('Top-level recordset delete option changed.', '12-step-meeting-list'));
+            tsml_alert(__('Local recordset delete option changed.', '12-step-meeting-list'));
         }
 
         //set change detection test_mode setting on/off
@@ -631,6 +631,7 @@ if (!function_exists('tsml_import_page')) {
                                 <h2><?php _e('About Importing...', '12-step-meeting-list') ?></h2>
                         
                                     <form method="post" class="stack compact" id="frm_about_importing">
+                                        <?php wp_nonce_field($tsml_nonce, 'tsml_nonce', false) ?>
                                         <p><?php _e('Your meeting data may consist of a single local data set or it may include an additional number of external data sets. External data sets provide a means to aggregate meetings from different sites into a single master list which can be managed through the features on this page.', '12-step-meeting-list') ?></p>
                                         <details>
                                             <summary class="small">Local Data Import...</summary>
