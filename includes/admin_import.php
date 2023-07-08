@@ -157,7 +157,7 @@ if (!function_exists('tsml_import_page')) {
 
                             if ($nbr_local_records !== 0) { //new top-level file upload
 
-                                if ($tsml_delete_top_level_option === 'whenever') {
+                                if ($tsml_delete_top_level_option == 'whenever') {
                                     //run top-level maintainable record set delete  
                                     tsml_delete('no_data_source');
 
@@ -366,11 +366,11 @@ if (!function_exists('tsml_import_page')) {
             }
         }
 
-        //set top-level records delete default setting whenever/never
+        //change tsml_delete_top_level_option saved setting (whenever/never)
         if (!empty($_POST['tsml_delete_top_level_option']) && isset($_POST['tsml_nonce']) && wp_verify_nonce($_POST['tsml_nonce'], $tsml_nonce)) {
             $tsml_delete_top_level_option = ($_POST['tsml_delete_top_level_option'] == 'whenever') ? 'whenever' : 'never';
             update_option('tsml_delete_top_level_option', $tsml_delete_top_level_option);
-            tsml_alert(__('Top-level Recordset Delete setting changed.', '12-step-meeting-list'));
+            tsml_alert(__('Top-level recordset delete option changed.', '12-step-meeting-list'));
         }
 
         //set change detection test_mode setting on/off
@@ -456,9 +456,10 @@ if (!function_exists('tsml_import_page')) {
                             <?php if (!empty($tsml_data_sources)) { ?>
 
                                 <?php foreach ($tsml_data_sources as $feed_or_filename => $properties) { ?>
-                                       <?php if ($properties['is_local']) {  
+                                    <?php if ($properties['is_local']) {  
                                         
-                                       } ?>
+                                    } ?>
+                                    <?php $data_source_is_local = array_key_exists('is_local', $properties) ? $properties['is_local'] : '0' ?>
                                         <tr data-source="<?php echo $feed_or_filename ?>">
                                             <td>
                                                 <?php if ($properties['type'] !== 'CSV') { ?>
@@ -543,7 +544,7 @@ if (!function_exists('tsml_import_page')) {
                                     if (tsml_count_top_level() != 0) { 
                                         $append_replace_option = ($tsml_delete_top_level_option == 'whenever') ? 'replace all the meetings in' : 'append these meetings to';
                                     } 
-                                    $add_local_confirm_msg = __("You are about to $append_replace_option your local meeting list?", "12-step-meeting-list"); 
+                                    $add_local_confirm_msg = __("You are about to <b>$append_replace_option</b> your local meeting list?", "12-step-meeting-list"); 
                                 ?>
                                 <form method="post" class="row" action="<?php echo $_SERVER['REQUEST_URI'] ?>" enctype="multipart/form-data" id="frm_direct_entry"  onsubmit="return confirm('<?php echo $add_local_confirm_msg ?>')" > 
                                     <div id="dv_direct_entry_file" class="align-left twenty-pixel-spacer-right">
@@ -629,18 +630,19 @@ if (!function_exists('tsml_import_page')) {
                             <div class="postbox stack">
                                 <h2><?php _e('About Importing...', '12-step-meeting-list') ?></h2>
                         
-                                    <form method="post" class="stack compact" id="frm_top_level_removal">
+                                    <form method="post" class="stack compact" id="frm_about_importing">
                                         <p><?php _e('Your meeting data may consist of a single local data set or it may include an additional number of external data sets. External data sets provide a means to aggregate meetings from different sites into a single master list which can be managed through the features on this page.', '12-step-meeting-list') ?></p>
                                         <details>
                                             <summary class="small">Local Data Import...</summary>
                                             <p><?php _e( "To replace all your local records during an import, set the “Delete local records” dropdown to <b>whenever uploading a local CSV file</b>.", '12-step-meeting-list') ?></p>
                                             <p><?php _e( "To append new meetings to your local data, set <b>never</b>. This will allow the adding of new meetings to the list of those local meetings already on your site.", '12-step-meeting-list') ?> </p>
                                             <p><?php _e( 'NOTE: To avoid duplicate meetings when appending, ensure your CSV does not contain meetings you already have on your site.', '12-step-meeting-list') ?></p>
+                                        
                                             <br />
-                                            <p><?php printf(__('<h4>Delete local records</h4>', '12-step-meeting-list')) ?></p>
+                                            <h3><?php printf(__('Delete local records', '12-step-meeting-list')) ?></h3>
                                             <select name="tsml_delete_top_level_option" onchange="this.form.submit()">
                                                 <?php
-                                                foreach (['whenever' => __('whenever uploading a local CSV file', '12-step-meeting-list'), 'only' => __('never', '12-step-meeting-list'),] as $key => $value) { ?>
+                                                foreach (['whenever' => __('whenever uploading a local CSV file', '12-step-meeting-list'), 'never' => __('never', '12-step-meeting-list'),] as $key => $value) { ?>
                                                         <option value="<?php echo $key ?>" <?php selected($tsml_delete_top_level_option, $key) ?> >
                                                             <?php echo $value ?>
                                                         </option>
@@ -652,8 +654,9 @@ if (!function_exists('tsml_import_page')) {
                                             <p><?php _e('The sources below the <b><i>Direct Entry (local)</i></b> listing provide information on external data sets imported into this website. ', '12-step-meeting-list') ?></p>
                                             <p><?php _e( 'Please note that only external imports go through our change detection process, where just the records in the database <u>which are different from those being imported</u> are actually updated.', '12-step-meeting-list') ?></p><br />
                                             <p><?php _e( "The <b><i>External Data CSV Import</i></b> option needs to use the exact same filename and parent region to update a particular record set during the import process.", '12-step-meeting-list') ?> </p>
+                                            <br />
                                         </details>
-                                        <?php wp_nonce_field($tsml_nonce, 'tsml_nonce', false) ?>
+                                        <br />
                                     </form>
                             </div>
 
@@ -757,13 +760,6 @@ if (!function_exists('tsml_import_page')) {
                                         </ul>
                                     </div>
                                 </div>
-                                <?php
-                                if ($tsml_detection_test_mode === 'on') { ?>
-                                    <form method="post" <?php if (!($meetings + $locations + $groups + $regions)) { ?> class="hidden" <?php } ?> >
-                                        <?php wp_nonce_field($tsml_nonce, 'tsml_nonce', false) ?>
-                                        <input type="submit" name="delete_everyting_button" class="button" value="Delete Everything!" onsubmit="return confirm(__('Are you really sure you want to delete everything?', '12-step-meeting-list'));"  />
-                                    </form>
-                                <?php } ?>
                             </div>
                         </div>
 
@@ -788,17 +784,24 @@ if (!function_exists('tsml_import_page')) {
                                 <h2><?php _e('Debug Mode', '12-step-meeting-list') ?></h2>
                                 <?php
                                 if ($meetings) { ?>
-                                        <form method="post" class="stack compact" action="<?php echo $_SERVER['REQUEST_URI'] ?>" id="frm_debug_mode">
+                                    <form method="post" class="stack compact" action="<?php echo $_SERVER['REQUEST_URI'] ?>" id="frm_debug_mode">
+                                        <?php wp_nonce_field($tsml_nonce, 'tsml_nonce', false) ?>
+                                        <select name="tsml_detection_test_mode" onchange="this.form.submit()">
+                                            <?php
+                                            foreach (['on' => __('On', '12-step-meeting-list'), 'off' => __('Off', '12-step-meeting-list'),] as $key => $value) { ?>
+                                                    <option value="<?php echo $key ?>" <?php selected($tsml_detection_test_mode, $key) ?> >
+                                                        <?php echo $value ?>
+                                                    </option>
+                                            <?php } ?>
+                                        </select>
+                                    </form>
+                                    <?php
+                                    if ($tsml_detection_test_mode === 'on') { ?>
+                                        <form method="post" <?php if (!($meetings + $locations + $groups + $regions)) { ?> class="hidden" <?php } ?> >
                                             <?php wp_nonce_field($tsml_nonce, 'tsml_nonce', false) ?>
-                                            <select name="tsml_detection_test_mode" onchange="this.form.submit()">
-                                                <?php
-                                                foreach (['on' => __('On', '12-step-meeting-list'), 'off' => __('Off', '12-step-meeting-list'),] as $key => $value) { ?>
-                                                        <option value="<?php echo $key ?>" <?php selected($tsml_detection_test_mode, $key) ?> >
-                                                            <?php echo $value ?>
-                                                        </option>
-                                                <?php } ?>
-                                            </select>
+                                            <input type="submit" name="delete_everyting_button" class="button" value="Delete Everything!" onsubmit="return confirm(__('Are you really sure you want to delete everything?', '12-step-meeting-list'));"  />
                                         </form>
+                                    <?php } ?>
                                 <?php } ?>
                             </div>
                         </div>
