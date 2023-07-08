@@ -377,7 +377,7 @@ if (!function_exists('tsml_import_page')) {
         if (!empty($_POST['tsml_detection_test_mode']) && isset($_POST['tsml_nonce']) && wp_verify_nonce($_POST['tsml_nonce'], $tsml_nonce)) {
             $tsml_detection_test_mode = ($_POST['tsml_detection_test_mode'] == 'on') ? 'on' : 'off';
             update_option('tsml_detection_test_mode', $tsml_detection_test_mode);
-            tsml_alert(__('Data Sources Debug Mode setting changed.', '12-step-meeting-list'));
+            tsml_alert(__('Debug Mode setting changed.', '12-step-meeting-list'));
         }
 
         //check for existing import buffer
@@ -780,7 +780,7 @@ if (!function_exists('tsml_import_page')) {
                                 <p><?php printf(__('Want to send a mass email to your contacts? <a href="%s" target="_blank">Click here</a> to see their email addresses.', '12-step-meeting-list'), admin_url('admin-ajax.php') . '?action=contacts') ?></p>
                             </div>
 
-                            <!-- Data Sources Debug Mode -->
+                            <!-- Debug Mode -->
                             <div class="postbox stack">
                                 <h2><?php _e('Debug Mode', '12-step-meeting-list') ?></h2>
                                 <?php

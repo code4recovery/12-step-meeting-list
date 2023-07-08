@@ -550,6 +550,7 @@ function tsml_delete($post_ids, $data_source_url = null, $data_source_parent_reg
 
         tsml_cache_rebuild();
 
+
     //**************************************>
 	} elseif ($is_delete_data_source_only) {
 	//**************************************>
@@ -601,8 +602,8 @@ function tsml_delete($post_ids, $data_source_url = null, $data_source_parent_reg
         //-------
         if (!empty($post_ids)) {
             @$wpdb->query('DELETE FROM ' . $wpdb->term_relationships . ' WHERE object_id IN (' . $post_ids . ')');
-            tsml_delete_orphans();
-            tsml_cache_rebuild();
+            @tsml_delete_orphans();
+            @tsml_cache_rebuild();
         }
 
         //step 5: remove this data source registration from wp_options table
@@ -611,7 +612,6 @@ function tsml_delete($post_ids, $data_source_url = null, $data_source_parent_reg
 			unset($tsml_data_sources[$data_source_url]);
             update_option('tsml_data_sources', $tsml_data_sources);
         }
-
 
 	//***************************>
     } else { // is_delete_nothing
@@ -1187,8 +1187,8 @@ function tsml_get_locations()
 	foreach ($posts as $post) {
 		$region_id = !empty($location_meta[$post->ID]['region_id']) ? $location_meta[$post->ID]['region_id'] : null;
 		if (array_key_exists($region_id, $regions_with_parents)) {
-			$region = $regions[$regions_with_parents[$region_id]];
-			$sub_region = $regions[$region_id];
+			$region = @$regions[$regions_with_parents[$region_id]];
+			$sub_region = @$regions[$region_id];
 		} else {
 			$region = !empty($regions[$region_id]) ? $regions[$region_id] : '';
 			$sub_region = null;
