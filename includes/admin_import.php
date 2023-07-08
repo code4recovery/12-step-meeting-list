@@ -543,8 +543,8 @@ if (!function_exists('tsml_import_page')) {
                                 <?php $append_replace_option = "add new meetings to";
                                     if (tsml_count_top_level() != 0) { 
                                         $append_replace_option = ($tsml_delete_top_level_option == 'whenever') ? 'replace all the meetings in' : 'append these meetings to';
-                                    } 
-                                    $add_local_confirm_msg = __("You are about to <b>$append_replace_option</b> your local meeting list?", "12-step-meeting-list"); 
+                                    }
+                                    $add_local_confirm_msg = __("You are about to $append_replace_option your local meeting list?", "12-step-meeting-list"); 
                                 ?>
                                 <form method="post" class="row" action="<?php echo $_SERVER['REQUEST_URI'] ?>" enctype="multipart/form-data" id="frm_direct_entry"  onsubmit="return confirm('<?php echo $add_local_confirm_msg ?>')" > 
                                     <div id="dv_direct_entry_file" class="align-left twenty-pixel-spacer-right">
