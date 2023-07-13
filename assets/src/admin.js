@@ -307,15 +307,11 @@ jQuery(function ($) {
 		if ($('input#formatted_address').val()) $('input#formatted_address').trigger('change');
 	}
 
-	//email contact
+	//email contact and data source deletes
 	$('table form span').click(function () {
 		$(this).parent().submit();
 	}); 
 
-	//"delegate" the delete of a "Your Data" record set
-	$(document).on('click', '.remove_data_source', function () {
-		$(this).parent().submit();
-	});
 
 	//fire count reset
 	$(document).ready(function () {

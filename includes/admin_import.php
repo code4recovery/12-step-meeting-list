@@ -509,7 +509,7 @@ if (!function_exists('tsml_import_page')) {
                                                     <form method="post" action="<?php echo $_SERVER['REQUEST_URI'] ?>" onsubmit="return confirm('<?php echo $delete_source_confirm_msg ?>')" >
                                                         <?php wp_nonce_field($tsml_nonce, 'tsml_nonce', false) ?>
                                                         <input type="hidden" name="tsml_remove_data_source" value="<?php echo $url_key ?>">
-                                                        <span class="remove_data_source dashicons dashicons-no-alt" title="remove local data"></span>
+                                                        <span class=" dashicons dashicons-no-alt" title="remove local data"></span>
                                                     </form>
                                                 </td>
                                             </tr>
@@ -554,7 +554,7 @@ if (!function_exists('tsml_import_page')) {
                                                     <form method="post" action="<?php echo $_SERVER['REQUEST_URI'] ?>" onsubmit="return confirm('<?php echo $delete_source_confirm_msg ?>')" >
                                                         <?php wp_nonce_field($tsml_nonce, 'tsml_nonce', false) ?>
                                                         <input type="hidden" name="tsml_remove_data_source" value="<?php echo $url_key ?>">
-                                                        <span class="remove_data_source dashicons dashicons-no-alt" title="remove file data"></span>
+                                                        <span class="dashicons dashicons-no-alt" title="remove file data"></span>
                                                     </form>
                                                 </td>
                                             </tr>
@@ -600,7 +600,7 @@ if (!function_exists('tsml_import_page')) {
                                                     <form method="post" action="<?php echo $_SERVER['REQUEST_URI'] ?>" onsubmit="return confirm('<?php echo $delete_source_confirm_msg ?>')" >
                                                         <?php wp_nonce_field($tsml_nonce, 'tsml_nonce', false) ?>
                                                         <input type="hidden" name="tsml_remove_data_source" value="<?php echo $url_key ?>">
-                                                        <span class="remove_data_source dashicons dashicons-no-alt" title="remove feed data"></span>
+                                                        <span class="dashicons dashicons-no-alt" title="remove feed data"></span>
                                                     </form>
                                                 </td>
                                             </tr>
