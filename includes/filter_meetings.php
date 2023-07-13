@@ -58,7 +58,7 @@ class tsml_filter_meetings
         }
 
         if (!empty($arguments['query'])) {
-            $this->searchable_keys = ['name', 'notes', 'location', 'location_notes', 'formatted_address', 'group', 'group_notes'];
+            $this->searchable_keys = ['name', 'notes', 'location', 'location_notes', 'formatted_address', 'group', 'group_notes', 'region', 'sub_region', 'district', 'sub_district'];
             $this->query = array_map('sanitize_text_field', array_filter(array_unique(explode(' ', stripslashes($arguments['query'])))));
         }
 

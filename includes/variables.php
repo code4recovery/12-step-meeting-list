@@ -1304,6 +1304,19 @@ add_action('plugins_loaded', function () {
 			'name' => 'Support Groups',
 			'types' => [],
 		],
+		'ua' => [
+			'abbr' => __('UA', '12-step-meeting-list'),
+			'flags' => ['M', 'W', 'TC', 'ONL'], //for /men and /women at end of meeting name (used in tsml_format_name())
+			'name' => __('Underearners Anonymous', '12-step-meeting-list'),
+			'types' => [
+				'BIPOC' => __('BIPOC', '12-step-meeting-list'),
+				'M' => __('Men', '12-step-meeting-list'),
+				'ES' => __('Spanish', '12-step-meeting-list'),
+				'ST' => __('Steps', '12-step-meeting-list'),
+				'T' => __('Tools', '12-step-meeting-list'),
+				'W' => __('Women', '12-step-meeting-list'),
+			],
+		],
 		'va' => [
 			'abbr' => __('VA', '12-step-meeting-list'),
 			'flags' => ['M', 'W', 'TC', 'ONL'], //for /men and /women at end of meeting name (used in tsml_format_name())
