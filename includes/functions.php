@@ -369,6 +369,8 @@ function tsml_delete($post_ids, $data_source_url = null, $data_source_parent_reg
     global $wpdb, $tsml_data_sources, $tsml_detection_test_mode;
     $test_mode = ($tsml_detection_test_mode === 'on') ? -1 : 0;
 
+	$site_url = get_site_url();
+
     //get options table info
     $tsml_data_sources = get_option('tsml_data_sources', []);
 
@@ -534,8 +536,8 @@ function tsml_delete($post_ids, $data_source_url = null, $data_source_parent_reg
 
 		//step 5: update top level local registration in the wp_options table
         //-------
-        if ($tsml_data_sources['http://csv-top-level.local']) {
-            $tsml_data_sources['http://csv-top-level.local'] = [
+        if ($tsml_data_sources[$site_url . '/wp-content/uploads/files/local.csv']) {
+            $tsml_data_sources[$site_url . '/wp-content/uploads/files/local.csv'] = [
                 'status' => 'OK',
                 'is_local' => true,
                 'last_import' => current_time('timestamp'),

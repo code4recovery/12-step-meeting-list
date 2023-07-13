@@ -551,9 +551,9 @@ add_action('wp_ajax_tsml_import', function () {
 	$regions   = tsml_count_regions();
 	$groups	= tsml_count_groups();
 
-	//update the data source counts for the database
+	//update the data source counts in the database wp_options table
 	foreach ($tsml_data_sources as $url => $props) {
-		if ($url === 'http://csv-top-level.local') {
+		if ($props['is_local'] === true) {
 			$tsml_data_sources[$url]['count_meetings'] = count(tsml_get_non_data_source_ids());
         } else {
             $tsml_data_sources[$url]['count_meetings'] = count(tsml_get_data_source_ids($url));
@@ -594,7 +594,8 @@ add_action('wp_ajax_tsml_removal', function () {
     $regions = tsml_count_regions();
     $groups = tsml_count_groups();
 
-	$tsml_data_sources['http://csv-top-level.local']['count_meetings'] = count(tsml_get_non_data_source_ids());
+	$site_url = get_site_url();
+	$tsml_data_sources[$site_url . '/wp-content/uploads/files/local.csv']['count_meetings'] = count(tsml_get_non_data_source_ids());
     update_option('tsml_data_sources', $tsml_data_sources);
 
     wp_send_json([

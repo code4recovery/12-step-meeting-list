@@ -307,23 +307,20 @@ jQuery(function ($) {
 		if ($('input#formatted_address').val()) $('input#formatted_address').trigger('change');
 	}
 
-	//delete data source or email contact
+	//email contact
 	$('table form span').click(function () {
+		$(this).parent().submit();
+	}); 
+
+	//"delegate" the delete of a "Your Data" record set
+	$(document).on('click', '.remove_data_source', function () {
 		$(this).parent().submit();
 	});
 
 	//fire count reset
 	$(document).ready(function () {
-		$("#tsml_removal").click(function () {
-
+		$('#tsml_remove_data_source').on('submit', function (e) {
 			reset_counts();
-		});
-	});
-	$(document).ready(function () {
-		$('#frm_tsml_removal').on('submit', function (e) {
-
-			reset_counts();
-
 		});
 	});
 
