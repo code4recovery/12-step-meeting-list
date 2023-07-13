@@ -7,3 +7,4 @@ docker-compose.yml
 .vs
 .vscode
 .DS_Store
+/includes/upload.php
