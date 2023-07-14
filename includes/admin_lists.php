@@ -1,41 +1,39 @@
 <?php
 
 # Adding region dropdown to filter
-add_action('restrict_manage_posts', function () {
+add_action('restrict_manage_posts', function ($post_type) {
 
-    if (@$_GET['post_type'] != 'tsml_meeting') {
+    if($post_type !== 'tsml_meeting') {
         return;
     }
 
     wp_dropdown_categories([
         'show_option_all' => 'Region',
         'orderby' => 'tax_name',
-        'hide_empty' => true,
-        'selected' => !empty($_GET['region']) ? $_GET['region'] : null,
+        'selected' => !empty($_GET['region']) ? sanitize_text_field($_GET['region']) : '',
         'hierarchical' => true,
         'name' => 'region',
         'taxonomy' => 'tsml_region',
         'hide_if_empty' => true,
-        'value_field' => 'term_id',
     ]);
-});
+}, 10, 1);
 
 # If filter is set, restrict results
 add_filter(
-    'parse_query',
+    'pre_get_posts',
     function ($query) {
-        global $pagenow, $wpdb;
+        global $post_type, $pagenow, $wpdb;
 
-        if (($pagenow != 'edit.php') || (@$_GET['post_type'] != 'tsml_meeting') || empty($_GET['region'])) {
-            return;
+        if(!empty($_GET['region']) && $pagenow === 'edit.php' && $post_type === 'tsml_meeting' && $query->is_main_query()) {
+            $parent_ids = $wpdb->get_col($wpdb->prepare(
+                "SELECT p.ID FROM $wpdb->posts p 
+	                    JOIN $wpdb->term_relationships r ON r.object_id = p.ID 
+	                    JOIN $wpdb->term_taxonomy x ON x.term_taxonomy_id = r.term_taxonomy_id 
+	                    WHERE x.term_id = %d",
+                    intval(sanitize_text_field($_GET['region']))
+            ));
+            $query->query_vars['post_parent__in'] = empty($parent_ids) ? [0] : $parent_ids;
         }
-
-        $parent_ids = $wpdb->get_col('SELECT p.ID FROM ' . $wpdb->posts . ' p
-            JOIN ' . $wpdb->term_relationships . ' r ON r.object_id = p.ID
-            JOIN ' . $wpdb->term_taxonomy . ' x ON x.term_taxonomy_id = r.term_taxonomy_id
-            WHERE x.term_id = ' . intval($_GET['region']));
-
-        $query->query_vars['post_parent__in'] = empty($parent_ids) ? [0] : $parent_ids;
     }
 );
 

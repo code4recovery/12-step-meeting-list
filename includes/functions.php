@@ -793,6 +793,16 @@ function tsml_format_time_reverse($string)
 	return sprintf('%02d', $time_parts['hour']) . ':' . sprintf('%02d', $time_parts['minute']);
 }
 
+//function: takes a website URL, eg https://www.groupname.org and returns the domain
+//used:		single-meetings.php
+function tsml_format_domain($url)
+{
+	$parts = parse_url(strtolower($url));
+	if (!$parts) return $url;
+	if (substr($parts['host'], 0, 4) == 'www.') return substr($parts['host'], 4);
+	return $parts['host'];
+}
+
 //function: display meeting list on home page (must be set to a static page)
 //used:		by themes that want it, such as https://github.com/code4recovery/one-page-meeting-list
 function tsml_front_page($wp_query)
@@ -1392,6 +1402,7 @@ function tsml_get_meetings($arguments = [], $from_cache = true, $full_export = f
 				'conference_phone' => isset($meeting_meta[$post->ID]['conference_phone']) ? $meeting_meta[$post->ID]['conference_phone'] : null,
 				'conference_phone_notes' => isset($meeting_meta[$post->ID]['conference_phone_notes']) ? $meeting_meta[$post->ID]['conference_phone_notes'] : null,
 				'types' => empty($meeting_meta[$post->ID]['types']) ? [] : array_values(unserialize($meeting_meta[$post->ID]['types'])),
+				'author' => get_the_author_meta('user_login', $post->post_author)
 			], $locations[$post->post_parent]);
 
 			// Include the data source when doing a full export
