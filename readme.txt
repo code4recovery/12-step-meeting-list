@@ -3,7 +3,7 @@ Contributors: Code for Recovery
 Requires at least: 3.2
 Requires PHP: 5.6
 Tested up to: 6.0
-Stable tag: 3.14.16
+Stable tag: 3.14.17
 
 This plugin helps twelve step recovery programs list their meetings. It standardizes addresses, and displays results in a searchable list and map.
 
@@ -234,9 +234,13 @@ You can make use of the [gettext filter](https://codex.wordpress.org/Plugin_API/
 Save it as a draft by editing the meeting's Status.
 
 = Are there shortcodes? =
-Yes, you can use `[tsml_meeting_count]`, `[tsml_location_count]`, `[tsml_group_count]`, and `[tsml_region_count]` to display human-formatted counts of your entities. For example, "Our area currently comprises [tsml_meeting_count] meetings." Also `[tsml_next_meetings count="5"]` displays a small table with the next several meetings in it. Use the `count` parameter to adjust how many are displayed. This will be unstyled if you're not using bootstrap in your theme.
+Yes, you can use `[tsml_meeting_count]`, `[tsml_location_count]`, `[tsml_group_count]`, and `[tsml_region_count]` to display human-formatted counts of your entities. For example, "Our area currently comprises [tsml_meeting_count] meetings." 
 
-Additionally, you can use `[tsml_types_list]` and `[tsml_regions_list]` to output linked lists to your meeting finder.
+`[tsml_next_meetings count="5"]` displays a small table with the next several meetings in it. Use the `count` parameter to adjust how many are displayed. This will be unstyled if you're not using bootstrap in your theme.
+
+Use `[tsml_types_list]` and `[tsml_regions_list]` to output linked lists to your meeting finder.
+
+Use `[tsml_ui]` to display the TSML UI meeting finder.
 
 = Are there translations to other languages? =
 It is translated into Polish. If you would like to volunteer to help translate another language, we would be pleased to work with you.
@@ -282,6 +286,13 @@ Yes, add the following to your theme's functions.php. Make sure you've enabled t
 1. Edit location
 
 == Changelog ==
+
+= 3.14.17 =
+* Add Underearners Anonymous [more info](https://github.com/code4recovery/12-step-meeting-list/issues/1169)
+* Add TSML UI shortcode to FAQ [more info](https://github.com/code4recovery/12-step-meeting-list/issues/1155)
+* Export meeting author in CSV export [more info](https://github.com/code4recovery/12-step-meeting-list/issues/1132)
+* Legacy UI: display meeting phone and email within button labels on detail page [more info](https://github.com/code4recovery/12-step-meeting-list/issues/1159)
+* Legacy UI: expand keyword search to include region and district names [more info](https://github.com/code4recovery/12-step-meeting-list/issues/1141)
 
 = 3.14.16 =
 * Fix issue where selecting a region and then using the bulk "move to trash" action emptied the public meetings page temporarily [more info](https://github.com/code4recovery/12-step-meeting-list/issues/1049)
