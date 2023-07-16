@@ -492,13 +492,13 @@ if (!function_exists('tsml_import_page')) {
                                                         <input type="hidden" name="tsml_add_data_source_parent_region_id" value="<?php echo @$properties['parent_region_id'] ?>">
 
                                                         <?php  
-                                                            $update_mode = "Add";
+                                                            $update_mode = "Begin";
                                                             if ($properties['count_meetings'] != 0) { 
                                                                 $update_mode = ($tsml_delete_top_level_option == 'whenever') ? __('Replace', '12-step-meeting-list') : __('Append', '12-step-meeting-list');
                                                             }
-                                                            $update_mode .= ' Meetings';
+                                                            //$update_mode .= ' Meetings';
                                                         ?>
-                                                        <input type="button" id="load_file_local" class="button button-small" value="<?php echo $update_mode ?>" onclick="document.getElementById('file_local').click();" style="width:110px;" />
+                                                        <input type="button" id="load_file_local" class="button button-small" value="<?php echo $update_mode ?>" onclick="document.getElementById('file_local').click();" />
                                                         <input type="file" class="hide" id="file_local" name="tsml_import" onchange="this.form.submit();"/>
                                                     </form>
                                                 </td>
@@ -543,7 +543,7 @@ if (!function_exists('tsml_import_page')) {
                                                         <input type="hidden" name="tsml_add_data_source_name" value="<?php echo @$properties['name'] ?>">
                                                         <input type="hidden" name="tsml_add_data_source_parent_region_id" value="<?php echo @$properties['parent_region_id'] ?>">
                                                        
-                                                        <input type="button" id="load_file_csv" class="button button-small" value="Upload File" onclick="document.getElementById('file_csv').click();" title="<?php echo @$properties['name'] ?>" style="width:110px;" />
+                                                        <input type="button" id="load_file_csv" class="button button-small" value="Upload CSV" onclick="document.getElementById('file_csv').click();" title="<?php echo @$properties['name'] ?>" />
                                                         <input type="file" style="display:none;" id="file_csv" name="tsml_import" onchange="this.form.submit();"/>
                                                     </form>
                                                 </td>
@@ -590,9 +590,9 @@ if (!function_exists('tsml_import_page')) {
                                                         <input type="hidden" name="tsml_add_data_source" value="<?php echo $url_key ?>">
                                                         <input type="hidden" name="tsml_add_data_source_name" value="<?php echo @$properties['name'] ?>">
                                                         <input type="hidden" name="tsml_add_data_source_parent_region_id" value="<?php echo @$properties['parent_region_id'] ?>">
-                                                       
-                                                        <input type="submit" value="Refresh Feed" class="button button-small" style="text-align:center; width:110px;" />
-                                                    </form>                                                </td>
+                                                        <input type="submit" value="Refresh" class="button button-small" />
+                                                    </form> 
+                                                </td>
                                                 <td class="align-center"> <!--last_update column-->
                                                     <?php echo Date(get_option('date_format') . ' ' . get_option('time_format'), $properties['last_import']) ?>
                                                 </td>
