@@ -7,12 +7,12 @@ if (!function_exists('tsml_import_page')) {
     function tsml_import_page() {
     
         global $tsml_data_sources, $tsml_programs, $tsml_program, $tsml_nonce, $tsml_sharing, $tsml_slug, $tsml_delete_top_level_option, $tsml_detection_test_mode;
-        $meetings = [];
+        $meetings = $parent_region_ids = [];
         $error = false;
-        $tsml_data_sources = get_option('tsml_data_sources', []);
+        $tsml_data_sources = get_option('tsml_data_sources', []);        
         $site_url = get_site_url();
 
-        if (!get_option('tsml_data_sources') || $tsml_data_sources[$site_url . '/wp-content/uploads/files/local.csv']['is_local'] != true) {
+        if (empty($tsml_data_sources) || !array_key_exists("[$site_url/wp-content/uploads/files/local.csv", $tsml_data_sources) || $tsml_data_sources[$site_url . '/wp-content/uploads/files/local.csv']['is_local'] != true) {
             //for new install or older releases, register the local data set in the wp_Options table
             $tsml_data_sources[$site_url . '/wp-content/uploads/files/local.csv'] = [
                 'status' => 'OK',
@@ -25,6 +25,13 @@ if (!function_exists('tsml_import_page')) {
             ];
             update_option('tsml_data_sources', $tsml_data_sources);
         }
+
+        //create array for use in sort method
+        foreach ($tsml_data_sources as $key => $val) {
+            $parent_region_ids[$key] = $val['parent_region_id'];
+        }
+        //apply sort method
+        array_multisort($parent_region_ids, SORT_ASC, $tsml_data_sources);
 
         //when posting a CSV, check for errors and add it to an array
         if (isset($_FILES['tsml_import']) && isset($_POST['tsml_nonce']) && wp_verify_nonce($_POST['tsml_nonce'], $tsml_nonce)) {
@@ -125,13 +132,9 @@ if (!function_exists('tsml_import_page')) {
 
             //sanitize URL, name and parent region id values
             if (isset($_FILES['tsml_import'])) {
-                //echo 'Meeting Count → ' . count($meeting) . '<br>';
                 $data_source_url = trim(esc_url_raw(tsml_clean_file_name($_FILES["tsml_import"]["name"])));
-                //echo 'URL → ' . $data_source_url . '<br>';
                 $data_source_name = $filename = tsml_clean_file_name($_FILES["tsml_import"]["name"]);
-                //echo 'name → ' . $data_source_name . '<br>';
                 $data_source_parent_region_id = array_key_exists('tsml_add_data_source_parent_region_id', $_POST) ? ($_POST['tsml_add_data_source_parent_region_id']) : '0';
-                //echo 'parent id → ' . $data_source_parent_region_id . '<br>';
             } else {
 
                 $data_source_url = trim(esc_url_raw($_POST['tsml_add_data_source'], array('http', 'https')));
@@ -151,7 +154,6 @@ if (!function_exists('tsml_import_page')) {
             /* ----------------------------------------------------------------------- */
             //processing booleans
             $stop_processing = $is_new_child_file_upload = $is_new_parent_file_upload = $is_new_parent_feed_import = $is_feed_or_upload_refresh = false;
-            $tsml_data_sources = get_option('tsml_data_sources', []);
 
             if (is_array($meetings) || !empty($response['body'])) { //we have import from either an upload or a feed
                 
@@ -215,7 +217,6 @@ if (!function_exists('tsml_import_page')) {
                     /* this is the normal feed/upload refresh operation
                     When a data source already exists we want to set up to apply those changes detected to the local db */
 
-                    $tsml_data_sources = get_option('tsml_data_sources', []);
                     $data_source_last_import = intval($tsml_data_sources[$data_source_url]['last_import']);
 
                     //get changed file upload records only
@@ -606,96 +607,6 @@ if (!function_exists('tsml_import_page')) {
                                             </tr>
 
                                             <?php break;?>
-                                       <!----------->
-                                        <?php
-                                        case $properties['type'] == 'TIMBUC1':?>
-                                            <tr class="" data-source="<?php echo $url_key ?>">
-                                                <td> <!--name column-->
-                                                    <a href="<?php echo $url_key ?>" target="_blank">
-                                                        <?php echo !empty($properties['name']) ? $properties['name'] : __('Unnamed Feed', '12-step-meeting-list') ?>
-                                                    </a>
-                                                </td> 
-                                                <td> <!--parent region column-->
-                                                    <?php
-                                                   $parent_region = null;
-                                                    if (empty($properties['parent_region_id']) || $properties['parent_region_id'] == -1) {
-                                                        $parent_region = __('Top-level region', '12-step-meeting-list');
-
-                                                    } else {
-                                                        $term = get_term_by('term_id', $properties['parent_region_id'], 'tsml_region');
-                                                        $parent_region = ($term !== false) ? $term->name : __('Missing Parent Region: ', '12-step-meeting-list') . $properties['parent_region_id'];
-                                                    } 
-                                                    echo $parent_region;
-                                                    ?>
-                                                </td>
-                                                <td class="align-center count_meetings"><!--meetings column--><?php echo number_format($properties['count_meetings']) ?></td>
-                                                <td class="align-center"> <!--update column-->
-                                                    <form method="post" class="" action="<?php echo $_SERVER['REQUEST_URI'] ?>" enctype="multipart/form-data" > 
-                                                        <?php wp_nonce_field($tsml_nonce, 'tsml_nonce', false); ?>
-                                                        <input type="hidden" name="tsml_add_data_source" value="<?php echo $url_key ?>">
-                                                        <input type="hidden" name="tsml_add_data_source_name" value="<?php echo @$properties['name'] ?>">
-                                                        <input type="hidden" name="tsml_add_data_source_parent_region_id" value="<?php echo @$properties['parent_region_id'] ?>">
-                                                       
-                                                        <input type="submit" value="Refresh Feed" class="button button-small" style="text-align:center; width:110px;" />
-                                                    </form>
-                                                </td>
-                                                <td class="align-center"> <!--last_update column-->
-                                                    <?php echo Date(get_option('date_format') . ' ' . get_option('time_format'), $properties['last_import']) ?>
-                                                </td>
-                                                <td class="align-right"> <!--"delete" column-->
-                                                    <?php $delete_source_confirm_msg = __("Delete the selected FEED data?", "12-step-meeting-list"); ?>
-                                                    <form method="post" action="<?php echo $_SERVER['REQUEST_URI'] ?>" onsubmit="return confirm('<?php echo $delete_source_confirm_msg ?>')" >
-                                                        <?php wp_nonce_field($tsml_nonce, 'tsml_nonce', false) ?>
-                                                        <input type="hidden" name="tsml_remove_data_source" value="<?php echo $url_key ?>">
-                                                        <span class="remove_data_source dashicons dashicons-no-alt" title="remove feed data"></span>
-                                                    </form>
-                                                </td>
-                                            </tr>
-
-                                            <?php break;?>
-                                            <!----------->
-                                        <?php
-                                        case $properties['type'] == 'TIMBUC2':?>
-                                            <tr class="" data-source="<?php echo $url_key ?>">
-                                                <td> <!--name column-->
-                                                    <a href="<?php echo $url_key ?>" target="_blank">
-                                                        <?php echo !empty($properties['name']) ? $properties['name'] : __('Unnamed Feed', '12-step-meeting-list') ?>
-                                                    </a>
-                                                </td> 
-                                                <td> <!--parent region column-->
-                                                    <?php
-                                                   $parent_region = null;
-                                                    if (empty($properties['parent_region_id']) || $properties['parent_region_id'] == -1) {
-                                                        $parent_region = __('Top-level region', '12-step-meeting-list');
-
-                                                    } else {
-                                                        $term = get_term_by('term_id', $properties['parent_region_id'], 'tsml_region');
-                                                        $parent_region = ($term !== false) ? $term->name : __('Missing Parent Region: ', '12-step-meeting-list') . $properties['parent_region_id'];
-                                                    } 
-                                                    echo $parent_region;
-                                                    ?>
-                                                </td>
-                                                <td class="align-center count_meetings"><!--meetings column--><?php echo number_format($properties['count_meetings']) ?></td>
-                                                <td class="align-center"> <!--update column-->
-                                                    <?php wp_nonce_field($tsml_nonce, 'tsml_nonce', false) ?>
-
-                                                <!--    <input type="submit" value="Refresh Feed" class="button button-small" style="text-align:center; width:110px;" >-->
-                                                <input type="submit" value="Refresh" class="button button-small">
-                                                </td>
-                                                <td class="align-center"> <!--last_update column-->
-                                                    <?php echo Date(get_option('date_format') . ' ' . get_option('time_format'), $properties['last_import']) ?>
-                                                </td>
-                                                <td class="align-right"> <!--"delete" column-->
-                                                    <?php $delete_source_confirm_msg = __("Delete the selected FEED data? ", "12-step-meeting-list"); ?>
-                                                    <form method="post" action="<?php echo $_SERVER['REQUEST_URI'] ?>" onsubmit="return confirm('<?php echo $delete_source_confirm_msg ?>')" >
-                                                        <?php wp_nonce_field($tsml_nonce, 'tsml_nonce', false) ?>
-                                                        <input type="hidden" name="tsml_remove_data_source" value="<?php echo $url_key ?>">
-                                                        <span class="dashicons dashicons-no-alt" title="remove feed data"></span>
-                                                    </form>
-                                                </td>
-                                            </tr>
-
-                                            <?php break;?>
                                             <!----------->
                                         <?php
                                         default:
@@ -717,25 +628,6 @@ if (!function_exists('tsml_import_page')) {
                                 <input type="radio" name="import" id="import_json" value="json" >
                             </div>
                             <br />
-                            <div id="dv_direct_entry" class="hide" >
-                                <?php $append_replace_option = "add new meetings to";
-                                    if (tsml_count_top_level() != 0) { 
-                                        $append_replace_option = ($tsml_delete_top_level_option == 'whenever') ? 'replace all the meetings in' : 'append these meetings to';
-                                    }
-                                    $add_local_confirm_msg = __("You are about to $append_replace_option your local meeting list?", "12-step-meeting-list"); 
-                                ?>
-                                <form method="post" class="row" action="<?php echo $_SERVER['REQUEST_URI'] ?>" enctype="multipart/form-data" id="frm_direct_entry"  onsubmit="return confirm('<?php echo $add_local_confirm_msg ?>')" > 
-                                    <div id="dv_direct_entry_file" class="align-left twenty-pixel-spacer-right">
-                                        <?php wp_nonce_field($tsml_nonce, 'tsml_nonce', false) ?><br>
-                                        <input type="file" name="tsml_import" id="tsml_import_direct_entry" >
-                                         
-                                    </div>
-                                    <div class="form_submit_bottom_right" >
-                                        <input type="submit" class="button" id="btn_direct_entry" value="<?php _e('Begin', '12-step-meeting-list') ?>" >
-                                    </div>
-                                   
-                                </form>
-                            </div>					
                             <div id="dv_file_source" class="show" >
                                 <?php $add_confirm_msg = __("You are about to update your meeting list?", "12-step-meeting-list");  ?>
                                 <form method="post" class="row" action="<?php echo $_SERVER['REQUEST_URI'] ?>" enctype="multipart/form-data" id="frm_file_source" onsubmit="return confirm('<?php echo $add_confirm_msg ?>')" >
@@ -761,7 +653,7 @@ if (!function_exists('tsml_import_page')) {
                                     </div>
 
                                     <div class="form_submit_bottom_right" >
-                                        <input type="submit" class="button" value="<?php _e('Upload', '12-step-meeting-list') ?>">
+                                        <input type="submit" class="button" value="<?php _e('Add Source', '12-step-meeting-list') ?>">
                                     </div>
                                 </form>
                             </div>					
@@ -977,9 +869,9 @@ if (!function_exists('tsml_import_page')) {
                                     </form>
                                     <?php
                                     if ($tsml_detection_test_mode === 'on') { ?>
-                                        <form method="post" <?php if (!($meetings + $locations + $groups + $regions)) { ?> class="hidden" <?php } ?> >
+                                        <form method="post" <?php if (!($meetings + $locations + $groups + $regions)) { ?> class="hidden" <?php } ?> onsubmit="return confirm(__('Delete everything?', '12-step-meeting-list'));" >
                                             <?php wp_nonce_field($tsml_nonce, 'tsml_nonce', false) ?>
-                                            <input type="submit" name="delete_everyting_button" class="button" value="Delete Everything!" onsubmit="return confirm(__('Are you really sure you want to delete everything?', '12-step-meeting-list'));"  />
+                                            <input type="submit" name="delete_everyting_button" class="button" value="Delete Everything!" />
                                         </form>
                                     <?php } ?>
                                 <?php } ?>

@@ -2479,7 +2479,7 @@ function tsml_schedule_import_scan($data_source_url, $data_source_name)
 	$ts = wp_next_scheduled("tsml_scan_data_source", array($data_source_url));
 	if ($ts) {
 		$mydisplaytime = tsml_date_localised(get_option('date_format') . ' ' . get_option('time_format'), $ts); // Use tsml_date_localised to convert to specified format with local site timezone included.
-		tsml_alert("A $data_source_name cron job is scheduled for a change detection scan at $mydisplaytime.  You can adjust the recurrences and the time that the scan job ('<b>tsml_scan_data_source</b>') runs with the WP_Crontrol plugin.", 'info');
+		tsml_alert("A daily $data_source_name cron job has been scheduled for a change detection scan at midnight.  You can adjust the schedule of the scan job ('<b>tsml_scan_data_source</b>') with the WP_Crontrol plugin.", 'info');
 	} else {
 		// When adding a data source we schedule its daily cron job
 		register_activation_hook(__FILE__, 'tsml_activate_data_source_scan');
@@ -2489,7 +2489,7 @@ function tsml_schedule_import_scan($data_source_url, $data_source_name)
 			tsml_alert("$data_source_name data source scan scheduling failed!", 'error');
 		} else {
 			$mydisplaytime = tsml_date_localised(get_option('date_format') . ' ' . get_option('time_format'), $timestamp); // Use tsml_date_localised to convert to specified format with local site timezone included.
-			tsml_alert("A $data_source_name cron job is scheduled to do a change detection scan at $mydisplaytime.  You can adjust the recurrences and the time that the job ('<b>tsml_scan_data_source</b>') runs with the WP_Crontrol plugin.", 'info');
+			tsml_alert("A daily $data_source_name cron job has been scheduled for a change detection scan at midnight.  You can adjust the schedule of the scan job ('<b>tsml_scan_data_source</b>') with the WP_Crontrol plugin.", 'info');
 		}
 	}
 }
@@ -3347,8 +3347,8 @@ function tsml_object_to_array($data)
     return $data;
 }
 
-  //function to clean up filename string to make it safe
-  //used:	admin_import
+//function to clean up filename string to make it safe
+//used:	admin_import
 function tsml_clean_file_name($file_name){
     $file_ext = pathinfo($file_name, PATHINFO_EXTENSION);
     $file_name_str = pathinfo($file_name, PATHINFO_FILENAME);
@@ -3364,6 +3364,18 @@ function tsml_clean_file_name($file_name){
 
     return $clean_file_name;
 }
+
+//function used to ensure the top region listed is always Direct Entry (local)
+//used:	admin_import
+function tsml_sort_by_region_id($my_data_sources)
+{
+    //custom sort
+    $parent_region_ids = [];
+    $parent_region_ids = array_column($my_data_sources, 'parent_region_id');
+
+    return array_multisort($parent_region_ids, SORT_ASC, $my_data_sources);
+}
+
 
 //admin footer text removal (i.e.Thank you and version #)
 add_filter( 'admin_footer_text', '__return_empty_string', 11 );
