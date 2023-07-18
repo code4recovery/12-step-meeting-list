@@ -544,7 +544,7 @@ if (!function_exists('tsml_import_page')) {
                                                         <input type="hidden" name="tsml_add_data_source_parent_region_id" value="<?php echo @$properties['parent_region_id'] ?>">
                                                        
                                                         <input type="button" id="load_file_csv" class="button button-small" value="Upload CSV" onclick="document.getElementById('file_csv').click();" title="<?php echo @$properties['name'] ?>" />
-                                                        <input type="file" style="display:none;" id="file_csv" name="tsml_import" onchange="this.form.submit();"/>
+                                                        <input type="file" class="hide" id="file_csv" name="tsml_import" onchange="this.form.submit();"/>
                                                     </form>
                                                 </td>
                                                 <td class="align-center"> <!--last_update column-->
@@ -619,9 +619,7 @@ if (!function_exists('tsml_import_page')) {
                         
                         <div class="add-import-container" >
                             <div id="import_radio_group" class="import-radio-group"  >
-
-                                <b><label for="import_direct" style="display:none;"> Local Data CSV Import </label></b>
-                                <input type="radio" name="import" id="import_direct" value="direct_entry" style="display:none;">
+                                <h2>External Data Sources</h2>
                                 <b><label for="import_csv" class="thirty-pixel-spacer-left"> CSV Import </label></b>
                                 <input type="radio" name="import" id="import_csv" value="csv" checked >
                                 <b><label for="import_json" class="thirty-pixel-spacer-left" > JSON Import </label></b>
@@ -661,11 +659,11 @@ if (!function_exists('tsml_import_page')) {
                                 <form method="post" class="row" action="<?php echo $_SERVER['REQUEST_URI'] ?>" id="frm_data_source" >
                                     <?php wp_nonce_field($tsml_nonce, 'tsml_nonce', false); ?>
 
-                                    <div class="small twenty-pixel-spacer-right" style="padding-right:20px;" >
+                                    <div class="small twenty-pixel-spacer-right"  >
                                         <label for="tsml_add_data_source_name" class="import-label-setting" >Name</label><br>
                                         <input type="text" name="tsml_add_data_source_name" id="tsml_add_data_source_name" class="small" placeholder="<?php _e('i.e.District 02', '12-step-meeting-list') ?>">
                                     </div>
-                                    <div id="dv_json_feed" class="small twenty-pixel-spacer-right"  style="padding-right:20px;" >
+                                    <div id="dv_json_feed" class="small twenty-pixel-spacer-right"   >
                                         <label for="tsml_add_data_source" class="import-label-setting">Link URL</label><br>
                                         <input type="text" name="tsml_add_data_source" id="tsml_add_data_source" class="small" placeholder="https://feed_domain/wp-admin/admin-ajax.php?action=meetings">
                                     </div>
@@ -701,33 +699,38 @@ if (!function_exists('tsml_import_page')) {
                             <div class="postbox stack">
                                 <h2><?php _e('About Importing...', '12-step-meeting-list') ?></h2>
                         
-                                    <form method="post" class="stack compact" id="frm_about_importing">
+                                    <form method="post" class="radio stack compact" id="frm_about_importing">
                                         <?php wp_nonce_field($tsml_nonce, 'tsml_nonce', false) ?>
-                                        <p><?php _e('Your meeting data may consist of a single local data set or it may include an additional number of non-local data sets. Non-local data sets provide a means to aggregate meetings from different sites into a single master list which can be managed through the features on this page.', '12-step-meeting-list') ?></p>
+
+                                        <p><?php _e('Your meeting data may consist of a single local data-set, or it may include an additional number of data-sets from external data sources (allowing you to aggregate meetings from different sites into a single master list).', '12-step-meeting-list') ?></p>
                                         <details>
-                                            <summary class="small">Local Data Set...</summary>
-                                            <p><?php _e( "To replace all your local records during an import, set the “Delete local records” dropdown to <b>whenever uploading a local CSV file</b>.", '12-step-meeting-list') ?></p>
-                                            <p><?php _e( "To append new meetings to your local data, set the dropdown to <b>never</b>. This will allow the adding of new meetings to the list of those local meetings already on your site.", '12-step-meeting-list') ?> </p>
+                                            <summary class="small">more on your local data...</summary>
+                                            <p><?php _e( "To replace all your local records during an import operation, set the radio button to <b>'delete all meetings, locations, groups, and regions not from a data source'</b>.", '12-step-meeting-list') ?></p>
+                                            <p><?php _e( "To append new meetings to your local data, set the radio button to <b>'don't delete anything'</b>. This will allow the adding of new meetings to the list of those local meetings already on your site.", '12-step-meeting-list') ?> </p>
                                             <p><?php _e( 'NOTE: To avoid duplicate meetings when appending, ensure your CSV does not contain meetings you already have on your site.', '12-step-meeting-list') ?></p>
                                         
                                             <br />
-                                            <h3><?php printf(__('Delete local records', '12-step-meeting-list')) ?></h3>
-                                            <select name="tsml_delete_top_level_option" onchange="this.form.submit()">
-                                                <?php
-                                                foreach (['whenever' => __('whenever uploading a local CSV file', '12-step-meeting-list'), 'never' => __('never', '12-step-meeting-list'),] as $key => $value) { ?>
-                                                        <option value="<?php echo $key ?>" <?php selected($tsml_delete_top_level_option, $key) ?> >
-                                                            <?php echo $value ?>
-                                                        </option>
-                                                <?php } ?>
-                                            </select>
                                         </details>
                                         <details>
-                                            <summary class="small">Non-local Data Sets...</summary>
-                                            <p><?php _e('The sources below the <b><i>Direct Entry (local)</i></b> listing provide information on non-local data sets imported into this website. ', '12-step-meeting-list') ?></p>
-                                            <p><?php _e( 'Please note that only non-local imports go through our change detection process, where just the records in the database <i>which are different from those being imported</i> are actually updated.', '12-step-meeting-list') ?></p><br />
-                                            <p><?php _e( "When updating a non-local data set through the <b><i>CSV Import</i></b> option, you will <b>need to use the exact same filename and parent region</b> to update the non-local record set.", '12-step-meeting-list') ?> </p>
-                                            <br />
+                                            <summary class="small">more about external data...</summary>
+                                            <p><?php _e('The sources below the <b><i>Direct Entry (local)</i></b> listing provide information on data sets from external sources imported into this website. ', '12-step-meeting-list') ?></p>
+                                            <p><?php _e( 'Please note that only external imports go through our change detection process, where just the records in the database <i>which are different from those being imported</i> are actually updated.', '12-step-meeting-list') ?></p><br />
+                                            <p><?php _e( "When updating data from an external source through the <b><i>CSV Import</i></b> option, you will <b>need to use the exact same filename</b> for the update to succeed.", '12-step-meeting-list') ?> </p>
                                         </details>
+                                        <br />
+                                        <h3><?php _e('When importing locally...', '12-step-meeting-list') ?></h3>
+
+                                       	<?php
+									    $delete_options = [
+										    'never'	=> __('don\'t delete anything', '12-step-meeting-list'),
+										    'whenever'	=> __('delete all meetings, locations, groups, and regions not from an external data source', '12-step-meeting-list'),
+									    ];
+									    foreach ($delete_options as $key => $value) { ?>
+										    <label>
+											    <input type="radio" name="tsml_delete_top_level_option" value="<?php echo $key ?>" <?php checked($key, $tsml_delete_top_level_option) ?> onchange="this.form.submit()" >
+											    <?php echo $value ?>
+										    </label>
+									    <?php } ?>
                                         <br />
                                     </form>
                             </div>
