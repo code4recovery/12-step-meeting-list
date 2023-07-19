@@ -2387,6 +2387,11 @@ function tsml_import_changes($feed_meetings, $data_source_url, $data_source_last
 	// list changed and new meetings found in the data source feed
 	foreach ($feed_meetings as $meeting) {
 
+		//scan requires an 'updated' field, so check for its existence
+        if (!array_key_exists("updated", $meeting) || empty($meeting['updated']))
+			return [];
+        }
+
 		list($day_of_week, $dow_number) = tsml_get_day_of_week_info($meeting['day'], $tsml_days);
 		$meeting_slug =  $meeting['slug'];
 
