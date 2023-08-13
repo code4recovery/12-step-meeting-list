@@ -14,16 +14,7 @@ function tsml_assets()
 {
 	global $post_type, $tsml_street_only, $tsml_programs, $tsml_strings, $tsml_program, $tsml_google_maps_key,
 		$tsml_mapbox_key, $tsml_mapbox_theme, $tsml_distance_units, $tsml_defaults, $tsml_columns, $tsml_nonce;
-
-	// TODO: verify this doesn't cause any other issues
-	$types = [
-		'tsml_meeting',
-		'tsml_location',
-		'tsml_group',
-	];
-	if (isset($post_type) && !in_array($post_type, $types)) {
-		return;
-	}
+	
 	//google maps api
 	if ($tsml_google_maps_key) {
 		wp_enqueue_script('google_maps_api', '//maps.googleapis.com/maps/api/js?key=' . $tsml_google_maps_key);
