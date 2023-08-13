@@ -14,7 +14,7 @@ function tsml_assets()
 {
 	global $post_type, $tsml_street_only, $tsml_programs, $tsml_strings, $tsml_program, $tsml_google_maps_key,
 		$tsml_mapbox_key, $tsml_mapbox_theme, $tsml_distance_units, $tsml_defaults, $tsml_columns, $tsml_nonce;
-	
+
 	//google maps api
 	if ($tsml_google_maps_key) {
 		wp_enqueue_script('google_maps_api', '//maps.googleapis.com/maps/api/js?key=' . $tsml_google_maps_key);
@@ -2362,7 +2362,7 @@ if (!function_exists('tsml_scan_data_source')) {
 function tsml_import_changes($feed_meetings, $data_source_url, $data_source_last_refresh)
 {
 	global $tsml_days;
-	$db_meetings = $feed_slugs = $message_lines = [];
+	$db_meetings = $feed_slugs = $message_lines = $db_meeting = [];
 
 	/* get local meetings and filter out all but the data source meetings  */
 	$data_source_ids = tsml_get_data_source_ids($data_source_url);
@@ -2376,45 +2376,50 @@ function tsml_import_changes($feed_meetings, $data_source_url, $data_source_last
 	sort($db_slugs);
 
 	// list changed and new meetings found in the data source feed
-	foreach ($feed_meetings as $meeting) {
+    foreach ($feed_meetings as $meeting) {
 
-		//scan requires an 'updated' field, so check for its existence
-        if (!array_key_exists("updated", $meeting) || empty($meeting['updated']))
-			return [];
+        list($day_of_week, $dow_number) = tsml_get_day_of_week_info($meeting['day'], $tsml_days);
+        $meeting_slug = $meeting['slug'];
+
+        $db_meeting_id = array_search($meeting_slug, $db_slugs);
+        if ($db_meeting_id > 0) {
+            //get matching db record and convert object to array for verification check
+            $db_meeting = tsml_object_to_array(tsml_get_meeting($db_meeting_id));
         }
 
-		list($day_of_week, $dow_number) = tsml_get_day_of_week_info($meeting['day'], $tsml_days);
-		$meeting_slug =  $meeting['slug'];
+        // match feed/database on unique slug
+        $is_matched = in_array($meeting_slug, $db_slugs);
 
-		// match feed/database on unique slug
-		$is_matched = in_array($meeting_slug, $db_slugs);
+        if (!$is_matched) {
+            // numeric slugs may need some reformatting
+            if (is_numeric($meeting_slug)) {
+                $meeting_slug .= '-' . $dow_number;
+            }
+            $is_matched = in_array($meeting_slug, $db_slugs);
+        }
 
-		if (!$is_matched) {
-			// numeric slugs may need some reformatting
-			if (is_numeric($meeting_slug)) {
-				$meeting_slug .= '-' . $dow_number;
-			}
-			$is_matched = in_array($meeting_slug, $db_slugs);
-		}
+        // add slug to feed array to help determine current db removals later on...
+        $feed_slugs[] = $meeting_slug;
 
-		// add slug to feed array to help determine current db removals later on...
-		$feed_slugs[] = $meeting_slug;
+        //compare matched records to see if there's been changes
+        $they_are_in_sync = false;
+        if ($is_matched && !empty($db_meeting)) {
+            $they_are_in_sync = tsml_verify_identical_records($db_meeting, $meeting, $data_source_last_refresh);
+        }
 
-		// has the meeting been updated since the last refresh?
-		$current_meeting_localised_last_update = tsml_date_localised(get_option('date_format') . ' ' . get_option('time_format'), strtotime($meeting['updated']));
-		if (strtotime($current_meeting_localised_last_update) > $data_source_last_refresh) {
-			$permalink = get_permalink($meeting['id']);
-			$meeting_name = '<a href=' . $permalink . '>' . $meeting['name'] . '</a>';
+        if (!$they_are_in_sync) {
+            $permalink = get_permalink($meeting['id']);
+            $meeting_name = '<a href=' . $permalink . '>' . $meeting['name'] . '</a>';
 
-			if ($is_matched) {
-				$message_lines[] = "<tr style='color:gray;'><td>Change</td><td >$meeting_name</td><td>$day_of_week</td><td>$current_meeting_localised_last_update</td></tr>";
-			} else {
-				$message_lines[] = "<tr style='color:green;'><td>Add New</td><td >$meeting_name</td><td>$day_of_week</td><td>$current_meeting_localised_last_update</td></tr>";
-			}
-		}
-	}
+            if ($is_matched) {
+                $message_lines[] = "<tr style='color:gray;'><td>Change</td><td >$meeting_name</td><td>$day_of_week</td><td>$current_meeting_localised_last_update</td></tr>";
+            } else {
+                $message_lines[] = "<tr style='color:green;'><td>Add New</td><td >$meeting_name</td><td>$day_of_week</td><td>$current_meeting_localised_last_update</td></tr>";
+            }
+        }
+    }
 
-	// mark as "Remove" those meetings in local database which are not matched with feed
+    // mark as "Remove" those meetings in local database which are not matched with feed
 	foreach ($db_meetings as $db_meeting) {
 
 		list($day_of_week, $dow_number) = tsml_get_day_of_week_info($db_meeting['day'], $tsml_days);
@@ -2662,6 +2667,35 @@ function tsml_verify_identical_records($db_meeting, &$import_meeting, $data_sour
 	global $tsml_days, $tsml_programs, $tsml_program, $tsml_detection_test_mode;
 
 	$test_mode = ($tsml_detection_test_mode === 'on') ? -1 : 0;
+
+    /***************************************************************************************************
+     * Do Incremental Comparison of only those records which have changed since the last update occurred
+     * *************************************************************************************************/
+
+    if (!empty($import_meeting['updated'])) {
+        //localize imported timestamp
+        $imported_timestamp = strtotime(tsml_date_localised(get_option('date_format') . ' ' . get_option('time_format'), strtotime($import_meeting['updated'])));
+
+        if ($imported_timestamp > $data_source_last_update) {
+
+            if ($test_mode) {
+                echo 'Updated --→ ' . $import_meeting['name'] . '<br>';
+                echo $data_source_last_update . '  <br>';
+                echo $imported_timestamp . ' <br><br>';
+            }
+
+            return false;
+
+        } else { 
+
+			return true;
+
+		}
+    }
+
+    /***************************************************************************************************
+     * When no 'updated' field exists Do a Differential Comparison based on each field
+     * *************************************************************************************************/
 
 	//compare db record to import record, field by field
 	if (!empty($db_meeting['post_title']) && !empty($import_meeting['name']) ) {
@@ -3295,25 +3329,7 @@ function tsml_verify_identical_records($db_meeting, &$import_meeting, $data_sour
 		}
 	}
 
-	//has the meeting been updated since the last update?
-	if ( !empty($import_meeting['updated']) ) {
-		//localize imported timestamp
-		$imported_timestamp = strtotime(tsml_date_localised(get_option('date_format') . ' ' . get_option('time_format'), strtotime($import_meeting['updated'])));
-
-		if ($imported_timestamp > $data_source_last_update) {
-
-			if ($test_mode) {
-				echo 'Updated --→ ' . $import_meeting['name'] . '<br>';
-				echo $data_source_last_update . '  <br>';
-				echo $imported_timestamp . ' <br><br>';
-			}
-
-			return false;
-
-		}
-	}
-
-	// No changes, so we are in sync
+	// → No changes, so we are in sync
 	return true;
 }
 
