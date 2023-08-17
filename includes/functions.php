@@ -2410,11 +2410,16 @@ function tsml_import_changes($feed_meetings, $data_source_url, $data_source_last
         if (!$they_are_in_sync) {
             $permalink = get_permalink($meeting['id']);
             $meeting_name = '<a href=' . $permalink . '>' . $meeting['name'] . '</a>';
+            $last_update = date('M j, Y  g:i a', current_time('timestamp'));
+            if (!empty($meeting['updated'])) {
+                //localize imported timestamp
+                $last_update = date(get_option('date_format') . ' ' . get_option('time_format'), strtotime($meeting['updated']));
+            }
 
             if ($is_matched) {
-                $message_lines[] = "<tr style='color:gray;'><td>Change</td><td >$meeting_name</td><td>$day_of_week</td><td>$current_meeting_localised_last_update</td></tr>";
+                $message_lines[] = "<tr style='color:gray;'><td>Change</td><td >$meeting_name</td><td>$day_of_week</td><td>$last_update</td></tr>";
             } else {
-                $message_lines[] = "<tr style='color:green;'><td>Add New</td><td >$meeting_name</td><td>$day_of_week</td><td>$current_meeting_localised_last_update</td></tr>";
+                $message_lines[] = "<tr style='color:green;'><td>Add New</td><td >$meeting_name</td><td>$day_of_week</td><td>$last_update</td></tr>";
             }
         }
     }
@@ -2615,7 +2620,11 @@ function tsml_get_import_changes_only($feed_meetings, $data_source_url, $data_so
 			//output both new and changed records
 			array_push($meetings_updated, $meeting);
 
-			$last_update = date(get_option('date_format') . ' ' . get_option('time_format'), current_time('timestamp'));
+            $last_update = date(get_option('date_format') . ' ' . get_option('time_format'), current_time('timestamp'));
+            if (!empty($meeting['updated'])) {
+                //localize imported timestamp
+                $last_update = date(get_option('date_format') . ' ' . get_option('time_format'), strtotime($meeting['updated']));
+            }
 			$meeting_name = $meeting['name'];
 
 			if ($is_matched) {
@@ -2686,7 +2695,7 @@ function tsml_verify_identical_records($db_meeting, &$import_meeting, $data_sour
 
             return false;
 
-        } else { 
+        } else {
 
 			return true;
 

@@ -705,7 +705,7 @@ if (!function_exists('tsml_import_page')) {
                                         <p><?php _e('Your meeting data may consist of a single local data-set, or it may include an additional number of data-sets from external data sources (allowing you to aggregate meetings from different sites into a single master list).', '12-step-meeting-list') ?></p>
                                         <details>
                                             <summary class="small">more on your local data...</summary>
-                                            <p><?php _e( "To replace all your local records during an import operation, set the radio button to <b>'delete all meetings, locations, groups, and regions not from a data source'</b>.", '12-step-meeting-list') ?></p>
+                                            <p><?php _e( "To replace all your local records during a CSV import operation, set the radio button to <b>'delete all meetings, locations, groups, and regions not from a data source'</b>.", '12-step-meeting-list') ?></p>
                                             <p><?php _e( "To append new meetings to your local data, set the radio button to <b>'don't delete anything'</b>. This will allow the adding of new meetings to the list of those local meetings already on your site.", '12-step-meeting-list') ?> </p>
                                             <p><?php _e( 'NOTE: To avoid duplicate meetings when appending, ensure your CSV does not contain meetings you already have on your site.', '12-step-meeting-list') ?></p>
                                         
@@ -715,7 +715,7 @@ if (!function_exists('tsml_import_page')) {
                                             <summary class="small">more about external data...</summary>
                                             <p><?php _e('The sources below the <b><i>Direct Entry (local)</i></b> listing provide information on data sets from external sources imported into this website. ', '12-step-meeting-list') ?></p>
                                             <p><?php _e( 'Please note that only external imports go through our change detection process, where just the records in the database <i>which are different from those being imported</i> are actually updated.', '12-step-meeting-list') ?></p><br />
-                                            <p><?php _e( "When updating data from an external source through the <b><i>CSV Import</i></b> option, you will <b>need to use the exact same filename</b> for the update to succeed.", '12-step-meeting-list') ?> </p>
+                                            <p><?php _e( "When updating data from an external source through the <b><i>CSV Import</i></b> option, you will <b>need to use the exact same filename and parent region</b> for the update to succeed. Use the 'Upload CSV' update button to help load the correct file and region. ", '12-step-meeting-list') ?> </p>
                                         </details>
                                         <br />
                                         <h3><?php _e('When importing locally...', '12-step-meeting-list') ?></h3>
