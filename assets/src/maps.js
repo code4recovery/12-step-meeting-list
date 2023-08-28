@@ -124,6 +124,7 @@ function setMapBounds() {
 		} else if (markers.length == 1) {
 			//if only one marker, zoom in and click the infowindow
 			var center = bounds.getCenter();
+			if (!center) return;
 			if (markers[0].getClickable()) {
 				tsmlmap.setCenter({lat: center.lat() + 0.0025, lng: center.lng()});
 				google.maps.event.trigger(markers[0], 'click');
@@ -220,6 +221,11 @@ function setMapMarker(title, position, content) {
 
 //add one or more markers to a map
 function setMapMarkers(locations, searchLocation) {
+
+	if (!locations) {
+		locations = [];
+	}
+
 	//remove existing markers
 	if (markers.length) {
 		for (var i = 0; i < markers.length; i++) {
