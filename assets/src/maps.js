@@ -124,6 +124,7 @@ function setMapBounds() {
 		} else if (markers.length == 1) {
 			//if only one marker, zoom in and click the infowindow
 			var center = bounds.getCenter();
+			if (!center) return;
 			if (markers[0].getClickable()) {
 				tsmlmap.setCenter({lat: center.lat() + 0.0025, lng: center.lng()});
 				google.maps.event.trigger(markers[0], 'click');
@@ -220,6 +221,7 @@ function setMapMarker(title, position, content) {
 
 //add one or more markers to a map
 function setMapMarkers(locations, searchLocation) {
+
 	//remove existing markers
 	if (markers.length) {
 		for (var i = 0; i < markers.length; i++) {
@@ -240,13 +242,13 @@ function setMapMarkers(locations, searchLocation) {
 	}
 
 	//convert to array and sort it by latitude (for marker overlaps)
-	var location_array = Object.keys(locations)
+	var location_array = typeof locations === 'object' ? Object.keys(locations)
 		.map(function(e) {
 			return locations[e];
 		})
 		.sort(function(a, b) {
 			return b.latitude - a.latitude;
-		});
+		}) : [];
 
 	//loop through and create new markers
 	for (var i = 0; i < location_array.length; i++) {
