@@ -950,11 +950,20 @@ function tsml_get_locations()
 			'region_id' => $region_id,
 			'region' => $region,
 			'sub_region' => $sub_region,
-			'regions' => array_reverse(array_map(function ($region_id) {
-				$term = get_term($region_id, 'tsml_region');
-				return !empty($term->name) ? $term->name : null;
-			}, array_merge([$region_id], get_ancestors($region_id, 'tsml_region')))),
 		];
+
+		// regions array eg ['Midwest', 'Illinois', 'Chicago', 'North Side']
+		$regions_array = array_filter(array_map(function ($region_id) {
+			$term = get_term($region_id, 'tsml_region');
+			return !empty($term->name) ? $term->name : null;
+		}, array_merge([$region_id], get_ancestors($region_id, 'tsml_region'))), function ($region) {
+			return !empty($region);
+		});
+
+		// omit key if empty
+		if (count($regions_array)) {
+			$locations[$post->ID]['regions'] = array_reverse($regions_array);
+		}
 	}
 
 	return $locations;
