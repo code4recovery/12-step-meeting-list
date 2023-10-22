@@ -17,12 +17,13 @@ add_action('do_meta_boxes', function () {
 	add_meta_box('authordiv', __('Editor', '12-step-meeting-list'), 'post_author_meta_box', 'tsml_meeting', 'side', 'default');
 });
 
-
-// Hook tsml_assets where we can check $post_type
-add_action('admin_print_scripts-post.php', 'tsml_assets');
-add_action('admin_print_scripts-post-new.php', 'tsml_assets');
-add_action('admin_print_scripts-tsml_meeting_page_import', 'tsml_assets');
-add_action('admin_print_scripts-tsml_meeting_page_settings', 'tsml_assets');
+// add admin assets to tsml screens only
+add_action('admin_enqueue_scripts', function () {
+	$screen = get_current_screen();
+	if (is_object($screen) && $screen->post_type === 'tsml_meeting') {
+		tsml_assets();
+	}
+});
 
 //edit page
 add_action('admin_init', function () {

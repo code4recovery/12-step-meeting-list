@@ -3,7 +3,7 @@ Contributors: Code for Recovery
 Requires at least: 3.2
 Requires PHP: 5.6
 Tested up to: 6.3
-Stable tag: 3.14.22
+Stable tag: 3.14.23
 
 This plugin helps twelve step recovery programs list their meetings. It standardizes addresses, and displays results in a searchable list and map.
 
@@ -286,6 +286,9 @@ Yes, add the following to your theme's functions.php. Make sure you've enabled t
 1. Edit location
 
 == Changelog ==
+
+= 3.14.23 =
+* Fix compatibility with Advanced Custom Fields [more info](https://github.com/code4recovery/12-step-meeting-list/discussions/1239?converting=1#discussioncomment-7351769)
 
 = 3.14.22 =
 * Omit JSON regions array when empty [more info](https://github.com/code4recovery/12-step-meeting-list/issues/1210)
