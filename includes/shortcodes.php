@@ -144,17 +144,9 @@ function tsml_ui()
 	$url = parse_url($data);
 	$data = $url['path'] . '?' . $url['query'];
 
-	$timezone = wp_timezone()->getName();
-
-	if (substr($timezone, 0, 1) === '+') {
-		return '<div style="background-color: pink; padding: 1rem; color: black; margin: 1rem; ">' .
-			sprintf(__('TSML UI cannot display with a GMT offset timezone. Your timezone is set to <code>%s</code>. Please set your timezone to use a city name in WordPress Settings > General > Timezone.', '12-step-meeting-list'), $timezone) .
-			'</div>';
-	}
-
 	return '<div id="tsml-ui"
 					data-src="' . $data . '"
-					data-timezone="' . $timezone . '"
+					data-timezone="' . wp_timezone_string() . '"
 					data-mapbox="' . $tsml_mapbox_key . '"></div>';
 }
 add_shortcode('tsml_react', 'tsml_ui');
