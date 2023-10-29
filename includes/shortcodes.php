@@ -146,7 +146,7 @@ function tsml_ui()
 
 	return '<div id="tsml-ui"
 					data-src="' . $data . '"
-					data-timezone="' . get_option('timezone_string', 'America/New_York') . '"
+					data-timezone="' . wp_timezone_string() . '"
 					data-mapbox="' . $tsml_mapbox_key . '"></div>';
 }
 add_shortcode('tsml_react', 'tsml_ui');
