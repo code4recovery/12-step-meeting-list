@@ -3,7 +3,7 @@ Contributors: Code for Recovery
 Requires at least: 3.2
 Requires PHP: 5.6
 Tested up to: 6.4
-Stable tag: 3.14.24
+Stable tag: 3.14.25
 
 This plugin helps twelve step recovery programs list their meetings. It standardizes addresses, and displays results in a searchable list and map.
 
@@ -286,6 +286,9 @@ Yes, add the following to your theme's functions.php. Make sure you've enabled t
 1. Edit location
 
 == Changelog ==
+
+= 3.14.25 =
+* Security update
 
 = 3.14.24 =
 * Show error in TSML UI when time zone is not valid [more info](https://github.com/code4recovery/12-step-meeting-list/discussions/1241#discussioncomment-7408442)

@@ -161,7 +161,7 @@ if (!function_exists('tsml_import_page')) {
 			$data_source_change_detect = sanitize_text_field($_POST['tsml_add_data_source_change_detect']);
 
 			//try fetching	
-			$response = wp_remote_get($data_source_url, [
+			$response = wp_safe_remote_get($data_source_url, [
 				'timeout' => 30,
 				'sslverify' => false,
 			]);
