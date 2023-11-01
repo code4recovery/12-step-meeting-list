@@ -14,7 +14,7 @@ function tsml_assets()
 {
 	global $post_type, $tsml_street_only, $tsml_programs, $tsml_strings, $tsml_program, $tsml_google_maps_key,
 		$tsml_mapbox_key, $tsml_mapbox_theme, $tsml_distance_units, $tsml_defaults, $tsml_columns, $tsml_nonce;
-	
+
 	//google maps api
 	if ($tsml_google_maps_key) {
 		wp_enqueue_script('google_maps_api', '//maps.googleapis.com/maps/api/js?key=' . $tsml_google_maps_key);
@@ -2024,7 +2024,7 @@ if (!function_exists('tsml_scan_data_source')) {
 			}
 
 			//try fetching
-			$response = wp_remote_get($data_source_url, array(
+			$response = wp_safe_remote_get($data_source_url, array(
 				'timeout' => 30,
 				'sslverify' => false,
 			));
