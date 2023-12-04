@@ -156,11 +156,11 @@ add_action('admin_init', function () {
 		'location',
 		__('Location Information', '12-step-meeting-list'),
 		function () {
-			global $post, $tsml_mapbox_key, $tsml_google_maps_key;
+			global $tsml_mapbox_key, $tsml_google_maps_key;
 			$meeting = tsml_get_meeting();
 			$location = $meetings = [];
-			if ($post->post_parent) {
-				$location = tsml_get_location($post->post_parent);
+			if ($meeting->post_parent) {
+				$location = tsml_get_location($meeting->post_parent);
 				$meetings = tsml_get_meetings(['location_id' => $location->ID]);
 			}
 	?>
@@ -253,14 +253,14 @@ add_action('admin_init', function () {
 			<div class="meta_form_row">
 				<label><?php _e('Meetings', '12-step-meeting-list') ?></label>
 				<ol>
-					<?php foreach ($meetings as $meeting) {
-						if ($meeting['id'] != $post->ID) {
-							$meeting['name'] = '<a href="' . get_edit_post_link($meeting['id']) . '">' . $meeting['name'] . '</a>';
+					<?php foreach ($meetings as $m) {
+						if ($m['id'] != $meeting->ID) {
+							$m['name'] = '<a href="' . get_edit_post_link($m['id']) . '">' . $m['name'] . '</a>';
 						}
 					?>
 						<li>
-							<span><?php echo tsml_format_day_and_time(@$meeting['day'], @$meeting['time'], ' ', true) ?></span>
-							<?php echo $meeting['name'] ?>
+							<span><?php echo tsml_format_day_and_time(@$m['day'], @$m['time'], ' ', true) ?></span>
+							<?php echo $m['name'] ?>
 						</li>
 					<?php } ?>
 				</ol>

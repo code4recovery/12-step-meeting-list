@@ -293,7 +293,7 @@ function tsml_custom_post_types()
 				'name' =>	__('Meetings', '12-step-meeting-list'),
 				'singular_name' =>	__('Meeting', '12-step-meeting-list'),
 				'not_found' =>	__('No meetings added yet.', '12-step-meeting-list'),
-				'add_new_item' =>	__('Add New Meeting', '12-step-meeting-list'),
+				'add_new' =>	__('Add New Meeting', '12-step-meeting-list'),
 				'search_items' =>	__('Search Meetings', '12-step-meeting-list'),
 				'edit_item' =>	__('Edit Meeting', '12-step-meeting-list'),
 				'view_item' =>	__('View Meeting', '12-step-meeting-list'),
@@ -341,6 +341,15 @@ function tsml_custom_types($types)
 		$tsml_programs[$tsml_program]['types'][$key] = $value;
 	}
 	asort($tsml_programs[$tsml_program]['types']);
+}
+
+// function used for debugging
+function tsml_dd($obj)
+{
+	echo '<pre>';
+	print_r($obj);
+	echo '</pre>';
+	exit;
 }
 
 //function:	efficiently remove an array of post_ids
@@ -886,7 +895,7 @@ function tsml_get_groups()
 //used: single-locations.php
 function tsml_get_location($location_id = false)
 {
-	if (!$location = get_post($location_id)) return;
+	if (!$location = tsml_get_post($location_id)) return;
 	if ($custom = get_post_meta($location->ID)) {
 		foreach ($custom as $key => $value) {
 			$location->{$key} = htmlentities($value[0], ENT_QUOTES);
@@ -975,14 +984,15 @@ function tsml_get_locations()
 //used: single-meetings.php
 function tsml_get_meeting($meeting_id = false)
 {
-	global $tsml_program, $tsml_programs, $tsml_contact_fields;
+	global $tsml_program, $tsml_programs, $tsml_contact_fields, $post;
 
-	$meeting = get_post($meeting_id);
+	if (!$meeting_id) $meeting_id = $post->ID;
+	$meeting = tsml_get_post($meeting_id);
 	$custom = get_post_meta($meeting->ID);
 
 	//add optional location information
 	if ($meeting->post_parent) {
-		$location = get_post($meeting->post_parent);
+		$location = tsml_get_post($meeting->post_parent);
 		$meeting->location_id = $location->ID;
 		$custom = array_merge($custom, get_post_meta($location->ID));
 		$meeting->location = htmlentities($location->post_title, ENT_QUOTES);
@@ -1024,7 +1034,7 @@ function tsml_get_meeting($meeting_id = false)
 
 	//if meeting is part of a group, include group info
 	if ($meeting->group_id) {
-		$group = get_post($meeting->group_id);
+		$group = tsml_get_post($meeting->group_id);
 		$meeting->group = htmlentities($group->post_title, ENT_QUOTES);
 		$meeting->group_notes = esc_html($group->post_content);
 		$group_custom = tsml_get_meta('tsml_group', $meeting->group_id);
@@ -1063,6 +1073,13 @@ function tsml_get_meeting($meeting_id = false)
 	if (!empty($meeting->post_title)) $meeting = tsml_ensure_location_approximate_set($meeting); // Can eventually remove this when <3.9 TSMLs no longer used.
 
 	return $meeting;
+}
+
+// get_post function doesn't work on wordpress.com
+function tsml_get_post($post_id)
+{
+	global $wpdb;
+	return $wpdb->get_row($wpdb->prepare('SELECT * FROM ' . $wpdb->posts . ' WHERE id = %d', $post_id));
 }
 
 //function: get feedback_url
