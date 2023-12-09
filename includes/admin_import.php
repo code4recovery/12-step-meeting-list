@@ -102,7 +102,8 @@ if (!function_exists('tsml_import_page')) {
 								$regions[] = empty($meeting['sub_region']) ? $meeting['region'] : $meeting['sub_region'];
 							}
 
-							//get locations for those meetings TODO add region support to tsml_get_posts
+							//get locations for those meetings
+							// TODO create $wpdb alternative to get_posts() here
 							$location_ids = get_posts([
 								'post_type' => 'tsml_location',
 								'numberposts' => -1,
@@ -128,7 +129,7 @@ if (!function_exists('tsml_import_page')) {
 							tsml_delete_orphans();
 						} elseif ($_POST['delete'] == 'no_data_source') {
 
-							// TODO add data_source support to tsml_get_posts()
+							// TODO create $wpdb alternative to get_posts() here
 							tsml_delete(get_posts([
 								'post_type' => 'tsml_meeting',
 								'numberposts' => -1,

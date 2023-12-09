@@ -781,7 +781,7 @@ function tsml_get_all_regions()
 //used:		tsml_ajax_import, import/settings page
 function tsml_get_data_source_ids($source)
 {
-	// TODO add data source support to tsml_get_posts
+	// TODO create $wpdb alternative to get_posts() here
 	return get_posts([
 		'post_type'		=> 'tsml_meeting',
 		'numberposts'	=> -1,
@@ -903,7 +903,7 @@ function tsml_get_locations()
 		if ($term->parent) $regions_with_parents[$term->term_id] = $term->parent;
 	}
 
-	# Get all locations TODO support multiple statuses
+	# Get all locations TODO handle this with one query
 	$posts = array_merge(
 		tsml_get_all_locations('publish'),
 		tsml_get_all_locations('draft')
