@@ -359,12 +359,7 @@ function tsml_delete($post_ids)
 	//special case
 	if ($post_ids == 'everything') {
 
-		$post_ids = get_posts([
-			'post_type' => ['tsml_meeting', 'tsml_location', 'tsml_group'],
-			'post_status' => 'any',
-			'fields' => 'ids',
-			'numberposts' => -1,
-		]);
+		$post_ids = tsml_get_posts(['fields' => 'ids']);
 
 		//when we're deleting *everything*, also delete regions & districts
 		if ($term_ids = implode(',', $wpdb->get_col('SELECT term_id FROM ' . $wpdb->term_taxonomy . ' WHERE taxonomy IN ("tsml_district", "tsml_region")'))) {
@@ -747,40 +742,31 @@ function tsml_geocode_google($address)
 
 //function: get all locations in the system
 //used:		tsml_group_count()
-function tsml_get_all_groups($status = 'any')
+function tsml_get_all_groups($status = null)
 {
-	return get_posts([
+	return tsml_get_posts([
 		'post_type'   => 'tsml_group',
 		'post_status' => $status,
-		'numberposts' => -1,
-		'orderby'     => 'name',
-		'order'       => 'ASC',
 	]);
 }
 
 //function: get all locations in the system
 //used:		tsml_location_count(), tsml_import(), and admin_import.php
-function tsml_get_all_locations($status = 'any')
+function tsml_get_all_locations($status = null)
 {
-	return get_posts([
+	return tsml_get_posts([
 		'post_type'   => 'tsml_location',
 		'post_status' => $status,
-		'numberposts' => -1,
-		'orderby'     => 'name',
-		'order'       => 'ASC',
 	]);
 }
 
 //function: get all meetings in the system
 //used:		tsml_meeting_count(), tsml_import(), and admin_import.php
-function tsml_get_all_meetings($status = 'any')
+function tsml_get_all_meetings($status = null)
 {
-	return get_posts([
+	return tsml_get_posts([
 		'post_type'   => 'tsml_meeting',
 		'post_status' => $status,
-		'numberposts' => -1,
-		'orderby'     => 'name',
-		'order'       => 'ASC',
 	]);
 }
 
@@ -795,6 +781,7 @@ function tsml_get_all_regions()
 //used:		tsml_ajax_import, import/settings page
 function tsml_get_data_source_ids($source)
 {
+	// TODO add data source support to tsml_get_posts
 	return get_posts([
 		'post_type'		=> 'tsml_meeting',
 		'numberposts'	=> -1,
@@ -916,8 +903,12 @@ function tsml_get_locations()
 		if ($term->parent) $regions_with_parents[$term->term_id] = $term->parent;
 	}
 
-	# Get all locations
-	$posts = tsml_get_all_locations(['publish', 'draft']);
+	# Get all locations TODO support multiple statuses
+	$posts = array_merge(
+		tsml_get_all_locations('publish'),
+		tsml_get_all_locations('draft')
+	);
+
 
 	# Much faster than doing get_post_meta() over and over
 	$location_meta = tsml_get_meta('tsml_location');
@@ -963,6 +954,19 @@ function tsml_get_locations()
 
 	return $locations;
 }
+
+// latency-free replacement for get_posts with post_type=tsml_location, post_meta=formatted_address, meta_value=$address
+function tsml_get_locations_with_address($address)
+{
+	global $wpdb;
+	$sql = $wpdb->prepare(
+		'SELECT * FROM ' . $wpdb->posts . ' WHERE post_type = "tsml_location" AND post_status = "publish" AND ID IN (SELECT post_id FROM ' . $wpdb->postmeta . ' WHERE meta_key = "formatted_address" AND meta_value = %s)',
+		$address
+	);
+	return $wpdb->get_results($sql);
+}
+
+
 
 
 //function: template tag to get meeting and location, attach custom fields to it
@@ -1059,18 +1063,58 @@ function tsml_get_meeting($meeting_id = false)
 	return $meeting;
 }
 
-// get_post function doesn't work on wordpress.com
+// latency-free replacement for get_post()
 function tsml_get_post($post_id)
 {
 	global $wpdb;
-	return $wpdb->get_row($wpdb->prepare('SELECT * FROM ' . $wpdb->posts . ' WHERE id = %d', $post_id));
+	$sql = $wpdb->prepare(
+		'SELECT * FROM ' . $wpdb->posts . ' WHERE id = %d',
+		$post_id
+	);
+	return $wpdb->get_row($sql);
 }
 
-// get_post function doesn't work on wordpress.com
-function tsml_get_posts($post_type, $post_status = 'publish')
+// latency-free replacement for get_posts()
+function tsml_get_posts($arguments = [])
 {
 	global $wpdb;
-	return $wpdb->get_results($wpdb->prepare('SELECT * FROM ' . $wpdb->posts . ' WHERE post_type = "%s" AND post_status = "%s"', $post_type, $post_status));
+
+	$where = $values = [];
+
+	$valid_post_types = ['tsml_meeting', 'tsml_location', 'tsml_group'];
+
+	// by default, retrieve all tsml post types
+	if (!empty($arguments['post_type']) && in_array($arguments['post_type'], $valid_post_types)) {
+		$where[] = 'post_type = %s';
+		$values[] = $arguments['post_type'];
+	} else {
+		$where[] = 'post_type IN ("' . implode('","', $valid_post_types) . '")';
+	}
+
+	// by default, retrieve all statuses
+	if (!empty($arguments['post_status'])) {
+		$where[] = 'post_status = %s';
+		$values[] = $arguments['post_status'];
+	}
+
+	// if post_parent__in is set, sanitize it
+	if (!empty($arguments['post_parent__in'])) {
+		$arguments['post_parent__in'] = array_map('intval', $arguments['post_parent__in']);
+		$where[] = 'post_parent IN (' . implode(',', $arguments['post_parent__in']);
+	}
+
+	// prepare sql statement
+	$sql = $wpdb->prepare('SELECT * FROM ' . $wpdb->posts . ' WHERE ' . implode(' AND ', $where), $values) . ' ORDER BY post_title ASC';
+	$results = $wpdb->get_results($sql);
+
+	// if fields == 'ids' return only the ids
+	if (!empty($arguments['fields']) && $arguments['fields'] == 'ids') {
+		$results = array_map(function ($result) {
+			return $result->ID;
+		}, $results);
+	}
+
+	return $results;
 }
 
 //function: get feedback_url
@@ -1084,7 +1128,7 @@ function tsml_feedback_url($meeting)
 	$url = $tsml_feedback_url;
 
 	foreach ($tsml_export_columns as $key => $heading) {
-		$value = @$meeting[$key];
+		$value = !empty($meeting[$key]) ? $meeting[$key] : '';
 		if (is_array($value)) {
 			$value = implode(',', $value);
 		}
@@ -1117,7 +1161,10 @@ function tsml_get_meetings($arguments = [], $from_cache = true, $full_export = f
 			$arguments['post_status'] = sanitize_title($arguments['post_status']);
 		}
 
-		$posts = tsml_get_posts('tsml_meeting');
+		$posts = tsml_get_posts([
+			'post_type' => 'tsml_meeting',
+			'post_status' => $arguments['post_status']
+		]);
 
 		$meeting_meta = tsml_get_meta('tsml_meeting');
 		$groups = tsml_get_groups();
@@ -1209,7 +1256,7 @@ function tsml_get_meetings($arguments = [], $from_cache = true, $full_export = f
 		}, $meetings);
 
 		//write array to cache
-		if (!$from_cache && !$full_export) {
+		if (!$full_export) {
 			$filepath = WP_CONTENT_DIR . $tsml_cache;
 			// Check if the file is writable, and if so, write it
 			if (is_writable($filepath) || (!file_exists($filepath) && is_writable(WP_CONTENT_DIR))) {

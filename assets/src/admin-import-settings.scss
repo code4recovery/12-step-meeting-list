@@ -20,13 +20,15 @@ ul {
 
 .notice {
 	margin-bottom: 20px;
-	padding-top: 15px;
-	padding-bottom: 15px;
 	&.notice-error {
 		padding: 10px 10px 8px 45px;
 		li {
 			margin: 0 0 2px;
 		}
+	}
+	&.notice-warning {
+		padding-bottom: 20px;
+		padding-top: 20px;
 	}
 }
 

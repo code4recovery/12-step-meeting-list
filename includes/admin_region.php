@@ -37,7 +37,7 @@ add_action(
 
         $delete_and_reassign = intval($_POST['delete_and_reassign']);
 
-        //delete this region and reassign its locations to another region
+        //delete this region and reassign its locations to another region TODO add region support to tsml_get_posts
         if (!empty($delete_and_reassign)) {
             $location_ids = get_posts([
                 'post_type' => 'tsml_location',
