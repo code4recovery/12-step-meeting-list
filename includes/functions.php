@@ -111,8 +111,6 @@ function tsml_bounds()
 //try to build a cache of meetings to help with CPU load
 function tsml_cache_rebuild()
 {
-	// Calling with $from_cache = false forces recreation of cache file
-	// $args, $from_cache
 	tsml_get_meetings([], false);
 }
 
@@ -747,18 +745,6 @@ function tsml_geocode_google($address)
 	return $response;
 }
 
-//function: Ensure location->approximate set through geocoding and updated
-//used: single-meetings.php, single-locations.php
-function tsml_ensure_location_approximate_set($meeting_location_info)
-{
-	if (empty($meeting_location_info->approximate) && !empty($meeting_location_info->formatted_address)) {
-		$geocoded = tsml_geocode($meeting_location_info->formatted_address);
-		$meeting_location_info->approximate = $geocoded['approximate'];
-		update_post_meta($meeting_location_info->location_id, 'approximate', $geocoded['approximate']);
-	};
-	return $meeting_location_info;
-}
-
 //function: get all locations in the system
 //used:		tsml_group_count()
 function tsml_get_all_groups($status = 'any')
@@ -1070,8 +1056,6 @@ function tsml_get_meeting($meeting_id = false)
 	}
 	sort($meeting->types_expanded);
 
-	if (!empty($meeting->post_title)) $meeting = tsml_ensure_location_approximate_set($meeting); // Can eventually remove this when <3.9 TSMLs no longer used.
-
 	return $meeting;
 }
 
@@ -1080,6 +1064,13 @@ function tsml_get_post($post_id)
 {
 	global $wpdb;
 	return $wpdb->get_row($wpdb->prepare('SELECT * FROM ' . $wpdb->posts . ' WHERE id = %d', $post_id));
+}
+
+// get_post function doesn't work on wordpress.com
+function tsml_get_posts($post_type, $post_status = 'publish')
+{
+	global $wpdb;
+	return $wpdb->get_results($wpdb->prepare('SELECT * FROM ' . $wpdb->posts . ' WHERE post_type = "%s" AND post_status = "%s"', $post_type, $post_status));
 }
 
 //function: get feedback_url
@@ -1126,11 +1117,7 @@ function tsml_get_meetings($arguments = [], $from_cache = true, $full_export = f
 			$arguments['post_status'] = sanitize_title($arguments['post_status']);
 		}
 
-		$posts = get_posts([
-			'post_type' => 'tsml_meeting',
-			'numberposts' => -1,
-			'post_status' => $arguments['post_status'],
-		]);
+		$posts = tsml_get_posts('tsml_meeting');
 
 		$meeting_meta = tsml_get_meta('tsml_meeting');
 		$groups = tsml_get_groups();
@@ -1222,7 +1209,7 @@ function tsml_get_meetings($arguments = [], $from_cache = true, $full_export = f
 		}, $meetings);
 
 		//write array to cache
-		if (!$full_export) {
+		if (!$from_cache && !$full_export) {
 			$filepath = WP_CONTENT_DIR . $tsml_cache;
 			// Check if the file is writable, and if so, write it
 			if (is_writable($filepath) || (!file_exists($filepath) && is_writable(WP_CONTENT_DIR))) {
