@@ -111,8 +111,10 @@ function tsml_bounds()
 //try to build a cache of meetings to help with CPU load
 function tsml_cache_rebuild()
 {
-	// Calling with $from_cache = false forces recreation of cache file
-	// $args, $from_cache
+	// flush wp object cache
+	wp_cache_flush();
+
+	// rebuild TSML meeting cache file
 	tsml_get_meetings([], false);
 }
 
@@ -293,7 +295,7 @@ function tsml_custom_post_types()
 				'name' =>	__('Meetings', '12-step-meeting-list'),
 				'singular_name' =>	__('Meeting', '12-step-meeting-list'),
 				'not_found' =>	__('No meetings added yet.', '12-step-meeting-list'),
-				'add_new_item' =>	__('Add New Meeting', '12-step-meeting-list'),
+				'add_new' =>	__('Add New Meeting', '12-step-meeting-list'),
 				'search_items' =>	__('Search Meetings', '12-step-meeting-list'),
 				'edit_item' =>	__('Edit Meeting', '12-step-meeting-list'),
 				'view_item' =>	__('View Meeting', '12-step-meeting-list'),
@@ -341,6 +343,15 @@ function tsml_custom_types($types)
 		$tsml_programs[$tsml_program]['types'][$key] = $value;
 	}
 	asort($tsml_programs[$tsml_program]['types']);
+}
+
+// function used for debugging
+function tsml_dd($obj)
+{
+	echo '<pre>';
+	print_r($obj);
+	echo '</pre>';
+	exit;
 }
 
 //function:	efficiently remove an array of post_ids
@@ -738,18 +749,6 @@ function tsml_geocode_google($address)
 	return $response;
 }
 
-//function: Ensure location->approximate set through geocoding and updated
-//used: single-meetings.php, single-locations.php
-function tsml_ensure_location_approximate_set($meeting_location_info)
-{
-	if (empty($meeting_location_info->approximate) && !empty($meeting_location_info->formatted_address)) {
-		$geocoded = tsml_geocode($meeting_location_info->formatted_address);
-		$meeting_location_info->approximate = $geocoded['approximate'];
-		update_post_meta($meeting_location_info->location_id, 'approximate', $geocoded['approximate']);
-	};
-	return $meeting_location_info;
-}
-
 //function: get all locations in the system
 //used:		tsml_group_count()
 function tsml_get_all_groups($status = 'any')
@@ -1060,8 +1059,6 @@ function tsml_get_meeting($meeting_id = false)
 	}
 	sort($meeting->types_expanded);
 
-	if (!empty($meeting->post_title)) $meeting = tsml_ensure_location_approximate_set($meeting); // Can eventually remove this when <3.9 TSMLs no longer used.
-
 	return $meeting;
 }
 
@@ -1076,7 +1073,7 @@ function tsml_feedback_url($meeting)
 	$url = $tsml_feedback_url;
 
 	foreach ($tsml_export_columns as $key => $heading) {
-		$value = @$meeting[$key];
+		$value = !empty($meeting[$key]) ? $meeting[$key] : '';
 		if (is_array($value)) {
 			$value = implode(',', $value);
 		}
