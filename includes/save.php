@@ -229,7 +229,15 @@ add_action('save_post', function ($post_id, $post, $update) {
 		}
 
 		//see if address is already in the database
-		if ($locations = tsml_get_locations_with_address($_POST['formatted_address'])) {
+		if ($locations = get_posts([
+			'post_type' => 'tsml_location',
+			'numberposts' => 1,
+			'orderby' => 'id',
+			'order' => 'ASC',
+			'meta_key' => 'formatted_address',
+			'meta_value' => $_POST['formatted_address'],
+			'post_status' => 'any',
+		])) {
 			$location_id = $locations[0]->ID;
 			if ($locations[0]->post_title != $_POST['location'] || $locations[0]->post_content != $_POST['location_notes']) {
 				wp_update_post([

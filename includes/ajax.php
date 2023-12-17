@@ -78,7 +78,7 @@ add_action('wp_ajax_tsml_groups', 'tsml_ajax_groups');
 add_action('wp_ajax_nopriv_tsml_groups', 'tsml_ajax_groups');
 function tsml_ajax_groups()
 {
-	$groups = tsml_get_posts(['post_type' => 'tsml_group']);
+	$groups = get_posts('post_type=tsml_group&numberposts=-1');
 	$results = [];
 	foreach ($groups as $group) {
 		$group_custom = get_post_meta($group->ID);
@@ -145,14 +145,19 @@ function tsml_ajax_regions()
 //ajax for address checking
 add_action('wp_ajax_tsml_address', function () {
 
-	$locations = tsml_get_locations_with_address($_GET['formatted_address']);
-	if (!count($locations)) wp_send_json(false);
-	$region = get_the_terms($locations[0]->ID, 'tsml_region');
+	if (!$posts = get_posts([
+		'post_type' => 'tsml_location',
+		'numberposts' => 1,
+		'meta_key' => 'formatted_address',
+		'meta_value' => sanitize_text_field($_GET['formatted_address']),
+	])) wp_send_json(false);
+
+	$region = get_the_terms($posts[0]->ID, 'tsml_region');
 
 	//return info to user
 	wp_send_json([
-		'location' => $locations[0]->post_title,
-		'location_notes' => $locations[0]->post_content,
+		'location' => $posts[0]->post_title,
+		'location_notes' => $posts[0]->post_content,
 		'region' => $region[0]->term_id,
 	]);
 });
