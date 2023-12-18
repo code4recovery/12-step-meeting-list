@@ -811,6 +811,25 @@ function tsml_get_data_source_ids($source)
 	]);
 }
 
+//function: get meeting ids for a non data source
+//used:		tsml_ajax_import, import/export page
+function tsml_get_non_data_source_ids()
+{
+    return get_posts([
+        'post_type' => 'tsml_meeting',
+        'numberposts' => -1,
+        'fields' => 'ids',
+        'meta_query' => [
+            [
+                'key' => 'data_source',
+                'compare' => 'NOT EXISTS',
+                'value' => '',
+            ],
+        ],
+    ]);
+}
+
+
 //function: get all locations with full location information
 //used: tsml_get_meetings()
 function tsml_get_groups()
@@ -2311,3 +2330,843 @@ function tsml_date_localised($format, $timestamp = null)
 	return $datetime->format($format);
 }
 /* ******************** end of data_source_change_detection ******************** */
+/* ******************** start of change_detection_updates ******************** */
+
+//function:	return array of updated feed records where only a difference is detected between the matched feed and database records
+//used:		admin-import.php
+function tsml_get_import_changes_only($feed_meetings, $data_source_url, $data_source_last_update, &$db_ids_to_delete, &$message_lines)
+{
+    global $tsml_days;
+    $db_meetings = $feed_slugs = $meetings_updated = $ds_ids = $db_meeting = [];
+
+    // get local meetings
+    $data_source_ids = tsml_get_data_source_ids($data_source_url);
+    sort($data_source_ids);
+
+    /* filter out all but the data source meetings  */
+    $db_meetings = array_filter(tsml_get_meetings(), function ($meeting) use ($data_source_ids) {
+        return in_array($meeting['id'], $data_source_ids);
+    });
+
+    // create array of database slugs for matching
+    $db_slugs = array_column($db_meetings, 'slug', 'id');
+
+    // list changed and new meetings found in the data source feed
+    foreach ($feed_meetings as $meeting) {
+
+        //when a regions array is used, we need to populate the region and subregion fields from it
+        if (in_array('regions', array_keys($meeting))) {
+            $meeting['region'] = $meeting['regions'][0];
+            if (count($meeting['regions']) > 1) {
+                $meeting['sub_region'] = $meeting['regions'][1];
+            }
+        }
+
+        list($day_of_week, $dow_number) = tsml_get_day_of_week_info($meeting['day'], $tsml_days);
+        $meeting_slug = $meeting['slug'];
+        $db_meeting_id = array_search($meeting_slug, $db_slugs);
+        if ($db_meeting_id > 0) {
+            //get matching db record and convert object to array for verification check
+            $db_meeting = tsml_object_to_array(tsml_get_meeting($db_meeting_id));
+        }
+
+        $is_matched = in_array($meeting_slug, $db_slugs);
+
+        //add slug to feed array to help determine database removals later on...
+        $feed_slugs[] = $meeting_slug;
+
+        //compare matched records to see if there's been changes
+        $they_are_in_sync = false;
+        if ($is_matched && !empty($db_meeting)) {
+            $they_are_in_sync = tsml_verify_identical_records($db_meeting, $meeting, $data_source_last_update);
+        }
+
+        if (!$they_are_in_sync) {
+
+            //output both new and changed records
+            array_push($meetings_updated, $meeting);
+
+            $last_update = date(get_option('date_format') . ' ' . get_option('time_format'), current_time('timestamp'));
+            if (!empty($meeting['updated'])) {
+                //localize imported timestamp
+                $last_update = date(get_option('date_format') . ' ' . get_option('time_format'), strtotime($meeting['updated']));
+            }
+            $meeting_name = $meeting['name'];
+
+            if ($is_matched) {
+                $message = __("<tr style='color:#A9A9A9;'><td>Change</td><td >$meeting_name</td><td>$day_of_week</td><td>$last_update</td></tr>", '12-step-meeting-list');
+                $message_lines[] = $message;
+                //add changed record id to list of db records to be removed
+                $db_ids_to_delete[] = $db_meeting_id;
+            } else {
+                $message = __("<tr style='color:green;'><td>Add New</td><td >$meeting_name</td><td>$day_of_week</td><td>$last_update</td></tr>", '12-step-meeting-list');
+                $message_lines[] = $message;
+            }
+        }
+    }
+
+    // remove those meetings in local database which are not matched with feed
+    foreach ($db_meetings as $db_meeting) {
+
+        list($day_of_week, $dow_number) = tsml_get_day_of_week_info($db_meeting['day'], $tsml_days);
+        $meeting_slug = $db_meeting['slug'];
+
+        $is_matched = in_array($meeting_slug, $feed_slugs);
+
+        // Check if slug has been modified on import by removing an appended suffix and test for match again
+        if (!$is_matched) {
+            for ($x = 0; $x <= 10; $x++) {
+                if (str_contains($meeting_slug, '-' . $x)) {
+                    $meeting_slug = str_replace('-' . $x, '', $meeting_slug);
+                    break;
+                }
+            }
+            $is_matched = in_array($meeting_slug, $feed_slugs);
+        }
+
+        if (!$is_matched) {
+            $meeting_update_date = date(get_option('date_format') . ' ' . get_option('time_format'), $data_source_last_update);
+            $meeting_name = $db_meeting['name'];
+            $message = __("<tr style='color:red;'><td>Remove</td><td >$meeting_name</td><td>$day_of_week</td><td>* $meeting_update_date</td></tr>", '12-step-meeting-list');
+            $message_lines[] = $message;
+            $db_ids_to_delete[] = $db_meeting['id'];
+        }
+    }
+
+    return $meetings_updated;
+}
+
+//function:	return boolean indicating whether or not the matched database and import records are in sync
+//used:		here (called from tsml_get_import_changes_only)
+function tsml_verify_identical_records($db_meeting, &$import_meeting, $data_source_last_update)
+{
+    global $tsml_days, $tsml_programs, $tsml_program, $tsml_detection_test_mode;
+
+    $test_mode = ($tsml_detection_test_mode === 'on') ? -1 : 0;
+
+    /***************************************************************************************************
+     * Do Incremental Comparison of only those records which have changed since the last update occurred
+     * *************************************************************************************************/
+
+    if (!empty($import_meeting['updated'])) {
+        //localize imported timestamp
+        $imported_timestamp = strtotime(tsml_date_localised(get_option('date_format') . ' ' . get_option('time_format'), strtotime($import_meeting['updated'])));
+
+        if ($imported_timestamp > $data_source_last_update) {
+
+            if ($test_mode) {
+                echo 'Updated --→ ' . $import_meeting['name'] . '<br>';
+                echo $data_source_last_update . '  <br>';
+                echo $imported_timestamp . ' <br><br>';
+            }
+
+            return false;
+
+        } else {
+
+            return true;
+
+        }
+    }
+
+    /***************************************************************************************************
+     * When no 'updated' field exists Do a Differential Comparison based on each field
+     * *************************************************************************************************/
+
+    //compare db record to import record, field by field
+    if (!empty($db_meeting['post_title']) && !empty($import_meeting['name'])) {
+
+        $post_title = trim(tsml_remove_special_char($db_meeting['post_title']));
+        $import_name = trim(tsml_remove_special_char($import_meeting['name']));
+
+        if ($post_title !== $import_name) {
+
+            if ($test_mode) {
+                echo 'Name --→ ' . $import_meeting['name'] . '<br>';
+                echo 'db Name: ' . $post_title . '  <br>';
+                echo '_Import: ' . $import_name . ' <br><br>';
+            }
+
+            return false;
+        }
+    }
+
+    if (!empty($db_meeting['post_name']) && !empty($import_meeting['slug'])) {
+        if ($db_meeting['post_name'] !== $import_meeting['slug']) {
+
+            if ($test_mode) {
+                echo 'Slug --→ ' . $import_meeting['name'] . '<br>';
+                echo $db_meeting['post_name'] . '  <br>';
+                echo $import_meeting['slug'] . ' <br><br>';
+            }
+            return false;
+        }
+    }
+
+    if (!empty($db_meeting['day']) && !empty($import_meeting['day'])) {
+        $day_of_week = $import_meeting['day'];
+        if (in_array($import_meeting['day'], $tsml_days)) {
+            $day_of_week = date('N', strtotime($day_of_week));
+        }
+        if (intval($db_meeting['day']) !== intval($day_of_week)) {
+
+            if ($test_mode) {
+                echo 'Day --→ ' . $import_meeting['name'] . '<br>';
+                echo 'db day: ' . $db_meeting['day'] . '  <br>';
+                echo 'import: ' . $day_of_week . ' <br><br>';
+            }
+
+            return false;
+        }
+    }
+
+    if (!empty($db_meeting['time']) && !empty($import_meeting['time'])) {
+        $time = date("H:i", strtotime($import_meeting['time']));
+
+        if ($db_meeting['time'] !== $time) {
+
+            if ($test_mode) {
+                echo 'Time --→ ' . $import_meeting['name'] . '<br>';
+                echo 'db time: ' . $db_meeting['time'] . '  <br>';
+                echo 'import: ' . $time . ' <br><br>';
+            }
+
+            return false;
+        }
+    }
+
+    if (!empty($db_meeting['end_time']) && !empty($import_meeting['end_time'])) {
+        $end_time = date("H:i", strtotime($import_meeting['end_time']));
+        if ($db_meeting['end_time'] !== $end_time) {
+
+            if ($test_mode) {
+                echo 'End Time --→ ' . $import_meeting['name'] . '<br>';
+                echo 'db end_time: ' . $db_meeting['end_time'] . '  <br>';
+                echo 'import time: ' . $end_time . ' <br><br>';
+            }
+            return false;
+        }
+    }
+
+    if (!empty($db_meeting['types']) && !empty($import_meeting['types'])) {
+
+        $db_types_str = implode(",", $db_meeting['types']);
+
+        if (is_array($import_meeting['types'])) {
+            //make sure we have no empty spaces in the array (e.g. "types":["G"," LGBTQ","O","ONL"])
+            $import_types_str = str_replace(" ", "", implode(",", $import_meeting['types']));
+            $import_meeting['types'] = explode(",", $import_types_str);
+        } else {
+            //convert type values string to array keys (e.g. "types":"Gay, LGBTQ, Open, Online Meeting" to ["G","LGBTQ","O","ONL"])
+            $upper_types = array_map('strtoupper', $tsml_programs[$tsml_program]['types']);
+            $import_type_keys = [];
+            $arr_import_types = array_map('strtoupper', explode(',', $import_meeting['types']));
+            //populate the import key array to match against the db array
+            foreach ($arr_import_types as $type_value) {
+                $type_value = trim($type_value);
+                $type_key = array_search($type_value, $upper_types);
+                if ($type_key !== '') {
+                    $import_type_keys[] = $type_key . ',';
+                }
+            }
+            $import_types_str = implode($import_type_keys);
+            $import_meeting['types'] = explode(",", $import_types_str);
+        }
+
+        $result = array_diff($db_meeting['types'], $import_meeting['types']);
+
+        if (count($result) !== 0) {
+
+            if ($test_mode) {
+                echo 'Types --→ ' . $import_meeting['name'] . '<br>';
+                echo 'db types: ' . $db_types_str . '  <br>';
+                echo '__import: ' . $import_types_str . ' <br><br>';
+            }
+
+            return false;
+        }
+    }
+
+    if (!empty($db_meeting['post_content']) && !empty($import_meeting['notes'])) {
+
+        $post_content = stripslashes(sanitize_text_field($db_meeting['post_content']));
+        $post_content = tsml_remove_special_char($post_content);
+
+        $import_notes = stripslashes(sanitize_text_field($import_meeting['notes']));
+        $import_notes = tsml_remove_special_char($import_notes);
+
+        if ($post_content !== $import_notes) {
+
+            if ($test_mode) {
+                echo 'Notes --→ ' . $import_meeting['name'] . '<br>';
+                echo $post_content . '  <br>';
+                echo $import_notes . ' <br><br>';
+            }
+            return false;
+        }
+    }
+
+    if (!empty($db_meeting['conference_url']) && !empty($import_meeting['conference_url'])) {
+        $db_conf_url = trim(tsml_remove_special_char($db_meeting['conference_url']));
+        $import_conf_url = trim(tsml_remove_special_char($import_meeting['conference_url']));
+
+        //if ($db_conf_url !== $import_conf_url) {
+        if (strcmp($db_conf_url, $import_conf_url) !== 0) {
+
+            if ($test_mode) {
+                echo 'Conf URL --→ ' . $import_meeting['name'] . '<br>';
+                echo 'db conference_url: ' . $db_conf_url . '  <br>';
+                echo 'im conference_url: ' . $import_conf_url . ' <br><br>';
+            }
+
+            return false;
+        }
+    }
+
+    if (!empty($db_meeting['conference_url_notes']) && !empty($import_meeting['conference_url_notes'])) {
+        $db_conf_url_notes = str_replace('&amp;', '&', $db_meeting['conference_url_notes']);
+        $db_conf_url_notes = tsml_remove_special_char($db_conf_url_notes);
+        $import_conf_url_notes = str_replace('&amp;', '&', $import_meeting['conference_url_notes']);
+        $import_conf_url_notes = tsml_remove_special_char($import_conf_url_notes);
+
+        if ($db_conf_url_notes !== $import_conf_url_notes) {
+
+            if ($test_mode) {
+                echo 'URL Notes --→ ' . $import_meeting['name'] . '<br>';
+                echo $db_conf_url_notes . '  <br>';
+                echo $import_conf_url_notes . ' <br><br>';
+            }
+
+            return false;
+        }
+    }
+
+    if (!empty($db_meeting['conference_phone']) && !empty($import_meeting['conference_phone'])) {
+        if ($db_meeting['conference_phone'] !== $import_meeting['conference_phone']) {
+
+            if ($test_mode) {
+                echo 'Conf Phone --→ ' . $import_meeting['name'] . '<br>';
+                echo $db_meeting['conference_phone'] . '  <br>';
+                echo $import_meeting['conference_phone'] . ' <br><br>';
+            }
+
+            return false;
+        }
+    }
+
+    if (!empty($db_meeting['conference_phone_notes']) && !empty($import_meeting['conference_phone_notes'])) {
+        $db_conference_phone_notes = tsml_remove_special_char($db_meeting['conference_phone_notes']);
+        $import_conference_phone_notes = tsml_remove_special_char($import_meeting['conference_phone_notes']);
+        if ($db_conference_phone_notes !== $import_conference_phone_notes) {
+
+            if ($test_mode) {
+                echo 'Conf Phone Notes --→ ' . $import_meeting['name'] . '<br>';
+                echo $db_conference_phone_notes . '  <br>';
+                echo $import_conference_phone_notes . ' <br><br>';
+            }
+
+            return false;
+        }
+    }
+
+    if (!empty($db_meeting['location']) && !empty($import_meeting['location'])) {
+        $db_location = tsml_remove_special_char($db_meeting['location']);
+        $import_location = tsml_remove_special_char($import_meeting['location']);
+
+        if ($db_location !== $import_location) {
+
+            if ($test_mode) {
+                echo 'Location -----→ ' . $import_meeting['name'] . '<br>';
+                echo 'Location --→ ' . $import_meeting['location'] . '<br>';
+                echo $db_location . '  <br>';
+                echo $import_location . ' <br><br>';
+            }
+
+            return false;
+        }
+    }
+
+    if (!empty($db_meeting['location_notes']) && !empty($import_meeting['location_notes'])) {
+        $db_location_notes = tsml_remove_special_char($db_meeting['location_notes']);
+        $import_location_notes = tsml_remove_special_char($import_meeting['location_notes']);
+
+        if ($db_location_notes !== $import_location_notes) {
+
+            if ($test_mode) {
+                echo 'Location Notes --→ ' . $import_meeting['name'] . '<br>';
+                echo $db_location_notes . '  <br>';
+                echo $import_location_notes . ' <br><br>';
+            }
+
+            return false;
+        }
+    }
+
+    if (!empty($db_meeting['formatted_address']) && !empty($import_meeting['formatted_address'])) {
+        $db_formatted_address = tsml_remove_special_char($db_meeting['formatted_address']);
+        $import_formatted_address = tsml_remove_special_char($import_meeting['formatted_address']);
+
+        if ($db_formatted_address !== $import_formatted_address) {
+
+            if ($test_mode) {
+                echo 'Formatted Address --→ ' . $import_meeting['name'] . '<br>';
+                echo $db_formatted_address . '  <br>';
+                echo $import_formatted_address . ' <br><br>';
+            }
+
+            return false;
+        }
+    }
+
+    if (!empty($db_meeting['approximate']) && !empty($import_meeting['approximate'])) {
+        if ($db_meeting['approximate'] !== $import_meeting['approximate']) {
+
+            if ($test_mode) {
+                echo 'Approximate --→ ' . $import_meeting['name'] . '<br>';
+                echo $db_meeting['approximate'] . '  <br>';
+                echo $import_meeting['approximate'] . ' <br><br>';
+            }
+
+            return false;
+        }
+    }
+
+    if (!empty($db_meeting['region_id ']) && !empty($import_meeting['region_id '])) {
+        if ($db_meeting['region_id '] !== $import_meeting['region_id ']) {
+            if ($db_meeting['post_parent  '] !== $import_meeting['region_id ']) {
+                if ($test_mode) {
+                    echo 'Region --→ ' . $import_meeting['name'] . '<br>';
+                    echo $db_meeting['region'] . '  <br>';
+                    echo $import_meeting['region'] . ' <br><br>';
+                }
+
+                return false;
+            }
+        }
+    }
+
+    if (!empty($db_meeting['image']) && !empty($import_meeting['image'])) {
+        if ($db_meeting['image'] !== $import_meeting['image']) {
+
+            if ($test_mode) {
+                echo 'Image --→ ' . $import_meeting['name'] . '<br>';
+                echo $db_meeting['image'] . '  <br>';
+                echo $import_meeting['image'] . ' <br><br>';
+            }
+
+            return false;
+        }
+    }
+
+    if (!empty($db_meeting['type_description']) && !empty($import_meeting['type_description'])) {
+        if ($db_meeting['type_description'] !== $import_meeting['type_description']) {
+
+            if ($test_mode) {
+
+                echo 'Type Description --→ ' . $import_meeting['name'] . '<br>';
+                echo $db_meeting['type_description'] . '  <br>';
+                echo $import_meeting['type_description'] . ' <br><br>';
+            }
+
+            return false;
+        }
+    }
+
+    if (!empty($db_meeting['group']) && !empty($import_meeting['group'])) {
+        $db_group = tsml_remove_special_char($db_meeting['group']);
+        $import_group = tsml_remove_special_char($import_meeting['group']);
+
+        if ($db_group !== $import_group) {
+
+            if ($test_mode) {
+                echo 'Group --→ ' . $import_meeting['name'] . '<br>';
+                echo $db_group . '  <br>';
+                echo $import_group . ' <br><br>';
+            }
+
+            return false;
+        }
+    }
+
+    if (!empty($db_meeting['group_notes']) && !empty($import_meeting['group_notes'])) {
+        $db_group_notes = tsml_remove_special_char($db_meeting['group_notes']);
+        $import_group_notes = tsml_remove_special_char($import_meeting['group_notes']);
+
+        if ($db_group_notes !== $import_group_notes) {
+
+            if ($test_mode) {
+                echo 'Group Notes --→ ' . $import_meeting['name'] . '<br>';
+                echo $db_group_notes . '  <br>';
+                echo $import_group_notes . ' <br><br>';
+            }
+
+            return false;
+        }
+    }
+
+    if (!empty($db_meeting['district']) && !empty($import_meeting['district'])) {
+        if ($db_meeting['district'] !== $import_meeting['district']) {
+
+            if ($test_mode) {
+                echo 'District --→ ' . $import_meeting['name'] . '<br>';
+                echo $db_meeting['district'] . '  <br>';
+                echo $import_meeting['district'] . ' <br><br>';
+            }
+
+            return false;
+        }
+    }
+
+    if (!empty($db_meeting['sub_district']) && !empty($import_meeting['sub_district'])) {
+        if ($db_meeting['sub_district'] !== $import_meeting['sub_district']) {
+
+            if ($test_mode) {
+                echo 'Sub District --→ ' . $import_meeting['name'] . '<br>';
+                echo $db_meeting['sub_district'] . '  <br>';
+                echo $import_meeting['sub_district'] . ' <br><br>';
+            }
+
+            return false;
+        }
+    }
+    if (!empty($db_meeting['website']) && !empty($import_meeting['website'])) {
+        $db_website = tsml_remove_special_char($db_meeting['website']);
+        $import_website = tsml_remove_special_char($import_meeting['website']);
+        if ($db_website !== $import_website) {
+
+            if ($test_mode) {
+                echo 'Website --→ ' . $import_meeting['name'] . '<br>';
+                echo $db_website . '  <br>';
+                echo $import_website . ' <br><br>';
+            }
+
+            return false;
+        }
+    }
+
+    if (!empty($db_meeting['website_2']) && !empty($import_meeting['website_2'])) {
+        $db_website_2 = tsml_remove_special_char($db_meeting['website_2']);
+        $import_website_2 = tsml_remove_special_char($import_meeting['website_2']);
+        if ($db_website_2 !== $import_website_2) {
+
+            if ($test_mode) {
+                echo 'Website 2 --→ ' . $import_meeting['name'] . '<br>';
+                echo $db_website_2 . '  <br>';
+                echo $import_website_2 . ' <br><br>';
+            }
+
+            return false;
+        }
+    }
+
+    if (!empty($db_meeting['email']) && !empty($import_meeting['email'])) {
+        if ($db_meeting['email'] !== $import_meeting['email']) {
+
+            if ($test_mode) {
+                echo 'Email --→ ' . $import_meeting['name'] . '<br>';
+                echo $db_meeting['email'] . '  <br>';
+                echo $import_meeting['email'] . ' <br><br>';
+            }
+
+            return false;
+        }
+    }
+
+    if (!empty($db_meeting['phone']) && !empty($import_meeting['phone'])) {
+        if ($db_meeting['phone'] !== $import_meeting['phone']) {
+
+            if ($test_mode) {
+                echo 'Phone --→ ' . $import_meeting['name'] . '<br>';
+                echo $db_meeting['phone'] . '  <br>';
+                echo $import_meeting['phone'] . ' <br><br>';
+            }
+
+            return false;
+        }
+    }
+
+    if (!empty($db_meeting['mailing_address']) && !empty($import_meeting['mailing_address'])) {
+        if ($db_meeting['mailing_address'] !== $import_meeting['mailing_address']) {
+
+            if ($test_mode) {
+                echo 'Mailing Address --→ ' . $import_meeting['name'] . '<br>';
+                echo $db_meeting['mailing_address'] . '  <br>';
+                echo $import_meeting['mailing_address'] . ' <br><br>';
+            }
+
+            return false;
+        }
+    }
+
+    if (!empty($db_meeting['venmo']) && !empty($import_meeting['venmo'])) {
+        if ($db_meeting['venmo'] !== $import_meeting['venmo']) {
+
+            if ($test_mode) {
+                echo 'Venmo --→ ' . $import_meeting['name'] . '<br>';
+                echo $db_meeting['venmo'] . '  <br>';
+                echo $import_meeting['venmo'] . ' <br><br>';
+            }
+
+            return false;
+        }
+    }
+
+    if (!empty($db_meeting['square']) && !empty($import_meeting['square'])) {
+        if ($db_meeting['square'] !== $import_meeting['square']) {
+
+            if ($test_mode) {
+                echo 'Square --→ ' . $import_meeting['name'] . '<br>';
+                echo $db_meeting['square'] . '  <br>';
+                echo $import_meeting['square'] . ' <br><br>';
+            }
+
+            return false;
+        }
+    }
+
+    if (!empty($db_meeting['paypal']) && !empty($import_meeting['paypal'])) {
+        if ($db_meeting['paypal'] !== $import_meeting['paypal']) {
+
+            if ($test_mode) {
+                echo 'PayPal --→ ' . $import_meeting['name'] . '<br>';
+                echo $db_meeting['paypal'] . '  <br>';
+                echo $import_meeting['paypal'] . ' <br><br>';
+            }
+
+            return false;
+        }
+    }
+
+    if (!empty($db_meeting['last_contact']) && !empty($import_meeting['last_contact'])) {
+        if ($db_meeting['last_contact'] !== $import_meeting['last_contact']) {
+
+            if ($test_mode) {
+                echo 'Last Contact --→ ' . $import_meeting['name'] . '<br>';
+                echo $db_meeting['last_contact'] . '  <br>';
+                echo $import_meeting['last_contact'] . ' <br><br>';
+            }
+
+            return false;
+        }
+    }
+
+    if (!empty($db_meeting['url']) && !empty($import_meeting['url'])) {
+        if ($db_meeting['url'] !== $import_meeting['url']) {
+
+            if ($test_mode) {
+                echo 'URL --→ ' . $import_meeting['name'] . '<br>';
+                echo $db_meeting['url'] . '  <br>';
+                echo $import_meeting['url'] . ' <br><br>';
+            }
+            return false;
+        }
+    }
+
+    if (!empty($db_meeting['feedback_url']) && !empty($import_meeting['feedback_url'])) {
+        if ($db_meeting['feedback_url'] !== $import_meeting['feedback_url']) {
+
+            if ($test_mode) {
+                echo 'Feedback URL --→ ' . $import_meeting['name'] . '<br>';
+                echo $db_meeting['feedback_url'] . '  <br>';
+                echo $import_meeting['feedback_url'] . ' <br><br>';
+            }
+
+            return false;
+        }
+    }
+
+    if (!empty($db_meeting['edit_url']) && !empty($import_meeting['edit_url'])) {
+        if ($db_meeting['edit_url'] !== $import_meeting['edit_url']) {
+
+            if ($test_mode) {
+                echo 'Edit URL --→ ' . $import_meeting['name'] . '<br>';
+                echo $db_meeting['edit_url'] . '  <br>';
+                echo $import_meeting['edit_url'] . ' <br><br>';
+            }
+
+            return false;
+        }
+    }
+
+    if (!empty($db_meeting['contact_1_name']) && !empty($import_meeting['contact_1_name'])) {
+        if ($db_meeting['contact_1_name'] !== $import_meeting['contact_1_name']) {
+
+            if ($test_mode) {
+                echo 'Contact 1 Name --→ ' . $import_meeting['name'] . '<br>';
+                echo $db_meeting['contact_1_name'] . '  <br>';
+                echo $import_meeting['contact_1_name'] . ' <br><br>';
+            }
+
+            return false;
+        }
+    }
+
+    if (!empty($db_meeting['contact_1_email']) && !empty($import_meeting['contact_1_email'])) {
+        if ($db_meeting['contact_1_email'] !== $import_meeting['contact_1_email']) {
+
+            if ($test_mode) {
+                echo 'Contact 1 Email --→ ' . $import_meeting['name'] . '<br>';
+                echo $db_meeting['contact_1_email'] . '  <br>';
+                echo $import_meeting['contact_1_email'] . ' <br><br>';
+            }
+
+            return false;
+        }
+    }
+
+    if (!empty($db_meeting['contact_1_phone']) && !empty($import_meeting['contact_1_phone'])) {
+        if ($db_meeting['contact_1_phone'] !== $import_meeting['contact_1_phone']) {
+
+            if ($test_mode) {
+                echo 'Contact 1 Phone --→ ' . $import_meeting['name'] . '<br>';
+                echo $db_meeting['contact_1_phone'] . '  <br>';
+                echo $import_meeting['contact_1_phone'] . ' <br><br>';
+            }
+
+            return false;
+        }
+    }
+
+    if (!empty($db_meeting['contact_2_name']) && !empty($import_meeting['contact_2_name'])) {
+        if ($db_meeting['contact_2_name'] !== $import_meeting['contact_2_name']) {
+
+            if ($test_mode) {
+                echo 'Contact 2 Name --→ ' . $import_meeting['name'] . '<br>';
+                echo $db_meeting['contact_2_name'] . '  <br>';
+                echo $import_meeting['contact_2_name'] . ' <br><br>';
+            }
+
+            return false;
+        }
+    }
+
+    if (!empty($db_meeting['contact_2_email']) && !empty($import_meeting['contact_2_email'])) {
+        if ($db_meeting['contact_2_email'] !== $import_meeting['contact_2_email']) {
+
+            if ($test_mode) {
+                echo 'Contact 2 Email --→ ' . $import_meeting['name'] . '<br>';
+                echo $db_meeting['contact_2_email'] . '  <br>';
+                echo $import_meeting['contact_2_email'] . ' <br><br>';
+            }
+
+            return false;
+        }
+    }
+
+    if (!empty($db_meeting['contact_2_phone']) && !empty($import_meeting['contact_2_phone'])) {
+        if ($db_meeting['contact_2_phone'] !== $import_meeting['contact_2_phone']) {
+
+            if ($test_mode) {
+                echo 'Contact 2 Phone --→ ' . $import_meeting['name'] . '<br>';
+                echo $db_meeting['contact_2_phone'] . '  <br>';
+                echo $import_meeting['contact_2_phone'] . ' <br><br>';
+            }
+
+            return false;
+        }
+    }
+
+    if (!empty($db_meeting['contact_3_name']) && !empty($import_meeting['contact_3_name'])) {
+        if ($db_meeting['contact_3_name'] !== $import_meeting['contact_3_name']) {
+
+            if ($test_mode) {
+                echo 'Contact 3 Name --→ ' . $import_meeting['name'] . '<br>';
+                echo $db_meeting['contact_3_name'] . '  <br>';
+                echo $import_meeting['contact_3_name'] . ' <br><br>';
+            }
+
+            return false;
+        }
+    }
+
+    if (!empty($db_meeting['contact_3_email']) && !empty($import_meeting['contact_3_email'])) {
+        if ($db_meeting['contact_3_email'] !== $import_meeting['contact_3_email']) {
+
+            if ($test_mode) {
+                echo 'Contact 3 Email --→ ' . $import_meeting['name'] . '<br>';
+                echo $db_meeting['contact_3_email'] . '  <br>';
+                echo $import_meeting['contact_3_email'] . ' <br><br>';
+            }
+
+            return false;
+        }
+    }
+
+    if (!empty($db_meeting['contact_3_phone']) && !empty($import_meeting['contact_3_phone'])) {
+        if ($db_meeting['contact_3_phone'] !== $import_meeting['contact_3_phone']) {
+
+            if ($test_mode) {
+                echo 'Contact 3 Phone --→ ' . $import_meeting['name'] . '<br>';
+                echo $db_meeting['contact_3_phone'] . '  <br>';
+                echo $import_meeting['contact_3_phone'] . ' <br><br>';
+            }
+
+            return false;
+        }
+    }
+
+    // → No changes, so we are in sync
+    return true;
+}
+
+//function to remove special characters and unwanted text from the passed string
+//used:	here (called from tsml_verify_identical_records)
+function tsml_remove_special_char($str)
+{
+
+    $str = stripslashes($str);
+    $result = str_replace(array('\'', '\’', '"', ',', '.', ';', '<', '>', '&', '"', "'", "’", " ", "Â", "Â’", "%c2%92", "%20", "#nbsp", "#039", "amp", "nbsp", "rsquo", "quot"), '', $str);
+
+    return $result;
+}
+
+//function to convert a class object to an array
+//used:	here (called from tsml_verify_identical_records)
+function tsml_object_to_array($data)
+{
+    if (is_array($data) || is_object($data)) {
+        $result = [];
+        foreach ($data as $key => $value) {
+            $result[$key] = (is_array($value) || is_object($value)) ? tsml_object_to_array($value) : $value;
+        }
+        return $result;
+    }
+    return $data;
+}
+
+//function to clean up filename string to make it safe
+//used:	admin_import
+function tsml_clean_file_name($file_name)
+{
+    $file_ext = pathinfo($file_name, PATHINFO_EXTENSION);
+    $file_name_str = pathinfo($file_name, PATHINFO_FILENAME);
+
+    // Replaces all spaces with hyphens.
+    $file_name_str = str_replace(' ', '-', $file_name_str);
+    // Removes special chars.
+    $file_name_str = preg_replace('/[^A-Za-z0-9\-\_]/', '', $file_name_str);
+    // Replaces multiple hyphens with single one.
+    $file_name_str = preg_replace('/-+/', '-', $file_name_str);
+
+    $clean_file_name = $file_name_str . '.' . $file_ext;
+
+    return $clean_file_name;
+}
+
+//function used to ensure the top region listed is always Direct Entry (local)
+//used:	admin_import
+function tsml_sort_by_region_id($my_data_sources)
+{
+    //custom sort
+    $parent_region_ids = [];
+    $parent_region_ids = array_column($my_data_sources, 'parent_region_id');
+
+    return array_multisort($parent_region_ids, SORT_ASC, $my_data_sources);
+}
+
+
+//admin footer text removal (i.e.Thank you and version #)
+add_filter('admin_footer_text', '__return_empty_string', 11);
+add_filter('update_footer', '__return_empty_string', 11);
+
+/* ******************** end of change_detection_updates ******************** */
