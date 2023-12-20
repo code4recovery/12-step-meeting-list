@@ -2364,6 +2364,7 @@ function tsml_get_import_changes_only($feed_meetings, $data_source_url, $data_so
 
         list($day_of_week, $dow_number) = tsml_get_day_of_week_info($meeting['day'], $tsml_days);
         $meeting_slug = $meeting['slug'];
+        $meeting_name = $meeting['name'];
         $db_meeting_id = array_search($meeting_slug, $db_slugs);
         if ($db_meeting_id > 0) {
             //get matching db record and convert object to array for verification check
@@ -2379,6 +2380,16 @@ function tsml_get_import_changes_only($feed_meetings, $data_source_url, $data_so
         $they_are_in_sync = false;
         if ($is_matched && !empty($db_meeting)) {
             $they_are_in_sync = tsml_verify_identical_records($db_meeting, $meeting, $data_source_last_update);
+        } else {
+            //make sure unmatched records can't be matched by name before adding as new records
+			$meeting_names = array_column($db_meetings, 'name', 'id');
+			$db_meeting_id = array_search($meeting_name, $meeting_names);
+			if ($db_meeting_id > 0) {
+				//get matching db record and convert object to array for verification check
+				$db_meeting = tsml_object_to_array(tsml_get_meeting($db_meeting_id));
+				$is_matched = true;
+                $they_are_in_sync = tsml_verify_identical_records($db_meeting, $meeting, $data_source_last_update);
+			}
         }
 
         if (!$they_are_in_sync) {

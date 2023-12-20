@@ -228,6 +228,13 @@ if (!function_exists('tsml_import_page')) {
                                 $message .= "<table border='1'><tbody><tr><th>$tbl_col1_txt</th><th>$tbl_col2_txt</th><th>$tbl_col3_txt</th><th>$tbl_col4_txt</th></tr>";
                                 $message .= implode('', $message_lines);
                                 $message .= "</tbody></table>";
+
+                                //reset the data source meetings count for this feed
+                                $tsml_data_sources[$data_source_url]['count_meetings'] = tsml_count_meetings();
+
+                                //save data source configuration
+                                update_option('tsml_data_sources', $tsml_data_sources);
+
                             } else {
                                 $message .= __('<p>Your local database meeting records are already in sync with this import feed.<p>', '12-step-meeting-list');
                             }
