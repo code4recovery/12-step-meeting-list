@@ -156,15 +156,15 @@ function tsml_plugin_activation()
 {
 	tsml_custom_post_types();
 	flush_rewrite_rules();
-    add_option( 'tsml_plugin_new_activation', true );
-    update_option( 'tsml_plugin_new_activation', true );
+	add_option( 'tsml_plugin_new_activation', true );
+	update_option( 'tsml_plugin_new_activation', true );
 }
 
 //called by register_deactivation_hook in 12-step-meeting-list.php
 //hands off to tsml_custom_post_types
 function tsml_plugin_deactivation()
 {
-    tsml_unregister_custom_post_types();
+	tsml_unregister_custom_post_types();
 	flush_rewrite_rules();
 }
 
@@ -348,9 +348,9 @@ function tsml_custom_post_types()
 //used: 	plugin deactivation, before final rewrite flush
 function tsml_unregister_custom_post_types()
 {
-    unregister_taxonomy('tsml_region');
-    unregister_taxonomy('tsml_location');
-    unregister_taxonomy('tsml_district');
+	unregister_taxonomy('tsml_region');
+	unregister_taxonomy('tsml_location');
+	unregister_taxonomy('tsml_district');
 	unregister_post_type('tsml_meeting');
 	unregister_post_type('tsml_location');
 	unregister_post_type('tsml_group');
