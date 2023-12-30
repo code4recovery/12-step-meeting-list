@@ -161,10 +161,27 @@ function tsml_plugin_activation()
 }
 
 //called by register_deactivation_hook in 12-step-meeting-list.php
-//hands off to tsml_custom_post_types
+//clean up custom taxonomies / post types and flush rewrite rules
 function tsml_plugin_deactivation()
 {
-	tsml_unregister_custom_post_types();
+	if ( taxonomy_exists('tsml_region') ) {
+        unregister_taxonomy('tsml_region');
+    }
+	if ( taxonomy_exists('tsml_location') ) {
+	    unregister_taxonomy('tsml_location');
+    }
+	if ( taxonomy_exists('tsml_district') ) {
+	    unregister_taxonomy('tsml_district');
+    }
+    if ( post_type_exists('tsml_meeting') ) {
+	    unregister_post_type('tsml_meeting');
+    }
+    if ( post_type_exists('tsml_location') ) {
+	    unregister_post_type('tsml_location');
+    }
+    if ( post_type_exists('tsml_group') ) {
+	    unregister_post_type('tsml_group');
+    }
 	flush_rewrite_rules();
 }
 
@@ -342,18 +359,6 @@ function tsml_custom_post_types()
 			'capabilities' => ['create_posts' => false],
 		]
 	);
-}
-
-//function: unregister custom post types and taxonomies
-//used: 	plugin deactivation, before final rewrite flush
-function tsml_unregister_custom_post_types()
-{
-	unregister_taxonomy('tsml_region');
-	unregister_taxonomy('tsml_location');
-	unregister_taxonomy('tsml_district');
-	unregister_post_type('tsml_meeting');
-	unregister_post_type('tsml_location');
-	unregister_post_type('tsml_group');
 }
 
 //fuction:	define custom meeting types for your area
