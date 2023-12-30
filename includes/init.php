@@ -6,12 +6,6 @@ add_action('init', function () {
     //register post types and taxonomies
     tsml_custom_post_types();
 
-    //recent activation, flush rewrite rules on first full load (once)
-    if (get_option('tsml_plugin_new_activation')) {
-        flush_rewrite_rules();
-        update_option('tsml_plugin_new_activation', false);
-    }
-
     //meeting list page
     add_filter('archive_template', 'tsml_archive_template');
     function tsml_archive_template($template)

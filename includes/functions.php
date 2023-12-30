@@ -154,10 +154,9 @@ function tsml_calculate_attendance_option($types, $approximate)
 //hands off to tsml_custom_post_types
 function tsml_plugin_activation()
 {
-	tsml_custom_post_types();
+    tsml_plugin_loaded();
+    tsml_custom_post_types();
 	flush_rewrite_rules();
-	add_option( 'tsml_plugin_new_activation', true );
-	update_option( 'tsml_plugin_new_activation', true );
 }
 
 //called by register_deactivation_hook in 12-step-meeting-list.php
