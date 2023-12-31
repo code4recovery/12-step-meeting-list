@@ -589,8 +589,10 @@ $tsml_days = $tsml_days_order = $tsml_programs = $tsml_types_in_use = $tsml_stri
 if (!isset($tsml_slug)) $tsml_slug = null;
 
 add_action('plugins_loaded', function () {
-	global $tsml_days, $tsml_days_order, $tsml_programs, $tsml_slug, $tsml_strings, $tsml_user_interface, $tsml_types_in_use;
+	global $tsml_days, $tsml_days_order, $tsml_programs, $tsml_slug, $tsml_strings, $tsml_user_interface, $tsml_types_in_use, $tsml_debug;
 
+    $tsml_debug = false; //toggle debug mode
+		
 	//load internationalization
 	load_plugin_textdomain('12-step-meeting-list', false, '12-step-meeting-list/languages');
 
@@ -1306,7 +1308,7 @@ add_action('plugins_loaded', function () {
 		],
 		'sia' => [
 			'abbr' => __('SIA', '12-step-meeting-list'),
-			'flags' => ['M', 'W', 'TC', 'ONL'], 
+			'flags' => ['M', 'W', 'TC', 'ONL'],
 			'name' => __('Survivors of Incest Anonymous', '12-step-meeting-list'),
 			'types' => [
 				'12x12' => __('12 Steps & 12 Traditions', '12-step-meeting-list'),

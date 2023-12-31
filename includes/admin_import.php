@@ -6,9 +6,8 @@ if (!function_exists('tsml_import_page')) {
 
 	function tsml_import_page()
 	{
-		global $tsml_data_sources, $tsml_programs, $tsml_program, $tsml_nonce, $tsml_sharing, $tsml_slug, $tsml_detection_test_mode;
+		global $tsml_data_sources, $tsml_programs, $tsml_program, $tsml_nonce, $tsml_sharing, $tsml_slug;
 
-		$tsml_detection_test_mode = 'off';  //developers note: set this on/off to toggle debugging
 		$error = false;
 		$tsml_data_sources = get_option('tsml_data_sources', array());
 
@@ -209,7 +208,7 @@ if (!function_exists('tsml_import_page')) {
                     $data_source_last_import = intval($tsml_data_sources[$data_source_url]['last_import']);
 
                     //get updated feed import record set 
-                    $import_updates = tsml_get_import_changes_only($meetings, $data_source_url, $data_source_last_import, $db_ids_to_delete, $message_lines);
+                    $import_updates = @tsml_get_import_changes_only($meetings, $data_source_url, $data_source_last_import, $db_ids_to_delete, $message_lines);
 
                     //drop database records which are being updated, or removed from the feed 
                     tsml_delete($db_ids_to_delete);
@@ -235,7 +234,7 @@ if (!function_exists('tsml_import_page')) {
                         $stop_processing = true;
 
                     } else {
-                        $message = __('<p>Your meeting list is being updated to sync with those in the ' . $data_source_name .' feed.</p>', '12-step-meeting-list');
+                        $message = __('<p>Your meeting list is being updated to sync with those in the ' . $data_source_name . ' feed.</p>', '12-step-meeting-list');
                         $message .= "<table border='1'><tbody><tr><th>$tbl_col1_txt</th><th>$tbl_col2_txt</th><th>$tbl_col3_txt</th><th>$tbl_col4_txt</th><th>$tbl_col5_txt</th></tr>";
                         $message .= implode('', $message_lines);
                         $message .= "</tbody></table>";
