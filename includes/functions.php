@@ -154,34 +154,33 @@ function tsml_calculate_attendance_option($types, $approximate)
 //hands off to tsml_custom_post_types
 function tsml_plugin_activation()
 {
-    tsml_plugin_loaded();
     tsml_custom_post_types();
-	flush_rewrite_rules();
+    flush_rewrite_rules();
 }
 
 //called by register_deactivation_hook in 12-step-meeting-list.php
 //clean up custom taxonomies / post types and flush rewrite rules
 function tsml_plugin_deactivation()
 {
-	if ( taxonomy_exists('tsml_region') ) {
+    if ( taxonomy_exists('tsml_region') ) {
         unregister_taxonomy('tsml_region');
     }
-	if ( taxonomy_exists('tsml_location') ) {
-	    unregister_taxonomy('tsml_location');
+    if ( taxonomy_exists('tsml_location') ) {
+        unregister_taxonomy('tsml_location');
     }
-	if ( taxonomy_exists('tsml_district') ) {
-	    unregister_taxonomy('tsml_district');
+    if ( taxonomy_exists('tsml_district') ) {
+        unregister_taxonomy('tsml_district');
     }
     if ( post_type_exists('tsml_meeting') ) {
-	    unregister_post_type('tsml_meeting');
+        unregister_post_type('tsml_meeting');
     }
     if ( post_type_exists('tsml_location') ) {
-	    unregister_post_type('tsml_location');
+        unregister_post_type('tsml_location');
     }
     if ( post_type_exists('tsml_group') ) {
-	    unregister_post_type('tsml_group');
+        unregister_post_type('tsml_group');
     }
-	flush_rewrite_rules();
+    flush_rewrite_rules();
 }
 
 //validate conference provider and return name
