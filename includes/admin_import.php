@@ -6,7 +6,7 @@ if (!function_exists('tsml_import_page')) {
 
 	function tsml_import_page()
 	{
-		global $tsml_data_sources, $tsml_programs, $tsml_program, $tsml_nonce, $tsml_sharing, $tsml_slug;
+		global $tsml_data_sources, $tsml_programs, $tsml_program, $tsml_nonce, $tsml_sharing, $tsml_slug, $tsml_debug;
 
 		$error = false;
 		$tsml_data_sources = get_option('tsml_data_sources', array());
@@ -191,12 +191,12 @@ if (!function_exists('tsml_import_page')) {
 			}
 
             //initialize processing booleans
-            $stop_processing = $is_new_parent_feed_import = $is_feed_refresh = false;
+            $stop_processing = $is_feed_refresh = false;
 
             if ( is_array($meetings) && !empty($meetings) ) {
 
-				if ( !array_key_exists($data_source_url, $tsml_data_sources) ) { //new feed import
-                    $is_new_parent_feed_import = true;
+				if ( !array_key_exists($data_source_url, $tsml_data_sources) ) { 
+                    //$is_new_feed_import = true;
 
                 } else { //process a previously registered feed import
 
@@ -216,10 +216,13 @@ if (!function_exists('tsml_import_page')) {
 
                     if (count($import_updates) === 0) {
                         if (count($db_ids_to_delete) !== 0) {
-                            $message = __('<p>Your meeting list is being updated to sync with those in the ' . $data_source_name . ' feed.</p>', '12-step-meeting-list');
-                            $message .= "<table border='1'><tbody><tr><th>$tbl_col1_txt</th><th>$tbl_col2_txt</th><th>$tbl_col3_txt</th><th>$tbl_col4_txt</th><th>$tbl_col5_txt</th></tr>";
-                            $message .= implode('', $message_lines);
-                            $message .= "</tbody></table>";
+                            if ($tsml_debug) {
+                                $message = __('<p>Your meeting list is being updated to sync with those in the ' . $data_source_name . ' feed.</p>', '12-step-meeting-list');
+                                $message .= "<table border='1'><tbody><tr><th>$tbl_col1_txt</th><th>$tbl_col2_txt</th><th>$tbl_col3_txt</th><th>$tbl_col4_txt</th><th>$tbl_col5_txt</th></tr>";
+                                $message .= implode('', $message_lines);
+                                $message .= "</tbody></table>";
+                                tsml_alert($message, 'info');
+                            }
 
                             //reset the data source meetings count for this feed
                             $tsml_data_sources[$data_source_url]['count_meetings'] = tsml_count_meetings();
@@ -229,16 +232,19 @@ if (!function_exists('tsml_import_page')) {
 
                         } else {
                             $message = __('<p>Your meeting list is already in sync with the records in the ' . $data_source_name . ' feed.<p>', '12-step-meeting-list');
+                            tsml_alert($message, 'success');
                         }
-                        tsml_alert($message, 'success');
+                        
                         $stop_processing = true;
 
                     } else {
-                        $message = __('<p>Your meeting list is being updated to sync with those in the ' . $data_source_name . ' feed.</p>', '12-step-meeting-list');
-                        $message .= "<table border='1'><tbody><tr><th>$tbl_col1_txt</th><th>$tbl_col2_txt</th><th>$tbl_col3_txt</th><th>$tbl_col4_txt</th><th>$tbl_col5_txt</th></tr>";
-                        $message .= implode('', $message_lines);
-                        $message .= "</tbody></table>";
-                        tsml_alert($message, 'success');
+                        if ($tsml_debug) {
+                            $message = __('<p>Your meeting list is being updated to sync with those in the ' . $data_source_name . ' feed.</p>', '12-step-meeting-list');
+                            $message .= "<table border='1'><tbody><tr><th>$tbl_col1_txt</th><th>$tbl_col2_txt</th><th>$tbl_col3_txt</th><th>$tbl_col4_txt</th><th>$tbl_col5_txt</th></tr>";
+                            $message .= implode('', $message_lines);
+                            $message .= "</tbody></table>";
+                            tsml_alert($message, 'info');
+                        }
                     }
                 }
 
@@ -252,22 +258,17 @@ if (!function_exists('tsml_import_page')) {
                                     'parent_region_id' => $data_source_parent_region_id,
                                     'type' => 'JSON',
                                 ]; 
-
-                    if ($is_new_parent_feed_import) {  
-
-                        // Create a cron job to run at least once daily 
-                        tsml_schedule_import_scan($data_source_url, $data_source_name);
-                        
-                        //import All the new feed records
-						tsml_import_buffer_set($meetings, $data_source_url, $data_source_parent_region_id);
-
-                    } elseif ($is_feed_refresh) {
+					
+					if ($is_feed_refresh) {
 
 	                    //import ONLY the change detected import feed records
                         tsml_import_buffer_set($import_updates, $data_source_url, $data_source_parent_region_id);
 
 
                     } else { //load everything
+
+                        // Create a cron job to run at least once daily 
+                        tsml_schedule_import_scan($data_source_url, $data_source_name);
 
                         //import All the existing feed records
                         tsml_import_buffer_set($meetings, $data_source_url, $data_source_parent_region_id);
