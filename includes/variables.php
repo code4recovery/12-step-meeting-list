@@ -141,6 +141,7 @@ $tsml_export_columns = [
 	'author' => 'Author',
 	'slug' => 'Slug',
 	'data_source' => 'Data Source',
+	'data_source_name' => 'Data Source Name',
 	'updated' => 'Updated',
 	'id' => 'ID',
 ];

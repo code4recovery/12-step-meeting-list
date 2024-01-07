@@ -1088,7 +1088,7 @@ function tsml_feedback_url($meeting)
 //used:		tsml_ajax_meetings(), single-locations.php, archive-meetings.php
 function tsml_get_meetings($arguments = [], $from_cache = true, $full_export = false)
 {
-	global $tsml_cache, $tsml_cache_writable, $tsml_contact_fields, $tsml_contact_display;
+	global $tsml_cache, $tsml_cache_writable, $tsml_contact_fields, $tsml_contact_display, $tsml_data_sources;
 
 	//start by grabbing all meetings
 	if ($from_cache && $tsml_cache_writable && $meetings = file_get_contents(WP_CONTENT_DIR . $tsml_cache)) {
@@ -1148,6 +1148,11 @@ function tsml_get_meetings($arguments = [], $from_cache = true, $full_export = f
 				$meeting['data_source'] = $meeting_meta[$post->ID]['data_source'];
 			}
 
+			// include the name of the data source
+			if (!empty($meeting_meta[$post->ID]['data_source']) && !empty($tsml_data_sources[$meeting_meta[$post->ID]['data_source']]['name'])) {
+				$meeting['data_source_name'] = $tsml_data_sources[$meeting_meta[$post->ID]['data_source']]['name'];
+			}
+		
 			//append contact info to meeting
 			if (!empty($meeting_meta[$post->ID]['group_id']) && array_key_exists($meeting_meta[$post->ID]['group_id'], $groups)) {
 				$meeting = array_merge($meeting, $groups[$meeting_meta[$post->ID]['group_id']]);
