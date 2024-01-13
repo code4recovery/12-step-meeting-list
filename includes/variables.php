@@ -588,7 +588,8 @@ $tsml_days = $tsml_days_order = $tsml_programs = $tsml_types_in_use = $tsml_stri
 //string url for the meeting finder, or false for no automatic archive page
 if (!isset($tsml_slug)) $tsml_slug = null;
 
-add_action('plugins_loaded', function () {
+// set up globals, common variables once plugins are loaded, but before init
+function tsml_load_config () {
 	global $tsml_days, $tsml_days_order, $tsml_programs, $tsml_slug, $tsml_strings, $tsml_user_interface, $tsml_types_in_use;
 
 	//load internationalization
@@ -1306,7 +1307,7 @@ add_action('plugins_loaded', function () {
 		],
 		'sia' => [
 			'abbr' => __('SIA', '12-step-meeting-list'),
-			'flags' => ['M', 'W', 'TC', 'ONL'], 
+			'flags' => ['M', 'W', 'TC', 'ONL'],
 			'name' => __('Survivors of Incest Anonymous', '12-step-meeting-list'),
 			'types' => [
 				'12x12' => __('12 Steps & 12 Traditions', '12-step-meeting-list'),
@@ -1418,4 +1419,10 @@ add_action('plugins_loaded', function () {
 
 	$tsml_types_in_use = get_option('tsml_types_in_use', []);
 	if (!is_array($tsml_types_in_use)) $tsml_types_in_use = [];
-});
+};
+
+add_action('plugins_loaded', 'tsml_load_config');
+// load config if we always passed plugins_loaded action
+if ( did_action( 'plugins_loaded' ) ) {
+    tsml_load_config();
+}
