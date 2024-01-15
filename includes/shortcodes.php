@@ -124,19 +124,22 @@ function tsml_ui()
 		: [];
 
 	//apply settings
-	wp_localize_script('tsml_ui', 'tsml_react_config', array_merge(
-		[
-			'columns' => array_keys($tsml_columns),
-			'conference_providers' => $tsml_conference_providers,
-			'distance_unit' => $tsml_distance_units,
-			'feedback_emails' => array_values($tsml_feedback_addresses),
-			'flags' => $tsml_programs[$tsml_program]['flags'],
-			'strings' => [
-				$tsml_language => array_merge($tsml_columns, compact('types', 'type_descriptions')),
+	wp_localize_script(
+		'tsml_ui',
+		'tsml_react_config',
+		array_merge(
+			[
+				'columns' => array_keys($tsml_columns),
+				'conference_providers' => $tsml_conference_providers,
+				'distance_unit' => $tsml_distance_units,
+				'feedback_emails' => array_values($tsml_feedback_addresses),
+				'flags' => $tsml_programs[$tsml_program]['flags'],
+				'strings' => [
+					$tsml_language => array_merge($tsml_columns, compact('types', 'type_descriptions')),
+				],
 			],
-		],
-		$tsml_ui_config
-	)
+			$tsml_ui_config
+		)
 	);
 
 	// use meetings.json if it's writable, otherwise use the admin-ajax URL to the feed
