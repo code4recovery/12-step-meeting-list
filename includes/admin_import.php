@@ -160,6 +160,7 @@ if (!function_exists('tsml_import_page')) {
         if (!empty($_POST['tsml_add_data_source']) && isset($_POST['tsml_nonce']) && wp_verify_nonce($_POST['tsml_nonce'], $tsml_nonce)) {
 
             //initialize variables 
+            $is_google_sheets_import = false;
             $import_updates = $db_ids_to_delete = $message_lines = [];
             $tbl_col1_txt = __('Update Mode', '12-step-meeting-list');
             $tbl_col2_txt = __('Meeting Name', '12-step-meeting-list');
@@ -184,6 +185,7 @@ if (!function_exists('tsml_import_page')) {
             //allow reformatting as necessary
             if (strpos($data_source_url, "sheets.googleapis.com") !== false) {
                 $meetings = tsml_import_reformat_googlesheet($body);
+                $is_google_sheets_import = true;
             } elseif (function_exists('tsml_import_reformat')) {
                 $meetings = tsml_import_reformat($body);
             } else {
@@ -198,9 +200,13 @@ if (!function_exists('tsml_import_page')) {
                 if (!array_key_exists($data_source_url, $tsml_data_sources)) {
                     //$is_new_feed_import = true;
 
-                } else { //process a previously registered feed import
+                } elseif($is_google_sheets_import) { //process a previously registered feed import
+                    $data_source_ids = tsml_get_data_source_ids($data_source_url);
+                    tsml_delete($data_source_ids);
+                    tsml_delete_orphans();
 
-                    /* This is the normal feed refresh operation
+                } else { //process a previously registered feed import
+                   /* This is the normal feed refresh operation
                                         When a data source already exists we want to set up to apply only the changes detected to the local db */
 
                     $is_feed_refresh = true;
@@ -371,11 +377,13 @@ if (!function_exists('tsml_import_page')) {
                         <div class="postbox stack">
                             <h2><?php _e('Import Data Sources', '12-step-meeting-list') ?></h2>
                             <p>
-                                <?php printf(__('Data sources are JSON feeds that contain a website\'s public meeting data. They can be used to aggregate meetings from different sites into a single master list. 
-						Data sources listed below will pull meeting information into this website. A configurable schedule allows for each data source to be scanned at least once per day looking 
-						for updates to the listing. Change Notification email addresses are sent an email when action is required to re-sync a data source with its meeting list information. 
-						Please note: records that you intend to maintain on your website should always be imported using the Import CSV feature below. <b>Only change detected Data Source records will be used to overwrite your meeting list during 
-						a feed refresh operation.</b> More information is available at the <a href="%s" target="_blank">Meeting Guide API Specification</a>.', '12-step-meeting-list'), 'https://github.com/code4recovery/spec') ?>
+                            <?php printf(__('Data sources are JSON feeds that contain a website\'s public meeting data. They can be used to aggregate meetings from different sites into a single master list. 
+						    Data sources listed below will pull meeting information into this website. A configurable schedule allows for each data source to be scanned at least once per day looking 
+						    for updates to the listing. Change Notification email addresses are sent an email when action is required to re-sync a data source with its meeting list information. 
+						    Please note: records that you intend to maintain on your website should always be imported using the Import CSV feature below. <b>For data sources based on the Meeting Guide App specification, 
+                            only changes detected will be used to overwrite your meeting list records during a feed refresh operation. Other import sources (i.e. Google Sheets or the CSV Import) will continue to do a  
+                            full update of all records during a refresh.</b> More information is available at the 
+                            <a href="%s" target="_blank">Meeting Guide API Specification</a>.', '12-step-meeting-list'), 'https://github.com/code4recovery/spec') ?>
                             </p>
                             <?php if (!empty($tsml_data_sources)) { ?>
                                     <table>
