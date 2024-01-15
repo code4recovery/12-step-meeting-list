@@ -29,7 +29,7 @@ function tsml_next_meetings($arguments)
 	foreach ($meetings as $meeting) {
 		$meeting_types = $classes = '';
 		if (!empty($meeting['types'])) {
-			$classes       = tsml_to_css_classes($meeting['types']);
+			$classes = tsml_to_css_classes($meeting['types']);
 			$meeting_types = ' <small><span class="meeting_types">' . tsml_format_types($meeting['types']) . '</span></small>';
 		}
 
@@ -58,7 +58,7 @@ function tsml_next_meetings($arguments)
 				<td class="name"><a href="' . $meeting['url'] . '">' . @$meeting['name'] . '</a>' . $meeting_types . '</td>
 				<td class="location">
 					<div class="location-name">' . $meeting_location . '</div>
-					<div class="attendance-option attendance-' . $meeting['attendance_option'] . '"><small>' . ($meeting['attendance_option'] != 'in_person' ? $tsml_meeting_attendance_options[$meeting['attendance_option']] : '')  . '</small></div>
+					<div class="attendance-option attendance-' . $meeting['attendance_option'] . '"><small>' . ($meeting['attendance_option'] != 'in_person' ? $tsml_meeting_attendance_options[$meeting['attendance_option']] : '') . '</small></div>
 				</td>
 				<td class="region">' . $region . '</td>
 			</tr>';
@@ -110,7 +110,7 @@ add_shortcode('tsml_types_list', function () {
 function tsml_ui()
 {
 	global $tsml_mapbox_key, $tsml_nonce, $tsml_conference_providers, $tsml_language, $tsml_programs, $tsml_program, $tsml_ui_config,
-		$tsml_feedback_addresses, $tsml_cache, $tsml_cache_writable, $tsml_distance_units, $tsml_columns;
+	$tsml_feedback_addresses, $tsml_cache, $tsml_cache_writable, $tsml_distance_units, $tsml_columns;
 
 	//enqueue app script
 	$js = defined('TSML_UI_PATH') ? TSML_UI_PATH : 'https://tsml-ui.code4recovery.org/app.js';
@@ -125,23 +125,27 @@ function tsml_ui()
 		: [];
 
 	//apply settings
-	wp_localize_script('tsml_ui', 'tsml_react_config', array_merge(
-		[
-			'columns' => array_keys($tsml_columns),
-			'conference_providers' => $tsml_conference_providers,
-			'distance_unit' => $tsml_distance_units,
-			'feedback_emails' => array_values($tsml_feedback_addresses),
-			'flags' => $tsml_programs[$tsml_program]['flags'],
-			'strings' => [
-				$tsml_language => array_merge($tsml_columns, compact('types', 'type_descriptions')),
+	wp_localize_script(
+		'tsml_ui',
+		'tsml_react_config',
+		array_merge(
+			[
+				'columns' => array_keys($tsml_columns),
+				'conference_providers' => $tsml_conference_providers,
+				'distance_unit' => $tsml_distance_units,
+				'feedback_emails' => array_values($tsml_feedback_addresses),
+				'flags' => $tsml_programs[$tsml_program]['flags'],
+				'strings' => [
+					$tsml_language => array_merge($tsml_columns, compact('types', 'type_descriptions')),
+				],
 			],
-		],
-		$tsml_ui_config
-	));
+			$tsml_ui_config
+		)
+	);
 
 	// use meetings.json if it's writable, otherwise use the admin-ajax URL to the feed
 	$data = $tsml_cache_writable && file_exists(WP_CONTENT_DIR . $tsml_cache) && defined('ABSPATH')
-		? get_site_url() . str_replace(ABSPATH, '/', WP_CONTENT_DIR) . $tsml_cache  . '?' . filemtime(WP_CONTENT_DIR . $tsml_cache)
+		? get_site_url() . str_replace(ABSPATH, '/', WP_CONTENT_DIR) . $tsml_cache . '?' . filemtime(WP_CONTENT_DIR . $tsml_cache)
 		: admin_url('admin-ajax.php') . '?action=meetings&nonce=' . wp_create_nonce($tsml_nonce);
 
 	// remove URL domain to fix CORS issues caused by GoDaddy Managed WP
@@ -163,7 +167,7 @@ add_shortcode('tsml_regions_list', function () {
 	{
 		global $tsml_user_interface;
 		$taxonomy = 'tsml_region';
-		$terms    = get_terms(compact('taxonomy', 'parent'));
+		$terms = get_terms(compact('taxonomy', 'parent'));
 		if (!count($terms)) {
 			return;
 		}

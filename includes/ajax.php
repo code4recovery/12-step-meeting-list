@@ -13,8 +13,8 @@ add_action('wp_ajax_nopriv_tsml_info', 'tsml_ajax_info');
 function tsml_ajax_info()
 {
 	global $tsml_sharing, $tsml_program, $tsml_data_sources, $tsml_google_maps_key, $tsml_mapbox_key, $tsml_sharing_keys,
-		$tsml_contact_display, $tsml_cache_writable, $tsml_feedback_addresses, $tsml_user_interface, $tsml_notification_addresses,
-		$tsml_google_geocoding_key;
+	$tsml_contact_display, $tsml_cache_writable, $tsml_feedback_addresses, $tsml_user_interface, $tsml_notification_addresses,
+	$tsml_google_geocoding_key;
 
 	$theme = wp_get_theme();
 
@@ -58,15 +58,15 @@ function tsml_ajax_locations()
 	$results = [];
 	foreach ($locations as $location) {
 		$results[] = [
-			'value'				=> html_entity_decode($location['location']),
-			'formatted_address'	=> $location['formatted_address'],
-			'latitude'			=> $location['latitude'],
-			'longitude'			=> $location['longitude'],
-			'region'			=> $location['region_id'],
-			'notes'				=> html_entity_decode($location['location_notes']),
-			'tokens'			=> tsml_string_tokens($location['location']),
-			'type'				=> 'location',
-			'url'				=> $location['location_url'],
+			'value' => html_entity_decode($location['location']),
+			'formatted_address' => $location['formatted_address'],
+			'latitude' => $location['latitude'],
+			'longitude' => $location['longitude'],
+			'region' => $location['region_id'],
+			'notes' => html_entity_decode($location['location_notes']),
+			'tokens' => tsml_string_tokens($location['location']),
+			'type' => 'location',
+			'url' => $location['location_url'],
 		];
 	}
 	wp_send_json($results);
@@ -85,30 +85,30 @@ function tsml_ajax_groups()
 
 		//basic group info
 		$result = [
-			'value'				=> $group->post_title,
-			'website'			=> @$group_custom['website'][0],
-			'website_2'			=> @$group_custom['website_2'][0],
-			'email'				=> @$group_custom['email'][0],
-			'phone'				=> @$group_custom['phone'][0],
-			'mailing_address'	=> @$group_custom['mailing_address'][0],
-			'last_contact'		=> @$group_custom['last_contact'][0],
-			'notes'				=> $group->post_content,
-			'tokens'			=> tsml_string_tokens($group->post_title),
-			'type'				=> 'group',
+			'value' => $group->post_title,
+			'website' => @$group_custom['website'][0],
+			'website_2' => @$group_custom['website_2'][0],
+			'email' => @$group_custom['email'][0],
+			'phone' => @$group_custom['phone'][0],
+			'mailing_address' => @$group_custom['mailing_address'][0],
+			'last_contact' => @$group_custom['last_contact'][0],
+			'notes' => $group->post_content,
+			'tokens' => tsml_string_tokens($group->post_title),
+			'type' => 'group',
 		];
 
 		//potentially-private contact info
 		if (is_user_logged_in()) {
 			$result += [
-				'contact_1_name'	=> @$group_custom['contact_1_name'][0],
-				'contact_1_email'	=> @$group_custom['contact_1_email'][0],
-				'contact_1_phone'	=> @$group_custom['contact_1_phone'][0],
-				'contact_2_name'	=> @$group_custom['contact_2_name'][0],
-				'contact_2_email'	=> @$group_custom['contact_2_email'][0],
-				'contact_2_phone'	=> @$group_custom['contact_2_phone'][0],
-				'contact_3_name'	=> @$group_custom['contact_3_name'][0],
-				'contact_3_email'	=> @$group_custom['contact_3_email'][0],
-				'contact_3_phone'	=> @$group_custom['contact_3_phone'][0],
+				'contact_1_name' => @$group_custom['contact_1_name'][0],
+				'contact_1_email' => @$group_custom['contact_1_email'][0],
+				'contact_1_phone' => @$group_custom['contact_1_phone'][0],
+				'contact_2_name' => @$group_custom['contact_2_name'][0],
+				'contact_2_email' => @$group_custom['contact_2_email'][0],
+				'contact_2_phone' => @$group_custom['contact_2_phone'][0],
+				'contact_3_name' => @$group_custom['contact_3_name'][0],
+				'contact_3_email' => @$group_custom['contact_3_email'][0],
+				'contact_3_phone' => @$group_custom['contact_3_phone'][0],
 			];
 		}
 
@@ -145,12 +145,14 @@ function tsml_ajax_regions()
 //ajax for address checking
 add_action('wp_ajax_tsml_address', function () {
 
-	if (!$posts = get_posts([
-		'post_type' => 'tsml_location',
-		'numberposts' => 1,
-		'meta_key' => 'formatted_address',
-		'meta_value' => sanitize_text_field($_GET['formatted_address']),
-	])) wp_send_json(false);
+	if (
+		!$posts = get_posts([
+			'post_type' => 'tsml_location',
+			'numberposts' => 1,
+			'meta_key' => 'formatted_address',
+			'meta_value' => sanitize_text_field($_GET['formatted_address']),
+		])
+	) wp_send_json(false);
 
 	$region = get_the_terms($posts[0]->ID, 'tsml_region');
 
@@ -244,11 +246,11 @@ function tsml_ajax_feedback()
 {
 	global $tsml_feedback_addresses, $tsml_nonce;
 
-	$meeting  = tsml_get_meeting(intval($_POST['meeting_id']));
-	$name	 = sanitize_text_field($_POST['tsml_name']);
-	$email	= sanitize_email($_POST['tsml_email']);
+	$meeting = tsml_get_meeting(intval($_POST['meeting_id']));
+	$name = sanitize_text_field($_POST['tsml_name']);
+	$email = sanitize_email($_POST['tsml_email']);
 
-	$message  = '<p style="padding-bottom: 20px; border-bottom: 2px dashed #ccc; margin-bottom: 20px;">' . nl2br(tsml_sanitize_text_area(stripslashes($_POST['tsml_message']))) . '</p>';
+	$message = '<p style="padding-bottom: 20px; border-bottom: 2px dashed #ccc; margin-bottom: 20px;">' . nl2br(tsml_sanitize_text_area(stripslashes($_POST['tsml_message']))) . '</p>';
 
 	$message_lines = [
 		__('Requested By', '12-step-meeting-list') => $name . ' &lt;<a href="mailto:' . $email . '">' . $email . '</a>&gt;',
@@ -325,9 +327,9 @@ function tsml_ajax_geocode()
 add_action('wp_ajax_tsml_import', function () {
 	global $tsml_data_sources;
 
-	$meetings	= get_option('tsml_import_buffer', []);
-	$errors		= [];
-	$limit		= 25;
+	$meetings = get_option('tsml_import_buffer', []);
+	$errors = [];
+	$limit = 25;
 
 	//manage import buffer
 	if (count($meetings) > $limit) {
@@ -344,17 +346,9 @@ add_action('wp_ajax_tsml_import', function () {
 	//get lookups, todo consider adding regions to this
 	$locations = $groups = [];
 	$all_locations = tsml_get_locations();
-	foreach ($all_locations as $location) $locations[$location['formatted_address']] = $location['location_id'];
-	$all_groups = tsml_get_all_groups();
-	foreach ($all_groups as $group)	$groups[$group->post_title] = $group->ID;
-
-	//passing post_modified and post_modified_gmt to wp_insert_post() below does not seem to work
+	foreach ($all_locations as $location) $locations[$location['formatted_address']] = $location['location_id']; $all_groups = tsml_get_all_groups(); foreach ($all_groups as $group) $groups[$group->post_title] = $group->ID; //passing post_modified and post_modified_gmt to wp_insert_post() below does not seem to work
 	//todo occasionally remove this to see if it is working
-	add_filter('wp_insert_post_data', 'tsml_import_post_modified', 99, 2);
-
-	$data_source_parent_region_id = 0;
-
-	foreach ($meetings as $meeting) {
+	add_filter('wp_insert_post_data', 'tsml_import_post_modified', 99, 2); $data_source_parent_region_id = 0; foreach ($meetings as $meeting) {
 		//check address
 		if (empty($meeting['formatted_address'])) {
 			$errors[] = '<li value="' . $meeting['row'] . '">' . sprintf(__('No location information provided for <code>%s</code>.', '12-step-meeting-list'), $meeting['name']) . '</li>';
@@ -399,10 +393,10 @@ add_action('wp_ajax_tsml_import', function () {
 		} else {
 			if (!array_key_exists($meeting['group'], $groups)) {
 				$group_id = wp_insert_post([
-					'post_type'		=> 'tsml_group',
-					'post_status'	=> 'publish',
-					'post_title'	=> $meeting['group'],
-					'post_content'  => empty($meeting['group_notes']) ? '' : $meeting['group_notes'],
+					'post_type' => 'tsml_group',
+					'post_status' => 'publish',
+					'post_title' => $meeting['group'],
+					'post_content' => empty($meeting['group_notes']) ? '' : $meeting['group_notes'],
 				]);
 
 				//add district to taxonomy if it doesn't exist yet
@@ -449,21 +443,21 @@ add_action('wp_ajax_tsml_import', function () {
 
 		//save meeting to this location
 		$options = [
-			'post_title'		=> $meeting['name'],
-			'post_type'			=> 'tsml_meeting',
-			'post_status'		=> 'publish',
-			'post_parent'		=> $location_id,
-			'post_content'		=> trim($meeting['notes']), //not sure why recursive trim not catching this
-			'post_modified'		=> $meeting['post_modified'],
-			'post_modified_gmt'	=> $meeting['post_modified_gmt'],
-			'post_author'		=> $meeting['post_author'],
+			'post_title' => $meeting['name'],
+			'post_type' => 'tsml_meeting',
+			'post_status' => 'publish',
+			'post_parent' => $location_id,
+			'post_content' => trim($meeting['notes']), //not sure why recursive trim not catching this
+			'post_modified' => $meeting['post_modified'],
+			'post_modified_gmt' => $meeting['post_modified_gmt'],
+			'post_author' => $meeting['post_author'],
 		];
 		if (!empty($meeting['slug'])) $options['post_name'] = $meeting['slug'];
 		$meeting_id = wp_insert_post($options);
 
 		//add day and time(s) if not appointment meeting
 		if (!empty($meeting['time']) && (!empty($meeting['day']) || (string) $meeting['day'] === '0')) {
-			add_post_meta($meeting_id, 'day',  $meeting['day']);
+			add_post_meta($meeting_id, 'day', $meeting['day']);
 			add_post_meta($meeting_id, 'time', $meeting['time']);
 			if (!empty($meeting['end_time'])) add_post_meta($meeting_id, 'end_time', $meeting['end_time']);
 		}
@@ -538,10 +532,10 @@ add_action('wp_ajax_tsml_import', function () {
 	remove_filter('wp_insert_post_data', 'tsml_import_post_modified', 99);
 
 	//send json result to browser
-	$meetings  = tsml_count_meetings();
+	$meetings = tsml_count_meetings();
 	$locations = tsml_count_locations();
-	$regions   = tsml_count_regions();
-	$groups	= tsml_count_groups();
+	$regions = tsml_count_regions();
+	$groups = tsml_count_groups();
 
 	//update the data source counts for the database
 	foreach ($tsml_data_sources as $url => $props) {
@@ -618,10 +612,12 @@ function tsml_ajax_meeting_guide()
 	}
 
 	//build url
-	$message = admin_url('admin-ajax.php?') . http_build_query(array(
-		'action' => 'meetings',
-		'key' => $mg_key,
-	));
+	$message = admin_url('admin-ajax.php?') . http_build_query(
+		array(
+			'action' => 'meetings',
+			'key' => $mg_key,
+		)
+	);
 
 	//send email
 	if (tsml_email(TSML_MEETING_GUIDE_APP_NOTIFY, 'Sharing Key', $message)) {

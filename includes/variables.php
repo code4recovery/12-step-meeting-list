@@ -590,14 +590,15 @@ $tsml_days = $tsml_days_order = $tsml_programs = $tsml_types_in_use = $tsml_stri
 if (!isset($tsml_slug)) $tsml_slug = null;
 
 // set up globals, common variables once plugins are loaded, but before init
-function tsml_load_config () {
+function tsml_load_config()
+{
 	global $tsml_days, $tsml_days_order, $tsml_programs, $tsml_slug, $tsml_strings, $tsml_user_interface, $tsml_types_in_use;
 
 	//load internationalization
 	load_plugin_textdomain('12-step-meeting-list', false, '12-step-meeting-list/languages');
 
 	//days of the week
-	$tsml_days	= [
+	$tsml_days = [
 		__('Sunday', '12-step-meeting-list'),
 		__('Monday', '12-step-meeting-list'),
 		__('Tuesday', '12-step-meeting-list'),
@@ -1420,10 +1421,11 @@ function tsml_load_config () {
 
 	$tsml_types_in_use = get_option('tsml_types_in_use', []);
 	if (!is_array($tsml_types_in_use)) $tsml_types_in_use = [];
-};
+}
+;
 
 add_action('plugins_loaded', 'tsml_load_config');
 // load config if we always passed plugins_loaded action
-if ( did_action( 'plugins_loaded' ) ) {
-    tsml_load_config();
+if (did_action('plugins_loaded')) {
+	tsml_load_config();
 }
