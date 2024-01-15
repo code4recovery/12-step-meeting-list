@@ -125,28 +125,44 @@ class TSML_Widget_Upcoming extends WP_Widget
 		$title = !empty($instance['title']) ? $instance['title'] : __('Upcoming Meetings', '12-step-meeting-list');
 		$count = !empty($instance['count']) ? $instance['count'] : 5;
 		$message = !empty($instance['message']) ? $instance['message'] : '';
-?>
+		?>
 		<p>
-			<label for="<?php echo esc_attr($this->get_field_id('title')) ?>"><?php _e('Title:', '12-step-meeting-list') ?></label>
-			<input class="widefat" id="<?php echo esc_attr($this->get_field_id('title')) ?>" name="<?php echo esc_attr($this->get_field_name('title')) ?>" type="text" value="<?php echo esc_attr($title) ?>">
+			<label for="<?php echo esc_attr($this->get_field_id('title')) ?>">
+				<?php _e('Title:', '12-step-meeting-list') ?>
+			</label>
+			<input class="widefat" id="<?php echo esc_attr($this->get_field_id('title')) ?>"
+				name="<?php echo esc_attr($this->get_field_name('title')) ?>" type="text"
+				value="<?php echo esc_attr($title) ?>">
 		</p>
 		<p>
-			<label for="<?php echo esc_attr($this->get_field_id('count')) ?>"><?php _e('Show:', '12-step-meeting-list') ?></label>
-			<select class="widefat" id="<?php echo esc_attr($this->get_field_id('title')) ?>" name="<?php echo esc_attr($this->get_field_name('count')) ?>">
+			<label for="<?php echo esc_attr($this->get_field_id('count')) ?>">
+				<?php _e('Show:', '12-step-meeting-list') ?>
+			</label>
+			<select class="widefat" id="<?php echo esc_attr($this->get_field_id('title')) ?>"
+				name="<?php echo esc_attr($this->get_field_name('count')) ?>">
 				<?php for ($i = 1; $i < 26; $i++) { ?>
-					<option value="<?php echo $i ?>" <?php selected($i, esc_attr($count)) ?>><?php echo $i ?></option>
+					<option value="<?php echo $i ?>" <?php selected($i, esc_attr($count)) ?>>
+						<?php echo $i ?>
+					</option>
 				<?php } ?>
 			</select>
 		</p>
 		<p>
-			<label for="<?php echo esc_attr($this->get_field_id('message')) ?>"><?php _e('Message:<span class="description">(displayed if no upcoming meetings, optional)</span>', '12-step-meeting-list') ?></label>
-			<input class="widefat" id="<?php echo esc_attr($this->get_field_id('message')) ?>" name="<?php echo esc_attr($this->get_field_name('message')) ?>" type="text" value="<?php echo esc_attr($message) ?>">
+			<label for="<?php echo esc_attr($this->get_field_id('message')) ?>">
+				<?php _e('Message:<span class="description">(displayed if no upcoming meetings, optional)</span>', '12-step-meeting-list') ?>
+			</label>
+			<input class="widefat" id="<?php echo esc_attr($this->get_field_id('message')) ?>"
+				name="<?php echo esc_attr($this->get_field_name('message')) ?>" type="text"
+				value="<?php echo esc_attr($message) ?>">
 		</p>
 		<p>
-			<input id="<?php echo esc_attr($this->get_field_id('css')) ?>" name="<?php echo esc_attr($this->get_field_name('css')) ?>" type="checkbox" <?php checked(!empty($instance['css'])) ?>>
-			<label for="<?php echo esc_attr($this->get_field_id('css')) ?>"><?php _e('Style with CSS?', '12-step-meeting-list') ?></label>
+			<input id="<?php echo esc_attr($this->get_field_id('css')) ?>"
+				name="<?php echo esc_attr($this->get_field_name('css')) ?>" type="checkbox" <?php checked(!empty($instance['css'])) ?>>
+			<label for="<?php echo esc_attr($this->get_field_id('css')) ?>">
+				<?php _e('Style with CSS?', '12-step-meeting-list') ?>
+			</label>
 		</p>
-	<?php
+		<?php
 	}
 
 	//sanitize widget form values as they are saved
@@ -181,16 +197,23 @@ class TSML_Widget_App_Store extends WP_Widget
 	public function form($instance)
 	{
 		$title = empty($instance['title']) ? '' : $instance['title'];
-	?>
+		?>
 		<p>
-			<label for="<?php echo esc_attr($this->get_field_id('title')) ?>"><?php _e('Title (optional):', '12-step-meeting-list') ?></label>
-			<input class="widefat" id="<?php echo esc_attr($this->get_field_id('title')) ?>" name="<?php echo esc_attr($this->get_field_name('title')) ?>" type="text" value="<?php echo esc_attr($title) ?>">
+			<label for="<?php echo esc_attr($this->get_field_id('title')) ?>">
+				<?php _e('Title (optional):', '12-step-meeting-list') ?>
+			</label>
+			<input class="widefat" id="<?php echo esc_attr($this->get_field_id('title')) ?>"
+				name="<?php echo esc_attr($this->get_field_name('title')) ?>" type="text"
+				value="<?php echo esc_attr($title) ?>">
 		</p>
 		<p>
-			<input id="<?php echo esc_attr($this->get_field_id('css')) ?>" name="<?php echo esc_attr($this->get_field_name('css')) ?>" type="checkbox" <?php checked(!empty($instance['css'])) ?>>
-			<label for="<?php echo esc_attr($this->get_field_id('css')) ?>"><?php _e('Style with CSS?', '12-step-meeting-list') ?></label>
+			<input id="<?php echo esc_attr($this->get_field_id('css')) ?>"
+				name="<?php echo esc_attr($this->get_field_name('css')) ?>" type="checkbox" <?php checked(!empty($instance['css'])) ?>>
+			<label for="<?php echo esc_attr($this->get_field_id('css')) ?>">
+				<?php _e('Style with CSS?', '12-step-meeting-list') ?>
+			</label>
 		</p>
-<?php
+		<?php
 	}
 
 	//sanitize widget form values as they are saved

@@ -6,8 +6,8 @@ if (!function_exists('tsml_settings_page')) {
 	function tsml_settings_page()
 	{
 		global $tsml_data_sources, $tsml_programs, $tsml_program, $tsml_nonce, $tsml_feedback_addresses, $tsml_notification_addresses,
-			$tsml_distance_units, $tsml_sharing, $tsml_sharing_keys, $tsml_contact_display, $tsml_google_maps_key, $tsml_mapbox_key,
-			$tsml_user_interface;
+		$tsml_distance_units, $tsml_sharing, $tsml_sharing_keys, $tsml_contact_display, $tsml_google_maps_key, $tsml_mapbox_key,
+		$tsml_user_interface;
 
 		$tsml_data_sources = get_option('tsml_data_sources', array());
 
@@ -189,7 +189,7 @@ if (!function_exists('tsml_settings_page')) {
 			}
 		}
 
-?>
+		?>
 
 		<!-- Admin page content should all be inside .wrap -->
 		<div class="wrap">
@@ -198,21 +198,26 @@ if (!function_exists('tsml_settings_page')) {
 
 			<?php if (!is_ssl()) { ?>
 				<div class="notice notice-warning inline">
-					<p><?php _e('If you enable SSL (https), your users will be able to search near their location.', '12-step-meeting-list') ?></p>
+					<p>
+						<?php _e('If you enable SSL (https), your users will be able to search near their location.', '12-step-meeting-list') ?>
+					</p>
 				</div>
 			<?php } ?>
 
 			<?php if (empty($tsml_mapbox_key) && empty($tsml_google_maps_key)) { ?>
 				<div class="notice notice-warning">
 					<h2>Enable Maps on Your Site</h2>
-					<p>If you want to enable maps on your site you have two options: <strong>Mapbox</strong> or <strong>Google</strong>.
-						They are both good options, although Google is not completely supported by all our features! In all likelihood neither one will charge you money. Mapbox gives
+					<p>If you want to enable maps on your site you have two options: <strong>Mapbox</strong> or
+						<strong>Google</strong>.
+						They are both good options, although Google is not completely supported by all our features! In all
+						likelihood neither one will charge you money. Mapbox gives
 						<a href="https://www.mapbox.com/pricing/" target="_blank">50,000 free map views</a> / month, Google gives
 						<a href="https://cloud.google.com/maps-platform/pricing/" target="_blank">28,500 free views</a>.
 						That's a lot of traffic!
 					</p>
 
-					<p>To sign up for Mapbox <a href="https://www.mapbox.com/signup/" target="_blank">go here</a>. You will only need
+					<p>To sign up for Mapbox <a href="https://www.mapbox.com/signup/" target="_blank">go here</a>. You will only
+						need
 						a valid email address, no credit card required. Copy your access token and paste it below:</p>
 
 					<form class="row" method="post" action="<?php echo $_SERVER['REQUEST_URI'] ?>">
@@ -227,9 +232,12 @@ if (!function_exists('tsml_settings_page')) {
 
 					<p>* Please note: our <b>TSML UI</b> user interface supports Mapbox, not Google.
 
-					<p>For our legacy user interface (<b>Legacy UI</b>), you can alternatively choose to use Google. Their interface is slightly more complex because they offer more
-						services. <a href="https://developers.google.com/maps/documentation/javascript/get-api-key" target="_blank">Go here</a>
-						to get a key from Google. The process should only take a few minutes, although you will have to enter a credit card.
+					<p>For our legacy user interface (<b>Legacy UI</b>), you can alternatively choose to use Google. Their interface
+						is slightly more complex because they offer more
+						services. <a href="https://developers.google.com/maps/documentation/javascript/get-api-key"
+							target="_blank">Go here</a>
+						to get a key from Google. The process should only take a few minutes, although you will have to enter a
+						credit card.
 					</p>
 
 					<p>Be sure to:<br>
@@ -256,10 +264,16 @@ if (!function_exists('tsml_settings_page')) {
 				<div class="stack">
 					<!-- General Settings -->
 					<div class="postbox stack">
-						<h2><?php _e('General', '12-step-meeting-list') ?></h2>
+						<h2>
+							<?php _e('General', '12-step-meeting-list') ?>
+						</h2>
 						<form class="stack compact" method="post" action="<?php echo $_SERVER['REQUEST_URI'] ?>">
-							<h3><?php _e('Program', '12-step-meeting-list') ?></h3>
-							<p><?php _e('Select the recovery program your site targets here.', '12-step-meeting-list') ?></p>
+							<h3>
+								<?php _e('Program', '12-step-meeting-list') ?>
+							</h3>
+							<p>
+								<?php _e('Select the recovery program your site targets here.', '12-step-meeting-list') ?>
+							</p>
 							<?php wp_nonce_field($tsml_nonce, 'tsml_nonce', false) ?>
 							<select name="tsml_program" onchange="this.form.submit()">
 								<?php foreach ($tsml_programs as $key => $value) { ?>
@@ -270,15 +284,16 @@ if (!function_exists('tsml_settings_page')) {
 							</select>
 						</form>
 						<form class="stack compact" method="post" action="<?php echo $_SERVER['REQUEST_URI'] ?>">
-							<h3><?php _e('Distance Units', '12-step-meeting-list') ?></h3>
-							<p><?php _e('This determines which units are used on the meeting list page.', '12-step-meeting-list') ?></p>
+							<h3>
+								<?php _e('Distance Units', '12-step-meeting-list') ?>
+							</h3>
+							<p>
+								<?php _e('This determines which units are used on the meeting list page.', '12-step-meeting-list') ?>
+							</p>
 							<?php wp_nonce_field($tsml_nonce, 'tsml_nonce', false) ?>
 							<select name="tsml_distance_units" onchange="this.form.submit()">
 								<?php
-								foreach ([
-									'km' => __('Kilometers', '12-step-meeting-list'),
-									'mi' => __('Miles', '12-step-meeting-list'),
-								] as $key => $value) { ?>
+								foreach (['km' => __('Kilometers', '12-step-meeting-list'), 'mi' => __('Miles', '12-step-meeting-list'),] as $key => $value) { ?>
 									<option value="<?php echo $key ?>" <?php selected($tsml_distance_units, $key) ?>>
 										<?php echo $value ?>
 									</option>
@@ -286,15 +301,16 @@ if (!function_exists('tsml_settings_page')) {
 							</select>
 						</form>
 						<form class="stack compact" method="post" action="<?php echo $_SERVER['REQUEST_URI'] ?>">
-							<h3><?php _e('Contact Visibility', '12-step-meeting-list') ?></h3>
-							<p><?php _e('This determines whether contacts are displayed publicly on meeting detail pages.', '12-step-meeting-list') ?></p>
+							<h3>
+								<?php _e('Contact Visibility', '12-step-meeting-list') ?>
+							</h3>
+							<p>
+								<?php _e('This determines whether contacts are displayed publicly on meeting detail pages.', '12-step-meeting-list') ?>
+							</p>
 							<?php wp_nonce_field($tsml_nonce, 'tsml_nonce', false) ?>
 							<select name="tsml_contact_display" onchange="this.form.submit()">
 								<?php
-								foreach ([
-									'public' => __('Public', '12-step-meeting-list'),
-									'private' => __('Private', '12-step-meeting-list'),
-								] as $key => $value) { ?>
+								foreach (['public' => __('Public', '12-step-meeting-list'), 'private' => __('Private', '12-step-meeting-list'),] as $key => $value) { ?>
 									<option value="<?php echo $key ?>" <?php selected($tsml_contact_display, $key) ?>>
 										<?php echo $value ?>
 									</option>
@@ -305,17 +321,20 @@ if (!function_exists('tsml_settings_page')) {
 
 					<div class="postbox stack">
 						<!-- Feed Management -->
-						<h2><?php _e('Feed Management', '12-step-meeting-list') ?></h2>
+						<h2>
+							<?php _e('Feed Management', '12-step-meeting-list') ?>
+						</h2>
 						<form class="stack compact" method="post" action="<?php echo $_SERVER['REQUEST_URI'] ?>">
-							<h3><?php _e('Feed Sharing', '12-step-meeting-list') ?></h3>
-							<p><?php printf(__('Open means your feeds are available publicly. Restricted means people need a key or to be logged in to get the feed.', '12-step-meeting-list')) ?></p>
+							<h3>
+								<?php _e('Feed Sharing', '12-step-meeting-list') ?>
+							</h3>
+							<p>
+								<?php printf(__('Open means your feeds are available publicly. Restricted means people need a key or to be logged in to get the feed.', '12-step-meeting-list')) ?>
+							</p>
 							<?php wp_nonce_field($tsml_nonce, 'tsml_nonce', false) ?>
 							<select name="tsml_sharing" onchange="this.form.submit()">
 								<?php
-								foreach ([
-									'open' => __('Open', '12-step-meeting-list'),
-									'restricted' => __('Restricted', '12-step-meeting-list'),
-								] as $key => $value) { ?>
+								foreach (['open' => __('Open', '12-step-meeting-list'), 'restricted' => __('Restricted', '12-step-meeting-list'),] as $key => $value) { ?>
 									<option value="<?php echo $key ?>" <?php selected($tsml_sharing, $key) ?>>
 										<?php echo $value ?>
 									</option>
@@ -326,9 +345,13 @@ if (!function_exists('tsml_settings_page')) {
 						<?php if ($tsml_sharing == 'restricted') { ?>
 
 							<div class="stack compact">
-								<h3><?php _e('Authorized Apps', '12-step-meeting-list') ?></h3>
+								<h3>
+									<?php _e('Authorized Apps', '12-step-meeting-list') ?>
+								</h3>
 
-								<p><?php _e('You may allow access to your meeting data for specific purposes, such as the <a target="_blank" href="https://meetingguide.org/">Meeting Guide App</a>.', '12-step-meeting-list') ?></p>
+								<p>
+									<?php _e('You may allow access to your meeting data for specific purposes, such as the <a target="_blank" href="https://meetingguide.org/">Meeting Guide App</a>.', '12-step-meeting-list') ?>
+								</p>
 
 								<?php if (count($tsml_sharing_keys)) { ?>
 									<table class="tsml_sharing_list">
@@ -337,9 +360,11 @@ if (!function_exists('tsml_settings_page')) {
 												'action' => 'meetings',
 												'key' => $key,
 											]);
-										?>
+											?>
 											<tr>
-												<td><a href="<?php echo $address ?>" target="_blank"><?php echo $name ?></a></td>
+												<td><a href="<?php echo $address ?>" target="_blank">
+														<?php echo $name ?>
+													</a></td>
 												<td>
 													<form method="post" action="<?php echo $_SERVER['REQUEST_URI'] ?>">
 														<?php wp_nonce_field($tsml_nonce, 'tsml_nonce', false) ?>
@@ -353,15 +378,22 @@ if (!function_exists('tsml_settings_page')) {
 								<?php } ?>
 								<form class="row" method="post" action="<?php echo $_SERVER['REQUEST_URI'] ?>">
 									<?php wp_nonce_field($tsml_nonce, 'tsml_nonce', false) ?>
-									<input type="text" name="tsml_add_sharing_key" placeholder="<?php _e('Meeting Guide', '12-step-meeting-list') ?>">
+									<input type="text" name="tsml_add_sharing_key"
+										placeholder="<?php _e('Meeting Guide', '12-step-meeting-list') ?>">
 									<input type="submit" class="button" value="<?php _e('Add', '12-step-meeting-list') ?>">
 								</form>
 							</div>
 						<?php } else { ?>
 							<div class="stack compact">
-								<h3><?php _e('Public Feed', '12-step-meeting-list') ?></h3>
-								<p><?php _e('The following feed contains your publicly available meeting information.', '12-step-meeting-list') ?></p>
-								<p><?php printf(__('<a class="public_feed" href="%s" target="_blank">Public Data Source</a>', '12-step-meeting-list'), admin_url('admin-ajax.php?action=meetings')) ?></p>
+								<h3>
+									<?php _e('Public Feed', '12-step-meeting-list') ?>
+								</h3>
+								<p>
+									<?php _e('The following feed contains your publicly available meeting information.', '12-step-meeting-list') ?>
+								</p>
+								<p>
+									<?php printf(__('<a class="public_feed" href="%s" target="_blank">Public Data Source</a>', '12-step-meeting-list'), admin_url('admin-ajax.php?action=meetings')) ?>
+								</p>
 							</div>
 						<?php } ?>
 					</div>
@@ -371,8 +403,12 @@ if (!function_exists('tsml_settings_page')) {
 					<div class="postbox stack">
 						<!-- Switch UI -->
 						<div class="stack compact">
-							<h2><?php _e('User Interface Display', '12-step-meeting-list') ?></h2>
-							<p><?php _e('Please select the user interface that is right for your site. Choose between our latest design that we call <b>TSML UI</b> or stay with the standard <b>Legacy UI</b>.', '12-step-meeting-list') ?></p>
+							<h2>
+								<?php _e('User Interface Display', '12-step-meeting-list') ?>
+							</h2>
+							<p>
+								<?php _e('Please select the user interface that is right for your site. Choose between our latest design that we call <b>TSML UI</b> or stay with the standard <b>Legacy UI</b>.', '12-step-meeting-list') ?>
+							</p>
 
 							<form method="post" action="<?php echo $_SERVER['REQUEST_URI'] ?>">
 								<?php wp_nonce_field($tsml_nonce, 'tsml_nonce', false) ?>
@@ -391,15 +427,22 @@ if (!function_exists('tsml_settings_page')) {
 					<!-- Map Settings -->
 					<div class="postbox stack">
 						<div class="stack compact">
-							<h2><?php _e('Maps', '12-step-meeting-list') ?></h2>
-							<p><?php _e('Display of maps requires an authorization key from <strong><a href="https://www.mapbox.com/" target="_blank">Mapbox</a></strong> or <strong><a href="https://console.cloud.google.com/home/" target="_blank">Google</a></strong>.', '12-step-meeting-list') ?></p>
+							<h2>
+								<?php _e('Maps', '12-step-meeting-list') ?>
+							</h2>
+							<p>
+								<?php _e('Display of maps requires an authorization key from <strong><a href="https://www.mapbox.com/" target="_blank">Mapbox</a></strong> or <strong><a href="https://console.cloud.google.com/home/" target="_blank">Google</a></strong>.', '12-step-meeting-list') ?>
+							</p>
 						</div>
 						<div class="stack compact">
-							<h3><?php _e('Mapbox Access Token', '12-step-meeting-list') ?></h3>
+							<h3>
+								<?php _e('Mapbox Access Token', '12-step-meeting-list') ?>
+							</h3>
 
 							<form class="row" method="post" action="<?php echo $_SERVER['REQUEST_URI'] ?>">
 								<?php wp_nonce_field($tsml_nonce, 'tsml_nonce', false) ?>
-								<input type="text" name="tsml_add_mapbox_key" value="<?php echo $tsml_mapbox_key ?>" placeholder="Enter Mapbox access token here">
+								<input type="text" name="tsml_add_mapbox_key" value="<?php echo $tsml_mapbox_key ?>"
+									placeholder="Enter Mapbox access token here">
 								<?php if (empty($tsml_mapbox_key)) { ?>
 									<input type="submit" class="button" value="<?php _e('Add', '12-step-meeting-list') ?>">
 								<?php } else { ?>
@@ -409,11 +452,16 @@ if (!function_exists('tsml_settings_page')) {
 						</div>
 
 						<div class="stack compact">
-							<h3><?php _e('Google Maps API Key', '12-step-meeting-list') ?></h3>
-							<p><?php _e('Be sure to enable JavaScript Maps API (<a href="https://developers.google.com/maps/documentation/javascript/get-api-key" target="_blank">read more</a>).', '12-step-meeting-list') ?></p>
+							<h3>
+								<?php _e('Google Maps API Key', '12-step-meeting-list') ?>
+							</h3>
+							<p>
+								<?php _e('Be sure to enable JavaScript Maps API (<a href="https://developers.google.com/maps/documentation/javascript/get-api-key" target="_blank">read more</a>).', '12-step-meeting-list') ?>
+							</p>
 							<form class="row" method="post" action="<?php echo $_SERVER['REQUEST_URI'] ?>">
 								<?php wp_nonce_field($tsml_nonce, 'tsml_nonce', false) ?>
-								<input type="text" name="tsml_add_google_maps_key" value="<?php echo $tsml_google_maps_key ?>" placeholder="Enter Google API key here">
+								<input type="text" name="tsml_add_google_maps_key" value="<?php echo $tsml_google_maps_key ?>"
+									placeholder="Enter Google API key here">
 								<?php if (empty($tsml_google_maps_key)) { ?>
 									<input type="submit" class="button" value="<?php _e('Add', '12-step-meeting-list') ?>">
 								<?php } else { ?>
@@ -429,10 +477,13 @@ if (!function_exists('tsml_settings_page')) {
 					<!-- About Us -->
 					<div class="postbox stack">
 						<div class="stack compact">
-							<h2><?php _e('About Us', '12-step-meeting-list') ?></h2>
+							<h2>
+								<?php _e('About Us', '12-step-meeting-list') ?>
+							</h2>
 							<p>
 								<a href="https://code4recovery.org/" target="_blank" class="logo">
-									<img src="<?php echo plugin_dir_url(__FILE__) . '../assets/img/code4recovery.svg'; ?>" alt="Code for Recovery">
+									<img src="<?php echo plugin_dir_url(__FILE__) . '../assets/img/code4recovery.svg'; ?>"
+										alt="Code for Recovery">
 								</a>
 								<?php _e(
 									'This <b>12 Step Meeting List</b> plugin (TSML) is one of the free services offered by the nonprofit organization <b>Code For Recovery</b> whose volunteer members build and maintain technology services for recovery fellowships such as AA and Al-Anon.',
@@ -445,18 +496,24 @@ if (!function_exists('tsml_settings_page')) {
 					<div class="postbox stack">
 						<!-- Need Help -->
 						<div class="stack compact">
-							<h2><?php _e('Need Help?', '12-step-meeting-list') ?></h2>
+							<h2>
+								<?php _e('Need Help?', '12-step-meeting-list') ?>
+							</h2>
 
-							<p><?php _e(
+							<p>
+								<?php _e(
 									'To get information about this product or our organization, simply use one of the linked buttons below which are great sources for information and answers.',
 									'12-step-meeting-list'
-								) ?></p>
+								) ?>
+							</p>
 						</div>
 						<p class="row">
-							<a href="https://wordpress.org/plugins/12-step-meeting-list/#faq-header" target="_blank" class="button">
+							<a href="https://wordpress.org/plugins/12-step-meeting-list/#faq-header" target="_blank"
+								class="button">
 								<?php _e('View Documentation', '12-step-meeting-list') ?>
 							</a>
-							<a href="https://github.com/code4recovery/12-step-meeting-list/discussions" target="_blank" class="button">
+							<a href="https://github.com/code4recovery/12-step-meeting-list/discussions" target="_blank"
+								class="button">
 								<?php _e('Ask a Question', '12-step-meeting-list') ?>
 							</a>
 						</p>
@@ -464,20 +521,29 @@ if (!function_exists('tsml_settings_page')) {
 
 					<!-- Email Settings -->
 					<div class="postbox stack">
-						<h2><?php _e('Email Addresses', '12-step-meeting-list') ?></h2>
+						<h2>
+							<?php _e('Email Addresses', '12-step-meeting-list') ?>
+						</h2>
 
 						<div class="stack compact">
-							<h3><?php _e('User Feedback Emails', '12-step-meeting-list') ?></h3>
-							<p><?php _e('Enable a meeting info feedback form by adding email addresses here.', '12-step-meeting-list') ?></p>
+							<h3>
+								<?php _e('User Feedback Emails', '12-step-meeting-list') ?>
+							</h3>
+							<p>
+								<?php _e('Enable a meeting info feedback form by adding email addresses here.', '12-step-meeting-list') ?>
+							</p>
 							<?php if (!empty($tsml_feedback_addresses)) { ?>
 								<table class="tsml_address_list">
 									<?php foreach ($tsml_feedback_addresses as $address) { ?>
 										<tr>
-											<td><?php echo $address ?></td>
+											<td>
+												<?php echo $address ?>
+											</td>
 											<td>
 												<form method="post" action="<?php echo $_SERVER['REQUEST_URI'] ?>">
 													<?php wp_nonce_field($tsml_nonce, 'tsml_nonce', false) ?>
-													<input type="hidden" name="tsml_remove_feedback_address" value="<?php echo $address ?>">
+													<input type="hidden" name="tsml_remove_feedback_address"
+														value="<?php echo $address ?>">
 													<span class="dashicons dashicons-no-alt"></span>
 												</form>
 											</td>
@@ -493,17 +559,24 @@ if (!function_exists('tsml_settings_page')) {
 						</div>
 
 						<div class="stack compact">
-							<h3><?php _e('Change Notification Emails', '12-step-meeting-list') ?></h3>
-							<p><?php _e('Receive notifications of meeting changes at the email addresses below.', '12-step-meeting-list') ?></p>
+							<h3>
+								<?php _e('Change Notification Emails', '12-step-meeting-list') ?>
+							</h3>
+							<p>
+								<?php _e('Receive notifications of meeting changes at the email addresses below.', '12-step-meeting-list') ?>
+							</p>
 							<?php if (!empty($tsml_notification_addresses)) { ?>
 								<table class="tsml_address_list">
 									<?php foreach ($tsml_notification_addresses as $address) { ?>
 										<tr>
-											<td><?php echo $address ?></td>
+											<td>
+												<?php echo $address ?>
+											</td>
 											<td>
 												<form method="post" action="<?php echo $_SERVER['REQUEST_URI'] ?>">
 													<?php wp_nonce_field($tsml_nonce, 'tsml_nonce', false) ?>
-													<input type="hidden" name="tsml_remove_notification_address" value="<?php echo $address ?>">
+													<input type="hidden" name="tsml_remove_notification_address"
+														value="<?php echo $address ?>">
 													<span class="dashicons dashicons-no-alt"></span>
 												</form>
 											</td>
@@ -521,6 +594,6 @@ if (!function_exists('tsml_settings_page')) {
 				</div>
 			</div>
 		</div>
-<?php
+		<?php
 	}
 }
