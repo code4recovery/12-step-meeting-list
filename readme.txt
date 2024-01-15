@@ -3,7 +3,7 @@ Contributors: Code for Recovery
 Requires at least: 3.2
 Requires PHP: 5.6
 Tested up to: 6.4
-Stable tag: 3.14.26
+Stable tag: 3.14.27
 
 This plugin helps twelve step recovery programs list their meetings. It standardizes addresses, and displays results in a searchable list and map.
 
@@ -132,7 +132,7 @@ Add a URL to your theme's functions.php.
 
 You can add variables to the URL that can be picked up by a form plugin:
 
-	$tsml_feedback_url = '/feedback?slug={{slug}}&id={{id}}&name={{name}}&day={{day}}&time={{time}}&end_time={{end_time}}&types={{types}}&notes={{notes}}&conference_url={{conference_url}}&conference_url_notes={{conference_url_notes}}&conference_phone={{conference_phone}}&conference_phone_notes={{conference_phone_notes}}&location={{location}}&formatted_address={{formatted_address}}&region={{region}}&location_notes={{location_notes}}&group={{group}}&group_notes={{group_notes}}&district={{district}}&website={{website}}&email={{email}}&phone={{phone}}&venmo={{venmo}}&square={{square}}&paypal={{paypal}}';
+	$tsml_feedback_url = '/feedback?slug={{slug}}&id={{id}}&name={{name}}&day={{day}}&time={{time}}&end_time={{end_time}}&types={{types}}&notes={{notes}}&conference_url={{conference_url}}&conference_url_notes={{conference_url_notes}}&conference_phone={{conference_phone}}&conference_phone_notes={{conference_phone_notes}}&location={{location}}&formatted_address={{formatted_address}}&region={{region}}&location_notes={{location_notes}}&group={{group}}&group_notes={{group_notes}}&district={{district}}&website={{website}}&email={{email}}&phone={{phone}}&venmo={{venmo}}&square={{square}}&paypal={{paypal}}&data_source_name={{data_source_name}}';
 
 Feel free to adjust as necessary. This can also be a new email URL, such as:
 
@@ -286,6 +286,9 @@ Yes, add the following to your theme's functions.php. Make sure you've enabled t
 1. Edit location
 
 == Changelog ==
+
+= 3.14.27 =
+* Include the name of the data source (if any) in the feedback URL
 
 = 3.14.26 =
 * Fixes for wordpress.com [more info](https://github.com/code4recovery/12-step-meeting-list/discussions/1257) [also here](https://github.com/code4recovery/12-step-meeting-list/discussions/1273) [and here](https://github.com/code4recovery/12-step-meeting-list/discussions/1276)

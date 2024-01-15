@@ -153,9 +153,34 @@ function tsml_calculate_attendance_option($types, $approximate)
 
 //called by register_activation_hook in 12-step-meeting-list.php
 //hands off to tsml_custom_post_types
-function tsml_change_activation_state()
+function tsml_plugin_activation()
 {
     tsml_custom_post_types();
+    flush_rewrite_rules();
+}
+
+//called by register_deactivation_hook in 12-step-meeting-list.php
+//clean up custom taxonomies / post types and flush rewrite rules
+function tsml_plugin_deactivation()
+{
+    if ( taxonomy_exists('tsml_region') ) {
+        unregister_taxonomy('tsml_region');
+    }
+    if ( taxonomy_exists('tsml_location') ) {
+        unregister_taxonomy('tsml_location');
+    }
+    if ( taxonomy_exists('tsml_district') ) {
+        unregister_taxonomy('tsml_district');
+    }
+    if ( post_type_exists('tsml_meeting') ) {
+        unregister_post_type('tsml_meeting');
+    }
+    if ( post_type_exists('tsml_location') ) {
+        unregister_post_type('tsml_location');
+    }
+    if ( post_type_exists('tsml_group') ) {
+        unregister_post_type('tsml_group');
+    }
     flush_rewrite_rules();
 }
 
@@ -1115,7 +1140,7 @@ function tsml_feedback_url($meeting)
 //used:		tsml_ajax_meetings(), single-locations.php, archive-meetings.php
 function tsml_get_meetings($arguments = [], $from_cache = true, $full_export = false)
 {
-    global $tsml_cache, $tsml_cache_writable, $tsml_contact_fields, $tsml_contact_display;
+	global $tsml_cache, $tsml_cache_writable, $tsml_contact_fields, $tsml_contact_display, $tsml_data_sources;
 
     //start by grabbing all meetings
     if ($from_cache && $tsml_cache_writable && $meetings = file_get_contents(WP_CONTENT_DIR . $tsml_cache)) {
@@ -1176,16 +1201,21 @@ function tsml_get_meetings($arguments = [], $from_cache = true, $full_export = f
                 $meeting['data_source'] = $meeting_meta[$post->ID]['data_source'];
             }
 
-            //append contact info to meeting
-            if (!empty($meeting_meta[$post->ID]['group_id']) && array_key_exists($meeting_meta[$post->ID]['group_id'], $groups)) {
-                $meeting = array_merge($meeting, $groups[$meeting_meta[$post->ID]['group_id']]);
-            } else {
-                foreach ($tsml_contact_fields as $field => $type) {
-                    if (!empty($meeting_meta[$post->ID][$field])) {
-                        $meeting[$field] = $meeting_meta[$post->ID][$field];
-                    }
-                }
-            }
+			// include the name of the data source
+			if (!empty($meeting_meta[$post->ID]['data_source']) && !empty($tsml_data_sources[$meeting_meta[$post->ID]['data_source']]['name'])) {
+				$meeting['data_source_name'] = $tsml_data_sources[$meeting_meta[$post->ID]['data_source']]['name'];
+			}
+		
+			//append contact info to meeting
+			if (!empty($meeting_meta[$post->ID]['group_id']) && array_key_exists($meeting_meta[$post->ID]['group_id'], $groups)) {
+				$meeting = array_merge($meeting, $groups[$meeting_meta[$post->ID]['group_id']]);
+			} else {
+				foreach ($tsml_contact_fields as $field => $type) {
+					if (!empty($meeting_meta[$post->ID][$field])) {
+						$meeting[$field] = $meeting_meta[$post->ID][$field];
+					}
+				}
+			}
 
             // Only show contact information when 'public' or doing a full export
             if ($tsml_contact_display !== 'public' && !$full_export) {
@@ -1822,16 +1852,16 @@ function tsml_import_reformat_googlesheet($data)
 
         foreach ($data['values'] as $row) {
 
-            //creates a meeting array with elements corresponding to each column header of the Google Sheet; updated for Google Sheets v4 API
-            $meeting = [];
-            for ($j = 0; $j < $header_count; $j++) {
-                if (isset($row[$j])) {
-                    $meeting[$header[$j]] = $row[$j];
-                }
-            }
-            array_push($meetings, $meeting);
-        }
-    }
+		//creates a meeting array with elements corresponding to each column header of the Google Sheet; updated for Google Sheets v4 API
+		$meeting = [];
+		for ($j = 0; $j < $header_count; $j++) {
+			if (isset($row[$j])) {
+				$meeting[$header[$j]] = $row[$j];
+			}
+		}
+
+		array_push($meetings, $meeting);
+	}
 
     return tsml_object_to_array($meetings);
 }
@@ -2152,32 +2182,128 @@ if (!function_exists('tsml_scan_data_source')) {
                 tsml_alert(__('Data source gave an empty response, you might need to try again.', '12-step-meeting-list'), 'error');
             } else {
 
-                switch (json_last_error()) {
-                    case JSON_ERROR_NONE:
-                        tsml_alert(__('JSON: no errors.', '12-step-meeting-list'), 'error');
-                        break;
-                    case JSON_ERROR_DEPTH:
-                        tsml_alert(__('JSON: Maximum stack depth exceeded.', '12-step-meeting-list'), 'error');
-                        break;
-                    case JSON_ERROR_STATE_MISMATCH:
-                        tsml_alert(__('JSON: Underflow or the modes mismatch.', '12-step-meeting-list'), 'error');
-                        break;
-                    case JSON_ERROR_CTRL_CHAR:
-                        tsml_alert(__('JSON: Unexpected control character found.', '12-step-meeting-list'), 'error');
-                        break;
-                    case JSON_ERROR_SYNTAX:
-                        tsml_alert(__('JSON: Syntax error, malformed JSON.', '12-step-meeting-list'), 'error');
-                        break;
-                    case JSON_ERROR_UTF8:
-                        tsml_alert(__('JSON: Malformed UTF-8 characters, possibly incorrectly encoded.', '12-step-meeting-list'), 'error');
-                        break;
-                    default:
-                        tsml_alert(__('JSON: Unknown error.', '12-step-meeting-list'), 'error');
-                        break;
-                }
-            }
-        }
-    }
+				switch (json_last_error()) {
+					case JSON_ERROR_NONE:
+						tsml_alert(__('JSON: no errors.', '12-step-meeting-list'), 'error');
+						break;
+					case JSON_ERROR_DEPTH:
+						tsml_alert(__('JSON: Maximum stack depth exceeded.', '12-step-meeting-list'), 'error');
+						break;
+					case JSON_ERROR_STATE_MISMATCH:
+						tsml_alert(__('JSON: Underflow or the modes mismatch.', '12-step-meeting-list'), 'error');
+						break;
+					case JSON_ERROR_CTRL_CHAR:
+						tsml_alert(__('JSON: Unexpected control character found.', '12-step-meeting-list'), 'error');
+						break;
+					case JSON_ERROR_SYNTAX:
+						tsml_alert(__('JSON: Syntax error, malformed JSON.', '12-step-meeting-list'), 'error');
+						break;
+					case JSON_ERROR_UTF8:
+						tsml_alert(__('JSON: Malformed UTF-8 characters, possibly incorrectly encoded.', '12-step-meeting-list'), 'error');
+						break;
+					default:
+						tsml_alert(__('JSON: Unknown error.', '12-step-meeting-list'), 'error');
+						break;
+				}
+			}
+		}
+	}
+}
+
+//function:	Returns summary list of modified records when data source changes detected
+function tsml_import_changes($feed_meetings, $data_source_url, $data_source_last_refresh)
+{
+	$db_meetings = $feed_slugs = $message_lines = [];
+	$week_days	= [
+		__('Sunday', '12-step-meeting-list'),
+		__('Monday', '12-step-meeting-list'),
+		__('Tuesday', '12-step-meeting-list'),
+		__('Wednesday', '12-step-meeting-list'),
+		__('Thursday', '12-step-meeting-list'),
+		__('Friday', '12-step-meeting-list'),
+		__('Saturday', '12-step-meeting-list'),
+	];
+
+	// get local meetings 
+	$all_db_meetings = tsml_get_meetings();
+	$ds_ids = tsml_get_data_source_ids($data_source_url);
+	sort($ds_ids);
+
+	/* filter out all but the data source meetings  */
+	foreach ($all_db_meetings as $db_meeting) {
+		$db_id = $db_meeting['id'];
+		if (in_array($db_id, $ds_ids)) {
+			array_push($db_meetings, $db_meeting);
+		}
+	}
+
+	// create array of database slugs for matching
+	$db_slugs = array_column($db_meetings, 'slug', 'id');
+	sort($db_slugs);
+
+	// list changed and new meetings found in the data source feed
+	foreach ($feed_meetings as $meeting) {
+
+		list($day_of_week, $dow_number) = tsml_get_day_of_week_info($meeting['day'], $week_days);
+		$meeting_slug =  $meeting['slug'];
+
+		// match feed/database on unique slug
+		$is_matched = in_array($meeting_slug, $db_slugs);
+
+		if (!$is_matched) {
+			// numeric slugs may need some reformatting
+			if (is_numeric($meeting_slug)) {
+				$meeting_slug .= '-' . $dow_number;
+			}
+			$is_matched = in_array($meeting_slug, $db_slugs);
+		}
+
+		// add slug to feed array to help determine current db removals later on...
+		$feed_slugs[] = $meeting_slug;
+
+		// has the meeting been updated since the last refresh?
+		$current_meeting_last_update = strtotime($meeting['updated']);
+		if ($current_meeting_last_update > $data_source_last_refresh) {
+			$permalink = get_permalink($meeting['id']);
+			$meeting_name = '<a href=' . $permalink . '>' . $meeting['name'] . '</a>';
+			$meeting_update_date = date('M j, Y  g:i a', $current_meeting_last_update);
+
+			if ($is_matched) {
+				$message_lines[] = "<tr style='color:gray;'><td>Change</td><td >$meeting_name</td><td>$day_of_week</td><td>$meeting_update_date</td></tr>";
+			} else {
+				$message_lines[] = "<tr style='color:green;'><td>Add New</td><td >$meeting_name</td><td>$day_of_week</td><td>$meeting_update_date</td></tr>";
+			}
+		}
+	}
+
+	// mark as "Remove" those meetings in local database which are not matched with feed
+	foreach ($db_meetings as $db_meeting) {
+
+		list($day_of_week, $dow_number) = tsml_get_day_of_week_info($db_meeting['day'], $week_days);
+		$meeting_slug = $db_meeting['slug'];
+
+		$is_matched = in_array($meeting_slug, $feed_slugs);
+
+		// Check if slug has been modified on import by removing an appended suffix and test for match again
+		if (!$is_matched) {
+			for ($x = 0; $x <= 10; $x++) {
+				if (str_contains($meeting_slug, '-' . $x)) {
+					$meeting_slug = str_replace('-' . $x, '', $meeting_slug);
+					break;
+				}
+			}
+			$is_matched = in_array($meeting_slug, $feed_slugs);
+		}
+
+		if (!$is_matched) {
+			$meeting_update_date = date('M j, Y  g:i a', $data_source_last_refresh);
+			$permalink = get_permalink($db_meeting['id']);
+			$meeting_name = '<a href=' . $permalink . '>' . $db_meeting['name'] . '</a>';
+			$message_lines[] = "<tr style='color:red;'><td>Remove</td><td >$meeting_name</td><td>$day_of_week</td><td>* $meeting_update_date</td></tr>";
+		}
+	}
+
+	return $message_lines;
 }
 
 //function:	Returns corresponding day of week string and number for the day input

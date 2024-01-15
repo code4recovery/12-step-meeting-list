@@ -53,10 +53,10 @@ get_header();
 						<div class="panel panel-default">
 							<ul class="list-group">
 								<li class="list-group-item list-group-item-address">
-									<p><?php echo tsml_format_address($location->formatted_address) ?></p>
+									<p class="notranslate"><?php echo tsml_format_address($location->formatted_address) ?></p>
 
 									<?php if ($location->region && !strpos($location->formatted_address, $location->region)) { ?>
-										<p><?php echo $location->region ?></p>
+										<p class="notranslate"><?php echo $location->region ?></p>
 									<?php }
 
 									if ($location->notes) { ?>
@@ -80,7 +80,7 @@ get_header();
 									$type_classes = tsml_to_css_classes($meeting['types']);
 
 									$meeting_link = '<li class="meeting attendance-' . $meeting['attendance_option'] . '"><span>' . $meeting['time_formatted'] . '</span> ';
-									$meeting_link .= tsml_link($meeting['url'], $meeting['name']);
+									$meeting_link .= tsml_link($meeting['url'], $meeting['name'], '', 'notranslate');
 									$meeting_types = tsml_format_types($meeting['types']);
 									if (!empty($meeting_types)) {
 										$meeting_link .= '<div class="meeting_types"><small>(' . __($meeting_types, "12-step-meeting-list") . ')</small></div>';
