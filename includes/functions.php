@@ -153,34 +153,9 @@ function tsml_calculate_attendance_option($types, $approximate)
 
 //called by register_activation_hook in 12-step-meeting-list.php
 //hands off to tsml_custom_post_types
-function tsml_plugin_activation()
+function tsml_change_activation_state()
 {
     tsml_custom_post_types();
-    flush_rewrite_rules();
-}
-
-//called by register_deactivation_hook in 12-step-meeting-list.php
-//clean up custom taxonomies / post types and flush rewrite rules
-function tsml_plugin_deactivation()
-{
-    if ( taxonomy_exists('tsml_region') ) {
-        unregister_taxonomy('tsml_region');
-    }
-    if ( taxonomy_exists('tsml_location') ) {
-        unregister_taxonomy('tsml_location');
-    }
-    if ( taxonomy_exists('tsml_district') ) {
-        unregister_taxonomy('tsml_district');
-    }
-    if ( post_type_exists('tsml_meeting') ) {
-        unregister_post_type('tsml_meeting');
-    }
-    if ( post_type_exists('tsml_location') ) {
-        unregister_post_type('tsml_location');
-    }
-    if ( post_type_exists('tsml_group') ) {
-        unregister_post_type('tsml_group');
-    }
     flush_rewrite_rules();
 }
 
@@ -1140,7 +1115,7 @@ function tsml_feedback_url($meeting)
 //used:		tsml_ajax_meetings(), single-locations.php, archive-meetings.php
 function tsml_get_meetings($arguments = [], $from_cache = true, $full_export = false)
 {
-	global $tsml_cache, $tsml_cache_writable, $tsml_contact_fields, $tsml_contact_display, $tsml_data_sources;
+    global $tsml_cache, $tsml_cache_writable, $tsml_contact_fields, $tsml_contact_display;
 
     //start by grabbing all meetings
     if ($from_cache && $tsml_cache_writable && $meetings = file_get_contents(WP_CONTENT_DIR . $tsml_cache)) {
@@ -1201,21 +1176,16 @@ function tsml_get_meetings($arguments = [], $from_cache = true, $full_export = f
                 $meeting['data_source'] = $meeting_meta[$post->ID]['data_source'];
             }
 
-			// include the name of the data source
-			if (!empty($meeting_meta[$post->ID]['data_source']) && !empty($tsml_data_sources[$meeting_meta[$post->ID]['data_source']]['name'])) {
-				$meeting['data_source_name'] = $tsml_data_sources[$meeting_meta[$post->ID]['data_source']]['name'];
-			}
-		
-			//append contact info to meeting
-			if (!empty($meeting_meta[$post->ID]['group_id']) && array_key_exists($meeting_meta[$post->ID]['group_id'], $groups)) {
-				$meeting = array_merge($meeting, $groups[$meeting_meta[$post->ID]['group_id']]);
-			} else {
-				foreach ($tsml_contact_fields as $field => $type) {
-					if (!empty($meeting_meta[$post->ID][$field])) {
-						$meeting[$field] = $meeting_meta[$post->ID][$field];
-					}
-				}
-			}
+            //append contact info to meeting
+            if (!empty($meeting_meta[$post->ID]['group_id']) && array_key_exists($meeting_meta[$post->ID]['group_id'], $groups)) {
+                $meeting = array_merge($meeting, $groups[$meeting_meta[$post->ID]['group_id']]);
+            } else {
+                foreach ($tsml_contact_fields as $field => $type) {
+                    if (!empty($meeting_meta[$post->ID][$field])) {
+                        $meeting[$field] = $meeting_meta[$post->ID][$field];
+                    }
+                }
+            }
 
             // Only show contact information when 'public' or doing a full export
             if ($tsml_contact_display !== 'public' && !$full_export) {
@@ -1852,16 +1822,16 @@ function tsml_import_reformat_googlesheet($data)
 
         foreach ($data['values'] as $row) {
 
-		//creates a meeting array with elements corresponding to each column header of the Google Sheet; updated for Google Sheets v4 API
-		$meeting = [];
-		for ($j = 0; $j < $header_count; $j++) {
-			if (isset($row[$j])) {
-				$meeting[$header[$j]] = $row[$j];
-			}
-		}
-
-		array_push($meetings, $meeting);
-	}
+            //creates a meeting array with elements corresponding to each column header of the Google Sheet; updated for Google Sheets v4 API
+            $meeting = [];
+            for ($j = 0; $j < $header_count; $j++) {
+                if (isset($row[$j])) {
+                    $meeting[$header[$j]] = $row[$j];
+                }
+            }
+            array_push($meetings, $meeting);
+        }
+    }
 
     return tsml_object_to_array($meetings);
 }
@@ -2182,32 +2152,32 @@ if (!function_exists('tsml_scan_data_source')) {
                 tsml_alert(__('Data source gave an empty response, you might need to try again.', '12-step-meeting-list'), 'error');
             } else {
 
-				switch (json_last_error()) {
-					case JSON_ERROR_NONE:
-						tsml_alert(__('JSON: no errors.', '12-step-meeting-list'), 'error');
-						break;
-					case JSON_ERROR_DEPTH:
-						tsml_alert(__('JSON: Maximum stack depth exceeded.', '12-step-meeting-list'), 'error');
-						break;
-					case JSON_ERROR_STATE_MISMATCH:
-						tsml_alert(__('JSON: Underflow or the modes mismatch.', '12-step-meeting-list'), 'error');
-						break;
-					case JSON_ERROR_CTRL_CHAR:
-						tsml_alert(__('JSON: Unexpected control character found.', '12-step-meeting-list'), 'error');
-						break;
-					case JSON_ERROR_SYNTAX:
-						tsml_alert(__('JSON: Syntax error, malformed JSON.', '12-step-meeting-list'), 'error');
-						break;
-					case JSON_ERROR_UTF8:
-						tsml_alert(__('JSON: Malformed UTF-8 characters, possibly incorrectly encoded.', '12-step-meeting-list'), 'error');
-						break;
-					default:
-						tsml_alert(__('JSON: Unknown error.', '12-step-meeting-list'), 'error');
-						break;
-				}
-			}
-		}
-	}
+                switch (json_last_error()) {
+                    case JSON_ERROR_NONE:
+                        tsml_alert(__('JSON: no errors.', '12-step-meeting-list'), 'error');
+                        break;
+                    case JSON_ERROR_DEPTH:
+                        tsml_alert(__('JSON: Maximum stack depth exceeded.', '12-step-meeting-list'), 'error');
+                        break;
+                    case JSON_ERROR_STATE_MISMATCH:
+                        tsml_alert(__('JSON: Underflow or the modes mismatch.', '12-step-meeting-list'), 'error');
+                        break;
+                    case JSON_ERROR_CTRL_CHAR:
+                        tsml_alert(__('JSON: Unexpected control character found.', '12-step-meeting-list'), 'error');
+                        break;
+                    case JSON_ERROR_SYNTAX:
+                        tsml_alert(__('JSON: Syntax error, malformed JSON.', '12-step-meeting-list'), 'error');
+                        break;
+                    case JSON_ERROR_UTF8:
+                        tsml_alert(__('JSON: Malformed UTF-8 characters, possibly incorrectly encoded.', '12-step-meeting-list'), 'error');
+                        break;
+                    default:
+                        tsml_alert(__('JSON: Unknown error.', '12-step-meeting-list'), 'error');
+                        break;
+                }
+            }
+        }
+    }
 }
 
 //function:	Returns corresponding day of week string and number for the day input

@@ -193,20 +193,20 @@ get_header();
 
 								if (!empty($meeting->location_id)) {
 									$location_info = '
-										<h3 class="list-group-item-heading notranslate">' . $meeting->location . '</h3>';
+										<h3 class="list-group-item-heading">' . $meeting->location . '</h3>';
 
 									if ($other_meetings = count($meeting->location_meetings) - 1) {
 										$location_info .= '<p class="location-other-meetings">' . sprintf(_n('%d other meeting at this location', '%d other meetings at this location', $other_meetings, '12-step-meeting-list'), $other_meetings) . '</p>';
 									}
 
-									$location_info .= '<p class="location-address notranslate">' . tsml_format_address($meeting->formatted_address) . '</p>';
+									$location_info .= '<p class="location-address">' . tsml_format_address($meeting->formatted_address) . '</p>';
 
 									if (!empty($meeting->location_notes)) {
 										$location_info .= '<section class="location-notes">' . wpautop($meeting->location_notes) . '</section>';
 									}
 
 									if (!empty($meeting->region) && !strpos($meeting->formatted_address, $meeting->region)) {
-										$location_info .= '<p class="location-region notranslate">' . $meeting->region . '</p>';
+										$location_info .= '<p class="location-region">' . $meeting->region . '</p>';
 									}
 
 									echo tsml_link(
@@ -230,7 +230,7 @@ get_header();
 											<section class="group-notes"><?php echo wpautop($meeting->group_notes) ?></section>
 										<?php }
 										if (!empty($meeting->district)) { ?>
-											<section class="group-district notranslate"><?php echo $meeting->district ?></section>
+											<section class="group-district"><?php echo $meeting->district ?></section>
 										<?php }
 										if (!empty($meeting->website)) { ?>
 											<a href="<?php echo $meeting->website ?>" class="btn btn-default btn-block group-website" target="_blank">

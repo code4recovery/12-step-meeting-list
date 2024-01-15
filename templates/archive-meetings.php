@@ -241,7 +241,7 @@ class Walker_Regions_Dropdown extends Walker_Category
 {
     public function start_el(&$output, $category, $depth = 0, $args = [], $id = 0)
     {
-        $classes = ['region', 'notranslate'];
+        $classes = ['region'];
         if ($args['value'] == esc_attr($category->slug)) {
             $classes[] = 'active';
         }
@@ -274,7 +274,7 @@ class Walker_Districts_Dropdown extends Walker_Category
 {
     public function start_el(&$output, $category, $depth = 0, $args = [], $id = 0)
     {
-        $classes = ['district', 'notranslate'];
+        $classes = ['district'];
         if ($args['value'] == esc_attr($category->slug)) {
             $classes[] = 'active';
         }
@@ -621,7 +621,7 @@ get_header();
                                                 <?php
                                                 ?>
                                                 <td class="location" data-sort="<?php echo tsml_sanitize_data_sort($meeting['location']) . '-' . $sort_time ?>">
-                                                    <div class="location-name notranslate"><?php echo $meeting['location'] ?></div>
+                                                    <div class="location-name"><?php echo $meeting['location'] ?></div>
                                                     <div class="attendance-<?php echo $meeting['attendance_option'] ?>">
                                                         <small>
                                                             <?php if ($meeting['attendance_option'] != 'in_person') echo $tsml_meeting_attendance_options[$meeting['attendance_option']] ?>
@@ -639,24 +639,24 @@ get_header();
                                                 }
                                                 ?>
                                                 <td class="location" data-sort="<?php echo tsml_sanitize_data_sort($meeting['location']) . '-' . $sort_time ?>">
-                                                    <div class="location-name notranslate"><?php echo $meeting_location; ?></div>
+                                                    <div class="location-name"><?php echo $meeting_location; ?></div>
                                                     <div class="attendance-<?php echo $meeting['attendance_option']; ?>"><small><?php if ($meeting['attendance_option'] != 'in_person') echo $tsml_meeting_attendance_options[$meeting['attendance_option']]; ?></small></div>
                                                 </td>
                                             <?php
                                                 break;
 
                                             case 'address': ?>
-                                                <td class="address notranslate" data-sort="<?php echo tsml_sanitize_data_sort($meeting['formatted_address']) . '-' . $sort_time ?>"><?php echo tsml_format_address($meeting['formatted_address'], $tsml_street_only) ?></td>
+                                                <td class="address" data-sort="<?php echo tsml_sanitize_data_sort($meeting['formatted_address']) . '-' . $sort_time ?>"><?php echo tsml_format_address($meeting['formatted_address'], $tsml_street_only) ?></td>
                                             <?php
                                                 break;
 
                                             case 'region': ?>
-                                                <td class="region notranslate" data-sort="<?php echo tsml_sanitize_data_sort($meeting['region']) . '-' . $sort_time ?>"><?php echo $meeting['region'] ?></td>
+                                                <td class="region" data-sort="<?php echo tsml_sanitize_data_sort($meeting['region']) . '-' . $sort_time ?>"><?php echo $meeting['region'] ?></td>
                                             <?php
                                                 break;
 
                                             case 'district': ?>
-                                                <td class="district notranslate" data-sort="<?php echo tsml_sanitize_data_sort($meeting['district']) . '-' . $sort_time ?>"><?php echo $meeting['district'] ?></td>
+                                                <td class="district" data-sort="<?php echo tsml_sanitize_data_sort($meeting['district']) . '-' . $sort_time ?>"><?php echo $meeting['district'] ?></td>
                                             <?php
                                                 break;
 
