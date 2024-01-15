@@ -229,15 +229,17 @@ add_action('save_post', function ($post_id, $post, $update) {
 		}
 
 		//see if address is already in the database
-		if ($locations = get_posts([
-			'post_type' => 'tsml_location',
-			'numberposts' => 1,
-			'orderby' => 'id',
-			'order' => 'ASC',
-			'meta_key' => 'formatted_address',
-			'meta_value' => $_POST['formatted_address'],
-			'post_status' => 'any',
-		])) {
+		if (
+			$locations = get_posts([
+				'post_type' => 'tsml_location',
+				'numberposts' => 1,
+				'orderby' => 'id',
+				'order' => 'ASC',
+				'meta_key' => 'formatted_address',
+				'meta_value' => $_POST['formatted_address'],
+				'post_status' => 'any',
+			])
+		) {
 			$location_id = $locations[0]->ID;
 			if ($locations[0]->post_title != $_POST['location'] || $locations[0]->post_content != $_POST['location_notes']) {
 				wp_update_post([
@@ -335,9 +337,9 @@ add_action('save_post', function ($post_id, $post, $update) {
 					$changes[] = 'group_notes';
 				}
 				wp_update_post([
-					'ID'            => $contact_entity_id,
-					'post_title'    => $_POST['group'],
-					'post_content'  => $_POST['group_notes'],
+					'ID' => $contact_entity_id,
+					'post_title' => $_POST['group'],
+					'post_content' => $_POST['group_notes'],
 				]);
 			}
 			//update region
