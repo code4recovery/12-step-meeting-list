@@ -2229,16 +2229,6 @@ function tsml_schedule_import_scan($data_source_url, $data_source_name)
     }
 }
 
-function tsml_slug_exists($post_name)
-{
-    global $wpdb;
-    if ($wpdb->get_row("SELECT post_name FROM wp_posts WHERE post_name = '" . $post_name . "'", 'ARRAY_A')) {
-        return true;
-    } else {
-        return false;
-    }
-}
-
 //function:	incorporates wp timezone into php's StrToTime() function
 //used:		here, admin-import.php
 function tsml_strtotime($str)
@@ -2326,7 +2316,6 @@ function tsml_get_db_slug_by_name_day_time($db_meetings, $import_name_value, $im
             $row++;
             echo "<br/>";
         }
-        exit;
         return '';
     }
     //for now we are always taking the first one found
@@ -2507,10 +2496,10 @@ function tsml_do_differential_comparison($db_meeting, &$import_meeting, $data_so
         'website_2',
     ];
     $time_fields_to_check = ['time', 'end_time'];
-    $fields_to_check_without_special_characters = ['location', 'location_notes', 'group', 'conference_url', 'conference_url_notes', 'formatted_address', 'region',];
+    $fields_to_check_without_special_characters = ['location', 'location_notes', 'group', 'conference_url', 'conference_url_notes',];
     //validate import records which may have a matching key in the database records which can be compared without any major transformation
     foreach ($import_meeting as $import_key => $import_value) {
-        if (!in_array($import_key, $fields_to_check) && !in_array($import_key, $time_fields_to_check)) { //bypass when not in either array
+        if (!in_array($import_key, $fields_to_check) && !in_array($import_key, $time_fields_to_check) && !in_array($import_key, $fields_to_check_without_special_characters)) { //bypass
             continue;
         } elseif (in_array($import_key, $time_fields_to_check)) {
             $db_value = date("H:i", strtotime($db_meeting[$import_key]));
@@ -2578,6 +2567,16 @@ function tsml_do_differential_comparison($db_meeting, &$import_meeting, $data_so
             return false;
         }
     }
+    if (!empty($db_meeting['formatted_address']) && !empty($import_meeting['formatted_address'])) {
+        $db_value = tsml_remove_special_char($db_meeting['formatted_address']);
+        $import_value = tsml_remove_special_char($import_meeting['formatted_address']);
+        if ($db_value !== $import_value) {
+            if ($tsml_debug) {
+                tsml_show_changed_values($import_meeting['name'], 'formatted_address', $db_meeting['formatted_address'], $import_meeting['formatted_address']);
+            }
+            return false;
+        }
+    }
     if (!empty($db_meeting['day']) && (!empty($import_meeting['day']) || !empty($import_meeting['Day']))) {
         $db_value = (string) $db_meeting['day'];
         $import_value = (string) $import_meeting['day'];
@@ -2604,11 +2603,23 @@ function tsml_do_differential_comparison($db_meeting, &$import_meeting, $data_so
             return false;
         }
     }
+    if (!empty($db_meeting['region']) && array_key_exists('region', $import_meeting)) {
+        $db_value = $db_meeting['region'];
+        $region_parts = explode(',', $import_meeting['formatted_address']);
+        $city_part = (string) $region_parts[0];
+        $import_value = (string) (isset($import_meeting['region'])) ? str_replace("Online", $city_part, $import_meeting['region']) : $import_meeting['region'];
+        if ($db_value !== $import_value) {
+            if ($tsml_debug) {
+                tsml_show_changed_values($import_meeting['name'], 'region', $db_meeting['region'], $import_meeting['region']);
+            }
+            return false;
+        }
+    }
 
+    //TODO:  Delete this code before release. May keep for a while to help in finding faulty comparison code!
     /* if ($tsml_debug) {
 
         //failsafe compare of only those records which have changed since the last update occurred. Ideally, this is dead code which never executes.
-        //TODO:  Delete this code before release. May keep for a while to help in finding faulty comparison code!
         if (!empty($import_meeting['updated'])) {
             //localize imported timestamp
             $imported_timestamp = strtotime(tsml_date_localised(get_option('date_format') . ' ' . get_option('time_format'), strtotime($import_meeting['updated'])));
@@ -2698,32 +2709,45 @@ function tsml_transform_import_meeting_fields($import_meeting) {
     //build address
 	if (empty($import_meeting['formatted_address'])) {
 		$address = [];
-		if (!empty($import_meeting['address'])) $address[] = $import_meeting['address'];
-		if (!empty($import_meeting['city'])) $address[] = $import_meeting['city'];
-		if (!empty($import_meeting['state'])) $address[] = $import_meeting['state'];
+		if (!empty($import_meeting['address']))
+            $address[] = $import_meeting['address'];
+		if (!empty($import_meeting['city']))
+            $address[] = $import_meeting['city'];
+		if (!empty($import_meeting['state']))
+            $address[] = $import_meeting['state'];
 		if (!empty($import_meeting['postal_code'])) {
-			if ((strlen($import_meeting['postal_code']) < 5) && ($import_meeting['country'] == 'USA')) $import_meeting['postal_code'] = str_pad($import_meeting['postal_code'], 5, '0', STR_PAD_LEFT);
-			$address[] = $import_meeting['postal_code'];
-		}
-		if (!empty($import_meeting['country'])) $address[] = $import_meeting['country'];
+			if ((strlen($import_meeting['postal_code']) < 5) && ($import_meeting['country'] == 'USA')) {
+                $import_meeting['postal_code'] = str_pad($import_meeting['postal_code'], 5, '0', STR_PAD_LEFT);
+            }
+            $address[] = $import_meeting['postal_code'];
+        }
+		if (!empty($import_meeting['country']))
+            $address[] = $import_meeting['country'];
+
 		$import_meeting['formatted_address'] = implode(', ', $address);
 	}
 
 	//notes
-	if (empty($import_meeting['notes'])) $import_meeting['notes'] = '';
-	if (empty($import_meeting['location_notes'])) $import_meeting['location_notes'] = '';
-	if (empty($import_meeting['group_notes'])) $import_meeting['group_notes'] = '';
+	if (empty($import_meeting['notes']))
+        $import_meeting['notes'] = '';
+	if (empty($import_meeting['location_notes']))
+        $import_meeting['location_notes'] = '';
+	if (empty($import_meeting['group_notes']))
+        $import_meeting['group_notes'] = '';
 
 	//updated
-	if (empty($import_meeting['updated']) || (!$import_meeting['updated'] = strtotime($import_meeting['updated']))) $import_meeting['updated'] = time();
+	if (empty($import_meeting['updated']) || (!$import_meeting['updated'] = strtotime($import_meeting['updated'])))
+        $import_meeting['updated'] = time();
 	$import_meeting['post_modified'] = date('Y-m-d H:i:s', $import_meeting['updated']);
 	$import_meeting['post_modified_gmt'] = get_gmt_from_date($import_meeting['post_modified']);
 
 	//default region to city if not specified
-	if (empty($import_meeting['region']) && !empty($import_meeting['city'])) $import_meeting['region'] = $import_meeting['city'];
+	if (empty($import_meeting['region']) && !empty($import_meeting['city']))
+        $import_meeting['region'] = $import_meeting['city'];
 
 	//sanitize types (they can be Closed or C)
-	if (empty($import_meeting['types'])) $import_meeting['types'] = '';
+	if (empty($import_meeting['types']))
+        $import_meeting['types'] = '';
     if (is_string($import_meeting['types'])) {
         $types = explode(',', $import_meeting['types']);
     } else {
