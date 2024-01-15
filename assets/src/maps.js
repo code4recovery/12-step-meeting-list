@@ -259,10 +259,10 @@ function setMapMarkers(locations, searchLocation) {
 		if (location.url && location.formatted_address && !location.approximate) {
 			//create infowindow content
 			content =
-				'<h3 class="notranslate">' +
+				'<h3>' +
 				formatLink(location.url, location.name, 'post_type') +
 				'</h3>' +
-				'<address class="notranslate">' +
+				'<address>' +
 				formatAddress(location.formatted_address) +
 				'</address>';
 

@@ -19,7 +19,6 @@ class tsml_filter_meetings
     public $time;
     public $type;
     public $attendance_option;
-    public $ten_minutes_ago;
 
     //sanitize and save arguments (won't be passed to a database)
     public function __construct($arguments)

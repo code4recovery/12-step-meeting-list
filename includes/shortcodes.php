@@ -37,11 +37,7 @@ function tsml_next_meetings($arguments)
 			$classes .= ' notes';
 		}
 
-		$meeting_location = '';
-		if (!empty($meeting['location'])) {
-			$meeting_location = $meeting['location'];
-		}
-
+		$meeting_location = $meeting['location'];
 		if ($meeting['attendance_option'] == 'online' || $meeting['attendance_option'] == 'inactive') {
 			$meeting_location = !empty($meeting['group']) ? $meeting['group'] : '';
 		}
