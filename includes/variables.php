@@ -141,6 +141,7 @@ $tsml_export_columns = [
     'author' => 'Author',
     'slug' => 'Slug',
     'data_source' => 'Data Source',
+    'data_source_name' => 'Data Source Name',
     'updated' => 'Updated',
     'id' => 'ID',
 ];
@@ -589,10 +590,13 @@ $tsml_days = $tsml_days_order = $tsml_programs = $tsml_types_in_use = $tsml_stri
 if (!isset($tsml_slug))
     $tsml_slug = null;
 
-add_action('plugins_loaded', function () {
-    global $tsml_days, $tsml_days_order, $tsml_programs, $tsml_slug, $tsml_strings, $tsml_user_interface, $tsml_types_in_use, $tsml_debug;
+//toggle debug mode
+$tsml_debug = false;
 
-    $tsml_debug = false; //toggle debug mode
+// set up globals, common variables once plugins are loaded, but before init
+function tsml_load_config()
+{
+    global $tsml_days, $tsml_days_order, $tsml_programs, $tsml_slug, $tsml_strings, $tsml_user_interface, $tsml_types_in_use;
 
     //load internationalization
     load_plugin_textdomain('12-step-meeting-list', false, '12-step-meeting-list/languages');
@@ -1420,6 +1424,11 @@ add_action('plugins_loaded', function () {
     ];
 
     $tsml_types_in_use = get_option('tsml_types_in_use', []);
-    if (!is_array($tsml_types_in_use))
-        $tsml_types_in_use = [];
-});
+    if (!is_array($tsml_types_in_use)) $tsml_types_in_use = [];
+}
+
+add_action('plugins_loaded', 'tsml_load_config');
+// load config if we always passed plugins_loaded action
+if (did_action('plugins_loaded')) {
+    tsml_load_config();
+}
