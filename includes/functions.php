@@ -2095,26 +2095,14 @@ function tsml_get_db_slug_by_name_day_time($db_meetings, $import_name_value, $im
     });
     try {
         if (count($time_meetings) === 0) {
-            throw new Exception("No <b>day/time</b> information available in the database for the $import_name_value meeting that matches on day: $import_day_value and on time: <b>$time</b>.");
+            throw new Exception("______________________________________________<br/>No <b>day/time</b> information available in the database for the $import_name_value meeting that matches on day: $import_day_value and on time: <b>$time</b>.");
         }
-        //echo 'There is at least ' . count($day_meetings) . ' meeting named ' . $import_name_value . ' in the local database which take place on day <b>' . $import_day_value . ' at <b>' . $time . '</b> . <br/>';
     } catch (Exception $e) {
-        echo 'Message: ' . $e->getMessage() . "<br/>";
-        $nbr_of_rows = count($day_meetings);
-        $row = 1;
-        foreach ($day_meetings as $meeting) {
-            echo "<p><b>Row number $row</b></p>";
-            echo implode(', ', $meeting);
-            $row++;
-            echo "<br/>";
-        }
-        return '';
+        echo $e->getMessage() . "<br/>";
     }
-    //for now we are always taking the first one found
+    //for now we are always taking the first one found. Hopefully, duplicate slugs in a data source is not being allowed.
     foreach ($time_meetings as $meeting) {
-        // if  (tsml_slug_exists($meeting['slug'])) {
         return $meeting['slug'];
-        //}
     }
     return '';
 }
@@ -2215,11 +2203,11 @@ function tsml_get_import_changes_only($feed_meetings, $data_source_url, $data_so
         if (!$they_are_in_sync) {
             array_push($import_updates, $meeting);
 
-            $my_import_date_format = tsml_extractDateTimeFormat($meeting['updated']);
-            $my_meeting_updated = (!empty($meeting['updated'])) ? $meeting['updated'] : $data_source_last_update;
-            $my_import_date = date_create_from_format($my_import_date_format, $meeting['updated']);
-            $my_localized_date_time_format = (string) (!empty($meeting['updated'])) ? (get_option('date_format') . ' ' . get_option('time_format')) : 'F j, Y';
-            $last_update = date_format($my_import_date, $my_localized_date_time_format);
+            $last_update = date(get_option('date_format') . ' ' . get_option('time_format'), $data_source_last_update);
+            if (array_key_exists('post_modified', $meeting) && (!empty($meeting['post_modified']))) {
+                $modified_timestamp = strtotime(tsml_date_localised(get_option('date_format') . ' ' . get_option('time_format'), strtotime($meeting['post_modified'])));
+                $last_update = date(get_option('date_format') . ' ' . get_option('time_format'), $modified_timestamp);
+            }
 
             if (isset($meeting_id)) {
                 $permalink = get_permalink($meeting_id);
@@ -2289,10 +2277,8 @@ function tsml_do_differential_comparison($db_meeting, $import_meeting, $data_sou
         'address',
         'author',
         'conference_phone',
-        'conference_phone_notes',
         'district',
         'email',
-        'group_notes',
         'last_contact',
         'location_group',
         'mailing_address',
@@ -2306,7 +2292,17 @@ function tsml_do_differential_comparison($db_meeting, $import_meeting, $data_sou
         'website_2',
     ];
     $time_fields_to_check = ['time', 'end_time'];
-    $fields_to_check_without_special_characters = ['location', 'location_notes', 'group', 'conference_url', 'conference_url_notes', 'phone', 'formatted_address',];
+    $fields_to_check_without_special_characters = [
+        'conference_phone_notes',
+        'conference_url',
+        'conference_url_notes',
+        'formatted_address',
+        'group',
+        'group_notes',
+        'location',
+        'location_notes',
+        'phone',
+    ];
     //validate import records which may have a matching key in the database records which can be compared without any major transformation
     foreach ($import_meeting as $import_key => $import_value) {
         if (!in_array($import_key, $fields_to_check) && !in_array($import_key, $time_fields_to_check) && !in_array($import_key, $fields_to_check_without_special_characters)) { //bypass
@@ -2421,38 +2417,6 @@ function tsml_do_differential_comparison($db_meeting, $import_meeting, $data_sou
         }
     }
 
-    //TODO:  Delete this code before release. May keep for a while to help in finding faulty comparison code!
-    /*when a regions array is used, we need to populate the region and subregion fields from it
-    if (is_array($meeting) && in_array('regions', array_keys($meeting))) {
-        $meeting['region'] = $meeting['regions'][0];
-        if (is_countable($meeting['regions']) && count($meeting['regions']) > 1) {
-            $meeting['sub_region'] = $meeting['regions'][1];
-        }
-    }
-    */
-
-    /* if ($tsml_debug) {
-
-        //failsafe compare of only those records which have changed since the last update occurred. Ideally, this is dead code which never executes.
-        if (!empty($import_meeting['updated'])) {
-            //localize imported timestamp
-            $imported_timestamp = strtotime(tsml_date_localised(get_option('date_format') . ' ' . get_option('time_format'), strtotime($import_meeting['updated'])));
-
-            $current_meeting_last_update = strtotime($import_meeting['updated']);
-            //if ($current_meeting_last_update > $data_source_last_update) {
-            if ($imported_timestamp > $data_source_last_update) {
-
-                if ($tsml_debug) {
-                    $ds_last_update = date(get_option('date_format') . ' ' . get_option('time_format'), $data_source_last_update);
-                    $cur_last_update = date(get_option('date_format') . ' ' . get_option('time_format'), $imported_timestamp);
-                    tsml_show_changed_values($import_meeting['name'], 'updated', $ds_last_update, $cur_last_update);
-                }
-                return false;
-            }
-        }
-                // note to self: this will fail on imports like Nashville where there is a large gap (16 hours) between my local time and their server time
-    } */
-
     //no changes, so we are in sync
     return true;
 }
@@ -2469,7 +2433,7 @@ function tsml_show_changed_values($import_name, $import_key, $db_value, $import_
 }
 
 //function:	applies transformation code found in tsml_import_buffer_set function to comparison code
-//used:		here (called from tsml_do_differential_comparison)
+//used:		here (called from tsml_import_buffer_set and tsml_get_import_changes_only.)
 function tsml_transform_import_meeting_fields($meetings, $data_source_url = null, $data_source_parent_region_id = null)
 {
     global $tsml_programs, $tsml_program, $tsml_days, $tsml_meeting_attendance_options, $tsml_data_sources;
