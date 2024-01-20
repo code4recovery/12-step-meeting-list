@@ -2082,6 +2082,7 @@ function tsml_date_localised($format, $timestamp = null)
 //used:		here, tsml_get_import_changes_only()
 function tsml_get_db_slug_by_name_day_time($db_meetings, $import_name_value, $import_day_value, $import_time_value)
 {
+    global $tsml_debug;
 
     $time = date("H:i", strtotime($import_time_value));
     $named_meetings = array_filter($db_meetings, function ($meeting) use ($import_name_value) {
@@ -2095,10 +2096,13 @@ function tsml_get_db_slug_by_name_day_time($db_meetings, $import_name_value, $im
     });
     try {
         if (count($time_meetings) === 0) {
-            throw new Exception("______________________________________________<br/>No <b>day/time</b> information available in the database for the $import_name_value meeting that matches on day: $import_day_value and on time: <b>$time</b>.");
+            throw new Exception("______________________________________________<br/>No <b>day/time</b> information available in the database for the <b>$import_name_value<b/> meeting that matches on day: <b>$import_day_value<b/> and on time: <b>$time</b>. Considered to be a new meeting!");
         }
     } catch (Exception $e) {
-        echo $e->getMessage() . "<br/>";
+        if ($tsml_debug) {
+            echo $e->getMessage() . "<br/>";
+        }
+        return '';
     }
     //for now we are always taking the first one found. Hopefully, duplicate slugs in a data source is not being allowed.
     foreach ($time_meetings as $meeting) {
