@@ -188,8 +188,7 @@ function tsml_plugin_deactivation()
 function tsml_conference_provider($url)
 {
     global $tsml_conference_providers;
-    if (empty($tsml_conference_providers))
-        return true; //don't provide validation
+    if (empty($tsml_conference_providers)) return true; //don't provide validation
     $domains = array_keys($tsml_conference_providers);
     $url_parts = parse_url($url);
     foreach ($domains as $domain) {
@@ -205,8 +204,7 @@ function tsml_conference_provider($url)
 function tsml_conference_providers()
 {
     global $tsml_conference_providers;
-    if (empty($tsml_conference_providers))
-        return [];
+    if (empty($tsml_conference_providers)) return [];
     $providers = array_unique(array_values($tsml_conference_providers));
     natcasesort($providers);
     return $providers;
@@ -405,8 +403,7 @@ function tsml_delete($post_ids)
         }
     }
 
-    if (empty($post_ids) || !is_array($post_ids))
-        return;
+    if (empty($post_ids) || !is_array($post_ids)) return;
 
     //sanitize
     $post_ids = array_map('intval', $post_ids);
@@ -454,8 +451,7 @@ function tsml_email($to, $subject, $message, $reply_to = false)
 {
 
     $headers = ['Content-Type: text/html; charset=UTF-8'];
-    if ($reply_to)
-        $headers[] = 'Reply-To: ' . $reply_to;
+    if ($reply_to) $headers[] = 'Reply-To: ' . $reply_to;
 
     //prepend subject as h1
     $message = '<h1>' . $subject . '</h1>' . $message;
@@ -509,8 +505,7 @@ function tsml_format_address($formatted_address, $street_only = false)
             $parts[count($parts) - 1] .= ', ' . $state_zip;
         }
     }
-    if ($street_only)
-        return array_shift($parts);
+    if ($street_only) return array_shift($parts);
     return implode('<br>', $parts);
 }
 
@@ -520,8 +515,7 @@ function tsml_format_day_and_time($day, $time, $separator = ', ', $short = false
 {
     global $tsml_days;
     /* translators: Appt is abbreviation for Appointment */
-    if (empty($tsml_days[$day]) || empty($time))
-        return $short ? __('Appt', '12-step-meeting-list') : __('Appointment', '12-step-meeting-list');
+    if (empty($tsml_days[$day]) || empty($time)) return $short ? __('Appt', '12-step-meeting-list') : __('Appointment', '12-step-meeting-list');
     return ($short ? substr($tsml_days[$day], 0, 3) : $tsml_days[$day]) . $separator . '<time>' . tsml_format_time($time) . '</time>';
 }
 
@@ -530,10 +524,8 @@ function tsml_format_day_and_time($day, $time, $separator = ', ', $short = false
 function tsml_format_name($name, $types = null)
 {
     global $tsml_program, $tsml_programs;
-    if (!is_array($types))
-        $types = [];
-    if (empty($tsml_programs[$tsml_program]['flags']) || !is_array($tsml_programs[$tsml_program]['flags']))
-        return $name;
+    if (!is_array($types)) $types = [];
+    if (empty($tsml_programs[$tsml_program]['flags']) || !is_array($tsml_programs[$tsml_program]['flags'])) return $name;
     $append = [];
     $meeting_is_online = in_array('ONL', $types);
     // Types assigned to the meeting passed to the function
@@ -554,8 +546,7 @@ function tsml_format_name($name, $types = null)
 function tsml_format_types($types = [])
 {
     global $tsml_program, $tsml_programs;
-    if (!is_array($types))
-        $types = [];
+    if (!is_array($types)) $types = [];
     $append = [];
     // Types assigned to the meeting passed to the function
     foreach ($types as $type) {
@@ -574,12 +565,9 @@ function tsml_format_types($types = [])
 //used:		tsml_get_meetings(), single-meetings.php, admin_lists.php
 function tsml_format_time($string, $empty = 'Appointment')
 {
-    if (empty($string))
-        return empty($empty) ? '' : __($empty, '12-step-meeting-list');
-    if ($string == '12:00')
-        return __('Noon', '12-step-meeting-list');
-    if ($string == '23:59' || $string == '00:00')
-        return __('Midnight', '12-step-meeting-list');
+    if (empty($string)) return empty($empty) ? '' : __($empty, '12-step-meeting-list');
+    if ($string == '12:00') return __('Noon', '12-step-meeting-list');
+    if ($string == '23:59' || $string == '00:00') return __('Midnight', '12-step-meeting-list');
     $date = strtotime($string);
     return date(get_option('time_format'), $date);
 }
@@ -597,10 +585,8 @@ function tsml_format_time_reverse($string)
 function tsml_format_domain($url)
 {
     $parts = parse_url(strtolower($url));
-    if (!$parts)
-        return $url;
-    if (substr($parts['host'], 0, 4) == 'www.')
-        return substr($parts['host'], 4);
+    if (!$parts) return $url;
+    if (substr($parts['host'], 0, 4) == 'www.') return substr($parts['host'], 4);
     return $parts['host'];
 }
 
@@ -608,8 +594,7 @@ function tsml_format_domain($url)
 //used:		by themes that want it, such as https://github.com/code4recovery/one-page-meeting-list
 function tsml_front_page($wp_query)
 {
-    if (is_admin())
-        return; //don't do this to inside pages
+    if (is_admin()) return; //don't do this to inside pages
     if ($wp_query->get('page_id') == get_option('page_on_front')) {
         $wp_query->set('post_type', 'tsml_meeting');
         $wp_query->set('page_id', '');
@@ -866,8 +851,7 @@ function tsml_get_groups()
     $terms = get_categories(['taxonomy' => 'tsml_district']);
     foreach ($terms as $term) {
         $districts[$term->term_id] = $term->name;
-        if ($term->parent)
-            $districts_with_parents[$term->term_id] = $term->parent;
+        if ($term->parent) $districts_with_parents[$term->term_id] = $term->parent;
     }
 
     # Get all locations
@@ -929,8 +913,7 @@ function tsml_get_groups()
 //used: single-locations.php
 function tsml_get_location($location_id = false)
 {
-    if (!$location = get_post($location_id))
-        return;
+    if (!$location = get_post($location_id)) return;
     if ($custom = get_post_meta($location->ID)) {
         foreach ($custom as $key => $value) {
             $location->{$key} = htmlentities($value[0], ENT_QUOTES);
@@ -962,8 +945,7 @@ function tsml_get_locations()
     $terms = get_categories(['taxonomy' => 'tsml_region']);
     foreach ($terms as $term) {
         $regions[$term->term_id] = $term->name;
-        if ($term->parent)
-            $regions_with_parents[$term->term_id] = $term->parent;
+        if ($term->parent) $regions_with_parents[$term->term_id] = $term->parent;
     }
 
     # Get all locations
@@ -1046,17 +1028,14 @@ function tsml_get_meeting($meeting_id = false)
         $meeting->approximate = $location->approximate;
     }
 
-    if (empty($meeting->approximate))
-        $meeting->approximate = 'no';
+    if (empty($meeting->approximate)) $meeting->approximate = 'no';
 
     //escape meeting values
     foreach ($custom as $key => $value) {
         $meeting->{$key} = ($key == 'types') ? $value[0] : htmlentities($value[0], ENT_QUOTES);
     }
-    if (empty($meeting->types))
-        $meeting->types = [];
-    if (!is_array($meeting->types))
-        $meeting->types = unserialize($meeting->types);
+    if (empty($meeting->types)) $meeting->types = [];
+    if (!is_array($meeting->types)) $meeting->types = unserialize($meeting->types);
     $meeting->post_title = htmlentities($meeting->post_title, ENT_QUOTES);
     $meeting->notes = esc_html($meeting->post_content);
 
@@ -1099,8 +1078,7 @@ function tsml_get_meeting($meeting_id = false)
     array_map('trim', $meeting->types);
     $meeting->types_expanded = [];
     foreach ($meeting->types as $type) {
-        if ($type == 'ONL' || $type == 'TC')
-            continue;
+        if ($type == 'ONL' || $type == 'TC') continue;
 
         if (!empty($tsml_programs[$tsml_program]['types'][$type])) {
             $meeting->types_expanded[] = $tsml_programs[$tsml_program]['types'][$type];
@@ -1117,8 +1095,7 @@ function tsml_feedback_url($meeting)
 {
     global $tsml_export_columns, $tsml_feedback_url;
 
-    if (empty($tsml_feedback_url))
-        return;
+    if (empty($tsml_feedback_url)) return;
 
     $url = $tsml_feedback_url;
 
@@ -1169,8 +1146,7 @@ function tsml_get_meetings($arguments = [], $from_cache = true, $full_export = f
         //make an array of the meetings
         foreach ($posts as $post) {
             //shouldn't ever happen, but just in case
-            if (empty($locations[$post->post_parent]))
-                continue;
+            if (empty($locations[$post->post_parent])) continue;
 
             //append to array
             $meeting = array_merge([
@@ -1297,10 +1273,8 @@ function tsml_get_meetings($arguments = [], $from_cache = true, $full_export = f
         global $tsml_days_order, $tsml_sort_by;
 
         //sub_regions are regions in this scenario
-        if (!empty($a['sub_region']))
-            $a['region'] = $a['sub_region'];
-        if (!empty($b['sub_region']))
-            $b['region'] = $b['sub_region'];
+        if (!empty($a['sub_region'])) $a['region'] = $a['sub_region'];
+        if (!empty($b['sub_region'])) $b['region'] = $b['sub_region'];
 
         //custom sort order?
         if ($tsml_sort_by !== 'time') {
@@ -1355,8 +1329,7 @@ function tsml_get_meta($type, $id = null)
         'tsml_location' => '"formatted_address", "latitude", "longitude", "approximate"',
         'tsml_meeting' => '"day", "time", "end_time", "types", "group_id", "website", "website_2", "email", "phone", "mailing_address", "venmo", "square", "paypal", "last_contact", "attendance_option", "conference_url", "conference_url_notes", "conference_phone", "conference_phone_notes", "data_source"' . (current_user_can('edit_posts') ? ', "contact_1_name", "contact_1_email", "contact_1_phone", "contact_2_name", "contact_2_email", "contact_2_phone", "contact_3_name", "contact_3_email", "contact_3_phone"' : ''),
     ];
-    if (!array_key_exists($type, $keys))
-        return trigger_error('tsml_get_meta for unexpected type ' . $type);
+    if (!array_key_exists($type, $keys)) return trigger_error('tsml_get_meta for unexpected type ' . $type);
     $meta = [];
     $query = 'SELECT post_id, meta_key, meta_value FROM ' . $wpdb->postmeta . ' WHERE
 		meta_key IN (' . $keys[$type] . ') AND
@@ -1395,8 +1368,7 @@ function tsml_get_meta($type, $id = null)
         }
     }
 
-    if ($id)
-        return array_key_exists($id, $meta) ? $meta[$id] : [];
+    if ($id) return array_key_exists($id, $meta) ? $meta[$id] : [];
     return $meta;
 }
 
@@ -1405,8 +1377,7 @@ function tsml_get_meta($type, $id = null)
 function tsml_meeting_types($types)
 {
     global $tsml_programs, $tsml_program;
-    if (empty($tsml_programs[$tsml_program]['types']))
-        return;
+    if (empty($tsml_programs[$tsml_program]['types'])) return;
     $return = [];
     foreach ($types as $type) {
         if (array_key_exists($type, $tsml_programs[$tsml_program]['types'])) {
@@ -1497,8 +1468,7 @@ function tsml_import_reformat_fnv($rows)
 
         $row = array_combine($header, $row);
 
-        if ($row['Type'] !== 'Regular')
-            continue;
+        if ($row['Type'] !== 'Regular') continue;
 
         for ($number = 1; $number < 5; $number++) {
             foreach ($short_days as $index => $day) {
@@ -1520,22 +1490,14 @@ function tsml_import_reformat_fnv($rows)
                             } elseif (strstr($part, 'men')) {
                                 $types[] = 'Men';
                             }
-                            if (strstr($part, 'bb') || strstr($part, 'big book'))
-                                $types[] = 'Big Book';
-                            if (strstr($part, '12') || strstr($part, 'step'))
-                                $types[] = 'Step Study';
-                            if (strstr($part, 'candlelight'))
-                                $types[] = 'Candlelight';
-                            if (strstr($part, 'speaker'))
-                                $types[] = 'Speaker';
-                            if (strstr($part, 'disc'))
-                                $types[] = 'Discussion';
-                            if (strstr($part, 'newcomer') || strstr($part, 'new comer'))
-                                $types[] = 'Newcomer';
-                            if (strstr($part, 'grapevine'))
-                                $types[] = 'Grapevine';
-                            if (strstr($part, 'spanish'))
-                                $types[] = 'Spanish';
+                            if (strstr($part, 'bb') || strstr($part, 'big book')) $types[] = 'Big Book';
+                            if (strstr($part, '12') || strstr($part, 'step')) $types[] = 'Step Study';
+                            if (strstr($part, 'candlelight')) $types[] = 'Candlelight';
+                            if (strstr($part, 'speaker')) $types[] = 'Speaker';
+                            if (strstr($part, 'disc')) $types[] = 'Discussion';
+                            if (strstr($part, 'newcomer') || strstr($part, 'new comer')) $types[] = 'Newcomer';
+                            if (strstr($part, 'grapevine')) $types[] = 'Grapevine';
+                            if (strstr($part, 'spanish')) $types[] = 'Spanish';
                         }
                         $all_types = array_merge($all_types, $types);
 
@@ -1622,15 +1584,13 @@ function tsml_import_reformat_googlesheet($data)
 function tsml_link($url, $string, $exclude = '', $class = false)
 {
     $appends = $_GET;
-    if (array_key_exists($exclude, $appends))
-        unset($appends[$exclude]);
+    if (array_key_exists($exclude, $appends)) unset($appends[$exclude]);
     if (!empty($appends)) {
         $url .= strstr($url, '?') ? '&' : '?';
         $url .= http_build_query($appends, '', '&amp;');
     }
     $return = '<a href="' . $url . '"';
-    if ($class)
-        $return .= ' class="' . $class . '"';
+    if ($class) $return .= ' class="' . $class . '"';
     $return .= '>' . $string . '</a>';
     return $return;
 }
@@ -1652,10 +1612,8 @@ function tsml_log($type, $info = null, $input = null)
     ];
 
     //optional variables
-    if ($info)
-        $entry['info'] = $info;
-    if ($input)
-        $entry['input'] = $input;
+    if ($info) $entry['info'] = $info;
+    if ($input) $entry['input'] = $input;
 
     //prepend to array
     array_unshift($tsml_log, $entry);
@@ -1714,8 +1672,7 @@ function tsml_update_types_in_use()
     //loop through results and append to master array
     foreach ($types as $type) {
         $type = unserialize($type);
-        if (is_array($type))
-            $all_types = array_merge($all_types, $type);
+        if (is_array($type)) $all_types = array_merge($all_types, $type);
     }
 
     //update global variable
@@ -1753,8 +1710,7 @@ function tsml_sanitize_text_area($value)
 function tsml_string_ends($string, $end)
 {
     $length = strlen($end);
-    if (!$length)
-        return true;
+    if (!$length) return true;
     return (substr($string, -$length) === $end);
 }
 
@@ -2096,7 +2052,7 @@ function tsml_get_db_slug_by_name_day_time($db_meetings, $import_name_value, $im
     });
     try {
         if (count($time_meetings) === 0) {
-            throw new Exception("______________________________________________<br/>No <b>day/time</b> information available in the database for the <b>$import_name_value<b/> meeting that matches on day: <b>$import_day_value<b/> and on time: <b>$time</b>. Considered to be a new meeting!");
+            throw new Exception("______________________________________________<br/>No database <b>day/time</b> information available for the <b>$import_name_value<b/> meeting that matches on day: <b>$import_day_value<b/> and time of: <b>$time</b>. It will be added as a new meeting!");
         }
     } catch (Exception $e) {
         if ($tsml_debug) {
