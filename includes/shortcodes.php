@@ -144,8 +144,8 @@ function tsml_ui()
     );
 
     // use meetings.json if it's writable, otherwise use the admin-ajax URL to the feed
-    $data = $tsml_cache_writable && file_exists(WP_CONTENT_DIR . $tsml_cache) && defined('ABSPATH')
-        ? get_site_url() . str_replace(ABSPATH, '/', WP_CONTENT_DIR) . $tsml_cache . '?' . filemtime(WP_CONTENT_DIR . $tsml_cache)
+    $data = $tsml_cache_writable && file_exists(WP_CONTENT_DIR . $tsml_cache)
+        ? content_url($tsml_cache) . '?' . filemtime(WP_CONTENT_DIR . $tsml_cache)
         : admin_url('admin-ajax.php') . '?action=meetings&nonce=' . wp_create_nonce($tsml_nonce);
 
     // remove URL domain to fix CORS issues caused by GoDaddy Managed WP

@@ -288,7 +288,14 @@ Yes, add the following to your theme's functions.php. Make sure you've enabled t
 == Changelog ==
 
 = 3.14.27 =
+* Fix 404 on TSML UI data URL when using Flywheel [more info](https://github.com/code4recovery/12-step-meeting-list/issues/1288)
+* Prevent address and location fields from being translated by Google Translate [more info](https://github.com/code4recovery/12-step-meeting-list/issues/1092)
+* Fix warning in upcoming meetings widget when location name is empty [more info](https://github.com/code4recovery/12-step-meeting-list/issues/1111)
+* Fix permalink issues caused by deactivating, reactivating TSML [more info](https://github.com/code4recovery/12-step-meeting-list/issues/1266)
+* Fix PHP code warning [more info](https://github.com/code4recovery/12-step-meeting-list/issues/1308)
 * Include the name of the data source (if any) in the feedback URL
+* Standardize whitespace format
+* Fix NPM 401 issues
 
 = 3.14.26 =
 * Fixes for wordpress.com [more info](https://github.com/code4recovery/12-step-meeting-list/discussions/1257) [also here](https://github.com/code4recovery/12-step-meeting-list/discussions/1273) [and here](https://github.com/code4recovery/12-step-meeting-list/discussions/1276)
