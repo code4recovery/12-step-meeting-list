@@ -8,6 +8,10 @@ if (!function_exists('tsml_import_page')) {
     {
         global $tsml_data_sources, $tsml_programs, $tsml_program, $tsml_nonce, $tsml_sharing, $tsml_slug, $tsml_change_detect;
 
+        // todo consider whether this check is necessary, since it is run from add_submenu_page() which is already checking for the same permission
+        // potentially tsml_import_page() could be a closure within the call to add_submenu_page which would prevent it from being reused elsewhere
+        tsml_require_meetings_permission();
+
         $error = false;
         $tsml_data_sources = get_option('tsml_data_sources', array());
 
@@ -231,7 +235,7 @@ if (!function_exists('tsml_import_page')) {
         $meetings = get_option('tsml_import_buffer', []);
 
         //remove data source
-        if (!empty($_POST['tsml_remove_data_source'])) {
+        if (!empty($_POST['tsml_remove_data_source']) && isset($_POST['tsml_nonce']) && wp_verify_nonce($_POST['tsml_nonce'], $tsml_nonce)) {
 
             //sanitize URL
             $_POST['tsml_remove_data_source'] = esc_url_raw($_POST['tsml_remove_data_source'], ['http', 'https']);
@@ -251,12 +255,6 @@ if (!function_exists('tsml_import_page')) {
                 tsml_alert(__('Data source removed.', '12-step-meeting-list'));
             }
         }
-
-        /*debugging
-        delete_option('tsml_data_sources');
-        tsml_delete('everything');
-        tsml_delete_orphans();
-        */
         ?>
 
         <!-- Admin page content should all be inside .wrap -->

@@ -3,6 +3,7 @@
 
 //delete all meetings and locations
 add_action('wp_ajax_tsml_delete', function () {
+    tsml_require_meetings_permission();
     tsml_delete('everything');
     die('deleted');
 });
@@ -144,6 +145,7 @@ function tsml_ajax_regions()
 
 //ajax for address checking
 add_action('wp_ajax_tsml_address', function () {
+    tsml_require_meetings_permission();
 
     if (
         !$posts = get_posts([
@@ -169,6 +171,7 @@ add_action('wp_ajax_tsml_address', function () {
 //linked from admin_import.php
 add_action('wp_ajax_contacts', function () {
     global $wpdb;
+    tsml_require_meetings_permission();
     $post_ids = $wpdb->get_col('SELECT id FROM ' . $wpdb->posts . ' WHERE post_type IN ("tsml_group", "tsml_meeting")');
     $emails = $wpdb->get_col('SELECT meta_value FROM ' . $wpdb->postmeta . ' WHERE meta_key IN ("email", "contact_1_email", "contact_2_email", "contact_3_email") AND post_id IN (' . implode(',', $post_ids) . ')');
     $emails = array_unique(array_filter($emails));
@@ -326,6 +329,8 @@ function tsml_ajax_geocode()
 //used by admin_import.php
 add_action('wp_ajax_tsml_import', function () {
     global $tsml_data_sources;
+
+    tsml_require_meetings_permission();
 
     $meetings = get_option('tsml_import_buffer', []);
     $errors = [];

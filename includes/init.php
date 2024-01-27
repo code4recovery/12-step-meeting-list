@@ -87,6 +87,8 @@ if (is_admin()) {
     add_action('transition_post_status', function ($new_status, $old_status, $post) {
         global $pagenow;
         if ($post->post_type === 'tsml_meeting' && $new_status === 'publish' && $pagenow !== 'post.php' && $pagenow !== 'admin-ajax.php') {
+            tsml_require_meetings_permission();
+
             // Try to load transient first or $_GET['post'] if it doesn't exist
             if ($bulk_ids = get_transient('tsml_bulk_process')) {
                 // Remove current post ID from array

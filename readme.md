@@ -10,6 +10,11 @@ Have a question? Check out our [Frequently Asked Questions](https://wordpress.or
 
 Need help? Please [open a new discussion](https://github.com/code4recovery/12-step-meeting-list/discussions).
 
+## How can I report security bugs?
+
+You can report security bugs through the Patchstack Vulnerability Disclosure Program. The Patchstack team helps validate, triage, and
+handle security vulnerabilities. [Report a security vulnerability.](https://patchstack.com/database/vdp/12-step-meeting-list)
+
 ## Helping with Development
 
 Do you want to help develop the plugin? We welcome new members! Please find out more at [code4recovery.org](https://code4recovery.org).
