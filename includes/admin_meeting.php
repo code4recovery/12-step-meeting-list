@@ -299,9 +299,7 @@ add_action('admin_init', function () {
                 <?php _e('Location Notes', '12-step-meeting-list') ?>
             </label>
             <textarea name="location_notes"
-                placeholder="<?php _e('eg. Around back, basement, ring buzzer', '12-step-meeting-list') ?>">
-                                                        <?php tsml_echo($location, 'post_content') ?>
-                                                    </textarea>
+                placeholder="<?php _e('eg. Around back, basement, ring buzzer', '12-step-meeting-list') ?>"><?php tsml_echo($location, 'post_content') ?></textarea>
         </div>
         <?php
         },
