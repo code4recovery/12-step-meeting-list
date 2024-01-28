@@ -60,6 +60,7 @@ add_action(
     function ($post_id) {
         $post = get_post($post_id);
         if ($post->post_type == 'tsml_meeting') {
+            tsml_require_meetings_permission();
             tsml_delete_orphans();
         }
     }
@@ -80,7 +81,7 @@ add_action('manage_tsml_meeting_posts_custom_column', function ($column_name, $p
 			JOIN ' . $wpdb->term_taxonomy . ' x ON t.term_id = x.term_id
 			JOIN ' . $wpdb->term_relationships . ' r ON x.term_taxonomy_id = r.term_taxonomy_id
 			JOIN ' . $wpdb->posts . ' p ON r.object_id = p.post_parent
-			WHERE p.ID = ' . $post_ID);
+			WHERE p.ID = ' . intval($post_ID));
     }
 }, 10, 2);
 
@@ -133,6 +134,8 @@ add_filter('bulk_actions-edit-tsml_meeting', function ($bulk_array) {
 
 # Handle removing Temporary Closures
 add_filter('handle_bulk_actions-edit-tsml_meeting', function ($redirect, $doaction, $object_ids) {
+    tsml_require_meetings_permission();
+
     // Handle tsml_add_tc
     // let's remove query args first
     $redirect = remove_query_arg(['tsml_add_tc'], $redirect);

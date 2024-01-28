@@ -9,6 +9,10 @@ if (!function_exists('tsml_settings_page')) {
         $tsml_distance_units, $tsml_sharing, $tsml_sharing_keys, $tsml_contact_display, $tsml_google_maps_key, $tsml_mapbox_key,
         $tsml_user_interface;
 
+        // todo consider whether this check is necessary, since it is run from add_submenu_page() which is already checking for the same permission
+        // potentially tsml_settings_page() could be a closure within the call to add_submenu_page which would prevent it from being reused elsewhere
+        tsml_require_settings_permission();
+
         $tsml_data_sources = get_option('tsml_data_sources', array());
 
         //change program

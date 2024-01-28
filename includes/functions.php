@@ -1656,6 +1656,22 @@ function tsml_program_has_types()
     return !empty($tsml_programs[$tsml_program]['types']);
 }
 
+// exit if user does not have permission to edit meetings
+function tsml_require_meetings_permission()
+{
+    if (!current_user_can(TSML_MEETINGS_PERMISSION)) {
+        wp_die(__('You do not have sufficient permissions to access this page (<code>' . TSML_MEETINGS_PERMISSION . '</code>).', '12-step-meeting-list'));
+    }
+}
+
+// exit if user does not have permission to edit settings
+function tsml_require_settings_permission()
+{
+    if (!current_user_can(TSML_SETTINGS_PERMISSION)) {
+        wp_die(__('You do not have sufficient permissions to access this page (<code>' . TSML_SETTINGS_PERMISSION . '</code>).', '12-step-meeting-list'));
+    }
+}
+
 //function: set an option with the currently-used types
 //used: 	tsml_import() and save.php
 function tsml_update_types_in_use()

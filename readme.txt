@@ -294,6 +294,12 @@ Yes, add the following to your theme's functions.php. Make sure you've enabled t
 
 	$tsml_google_geocoding_key = 'my.api.key.goes.here';
 
+= How can I report security bugs?
+
+You can report security bugs through the Patchstack Vulnerability Disclosure Program. The Patchstack team helps validate, triage, and
+handle security vulnerabilities. [Report a security vulnerability.](https://patchstack.com/database/vdp/12-step-meeting-list)
+
+
 == Screenshots ==
 
 1. Meeting list page
@@ -316,6 +322,7 @@ Yes, add the following to your theme's functions.php. Make sure you've enabled t
 * Include the name of the data source (if any) in the feedback URL
 * Standardize whitespace format
 * Fix NPM 401 issues
+* Fix some potential edge-case security issues, and add notice about Patchstack [more info](https://github.com/code4recovery/12-step-meeting-list/issues/1321)
 
 = 3.14.26 =
 * Fixes for wordpress.com [more info](https://github.com/code4recovery/12-step-meeting-list/discussions/1257) [also here](https://github.com/code4recovery/12-step-meeting-list/discussions/1273) [and here](https://github.com/code4recovery/12-step-meeting-list/discussions/1276)

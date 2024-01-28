@@ -30,6 +30,7 @@ add_action('tsml_region_edit_form_fields', function ($term) {
 add_action(
     'edited_tsml_region',
     function ($region_id) {
+        tsml_require_meetings_permission();
 
         //set updated time for all meetings in region if a region is edited
         $meetings = tsml_get_meetings(['region' => $region_id]);
