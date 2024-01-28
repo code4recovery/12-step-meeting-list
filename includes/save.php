@@ -7,9 +7,7 @@ add_filter('wp_insert_post_data', function ($post) {
     //sanitize text (remove html, trim)
     if ($post['post_type'] == 'tsml_meeting') {
         $post['post_content'] = tsml_sanitize_text_area($post['post_content']);
-    }
 
-    if ($post['post_type'] == 'tsml_meeting') {
         //check for blank title. if empty, build one from entered values
         if (empty($post['post_title'])) {
             $title = empty($_POST['location']) ? __('New Meeting', '12-step-meeting-list') : $_POST['location'];
@@ -31,9 +29,6 @@ add_action('save_post', function ($post_id, $post, $update) {
     if (defined('DOING_AUTOSAVE') && DOING_AUTOSAVE) {
         return;
     }
-    if (!current_user_can('edit_post', $post_id)) {
-        return;
-    }
     if (wp_is_post_revision($post_id)) {
         return;
     }
@@ -43,6 +38,7 @@ add_action('save_post', function ($post_id, $post, $update) {
     if (!isset($_POST['post_type']) || ($_POST['post_type'] != 'tsml_meeting')) {
         return;
     }
+    tsml_require_meetings_permission();
 
     //update is always 1, probably because it's actually 'created' when the edit screen first loads (due to autosave)
     $update = ($post->post_date !== $post->post_modified);

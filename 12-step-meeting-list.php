@@ -22,6 +22,10 @@ define('TSML_PATH', plugin_dir_path(__FILE__));
 
 define('TSML_VERSION', '3.14.27');
 
+define('TSML_MEETINGS_PERMISSION', 'edit_posts');
+
+define('TSML_SETTINGS_PERMISSION', 'manage_options');
+
 //defining externally-defined constant + function for php intelephense
 if (false) {
     define('TSML_UI_PATH', '');
@@ -33,7 +37,6 @@ if (false) {
 //include these files first
 include TSML_PATH . '/includes/filter_meetings.php';
 include TSML_PATH . '/includes/functions.php';
-include TSML_PATH . '/includes/database_updates.php';
 include TSML_PATH . '/includes/variables.php';
 
 //include public files
