@@ -1386,6 +1386,7 @@ function tsml_meeting_types($types)
     }
     sort($return);
     return implode(', ', $return);
+
 }
 
 //function to convert a class object to an array
@@ -1414,6 +1415,7 @@ function tsml_import_buffer_set($meetings, $data_source_url = null, $data_source
 
     if (!$is_already_transformed) {
         $meetings = tsml_transform_import_meeting_fields($meetings, $data_source_url, $data_source_parent_region_id);
+
     }
 
     //save data source configuration
@@ -1555,6 +1557,7 @@ function tsml_import_reformat_fnv($rows)
 //used: tsml_import_buffer_set
 function tsml_import_reformat_googlesheet($data)
 {
+
     $meetings = $header = [];
 
     if (!empty($data['values'])) {
@@ -1815,10 +1818,12 @@ add_action('tsml_scan_data_source', 'tsml_scan_data_source', 10, 1);
 if (!function_exists('tsml_scan_data_source')) {
     function tsml_scan_data_source($data_source_url)
     {
+
         $errors = $data_source_name = $data_source_last_import = null;
         $data_source_parent_region_id = -1;
         $data_source_count_meetings = 0;
         $db_ids_to_delete = $message_lines = [];
+
         $tsml_notification_addresses = get_option('tsml_notification_addresses', array());
         $tsml_data_sources = get_option('tsml_data_sources', array());
         $data_source_count_meetings = (int) $tsml_data_sources[$data_source_url]['count_meetings'];
@@ -1843,6 +1848,7 @@ if (!function_exists('tsml_scan_data_source')) {
             );
 
             if (is_array($response) && !empty($response['body']) && ($body = json_decode($response['body'], true))) {
+
                 //allow reformatting as necessary
                 if (strpos($data_source_url, "sheets.googleapis.com") !== false) {
                     $meetings = tsml_import_reformat_googlesheet($body);
@@ -1922,6 +1928,7 @@ if (!function_exists('tsml_scan_data_source')) {
             }
         }
     }
+
 }
 
 //function:	Returns corresponding day of week string and number for the day input
@@ -2674,3 +2681,4 @@ function tsml_remove_special_char($str)
 
     return $result;
 }
+

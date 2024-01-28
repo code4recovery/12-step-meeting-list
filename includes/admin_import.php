@@ -151,6 +151,7 @@ if (!function_exists('tsml_import_page')) {
             }
         }
 
+
         //add data source  
         if (!empty($_POST['tsml_add_data_source']) && isset($_POST['tsml_nonce']) && wp_verify_nonce($_POST['tsml_nonce'], $tsml_nonce)) {
 
@@ -173,6 +174,7 @@ if (!function_exists('tsml_import_page')) {
                 'timeout' => 30,
                 'sslverify' => false,
             ]);
+<
 
             //set response body to an empty array rather than erroring
             $body = (is_array($response) ? json_decode($response['body'], true) : []);
@@ -373,12 +375,14 @@ if (!function_exists('tsml_import_page')) {
                     </h2>
                     <p>
                         <?php printf(__('Data sources are JSON feeds that contain a website\'s public meeting data. They can be used to aggregate meetings from different sites into a single master list. 
+
             Data sources listed below will pull meeting information into this website. A configurable schedule allows for each data source to be scanned at least once per day looking 
             for updates to the listing. Change Notification email addresses are sent an email when action is required to re-sync a data source with its meeting list information. 
             Please note: records that you intend to maintain on your website should always be imported using the Import CSV feature below. <b>For data sources based on the Meeting Guide API specification, 
             only changes detected will be used to overwrite your meeting list records during a feed refresh operation. Other import sources (i.e. Google Sheets or the CSV Import) will continue to do a  
             full update of all records during a refresh.</b> More information is available at the 
             <a href="%s" target="_blank">Meeting Guide API Specification</a>.', '12-step-meeting-list'), 'https://github.com/code4recovery/spec') ?>
+
                     </p>
                     <?php if (!empty($tsml_data_sources)) { ?>
                         <table>
@@ -391,6 +395,7 @@ if (!function_exists('tsml_import_page')) {
                                     <th class="align-left">
                                         <?php _e('Parent Region', '12-step-meeting-list') ?>
                                     </th>
+
                                     <th class="align-center">
                                         <?php _e('Meetings', '12-step-meeting-list') ?>
                                     </th>
@@ -463,7 +468,6 @@ if (!function_exists('tsml_import_page')) {
 
                         <input type="text" name="tsml_add_data_source_name"
                             placeholder="<?php _e('District or Intergroup Name', '12-step-meeting-list') ?>">
-
                         <input type="text" name="tsml_add_data_source" placeholder="https://">
 
                         <?php wp_dropdown_categories(

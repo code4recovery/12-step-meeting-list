@@ -3,7 +3,7 @@
 # Adding region dropdown to filter
 add_action('restrict_manage_posts', function ($post_type) {
 
-    if($post_type !== 'tsml_meeting') {
+    if ($post_type !== 'tsml_meeting') {
         return;
     }
 
@@ -24,14 +24,16 @@ add_filter(
     function ($query) {
         global $post_type, $pagenow, $wpdb;
 
-        if(!empty($_GET['region']) && $pagenow === 'edit.php' && $post_type === 'tsml_meeting' && $query->is_main_query()) {
-            $parent_ids = $wpdb->get_col($wpdb->prepare(
-                "SELECT p.ID FROM $wpdb->posts p 
+        if (!empty($_GET['region']) && $pagenow === 'edit.php' && $post_type === 'tsml_meeting' && $query->is_main_query()) {
+            $parent_ids = $wpdb->get_col(
+                $wpdb->prepare(
+                    "SELECT p.ID FROM $wpdb->posts p 
 	                    JOIN $wpdb->term_relationships r ON r.object_id = p.ID 
 	                    JOIN $wpdb->term_taxonomy x ON x.term_taxonomy_id = r.term_taxonomy_id 
 	                    WHERE x.term_id = %d",
                     intval(sanitize_text_field($_GET['region']))
-            ));
+                )
+            );
             $query->query_vars['post_parent__in'] = empty($parent_ids) ? [0] : $parent_ids;
         }
     }

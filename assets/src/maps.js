@@ -172,8 +172,7 @@ function setMapMarker(title, position, content) {
 			map: tsmlmap,
 			title: title,
 			icon: {
-				path:
-					'M20.5,0.5 c11.046,0,20,8.656,20,19.333c0,10.677-12.059,21.939-20,38.667c-5.619-14.433-20-27.989-20-38.667C0.5,9.156,9.454,0.5,20.5,0.5z',
+				path: 'M20.5,0.5 c11.046,0,20,8.656,20,19.333c0,10.677-12.059,21.939-20,38.667c-5.619-14.433-20-27.989-20-38.667C0.5,9.156,9.454,0.5,20.5,0.5z',
 				fillColor: '#f76458',
 				fillOpacity: 1,
 				anchor: new google.maps.Point(40, 50),
@@ -188,8 +187,8 @@ function setMapMarker(title, position, content) {
 			google.maps.event.addListener(
 				marker,
 				'click',
-				(function(marker) {
-					return function() {
+				(function (marker) {
+					return function () {
 						infowindow.setContent('<div class="tsml_infowindow">' + content + '</div>');
 						infowindow.open(tsmlmap, marker);
 					};
@@ -221,7 +220,6 @@ function setMapMarker(title, position, content) {
 
 //add one or more markers to a map
 function setMapMarkers(locations, searchLocation) {
-
 	//remove existing markers
 	if (markers.length) {
 		for (var i = 0; i < markers.length; i++) {
@@ -242,13 +240,16 @@ function setMapMarkers(locations, searchLocation) {
 	}
 
 	//convert to array and sort it by latitude (for marker overlaps)
-	var location_array = typeof locations === 'object' ? Object.keys(locations)
-		.map(function(e) {
-			return locations[e];
-		})
-		.sort(function(a, b) {
-			return b.latitude - a.latitude;
-		}) : [];
+	var location_array =
+		typeof locations === 'object'
+			? Object.keys(locations)
+					.map(function (e) {
+						return locations[e];
+					})
+					.sort(function (a, b) {
+						return b.latitude - a.latitude;
+					})
+			: [];
 
 	//loop through and create new markers
 	for (var i = 0; i < location_array.length; i++) {
@@ -334,8 +335,7 @@ function setSearchMarker(data) {
 	if (mapMode == 'google') {
 		searchMarker = new google.maps.Marker({
 			icon: {
-				path:
-					'M20.5,0.5 c11.046,0,20,8.656,20,19.333c0,10.677-12.059,21.939-20,38.667c-5.619-14.433-20-27.989-20-38.667C0.5,9.156,9.454,0.5,20.5,0.5z',
+				path: 'M20.5,0.5 c11.046,0,20,8.656,20,19.333c0,10.677-12.059,21.939-20,38.667c-5.619-14.433-20-27.989-20-38.667C0.5,9.156,9.454,0.5,20.5,0.5z',
 				fillColor: '#2c78b3',
 				fillOpacity: 1,
 				anchor: new google.maps.Point(40, 50),

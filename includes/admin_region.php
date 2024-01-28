@@ -2,10 +2,12 @@
 //customizing region administration
 
 add_action('tsml_region_edit_form_fields', function ($term) {
-?>
+    ?>
     <tr class="form-field">
         <th valign="top" scope="row">
-            <label for="delete_and_reassign"><?php _e('Delete and Reassign', '12-step-meeting-list'); ?></label>
+            <label for="delete_and_reassign">
+                <?php _e('Delete and Reassign', '12-step-meeting-list'); ?>
+            </label>
         </th>
         <td>
             <?php wp_dropdown_categories([
