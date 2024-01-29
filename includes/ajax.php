@@ -181,11 +181,8 @@ add_action('wp_ajax_contacts', function () {
 
 
 //function:	export csv
-//used:		linked from admin-import.php, potentially also from theme
-add_action('wp_ajax_csv', 'tsml_ajax_csv');
-add_action('wp_ajax_nopriv_csv', 'tsml_ajax_csv');
-function tsml_ajax_csv()
-{
+//used:		linked from admin-import.php
+add_action('wp_ajax_csv', function () {
 
     //going to need this later
     global $tsml_days, $tsml_programs, $tsml_program, $tsml_sharing, $tsml_export_columns;
@@ -219,7 +216,9 @@ function tsml_ajax_csv()
             } elseif ($column == 'types') {
                 $types = !empty($meeting[$column]) ? $meeting[$column] : [];
                 if (!is_array($types)) $types = [];
-                foreach ($types as &$type) $type = $tsml_programs[$tsml_program]['types'][trim($type)];
+                foreach ($types as &$type) {
+                    $type = $tsml_programs[$tsml_program]['types'][trim($type)];
+                }
                 sort($types);
                 $line[] = $escape . implode(', ', $types) . $escape;
             } elseif (strstr($column, 'notes')) {
@@ -239,7 +238,7 @@ function tsml_ajax_csv()
 
     //output
     wp_die($return);
-}
+});
 
 //function: receives user feedback, sends email to admin
 //used:		single-meetings.php
