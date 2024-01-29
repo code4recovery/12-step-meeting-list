@@ -587,8 +587,7 @@ $tsml_ui_config = [];
 $tsml_days = $tsml_days_order = $tsml_programs = $tsml_types_in_use = $tsml_strings = [];
 
 //string url for the meeting finder, or false for no automatic archive page
-if (!isset($tsml_slug))
-    $tsml_slug = null;
+if (!isset($tsml_slug)) $tsml_slug = null;
 
 //toggle debug mode
 $tsml_debug = false;

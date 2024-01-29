@@ -54,7 +54,6 @@ function tsml_next_meetings($arguments)
         }
 
         $rows .= '<tr class="meeting ' . $classes . ' attendance-' . $meeting['attendance_option'] . '">
-
 				<td class="time">' . tsml_format_time($meeting['time']) . '</td>
 				<td class="name"><a href="' . $meeting['url'] . '">' . @$meeting['name'] . '</a>' . $meeting_types . '</td>
 				<td class="location">

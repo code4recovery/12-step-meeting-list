@@ -241,7 +241,7 @@ class Walker_Regions_Dropdown extends Walker_Category
 {
     public function start_el(&$output, $category, $depth = 0, $args = [], $id = 0)
     {
-        $classes = ['region'];
+        $classes = ['region', 'notranslate'];
         if ($args['value'] == esc_attr($category->slug)) {
             $classes[] = 'active';
         }
@@ -274,7 +274,7 @@ class Walker_Districts_Dropdown extends Walker_Category
 {
     public function start_el(&$output, $category, $depth = 0, $args = [], $id = 0)
     {
-        $classes = ['district'];
+        $classes = ['district', 'notranslate'];
         if ($args['value'] == esc_attr($category->slug)) {
             $classes[] = 'active';
         }

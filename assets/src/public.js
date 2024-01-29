@@ -622,7 +622,7 @@ jQuery(function ($) {
 
 								case 'location':
 									row += '<td class="location" data-sort="' + sanitizeDataSort(obj.location) + '-' + sort_time + '">';
-									row += '<div class="location-name">' + obj.location + '</div>';
+									row += '<div class="location-name notranslate">' + obj.location + '</div>';
 									row += '<div class="attendance-' + obj.attendance_option + '"><small>';
 									switch (obj.attendance_option) {
 										case 'online':
@@ -652,7 +652,7 @@ jQuery(function ($) {
 									}
 
 									row += '<td class="location" data-sort="' + sanitizeDataSort(obj.location) + '-' + sort_time + '">';
-									row += '<div class="location-name">' + meeting_location + '</div>';
+									row += '<div class="location-name notranslate">' + meeting_location + '</div>';
 									row += '<div class="attendance-' + obj.attendance_option + '"><small>';
 									switch (obj.attendance_option) {
 										case 'online':
@@ -673,7 +673,7 @@ jQuery(function ($) {
 
 								case 'address':
 									row +=
-										'<td class="address" data-sort="' +
+										'<td class="address notranslate" data-sort="' +
 										sanitizeDataSort(obj.formatted_address) +
 										'-' +
 										sort_time +
@@ -684,7 +684,7 @@ jQuery(function ($) {
 
 								case 'region':
 									row +=
-										'<td class="region" data-sort="' +
+										'<td class="region notranslate" data-sort="' +
 										sanitizeDataSort(obj.sub_region || obj.region || '') +
 										'-' +
 										sort_time +
@@ -695,7 +695,7 @@ jQuery(function ($) {
 
 								case 'district':
 									row +=
-										'<td class="district" data-sort="' +
+										'<td class="district notranslate" data-sort="' +
 										sanitizeDataSort(obj.sub_district || obj.district || '') +
 										'-' +
 										sort_time +

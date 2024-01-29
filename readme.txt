@@ -149,7 +149,7 @@ Add a URL to your theme's functions.php.
 
 You can add variables to the URL that can be picked up by a form plugin:
 
-	$tsml_feedback_url = '/feedback?slug={{slug}}&id={{id}}&name={{name}}&day={{day}}&time={{time}}&end_time={{end_time}}&types={{types}}&notes={{notes}}&conference_url={{conference_url}}&conference_url_notes={{conference_url_notes}}&conference_phone={{conference_phone}}&conference_phone_notes={{conference_phone_notes}}&location={{location}}&formatted_address={{formatted_address}}&region={{region}}&location_notes={{location_notes}}&group={{group}}&group_notes={{group_notes}}&district={{district}}&website={{website}}&email={{email}}&phone={{phone}}&venmo={{venmo}}&square={{square}}&paypal={{paypal}}';
+	$tsml_feedback_url = '/feedback?slug={{slug}}&id={{id}}&name={{name}}&day={{day}}&time={{time}}&end_time={{end_time}}&types={{types}}&notes={{notes}}&conference_url={{conference_url}}&conference_url_notes={{conference_url_notes}}&conference_phone={{conference_phone}}&conference_phone_notes={{conference_phone_notes}}&location={{location}}&formatted_address={{formatted_address}}&region={{region}}&location_notes={{location_notes}}&group={{group}}&group_notes={{group_notes}}&district={{district}}&website={{website}}&email={{email}}&phone={{phone}}&venmo={{venmo}}&square={{square}}&paypal={{paypal}}&data_source_name={{data_source_name}}';
 
 Feel free to adjust as necessary. This can also be a new email URL, such as:
 
