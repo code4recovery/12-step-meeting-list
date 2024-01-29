@@ -178,7 +178,6 @@ if (!function_exists('tsml_import_page')) {
                 'timeout' => 30,
                 'sslverify' => false,
             ]);
-<
 
             //set response body to an empty array rather than erroring
             $body = (is_array($response) ? json_decode($response['body'], true) : []);
