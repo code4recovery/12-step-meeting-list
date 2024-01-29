@@ -3,7 +3,7 @@ Contributors: Code for Recovery
 Requires at least: 3.2
 Requires PHP: 5.6
 Tested up to: 6.4
-Stable tag: 3.14.27
+Stable tag: 3.14.28
 
 This plugin helps twelve step recovery programs list their meetings. It standardizes addresses, and displays results in a searchable list and map.
 
@@ -292,6 +292,9 @@ handle security vulnerabilities. [Report a security vulnerability.](https://patc
 1. Edit location
 
 == Changelog ==
+
+= 3.14.28 =
+* Remove capability to make public CSV download links, since it looks like a security gap to researchers [more info](https://github.com/code4recovery/12-step-meeting-list/issues/1329)
 
 = 3.14.27 =
 * Fix 404 on TSML UI data URL when using Flywheel [more info](https://github.com/code4recovery/12-step-meeting-list/issues/1288)
