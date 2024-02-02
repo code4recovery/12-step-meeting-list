@@ -3,7 +3,7 @@ Contributors: Code for Recovery
 Requires at least: 3.2
 Requires PHP: 5.6
 Tested up to: 6.4
-Stable tag: 3.14.28
+Stable tag: 3.14.29
 
 This plugin helps twelve step recovery programs list their meetings. It standardizes addresses, and displays results in a searchable list and map.
 
@@ -282,6 +282,15 @@ Yes, add the following to your theme's functions.php. Make sure you've enabled t
 You can report security bugs through the Patchstack Vulnerability Disclosure Program. The Patchstack team helps validate, triage, and
 handle security vulnerabilities. [Report a security vulnerability.](https://patchstack.com/database/vdp/12-step-meeting-list)
 
+= Can I include custom fields in the CSV export?
+
+Yes, you will need to know the key name of the field. Then include an array in your theme's function.php file:
+
+	$tsml_custom_meeting_fields = [
+		'my_custom_field_key' => 'My Custom Field',
+	];
+
+
 
 == Screenshots ==
 
@@ -292,6 +301,9 @@ handle security vulnerabilities. [Report a security vulnerability.](https://patc
 1. Edit location
 
 == Changelog ==
+
+= 3.14.29 =
+* Add ability to export custom field types [more info](https://github.com/code4recovery/12-step-meeting-list/discussions/1334)
 
 = 3.14.28 =
 * Remove capability to make public CSV download links, since it looks like a security gap to researchers [more info](https://github.com/code4recovery/12-step-meeting-list/issues/1329)

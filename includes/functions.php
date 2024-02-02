@@ -1115,7 +1115,7 @@ function tsml_feedback_url($meeting)
 //used:		tsml_ajax_meetings(), single-locations.php, archive-meetings.php
 function tsml_get_meetings($arguments = [], $from_cache = true, $full_export = false)
 {
-    global $tsml_cache, $tsml_cache_writable, $tsml_contact_fields, $tsml_contact_display, $tsml_data_sources;
+    global $tsml_cache, $tsml_cache_writable, $tsml_contact_fields, $tsml_contact_display, $tsml_data_sources, $tsml_custom_meeting_fields;
 
     //start by grabbing all meetings
     if ($from_cache && $tsml_cache_writable && $meetings = file_get_contents(WP_CONTENT_DIR . $tsml_cache)) {
@@ -1169,6 +1169,15 @@ function tsml_get_meetings($arguments = [], $from_cache = true, $full_export = f
                 'types' => empty($meeting_meta[$post->ID]['types']) ? [] : array_values(unserialize($meeting_meta[$post->ID]['types'])),
                 'author' => get_the_author_meta('user_login', $post->post_author)
             ], $locations[$post->post_parent]);
+
+            // include user-defined meeting fields
+            if (!empty($tsml_custom_meeting_fields)) {
+                foreach ($tsml_custom_meeting_fields as $field => $title) {
+                    if (!empty($meeting_meta[$post->ID][$field])) {
+                        $meeting[$field] = $meeting_meta[$post->ID][$field];
+                    }
+                }
+            }
 
             // Include the data source when doing a full export
             if ($full_export && isset($meeting_meta[$post->ID]['data_source'])) {
@@ -1321,7 +1330,7 @@ function tsml_get_meetings($arguments = [], $from_cache = true, $full_export = f
 //called in tsml_get_meetings(), tsml_get_locations()
 function tsml_get_meta($type, $id = null)
 {
-    global $wpdb;
+    global $wpdb, $tsml_custom_meeting_fields;
     //don't show contact information if user is not logged in
     //contact info still available on an individual meeting basis via tsml_get_meeting()
     $keys = [
@@ -1329,6 +1338,13 @@ function tsml_get_meta($type, $id = null)
         'tsml_location' => '"formatted_address", "latitude", "longitude", "approximate"',
         'tsml_meeting' => '"day", "time", "end_time", "types", "group_id", "website", "website_2", "email", "phone", "mailing_address", "venmo", "square", "paypal", "last_contact", "attendance_option", "conference_url", "conference_url_notes", "conference_phone", "conference_phone_notes", "data_source"' . (current_user_can('edit_posts') ? ', "contact_1_name", "contact_1_email", "contact_1_phone", "contact_2_name", "contact_2_email", "contact_2_phone", "contact_3_name", "contact_3_email", "contact_3_phone"' : ''),
     ];
+
+    if (!empty($tsml_custom_meeting_fields)) {
+        $keys['tsml_meeting'] .= ', ' . implode(', ', array_map(function ($field) {
+            return '"' . $field . '"';
+        }, $tsml_custom_meeting_fields));
+    }
+
     if (!array_key_exists($type, $keys)) return trigger_error('tsml_get_meta for unexpected type ' . $type);
     $meta = [];
     $query = 'SELECT post_id, meta_key, meta_value FROM ' . $wpdb->postmeta . ' WHERE

@@ -185,7 +185,7 @@ add_action('wp_ajax_contacts', function () {
 add_action('wp_ajax_csv', function () {
 
     //going to need this later
-    global $tsml_days, $tsml_programs, $tsml_program, $tsml_sharing, $tsml_export_columns;
+    global $tsml_days, $tsml_programs, $tsml_program, $tsml_sharing, $tsml_export_columns, $tsml_custom_meeting_fields;
 
     //security
     if (($tsml_sharing != 'open') && !is_user_logged_in()) {
@@ -198,6 +198,11 @@ add_action('wp_ajax_csv', function () {
     //helper vars
     $delimiter = ',';
     $escape = '"';
+
+    // allow user-defined fields to be exported
+    if (!empty($tsml_custom_meeting_fields)) {
+        $tsml_export_columns = array_merge($tsml_export_columns, $tsml_custom_meeting_fields);
+    }
 
     //do header
     $return = implode($delimiter, array_values($tsml_export_columns)) . PHP_EOL;
