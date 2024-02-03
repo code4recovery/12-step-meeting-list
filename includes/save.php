@@ -61,7 +61,9 @@ add_action('save_post', function ($post_id, $post, $update) {
         $old_meeting = tsml_get_meeting($post_id);
         $decode_keys = array('post_title', 'post_content', 'location', 'location_notes', 'group', 'group_notes');
         foreach ($decode_keys as $key) {
-            $old_meeting->{$key} = html_entity_decode($old_meeting->{$key});
+            if (!empty($old_meeting->{$key})) {
+                $old_meeting->{$key} = html_entity_decode($old_meeting->{$key});
+            }
         }
     }
 
@@ -116,7 +118,7 @@ add_action('save_post', function ($post_id, $post, $update) {
     }
 
     //video conferencing info
-    if (!$update || strcmp($old_meeting->conference_url, $valid_conference_url) !== 0) {
+    if ($valid_conference_url && (!$update || strcmp($old_meeting->conference_url, $valid_conference_url) !== 0)) {
         $changes[] = 'conference_url';
         if (empty($valid_conference_url)) {
             delete_post_meta($post->ID, 'conference_url');
@@ -390,7 +392,7 @@ add_action('save_post', function ($post_id, $post, $update) {
         $_POST['square'] = null;
     }
     if (!empty($_POST['paypal']) && strpos($_POST['paypal'], '/') !== false) {
-        $_POST['paypal'] = array_pop(explode('/', $_POST['paypal']));
+        $_POST['paypal'] = strtok($_POST['paypal'], '/');
     }
 
     //loop through and validate each field

@@ -181,19 +181,14 @@ add_action('wp_ajax_contacts', function () {
 
 
 //function:	export csv
-//used:		linked from admin-import.php, potentially also from theme
-add_action('wp_ajax_csv', 'tsml_ajax_csv');
-add_action('wp_ajax_nopriv_csv', 'tsml_ajax_csv');
-function tsml_ajax_csv()
-{
+//used:		linked from admin-import.php
+add_action('wp_ajax_csv', function () {
 
     //going to need this later
-    global $tsml_days, $tsml_programs, $tsml_program, $tsml_sharing, $tsml_export_columns;
+    global $tsml_days, $tsml_programs, $tsml_program, $tsml_sharing, $tsml_export_columns, $tsml_custom_meeting_fields;
 
     //security
-    if (($tsml_sharing != 'open') && !is_user_logged_in()) {
-        tsml_ajax_unauthorized();
-    }
+    tsml_require_meetings_permission();
 
     //get data source
     $meetings = tsml_get_meetings([], false, true);
@@ -201,6 +196,11 @@ function tsml_ajax_csv()
     //helper vars
     $delimiter = ',';
     $escape = '"';
+
+    // allow user-defined fields to be exported
+    if (!empty($tsml_custom_meeting_fields)) {
+        $tsml_export_columns = array_merge($tsml_export_columns, $tsml_custom_meeting_fields);
+    }
 
     //do header
     $return = implode($delimiter, array_values($tsml_export_columns)) . PHP_EOL;
@@ -219,7 +219,9 @@ function tsml_ajax_csv()
             } elseif ($column == 'types') {
                 $types = !empty($meeting[$column]) ? $meeting[$column] : [];
                 if (!is_array($types)) $types = [];
-                foreach ($types as &$type) $type = $tsml_programs[$tsml_program]['types'][trim($type)];
+                foreach ($types as &$type) {
+                    $type = $tsml_programs[$tsml_program]['types'][trim($type)];
+                }
                 sort($types);
                 $line[] = $escape . implode(', ', $types) . $escape;
             } elseif (strstr($column, 'notes')) {
@@ -239,7 +241,7 @@ function tsml_ajax_csv()
 
     //output
     wp_die($return);
-}
+});
 
 //function: receives user feedback, sends email to admin
 //used:		single-meetings.php
