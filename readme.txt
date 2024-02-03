@@ -2,7 +2,7 @@
 Contributors: Code for Recovery
 Requires at least: 3.2
 Requires PHP: 5.6
-Tested up to: 6.4
+Tested up to: 6.4.3
 Stable tag: 3.14.29
 
 This plugin helps twelve step recovery programs list their meetings. It standardizes addresses, and displays results in a searchable list and map.
@@ -304,6 +304,7 @@ Yes, you will need to know the key name of the field. Then include an array in y
 
 = 3.14.29 =
 * Add ability to export custom field types [more info](https://github.com/code4recovery/12-step-meeting-list/discussions/1334)
+* Limit CSV-downloading to editors and above
 
 = 3.14.28 =
 * Remove capability to make public CSV download links, since it looks like a security gap to researchers [more info](https://github.com/code4recovery/12-step-meeting-list/issues/1329)
