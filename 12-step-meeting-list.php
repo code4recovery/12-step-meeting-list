@@ -14,8 +14,6 @@
 //define constants
 define('TSML_GROUP_CONTACT_COUNT', 3);
 
-define('TSML_CONTACT_EMAIL', 'tsml@code4recovery.org');
-
 define('TSML_MEETING_GUIDE_APP_NOTIFY', 'appsupport@aa.org');
 
 define('TSML_PATH', plugin_dir_path(__FILE__));
