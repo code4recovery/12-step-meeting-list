@@ -188,9 +188,7 @@ add_action('wp_ajax_csv', function () {
     global $tsml_days, $tsml_programs, $tsml_program, $tsml_sharing, $tsml_export_columns, $tsml_custom_meeting_fields;
 
     //security
-    if (($tsml_sharing != 'open') && !is_user_logged_in()) {
-        tsml_ajax_unauthorized();
-    }
+    tsml_require_meetings_permission();
 
     //get data source
     $meetings = tsml_get_meetings([], false, true);
