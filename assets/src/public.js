@@ -940,12 +940,7 @@ jQuery(function ($) {
 	function typeaheadEnable() {
 		if (typeaheadEnabled) return;
 		if (tsml.debug) console.log('typeaheadEnable()');
-		$.when(
-			$.getJSON(tsml.ajaxurl + '?action=tsml_regions'),
-			$.getJSON(tsml.ajaxurl + '?action=tsml_groups'),
-			$.getJSON(tsml.ajaxurl + '?action=tsml_locations')
-		).done(function (data1, data2, data3) {
-			var search_data = data1[0].concat(data2[0], data3[0]);
+		$.getJSON(tsml.ajaxurl + '?action=tsml_typeahead').done(function (search_data) {
 			typeaheadEnabled = true;
 			$('#meetings #search input[name="query"]').autocomplete({
 				autoFocus: false,
