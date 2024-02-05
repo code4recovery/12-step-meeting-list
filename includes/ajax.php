@@ -64,8 +64,6 @@ add_action('wp_ajax_tsml_locations', function () {
             'region' => $location['region_id'],
             'notes' => html_entity_decode($location['location_notes']),
             'tokens' => tsml_string_tokens($location['location']),
-            'type' => 'location',
-            'url' => $location['location_url'],
         ];
     }
     wp_send_json($results);
@@ -123,17 +121,18 @@ function tsml_ajax_typeahead()
     }
 
     // locations
-    $locations = get_posts('post_type=tsml_location&numberposts=-1');
+    $locations = get_posts(['post_type' => 'tsml_location', 'numberposts' => -1]);
     foreach ($locations as $location) {
         $results[] = [
             'value' => html_entity_decode($location->post_title),
             'type' => 'location',
             'tokens' => tsml_string_tokens($location->post_title),
+            'url' => get_permalink($location->ID),
         ];
     }
 
     // groups
-    $groups = get_posts('post_type=tsml_group&numberposts=-1');
+    $groups = get_posts(['post_type' => 'tsml_group', 'numberposts' => -1]);
     foreach ($groups as $group) {
         $results[] = [
             'value' => html_entity_decode($group->post_title),
