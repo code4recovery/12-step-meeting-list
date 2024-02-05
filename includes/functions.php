@@ -2388,3 +2388,22 @@ function tsml_date_localised($format, $timestamp = null)
     return $datetime->format($format);
 }
 /* ******************** end of data_source_change_detection ******************** */
+
+function tsml_header()
+{
+    if (function_exists('wp_is_block_theme') && wp_is_block_theme()) {
+        include(TSML_PATH . '/templates/header.php');
+    } else {
+        get_header();
+    }
+}
+
+function tsml_footer()
+{
+    if (function_exists('wp_is_block_theme') && wp_is_block_theme()) {
+        include(TSML_PATH . '/templates/footer.php');
+    } else {
+        get_footer();
+    }
+
+}
