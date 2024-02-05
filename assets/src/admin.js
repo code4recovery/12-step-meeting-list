@@ -240,6 +240,7 @@ jQuery(function ($) {
 						nonce: tsml.nonce
 					},
 					function (geocoded) {
+						console.log('Geocoded: ', geocoded);
 						//check status first, eg REQUEST_DENIED, ZERO_RESULTS
 						if (geocoded.status == 'error') return;
 
