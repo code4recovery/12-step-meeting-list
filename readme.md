@@ -12,8 +12,7 @@ Need help? Please [open a new discussion](https://github.com/code4recovery/12-st
 
 ## How can I report security bugs?
 
-You can report security bugs through the Patchstack Vulnerability Disclosure Program. The Patchstack team helps validate, triage, and
-handle security vulnerabilities. [Report a security vulnerability.](https://patchstack.com/database/vdp/12-step-meeting-list)
+To report a security issue, please use the [Security Tab](https://github.com/code4recovery/12-step-meeting-list/security), located under the repository name. If you cannot see the "Security" tab, select the ... dropdown menu, and then click Security. Please include as much information as possible, including steps to help our team recreate the issue.
 
 ## Helping with Development
 
@@ -23,8 +22,7 @@ Do you want to help develop the plugin? We welcome new members! Please find out 
 
 These help improve code readability and maintainability:
 
-- Use extensions like [PHP Intelephense](https://marketplace.visualstudio.com/items?itemName=bmewburn.vscode-intelephense-client) and
-  [Prettier](https://marketplace.visualstudio.com/items?itemName=esbenp.prettier-vscode) to format code on save
+- Use extensions like [DevSense](https://www.devsense.com) and [Prettier](https://prettier.io/) to format code on save
 - Use the [Query Monitor WordPress plugin](https://wordpress.org/plugins/query-monitor/) locally to detect and fix any PHP warnings
 - All constants, global functions, and global variables should have a name starting with `tsml_`
 - Functions ought to be useful in multiple places (except functions that are available to end users such as `tsml_custom_types`)
