@@ -299,6 +299,7 @@ class tsml_filter_meetings
     public function get_region_id($slug)
     {
         $term = get_term_by('slug', $slug, 'tsml_region');
+        if (empty($term->term_id)) return [];
         $children = get_term_children($term->term_id, 'tsml_region');
         return array_merge([$term->term_id], $children);
     }

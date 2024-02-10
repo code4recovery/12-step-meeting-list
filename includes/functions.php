@@ -842,6 +842,7 @@ function tsml_get_data_source_ids($source)
 //used: tsml_get_meetings()
 function tsml_get_groups()
 {
+    global $tsml_contact_fields;
 
     $groups = array();
 
@@ -878,29 +879,10 @@ function tsml_get_groups()
             'district_id' => $district_id,
             'sub_district' => $sub_district,
             'group_notes' => $post->post_content,
-            'website' => empty($group_meta[$post->ID]['website']) ? null : $group_meta[$post->ID]['website'],
-            'website_2' => empty($group_meta[$post->ID]['website_2']) ? null : $group_meta[$post->ID]['website_2'],
-            'email' => empty($group_meta[$post->ID]['email']) ? null : $group_meta[$post->ID]['email'],
-            'phone' => empty($group_meta[$post->ID]['phone']) ? null : $group_meta[$post->ID]['phone'],
-            'mailing_address' => empty($group_meta[$post->ID]['mailing_address']) ? null : $group_meta[$post->ID]['mailing_address'],
-            'venmo' => empty($group_meta[$post->ID]['venmo']) ? null : $group_meta[$post->ID]['venmo'],
-            'square' => empty($group_meta[$post->ID]['square']) ? null : $group_meta[$post->ID]['square'],
-            'paypal' => empty($group_meta[$post->ID]['paypal']) ? null : $group_meta[$post->ID]['paypal'],
-            'last_contact' => empty($group_meta[$post->ID]['last_contact']) ? null : $group_meta[$post->ID]['last_contact'],
         ];
 
-        if (current_user_can('edit_posts')) {
-            $groups[$post->ID] = array_merge($groups[$post->ID], [
-                'contact_1_name' => empty($group_meta[$post->ID]['contact_1_name']) ? null : $group_meta[$post->ID]['contact_1_name'],
-                'contact_1_email' => empty($group_meta[$post->ID]['contact_1_email']) ? null : $group_meta[$post->ID]['contact_1_email'],
-                'contact_1_phone' => empty($group_meta[$post->ID]['contact_1_phone']) ? null : $group_meta[$post->ID]['contact_1_phone'],
-                'contact_2_name' => empty($group_meta[$post->ID]['contact_2_name']) ? null : $group_meta[$post->ID]['contact_2_name'],
-                'contact_2_email' => empty($group_meta[$post->ID]['contact_2_email']) ? null : $group_meta[$post->ID]['contact_2_email'],
-                'contact_2_phone' => empty($group_meta[$post->ID]['contact_2_phone']) ? null : $group_meta[$post->ID]['contact_2_phone'],
-                'contact_3_name' => empty($group_meta[$post->ID]['contact_3_name']) ? null : $group_meta[$post->ID]['contact_3_name'],
-                'contact_3_email' => empty($group_meta[$post->ID]['contact_3_email']) ? null : $group_meta[$post->ID]['contact_3_email'],
-                'contact_3_phone' => empty($group_meta[$post->ID]['contact_3_phone']) ? null : $group_meta[$post->ID]['contact_3_phone'],
-            ]);
+        foreach ($tsml_contact_fields as $field => $type) {
+            $groups[$post->ID][$field] = empty($group_meta[$post->ID][$field]) ? null : $group_meta[$post->ID][$field];
         }
     }
 
@@ -1330,25 +1312,35 @@ function tsml_get_meetings($arguments = [], $from_cache = true, $full_export = f
 //called in tsml_get_meetings(), tsml_get_locations()
 function tsml_get_meta($type, $id = null)
 {
-    global $wpdb, $tsml_custom_meeting_fields;
-    //don't show contact information if user is not logged in
-    //contact info still available on an individual meeting basis via tsml_get_meeting()
+    global $wpdb, $tsml_custom_meeting_fields, $tsml_contact_fields;
     $keys = [
-        'tsml_group' => '"website", "website_2", "email", "phone", "mailing_address", "venmo", "square", "paypal", "last_contact"' . (current_user_can('edit_posts') ? ', "contact_1_name", "contact_1_email", "contact_1_phone", "contact_2_name", "contact_2_email", "contact_2_phone", "contact_3_name", "contact_3_email", "contact_3_phone"' : ''),
-        'tsml_location' => '"formatted_address", "latitude", "longitude", "approximate"',
-        'tsml_meeting' => '"day", "time", "end_time", "types", "group_id", "website", "website_2", "email", "phone", "mailing_address", "venmo", "square", "paypal", "last_contact", "attendance_option", "conference_url", "conference_url_notes", "conference_phone", "conference_phone_notes", "data_source"' . (current_user_can('edit_posts') ? ', "contact_1_name", "contact_1_email", "contact_1_phone", "contact_2_name", "contact_2_email", "contact_2_phone", "contact_3_name", "contact_3_email", "contact_3_phone"' : ''),
+        'tsml_group' => array_keys($tsml_contact_fields),
+        'tsml_location' => ['formatted_address', 'latitude', 'longitude', 'approximate'],
+        'tsml_meeting' => array_merge(
+            [
+                'day',
+                'time',
+                'end_time',
+                'types',
+                'group_id',
+                'conference_url',
+                'conference_url_notes',
+                'conference_phone',
+                'conference_phone_notes',
+                'data_source'
+            ],
+            array_keys($tsml_contact_fields),
+            empty($tsml_custom_meeting_fields) ? [] : array_keys($tsml_custom_meeting_fields)
+        ),
     ];
-
-    if (!empty($tsml_custom_meeting_fields)) {
-        $keys['tsml_meeting'] .= ', ' . implode(', ', array_map(function ($field) {
-            return '"' . $field . '"';
-        }, $tsml_custom_meeting_fields));
-    }
 
     if (!array_key_exists($type, $keys)) return trigger_error('tsml_get_meta for unexpected type ' . $type);
     $meta = [];
+    $field_names_for_sql = implode(', ', array_map(function ($field) {
+        return '"' . $field . '"';
+    }, $keys[$type]));
     $query = 'SELECT post_id, meta_key, meta_value FROM ' . $wpdb->postmeta . ' WHERE
-		meta_key IN (' . $keys[$type] . ') AND
+		meta_key IN (' . $field_names_for_sql . ') AND
 		post_id ' . ($id ? '= ' . $id : 'IN (SELECT id FROM ' . $wpdb->posts . ' WHERE post_type = "' . $type . '")');
     $values = $wpdb->get_results($query);
     foreach ($values as $value) {

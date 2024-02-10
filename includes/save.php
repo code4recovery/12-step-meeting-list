@@ -262,9 +262,13 @@ add_action('save_post', function ($post_id, $post, $update) {
             update_post_meta($location_id, 'approximate', $approximate ? 'yes' : 'no');
 
             //update region
-            if (!$update || $old_meeting->region_id != $_POST['region']) {
+            if (!$update || @$old_meeting->region_id != @$_POST['region']) {
                 $changes[] = 'region';
-                wp_set_object_terms($location_id, intval($_POST['region']), 'tsml_region');
+                if (!empty($_POST['region'])) {
+                    wp_set_object_terms($location_id, intval($_POST['region']), 'tsml_region');
+                } else {
+                    wp_remove_object_terms($location_id, get_terms(['taxonomy' => 'tsml_region']), 'tsml_region');
+                }
             }
         } elseif (!empty($_POST['formatted_address'])) {
             $location_id = wp_insert_post([
@@ -278,7 +282,9 @@ add_action('save_post', function ($post_id, $post, $update) {
             update_post_meta($location_id, 'latitude', floatval($_POST['latitude']));
             update_post_meta($location_id, 'longitude', floatval($_POST['longitude']));
             update_post_meta($location_id, 'approximate', $approximate ? 'yes' : 'no');
-            wp_set_object_terms($location_id, intval($_POST['region']), 'tsml_region');
+            if (!empty($_POST['region'])) {
+                wp_set_object_terms($location_id, intval($_POST['region']), 'tsml_region');
+            }
         }
 
         //update address & info on location
