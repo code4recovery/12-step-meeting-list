@@ -309,6 +309,7 @@ Yes, you will need to know the key name of the field. Then include an array in y
 * Fix performance and appearance issues with search typeahead in Legacy appearance
 * Fix minor issues on Region and District admin pages
 * Fix minor issues when saving if debug mode is on and no region is selected
+* Fix error when deleting plugin [more info](https://github.com/code4recovery/12-step-meeting-list/issues/1342)
 
 = 3.14.29 =
 * Add ability to export custom field types [more info](https://github.com/code4recovery/12-step-meeting-list/discussions/1334)
