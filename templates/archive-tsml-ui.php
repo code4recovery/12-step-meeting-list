@@ -1,7 +1,5 @@
-<!-- USING TSML UI IN A CLASSIC THEME -->
 <?php
-tsml_assets();
-get_header();
+tsml_header();
 
 if (is_active_sidebar('tsml_meetings_top')) { ?>
     <div class="widgets meetings-widgets meetings-widgets-top" role="complementary">
@@ -19,5 +17,4 @@ if (is_active_sidebar('tsml_meetings_top')) { ?>
     </div>
 <?php }
 
-get_footer();
-
+tsml_footer();

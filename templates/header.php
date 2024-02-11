@@ -4,8 +4,13 @@
 <head>
     <meta charset="<?php bloginfo('charset'); ?>" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <?php wp_head(); ?>
+    <?php
+    // must be before wp_head() to render CSS
+    $header = do_blocks('<!-- wp:template-part {"slug":"header"} /-->');
+    wp_head();
+    ?>
 </head>
 
 <body <?php body_class(); ?>>
-    <?php block_header_area();
+    <?php wp_body_open(); ?>
+    <?php echo $header; ?>
