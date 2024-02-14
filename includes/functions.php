@@ -350,6 +350,22 @@ function tsml_custom_post_types()
     register_post_type(
         'tsml_group',
         [
+            'labels' => [
+                'name' => __('Groups', '12-step-meeting-list'),
+                'singular_name' => __('Group', '12-step-meeting-list'),
+                'menu_name' => __('Groups', '12-step-meeting-list'),
+                'all_items' => __('All Groups', '12-step-meeting-list'),
+                'edit_item' => __('Edit Group', '12-step-meeting-list'),
+                'view_item' => __('View Group', '12-step-meeting-list'),
+                'update_item' => __('Update Group', '12-step-meeting-list'),
+                'add_new_item' => __('Add New Group', '12-step-meeting-list'),
+                'new_item_name' => __('New Group', '12-step-meeting-list'),
+                'parent_item' => __('Parent Group', '12-step-meeting-list'),
+                'parent_item_colon' => __('Parent Group:', '12-step-meeting-list'),
+                'search_items' => __('Search Groups', '12-step-meeting-list'),
+                'popular_items' => __('Popular Groups', '12-step-meeting-list'),
+                'not_found' => __('No groups found.', '12-step-meeting-list'),
+            ],
             'supports' => ['title'],
             'public' => true,
             'show_ui' => false,
