@@ -337,6 +337,22 @@ function tsml_custom_post_types()
     register_post_type(
         'tsml_location',
         [
+            'labels' => [
+                'name' => __('Locationss', '12-step-meeting-list'),
+                'singular_name' => __('Location', '12-step-meeting-list'),
+                'menu_name' => __('Locations', '12-step-meeting-list'),
+                'all_items' => __('All Locations', '12-step-meeting-list'),
+                'edit_item' => __('Edit Location', '12-step-meeting-list'),
+                'view_item' => __('View Location', '12-step-meeting-list'),
+                'update_item' => __('Update Location', '12-step-meeting-list'),
+                'add_new_item' => __('Add New Location', '12-step-meeting-list'),
+                'new_item_name' => __('New Location', '12-step-meeting-list'),
+                'parent_item' => __('Parent Location', '12-step-meeting-list'),
+                'parent_item_colon' => __('Parent Location:', '12-step-meeting-list'),
+                'search_items' => __('Search Locations', '12-step-meeting-list'),
+                'popular_items' => __('Popular Locations', '12-step-meeting-list'),
+                'not_found' => __('No locations found.', '12-step-meeting-list'),
+            ],
             'supports' => ['title'],
             'public' => $is_public,
             'show_ui' => false,
