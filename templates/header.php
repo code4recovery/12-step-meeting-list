@@ -13,4 +13,5 @@
 
 <body <?php body_class(); ?>>
     <?php wp_body_open(); ?>
-    <?php echo $header; ?>
+    <div class="wp-site-blocks">
+        <?php echo $header; ?>
