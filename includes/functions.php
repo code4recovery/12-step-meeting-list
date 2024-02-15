@@ -338,7 +338,7 @@ function tsml_custom_post_types()
         'tsml_location',
         [
             'labels' => [
-                'name' => __('Locationss', '12-step-meeting-list'),
+                'name' => __('Locations', '12-step-meeting-list'),
                 'singular_name' => __('Location', '12-step-meeting-list'),
                 'menu_name' => __('Locations', '12-step-meeting-list'),
                 'all_items' => __('All Locations', '12-step-meeting-list'),
