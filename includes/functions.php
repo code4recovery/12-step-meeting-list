@@ -1868,6 +1868,9 @@ function tsml_log($type, $info = null, $input = null)
 {
     //load
     $tsml_log = get_option('tsml_log', []);
+    if (!is_array($tsml_log)) {
+        $tsml_log = array();
+    }
 
     //default variables
     $entry = [
