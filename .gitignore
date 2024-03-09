@@ -7,3 +7,5 @@ docker-compose.yml
 .vs
 .vscode
 .DS_Store
+undefined.asset.php
+undefined.js

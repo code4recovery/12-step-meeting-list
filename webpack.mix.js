@@ -1,4 +1,5 @@
 let mix = require('laravel-mix');
+require("@tinypixelco/laravel-mix-wp-blocks");
 
 /*
  |--------------------------------------------------------------------------
@@ -36,4 +37,6 @@ mix.sass('./assets/src/admin.scss', './assets/css/admin.css')
 		'./assets/js/bootstrap.dropdown.js',
 		'./assets/src/maps.js',
 		'./assets/src/public.js'
-	], './assets/js/public.min.js');
+	], './assets/js/public.min.js')
+	.copy('assets/src/blocks/block.json', 'assets/blocks')
+	.block('assets/src/blocks/meetings.js', 'assets/blocks');

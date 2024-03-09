@@ -43,6 +43,7 @@ include TSML_PATH . '/includes/init.php';
 include TSML_PATH . '/includes/shortcodes.php';
 include TSML_PATH . '/includes/widgets.php';
 include TSML_PATH . '/includes/widgets_init.php';
+include TSML_PATH . '/includes/blocks.php';
 
 //include admin files
 if (is_admin()) {
