@@ -20,7 +20,6 @@ if ($blockType === 'tsml_ui') {
 
 // Set shortcode for blocks
 $shortcode = "[$blockType$meeting_count$meeting_message]";
-d($shortcode);
 ?>
 
 <div <?php echo wp_kses_data(get_block_wrapper_attributes()); ?>>
