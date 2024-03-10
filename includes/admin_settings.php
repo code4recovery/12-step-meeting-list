@@ -13,7 +13,7 @@ if (!function_exists('tsml_settings_page')) {
         // potentially tsml_settings_page() could be a closure within the call to add_submenu_page which would prevent it from being reused elsewhere
         tsml_require_settings_permission();
 
-        $tsml_data_sources = get_option('tsml_data_sources', array());
+        $tsml_data_sources = tsml_get_option_array('tsml_data_sources');
 
         //change program
         if (!empty($_POST['tsml_program']) && isset($_POST['tsml_nonce']) && wp_verify_nonce($_POST['tsml_nonce'], $tsml_nonce)) {
