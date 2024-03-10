@@ -651,8 +651,7 @@ function tsml_geocode($address)
     }
 
     //check cache
-    $addresses = get_option('tsml_addresses', []);
-
+    $addresses = tsml_get_option_array('tsml_addresses');
 
     //if key exists && approximate is set for that address, return it
     if (array_key_exists($address, $addresses) && !empty($addresses[$address]['approximate'])) {
@@ -1412,6 +1411,12 @@ function tsml_get_meta($type, $id = null)
     return $meta;
 }
 
+// get an array from wp options and confirm it's an array
+function tsml_get_option_array($option, $default = []) {
+    $value = get_option($option, $default);
+    return is_array($value) ? $value : $default;
+}
+
 //return spelled-out meeting types
 //called from save.php (updates) and archive-meetings.php (display)
 function tsml_meeting_types($types)
@@ -1867,10 +1872,7 @@ function tsml_link($url, $string, $exclude = '', $class = false)
 function tsml_log($type, $info = null, $input = null)
 {
     //load
-    $tsml_log = get_option('tsml_log', []);
-    if (!is_array($tsml_log)) {
-        $tsml_log = array();
-    }
+    $tsml_log = tsml_get_option_array('tsml_log');
 
     //default variables
     $entry = [
@@ -2106,8 +2108,8 @@ if (!function_exists('tsml_scan_data_source')) {
         $data_source_count_meetings = 0;
         $data_source_last_import = null;
 
-        $tsml_notification_addresses = get_option('tsml_notification_addresses', array());
-        $tsml_data_sources = get_option('tsml_data_sources', array());
+        $tsml_notification_addresses = tsml_get_option_array('tsml_notification_addresses');
+        $tsml_data_sources = tsml_get_option_array('tsml_data_sources');
         $data_source_count_meetings = (int) $tsml_data_sources[$data_source_url]['count_meetings'];
 
         if (!empty($tsml_notification_addresses) && $data_source_count_meetings !== 0) {

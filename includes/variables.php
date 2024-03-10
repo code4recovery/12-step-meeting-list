@@ -80,7 +80,7 @@ for ($i = 1; $i <= TSML_GROUP_CONTACT_COUNT; $i++) {
 $tsml_curl_handle = null;
 
 //load the array of URLs that we're using
-$tsml_data_sources = get_option('tsml_data_sources', []);
+$tsml_data_sources = tsml_get_option_array('tsml_data_sources');
 
 //meeting search defaults
 $tsml_defaults = [
@@ -147,7 +147,7 @@ $tsml_export_columns = [
 ];
 
 //load email addresses to send user feedback about meetings
-$tsml_feedback_addresses = get_option('tsml_feedback_addresses', []);
+$tsml_feedback_addresses = tsml_get_option_array('tsml_feedback_addresses');
 
 //load the API key user saved, if any
 $tsml_google_maps_key = get_option('tsml_google_maps_key');
@@ -548,7 +548,7 @@ $tsml_mapbox_key = get_option('tsml_mapbox_key');
 
 //if no maps key, check to see if the events calendar plugin has one
 if (empty($tsml_google_maps_key) && empty($tsml_mapbox_key)) {
-    if ($tribe_options = get_option('tribe_events_calendar_options', [])) {
+    if ($tribe_options = tsml_get_option_array('tribe_events_calendar_options')) {
         if (array_key_exists('google_maps_js_api_key', $tribe_options)) {
             $tsml_google_maps_key = $tribe_options['google_maps_js_api_key'];
             update_option('tsml_google_maps_key', $tsml_google_maps_key);
@@ -560,7 +560,7 @@ if (empty($tsml_google_maps_key) && empty($tsml_mapbox_key)) {
 $tsml_nonce = plugin_basename(__FILE__);
 
 //load email addresses to send emails when there is a meeting change
-$tsml_notification_addresses = get_option('tsml_notification_addresses', []);
+$tsml_notification_addresses = tsml_get_option_array('tsml_notification_addresses');
 
 //load the program setting (NA, AA, etc)
 $tsml_program = get_option('tsml_program', 'aa');
@@ -569,7 +569,7 @@ $tsml_program = get_option('tsml_program', 'aa');
 $tsml_sharing = get_option('tsml_sharing', 'restricted');
 
 //get the sharing policy
-$tsml_sharing_keys = get_option('tsml_sharing_keys', []);
+$tsml_sharing_keys = tsml_get_option_array('tsml_sharing_keys');
 
 //the default meetings sort order
 $tsml_sort_by = 'time';
@@ -1419,7 +1419,7 @@ function tsml_load_config()
         'women' => __('Women', '12-step-meeting-list'),
     ];
 
-    $tsml_types_in_use = get_option('tsml_types_in_use', []);
+    $tsml_types_in_use = tsml_get_option_array('tsml_types_in_use');
     if (!is_array($tsml_types_in_use)) $tsml_types_in_use = [];
 }
 ;

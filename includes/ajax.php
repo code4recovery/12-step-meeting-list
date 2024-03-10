@@ -19,10 +19,7 @@ function tsml_ajax_info()
 
     $theme = wp_get_theme();
 
-    $tsml_log = get_option('tsml_log', []);
-    if (!is_array($tsml_log)) {
-        $tsml_log = array();
-    }
+    $tsml_log = tsml_get_option_array('tsml_log');
 
     wp_send_json([
         'language' => get_bloginfo('language'),
