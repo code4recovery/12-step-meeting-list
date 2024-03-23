@@ -1,5 +1,4 @@
 let mix = require('laravel-mix');
-require("@tinypixelco/laravel-mix-wp-blocks");
 
 /*
  |--------------------------------------------------------------------------
@@ -25,18 +24,16 @@ mix.sass('./assets/src/admin.scss', './assets/css/admin.css')
 	], './assets/css/public.min.css')
 	.options({
 		processCssUrls: false
-  	}).scripts([
-		'./node_modules/timepicker/jquery.timepicker.min.js',
-		'./node_modules/mapbox-gl/dist/mapbox-gl.js',
-		'./assets/src/maps.js',
-		'./assets/src/admin.js',
-	], './assets/js/admin.min.js')
+	}).scripts([
+	'./node_modules/timepicker/jquery.timepicker.min.js',
+	'./node_modules/mapbox-gl/dist/mapbox-gl.js',
+	'./assets/src/maps.js',
+	'./assets/src/admin.js',
+], './assets/js/admin.min.js')
 	.scripts([
 		'./node_modules/mark.js/dist/jquery.mark.js',
 		'./node_modules/mapbox-gl/dist/mapbox-gl.js',
 		'./assets/js/bootstrap.dropdown.js',
 		'./assets/src/maps.js',
 		'./assets/src/public.js'
-	], './assets/js/public.min.js')
-	.copy('assets/src/blocks/block.json', 'assets/blocks')
-	.block('assets/src/blocks/meetings.js', 'assets/blocks');
+	], './assets/js/public.min.js');

@@ -40,6 +40,6 @@
     }
   },
   "textdomain": "12-step-meeting-list",
-  "render": "file:../../includes/blocks/render.php",
+  "render": "file:./render.php",
   "editorScript": "file:./meetings.js"
 }

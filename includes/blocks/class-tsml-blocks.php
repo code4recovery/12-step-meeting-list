@@ -36,7 +36,7 @@ if (! class_exists('Blocks')) {
         public function setupBlocks(): void
         {
             register_block_type(
-                TSML_PATH . 'assets/blocks'
+                TSML_PATH . 'assets/build/blocks'
             );
         }
     }
