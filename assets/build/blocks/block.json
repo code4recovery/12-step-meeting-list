@@ -23,6 +23,7 @@
   "supports": {
     "html": false,
     "align": true,
+    "alignWide": true,
     "anchor": true,
     "className": true,
     "typography": {
