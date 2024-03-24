@@ -338,6 +338,22 @@ function tsml_custom_post_types()
     register_post_type(
         'tsml_location',
         [
+            'labels' => [
+                'name' => __('Locations', '12-step-meeting-list'),
+                'singular_name' => __('Location', '12-step-meeting-list'),
+                'menu_name' => __('Locations', '12-step-meeting-list'),
+                'all_items' => __('All Locations', '12-step-meeting-list'),
+                'edit_item' => __('Edit Location', '12-step-meeting-list'),
+                'view_item' => __('View Location', '12-step-meeting-list'),
+                'update_item' => __('Update Location', '12-step-meeting-list'),
+                'add_new_item' => __('Add New Location', '12-step-meeting-list'),
+                'new_item_name' => __('New Location', '12-step-meeting-list'),
+                'parent_item' => __('Parent Location', '12-step-meeting-list'),
+                'parent_item_colon' => __('Parent Location:', '12-step-meeting-list'),
+                'search_items' => __('Search Locations', '12-step-meeting-list'),
+                'popular_items' => __('Popular Locations', '12-step-meeting-list'),
+                'not_found' => __('No locations found.', '12-step-meeting-list'),
+            ],
             'supports' => ['title'],
             'public' => $is_public,
             'show_ui' => false,
@@ -351,6 +367,22 @@ function tsml_custom_post_types()
     register_post_type(
         'tsml_group',
         [
+            'labels' => [
+                'name' => __('Groups', '12-step-meeting-list'),
+                'singular_name' => __('Group', '12-step-meeting-list'),
+                'menu_name' => __('Groups', '12-step-meeting-list'),
+                'all_items' => __('All Groups', '12-step-meeting-list'),
+                'edit_item' => __('Edit Group', '12-step-meeting-list'),
+                'view_item' => __('View Group', '12-step-meeting-list'),
+                'update_item' => __('Update Group', '12-step-meeting-list'),
+                'add_new_item' => __('Add New Group', '12-step-meeting-list'),
+                'new_item_name' => __('New Group', '12-step-meeting-list'),
+                'parent_item' => __('Parent Group', '12-step-meeting-list'),
+                'parent_item_colon' => __('Parent Group:', '12-step-meeting-list'),
+                'search_items' => __('Search Groups', '12-step-meeting-list'),
+                'popular_items' => __('Popular Groups', '12-step-meeting-list'),
+                'not_found' => __('No groups found.', '12-step-meeting-list'),
+            ],
             'supports' => ['title'],
             'public' => true,
             'show_ui' => false,
@@ -620,8 +652,7 @@ function tsml_geocode($address)
     }
 
     //check cache
-    $addresses = get_option('tsml_addresses', []);
-
+    $addresses = tsml_get_option_array('tsml_addresses');
 
     //if key exists && approximate is set for that address, return it
     if (array_key_exists($address, $addresses) && !empty($addresses[$address]['approximate'])) {
@@ -843,6 +874,7 @@ function tsml_get_data_source_ids($source)
 //used: tsml_get_meetings()
 function tsml_get_groups()
 {
+    global $tsml_contact_fields;
 
     $groups = array();
 
@@ -879,29 +911,10 @@ function tsml_get_groups()
             'district_id' => $district_id,
             'sub_district' => $sub_district,
             'group_notes' => $post->post_content,
-            'website' => empty($group_meta[$post->ID]['website']) ? null : $group_meta[$post->ID]['website'],
-            'website_2' => empty($group_meta[$post->ID]['website_2']) ? null : $group_meta[$post->ID]['website_2'],
-            'email' => empty($group_meta[$post->ID]['email']) ? null : $group_meta[$post->ID]['email'],
-            'phone' => empty($group_meta[$post->ID]['phone']) ? null : $group_meta[$post->ID]['phone'],
-            'mailing_address' => empty($group_meta[$post->ID]['mailing_address']) ? null : $group_meta[$post->ID]['mailing_address'],
-            'venmo' => empty($group_meta[$post->ID]['venmo']) ? null : $group_meta[$post->ID]['venmo'],
-            'square' => empty($group_meta[$post->ID]['square']) ? null : $group_meta[$post->ID]['square'],
-            'paypal' => empty($group_meta[$post->ID]['paypal']) ? null : $group_meta[$post->ID]['paypal'],
-            'last_contact' => empty($group_meta[$post->ID]['last_contact']) ? null : $group_meta[$post->ID]['last_contact'],
         ];
 
-        if (current_user_can('edit_posts')) {
-            $groups[$post->ID] = array_merge($groups[$post->ID], [
-                'contact_1_name' => empty($group_meta[$post->ID]['contact_1_name']) ? null : $group_meta[$post->ID]['contact_1_name'],
-                'contact_1_email' => empty($group_meta[$post->ID]['contact_1_email']) ? null : $group_meta[$post->ID]['contact_1_email'],
-                'contact_1_phone' => empty($group_meta[$post->ID]['contact_1_phone']) ? null : $group_meta[$post->ID]['contact_1_phone'],
-                'contact_2_name' => empty($group_meta[$post->ID]['contact_2_name']) ? null : $group_meta[$post->ID]['contact_2_name'],
-                'contact_2_email' => empty($group_meta[$post->ID]['contact_2_email']) ? null : $group_meta[$post->ID]['contact_2_email'],
-                'contact_2_phone' => empty($group_meta[$post->ID]['contact_2_phone']) ? null : $group_meta[$post->ID]['contact_2_phone'],
-                'contact_3_name' => empty($group_meta[$post->ID]['contact_3_name']) ? null : $group_meta[$post->ID]['contact_3_name'],
-                'contact_3_email' => empty($group_meta[$post->ID]['contact_3_email']) ? null : $group_meta[$post->ID]['contact_3_email'],
-                'contact_3_phone' => empty($group_meta[$post->ID]['contact_3_phone']) ? null : $group_meta[$post->ID]['contact_3_phone'],
-            ]);
+        foreach ($tsml_contact_fields as $field => $type) {
+            $groups[$post->ID][$field] = empty($group_meta[$post->ID][$field]) ? null : $group_meta[$post->ID][$field];
         }
     }
 
@@ -1330,25 +1343,35 @@ function tsml_get_meetings($arguments = [], $from_cache = true, $full_export = f
 //called in tsml_get_meetings(), tsml_get_locations()
 function tsml_get_meta($type, $id = null)
 {
-    global $wpdb, $tsml_custom_meeting_fields;
-    //don't show contact information if user is not logged in
-    //contact info still available on an individual meeting basis via tsml_get_meeting()
+    global $wpdb, $tsml_custom_meeting_fields, $tsml_contact_fields;
     $keys = [
-        'tsml_group' => '"website", "website_2", "email", "phone", "mailing_address", "venmo", "square", "paypal", "last_contact"' . (current_user_can('edit_posts') ? ', "contact_1_name", "contact_1_email", "contact_1_phone", "contact_2_name", "contact_2_email", "contact_2_phone", "contact_3_name", "contact_3_email", "contact_3_phone"' : ''),
-        'tsml_location' => '"formatted_address", "latitude", "longitude", "approximate"',
-        'tsml_meeting' => '"day", "time", "end_time", "types", "group_id", "website", "website_2", "email", "phone", "mailing_address", "venmo", "square", "paypal", "last_contact", "attendance_option", "conference_url", "conference_url_notes", "conference_phone", "conference_phone_notes", "data_source"' . (current_user_can('edit_posts') ? ', "contact_1_name", "contact_1_email", "contact_1_phone", "contact_2_name", "contact_2_email", "contact_2_phone", "contact_3_name", "contact_3_email", "contact_3_phone"' : ''),
+        'tsml_group' => array_keys($tsml_contact_fields),
+        'tsml_location' => ['formatted_address', 'latitude', 'longitude', 'approximate'],
+        'tsml_meeting' => array_merge(
+            [
+                'day',
+                'time',
+                'end_time',
+                'types',
+                'group_id',
+                'conference_url',
+                'conference_url_notes',
+                'conference_phone',
+                'conference_phone_notes',
+                'data_source'
+            ],
+            array_keys($tsml_contact_fields),
+            empty($tsml_custom_meeting_fields) ? [] : array_keys($tsml_custom_meeting_fields)
+        ),
     ];
-
-    if (!empty($tsml_custom_meeting_fields)) {
-        $keys['tsml_meeting'] .= ', ' . implode(', ', array_map(function ($field) {
-            return '"' . $field . '"';
-        }, $tsml_custom_meeting_fields));
-    }
 
     if (!array_key_exists($type, $keys)) return trigger_error('tsml_get_meta for unexpected type ' . $type);
     $meta = [];
+    $field_names_for_sql = implode(', ', array_map(function ($field) {
+        return '"' . $field . '"';
+    }, $keys[$type]));
     $query = 'SELECT post_id, meta_key, meta_value FROM ' . $wpdb->postmeta . ' WHERE
-		meta_key IN (' . $keys[$type] . ') AND
+		meta_key IN (' . $field_names_for_sql . ') AND
 		post_id ' . ($id ? '= ' . $id : 'IN (SELECT id FROM ' . $wpdb->posts . ' WHERE post_type = "' . $type . '")');
     $values = $wpdb->get_results($query);
     foreach ($values as $value) {
@@ -1386,6 +1409,12 @@ function tsml_get_meta($type, $id = null)
 
     if ($id) return array_key_exists($id, $meta) ? $meta[$id] : [];
     return $meta;
+}
+
+// get an array from wp options and confirm it's an array
+function tsml_get_option_array($option, $default = []) {
+    $value = get_option($option, $default);
+    return is_array($value) ? $value : $default;
 }
 
 //return spelled-out meeting types
@@ -1622,7 +1651,7 @@ function tsml_link($url, $string, $exclude = '', $class = false)
 function tsml_log($type, $info = null, $input = null)
 {
     //load
-    $tsml_log = get_option('tsml_log', []);
+    $tsml_log = tsml_get_option_array('tsml_log');
 
     //default variables
     $entry = [
@@ -1856,8 +1885,8 @@ if (!function_exists('tsml_scan_data_source')) {
         $data_source_count_meetings = 0;
         $db_ids_to_delete = $message_lines = [];
 
-        $tsml_notification_addresses = get_option('tsml_notification_addresses', array());
-        $tsml_data_sources = get_option('tsml_data_sources', array());
+        $tsml_notification_addresses = tsml_get_option_array('tsml_notification_addresses');
+        $tsml_data_sources = tsml_get_option_array('tsml_data_sources');
         $data_source_count_meetings = (int) $tsml_data_sources[$data_source_url]['count_meetings'];
 
         if (!empty($tsml_notification_addresses) && $data_source_count_meetings !== 0) {
@@ -2714,3 +2743,23 @@ function tsml_remove_special_char($str)
     return $result;
 }
 
+/* ******************** end of data_source_change_detection ******************** */
+
+function tsml_header()
+{
+    if (function_exists('wp_is_block_theme') && wp_is_block_theme()) {
+        include(TSML_PATH . '/templates/header.php');
+    } else {
+        get_header();
+    }
+}
+
+function tsml_footer()
+{
+    if (function_exists('wp_is_block_theme') && wp_is_block_theme()) {
+        include(TSML_PATH . '/templates/footer.php');
+    } else {
+        get_footer();
+    }
+
+}

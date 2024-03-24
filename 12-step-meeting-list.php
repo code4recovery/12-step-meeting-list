@@ -18,7 +18,7 @@ define('TSML_MEETING_GUIDE_APP_NOTIFY', 'appsupport@aa.org');
 
 define('TSML_PATH', plugin_dir_path(__FILE__));
 
-define('TSML_VERSION', '3.15');
+define('TSML_VERSION', '3.14.33');
 
 define('TSML_MEETINGS_PERMISSION', 'edit_posts');
 
