@@ -160,7 +160,7 @@ jQuery(function ($) {
 				minLength: 1,
 				select: function ($e, selected) {
 					var location = selected.item;
-					console.log('Location: ', location);
+					if (tsml.debug) console.log('Location: ', location);
 					$('input[name=formatted_address]').val(location.formatted_address).trigger('change');
 					$('input[name=latitude]').val(location.latitude);
 					$('input[name=longitude]').val(location.longitude);
@@ -177,7 +177,7 @@ jQuery(function ($) {
 				minLength: 1,
 				select: function ($e, selected) {
 					var group = selected.item;
-					//console.log('Selected: ', selected);
+					if (tsml.debug) console.log('Selected: ', selected);
 					$('select[name=district]').val(group.district);
 					$('input[name=website]').val(group.website);
 					$('input[name=email]').val(group.email);
