@@ -397,15 +397,15 @@ msgstr ""
 msgid "Last Update"
 msgstr ""
 
-#: includes/admin_import.php:586
+#: includes/admin_import.php:392
 msgid "Unnamed Feed"
 msgstr ""
 
-#: includes/admin_import.php:608
-msgid "District 02"
+#: includes/admin_import.php:447
+msgid "District or Intergroup Name"
 msgstr ""
 
-#: includes/admin_import.php:614
+#: includes/admin_import.php:472
 msgid "Add Data Source"
 msgstr ""
 
