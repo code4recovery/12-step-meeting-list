@@ -19,9 +19,11 @@ function tsml_ajax_info()
 
     $theme = wp_get_theme();
 
+    $tsml_log = tsml_get_option_array('tsml_log');
+
     wp_send_json([
         'language' => get_bloginfo('language'),
-        'log' => array_slice(get_option('tsml_log', []), 0, 25), //limit to 25 events
+        'log' => array_slice($tsml_log, 0, 25), //limit to 25 events
         'plugins' => array_map(function ($key) {
             return explode('/', $key)[0];
         }, array_keys(get_plugins())),
@@ -50,11 +52,9 @@ function tsml_ajax_info()
     ]);
 }
 
-//ajax for the search typeahead and the location typeahead on the meeting edit page
-add_action('wp_ajax_tsml_locations', 'tsml_ajax_locations');
-add_action('wp_ajax_nopriv_tsml_locations', 'tsml_ajax_locations');
-function tsml_ajax_locations()
-{
+// ajax for the location typeahead on the meeting edit page
+add_action('wp_ajax_tsml_locations', function () {
+    tsml_require_meetings_permission();
     $locations = tsml_get_locations();
     $results = [];
     foreach ($locations as $location) {
@@ -66,19 +66,17 @@ function tsml_ajax_locations()
             'region' => $location['region_id'],
             'notes' => html_entity_decode($location['location_notes']),
             'tokens' => tsml_string_tokens($location['location']),
-            'type' => 'location',
-            'url' => $location['location_url'],
         ];
     }
     wp_send_json($results);
-}
+});
 
+// ajax for the meeting edit group typeahead
+add_action('wp_ajax_tsml_groups', function () {
+    global $tsml_contact_fields;
 
-//ajax for the search typeahead and the meeting edit group typeahead
-add_action('wp_ajax_tsml_groups', 'tsml_ajax_groups');
-add_action('wp_ajax_nopriv_tsml_groups', 'tsml_ajax_groups');
-function tsml_ajax_groups()
-{
+    tsml_require_meetings_permission();
+
     $groups = get_posts('post_type=tsml_group&numberposts=-1');
     $results = [];
     foreach ($groups as $group) {
@@ -87,30 +85,12 @@ function tsml_ajax_groups()
         //basic group info
         $result = [
             'value' => $group->post_title,
-            'website' => @$group_custom['website'][0],
-            'website_2' => @$group_custom['website_2'][0],
-            'email' => @$group_custom['email'][0],
-            'phone' => @$group_custom['phone'][0],
-            'mailing_address' => @$group_custom['mailing_address'][0],
-            'last_contact' => @$group_custom['last_contact'][0],
             'notes' => $group->post_content,
             'tokens' => tsml_string_tokens($group->post_title),
-            'type' => 'group',
         ];
 
-        //potentially-private contact info
-        if (is_user_logged_in()) {
-            $result += [
-                'contact_1_name' => @$group_custom['contact_1_name'][0],
-                'contact_1_email' => @$group_custom['contact_1_email'][0],
-                'contact_1_phone' => @$group_custom['contact_1_phone'][0],
-                'contact_2_name' => @$group_custom['contact_2_name'][0],
-                'contact_2_email' => @$group_custom['contact_2_email'][0],
-                'contact_2_phone' => @$group_custom['contact_2_phone'][0],
-                'contact_3_name' => @$group_custom['contact_3_name'][0],
-                'contact_3_email' => @$group_custom['contact_3_email'][0],
-                'contact_3_phone' => @$group_custom['contact_3_phone'][0],
-            ];
+        foreach ($tsml_contact_fields as $field => $type) {
+            $result[$field] = !empty($group_custom[$field][0]) ? $group_custom[$field][0] : null;
         }
 
         //district
@@ -123,23 +103,46 @@ function tsml_ajax_groups()
         $results[] = $result;
     }
     wp_send_json($results);
-}
+});
 
-//ajax for the search typeahead
-add_action('wp_ajax_tsml_regions', 'tsml_ajax_regions');
-add_action('wp_ajax_nopriv_tsml_regions', 'tsml_ajax_regions');
-function tsml_ajax_regions()
+
+// ajax for the search typeahead on the public meeting directory
+add_action('wp_ajax_tsml_typeahead', 'tsml_ajax_typeahead');
+add_action('wp_ajax_nopriv_tsml_typeahead', 'tsml_ajax_typeahead');
+function tsml_ajax_typeahead()
 {
+    // regions
     $regions = get_terms('tsml_region');
     $results = [];
     foreach ($regions as $region) {
         $results[] = [
-            'id' => $region->slug,
             'value' => html_entity_decode($region->name),
             'type' => 'region',
             'tokens' => tsml_string_tokens($region->name),
         ];
     }
+
+    // locations
+    $locations = get_posts(['post_type' => 'tsml_location', 'numberposts' => -1]);
+    foreach ($locations as $location) {
+        $results[] = [
+            'value' => html_entity_decode($location->post_title),
+            'type' => 'location',
+            'tokens' => tsml_string_tokens($location->post_title),
+            'url' => get_permalink($location->ID),
+        ];
+    }
+
+    // groups
+    $groups = get_posts(['post_type' => 'tsml_group', 'numberposts' => -1]);
+    foreach ($groups as $group) {
+        $results[] = [
+            'value' => html_entity_decode($group->post_title),
+            'type' => 'group',
+            'tokens' => tsml_string_tokens($group->post_title),
+        ];
+    }
+
     wp_send_json($results);
 }
 
@@ -316,8 +319,8 @@ function tsml_ajax_feedback()
 }
 
 
-//function: receives user feedback, sends email to admin
-//used:		single-meetings.php
+//function: get geocode for string
+//used: public meeting directory, admin_meeting.php
 add_action('wp_ajax_tsml_geocode', 'tsml_ajax_geocode');
 add_action('wp_ajax_nopriv_tsml_geocode', 'tsml_ajax_geocode');
 function tsml_ajax_geocode()

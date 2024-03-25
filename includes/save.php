@@ -118,7 +118,7 @@ add_action('save_post', function ($post_id, $post, $update) {
     }
 
     //video conferencing info
-    if ($valid_conference_url && (!$update || strcmp($old_meeting->conference_url, $valid_conference_url) !== 0)) {
+    if (!$update || @strcmp($old_meeting->conference_url, $valid_conference_url) !== 0) {
         $changes[] = 'conference_url';
         if (empty($valid_conference_url)) {
             delete_post_meta($post->ID, 'conference_url');
@@ -262,9 +262,13 @@ add_action('save_post', function ($post_id, $post, $update) {
             update_post_meta($location_id, 'approximate', $approximate ? 'yes' : 'no');
 
             //update region
-            if (!$update || $old_meeting->region_id != $_POST['region']) {
+            if (!$update || @$old_meeting->region_id != @$_POST['region']) {
                 $changes[] = 'region';
-                wp_set_object_terms($location_id, intval($_POST['region']), 'tsml_region');
+                if (!empty($_POST['region'])) {
+                    wp_set_object_terms($location_id, intval($_POST['region']), 'tsml_region');
+                } else {
+                    wp_remove_object_terms($location_id, get_terms(['taxonomy' => 'tsml_region']), 'tsml_region');
+                }
             }
         } elseif (!empty($_POST['formatted_address'])) {
             $location_id = wp_insert_post([
@@ -278,7 +282,9 @@ add_action('save_post', function ($post_id, $post, $update) {
             update_post_meta($location_id, 'latitude', floatval($_POST['latitude']));
             update_post_meta($location_id, 'longitude', floatval($_POST['longitude']));
             update_post_meta($location_id, 'approximate', $approximate ? 'yes' : 'no');
-            wp_set_object_terms($location_id, intval($_POST['region']), 'tsml_region');
+            if (!empty($_POST['region'])) {
+                wp_set_object_terms($location_id, intval($_POST['region']), 'tsml_region');
+            }
         }
 
         //update address & info on location
@@ -397,7 +403,7 @@ add_action('save_post', function ($post_id, $post, $update) {
 
     //loop through and validate each field
     foreach ($tsml_contact_fields as $field => $type) {
-        if (!$update || strcmp($old_meeting->{$field}, $_POST[$field]) !== 0) {
+        if (!$update || @strcmp($old_meeting->{$field}, $_POST[$field]) !== 0) {
             $changes[] = $field;
         }
         if (empty($_POST[$field])) {

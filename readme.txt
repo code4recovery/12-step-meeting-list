@@ -296,8 +296,9 @@ Yes, add the following to your theme's functions.php. Make sure you've enabled t
 
 = How can I report security bugs?
 
-You can report security bugs through the Patchstack Vulnerability Disclosure Program. The Patchstack team helps validate, triage, and
-handle security vulnerabilities. [Report a security vulnerability.](https://patchstack.com/database/vdp/12-step-meeting-list)
+To report a security issue, please use the [Security Tab](https://github.com/code4recovery/12-step-meeting-list/security) on our GitHub repo, 
+located under the repository name. If you cannot see the "Security" tab, select the ... dropdown menu, and then click Security. 
+Please include as much information as possible, including steps to help our team recreate the issue.
 
 = Can I include custom fields in the CSV export?
 
@@ -321,6 +322,24 @@ Yes, you will need to know the key name of the field. Then include an array in y
 
 = 3.15 =
 * Modifies Import Data Source feature so that only the changes detected between an import feed and the local database are applied as updates. [more info](https://github.com/code4recovery/12-step-meeting-list/issues/1075)
+
+= 3.14.33 =
+* Fix PHP warning [more info](https://github.com/code4recovery/12-step-meeting-list/issues/1366)
+* Update "tested up to" value [more info](https://github.com/code4recovery/12-step-meeting-list/issues/1390)
+
+= 3.14.32 =
+* Fix bug preventing removal of online meeting URLs [more info](https://github.com/code4recovery/12-step-meeting-list/issues/1354)
+
+= 3.14.31 =
+* Improve page appearance with block themes [more info](https://github.com/code4recovery/12-step-meeting-list/issues/1260)
+
+= 3.14.30 =
+* Add SECURITY.md [more info](https://github.com/code4recovery/12-step-meeting-list/pull/1332)
+* Fix page appearance with block themes [more info](https://github.com/code4recovery/12-step-meeting-list/issues/1260)
+* Fix performance and appearance issues with search typeahead in Legacy appearance
+* Fix minor issues on Region and District admin pages
+* Fix minor issues when saving if debug mode is on and no region is selected
+* Fix error when deleting plugin [more info](https://github.com/code4recovery/12-step-meeting-list/issues/1342)
 
 = 3.14.29 =
 * Add ability to export custom field types [more info](https://github.com/code4recovery/12-step-meeting-list/discussions/1334)

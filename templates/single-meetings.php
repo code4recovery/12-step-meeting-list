@@ -33,7 +33,7 @@ add_filter('body_class', function ($classes) {
     return $classes;
 });
 
-get_header();
+tsml_header();
 ?>
 
 <div id="tsml">
@@ -428,4 +428,4 @@ get_header();
     </div>
 </div>
 <?php
-get_footer();
+tsml_footer();

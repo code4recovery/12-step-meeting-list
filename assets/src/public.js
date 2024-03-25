@@ -940,28 +940,20 @@ jQuery(function ($) {
 	function typeaheadEnable() {
 		if (typeaheadEnabled) return;
 		if (tsml.debug) console.log('typeaheadEnable()');
-		$.when(
-			$.getJSON(tsml.ajaxurl + '?action=tsml_regions'),
-			$.getJSON(tsml.ajaxurl + '?action=tsml_groups'),
-			$.getJSON(tsml.ajaxurl + '?action=tsml_locations')
-		).done(function (data1, data2, data3) {
-			var search_data = data1[0].concat(data2[0], data3[0]);
+		$.getJSON(tsml.ajaxurl + '?action=tsml_typeahead').done(function (search_data) {
 			typeaheadEnabled = true;
 			$('#meetings #search input[name="query"]').autocomplete({
 				autoFocus: false,
 				source: search_data,
 				minLength: 1,
-				change: function (event, ui) {
-					console.log('Change! ', event, ui);
-				},
 				select: function (event, ui) {
 					const {item} = ui;
-					console.log('item: ', item);
+					if (tsml.debug) console.log('item: ', item);
 					if (item.type == 'region') {
 						$('#region li').removeClass('active');
 						var active = $('#region li a[data-id="' + item.id + '"]');
 						active.parent().addClass('active');
-						console.log('Active: ', active);
+						if (tsml.debug) console.log('Active: ', active);
 						$('#region span.selected').html(active.html());
 						$('#search input[name="query"]').val('');
 						event.preventDefault();
