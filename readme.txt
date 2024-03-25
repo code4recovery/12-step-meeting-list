@@ -2,7 +2,7 @@
 Contributors: Code for Recovery
 Requires at least: 3.2
 Requires PHP: 5.6
-Tested up to: 6.4.3
+Tested up to: 6.5
 Stable tag: 3.15
 
 This plugin helps twelve step recovery programs list their meetings. It standardizes addresses, and displays results in a searchable list and map.
