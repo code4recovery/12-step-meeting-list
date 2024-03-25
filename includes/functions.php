@@ -1044,11 +1044,18 @@ function tsml_get_meeting($meeting_id = false)
     if (empty($meeting->approximate)) $meeting->approximate = 'no';
 
     //escape meeting values
+    $meeting->types = [];
     foreach ($custom as $key => $value) {
-        $meeting->{$key} = ($key == 'types') ? $value[0] : htmlentities($value[0], ENT_QUOTES);
+        if (is_array($value)) {
+            $value = count($value) ? $value[0] : '';
+        }
+        if ('types' === $key) {
+            $value = (array) maybe_unserialize($value);
+        } else {
+            $value = htmlentities(strval($value), ENT_QUOTES);
+        }
+        $meeting->{$key} = $value;
     }
-    if (empty($meeting->types)) $meeting->types = [];
-    if (!is_array($meeting->types)) $meeting->types = unserialize($meeting->types);
     $meeting->post_title = htmlentities($meeting->post_title, ENT_QUOTES);
     $meeting->notes = esc_html($meeting->post_content);
 

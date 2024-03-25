@@ -46,13 +46,17 @@ add_action('save_post', function ($post_id, $post, $update) {
     //sanitize strings (website, website_2, paypal are not included)
     $strings = ['post_title', 'location', 'formatted_address', 'mailing_address', 'venmo', 'square', 'post_status', 'group', 'last_contact', 'conference_url_notes', 'conference_phone', 'conference_phone_notes'];
     foreach ($strings as $string) {
-        $_POST[$string] = stripslashes(sanitize_text_field($_POST[$string]));
+        if (isset($_POST[$string])) {
+            $_POST[$string] = stripslashes(sanitize_text_field($_POST[$string]));
+        }
     }
 
     //sanitize textareas
     $textareas = ['post_content', 'location_notes', 'group_notes'];
     foreach ($textareas as $textarea) {
-        $_POST[$textarea] = stripslashes(tsml_sanitize_text_area($_POST[$textarea]));
+        if (isset($_POST[$textarea])) {
+            $_POST[$textarea] = stripslashes(tsml_sanitize_text_area($_POST[$textarea]));
+        }
     }
 
     //get current meeting state to compare against
