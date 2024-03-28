@@ -9,7 +9,7 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"POT-Creation-Date: 2024-03-28T19:34:15-04:00\n"
+"POT-Creation-Date: 2024-03-28T19:56:42-04:00\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "X-Generator: WP-CLI 2.10.0\n"
 "X-Domain: 12-step-meeting-list\n"
@@ -852,10 +852,10 @@ msgstr ""
 #: includes/admin_settings.php:233
 #: includes/admin_settings.php:261
 #: includes/admin_settings.php:387
-#: includes/admin_settings.php:451
-#: includes/admin_settings.php:470
-#: includes/admin_settings.php:561
-#: includes/admin_settings.php:594
+#: includes/admin_settings.php:453
+#: includes/admin_settings.php:472
+#: includes/admin_settings.php:563
+#: includes/admin_settings.php:596
 msgid "Add"
 msgstr ""
 
@@ -954,92 +954,92 @@ msgstr ""
 msgid "The following feed contains your publicly available meeting information."
 msgstr ""
 
-#: includes/admin_settings.php:399
-msgid "<a class=\"public_feed\" href=\"%s\" target=\"_blank\">Public Data Source</a>"
+#: includes/admin_settings.php:400
+msgid "Public Data Source"
 msgstr ""
 
-#: includes/admin_settings.php:411
+#: includes/admin_settings.php:413
 msgid "User Interface Display"
 msgstr ""
 
-#: includes/admin_settings.php:414
+#: includes/admin_settings.php:416
 msgid "Please select the user interface that is right for your site. Choose between our latest design that we call <b>TSML UI</b> or stay with the standard <b>Legacy UI</b>."
 msgstr ""
 
-#: includes/admin_settings.php:421
+#: includes/admin_settings.php:423
 msgid "Legacy UI"
 msgstr ""
 
-#: includes/admin_settings.php:424
+#: includes/admin_settings.php:426
 msgid "TSML UI"
 msgstr ""
 
-#: includes/admin_settings.php:435
+#: includes/admin_settings.php:437
 msgid "Maps"
 msgstr ""
 
-#: includes/admin_settings.php:438
+#: includes/admin_settings.php:440
 msgid "Display of maps requires an authorization key from <strong><a href=\"https://www.mapbox.com/\" target=\"_blank\">Mapbox</a></strong> or <strong><a href=\"https://console.cloud.google.com/home/\" target=\"_blank\">Google</a></strong>."
 msgstr ""
 
-#: includes/admin_settings.php:443
+#: includes/admin_settings.php:445
 msgid "Mapbox Access Token"
 msgstr ""
 
-#: includes/admin_settings.php:453
-#: includes/admin_settings.php:472
+#: includes/admin_settings.php:455
+#: includes/admin_settings.php:474
 msgid "Update"
 msgstr ""
 
-#: includes/admin_settings.php:460
+#: includes/admin_settings.php:462
 msgid "Google Maps API Key"
 msgstr ""
 
-#: includes/admin_settings.php:463
+#: includes/admin_settings.php:465
 msgid "Be sure to enable JavaScript Maps API (<a href=\"https://developers.google.com/maps/documentation/javascript/get-api-key\" target=\"_blank\">read more</a>)."
 msgstr ""
 
-#: includes/admin_settings.php:485
+#: includes/admin_settings.php:487
 msgid "About Us"
 msgstr ""
 
-#: includes/admin_settings.php:492
+#: includes/admin_settings.php:494
 msgid "This <b>12 Step Meeting List</b> plugin (TSML) is one of the free services offered by the nonprofit organization <b>Code For Recovery</b> whose volunteer members build and maintain technology services for recovery fellowships such as AA and Al-Anon."
 msgstr ""
 
-#: includes/admin_settings.php:504
+#: includes/admin_settings.php:506
 msgid "Need Help?"
 msgstr ""
 
-#: includes/admin_settings.php:508
+#: includes/admin_settings.php:510
 msgid "To get information about this product or our organization, simply use one of the linked buttons below which are great sources for information and answers."
 msgstr ""
 
-#: includes/admin_settings.php:517
+#: includes/admin_settings.php:519
 msgid "View Documentation"
 msgstr ""
 
-#: includes/admin_settings.php:521
+#: includes/admin_settings.php:523
 msgid "Ask a Question"
 msgstr ""
 
-#: includes/admin_settings.php:529
+#: includes/admin_settings.php:531
 msgid "Email Addresses"
 msgstr ""
 
-#: includes/admin_settings.php:534
+#: includes/admin_settings.php:536
 msgid "User Feedback Emails"
 msgstr ""
 
-#: includes/admin_settings.php:537
+#: includes/admin_settings.php:539
 msgid "Enable a meeting info feedback form by adding email addresses here."
 msgstr ""
 
-#: includes/admin_settings.php:567
+#: includes/admin_settings.php:569
 msgid "Change Notification Emails"
 msgstr ""
 
-#: includes/admin_settings.php:570
+#: includes/admin_settings.php:572
 msgid "Receive notifications of meeting changes at the email addresses below."
 msgstr ""
 
