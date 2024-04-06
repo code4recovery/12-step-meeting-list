@@ -25,14 +25,14 @@ $tsml_meeting_attendance_options = [
 
 //load the set of columns that should be present in the list (not sure why this shouldn't go after plugins_loaded below)
 $tsml_columns = [
-    'time' => 'Time',
-    'distance' => 'Distance',
-    'name' => 'Meeting',
-    'location_group' => 'Location / Group',
-    'address' => 'Address',
-    'region' => 'Region',
-    'district' => 'District',
-    'types' => 'Types',
+    'time' => __('Time', '12-step-meeting-list'),
+    'distance' => __('Distance', '12-step-meeting-list'),
+    'name' => __('Meeting', '12-step-meeting-list'),
+    'location_group' => __('Location / Group', '12-step-meeting-list'),
+    'address' => __('Address', '12-step-meeting-list'),
+    'region' => __('Region', '12-step-meeting-list'),
+    'district' => __('District', '12-step-meeting-list'),
+    'types' => __('Types', '12-step-meeting-list'),
 ];
 
 //list of valid conference providers (matches Meeting Guide app). set this to null in your theme if you don't want to validate
