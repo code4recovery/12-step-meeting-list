@@ -416,7 +416,7 @@ add_action('wp_ajax_tsml_import', function () {
                     }
                     $district_id = intval($term['term_id']);
 
-                    //can only have a subregion if you already have a region
+                    //can only have a subdistrict if you already have a district
                     if (!empty($meeting['sub_district'])) {
                         if (!$term = term_exists($meeting['sub_district'], 'tsml_district', $district_id)) {
                             $term = wp_insert_term($meeting['sub_district'], 'tsml_district', ['parent' => $district_id]);
@@ -473,7 +473,7 @@ add_action('wp_ajax_tsml_import', function () {
         }
 
         //add custom meeting fields if available
-        foreach (['types', 'data_source', 'conference_url', 'conference_url_notes', 'conference_phone', 'conference_phone_notes'] as $key) {
+        foreach (['types', 'data_source', 'conference_url', 'conference_url_notes', 'conference_phone', 'conference_phone_notes', 'source_formatted_address', 'source_slug', 'source_slug_modified'] as $key) {
             if (!empty($meeting[$key])) add_post_meta($meeting_id, $key, $meeting[$key]);
         }
 

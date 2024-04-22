@@ -6,7 +6,7 @@ if (!function_exists('tsml_import_page')) {
 
     function tsml_import_page()
     {
-        global $tsml_data_sources, $tsml_programs, $tsml_program, $tsml_nonce, $tsml_sharing, $tsml_slug, $tsml_debug;
+        global $tsml_data_sources, $tsml_programs, $tsml_program, $tsml_nonce, $tsml_sharing, $tsml_slug, $tsml_change_detect, $tsml_debug;
 
         // todo consider whether this check is necessary, since it is run from add_submenu_page() which is already checking for the same permission
         // potentially tsml_import_page() could be a closure within the call to add_submenu_page which would prevent it from being reused elsewhere
@@ -162,16 +162,13 @@ if (!function_exists('tsml_import_page')) {
             //initialize variables 
             $is_google_sheets_import = false;
             $import_updates = $db_ids_to_delete = $message_lines = [];
-            $tbl_col1_txt = __('Update Mode', '12-step-meeting-list');
-            $tbl_col2_txt = __('Meeting Name', '12-step-meeting-list');
-            $tbl_col3_txt = __('Day of Week', '12-step-meeting-list');
-            $tbl_col4_txt = __('Meeting Time', '12-step-meeting-list');
-            $tbl_col5_txt = __('Last Updated', '12-step-meeting-list');
+            $data_source_ids = '';
 
             //sanitize URL, name, and parent region id values
             $data_source_url = trim(esc_url_raw($_POST['tsml_add_data_source'], array('http', 'https')));
             $data_source_name = sanitize_text_field($_POST['tsml_add_data_source_name']);
             $data_source_parent_region_id = (int) $_POST['tsml_add_data_source_parent_region_id'];
+            $data_source_change_detect = sanitize_text_field($_POST['tsml_add_data_source_change_detect']);
 
             //try fetching	
             $response = wp_safe_remote_get($data_source_url, [
@@ -206,15 +203,14 @@ if (!function_exists('tsml_import_page')) {
                     tsml_delete_orphans();
 
                 } else {
-                    //process a previously registered feed import
-                    // This is the normal feed refresh operation when a data source already exists we want to set up to apply only the changes detected to the local db
+                    /* process a previously registered feed import
+                       This is the normal feed refresh operation when a data source already exists we want to set up to apply only the changes detected to the local db */
 
                     $is_feed_refresh = true;
-                    $tsml_data_sources = get_option('tsml_data_sources', []);
                     $data_source_last_import = intval($tsml_data_sources[$data_source_url]['last_import']);
 
                     //get updated feed import record set 
-                    $import_updates = @tsml_get_import_changes_only($meetings, $data_source_url, $data_source_parent_region_id, $data_source_last_import, $db_ids_to_delete, $message_lines);
+                    list($import_updates, $db_ids_to_delete, $message_lines) = tsml_get_import_changes_only($meetings, $data_source_url, $data_source_parent_region_id, $data_source_last_import);
 
                     //drop database records which are being updated, or removed from the feed 
                     tsml_delete($db_ids_to_delete);
@@ -223,10 +219,7 @@ if (!function_exists('tsml_import_page')) {
                     if (count($import_updates) === 0) {
                         if (count($db_ids_to_delete) !== 0) {
                             if ($tsml_debug) {
-                                $message = __('<p>Your meeting list is being updated to sync with those in the ' . $data_source_name . ' feed.</p>', '12-step-meeting-list');
-                                $message .= "<table border='1'><tbody><tr><th>$tbl_col1_txt</th><th>$tbl_col2_txt</th><th>$tbl_col3_txt</th><th>$tbl_col4_txt</th><th>$tbl_col5_txt</th></tr>";
-                                $message .= implode('', $message_lines);
-                                $message .= "</tbody></table>";
+                                $message = tsml_build_change_report($data_source_name, $message_lines);
                                 tsml_alert($message, 'info');
                             }
 
@@ -237,7 +230,8 @@ if (!function_exists('tsml_import_page')) {
                             update_option('tsml_data_sources', $tsml_data_sources);
 
                         } else {
-                            $message = __('<p>Your meeting list is already in sync with the records in the ' . $data_source_name . ' feed.<p>', '12-step-meeting-list');
+                            $translatable_msg = __('Your meeting list is already in sync with the feed from ', '12-step-meeting-list');
+                            $message = $translatable_msg . $data_source_name;
                             tsml_alert($message, 'success');
                         }
 
@@ -245,10 +239,7 @@ if (!function_exists('tsml_import_page')) {
 
                     } else {
                         if ($tsml_debug) {
-                            $message = __('<p>Your meeting list is being updated to sync with those in the ' . $data_source_name . ' feed.</p>', '12-step-meeting-list');
-                            $message .= "<table border='1'><tbody><tr><th>$tbl_col1_txt</th><th>$tbl_col2_txt</th><th>$tbl_col3_txt</th><th>$tbl_col4_txt</th><th>$tbl_col5_txt</th></tr>";
-                            $message .= implode('', $message_lines);
-                            $message .= "</tbody></table>";
+                            $message = tsml_build_change_report($data_source_name, $message_lines);
                             tsml_alert($message, 'info');
                         }
                     }
@@ -262,6 +253,7 @@ if (!function_exists('tsml_import_page')) {
                         'count_meetings' => 0,
                         'name' => $data_source_name,
                         'parent_region_id' => $data_source_parent_region_id,
+                        'change_detect' => $data_source_change_detect,
                         'type' => 'JSON',
                     ];
 
@@ -269,10 +261,13 @@ if (!function_exists('tsml_import_page')) {
 
                         //import ONLY the change detected import feed records
                         tsml_import_buffer_set($import_updates, $data_source_url, $data_source_parent_region_id, true);
-                    } else { //load everything
-                        // Create a cron job to run at least once daily 
-                        tsml_schedule_import_scan($data_source_url, $data_source_name);
 
+
+                    } else { //load everything
+                        // Create a cron job to run daily when Change Detection is enabled for a new data source
+                        if ($data_source_change_detect === 'enabled') {
+                            tsml_schedule_import_scan($data_source_url, $data_source_name);
+                        }
                         //import All the existing feed records
                         tsml_import_buffer_set($meetings, $data_source_url, $data_source_parent_region_id);
                     }
@@ -392,7 +387,9 @@ if (!function_exists('tsml_import_page')) {
                                     <th class="align-left">
                                         <?php _e('Parent Region', '12-step-meeting-list') ?>
                                     </th>
-
+                                    <th class="align-left">
+                                        <?php _e('Change Detection', '12-step-meeting-list') ?>
+                                    </th>
                                     <th class="align-center">
                                         <?php _e('Meetings', '12-step-meeting-list') ?>
                                     </th>
@@ -413,6 +410,8 @@ if (!function_exists('tsml_import_page')) {
                                                     value="<?php echo @$properties['name'] ?>">
                                                 <input type="hidden" name="tsml_add_data_source_parent_region_id"
                                                     value="<?php echo @$properties['parent_region_id'] ?>">
+                                                <input type="hidden" name="tsml_add_data_source_change_detect"
+                                                    value="<?php echo @$properties['change_detect'] ?>">
                                                 <input type="submit" value="Refresh" class="button button-small">
                                             </form>
                                         </td>
@@ -438,6 +437,17 @@ if (!function_exists('tsml_import_page')) {
                                                 $parent_region = $regions[$properties['parent_region_id']];
                                             }
                                             echo $parent_region;
+                                            ?>
+                                        </td>
+                                        <td>
+                                            <?php
+                                            $change_detect = null;
+                                            if (empty($properties['change_detect']) || $properties['change_detect'] == -1) {
+                                                $change_detect = __('Disabled', '12-step-meeting-list');
+                                            } else {
+                                                $change_detect = ucfirst($properties['change_detect']);
+                                            }
+                                            echo $change_detect;
                                             ?>
                                         </td>
                                         <td class="align-center count_meetings">
@@ -479,8 +489,16 @@ if (!function_exists('tsml_import_page')) {
                                 'show_option_none' => __('Parent Region…', '12-step-meeting-list'),
                             )
                         ) ?>
+                        <select name="tsml_add_data_source_change_detect" id="tsml_change_detect">
+                            <?php
+                            foreach (array('disabled' => __('Change Detection Disabled', '12-step-meeting-list'), 'enabled' => __('Change Detection Enabled', '12-step-meeting-list'), ) as $key => $value) { ?>
+                                <option value="<?php echo $key ?>" <?php selected($tsml_change_detect, $key) ?>>
+                                    <?php echo $value ?>
+                                </option>
+                            <?php } ?>
+                        </select>
 
-                        <input type="submit" class="button" value="<?php _e('Add Data Source', '12-step-meeting-list') ?>">
+        <input type="submit" class="button" value="<?php _e('Add Data Source', '12-step-meeting-list') ?>">
                     </form>
                 </div>
 
