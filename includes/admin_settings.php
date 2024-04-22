@@ -396,7 +396,9 @@ if (!function_exists('tsml_settings_page')) {
                                     <?php _e('The following feed contains your publicly available meeting information.', '12-step-meeting-list') ?>
                                 </p>
                                 <p>
-                                    <?php printf(__('<a class="public_feed" href="%s" target="_blank">Public Data Source</a>', '12-step-meeting-list'), admin_url('admin-ajax.php?action=meetings')) ?>
+                                    <a class="public_feed" href="<?php echo esc_attr(admin_url('admin-ajax.php?action=meetings')); ?>" target="_blank">
+                                        <?php echo __('Public Data Source', '12-step-meeting-list'); ?>
+                                    </a>
                                 </p>
                             </div>
                         <?php } ?>
