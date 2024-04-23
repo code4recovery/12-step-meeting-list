@@ -2238,9 +2238,7 @@ function tsml_get_import_changes_only($feed_meetings, $data_source_url, $data_so
             if (isset($meeting['id'])) {
                 $meeting_id = $meeting['id'];
             }
-            if (isset($meeting['name'])) {
-                $meeting_name = $meeting['name'];
-            }
+            $meeting_name = isset($meeting['name']) ? $meeting['name'] : null; 
             if (array_key_exists('slug', $meeting)) {
                 $meeting_slug = strtolower($meeting['slug']);
             }
@@ -2281,21 +2279,13 @@ function tsml_get_import_changes_only($feed_meetings, $data_source_url, $data_so
         if (!$they_are_in_sync) {
             array_push($import_updates, $meeting);
 
-            if (isset($meeting_name)) {
-                if ($is_matched) {
-                    $meeting_name_linked = '<a href=' . $db_meeting['guid'] . ' target="_blank" rel="noopener noreferrer">' . $meeting_name . '</a>';
-                } else {
-                    $permalink = isset($meeting_id) ? get_permalink($meeting_id) : $meeting_slug;
-                    $meeting_name_linked = '<a href=' . $permalink . ' target="_blank" rel="noopener noreferrer">' . $meeting_name . '</a>';
-                }
-            }
-
             $meeting_time_formatted = isset($meeting_time) ? date(get_option('time_format'), strtotime($meeting_time)) : null;
             $location = isset($meeting['location']) ? $meeting['location'] : null;
             $db_value = @is_array($db_meeting[$chng_detected_key]) ? @implode($db_meeting[$chng_detected_key]) : @$db_meeting[$chng_detected_key];
             $import_value = @is_array($meeting[$chng_detected_key]) ? @implode($meeting[$chng_detected_key]) : @$meeting[$chng_detected_key];
 
             if ($is_matched) {
+                $meeting_name_linked = '<a href=' . $db_meeting['guid'] . ' target="_blank" rel="noopener noreferrer">' . $meeting_name . '</a>';
                 $message = "<tr style='color:gray;'><td>Change</td><td>$meeting_name_linked</td><td>$day_of_week</td><td>$meeting_time_formatted</td><td>$location</td><td>$chng_detected_key</td><td>$db_value</td><td>$import_value</td></tr>";
 
                 //add changed record id to list of db records to be removed (changes will get added back in by the importer)
@@ -2303,6 +2293,9 @@ function tsml_get_import_changes_only($feed_meetings, $data_source_url, $data_so
             } else {
                 $add_new_key = 'slug';
                 $add_new_slug = isset($meeting['slug']) ? $meeting['slug'] : null;
+                $parts = parse_url(strtolower($data_source_url));
+                $new_link_url = $parts['scheme'] . '://' . $parts['host'] . '/' . $add_new_slug;
+                $meeting_name_linked = '<a href=' . $new_link_url . ' target="_blank" rel="noopener noreferrer">' . $meeting_name . '</a>';
 
                 //store the source_slug in the postmeta table
                 if (isset($meeting['id']) && isset($meeting['source_slug'])) {
@@ -2413,11 +2406,11 @@ function tsml_compare_meetings($db_meeting, $import_meeting, $data_source_last_u
         'author',
         'conference_phone',
         'district', 'sub-district',
-        'email', 
+        'email',
         'last_contact',
         'location_group',
         'mailing_address',
-        'paypal', 'square', 'venmo', 
+        'paypal', 'square', 'venmo',
         'website', 'website_2',
         'contact1_name', 'contact1_email', 'contact1_phone',
         'contact2_name', 'contact2_email', 'contact2_phone',
