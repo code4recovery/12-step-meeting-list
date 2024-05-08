@@ -1683,7 +1683,7 @@ function tsml_import_buffer_set($meetings, $data_source_url = null, $data_source
 
         //make sure we're not double-listing types
         $meetings[$i]['types'] = array_unique($meetings[$i]['types']);
-
+	    
         //clean up
         foreach (['address', 'city', 'state', 'postal_code', 'country', 'updated'] as $key) {
             if (isset($meetings[$i][$key])) unset($meetings[$i][$key]);
