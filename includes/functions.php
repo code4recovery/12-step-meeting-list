@@ -1688,7 +1688,7 @@ function tsml_import_buffer_set($meetings, $data_source_url = null, $data_source
         if (!empty($tsml_custom_meeting_fields)) {
            foreach ($tsml_custom_meeting_fields as $key  => $value) {
                 //check if this key is in our list of custom fields
-                if (array_key_exists($meetings[$i][$key], $tsml_custom_meeting_fields) && !empty($meetings[$i][$key])) {
+                if (array_key_exists($key, $meetings[$i]) && !empty($meetings[$i][$key])) {
                     if ( is_array($meetings[$i][$key]) || is_object($meetings[$i][$key]) ) {
                         $value = implode(" ", $meetings[$i][$key]);
                     } else {
