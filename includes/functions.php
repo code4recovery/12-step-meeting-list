@@ -1684,6 +1684,22 @@ function tsml_import_buffer_set($meetings, $data_source_url = null, $data_source
         //make sure we're not double-listing types
         $meetings[$i]['types'] = array_unique($meetings[$i]['types']);
 
+        /* import custom user-defined meeting fields from CSV  */
+        if (!empty($tsml_custom_meeting_fields)) {
+           foreach ($tsml_custom_meeting_fields as $key  => $value) {
+                //check if this key is in our list of custom fields
+                if (array_key_exists($meetings[$i][$key], $tsml_custom_meeting_fields) && !empty($meetings[$i][$key])) {
+                    if ( is_array($meetings[$i][$key]) || is_object($meetings[$i][$key]) ) {
+                        $value = implode(" ", $meetings[$i][$key]);
+                    } else {
+                        $value = (string)$meetings[$i][$key];
+                    }
+                    //update meta data with custom field data
+                    update_post_meta($meetings[$i]['id'], [$key], $value);
+                }
+            }
+        }
+	    
         //clean up
         foreach (['address', 'city', 'state', 'postal_code', 'country', 'updated'] as $key) {
             if (isset($meetings[$i][$key])) unset($meetings[$i][$key]);
