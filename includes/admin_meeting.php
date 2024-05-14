@@ -261,6 +261,26 @@ add_action('admin_init', function () {
             </div>
         <?php } ?>
 
+		<div class="meta_form_row">
+			<label for="timezone">
+				 <?php _e('Timezone', '12-step-meeting-list') ?>
+			</label>
+
+            <select name="timezone" id="timezone">
+				<?php
+				$selected_timezone = isset($meeting->timezone) ? $meeting->timezone : ''; // Allow null tz for backwards compatibility
+				$timezones = DateTimeZone::listIdentifiers(); 
+				foreach ($timezones as $timezone) {
+        echo '<option value="' . htmlspecialchars($timezone) . '"';
+        if ($timezone === $selected_timezone) {
+            echo ' selected';
+        }
+        echo '>' . htmlspecialchars($timezone) . '</option>';
+    }
+				?>
+            </select>
+		</div>
+
         <div class="meta_form_row">
             <label>
                 <?php _e('Map', '12-step-meeting-list') ?>

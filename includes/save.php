@@ -63,7 +63,7 @@ add_action('save_post', function ($post_id, $post, $update) {
     $old_meeting = null;
     if ($update) {
         $old_meeting = tsml_get_meeting($post_id);
-        $decode_keys = array('post_title', 'post_content', 'location', 'location_notes', 'group', 'group_notes');
+        $decode_keys = array('post_title', 'post_content', 'location', 'timezone', 'location_notes', 'group', 'group_notes');
         foreach ($decode_keys as $key) {
             if (!empty($old_meeting->{$key})) {
                 $old_meeting->{$key} = html_entity_decode($old_meeting->{$key});
@@ -183,9 +183,7 @@ add_action('save_post', function ($post_id, $post, $update) {
             if (empty($_POST['time'])) {
                 delete_post_meta($post->ID, 'time');
             } else {
-                //$time_temp = $old_meeting->time;
                 update_post_meta($post->ID, 'time', $_POST['time']);
-                //if ($time_temp != $old_meeting->time) die('what the fuck');
             }
         }
 
@@ -297,6 +295,16 @@ add_action('save_post', function ($post_id, $post, $update) {
             update_post_meta($location_id, 'formatted_address', $_POST['formatted_address']);
         }
     }
+
+	// save timezone
+	if (!$update || strcmp($old_meeting->timezone, $_POST['timezone']) !==0) {
+		$changes[] = 'timezone'	;
+		if (empty($_POST['timezone'])) {
+			delete_post_meta($post->ID, 'timezone');
+		} else {
+			update_post_meta($post->ID, 'timezone', $_POST['timezone']);
+		}
+	}
 
     //set parent on this post (or all meetings at location) without re-triggering the save_posts hook (update 7/25/17: removing post_status from this)
     if (!$update || ($old_meeting->post_parent != $location_id)) {
