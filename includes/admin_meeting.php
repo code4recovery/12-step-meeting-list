@@ -87,7 +87,9 @@ add_action('admin_init', function () {
                     class="checkboxes<?php if (!empty($tsml_types_in_use) && count($tsml_types_in_use) !== count($tsml_programs[$tsml_program]['types'])) { ?> has_more<?php } ?>">
                     <?php
                     foreach ($tsml_programs[$tsml_program]['types'] as $key => $type) {
-                        if ($key == 'ONL' || $key == 'TC') continue; //hide "Online Meeting" since it's not manually settable, neither is location Temporarily Closed
+                        if ($key == 'ONL' || $key == 'TC') {
+                            continue;
+                        } //hide "Online Meeting" since it's not manually settable, neither is location Temporarily Closed
                         ?>
                         <label <?php if (!empty($tsml_types_in_use) && !in_array($key, $tsml_types_in_use)) {
                             echo ' class="not_in_use"';
@@ -244,20 +246,20 @@ add_action('admin_init', function () {
                 </label>
             </div>
         <?php }
-            if (wp_count_terms('tsml_region')) { ?>
+        if (wp_count_terms('tsml_region')) { ?>
             <div class="meta_form_row">
                 <label for="region">
                     <?php _e('Region', '12-step-meeting-list') ?>
                 </label>
                 <?php wp_dropdown_categories([
-                        'name' => 'region',
-                        'taxonomy' => 'tsml_region',
-                        'hierarchical' => true,
-                        'hide_empty' => false,
-                        'orderby' => 'name',
-                        'selected' => empty($location->region_id) ? null : $location->region_id,
-                        'show_option_none' => __('Region', '12-step-meeting-list'),
-                    ]) ?>
+                    'name' => 'region',
+                    'taxonomy' => 'tsml_region',
+                    'hierarchical' => true,
+                    'hide_empty' => false,
+                    'orderby' => 'name',
+                    'selected' => empty($location->region_id) ? null : $location->region_id,
+                    'show_option_none' => __('Region', '12-step-meeting-list'),
+                ]) ?>
             </div>
         <?php } ?>
 
@@ -266,18 +268,16 @@ add_action('admin_init', function () {
 				 <?php _e('Timezone', '12-step-meeting-list') ?>
 			</label>
 
-            <select name="timezone" id="timezone">
 				<?php
-				$selected_timezone = isset($meeting->timezone) ? $meeting->timezone : ''; // Allow null tz for backwards compatibility
-				$timezones = DateTimeZone::listIdentifiers(); 
-				foreach ($timezones as $timezone) {
-        echo '<option value="' . htmlspecialchars($timezone) . '"';
-        if ($timezone === $selected_timezone) {
-            echo ' selected';
-        }
-        echo '>' . htmlspecialchars($timezone) . '</option>';
-    }
+					$selected_timezone = isset($meeting->timezone) ? $meeting->timezone : ''; // Allow null tz for backwards compatibility
+					$timezones = DateTimeZone::listIdentifiers();
 				?>
+            <select name="timezone" id="timezone">
+				<?php foreach ($timezones as $timezone) : ?>
+				<option value="<?echo esc_attr($timezone);?>" <?php selected($timezone, $selected_timezone);?>>
+						<?php echo esc_html($timezone); ?>
+					</option>
+				<?php endforeach; ?>
             </select>
 		</div>
 
@@ -300,10 +300,10 @@ add_action('admin_init', function () {
                 </label>
                 <ol>
                     <?php foreach ($meetings as $m) {
-                            if ($m['id'] != $meeting->ID) {
-                                $m['name'] = '<a href="' . get_edit_post_link($m['id']) . '">' . $m['name'] . '</a>';
-                            }
-                            ?>
+                        if ($m['id'] != $meeting->ID) {
+                            $m['name'] = '<a href="' . get_edit_post_link($m['id']) . '">' . $m['name'] . '</a>';
+                        }
+                        ?>
                         <li>
                             <span>
                                 <?php echo tsml_format_day_and_time(@$m['day'], @$m['time'], ' ', true) ?>

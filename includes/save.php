@@ -44,7 +44,7 @@ add_action('save_post', function ($post_id, $post, $update) {
     $update = ($post->post_date !== $post->post_modified);
 
     //sanitize strings (website, website_2, paypal are not included)
-    $strings = ['post_title', 'location', 'formatted_address', 'mailing_address', 'venmo', 'square', 'post_status', 'group', 'last_contact', 'conference_url_notes', 'conference_phone', 'conference_phone_notes'];
+    $strings = ['post_title', 'location', 'formatted_address', 'timezone', 'mailing_address', 'venmo', 'square', 'post_status', 'group', 'last_contact', 'conference_url_notes', 'conference_phone', 'conference_phone_notes'];
     foreach ($strings as $string) {
         if (isset($_POST[$string])) {
             $_POST[$string] = stripslashes(sanitize_text_field($_POST[$string]));
@@ -296,15 +296,15 @@ add_action('save_post', function ($post_id, $post, $update) {
         }
     }
 
-	// save timezone
-	if (!$update || strcmp($old_meeting->timezone, $_POST['timezone']) !==0) {
-		$changes[] = 'timezone'	;
-		if (empty($_POST['timezone'])) {
-			delete_post_meta($post->ID, 'timezone');
-		} else {
-			update_post_meta($post->ID, 'timezone', $_POST['timezone']);
-		}
-	}
+    // save timezone
+    if (!$update || strcmp($old_meeting->timezone, $_POST['timezone']) !== 0) {
+        $changes[] = 'timezone'	;
+		if (!in_array($_POST['timezone'], DateTimeZone::listIdentifiers())) {
+            delete_post_meta($post->ID, 'timezone');
+        } else {
+            update_post_meta($post->ID, 'timezone', $_POST['timezone']);
+        }
+    }
 
     //set parent on this post (or all meetings at location) without re-triggering the save_posts hook (update 7/25/17: removing post_status from this)
     if (!$update || ($old_meeting->post_parent != $location_id)) {
