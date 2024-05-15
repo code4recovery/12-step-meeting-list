@@ -299,7 +299,7 @@ add_action('save_post', function ($post_id, $post, $update) {
     // save timezone
     if (!$update || strcmp($old_meeting->timezone, $_POST['timezone']) !== 0) {
         $changes[] = 'timezone'	;
-		if (!in_array($_POST['timezone'], DateTimeZone::listIdentifiers())) {
+        if (!in_array($_POST['timezone'], DateTimeZone::listIdentifiers())) {
             delete_post_meta($post->ID, 'timezone');
         } else {
             update_post_meta($post->ID, 'timezone', $_POST['timezone']);

@@ -269,9 +269,9 @@ add_action('admin_init', function () {
 			</label>
 
 				<?php
-					$selected_timezone = isset($meeting->timezone) ? $meeting->timezone : ''; // Allow null tz for backwards compatibility
-					$timezones = DateTimeZone::listIdentifiers();
-				?>
+                    $selected_timezone = isset($meeting->timezone) ? $meeting->timezone : ''; // Allow null tz for backwards compatibility
+            $timezones = DateTimeZone::listIdentifiers();
+            ?>
             <select name="timezone" id="timezone">
 				<?php foreach ($timezones as $timezone) : ?>
 				<option value="<?echo esc_attr($timezone);?>" <?php selected($timezone, $selected_timezone);?>>
