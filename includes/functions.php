@@ -986,6 +986,7 @@ function tsml_get_locations()
             'approximate' => empty($location_meta[$post->ID]['approximate']) ? null : $location_meta[$post->ID]['approximate'],
             'latitude' => empty($location_meta[$post->ID]['latitude']) ? null : $location_meta[$post->ID]['latitude'],
             'longitude' => empty($location_meta[$post->ID]['longitude']) ? null : $location_meta[$post->ID]['longitude'],
+            'timezone' => empty($location_meta[$post->ID]['timezone']) ? null : $location_meta[$post->ID]['timezone'],
             'region_id' => $region_id,
             'region' => $region,
             'sub_region' => $sub_region,
@@ -1353,7 +1354,7 @@ function tsml_get_meta($type, $id = null)
     global $wpdb, $tsml_custom_meeting_fields, $tsml_contact_fields;
     $keys = [
         'tsml_group' => array_keys($tsml_contact_fields),
-        'tsml_location' => ['formatted_address', 'latitude', 'longitude', 'approximate'],
+        'tsml_location' => ['formatted_address', 'latitude', 'longitude', 'approximate', 'timezone'],
         'tsml_meeting' => array_merge(
             [
                 'day',

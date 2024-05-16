@@ -263,23 +263,23 @@ add_action('admin_init', function () {
             </div>
         <?php } ?>
 
-		<div class="meta_form_row">
-			<label for="timezone">
-				 <?php _e('Timezone', '12-step-meeting-list') ?>
-			</label>
+        <div class="meta_form_row">
+            <label for="timezone">
+                <?php _e('Timezone', '12-step-meeting-list') ?>
+            </label>
 
-				<?php
-                    $selected_timezone = isset($meeting->timezone) ? $meeting->timezone : ''; // Allow null tz for backwards compatibility
+            <?php
             $timezones = DateTimeZone::listIdentifiers();
+            array_unshift($timezones, '');
             ?>
             <select name="timezone" id="timezone">
-				<?php foreach ($timezones as $timezone) : ?>
-				<option value="<?echo esc_attr($timezone);?>" <?php selected($timezone, $selected_timezone);?>>
-						<?php echo esc_html($timezone); ?>
-					</option>
-				<?php endforeach; ?>
+                <?php foreach ($timezones as $timezone) { ?>
+                    <option value="<?php echo esc_attr($timezone); ?>" <?php selected($timezone, $meeting->timezone); ?>>
+                        <?php echo esc_html($timezone); ?>
+                    </option>
+                <?php } ?>
             </select>
-		</div>
+        </div>
 
         <div class="meta_form_row">
             <label>
