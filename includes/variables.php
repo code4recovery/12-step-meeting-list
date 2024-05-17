@@ -112,6 +112,7 @@ $tsml_export_columns = [
     'types' => 'Types',
     'notes' => 'Notes',
     'location_notes' => 'Location Notes',
+    'timezone' => 'Timezone',
     'group' => 'Group',
     'district' => 'District',
     'sub_district' => 'Sub District',

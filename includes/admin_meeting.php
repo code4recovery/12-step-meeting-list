@@ -87,9 +87,7 @@ add_action('admin_init', function () {
                     class="checkboxes<?php if (!empty($tsml_types_in_use) && count($tsml_types_in_use) !== count($tsml_programs[$tsml_program]['types'])) { ?> has_more<?php } ?>">
                     <?php
                     foreach ($tsml_programs[$tsml_program]['types'] as $key => $type) {
-                        if ($key == 'ONL' || $key == 'TC') {
-                            continue;
-                        } //hide "Online Meeting" since it's not manually settable, neither is location Temporarily Closed
+                        if ($key == 'ONL' || $key == 'TC') continue; //hide "Online Meeting" since it's not manually settable, neither is location Temporarily Closed
                         ?>
                         <label <?php if (!empty($tsml_types_in_use) && !in_array($key, $tsml_types_in_use)) {
                             echo ' class="not_in_use"';
@@ -264,6 +262,18 @@ add_action('admin_init', function () {
         <?php } ?>
 
         <div class="meta_form_row">
+            <label>
+                <?php _e('Map', '12-step-meeting-list') ?>
+            </label>
+            <div id="map">
+                <?php if (empty($tsml_mapbox_key) && empty($tsml_google_maps_key)) { ?>
+                    <p>Enable maps on the <a href="<?php echo admin_url('edit.php?post_type=tsml_meeting&page=import') ?>">Import &
+                            Settings</a> page.</p>
+                <?php } ?>
+            </div>
+        </div>
+
+        <div class="meta_form_row">
             <label for="timezone">
                 <?php _e('Timezone', '12-step-meeting-list') ?>
             </label>
@@ -279,18 +289,6 @@ add_action('admin_init', function () {
                     </option>
                 <?php } ?>
             </select>
-        </div>
-
-        <div class="meta_form_row">
-            <label>
-                <?php _e('Map', '12-step-meeting-list') ?>
-            </label>
-            <div id="map">
-                <?php if (empty($tsml_mapbox_key) && empty($tsml_google_maps_key)) { ?>
-                    <p>Enable maps on the <a href="<?php echo admin_url('edit.php?post_type=tsml_meeting&page=import') ?>">Import &
-                            Settings</a> page.</p>
-                <?php } ?>
-            </div>
         </div>
 
         <?php if (count($meetings) > 1) { ?>

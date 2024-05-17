@@ -64,6 +64,7 @@ add_action('wp_ajax_tsml_locations', function () {
             'latitude' => $location['latitude'],
             'longitude' => $location['longitude'],
             'region' => $location['region_id'],
+            'timezone' => $location['timezone'],
             'notes' => html_entity_decode($location['location_notes']),
             'tokens' => tsml_string_tokens($location['location']),
         ];
@@ -449,6 +450,11 @@ add_action('wp_ajax_tsml_import', function () {
             add_post_meta($location_id, 'longitude', $geocoded['longitude']);
             add_post_meta($location_id, 'approximate', $geocoded['approximate']);
             wp_set_object_terms($location_id, $region_id, 'tsml_region');
+
+            // timezone
+            if (!empty($meeting['timezone']) && in_array($meeting['timezone'], DateTimeZone::listIdentifiers())) {
+                add_post_meta($location_id, 'timezone', $meeting['timezone']);
+            }
         }
 
         //save meeting to this location
