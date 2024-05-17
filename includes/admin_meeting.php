@@ -244,20 +244,20 @@ add_action('admin_init', function () {
                 </label>
             </div>
         <?php }
-        if (wp_count_terms('tsml_region')) { ?>
+            if (wp_count_terms('tsml_region')) { ?>
             <div class="meta_form_row">
                 <label for="region">
                     <?php _e('Region', '12-step-meeting-list') ?>
                 </label>
                 <?php wp_dropdown_categories([
-                    'name' => 'region',
-                    'taxonomy' => 'tsml_region',
-                    'hierarchical' => true,
-                    'hide_empty' => false,
-                    'orderby' => 'name',
-                    'selected' => empty($location->region_id) ? null : $location->region_id,
-                    'show_option_none' => __('Region', '12-step-meeting-list'),
-                ]) ?>
+                        'name' => 'region',
+                        'taxonomy' => 'tsml_region',
+                        'hierarchical' => true,
+                        'hide_empty' => false,
+                        'orderby' => 'name',
+                        'selected' => empty($location->region_id) ? null : $location->region_id,
+                        'show_option_none' => __('Region', '12-step-meeting-list'),
+                    ]) ?>
             </div>
         <?php } ?>
 
@@ -298,10 +298,10 @@ add_action('admin_init', function () {
                 </label>
                 <ol>
                     <?php foreach ($meetings as $m) {
-                        if ($m['id'] != $meeting->ID) {
-                            $m['name'] = '<a href="' . get_edit_post_link($m['id']) . '">' . $m['name'] . '</a>';
-                        }
-                        ?>
+                            if ($m['id'] != $meeting->ID) {
+                                $m['name'] = '<a href="' . get_edit_post_link($m['id']) . '">' . $m['name'] . '</a>';
+                            }
+                            ?>
                         <li>
                             <span>
                                 <?php echo tsml_format_day_and_time(@$m['day'], @$m['time'], ' ', true) ?>
