@@ -15,7 +15,7 @@ function tsml_ajax_info()
 {
     global $tsml_sharing, $tsml_program, $tsml_data_sources, $tsml_google_maps_key, $tsml_mapbox_key, $tsml_sharing_keys,
     $tsml_contact_display, $tsml_cache_writable, $tsml_feedback_addresses, $tsml_user_interface, $tsml_notification_addresses,
-    $tsml_google_geocoding_key;
+    $tsml_google_geocoding_key, $tsml_timezone;
 
     $theme = wp_get_theme();
 
@@ -43,7 +43,7 @@ function tsml_ajax_info()
         ],
         'theme' => $theme->get_stylesheet(),
         'theme_parent' => $theme->exists() && $theme->parent() ? $theme->parent()->get_stylesheet() : null,
-        'timezone' => wp_timezone_string(),
+        'timezone' => $tsml_timezone,
         'versions' => [
             'php' => phpversion(),
             'tsml' => TSML_VERSION,
