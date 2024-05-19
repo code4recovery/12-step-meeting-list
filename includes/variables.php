@@ -112,6 +112,7 @@ $tsml_export_columns = [
     'types' => 'Types',
     'notes' => 'Notes',
     'location_notes' => 'Location Notes',
+    'timezone' => 'Timezone',
     'group' => 'Group',
     'district' => 'District',
     'sub_district' => 'Sub District',
@@ -579,6 +580,10 @@ $tsml_street_only = true;
 
 //for timing
 $tsml_timestamp = microtime(true);
+
+//timezone
+$default_tz = tsml_timezone_is_valid(wp_timezone_string()) ? wp_timezone_string() : null;
+$tsml_timezone = get_option('tsml_timezone', $default_tz);
 
 //for customizing TSML-UI
 $tsml_ui_config = [];
