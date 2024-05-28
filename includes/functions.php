@@ -1191,14 +1191,14 @@ function tsml_get_meetings($arguments = [], $from_cache = true, $full_export = f
                 'author' => get_the_author_meta('user_login', $post->post_author)
             ], $locations[$post->post_parent]);
 
-            /* include user-defined meeting fields */
+            // include user-defined meeting fields 
             if (!empty($tsml_custom_meeting_fields)) {
                 foreach ($tsml_custom_meeting_fields as $field => $title) {
                     if (!empty($meeting_meta[$post->ID][$field])) {
-                        $meeting[$field] = isset($meeting_meta[$post->ID][$field]) ? $meeting_meta[$post->ID][$field] : $meeting[$field];
+                        $meeting[$field] = $meeting_meta[$post->ID][$field];
                     }
                 }
-            }
+            } 
 
             // Include the data source when doing a full export
             if ($full_export && isset($meeting_meta[$post->ID]['data_source'])) {
@@ -1684,17 +1684,6 @@ function tsml_import_buffer_set($meetings, $data_source_url = null, $data_source
 
         //make sure we're not double-listing types
         $meetings[$i]['types'] = array_unique($meetings[$i]['types']);
-
-        /* import custom user-defined meeting fields from CSV */
-        if (!empty($tsml_custom_meeting_fields)) {
-            foreach ($tsml_custom_meeting_fields as $field => $title) {
-                if (array_key_exists($field, $meetings[$i]) && !empty($meetings[$i][$field])) {
-                    $meeting_id = (int) $meetings[$i]['id'];
-                    $meta_value = (string) $meetings[$i][$field];
-                    add_post_meta($meeting_id, $field, $meta_value);
-                }
-            }
-        }
 
         //clean up
         foreach (['address', 'city', 'state', 'postal_code', 'country', 'updated'] as $key) {

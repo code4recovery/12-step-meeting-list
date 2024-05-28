@@ -304,7 +304,8 @@ Yes, you will need to know the key name of the field. Then include an array in y
 == Changelog ==
 
 = 3.14.35 =
-* Add timezone support [more info](https://github.com/code4recovery/12-step-meeting-list/issues/930)
+* Add timezone support [more info] (https://github.com/code4recovery/12-step-meeting-list/issues/930)
+* Import custom fields from csv file [more info] (https://github.com/code4recovery/12-step-meeting-list/issues/1416)
 
 = 3.14.34 =
 * Fix PHP vulnerability [more info](https://github.com/code4recovery/12-step-meeting-list/issues/1415)
