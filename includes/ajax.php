@@ -487,16 +487,10 @@ add_action('wp_ajax_tsml_import', function () {
         if (!empty($tsml_custom_meeting_fields)) {
             foreach ($tsml_custom_meeting_fields as $field => $title) {
                 if (array_key_exists($field, $meeting) && !empty($meeting[$field])) {
-                    $import_id = (int) $meeting['id'];
                     $meta_value = (string) $meeting[$field];
-                    add_post_meta($import_id, $field, $meta_value);
+                    add_post_meta($meeting_id, $field, $meta_value);
                 }
             }
-            //update custom meeting field ids to new Post ID
-            $update_query = 'UPDATE ' . $wpdb->postmeta . ' ' .
-                'SET post_id = ' . $meeting_id . ' ' .
-                'WHERE post_id = ' . $meeting['id'];
-            $results = $wpdb->get_results($update_query);
         }
 
         // Add Group Id and group specific info if applicable
