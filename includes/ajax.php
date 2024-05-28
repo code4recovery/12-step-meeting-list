@@ -334,7 +334,7 @@ function tsml_ajax_geocode()
 //ajax function to import the meetings in the import buffer
 //used by admin_import.php
 add_action('wp_ajax_tsml_import', function () {
-    global $tsml_data_sources, $tsml_export_columns, $tsml_custom_meeting_fields, $wpdb;
+    global $tsml_data_sources, $tsml_custom_meeting_fields;
 
     tsml_require_meetings_permission();
 
