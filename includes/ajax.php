@@ -480,7 +480,7 @@ add_action('wp_ajax_tsml_import', function () {
 
         //add custom meeting fields if available
        foreach (['types', 'data_source', 'conference_url', 'conference_url_notes', 'conference_phone', 'conference_phone_notes'] as $key) {
-           if (!empty($meeting[$key])) if (!empty($meeting[$key])) add_post_meta($meeting_id, $key, $meeting[$key]);
+           if (!empty($meeting[$key])) add_post_meta($meeting_id, $key, $meeting[$key]);
        }
 
         //import custom user-defined meeting fields from CSV

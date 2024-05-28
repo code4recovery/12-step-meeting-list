@@ -1445,7 +1445,7 @@ function tsml_meeting_types($types)
 //called from admin_import.php (both CSV and JSON)
 function tsml_import_buffer_set($meetings, $data_source_url = null, $data_source_parent_region_id = null)
 {
-    global $tsml_programs, $tsml_program, $tsml_days, $tsml_meeting_attendance_options, $tsml_data_sources, $tsml_custom_meeting_fields;
+    global $tsml_programs, $tsml_program, $tsml_days, $tsml_meeting_attendance_options, $tsml_data_sources;
 
     if (strpos($data_source_url, "sheets.googleapis.com") !== false) {
         $meetings = tsml_import_reformat_googlesheet($meetings);
