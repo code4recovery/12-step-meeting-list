@@ -1447,7 +1447,7 @@ function tsml_import_buffer_set($meetings, $data_source_url = null, $data_source
 {
     global $tsml_programs, $tsml_program, $tsml_days, $tsml_meeting_attendance_options, $tsml_data_sources, $tsml_custom_meeting_fields;
 
-    if (@strpos($data_source_url, "sheets.googleapis.com") !== false) {
+    if (strpos($data_source_url, "sheets.googleapis.com") !== false) {
         $meetings = tsml_import_reformat_googlesheet($meetings);
     }
 
