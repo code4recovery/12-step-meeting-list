@@ -110,7 +110,7 @@ add_shortcode('tsml_types_list', function () {
 function tsml_ui()
 {
     global $tsml_mapbox_key, $tsml_nonce, $tsml_conference_providers, $tsml_language, $tsml_programs, $tsml_program, $tsml_ui_config,
-    $tsml_feedback_addresses, $tsml_cache, $tsml_cache_writable, $tsml_distance_units, $tsml_columns;
+    $tsml_feedback_addresses, $tsml_cache, $tsml_cache_writable, $tsml_distance_units, $tsml_columns, $tsml_timezone;
 
     //enqueue app script
     $js = defined('TSML_UI_PATH') ? TSML_UI_PATH : 'https://tsml-ui.code4recovery.org/app.js';
@@ -154,7 +154,7 @@ function tsml_ui()
 
     return '<div id="tsml-ui"
 					data-src="' . $data . '"
-					data-timezone="' . wp_timezone_string() . '"
+					data-timezone="' . $tsml_timezone . '"
 					data-mapbox="' . $tsml_mapbox_key . '"></div>';
 }
 add_shortcode('tsml_react', 'tsml_ui');
