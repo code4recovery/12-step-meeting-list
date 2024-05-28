@@ -23,7 +23,7 @@ add_filter('wp_insert_post_data', function ($post) {
 
 //handle all the metadata, location
 add_action('save_post', function ($post_id, $post, $update) {
-    global $tsml_nonce, $wpdb, $tsml_notification_addresses, $tsml_days, $tsml_contact_fields;
+    global $tsml_nonce, $wpdb, $tsml_notification_addresses, $tsml_days, $tsml_contact_fields, $tsml_custom_meeting_fields;
 
     //security
     if (defined('DOING_AUTOSAVE') && DOING_AUTOSAVE) {
@@ -414,6 +414,17 @@ add_action('save_post', function ($post_id, $post, $update) {
             delete_post_meta($contact_entity_id, $field);
         } else {
             update_post_meta($contact_entity_id, $field, tsml_sanitize($type, $_POST[$field]));
+        }
+    }
+
+    foreach ($tsml_custom_meeting_fields as $field => $title) {
+        if (!$update || @strcmp($old_meeting->{$field}, $_POST[$field]) !== 0) {
+            $changes[] = $field;
+        }
+        if (empty($_POST[$field])) {
+            delete_post_meta($post->ID, $field);
+        } else {
+            update_post_meta($post->ID, $field, tsml_sanitize($title, $_POST[$field]));
         }
     }
 
