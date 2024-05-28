@@ -15,7 +15,7 @@ function tsml_ajax_info()
 {
     global $tsml_sharing, $tsml_program, $tsml_data_sources, $tsml_google_maps_key, $tsml_mapbox_key, $tsml_sharing_keys,
     $tsml_contact_display, $tsml_cache_writable, $tsml_feedback_addresses, $tsml_user_interface, $tsml_notification_addresses,
-    $tsml_google_geocoding_key;
+    $tsml_google_geocoding_key, $tsml_timezone;
 
     $theme = wp_get_theme();
 
@@ -43,7 +43,7 @@ function tsml_ajax_info()
         ],
         'theme' => $theme->get_stylesheet(),
         'theme_parent' => $theme->exists() && $theme->parent() ? $theme->parent()->get_stylesheet() : null,
-        'timezone' => wp_timezone_string(),
+        'timezone' => $tsml_timezone,
         'versions' => [
             'php' => phpversion(),
             'tsml' => TSML_VERSION,
@@ -64,6 +64,7 @@ add_action('wp_ajax_tsml_locations', function () {
             'latitude' => $location['latitude'],
             'longitude' => $location['longitude'],
             'region' => $location['region_id'],
+            'timezone' => $location['timezone'],
             'notes' => html_entity_decode($location['location_notes']),
             'tokens' => tsml_string_tokens($location['location']),
         ];
@@ -333,7 +334,7 @@ function tsml_ajax_geocode()
 //ajax function to import the meetings in the import buffer
 //used by admin_import.php
 add_action('wp_ajax_tsml_import', function () {
-    global $tsml_data_sources;
+    global $tsml_data_sources, $tsml_export_columns, $tsml_custom_meeting_fields, $wpdb;
 
     tsml_require_meetings_permission();
 
@@ -416,7 +417,7 @@ add_action('wp_ajax_tsml_import', function () {
                     }
                     $district_id = intval($term['term_id']);
 
-                    //can only have a subregion if you already have a region
+                    //can only have a subdistrict if you already have a district
                     if (!empty($meeting['sub_district'])) {
                         if (!$term = term_exists($meeting['sub_district'], 'tsml_district', $district_id)) {
                             $term = wp_insert_term($meeting['sub_district'], 'tsml_district', ['parent' => $district_id]);
@@ -449,6 +450,11 @@ add_action('wp_ajax_tsml_import', function () {
             add_post_meta($location_id, 'longitude', $geocoded['longitude']);
             add_post_meta($location_id, 'approximate', $geocoded['approximate']);
             wp_set_object_terms($location_id, $region_id, 'tsml_region');
+
+            // timezone
+            if (!empty($meeting['timezone']) && in_array($meeting['timezone'], DateTimeZone::listIdentifiers())) {
+                add_post_meta($location_id, 'timezone', $meeting['timezone']);
+            }
         }
 
         //save meeting to this location
@@ -472,9 +478,19 @@ add_action('wp_ajax_tsml_import', function () {
             if (!empty($meeting['end_time'])) add_post_meta($meeting_id, 'end_time', $meeting['end_time']);
         }
 
-        //add custom meeting fields if available
+         //add custom meeting fields if available
         foreach (['types', 'data_source', 'conference_url', 'conference_url_notes', 'conference_phone', 'conference_phone_notes'] as $key) {
-            if (!empty($meeting[$key])) add_post_meta($meeting_id, $key, $meeting[$key]);
+            if (!empty($meeting[$key])) {
+                add_post_meta($meeting_id, $key, $meeting[$key]);
+            }
+        }
+
+        //when found, update ACF custom meeting field ids
+        if (!empty($tsml_custom_meeting_fields)) {
+            $update_query = 'UPDATE ' . $wpdb->postmeta . ' ' .
+                'SET post_id = ' . $meeting_id . ' ' .
+                'WHERE post_id = ' . $meeting['id'];
+            $results = $wpdb->get_results($update_query);
         }
 
         // Add Group Id and group specific info if applicable

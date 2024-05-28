@@ -986,6 +986,7 @@ function tsml_get_locations()
             'approximate' => empty($location_meta[$post->ID]['approximate']) ? null : $location_meta[$post->ID]['approximate'],
             'latitude' => empty($location_meta[$post->ID]['latitude']) ? null : $location_meta[$post->ID]['latitude'],
             'longitude' => empty($location_meta[$post->ID]['longitude']) ? null : $location_meta[$post->ID]['longitude'],
+            'timezone' => empty($location_meta[$post->ID]['timezone']) ? null : $location_meta[$post->ID]['timezone'],
             'region_id' => $region_id,
             'region' => $region,
             'sub_region' => $sub_region,
@@ -1190,11 +1191,11 @@ function tsml_get_meetings($arguments = [], $from_cache = true, $full_export = f
                 'author' => get_the_author_meta('user_login', $post->post_author)
             ], $locations[$post->post_parent]);
 
-            // include user-defined meeting fields
+            /* include user-defined meeting fields */
             if (!empty($tsml_custom_meeting_fields)) {
                 foreach ($tsml_custom_meeting_fields as $field => $title) {
                     if (!empty($meeting_meta[$post->ID][$field])) {
-                        $meeting[$field] = $meeting_meta[$post->ID][$field];
+                        $meeting[$field] = isset($meeting_meta[$post->ID][$field]) ? $meeting_meta[$post->ID][$field] : $meeting[$field];
                     }
                 }
             }
@@ -1353,7 +1354,7 @@ function tsml_get_meta($type, $id = null)
     global $wpdb, $tsml_custom_meeting_fields, $tsml_contact_fields;
     $keys = [
         'tsml_group' => array_keys($tsml_contact_fields),
-        'tsml_location' => ['formatted_address', 'latitude', 'longitude', 'approximate'],
+        'tsml_location' => ['formatted_address', 'latitude', 'longitude', 'approximate', 'timezone'],
         'tsml_meeting' => array_merge(
             [
                 'day',
@@ -1444,9 +1445,9 @@ function tsml_meeting_types($types)
 //called from admin_import.php (both CSV and JSON)
 function tsml_import_buffer_set($meetings, $data_source_url = null, $data_source_parent_region_id = null)
 {
-    global $tsml_programs, $tsml_program, $tsml_days, $tsml_meeting_attendance_options, $tsml_data_sources;
+    global $tsml_programs, $tsml_program, $tsml_days, $tsml_meeting_attendance_options, $tsml_data_sources, $tsml_custom_meeting_fields;
 
-    if (strpos($data_source_url, "sheets.googleapis.com") !== false) {
+    if (@strpos($data_source_url, "sheets.googleapis.com") !== false) {
         $meetings = tsml_import_reformat_googlesheet($meetings);
     }
 
@@ -1683,7 +1684,18 @@ function tsml_import_buffer_set($meetings, $data_source_url = null, $data_source
 
         //make sure we're not double-listing types
         $meetings[$i]['types'] = array_unique($meetings[$i]['types']);
-	    
+
+        /* import custom user-defined meeting fields from CSV */
+        if (!empty($tsml_custom_meeting_fields)) {
+            foreach ($tsml_custom_meeting_fields as $field => $title) {
+                if (array_key_exists($field, $meetings[$i]) && !empty($meetings[$i][$field])) {
+                    $meeting_id = (int) $meetings[$i]['id'];
+                    $meta_value = (string) $meetings[$i][$field];
+                    add_post_meta($meeting_id, $field, $meta_value);
+                }
+            }
+        }
+
         //clean up
         foreach (['address', 'city', 'state', 'postal_code', 'country', 'updated'] as $key) {
             if (isset($meetings[$i][$key])) unset($meetings[$i][$key]);

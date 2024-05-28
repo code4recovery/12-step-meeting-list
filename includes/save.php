@@ -23,7 +23,7 @@ add_filter('wp_insert_post_data', function ($post) {
 
 //handle all the metadata, location
 add_action('save_post', function ($post_id, $post, $update) {
-    global $tsml_nonce, $wpdb, $tsml_notification_addresses, $tsml_days, $tsml_contact_fields;
+    global $tsml_nonce, $wpdb, $tsml_notification_addresses, $tsml_days, $tsml_contact_fields, $tsml_custom_meeting_fields;
 
     //security
     if (defined('DOING_AUTOSAVE') && DOING_AUTOSAVE) {
@@ -44,7 +44,7 @@ add_action('save_post', function ($post_id, $post, $update) {
     $update = ($post->post_date !== $post->post_modified);
 
     //sanitize strings (website, website_2, paypal are not included)
-    $strings = ['post_title', 'location', 'formatted_address', 'mailing_address', 'venmo', 'square', 'post_status', 'group', 'last_contact', 'conference_url_notes', 'conference_phone', 'conference_phone_notes'];
+    $strings = ['post_title', 'location', 'formatted_address', 'timezone', 'mailing_address', 'venmo', 'square', 'post_status', 'group', 'last_contact', 'conference_url_notes', 'conference_phone', 'conference_phone_notes'];
     foreach ($strings as $string) {
         if (isset($_POST[$string])) {
             $_POST[$string] = stripslashes(sanitize_text_field($_POST[$string]));
@@ -63,7 +63,7 @@ add_action('save_post', function ($post_id, $post, $update) {
     $old_meeting = null;
     if ($update) {
         $old_meeting = tsml_get_meeting($post_id);
-        $decode_keys = array('post_title', 'post_content', 'location', 'location_notes', 'group', 'group_notes');
+        $decode_keys = array('post_title', 'post_content', 'location', 'timezone', 'location_notes', 'group', 'group_notes');
         foreach ($decode_keys as $key) {
             if (!empty($old_meeting->{$key})) {
                 $old_meeting->{$key} = html_entity_decode($old_meeting->{$key});
@@ -183,9 +183,7 @@ add_action('save_post', function ($post_id, $post, $update) {
             if (empty($_POST['time'])) {
                 delete_post_meta($post->ID, 'time');
             } else {
-                //$time_temp = $old_meeting->time;
                 update_post_meta($post->ID, 'time', $_POST['time']);
-                //if ($time_temp != $old_meeting->time) die('what the fuck');
             }
         }
 
@@ -295,6 +293,16 @@ add_action('save_post', function ($post_id, $post, $update) {
         if ($location_id && (!$update || html_entity_decode($old_meeting->formatted_address) != $_POST['formatted_address'])) {
             $changes[] = 'formatted_address';
             update_post_meta($location_id, 'formatted_address', $_POST['formatted_address']);
+        }
+    }
+
+    // save timezone
+    if (!$update || strcmp($old_meeting->timezone, $_POST['timezone']) !== 0) {
+        $changes[] = 'timezone'	;
+        if (!tsml_timezone_is_valid($_POST['timezone'])) {
+            delete_post_meta($location_id, 'timezone');
+        } else {
+            update_post_meta($location_id, 'timezone', $_POST['timezone']);
         }
     }
 
@@ -414,6 +422,17 @@ add_action('save_post', function ($post_id, $post, $update) {
             delete_post_meta($contact_entity_id, $field);
         } else {
             update_post_meta($contact_entity_id, $field, tsml_sanitize($type, $_POST[$field]));
+        }
+    }
+
+    foreach ($tsml_custom_meeting_fields as $field => $title) {
+        if (!$update || @strcmp($old_meeting->{$field}, $_POST[$field]) !== 0) {
+            $changes[] = $field;
+        }
+        if (empty($_POST[$field])) {
+            delete_post_meta($post->ID, $field);
+        } else {
+            update_post_meta($post->ID, $field, tsml_sanitize($title, $_POST[$field]));
         }
     }
 

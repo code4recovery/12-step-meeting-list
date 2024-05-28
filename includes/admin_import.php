@@ -17,7 +17,7 @@ if (!function_exists('tsml_import_page')) {
 
         //if posting a CSV, check for errors and add it to the import buffer
         if (isset($_FILES['tsml_import']) && isset($_POST['tsml_nonce']) && wp_verify_nonce($_POST['tsml_nonce'], $tsml_nonce)) {
-            ini_set('auto_detect_line_endings', 1); //to handle mac \r line endings
+            @ini_set('auto_detect_line_endings', 1); //to handle mac \r line endings
             $extension = explode('.', strtolower($_FILES['tsml_import']['name']));
             $extension = end($extension);
             if ($_FILES['tsml_import']['error'] > 0) {
@@ -92,7 +92,7 @@ if (!function_exists('tsml_import_page')) {
 
                             //associate
                             $meeting = array_combine($header, $meeting);
-                        }
+                        } 
 
                         //import into buffer, also done this way in data source import
                         tsml_import_buffer_set($meetings);
