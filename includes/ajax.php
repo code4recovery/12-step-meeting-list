@@ -479,18 +479,12 @@ add_action('wp_ajax_tsml_import', function () {
         }
 
         //add custom meeting fields if available
-       foreach (['types', 'data_source', 'conference_url', 'conference_url_notes', 'conference_phone', 'conference_phone_notes'] as $key) {
-           if (!empty($meeting[$key])) add_post_meta($meeting_id, $key, $meeting[$key]);
-       }
-
-        //import custom user-defined meeting fields from CSV
+        $custom_meeting_fields = ['types', 'data_source', 'conference_url', 'conference_url_notes', 'conference_phone', 'conference_phone_notes'];
         if (!empty($tsml_custom_meeting_fields)) {
-            foreach ($tsml_custom_meeting_fields as $field => $title) {
-                if (array_key_exists($field, $meeting) && !empty($meeting[$field])) {
-                    $meta_value = (string) $meeting[$field];
-                    add_post_meta($meeting_id, $field, $meta_value);
-                }
-            }
+            $custom_meeting_fields = array_merge($custom_meeting_fields, array_keys($tsml_custom_meeting_fields));
+        }
+        foreach ($custom_meeting_fields as $key) {
+            if (!empty($meeting[$key])) add_post_meta($meeting_id, $key, $meeting[$key]);
         }
 
         // Add Group Id and group specific info if applicable
