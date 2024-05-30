@@ -352,7 +352,7 @@ function tsml_ajax_geocodes()
 
     // include the google overrides
     if (!empty($tsml_google_overrides)) {
-        //$addresses = array_merge($addresses, $tsml_google_overrides);
+        $addresses = array_merge($addresses, $tsml_google_overrides);
     }
 
     // add useful links
