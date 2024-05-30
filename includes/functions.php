@@ -642,6 +642,8 @@ function tsml_geocode($address)
 {
     global $tsml_google_overrides;
 
+    $address = stripslashes($address);
+
     //check overrides first before anything
     if (array_key_exists($address, $tsml_google_overrides)) {
         if (empty($tsml_google_overrides[$address]['approximate'])) {
