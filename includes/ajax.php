@@ -331,6 +331,42 @@ function tsml_ajax_geocode()
     wp_send_json(tsml_geocode(@$_GET['address']));
 }
 
+//function: get a list of all the geocodes in the database
+//used: for debugging
+add_action('wp_ajax_tsml_geocodes', 'tsml_ajax_geocodes');
+add_action('wp_ajax_nopriv_tsml_geocodes', 'tsml_ajax_geocodes');
+function tsml_ajax_geocodes()
+{
+    global $tsml_google_overrides;
+
+    $addresses = tsml_get_option_array('tsml_addresses');
+
+    // handle get request to remove an address from the cache
+    if (isset($_GET['remove'])) {
+        $remove = stripslashes($_GET['remove']);
+        if (!empty($addresses[$remove])) {
+            unset($addresses[$remove]);
+            update_option('tsml_addresses', $addresses);
+        }
+    }
+
+    // include the google overrides
+    if (!empty($tsml_google_overrides)) {
+        //$addresses = array_merge($addresses, $tsml_google_overrides);
+    }
+
+    // add useful links
+    foreach ($addresses as $address => $geocode) {
+        $addresses[$address]['map_address'] = 'https://www.google.com/maps/search/?api=1&query=' . urlencode($geocode['formatted_address']);
+        $addresses[$address]['map_coordinates'] = 'https://www.google.com/maps/search/?api=1&query=' . urlencode($geocode['latitude'] . ',' . $geocode['longitude']);
+        if ($geocode['status'] === 'geocode') {
+            $addresses[$address]['remove'] = admin_url('admin-ajax.php?action=tsml_geocodes&remove=' . urlencode($address));
+        }
+    }
+    
+    wp_send_json($addresses);
+}
+
 //ajax function to import the meetings in the import buffer
 //used by admin_import.php
 add_action('wp_ajax_tsml_import', function () {

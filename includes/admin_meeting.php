@@ -278,7 +278,7 @@ add_action('admin_init', function () {
                 <?php _e('Timezone', '12-step-meeting-list') ?>
             </label>
 
-            <?php echo tsml_timezone_select($location->timezone) ?>
+            <?php echo tsml_timezone_select(@$location->timezone) ?>
         </div>
 
         <?php if (empty($location->timezone) && empty($tsml_timezone) && $tsml_user_interface === 'tsml_ui') {?>
