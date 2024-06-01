@@ -15,7 +15,7 @@ function tsml_ajax_info()
 {
     global $tsml_sharing, $tsml_program, $tsml_data_sources, $tsml_google_maps_key, $tsml_mapbox_key, $tsml_sharing_keys,
     $tsml_contact_display, $tsml_cache_writable, $tsml_feedback_addresses, $tsml_user_interface, $tsml_notification_addresses,
-    $tsml_google_geocoding_key;
+    $tsml_google_geocoding_key, $tsml_timezone;
 
     $theme = wp_get_theme();
 
@@ -43,7 +43,7 @@ function tsml_ajax_info()
         ],
         'theme' => $theme->get_stylesheet(),
         'theme_parent' => $theme->exists() && $theme->parent() ? $theme->parent()->get_stylesheet() : null,
-        'timezone' => wp_timezone_string(),
+        'timezone' => $tsml_timezone,
         'versions' => [
             'php' => phpversion(),
             'tsml' => TSML_VERSION,
@@ -64,6 +64,7 @@ add_action('wp_ajax_tsml_locations', function () {
             'latitude' => $location['latitude'],
             'longitude' => $location['longitude'],
             'region' => $location['region_id'],
+            'timezone' => $location['timezone'],
             'notes' => html_entity_decode($location['location_notes']),
             'tokens' => tsml_string_tokens($location['location']),
         ];
@@ -330,10 +331,46 @@ function tsml_ajax_geocode()
     wp_send_json(tsml_geocode(@$_GET['address']));
 }
 
+//function: get a list of all the geocodes in the database
+//used: for debugging
+add_action('wp_ajax_tsml_geocodes', 'tsml_ajax_geocodes');
+add_action('wp_ajax_nopriv_tsml_geocodes', 'tsml_ajax_geocodes');
+function tsml_ajax_geocodes()
+{
+    global $tsml_google_overrides;
+
+    $addresses = tsml_get_option_array('tsml_addresses');
+
+    // handle get request to remove an address from the cache
+    if (isset($_GET['remove'])) {
+        $remove = stripslashes($_GET['remove']);
+        if (!empty($addresses[$remove])) {
+            unset($addresses[$remove]);
+            update_option('tsml_addresses', $addresses);
+        }
+    }
+
+    // include the google overrides
+    if (!empty($tsml_google_overrides)) {
+        $addresses = array_merge($addresses, $tsml_google_overrides);
+    }
+
+    // add useful links
+    foreach ($addresses as $address => $geocode) {
+        $addresses[$address]['map_address'] = 'https://www.google.com/maps/search/?api=1&query=' . urlencode($geocode['formatted_address']);
+        $addresses[$address]['map_coordinates'] = 'https://www.google.com/maps/search/?api=1&query=' . urlencode($geocode['latitude'] . ',' . $geocode['longitude']);
+        if ($geocode['status'] === 'geocode') {
+            $addresses[$address]['remove'] = admin_url('admin-ajax.php?action=tsml_geocodes&remove=' . urlencode($address));
+        }
+    }
+    
+    wp_send_json($addresses);
+}
+
 //ajax function to import the meetings in the import buffer
 //used by admin_import.php
 add_action('wp_ajax_tsml_import', function () {
-    global $tsml_data_sources;
+    global $tsml_data_sources, $tsml_custom_meeting_fields;
 
     tsml_require_meetings_permission();
 
@@ -449,6 +486,11 @@ add_action('wp_ajax_tsml_import', function () {
             add_post_meta($location_id, 'longitude', $geocoded['longitude']);
             add_post_meta($location_id, 'approximate', $geocoded['approximate']);
             wp_set_object_terms($location_id, $region_id, 'tsml_region');
+
+            // timezone
+            if (!empty($meeting['timezone']) && in_array($meeting['timezone'], DateTimeZone::listIdentifiers())) {
+                add_post_meta($location_id, 'timezone', $meeting['timezone']);
+            }
         }
 
         //save meeting to this location
@@ -473,7 +515,11 @@ add_action('wp_ajax_tsml_import', function () {
         }
 
         //add custom meeting fields if available
-        foreach (['types', 'data_source', 'conference_url', 'conference_url_notes', 'conference_phone', 'conference_phone_notes', 'source_formatted_address', 'source_slug', 'source_slug_modified'] as $key) {
+        $custom_meeting_fields = ['types', 'data_source', 'conference_url', 'conference_url_notes', 'conference_phone', 'conference_phone_notes', 'source_formatted_address', 'source_slug', 'source_slug_modified']];
+        if (!empty($tsml_custom_meeting_fields)) {
+            $custom_meeting_fields = array_merge($custom_meeting_fields, array_keys($tsml_custom_meeting_fields));
+        }
+        foreach ($custom_meeting_fields as $key) {
             if (!empty($meeting[$key])) add_post_meta($meeting_id, $key, $meeting[$key]);
         }
 
