@@ -515,7 +515,7 @@ add_action('wp_ajax_tsml_import', function () {
         }
 
         //add custom meeting fields if available
-        $custom_meeting_fields = ['types', 'data_source', 'conference_url', 'conference_url_notes', 'conference_phone', 'conference_phone_notes', 'source_formatted_address', 'source_slug', 'source_slug_modified']];
+        $custom_meeting_fields = ['types', 'data_source', 'conference_url', 'conference_url_notes', 'conference_phone', 'conference_phone_notes', 'source_formatted_address', 'source_slug', 'source_slug_modified'];
         if (!empty($tsml_custom_meeting_fields)) {
             $custom_meeting_fields = array_merge($custom_meeting_fields, array_keys($tsml_custom_meeting_fields));
         }

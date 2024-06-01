@@ -306,7 +306,18 @@ Yes, you will need to know the key name of the field. Then include an array in y
 = 3.15 =
 * Modifies Import Data Source feature so that only the changes detected between an import feed and the local database are applied as updates. [more info](https://github.com/code4recovery/12-step-meeting-list/issues/1075)
 
+= 3.14.35 =
+* Add timezone support [more info](https://github.com/code4recovery/12-step-meeting-list/issues/930)
+* Import custom fields from CSV file [more info](https://github.com/code4recovery/12-step-meeting-list/issues/1416)
+* New tools to debug geocode cache [more info](https://github.com/code4recovery/12-step-meeting-list/issues/1432)
+
+= 3.14.34 =
+* Fix PHP vulnerability [more info](https://github.com/code4recovery/12-step-meeting-list/issues/1415)
+* Fix PHP deprecation warning [more info](https://github.com/code4recovery/12-step-meeting-list/issues/1399)
+* Improve coverage of translatable strings [more info](https://github.com/code4recovery/12-step-meeting-list/issues/1402)
+
 = 3.14.33 =
+
 * Fix PHP warning [more info](https://github.com/code4recovery/12-step-meeting-list/issues/1366)
 * Update "tested up to" value [more info](https://github.com/code4recovery/12-step-meeting-list/issues/1390)
 
