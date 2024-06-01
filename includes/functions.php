@@ -1193,8 +1193,8 @@ function tsml_get_meetings($arguments = [], $from_cache = true, $full_export = f
                 'author' => get_the_author_meta('user_login', $post->post_author)
             ], $locations[$post->post_parent]);
 
-            // include user-defined meeting fields
-            if (!empty($tsml_custom_meeting_fields)) {
+            // include user-defined meeting fields when doing a full export
+            if ($full_export && !empty($tsml_custom_meeting_fields)) {
                 foreach ($tsml_custom_meeting_fields as $field => $title) {
                     if (!empty($meeting_meta[$post->ID][$field])) {
                         $meeting[$field] = $meeting_meta[$post->ID][$field];
