@@ -594,6 +594,9 @@ $tsml_days = $tsml_days_order = $tsml_programs = $tsml_types_in_use = $tsml_stri
 //string url for the meeting finder, or false for no automatic archive page
 if (!isset($tsml_slug)) $tsml_slug = null;
 
+//toggle debug mode
+$tsml_debug = false;
+
 // set up globals, common variables once plugins are loaded, but before init
 function tsml_load_config()
 {
@@ -1427,7 +1430,6 @@ function tsml_load_config()
     $tsml_types_in_use = tsml_get_option_array('tsml_types_in_use');
     if (!is_array($tsml_types_in_use)) $tsml_types_in_use = [];
 }
-;
 
 add_action('plugins_loaded', 'tsml_load_config');
 // load config if we always passed plugins_loaded action
