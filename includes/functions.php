@@ -2081,8 +2081,11 @@ function tsml_sanitize_data_sort($string)
     }
 
     # Unicode-aware lowercase of characters in string
-    if (function_exists('mb_strtolower'))
-    return mb_strtolower($t);
+    if (function_exists('mb_strtolower')) {
+        return mb_strtolower($t);
+    } else {
+        return strtolower($t);
+    }
 }
 
 
