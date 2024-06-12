@@ -1471,11 +1471,14 @@ function tsml_import_buffer_set($meetings, $data_source_url = null, $data_source
     $user_id = get_current_user_id();
 
     //convert the array to UTF-8
-    array_walk_recursive($meetings, function (&$item) {
-        if (!mb_detect_encoding($item, 'utf-8', true)) {
-            $item = utf8_encode($item);
-        }
-    });
+    if (function_exists('mb_detect_encoding')) {
+        array_walk_recursive($meetings, function ($value) {
+            if (!mb_detect_encoding($value, 'utf-8', true)) {
+                return (string) mb_convert_encoding($value, 'UTF-8', 'auto');
+            }
+            return $value;
+        });
+    }
 
     //trim everything
     array_walk_recursive($meetings, function ($value) {
@@ -2078,6 +2081,7 @@ function tsml_sanitize_data_sort($string)
     }
 
     # Unicode-aware lowercase of characters in string
+    if (function_exists('mb_strtolower'))
     return mb_strtolower($t);
 }
 

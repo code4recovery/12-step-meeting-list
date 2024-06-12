@@ -3,7 +3,7 @@ Contributors: Code for Recovery
 Requires at least: 3.2
 Requires PHP: 5.6
 Tested up to: 6.5
-Stable tag: 3.14.35
+Stable tag: 3.14.36
 
 This plugin helps twelve step recovery programs list their meetings. It standardizes addresses, and displays results in a searchable list and map.
 
@@ -302,6 +302,9 @@ Yes, you will need to know the key name of the field. Then include an array in y
 1. Edit location
 
 == Changelog ==
+
+= 3.14.36 =
+* Fix error when multibyte functions are not installed
 
 = 3.14.35 =
 * Add timezone support [more info](https://github.com/code4recovery/12-step-meeting-list/issues/930)
