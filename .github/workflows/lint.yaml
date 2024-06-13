@@ -1,0 +1,22 @@
+name: lint
+on: [push, pull_request]
+jobs:
+  linting:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: prettier
+        run: npx prettier --write src/**/*.js
+      - name: PHP-CS-Fixer
+        uses: docker://oskarstark/php-cs-fixer-ga
+        with:
+          args: --rules=@PSR12 --diff --dry-run
+      - name: Check for modified files
+        id: git-check
+        run: echo "modified=$(if git diff-index --quiet HEAD --; then echo "false"; else echo "true"; fi)" >> $GITHUB_OUTPUT
+      - name: Push changes
+        if: steps.git-check.outputs.modified == 'true'
+        run: |
+          git remote set-url origin https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }}
+          git commit -am "Linted changes"
+          git push
