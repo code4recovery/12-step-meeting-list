@@ -5,8 +5,12 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - name: prettier
-        run: npx prettier --write src/**/*.js
+      - name: Set up Node.js for prettier
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+      - name: Install & Run Prettier
+        run: npm install prettier --save-dev && npx prettier --write assets/js/*.js
       - name: PHP-CS-Fixer
         uses: docker://oskarstark/php-cs-fixer-ga
         with:
@@ -19,4 +23,5 @@ jobs:
         run: |
           git remote set-url origin https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }}
           git commit -am "Linted changes"
+          git push --set-upstream origin CICDSupport
           git push
