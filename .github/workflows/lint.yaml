@@ -14,7 +14,7 @@ jobs:
       - name: PHP-CS-Fixer
         uses: docker://oskarstark/php-cs-fixer-ga
         with:
-          args: --rules=@PSR12 --diff --dry-run
+          args: --config=.php-cs-fixer.dist.php --diff --dry-run --verbose --using-cache=no
       - name: Check for modified files
         id: git-check
         run: echo "modified=$(if git diff-index --quiet HEAD --; then echo "false"; else echo "true"; fi)" >> $GITHUB_OUTPUT
