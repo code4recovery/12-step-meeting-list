@@ -178,20 +178,19 @@ if (!function_exists('tsml_settings_page')) {
             delete_option('tsml_mapbox_key');
         }
 
-        //change user interface
-        if (!empty($_POST['tsml_user_interface']) && isset($_POST['tsml_nonce']) && wp_verify_nonce($_POST['tsml_nonce'], $tsml_nonce)) {
-            $tsml_user_interface = sanitize_text_field($_POST['tsml_user_interface']);
-            update_option('tsml_user_interface', $tsml_user_interface);
-            if ($tsml_user_interface == 'tsml_ui') {
-                $tsml_ui = "TSML UI";
-            } else {
-                $tsml_ui = "LEGACY UI";
-            }
-            tsml_alert(__('User interface is now set to <strong>' . $tsml_ui . '</strong>', '12-step-meeting-list'));
-            if (empty($tsml_mapbox_key) && ($tsml_user_interface == 'tsml_ui')) {
-                tsml_alert(__('<b>Please note</b> that TSML UI only supports Mapbox. To enable mapping you will need a <a href="https://www.mapbox.com/" target="_blank">Mapbox access token</a>. Paste it in the Maps section\'s <b>Mapbox Access Token</b> field.', '12-step-meeting-list'), 'warning');
-            }
-        }
+		//change user interface
+		if (!empty($_POST['tsml_user_interface']) && isset($_POST['tsml_nonce']) && wp_verify_nonce($_POST['tsml_nonce'], $tsml_nonce)) {
+			$tsml_user_interface = sanitize_text_field($_POST['tsml_user_interface']);
+			update_option('tsml_user_interface', $tsml_user_interface);
+			
+			if ($tsml_user_interface == 'tsml_ui') {
+				$tsml_ui = "TSML UI";
+			} else {
+				$tsml_ui = "LEGACY UI";
+			}
+
+			tsml_alert(__('User interface is now set to <strong>' . $tsml_ui . '</strong>', '12-step-meeting-list'));
+		}
 
         //change timezone
         if (isset($_POST['timezone']) && isset($_POST['tsml_nonce']) && wp_verify_nonce($_POST['tsml_nonce'], $tsml_nonce)) {
@@ -209,6 +208,13 @@ if (!function_exists('tsml_settings_page')) {
         <div class="wrap">
 
             <h1></h1> <!-- Set alerts here -->
+			<?php if (empty($tsml_mapbox_key) && ($tsml_user_interface == 'tsml_ui')) { ?>
+				<div class="notice notice-warning inline">
+					<p>
+						<?php _e('<b>Please note</b> that TSML UI only supports Mapbox. To enable mapping you will need a <a href="https://www.mapbox.com/" target="_blank">Mapbox access token</a>. Paste it in the Maps section\'s <b>Mapbox Access Token</b> field.', '12-step-meeting-list') ?>
+					</p>
+				</div>
+            <?php } ?>
 
             <?php if (!is_ssl()) { ?>
                 <div class="notice notice-warning inline">
