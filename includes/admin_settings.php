@@ -207,15 +207,8 @@ if (!function_exists('tsml_settings_page')) {
         <!-- Admin page content should all be inside .wrap -->
         <div class="wrap">
 
-            <h1></h1> <!-- Set alerts here -->
-			<?php if (empty($tsml_mapbox_key) && ($tsml_user_interface == 'tsml_ui')) { ?>
-				<div class="notice notice-warning inline">
-					<p>
-						<?php _e('<b>Please note</b> that TSML UI only supports Mapbox. To enable mapping you will need a <a href="https://www.mapbox.com/" target="_blank">Mapbox access token</a>. Paste it in the Maps section\'s <b>Mapbox Access Token</b> field.', '12-step-meeting-list') ?>
-					</p>
-				</div>
-            <?php } ?>
-
+			<h1></h1> <!-- Set alerts here -->
+			
             <?php if (!is_ssl()) { ?>
                 <div class="notice notice-warning inline">
                     <p>
@@ -482,6 +475,9 @@ if (!function_exists('tsml_settings_page')) {
                             <p>
                                 <?php _e('Display of maps requires an authorization key from <strong><a href="https://www.mapbox.com/" target="_blank">Mapbox</a></strong> or <strong><a href="https://console.cloud.google.com/home/" target="_blank">Google</a></strong>.', '12-step-meeting-list') ?>
                             </p>
+							<p>
+								<?php _e('Please note that TSML UI only supports Mapbox.', '12-step-meeting-list') ?>
+							</p>
                         </div>
                         <div class="stack compact">
                             <h3>
