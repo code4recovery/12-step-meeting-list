@@ -445,80 +445,82 @@ add_action('save_post', function ($post_id, $post, $update) {
     $changes = array_diff($changes, ['latitude', 'longitude']);
 
     if (count($tsml_notification_addresses) && count($changes)) {
-        $message = ' <p>';
-        if ($update) {
-            $message .= sprintf(__('This is to notify you that %s updated a <a href="%s">meeting</a> on the %s site.', '12-step-meeting-list'), $user->display_name, get_permalink($post->ID), get_bloginfo('name'));
-        } else {
-            $message .= sprintf(__('This is to notify you that %s created a <a href="%s">new meeting</a> on the %s site.', '12-step-meeting-list'), $user->display_name, get_permalink($post->ID), get_bloginfo('name'));
-        }
-        $message .= '</p><table style="font:14px arial;width:100%;border-collapse:collapse;padding:0;">';
-        foreach ($tsml_export_columns as $field => $field_name) { 
-            $new = $old = '';
+		if ($_POST['post_status'] !== 'draft') {
+			$message = ' <p>';
+			if ($update) {
+				$message .= sprintf(__('This is to notify you that %s updated a <a href="%s">meeting</a> on the %s site.', '12-step-meeting-list'), $user->display_name, get_permalink($post->ID), get_bloginfo('name'));
+			} else {
+				$message .= sprintf(__('This is to notify you that %s created a <a href="%s">new meeting</a> on the %s site.', '12-step-meeting-list'), $user->display_name, get_permalink($post->ID), get_bloginfo('name'));
+			}
+			$message .= '</p><table style="font:14px arial;width:100%;border-collapse:collapse;padding:0;">';
+			foreach ($tsml_export_columns as $field => $field_name) { 
+				$new = $old = '';
 
-            if ($field == 'types') {
-                if ($update) {
-                    $old = implode(', ', $old_meeting->types);
-                }
-                $new = tsml_meeting_types($_POST['types']);
-            } elseif ($field == 'name') {
-                if ($update) {
-                    $old = $old_meeting->post_title;
-                }
-                $new = $_POST['post_title'];
-            } elseif ($field == 'notes') {
-                if ($update) {
-                    $old = $old_meeting->post_content;
-                }
-                $new = $_POST['post_content'];
-            } elseif ($field == 'day') {
-                if ($update) {
-                    $old = in_array($old_meeting->day, ['0', '1', '2', '3', '4', '5', '6']) ? $tsml_days[$old_meeting->day] : __('Appointment', '12-step-meeting-list');
-                }
-                $new = in_array($_POST['day'], ['0', '1', '2', '3', '4', '5', '6']) ? $tsml_days[$_POST['day']] : __('Appointment', '12-step-meeting-list');
-            } elseif ($field == 'time') {
-                if ($update) {
-                    $old = empty($old_meeting->time) ? '' : tsml_format_time($old_meeting->time, '');
-                }
-                $new = empty($_POST['time']) ? '' : tsml_format_time($_POST['time'], '');
-            } elseif ($field == 'end_time') {
-                if ($update) {
-                    $old = empty($old_meeting->end_time) ? '' : tsml_format_time($old_meeting->end_time, '');
-                }
-                $new = empty($_POST['end_time']) ? '' : tsml_format_time($_POST['end_time'], '');
-            } elseif ($field == 'region') {
-                if ($term = get_term($_POST['region'], 'tsml_region')) {
-                    $new = $term->name;
-                }
-                if ($update && !empty($old_meeting->region)) {
-                    $old = $old_meeting->region;
-                }
-            } elseif ($field == 'district') {
-                if (!empty($_POST['district']) && ($term = get_term($_POST['district'], 'tsml_district'))) {
-                    $new = $term->name;
-                }
-                if ($update && !empty($old_meeting->district)) {
-                    $old = $old_meeting->district;
-                }
-            } else {
-                if ($update) {
-                    $old = $old_meeting->{$field};
-                }
-                $new = $_POST[$field];
-            }
+				if ($field == 'types') {
+					if ($update) {
+						$old = implode(', ', $old_meeting->types);
+					}
+					$new = tsml_meeting_types($_POST['types']);
+				} elseif ($field == 'name') {
+					if ($update) {
+						$old = $old_meeting->post_title;
+					}
+					$new = $_POST['post_title'];
+				} elseif ($field == 'notes') {
+					if ($update) {
+						$old = $old_meeting->post_content;
+					}
+					$new = $_POST['post_content'];
+				} elseif ($field == 'day') {
+					if ($update) {
+						$old = in_array($old_meeting->day, ['0', '1', '2', '3', '4', '5', '6']) ? $tsml_days[$old_meeting->day] : __('Appointment', '12-step-meeting-list');
+					}
+					$new = in_array($_POST['day'], ['0', '1', '2', '3', '4', '5', '6']) ? $tsml_days[$_POST['day']] : __('Appointment', '12-step-meeting-list');
+				} elseif ($field == 'time') {
+					if ($update) {
+						$old = empty($old_meeting->time) ? '' : tsml_format_time($old_meeting->time, '');
+					}
+					$new = empty($_POST['time']) ? '' : tsml_format_time($_POST['time'], '');
+				} elseif ($field == 'end_time') {
+					if ($update) {
+						$old = empty($old_meeting->end_time) ? '' : tsml_format_time($old_meeting->end_time, '');
+					}
+					$new = empty($_POST['end_time']) ? '' : tsml_format_time($_POST['end_time'], '');
+				} elseif ($field == 'region') {
+					if ($term = get_term($_POST['region'], 'tsml_region')) {
+						$new = $term->name;
+					}
+					if ($update && !empty($old_meeting->region)) {
+						$old = $old_meeting->region;
+					}
+				} elseif ($field == 'district') {
+					if (!empty($_POST['district']) && ($term = get_term($_POST['district'], 'tsml_district'))) {
+						$new = $term->name;
+					}
+					if ($update && !empty($old_meeting->district)) {
+						$old = $old_meeting->district;
+					}
+				} else {
+					if ($update) {
+						$old = $old_meeting->{$field};
+					}
+					$new = $_POST[$field];
+				}
 
-            if (in_array($field, $changes)) {
-                $message .= '<tr style="border:1px solid #999;background-color:#fff;"><td style="width:150px;padding:5px">' . $field_name . '</td><td style="padding:5px">';
-                if (!empty($old)) {
-                    $message .= '<strike style="color:#999">' . $old . '</strike> ';
-                }
-                $message .= $new . '</td></tr>';
-            } elseif (!empty($old)) {
-                $message .= '<tr style="border:1px solid #999;background-color:#eee;"><td style="width:150px;padding:5px">' . $field_name . '</td><td style="padding:5px">' . $old . '</td></tr>';
-            }
-        }
-        $message .= '</table>';
-        $subject = $update ? __('Meeting Change Notification', '12-step-meeting-list') : __('New Meeting Notification', '12-step-meeting-list');
-        $subject .= ': ' . sanitize_text_field($_POST['post_title']);
-        tsml_email($tsml_notification_addresses, $subject, $message);
-    }
+				if (in_array($field, $changes)) {
+					$message .= '<tr style="border:1px solid #999;background-color:#fff;"><td style="width:150px;padding:5px">' . $field_name . '</td><td style="padding:5px">';
+					if (!empty($old)) {
+						$message .= '<strike style="color:#999">' . $old . '</strike> ';
+					}
+					$message .= $new . '</td></tr>';
+					} elseif (!empty($old)) {
+						$message .= '<tr style="border:1px solid #999;background-color:#eee;"><td style="width:150px;padding:5px">' . $field_name . '</td><td style="padding:5px">' . $old . '</td></tr>';
+					}
+				}
+				$message .= '</table>';
+				$subject = $update ? __('Meeting Change Notification', '12-step-meeting-list') : __('New Meeting Notification', '12-step-meeting-list');
+				$subject .= ': ' . sanitize_text_field($_POST['post_title']);
+				tsml_email($tsml_notification_addresses, $subject, $message);
+		}
+	}
 }, 10, 3);
