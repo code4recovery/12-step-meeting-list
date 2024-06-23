@@ -23,7 +23,7 @@ add_filter('wp_insert_post_data', function ($post) {
 
 //handle all the metadata, location
 add_action('save_post', function ($post_id, $post, $update) {
-    global $tsml_nonce, $wpdb, $tsml_notification_addresses, $tsml_days, $tsml_contact_fields;
+    global $tsml_nonce, $wpdb, $tsml_notification_addresses, $tsml_days, $tsml_contact_fields, $tsml_export_columns;
 
     //security
     if (defined('DOING_AUTOSAVE') && DOING_AUTOSAVE) {
@@ -451,11 +451,8 @@ add_action('save_post', function ($post_id, $post, $update) {
         } else {
             $message .= sprintf(__('This is to notify you that %s created a <a href="%s">new meeting</a> on the %s site.', '12-step-meeting-list'), $user->display_name, get_permalink($post->ID), get_bloginfo('name'));
         }
-        $message .= '</p><table style="font:14px arial;width:100%;border-collapse:collapse;padding:0;">';
-        $fields = array_merge(
-            ['name', 'day', 'time', 'end_time', 'types', 'notes', 'location', 'formatted_address', 'region', 'location_notes', 'group', 'district', 'group_notes'],
-            array_keys($tsml_contact_fields)
-        );
+        $message .= '</p><table style="font:14px arial;width:100%;border-collapse:collapse;parray_keys($tsml_export_columns)adding:0;">';
+        $fields = array_keys($tsml_export_columns);
         foreach ($fields as $field) {
             $new = $old = '';
 
