@@ -451,9 +451,8 @@ add_action('save_post', function ($post_id, $post, $update) {
         } else {
             $message .= sprintf(__('This is to notify you that %s created a <a href="%s">new meeting</a> on the %s site.', '12-step-meeting-list'), $user->display_name, get_permalink($post->ID), get_bloginfo('name'));
         }
-        $message .= '</p><table style="font:14px arial;width:100%;border-collapse:collapse;parray_keys($tsml_export_columns)adding:0;">';
-        $fields = array_keys($tsml_export_columns);
-        foreach ($fields as $field) {
+        $message .= '</p><table style="font:14px arial;width:100%;border-collapse:collapse;padding:0;">';
+        foreach ($tsml_export_columns as $field => $field_name) { 
             $new = $old = '';
 
             if ($field == 'types') {
@@ -506,8 +505,6 @@ add_action('save_post', function ($post_id, $post, $update) {
                 }
                 $new = $_POST[$field];
             }
-
-            $field_name = __(ucwords(str_replace('_', ' ', $field)), '12-step-meeting-list');
 
             if (in_array($field, $changes)) {
                 $message .= '<tr style="border:1px solid #999;background-color:#fff;"><td style="width:150px;padding:5px">' . $field_name . '</td><td style="padding:5px">';
