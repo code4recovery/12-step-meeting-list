@@ -393,9 +393,13 @@ add_action('wp_ajax_tsml_import', function () {
     //get lookups, todo consider adding regions to this
     $locations = $groups = [];
     $all_locations = tsml_get_locations();
-    foreach ($all_locations as $location) $locations[$location['formatted_address']] = $location['location_id']; $all_groups = tsml_get_all_groups(); foreach ($all_groups as $group) $groups[$group->post_title] = $group->ID; //passing post_modified and post_modified_gmt to wp_insert_post() below does not seem to work
+    foreach ($all_locations as $location) $locations[$location['formatted_address']] = $location['location_id']; 
+    $all_groups = tsml_get_all_groups(); 
+    foreach ($all_groups as $group) $groups[$group->post_title] = $group->ID; //passing post_modified and post_modified_gmt to wp_insert_post() below does not seem to work
     //todo occasionally remove this to see if it is working
-    add_filter('wp_insert_post_data', 'tsml_import_post_modified', 99, 2); $data_source_parent_region_id = 0; foreach ($meetings as $meeting) {
+    add_filter('wp_insert_post_data', 'tsml_import_post_modified', 99, 2); 
+    $data_source_parent_region_id = 0; 
+    foreach ($meetings as $meeting) {
         //check address
         if (empty($meeting['formatted_address'])) {
             $errors[] = '<li value="' . $meeting['row'] . '">' . sprintf(__('No location information provided for <code>%s</code>.', '12-step-meeting-list'), $meeting['name']) . '</li>';
