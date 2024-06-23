@@ -17,7 +17,7 @@ if (!function_exists('tsml_import_page')) {
 
         //if posting a CSV, check for errors and add it to the import buffer
         if (isset($_FILES['tsml_import']) && isset($_POST['tsml_nonce']) && wp_verify_nonce($_POST['tsml_nonce'], $tsml_nonce)) {
-            @ini_set('auto_detect_line_endings', 1); //to handle mac \r line endings
+            ini_set('auto_detect_line_endings', 1); //to handle mac \r line endings
             $extension = explode('.', strtolower($_FILES['tsml_import']['name']));
             $extension = end($extension);
             if ($_FILES['tsml_import']['error'] > 0) {
@@ -155,21 +155,21 @@ if (!function_exists('tsml_import_page')) {
             }
         }
 
-
-        //add data source  
+        //add data source
         if (!empty($_POST['tsml_add_data_source']) && isset($_POST['tsml_nonce']) && wp_verify_nonce($_POST['tsml_nonce'], $tsml_nonce)) {
 
-            //initialize variables 
-            $is_google_sheets_import = false;
-            $import_updates = $db_ids_to_delete = $message_lines = [];
-            $data_source_ids = '';
-
-            //sanitize URL, name, and parent region id values
+            //sanitize URL, name, parent region id, and Change Detection values
             $data_source_url = trim(esc_url_raw($_POST['tsml_add_data_source'], array('http', 'https')));
             $data_source_name = sanitize_text_field($_POST['tsml_add_data_source_name']);
             $data_source_parent_region_id = (int) $_POST['tsml_add_data_source_parent_region_id'];
             $data_source_change_detect = sanitize_text_field($_POST['tsml_add_data_source_change_detect']);
 
+            //initialize variables 
+            $is_google_sheets_import = strpos($data_source_url, "sheets.googleapis.com") !== false;
+            $import_updates = $db_ids_to_delete = $message_lines = [];
+            $data_source_ids = '';
+            $stop_processing = $is_feed_refresh = false;
+            
             //try fetching	
             $response = wp_safe_remote_get($data_source_url, [
                 'timeout' => 30,
@@ -177,36 +177,32 @@ if (!function_exists('tsml_import_page')) {
             ]);
 
             //set response body to an empty array rather than erroring
-            $body = (is_array($response) ? json_decode($response['body'], true) : []);
+            $meetings = (is_array($response) ? json_decode($response['body'], true) : []);
 
             //allow reformatting as necessary
-            if (strpos($data_source_url, "sheets.googleapis.com") !== false) {
-                $meetings = tsml_import_reformat_googlesheet($body);
-                $is_google_sheets_import = true;
-            } elseif (function_exists('tsml_import_reformat')) {
-                $meetings = tsml_import_reformat($body);
-            } else {
-                $meetings = $body;
+            if ($is_google_sheets_import) {
+                $meetings = tsml_import_reformat_googlesheet($meetings);
             }
-
-            //initialize processing booleans
-            $stop_processing = $is_feed_refresh = false;
+            
+            if (function_exists('tsml_import_reformat')) {
+                $meetings = tsml_import_reformat($meetings);
+            }
 
             if (is_array($meetings) && !empty($meetings)) {
 
                 if (!array_key_exists($data_source_url, $tsml_data_sources)) {
-                    //$is_new_feed_import = true;
-
-                } elseif ($is_google_sheets_import) { //process a previously registered feed import
+                    //new data source
+                } elseif ($is_google_sheets_import) {
+                    //todo: do we need to exclude?
                     $data_source_ids = tsml_get_data_source_ids($data_source_url);
                     tsml_delete($data_source_ids);
                     tsml_delete_orphans();
-
                 } else {
-                    /* process a previously registered feed import
-                       This is the normal feed refresh operation when a data source already exists we want to set up to apply only the changes detected to the local db */
-
+                    //apply only the changes detected
+                    
                     $is_feed_refresh = true;
+
+                    //todo do we need this
                     $data_source_last_import = intval($tsml_data_sources[$data_source_url]['last_import']);
 
                     //get updated feed import record set 
@@ -228,10 +224,8 @@ if (!function_exists('tsml_import_page')) {
 
                             //save data source configuration
                             update_option('tsml_data_sources', $tsml_data_sources);
-
                         } else {
-                            $translatable_msg = __('Your meeting list is already in sync with the feed from ', '12-step-meeting-list');
-                            $message = $translatable_msg . $data_source_name;
+                            $message = __('Your meeting list is already in sync with the feed.', '12-step-meeting-list');
                             tsml_alert($message, 'success');
                         }
 
@@ -258,11 +252,8 @@ if (!function_exists('tsml_import_page')) {
                     ];
 
                     if ($is_feed_refresh) {
-
-                        //import ONLY the change detected import feed records
+                        //import feed
                         tsml_import_buffer_set($import_updates, $data_source_url, $data_source_parent_region_id, true);
-
-
                     } else { //load everything
                         // Create a cron job to run daily when Change Detection is enabled for a new data source
                         if ($data_source_change_detect === 'enabled') {
@@ -334,8 +325,6 @@ if (!function_exists('tsml_import_page')) {
                 update_option('tsml_data_sources', $tsml_data_sources);
 
                 tsml_alert(__('Data source removed.', '12-step-meeting-list'));
-            } else {
-                tsml_alert(__(' Data source removal failed! ' . $_POST['tsml_remove_data_source'], '12-step-meeting-list'), 'error');
             }
         }
         ?>
@@ -367,14 +356,12 @@ if (!function_exists('tsml_import_page')) {
                     </h2>
                     <p>
                         <?php printf(__('Data sources are JSON feeds that contain a website\'s public meeting data. They can be used to aggregate meetings from different sites into a single master list. 
-
             Data sources listed below will pull meeting information into this website. A configurable schedule allows for each data source to be scanned at least once per day looking 
             for updates to the listing. Change Notification email addresses are sent an email when action is required to re-sync a data source with its meeting list information. 
             Please note: records that you intend to maintain on your website should always be imported using the Import CSV feature below. <b>For data sources based on the Meeting Guide API specification, 
             only changes detected will be used to overwrite your meeting list records during a feed refresh operation. Other import sources (i.e. Google Sheets or the CSV Import) will continue to do a  
             full update of all records during a refresh.</b> More information is available at the 
             <a href="%s" target="_blank">Meeting Guide API Specification</a>.', '12-step-meeting-list'), 'https://github.com/code4recovery/spec') ?>
-
                     </p>
                     <?php if (!empty($tsml_data_sources)) { ?>
                         <table>
@@ -447,6 +434,7 @@ if (!function_exists('tsml_import_page')) {
                                             } else {
                                                 $change_detect = ucfirst($properties['change_detect']);
                                             }
+
                                             echo $change_detect;
                                             ?>
                                         </td>
@@ -489,6 +477,7 @@ if (!function_exists('tsml_import_page')) {
                                 'show_option_none' => __('Parent Region…', '12-step-meeting-list'),
                             )
                         ) ?>
+
                         <select name="tsml_add_data_source_change_detect" id="tsml_change_detect">
                             <?php
                             foreach (array('disabled' => __('Change Detection Disabled', '12-step-meeting-list'), 'enabled' => __('Change Detection Enabled', '12-step-meeting-list'), ) as $key => $value) { ?>
@@ -498,7 +487,7 @@ if (!function_exists('tsml_import_page')) {
                             <?php } ?>
                         </select>
 
-        <input type="submit" class="button" value="<?php _e('Add Data Source', '12-step-meeting-list') ?>">
+                        <input type="submit" class="button" value="<?php _e('Add Data Source', '12-step-meeting-list') ?>">
                     </form>
                 </div>
 
