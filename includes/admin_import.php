@@ -190,7 +190,7 @@ if (!function_exists('tsml_import_page')) {
             }
 
             //initialize processing booleans
-            $stop_processing = $is_feed_refresh = false;
+            $is_feed_refresh = false;
 
             if (is_array($meetings) && !empty($meetings)) {
 
@@ -207,45 +207,31 @@ if (!function_exists('tsml_import_page')) {
                        This is the normal feed refresh operation when a data source already exists we want to set up to apply only the changes detected to the local db */
 
                     $is_feed_refresh = true;
-                    $data_source_last_import = intval($tsml_data_sources[$data_source_url]['last_import']);
 
                     //get updated feed import record set 
-                    list($import_updates, $db_ids_to_delete, $message_lines) = tsml_get_import_changes_only($meetings, $data_source_url, $data_source_parent_region_id, $data_source_last_import);
+                    list($import_updates, $db_ids_to_delete, $change_log) = tsml_get_import_changes_only($meetings, $data_source_url, $data_source_parent_region_id);
 
                     //drop database records which are being updated, or removed from the feed 
-                    tsml_delete($db_ids_to_delete);
-                    tsml_delete_orphans();
+                    if (count($db_ids_to_delete)) {
+                        tsml_delete($db_ids_to_delete);
+                        tsml_delete_orphans();
 
-                    if (count($import_updates) === 0) {
-                        if (count($db_ids_to_delete) !== 0) {
-                            if ($tsml_debug) {
-                                $message = tsml_build_change_report($data_source_name, $message_lines);
-                                tsml_alert($message, 'info');
-                            }
+                        //reset the data source meetings count for this feed
+                        $tsml_data_sources[$data_source_url]['count_meetings'] = count(tsml_get_data_source_ids($data_source_url));
 
-                            //reset the data source meetings count for this feed
-                            $tsml_data_sources[$data_source_url]['count_meetings'] = count(tsml_get_data_source_ids($data_source_url));
+                        //save data source configuration
+                        update_option('tsml_data_sources', $tsml_data_sources);
+                    }
 
-                            //save data source configuration
-                            update_option('tsml_data_sources', $tsml_data_sources);
-
-                        } else {
-                            $translatable_msg = __('Your meeting list is already in sync with the feed from ', '12-step-meeting-list');
-                            $message = $translatable_msg . $data_source_name;
-                            tsml_alert($message, 'success');
-                        }
-
-                        $stop_processing = true;
-
-                    } else {
-                        if ($tsml_debug) {
-                            $message = tsml_build_change_report($data_source_name, $message_lines);
-                            tsml_alert($message, 'info');
-                        }
+                    // @TODO: flesh out change report
+                    if (count($change_log) && $tsml_debug) {
+                        $message = tsml_build_change_report($data_source_name, $change_log);
+                        tsml_alert($message, 'info');
                     }
                 }
 
-                if (!$stop_processing) {
+                //if we have meetings to import...
+                if (count($import_updates)) {
 
                     $tsml_data_sources[$data_source_url] = [
                         'status' => 'OK',
@@ -261,7 +247,6 @@ if (!function_exists('tsml_import_page')) {
 
                         //import ONLY the change detected import feed records
                         tsml_import_buffer_set($import_updates, $data_source_url, $data_source_parent_region_id, true);
-
 
                     } else { //load everything
                         // Create a cron job to run daily when Change Detection is enabled for a new data source
