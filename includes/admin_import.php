@@ -161,7 +161,7 @@ if (!function_exists('tsml_import_page')) {
 
             //initialize variables 
             $is_google_sheets_import = false;
-            $import_updates = $db_ids_to_delete = $message_lines = [];
+            $import_meetings = $delete_meeting_ids = [];
             $data_source_ids = '';
 
             //sanitize URL, name, and parent region id values
@@ -209,11 +209,11 @@ if (!function_exists('tsml_import_page')) {
                     $is_feed_refresh = true;
 
                     //get updated feed import record set 
-                    list($import_updates, $db_ids_to_delete, $change_log) = tsml_get_import_changes_only($meetings, $data_source_url, $data_source_parent_region_id);
+                    list($import_meetings, $delete_meeting_ids, $change_log) = tsml_get_import_changes_only($meetings, $data_source_url, $data_source_parent_region_id);
 
                     //drop database records which are being updated, or removed from the feed 
-                    if (count($db_ids_to_delete)) {
-                        tsml_delete($db_ids_to_delete);
+                    if (count($delete_meeting_ids)) {
+                        tsml_delete($delete_meeting_ids);
                         tsml_delete_orphans();
 
                         //reset the data source meetings count for this feed
@@ -228,10 +228,15 @@ if (!function_exists('tsml_import_page')) {
                         $message = tsml_build_change_report($data_source_name, $change_log);
                         tsml_alert($message, 'info');
                     }
+                    //empty change log means we're up to date
+                    if (!count($change_log)) {
+                        $message = __('Your meeting list is already in sync with the feed.', '12-step-meeting-list');
+                        tsml_alert($message, 'success');                    
+                    }
                 }
 
                 //if we have meetings to import...
-                if (count($import_updates)) {
+                if (count($import_meetings)) {
 
                     $tsml_data_sources[$data_source_url] = [
                         'status' => 'OK',
@@ -246,7 +251,7 @@ if (!function_exists('tsml_import_page')) {
                     if ($is_feed_refresh) {
 
                         //import ONLY the change detected import feed records
-                        tsml_import_buffer_set($import_updates, $data_source_url, $data_source_parent_region_id, true);
+                        tsml_import_buffer_set($import_meetings, $data_source_url, $data_source_parent_region_id, true);
 
                     } else { //load everything
                         // Create a cron job to run daily when Change Detection is enabled for a new data source

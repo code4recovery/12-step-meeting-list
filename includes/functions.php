@@ -1956,9 +1956,8 @@ if (!function_exists('tsml_scan_data_source')) {
 
         $data_source_name = $data_source_last_import = null;
         $data_source_parent_region_id = -1;
-        $data_source_change_detect = 'disabled';
         $data_source_count_meetings = 0;
-        $errors = $import_updates = $db_ids_to_delete = $message_lines = [];
+        $errors = [];
 
         $tsml_notification_addresses = tsml_get_option_array('tsml_notification_addresses');
         $tsml_data_sources = tsml_get_option_array('tsml_data_sources');
@@ -1995,7 +1994,7 @@ if (!function_exists('tsml_scan_data_source')) {
                 }
 
                 // check import feed for changes and return array summing up changes detected
-                list($import_updates, $db_ids_to_delete,  $change_log) = tsml_get_import_changes_only($meetings, $data_source_url, $data_source_parent_region_id);
+                list($import_meetings, $delete_meeting_ids,  $change_log) = tsml_get_import_changes_only($meetings, $data_source_url, $data_source_parent_region_id);
                 if (is_array($change_log) && count($change_log)) {
                     // Send Email notifying Admins that this Data Source needs updating
                     $message = "Data Source changes were detected during a scheduled sychronization check with this feed: $data_source_url. Your website meeting list details based on the $data_source_name feed are no longer in sync. <br><br>Please sign-in to your website and refresh the $data_source_name Data Source feed found on the Meetings Import & Export page.<br><br>";
@@ -2193,12 +2192,20 @@ function tsml_extractDateTimeFormat($string)
         return 'd.m.Y';
 }
 
-//function:	Returns an array of updated feed records where only a difference is detected between the matched feed and database records
-//used:		admin-import.php
+/**
+ * Checks a list of imported meetings for necessary import changes / updates
+ *
+ * @param array  $feed_meetings                array of feed meetings to test for changes
+ * @param string $data_source_url              feed source url
+ * @param int    $data_source_parent_region_id feed parent region id
+ * @return array[array, array, array]
+ *       $import_meetings    array of imported meetings that need to be processes
+ *       $delete_meeting_ids array of existing meeting post id's to delete
+ *       $change_log         array of changes to existing 
+ */
 function tsml_get_import_changes_only($feed_meetings, $data_source_url, $data_source_parent_region_id)
 {
-    global $tsml_days;
-    $import_updates = $db_ids_to_delete = $db_meetings = $feed_slugs = $meeting = [];
+    $import_meetings = $delete_meeting_ids = $db_meetings = $feed_slugs = $meeting = [];
     $change_log = array();
 
     //get local meetings
@@ -2223,7 +2230,7 @@ function tsml_get_import_changes_only($feed_meetings, $data_source_url, $data_so
 
         if (!empty($meeting) && is_array($meeting)) {
             if (array_key_exists('slug', $meeting)) {
-                $meeting_slug = strtolower($meeting['slug']);
+                $meeting_slug = trim(strtolower(strval($meeting['slug'])));
             }
             $db_meeting_id = array_search($meeting_slug, $db_slugs);
             if ($db_meeting_id) {
@@ -2233,7 +2240,9 @@ function tsml_get_import_changes_only($feed_meetings, $data_source_url, $data_so
                 if ($db_meeting_id) {
                     $db_meeting = tsml_get_meeting($db_meeting_id);
                     //@TODO: explain
-                    $meeting_slug = $db_meeting['source_slug_modified'];
+                    if (isset($db_meeting['source_slug_modified'])) {
+                        $meeting_slug = $db_meeting['source_slug_modified'];
+                    }
                 }            
             }
         }
@@ -2248,15 +2257,16 @@ function tsml_get_import_changes_only($feed_meetings, $data_source_url, $data_so
 
         //output the array containing only the feed records needing to be changed or the new ones to be added to the database
         if ($changed_fields) {
-            array_push($import_updates, $meeting);
+            array_push($import_meetings, $meeting);
             if ($db_meeting) {
                 $change_log[] = array(
                     'action'         => 'update',
                     'meeting'        => $meeting,
                     'changed_fields' => $changed_fields,
+                    'post_id'        => $db_meeting_id,
                 );
                 //add changed record id to list of db records to be removed (changes will get added back in by the importer)
-                $db_ids_to_delete[] = $db_meeting_id;
+                $delete_meeting_ids[] = $db_meeting_id;
             } else {
                 $change_log[] = array(
                     'action'  => 'add',
@@ -2266,7 +2276,7 @@ function tsml_get_import_changes_only($feed_meetings, $data_source_url, $data_so
         }
     }
 
-    //add to removal array (i.e. $db_ids_to_delete) for only those meetings in local database which are not matched with the import feed
+    //add to removal array (i.e. $delete_meeting_ids) for only those meetings in local database which are not matched with the import feed
     foreach ($db_meetings as $db_meeting) {
         $meeting_slug = $db_meeting['slug'];
         $is_matched = in_array($meeting_slug, $feed_slugs);
@@ -2274,11 +2284,12 @@ function tsml_get_import_changes_only($feed_meetings, $data_source_url, $data_so
             $change_log[] = array(
                 'action'  => 'remove',
                 'meeting' => $db_meeting,
+                'post_id' => $db_meeting['id'],
             );
-            $db_ids_to_delete[] = $db_meeting['id'];
+            $delete_meeting_ids[] = $db_meeting['id'];
         }
     }
-    return array($import_updates, $db_ids_to_delete, $change_log);
+    return array($import_meetings, $delete_meeting_ids, $change_log);
 }
 
 //function:	return array of fields that don't match between two meetings, or null if no difference
