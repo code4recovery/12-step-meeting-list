@@ -317,7 +317,6 @@ Yes, you will need to know the key name of the field. Then include an array in y
 * Improve coverage of translatable strings [more info](https://github.com/code4recovery/12-step-meeting-list/issues/1402)
 
 = 3.14.33 =
-
 * Fix PHP warning [more info](https://github.com/code4recovery/12-step-meeting-list/issues/1366)
 * Update "tested up to" value [more info](https://github.com/code4recovery/12-step-meeting-list/issues/1390)
 

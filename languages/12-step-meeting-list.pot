@@ -360,6 +360,18 @@ msgstr ""
 msgid "<strong>URL</strong> is optional and should point to the meeting's listing on the area website."
 msgstr ""
 
+#: includes/admin_import.php:550
+msgid "<strong>Feedback URL</strong> is an optional string URL that can be used to provide feedback about the meeting. These could be local links (e.g. <code>https://mywebsite.org/feedback?meeting=meeting-slug-1</code>), remote links (e.g. <code>https://typeform.com/to/23904203?meeting=meeting-slug-1</code>), or email links (e.g. <code>mailto:webservant@domain.org?subject=meeting-slug-1</code>)."
+msgstr ""
+
+#: includes/admin_import.php:553
+msgid "<strong>Edit URL</strong> is an optional string URL that trusted servants can use to edit the specific meeting's listing."
+msgstr ""
+
+#: includes/admin_import.php:556
+msgid "<strong>Contact 1/2/3 Name/Email/Phone</strong> (nine fields in total) are all optional. By default, contact information is only visible inside the WordPress dashboard."
+msgstr ""
+
 #: includes/admin_import.php:559
 msgid "<strong>Last Contact</strong> is an optional date."
 msgstr ""

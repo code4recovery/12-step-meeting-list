@@ -146,8 +146,7 @@ function tsml_calculate_attendance_option($types, $approximate)
     $attendance_option = '';
 
     // Handle when the types list is empty, this prevents PHP warnings
-    if (empty($types))
-        $types = [];
+    if (empty($types)) $types = [];
 
     if (in_array('TC', $types) && in_array('ONL', $types)) {
         // Types has both Location Temporarily Closed and Online, which means it should be an online meeting
@@ -566,30 +565,26 @@ function tsml_format_address($formatted_address, $street_only = false)
 //used in multiple functions here
 function tsml_build_source_address($meeting)
 {
-    $ret_formatted_address = '';
-
-    if (empty($meeting['formatted_address'])) {
-        $address = [];
-        if (!empty($meeting['address']))
-            $address[] = $meeting['address'];
-        if (!empty($meeting['city']))
-            $address[] = $meeting['city'];
-        if (!empty($meeting['state']))
-            $address[] = $meeting['state'];
-        if (!empty($meeting['postal_code'])) {
-            if ((strlen($meeting['postal_code']) < 5) && ($meeting['country'] == 'USA'))
-                $meeting['postal_code'] = str_pad($meeting['postal_code'], 5, '0', STR_PAD_LEFT);
-            $address[] = $meeting['postal_code'];
-        }
-        if (!empty($meeting['country']))
-            $address[] = $meeting['country'];
-
-        if (count($address) > 0) {
-             $ret_formatted_address = implode(', ', $address);
-        }
+    if (!empty($meeting['formatted_address'])) {
+        return $meeting['formatted_address'];
     }
 
-    return $ret_formatted_address;
+    $address = [];
+    if (!empty($meeting['address']))
+        $address[] = $meeting['address'];
+    if (!empty($meeting['city']))
+        $address[] = $meeting['city'];
+    if (!empty($meeting['state']))
+        $address[] = $meeting['state'];
+    if (!empty($meeting['postal_code'])) {
+        if ((strlen($meeting['postal_code']) < 5) && ($meeting['country'] == 'USA'))
+            $meeting['postal_code'] = str_pad($meeting['postal_code'], 5, '0', STR_PAD_LEFT);
+        $address[] = $meeting['postal_code'];
+    }
+    if (!empty($meeting['country'])) {
+        $address[] = $meeting['country'];
+    }
+    return implode(', ', $address);
 }
 
 //function: takes 0, 18:30 and returns Sunday, 6:30 pm (depending on your settings)
@@ -1265,12 +1260,14 @@ function tsml_get_meetings($arguments = [], $from_cache = true, $full_export = f
 
             // Include the original guid, source slug, modified slug, and formatted address
             if (!empty($meeting_meta[$post->ID]['data_source'])) {
+                // todo we should discuss adding this new field here - i think we can use URL
                 $meeting['guid'] = isset($post->guid) ? $post->guid : null;
 
                 if (!empty($meeting_meta[$post->ID]['source_slug'])) {
                     $meeting['source_slug'] = isset($meeting_meta[$post->ID]['source_slug']) ? $meeting_meta[$post->ID]['source_slug'] : null;
                     // Store the source_slug_modified in the postmeta table
                      if ($meeting['source_slug'] !== $post->post_name) {
+                        // todo can't do an update here
                         update_post_meta($post->ID, 'source_slug_modified', $post->post_name);
                         $meeting['source_slug_modified'] = $post->post_name;
                     }
@@ -2431,8 +2428,8 @@ function tsml_transform_import_meeting_fields($meetings, $data_source_url = null
         }
 
         //column aliases
-        if (empty($meetings[$i]['postal_code']) && !empty($meetings[$i]['zip'])) {
-            $meetings[$i]['postal_code'] = $meetings[$i]['zip'];
+        if (empty($meetings[$i]['postal_code']) && !empty($meetings[$i]['postal_code'])) {
+            $meetings[$i]['postal_code'] = $meetings[$i]['postal_code'];
         }
         if (empty($meetings[$i]['name']) && !empty($meetings[$i]['meeting'])) {
             $meetings[$i]['name'] = $meetings[$i]['meeting'];
@@ -2464,8 +2461,9 @@ function tsml_transform_import_meeting_fields($meetings, $data_source_url = null
             $meetings[$i]['time'] = $meetings[$i]['end_time'] = $meetings[$i]['day'] = false; //by appointment
 
             //if meeting name missing, use location
-            if (empty($meetings[$i]['name']))
+            if (empty($meetings[$i]['name'])) {
                 $meetings[$i]['name'] = sprintf(__('%s by Appointment', '12-step-meeting-list'), $meetings[$i]['location']);
+            }
         } else {
             //if meeting name missing, use location, day, and time
             if (empty($meetings[$i]['name'])) {
@@ -2488,20 +2486,25 @@ function tsml_transform_import_meeting_fields($meetings, $data_source_url = null
         $meetings[$i]['source_formatted_address'] = $meetings[$i]['formatted_address'];
 
         //source_slug
-        if (empty($meetings[$i]['source_slug']))
+        if (empty($meetings[$i]['source_slug'])) {
             $meetings[$i]['source_slug'] = $meetings[$i]['slug'];
+        }
 
         //notes
-        if (empty($meetings[$i]['notes']))
+        if (empty($meetings[$i]['notes'])) {
             $meetings[$i]['notes'] = '';
-        if (empty($meetings[$i]['location_notes']))
+        }
+        if (empty($meetings[$i]['location_notes'])) {
             $meetings[$i]['location_notes'] = '';
-        if (empty($meetings[$i]['group_notes']))
+        }
+        if (empty($meetings[$i]['group_notes'])) {
             $meetings[$i]['group_notes'] = '';
+        }
 
         //updated
-        if (empty($meetings[$i]['updated']) || (!$meetings[$i]['updated'] = strtotime($meetings[$i]['updated'])))
+        if (empty($meetings[$i]['updated']) || (!$meetings[$i]['updated'] = strtotime($meetings[$i]['updated']))) {
             $meetings[$i]['updated'] = time();
+        }
         $meetings[$i]['post_modified'] = date('Y-m-d H:i:s', $meetings[$i]['updated']);
         $meetings[$i]['post_modified_gmt'] = get_gmt_from_date($meetings[$i]['post_modified']);
 
@@ -2551,8 +2554,9 @@ function tsml_transform_import_meeting_fields($meetings, $data_source_url = null
         }
 
         //sanitize types (they can be Closed or C)
-        if (empty($meetings[$i]['types']))
+        if (empty($meetings[$i]['types'])) {
             $meetings[$i]['types'] = '';
+        }
         $types = explode(',', $meetings[$i]['types']);
         $meetings[$i]['types'] = $unused_types = [];
         foreach ($types as $type) {
@@ -2573,8 +2577,9 @@ function tsml_transform_import_meeting_fields($meetings, $data_source_url = null
 
         //append unused types to notes
         if (count($unused_types)) {
-            if (!empty($meetings[$i]['notes']))
+            if (!empty($meetings[$i]['notes'])) {
                 $meetings[$i]['notes'] .= str_repeat(PHP_EOL, 2);
+            }
             $meetings[$i]['notes'] .= implode(', ', $unused_types);
         }
 
