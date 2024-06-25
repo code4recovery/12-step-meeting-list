@@ -41,6 +41,8 @@ add_action('admin_init', function () {
     add_meta_box('info', __('Meeting Information', '12-step-meeting-list'), function () {
         global $tsml_days, $tsml_programs, $tsml_program, $tsml_nonce, $tsml_types_in_use;
 
+		$meeting_languages = isset($meeting->languages) && is_array($meeting->languages) ? $meeting->languages : []; // forces an array
+
         $meeting = tsml_get_meeting();
 
         //time is before the end of april and not currently using temporary closure
@@ -111,6 +113,31 @@ add_action('admin_init', function () {
                 </div>
             </div>
         <?php } ?>
+		<div class="meta_form_row">
+			<label for="languages">
+				<?php _e('Languages', '12-step-meeting-list') ?>
+			</label>
+			<div class="checkboxes">
+				<?php foreach ($tsml_programs[$tsml_program]['languages'] as $key => $language) { ?>
+					<label>
+						<input type="checkbox" name="languages[]" value="<?php echo $key ?>" <?php checked(in_array($key, $meeting_languages)) ?>>
+						<?php echo $language ?>
+					</label>
+				<?php } ?>
+				<div class="toggle_more">
+					<div class="more">
+						<span class="dashicons dashicons-arrow-down-alt2"></span> <a href="#more-types">
+							<?php _e('View all', '12-step-meeting-list') ?>
+						</a>
+					</div>
+					<div class="less">
+						<span class="dashicons dashicons-arrow-up-alt2"></span> <a href="#more-types">
+							<?php _e('Hide types not in use', '12-step-meeting-list') ?>
+						</a>
+					</div>
+				</div>
+			</div>
+		</div>
         <div class="meta_form_row">
             <label for="content">
                 <?php _e('Notes', '12-step-meeting-list') ?>
