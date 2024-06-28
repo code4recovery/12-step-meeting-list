@@ -200,11 +200,6 @@ Another approach is to adjust which meeting types are "flagged" in the meeting n
 
 The code above will add "Open" and "Closed" flags to the meeting name.
 
-= When there are notes on a meeting, can I indicate that somehow in the meeting list? =
-Yes, with CSS. Rows that have meeting notes will have a 'notes' class. To add an asterisk, for example, try this:
-
-	div#tsml tr.notes a:after { content: "*"; }
-
 = Can I import a custom spreadsheet format? =
 If you don't mind some PHP programming, then yes! Create a function called `tsml_import_reformat`, and use it to
 reformat your incoming data to the standard format
