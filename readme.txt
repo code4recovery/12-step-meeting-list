@@ -299,7 +299,10 @@ Yes, you will need to know the key name of the field. Then include an array in y
 == Changelog ==
 
 = 3.14.36 =
-* Fix error when multibyte functions are not installed
+* Add Eating Disorders Anonymous [more info](https://github.com/code4recovery/12-step-meeting-list/pull/1447)
+* Don't include custom fields in JSON feed [more info](https://github.com/code4recovery/12-step-meeting-list/issues/1436)
+* Update messaging about TSML UI supporting Mapbox only [more info](https://github.com/code4recovery/12-step-meeting-list/issues/1453)
+* Fix error when multibyte functions are not installed [more info](https://github.com/code4recovery/12-step-meeting-list/discussions/1443)
 
 = 3.14.35 =
 * Add timezone support [more info](https://github.com/code4recovery/12-step-meeting-list/issues/930)
