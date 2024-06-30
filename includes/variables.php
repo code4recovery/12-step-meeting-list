@@ -958,14 +958,7 @@ function tsml_load_config()
                 'CC' => __('Chair\'s Choice', '12-step-meeting-list'),
                 'CF' => __('Child-Friendly', '12-step-meeting-list'),
                 'C' => __('Closed', '12-step-meeting-list'),
-                'NL' => __('Dutch', '12-step-meeting-list'),
-                'EN' => __('English', '12-step-meeting-list'),
-                'DE' => __('German', '12-step-meeting-list'),
-                'KA' => __('Georgian', '12-step-meeting-list'),
-                'EL' => __('Greek', '12-step-meeting-list'),
                 'NDG' => __('Indigenous', '12-step-meeting-list'),
-                'IS' => __('Icelandic', '12-step-meeting-list'),
-                'ITA' => __('Italian', '12-step-meeting-list'),
                 'LIT' => __('Literature', '12-step-meeting-list'),
                 'LGBTQ' => __('LGBTQ+', '12-step-meeting-list'),
                 'MED' => __('Meditation', '12-step-meeting-list'),
@@ -1375,12 +1368,12 @@ function tsml_load_config()
 		'EN' => __('English', '12-step-meeting-list'),
 		'FI' => __('Finnish', '12-step-meeting-list'),
 		'FR' => __('French', '12-step-meeting-list'),
-		'GE' => __('Georgian', '12-step-meeting-list'),
+		'KA' => __('Georgian', '12-step-meeting-list'),
 		'DE' => __('German', '12-step-meeting-list'),
 		'EL' => __('Greek', '12-step-meeting-list'),
 		'HE' => __('Hebrew', '12-step-meeting-list'),
 		'HI' => __('Hindi', '12-step-meeting-list'),
-		'IC' => __('Icelandic', '12-step-meeting-list'),
+		'IS' => __('Icelandic', '12-step-meeting-list'), //conflict w RD Inquiry Study; RS Inventory study
 		'ITA' => __('Italian', '12-step-meeting-list'),
 		'JA' => __('Japanese', '12-step-meeting-list'),
 		'KOR' => __('Korean', '12-step-meeting-list'),
@@ -1425,17 +1418,17 @@ function tsml_load_config()
 	$tsml_programs['ACA']['types']['S'] = __('Speaker', '12-step-meeting-list');
 	$tsml_programs['ACA']['types']['SP'] = __('Spanish', '12-step-meeting-list');
 
-	// EDA
-	unset($tsml_programs['EDA']['types']['EL']);
-	$tsml_programs['EDA']['types']['GR'] = __('Greek', '12-step-meeting-list');
-	
 	// Recovery Dharma
 	unset($tsml_programs['Recovery Dharma']['types']['S']);
 	$tsml_programs['Recovery Dharma']['types']['ES'] = __('Spanish', '12-step-meeting-list');
+	unset($tsml_programs['Recovery Dharma']['types']['IS']);
+	$tsml_programs['Recovery Dharma']['types']['IS'] =  __('Inquiry Study', '12-step-meeting-list');
 
 	// Refuge Recovery
 	unset($tsml_programs['Refuge Recovery']['types']['S']);
+	unset($tsml_programs['Refuge Recovery']['types']['IS']);
 	$tsml_programs['Refuge Recovery']['types']['ES'] =  __('Spanish', '12-step-meeting-list');
+	$tsml_programs['Refuge Recovery']['types']['IS'] =  __('Inventory Study', '12-step-meeting-list');
 
 	// UA
 	unset($tsml_programs['UA']['types']['S']);
