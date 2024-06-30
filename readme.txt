@@ -200,11 +200,6 @@ Another approach is to adjust which meeting types are "flagged" in the meeting n
 
 The code above will add "Open" and "Closed" flags to the meeting name.
 
-= When there are notes on a meeting, can I indicate that somehow in the meeting list? =
-Yes, with CSS. Rows that have meeting notes will have a 'notes' class. To add an asterisk, for example, try this:
-
-	div#tsml tr.notes a:after { content: "*"; }
-
 = Can I import a custom spreadsheet format? =
 If you don't mind some PHP programming, then yes! Create a function called `tsml_import_reformat`, and use it to
 reformat your incoming data to the standard format
@@ -304,7 +299,10 @@ Yes, you will need to know the key name of the field. Then include an array in y
 == Changelog ==
 
 = 3.14.36 =
-* Fix error when multibyte functions are not installed
+* Add Eating Disorders Anonymous [more info](https://github.com/code4recovery/12-step-meeting-list/pull/1447)
+* Don't include custom fields in JSON feed [more info](https://github.com/code4recovery/12-step-meeting-list/issues/1436)
+* Update messaging about TSML UI supporting Mapbox only [more info](https://github.com/code4recovery/12-step-meeting-list/issues/1453)
+* Fix error when multibyte functions are not installed [more info](https://github.com/code4recovery/12-step-meeting-list/discussions/1443)
 
 = 3.14.35 =
 * Add timezone support [more info](https://github.com/code4recovery/12-step-meeting-list/issues/930)
