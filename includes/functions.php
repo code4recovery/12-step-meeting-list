@@ -561,32 +561,6 @@ function tsml_format_address($formatted_address, $street_only = false)
     return implode('<br>', $parts);
 }
 
-//takes a full non formatted address from a meeting and returns it formatted for the front-end
-//used in multiple functions here
-function tsml_build_source_address($meeting)
-{
-    if (!empty($meeting['formatted_address'])) {
-        return $meeting['formatted_address'];
-    }
-
-    $address = [];
-    if (!empty($meeting['address']))
-        $address[] = $meeting['address'];
-    if (!empty($meeting['city']))
-        $address[] = $meeting['city'];
-    if (!empty($meeting['state']))
-        $address[] = $meeting['state'];
-    if (!empty($meeting['postal_code'])) {
-        if ((strlen($meeting['postal_code']) < 5) && ($meeting['country'] == 'USA'))
-            $meeting['postal_code'] = str_pad($meeting['postal_code'], 5, '0', STR_PAD_LEFT);
-        $address[] = $meeting['postal_code'];
-    }
-    if (!empty($meeting['country'])) {
-        $address[] = $meeting['country'];
-    }
-    return implode(', ', $address);
-}
-
 //function: takes 0, 18:30 and returns Sunday, 6:30 pm (depending on your settings)
 //used:		admin_edit.php, archive-meetings.php, single-meetings.php
 function tsml_format_day_and_time($day, $time, $separator = ', ', $short = false)
@@ -1258,6 +1232,7 @@ function tsml_get_meetings($arguments = [], $from_cache = true, $full_export = f
                 $meeting['data_source_name'] = $tsml_data_sources[$meeting_meta[$post->ID]['data_source']]['name'];
             }
 
+            // @TODO: Looking to remove, adding new fields just opens up new problems
             // Include the original guid, source slug, modified slug, and formatted address
             if (!empty($meeting_meta[$post->ID]['data_source'])) {
                 // todo we should discuss adding this new field here - i think we can use URL
@@ -1265,14 +1240,8 @@ function tsml_get_meetings($arguments = [], $from_cache = true, $full_export = f
 
                 if (!empty($meeting_meta[$post->ID]['source_slug'])) {
                     $meeting['source_slug'] = isset($meeting_meta[$post->ID]['source_slug']) ? $meeting_meta[$post->ID]['source_slug'] : null;
-                    // Store the source_slug_modified in the postmeta table
-                     if ($meeting['source_slug'] !== $post->post_name) {
-                        // todo can't do an update here
-                        update_post_meta($post->ID, 'source_slug_modified', $post->post_name);
-                        $meeting['source_slug_modified'] = $post->post_name;
-                    }
                 }
-
+                // @TODO: check why this is being stored
                 if (!empty($meeting_meta[$post->ID]['source_formatted_address'])) {
                     $meeting['source_formatted_address'] = isset($meeting_meta[$post->ID]['source_formatted_address']) ? $meeting_meta[$post->ID]['source_formatted_address'] : $meeting['source_formatted_address'];
                 }
@@ -1437,7 +1406,6 @@ function tsml_get_meta($type, $id = null)
                 'data_source',
                 'source_formatted_address',
                 'source_slug',
-                'source_slug_modified'
             ],
             array_keys($tsml_contact_fields),
             empty($tsml_custom_meeting_fields) ? [] : array_keys($tsml_custom_meeting_fields)
@@ -1513,9 +1481,253 @@ function tsml_meeting_types($types)
 
 }
 
+//return array of sanitized meetings
+//sanitizes imported meetings before processing
+function tsml_sanitize_import_meetings($meetings, $data_source_url = null, $data_source_parent_region_id = null) {
+
+    global $tsml_programs, $tsml_program, $tsml_days, $tsml_meeting_attendance_options, $tsml_data_sources;
+
+    if (strpos($data_source_url, "sheets.googleapis.com") !== false) {
+        $meetings = tsml_import_reformat_googlesheet($meetings);
+    }
+
+    //allow theme-defined function to reformat data source import - issue #439
+    if (function_exists('tsml_import_reformat')) {
+        $meetings = tsml_import_reformat($meetings);
+    }
+
+    //uppercasing for value matching later
+    $upper_types = array_map('strtoupper', $tsml_programs[$tsml_program]['types']);
+    $upper_days = array_map('strtoupper', $tsml_days);
+
+    //get users, keyed by username
+    $users = [];
+    foreach (get_users(['fields' => ['ID', 'user_login'],]) as $user) {
+        $users[$user->user_login] = $user->ID;
+    }
+
+    $user_id = get_current_user_id();
+
+    //convert the array to UTF-8
+    if (function_exists('mb_detect_encoding')) {
+        array_walk_recursive($meetings, function ($value) {
+            if (!mb_detect_encoding($value, 'utf-8', true)) {
+                return (string) mb_convert_encoding($value, 'UTF-8', 'auto');
+            }
+            return $value;
+        });
+    }
+
+    //trim everything
+    array_walk_recursive($meetings, function ($value) {
+        //preserve <br>s as line breaks if present, otherwise clean up
+        $value = preg_replace('/\<br(\s*)?\/?\>/i', PHP_EOL, $value);
+        $value = stripslashes($value);
+        $value = trim($value);
+
+        //turn "string" into string (only do if on both ends though)
+        if ((substr($value, 0, 1) == '"') && (substr($value, -1) == '"')) {
+            $value = trim(trim($value, '"'));
+        }
+
+        return $value;
+    });
+
+    //check for any meetings with arrays of days and creates an individual meeting for each day in array
+    $meetings_to_add = [];
+    $indexes_to_remove = [];
+
+    for ($i = 0; $i < count($meetings); $i++) {
+        if (isset($meetings[$i]['day']) && is_array($meetings[$i]['day'])) {
+            array_push($indexes_to_remove, $i);
+            foreach ($meetings[$i]['day'] as $single_day) {
+                $temp_meeting = $meetings[$i];
+                $temp_meeting['day'] = $single_day;
+                $temp_meeting['slug'] = $meetings[$i]['slug'] . "-" . $single_day;
+                array_push($meetings_to_add, $temp_meeting);
+            }
+        }
+    }
+
+    for ($i = 0; $i < count($indexes_to_remove); $i++) {
+        unset($meetings[$indexes_to_remove[$i]]);
+    }
+
+    $meetings = array_merge($meetings, $meetings_to_add);
+
+    //prepare array for import buffer
+    $count_meetings = count($meetings);
+    for ($i = 0; $i < $count_meetings; $i++) {
+
+        //do wordpress sanitization
+        foreach ($meetings[$i] as $key => $value) {
+
+            //have to compress types down real quick (only happens with json)
+            if (is_array($value)) $value = implode(',', $value);
+
+            if (tsml_string_ends($key, 'notes')) {
+                $meetings[$i][$key] = tsml_sanitize_text_area($value);
+            } else {
+                $meetings[$i][$key] = sanitize_text_field($value);
+            }
+        }
+
+        //column aliases
+        if (empty($meetings[$i]['postal_code']) && !empty($meetings[$i]['zip'])) {
+            $meetings[$i]['postal_code'] = $meetings[$i]['zip'];
+        }
+        if (empty($meetings[$i]['name']) && !empty($meetings[$i]['meeting'])) {
+            $meetings[$i]['name'] = $meetings[$i]['meeting'];
+        }
+        if (empty($meetings[$i]['location']) && !empty($meetings[$i]['location_name'])) {
+            $meetings[$i]['location'] = $meetings[$i]['location_name'];
+        }
+        if (empty($meetings[$i]['time']) && !empty($meetings[$i]['start_time'])) {
+            $meetings[$i]['time'] = $meetings[$i]['start_time'];
+        }
+
+        //if '@' is in address, remove it and everything after
+        if (!empty($meetings[$i]['address']) && $pos = strpos($meetings[$i]['address'], '@')) $meetings[$i]['address'] = trim(substr($meetings[$i]['address'], 0, $pos));
+
+        //if location name is missing, use address
+        if (empty($meetings[$i]['location'])) {
+            $meetings[$i]['location'] = empty($meetings[$i]['address']) ? __('Meeting Location', '12-step-meeting-list') : $meetings[$i]['address'];
+        }
+
+        //day can either be 0, 1, 2, 3 or Sunday, Monday, or empty
+        if (isset($meetings[$i]['day']) && !array_key_exists($meetings[$i]['day'], $upper_days)) {
+            $meetings[$i]['day'] = array_search(strtoupper($meetings[$i]['day']), $upper_days);
+        }
+
+        //sanitize time & day
+        if (empty($meetings[$i]['time']) || ($meetings[$i]['day'] === false)) {
+            $meetings[$i]['time'] = $meetings[$i]['end_time'] = $meetings[$i]['day'] = false; //by appointment
+
+            //if meeting name missing, use location
+            if (empty($meetings[$i]['name'])) $meetings[$i]['name'] = sprintf(__('%s by Appointment', '12-step-meeting-list'), $meetings[$i]['location']);
+        } else {
+            //if meeting name missing, use location, day, and time
+            if (empty($meetings[$i]['name'])) {
+                $meetings[$i]['name'] = sprintf(__('%s %ss at %s', '12-step-meeting-list'), $meetings[$i]['location'], $tsml_days[$meetings[$i]['day']], $meetings[$i]['time']);
+            }
+
+            $meetings[$i]['time'] = tsml_format_time_reverse($meetings[$i]['time']);
+            if (!empty($meetings[$i]['end_time'])) $meetings[$i]['end_time'] = tsml_format_time_reverse($meetings[$i]['end_time']);
+        }
+
+        //google prefers USA for geocoding
+        if (!empty($meetings[$i]['country']) && $meetings[$i]['country'] == 'US') $meetings[$i]['country'] = 'USA';
+
+        //build address
+        if (empty($meetings[$i]['formatted_address'])) {
+            $address = [];
+            if (!empty($meetings[$i]['address'])) $address[] = $meetings[$i]['address'];
+            if (!empty($meetings[$i]['city'])) $address[] = $meetings[$i]['city'];
+            if (!empty($meetings[$i]['state'])) $address[] = $meetings[$i]['state'];
+            if (!empty($meetings[$i]['postal_code'])) {
+                if ((strlen($meetings[$i]['postal_code']) < 5) && ($meetings[$i]['country'] == 'USA')) $meetings[$i]['postal_code'] = str_pad($meetings[$i]['postal_code'], 5, '0', STR_PAD_LEFT);
+                $address[] = $meetings[$i]['postal_code'];
+            }
+            if (!empty($meetings[$i]['country'])) $address[] = $meetings[$i]['country'];
+            $meetings[$i]['formatted_address'] = implode(', ', $address);
+        }
+
+        //notes
+        if (empty($meetings[$i]['notes'])) $meetings[$i]['notes'] = '';
+        if (empty($meetings[$i]['location_notes'])) $meetings[$i]['location_notes'] = '';
+        if (empty($meetings[$i]['group_notes'])) $meetings[$i]['group_notes'] = '';
+
+        //updated
+        if (empty($meetings[$i]['updated']) || (!$meetings[$i]['updated'] = strtotime($meetings[$i]['updated']))) $meetings[$i]['updated'] = time();
+        $meetings[$i]['post_modified'] = date('Y-m-d H:i:s', $meetings[$i]['updated']);
+        $meetings[$i]['post_modified_gmt'] = get_gmt_from_date($meetings[$i]['post_modified']);
+
+        //author
+        if (!empty($meetings[$i]['author']) && array_key_exists($meetings[$i]['author'], $users)) {
+            $meetings[$i]['post_author'] = $users[$meetings[$i]['author']];
+        } else {
+            $meetings[$i]['post_author'] = $user_id;
+        }
+
+        //default region to city if not specified
+        if (empty($meetings[$i]['region']) && !empty($meetings[$i]['city'])) $meetings[$i]['region'] = $meetings[$i]['city'];
+
+        //sanitize types (they can be Closed or C)
+        if (empty($meetings[$i]['types'])) $meetings[$i]['types'] = '';
+        $types = explode(',', $meetings[$i]['types']);
+        $meetings[$i]['types'] = $unused_types = [];
+        foreach ($types as $type) {
+            $upper_type = trim(strtoupper($type));
+            if (in_array($upper_type, array_map('strtoupper', array_keys($upper_types)))) {
+                $meetings[$i]['types'][] = $type;
+            } elseif (in_array($upper_type, array_values($upper_types))) {
+                $meetings[$i]['types'][] = array_search($upper_type, $upper_types);
+            } else {
+                $unused_types[] = $type;
+            }
+        }
+
+        //if a meeting is both open and closed, make it closed
+        if (in_array('C', $meetings[$i]['types']) && in_array('O', $meetings[$i]['types'])) {
+            $meetings[$i]['types'] = array_diff($meetings[$i]['types'], ['O']);
+        }
+
+        //append unused types to notes
+        if (count($unused_types)) {
+            if (!empty($meetings[$i]['notes'])) $meetings[$i]['notes'] .= str_repeat(PHP_EOL, 2);
+            $meetings[$i]['notes'] .= implode(', ', $unused_types);
+        }
+
+        // If Conference URL, validate; or if phone, force 'ONL' type, else remove 'ONL'
+        $meetings[$i]['types'] = array_values(array_diff($meetings[$i]['types'], ['ONL']));
+        if (!empty($meetings[$i]['conference_url'])) {
+            $url = esc_url_raw($meetings[$i]['conference_url'], ['http', 'https']);
+            if (tsml_conference_provider($url)) {
+                $meetings[$i]['conference_url'] = $url;
+                $meetings[$i]['types'][] = 'ONL';
+            } else {
+                $meetings[$i]['conference_url'] = null;
+                $meetings[$i]['conference_url_notes'] = null;
+            }
+        }
+        if (!empty($meetings[$i]['conference_phone']) && empty($meetings[$i]['conference_url'])) {
+            $meetings[$i]['types'][] = 'ONL';
+        }
+        if (empty($meetings[$i]['conference_phone'])) {
+            $meetings[$i]['conference_phone_notes'] = null;
+        }
+
+        //Clean up attendance options
+        if (!empty($meetings[$i]['attendance_option'])) {
+            $meetings[$i]['attendance_option'] = trim(strtolower($meetings[$i]['attendance_option']));
+            if (!array_key_exists($meetings[$i]['attendance_option'], $tsml_meeting_attendance_options)) {
+                $meetings[$i]['attendance_option'] = '';
+            }
+        }
+
+        //make sure we're not double-listing types
+        $meetings[$i]['types'] = array_unique($meetings[$i]['types']);
+
+        //clean up
+        foreach (['address', 'city', 'state', 'postal_code', 'country', 'updated'] as $key) {
+            if (isset($meetings[$i][$key])) unset($meetings[$i][$key]);
+        }
+
+        //preserve row number for errors later
+        $meetings[$i]['row'] = $i + 2;
+    }
+
+    //allow user-defined function to filter the meetings (for gal-aa.org)
+    if (function_exists('tsml_import_filter')) {
+        $meetings = array_filter($meetings, 'tsml_import_filter');
+    }
+
+    return $meetings;
+}
+
 //sanitize and import an array of meetings to an 'import buffer' (an wp_option that's iterated on progressively)
 //called from admin_import.php (both CSV and JSON)
-function tsml_import_buffer_set($meetings, $data_source_url = null, $data_source_parent_region_id = null, $is_already_transformed = false)
+function tsml_import_buffer_set($meetings, $data_source_url = null, $data_source_parent_region_id = null)
 {
     global $tsml_programs, $tsml_program, $tsml_days, $tsml_meeting_attendance_options, $tsml_data_sources;
 
@@ -1523,26 +1735,32 @@ function tsml_import_buffer_set($meetings, $data_source_url = null, $data_source
      * Only those feed records deemed to be out-of-sync with those already stored locally will be passed here. Google Sheets and CSV Imports do
      * not pass through the compare code and are passed here directly where the full meetings feed is transformed before updating. */
 
-    if (!$is_already_transformed) {
-        $meetings = tsml_transform_import_meeting_fields($meetings, $data_source_url, $data_source_parent_region_id);
-    }
-
-    //clean up
-    for ($i = 0; $i < count($meetings); $i++) {
-        foreach (['address', 'city', 'state', 'postal_code', 'country', 'updated'] as $key) {
-            if (isset($meetings[$i][$key])) {
-                unset($meetings[$i][$key]);
+    foreach ($meetings as $i => $meeting) {
+        // If the meeting doesn't have a data_source, use the one from the function call
+        $meeting_data_source = isset($meeting['data_source']) ? $meeting['data_source'] : '';
+        if (empty($meeting_data_source)) {
+            $meetings[$i]['data_source'] = $data_source_url;
+        } else {
+            // Check if this data sources is in our list of feeds
+            if (!array_key_exists($meeting_data_source, $tsml_data_sources)) {
+                // Not already there, so add it
+                $tsml_data_sources[$meeting_data_source] = [
+                    'status' => 'OK',
+                    'last_import' => current_time('timestamp'),
+                    'count_meetings' => 0,
+                    'name' => parse_url($meeting_data_source, PHP_URL_HOST),
+                    'parent_region_id' => $data_source_parent_region_id,
+                    'change_detect' => null,
+                    'type' => 'JSON',
+                ];
             }
         }
+
+        $meetings[$i]['data_source_parent_region_id'] = $data_source_parent_region_id;
     }
 
     //save data source configuration
     update_option('tsml_data_sources', $tsml_data_sources);
-
-    //allow user-defined function to filter the meetings (for gal-aa.org)
-    if (function_exists('tsml_import_filter')) {
-        $meetings = array_filter($meetings, 'tsml_import_filter');
-    }
 
     //prepare import buffer in wp_options
     update_option('tsml_import_buffer', $meetings, false);
@@ -1918,11 +2136,15 @@ function tsml_sanitize_data_sort($string)
     }
 
     # Unicode-aware lowercase of characters in string
-    return mb_strtolower($t);
+    if (function_exists('mb_strtolower')) {
+        return mb_strtolower($t);
+    } else {
+        return strtolower($t);
+    }
 }
 
 
-//start of change_detection_updates
+/* ******************** start of data_source_change_detection ****************** */
 
 //called by register_activation_hook in admin_import
 function tsml_activate_data_source_scan()
@@ -1982,6 +2204,7 @@ if (!function_exists('tsml_scan_data_source')) {
             if (is_array($response) && !empty($response['body']) && ($body = json_decode($response['body'], true))) {
 
                 //allow reformatting as necessary
+                // @TODO: walk through track changes
                 if (strpos($data_source_url, "sheets.googleapis.com") !== false) {
                     $meetings = tsml_import_reformat_googlesheet($body);
                 } elseif (function_exists('tsml_import_reformat')) {
@@ -2170,25 +2393,6 @@ function tsml_date_localised($format, $timestamp = null)
     return $datetime->format($format);
 }
 
-//function: Interrogates date/time string and returns the formatting datetime detected. This is not an exhaustive check, as there are more possibilities.
-function tsml_extractDateTimeFormat($string)
-{
-    if (preg_match('/^\d{4}-\d{2}-\d{2}$/', $string))
-        return 'Y-m-d';
-
-    if (preg_match('/^\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}$/', $string))
-        return 'Y-m-d H:i:s';
-
-    if (preg_match('/^\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}\.\d{3}$/', $string))
-        return 'Y-m-d H:i:s.v';
-
-    if (preg_match('/^\d{2}\/\d{2}\/\d{4}$/', $string))
-        return 'm/d/Y';
-
-    if (preg_match('/^\d{2}\.\d{2}\.\d{4}$/', $string))
-        return 'd.m.Y';
-}
-
 /**
  * Checks a list of imported meetings for necessary import changes / updates
  *
@@ -2198,11 +2402,11 @@ function tsml_extractDateTimeFormat($string)
  * @return array[array, array, array]
  *       $import_meetings    array of imported meetings that need to be processes
  *       $delete_meeting_ids array of existing meeting post id's to delete
- *       $change_log         array of changes to existing 
+ *       $change_log         array of changes to existing
  */
 function tsml_get_import_changes_only($feed_meetings, $data_source_url, $data_source_parent_region_id)
 {
-    $import_meetings = $delete_meeting_ids = $db_meetings = $feed_slugs = $meeting = [];
+    $import_meetings = $delete_meeting_ids = $source_meetings = $feed_slugs = $meeting = [];
     $change_log = array();
 
     //get local meetings
@@ -2210,115 +2414,117 @@ function tsml_get_import_changes_only($feed_meetings, $data_source_url, $data_so
     sort($data_source_ids);
 
     /* filter out all but the data source meetings  */
-    $db_meetings = array_filter(tsml_get_meetings(), function ($meeting) use ($data_source_ids) {
+    $source_meetings = array_filter(tsml_get_meetings(), function ($meeting) use ($data_source_ids) {
         return in_array($meeting['id'], $data_source_ids);
     });
 
     //create array of database slugs for matching
-    $db_slugs = array_column($db_meetings, 'slug', 'id');
+    $meeting_slugs_map = array_column($source_meetings, 'slug', 'id');
     //create another array of the database source_slugs for matching to the original slug which may be overriden by the importer
-    $db_source_slugs = array_column($db_meetings, 'source_slug', 'id');
-
-    $transformed_meetings = tsml_transform_import_meeting_fields($feed_meetings, $data_source_url, $data_source_parent_region_id);
+    $meeting_source_slugs_map = array_column($source_meetings, 'source_slug', 'id');
 
     //list changed and new meetings found in the data source feed
-    foreach ($transformed_meetings as $meeting) {
-        $meeting_slug = $db_meeting = $db_meeting_id = null;
+    foreach ($feed_meetings as $feed_meeting) {
+        $feed_meeting_slug = $source_meeting = $source_meeting_id = null;
 
-        if (!empty($meeting) && is_array($meeting)) {
-            if (array_key_exists('slug', $meeting)) {
-                $meeting_slug = trim(strtolower(strval($meeting['slug'])));
-            }
-            $db_meeting_id = array_search($meeting_slug, $db_slugs);
-            if ($db_meeting_id) {
-                $db_meeting = tsml_get_meeting($db_meeting_id);
-            } else {
-                $db_meeting_id = array_search($meeting_slug, $db_source_slugs);
-                if ($db_meeting_id) {
-                    $db_meeting = tsml_get_meeting($db_meeting_id);
-                    //@TODO: explain
-                    if (isset($db_meeting['source_slug_modified'])) {
-                        $meeting_slug = $db_meeting['source_slug_modified'];
-                    }
-                }            
-            }
+        if (empty($feed_meeting) || !is_array($feed_meeting)) {
+            continue;
+        }
+        
+        if (array_key_exists('slug', $feed_meeting)) {
+            $feed_meeting_slug = trim(strtolower(strval($feed_meeting['slug'])));
+        }
+        $source_meeting_id = array_search($feed_meeting_slug, $meeting_slugs_map);
+        if (!$source_meeting_id) {
+            $source_meeting_id = array_search($feed_meeting_slug, $meeting_source_slugs_map);
+        }
+        
+        if ($source_meeting_id) {
+            $source_meeting = tsml_get_meeting($source_meeting_id);
+        }
+        if ($source_meeting) {
+            $source_meeting = (array) $source_meeting;
         }
 
         //add slug to feed array to help determine current db removals later on...
-        if ($meeting_slug) {
-            $feed_slugs[] = $meeting_slug;
+        if ($feed_meeting_slug) {
+            $feed_slugs[] = $feed_meeting_slug;
         }
 
         //compare matched records to see if there's been changes
-        $changed_fields = tsml_compare_meetings($db_meeting, $meeting);
-
-        //output the array containing only the feed records needing to be changed or the new ones to be added to the database
-        if ($changed_fields) {
-            array_push($import_meetings, $meeting);
-            if ($db_meeting) {
+        if (!$source_meeting) {
+            $change_log[] = array(
+                'action'  => 'add',
+                'meeting' => $feed_meeting,
+            );
+            $import_meetings[] = $feed_meeting;
+        } else {
+            $changed_fields = tsml_compare_meetings($source_meeting, $feed_meeting);
+            if (!empty($changed_fields)) {
                 $change_log[] = array(
                     'action'         => 'update',
-                    'meeting'        => $meeting,
+                    'meeting'        => $feed_meeting,
                     'changed_fields' => $changed_fields,
-                    'post_id'        => $db_meeting_id,
+                    'post_id'        => $source_meeting_id,
                 );
                 //add changed record id to list of db records to be removed (changes will get added back in by the importer)
-                $delete_meeting_ids[] = $db_meeting_id;
-            } else {
-                $change_log[] = array(
-                    'action'  => 'add',
-                    'meeting' => $meeting,
-                );
+                $delete_meeting_ids[] = $source_meeting_id;            
+                $import_meetings[] = $feed_meeting;
             }
         }
     }
 
     //add to removal array (i.e. $delete_meeting_ids) for only those meetings in local database which are not matched with the import feed
-    foreach ($db_meetings as $db_meeting) {
-        $meeting_slug = $db_meeting['slug'];
-        $is_matched = in_array($meeting_slug, $feed_slugs);
-        if (!$is_matched) {
+    foreach ($source_meetings as $source_meeting) {
+        $feed_meeting_slug = $source_meeting['slug'];
+        if (!in_array($feed_meeting_slug, $feed_slugs)) {
             $change_log[] = array(
                 'action'  => 'remove',
-                'meeting' => $db_meeting,
-                'post_id' => $db_meeting['id'],
+                'meeting' => $source_meeting,
+                'post_id' => $source_meeting['id'],
             );
-            $delete_meeting_ids[] = $db_meeting['id'];
+            $delete_meeting_ids[] = $source_meeting['id'];
         }
     }
     return array($import_meetings, $delete_meeting_ids, $change_log);
 }
 
-//function:	return array of fields that don't match between two meetings, or null if no difference
-function tsml_compare_meetings($db_meeting, $import_meeting)
+/**
+ * Compares content of two meetings, not internal system fields, returns differing fields or null if equal
+ * @param array $meeting_1 Meeting 1
+ * @param array $meeting_2 Meeting 2
+ * @return array|null
+ */
+function tsml_compare_meetings($meeting_1, $meeting_2)
 {
+    global $tsml_export_columns;
+    $compare_fields = array_diff(
+        array_keys($tsml_export_columns),
+        //these fields are unique internal fields, not content fields for comparison
+        explode(',', 'id,name,slug,author,data_source,data_source_name')
+    );
+
     // normalize meetings for comparison
-    $compare_fields = explode(',', 'post_title,day,time,end_time,types,formatted_address,address,location,location_notes,conference_phone,district,sub-district,email,last_contact,location_group,mailing_address,paypal,square,venmo,website,website_2');
-
-    for ($i = 1; $i <= TSML_GROUP_CONTACT_COUNT; $i++) {
-        foreach (['name', 'phone', 'email'] as $field) {
-            $compare_fields[] = 'contact_' . $i . '_' . $field;
-        }
-    }
-
     $normalized_meetings = array();
-    foreach(array($db_meeting, $import_meeting) as $meeting) {
+    foreach(array($meeting_1, $meeting_2) as $meeting) {
         $normalized_meeting = array();
         $meeting = (array) $meeting;
         foreach($compare_fields as $field) {
-            $value = isset($meeting[$field]) ? $meeting[$field] : null;
+            $value = isset($meeting[$field]) ? $meeting[$field] : '';
             //import meeting: post_title <=> name
             if (!$value && 'post_title' === $field) {
-                $value = isset($meeting['name']) ? $meeting['name'] : null;
+                $value = isset($meeting['name']) ? $meeting['name'] : '';
             }
             if (is_object($value) || is_array($value)) {
                 $value = json_encode($value);
             } elseif (null !== $value) {
                 $value = trim(html_entity_decode(strval($value)));
+            } else {
+                $value = '';
             }
-            $normalized_meeting[$field] = $value;        
+            $normalized_meeting[$field] = $value;
         }
-        $normalized_meetings[] = $normalized_meeting;    
+        $normalized_meetings[] = $normalized_meeting;
     }
     $diff_fields = array();
     foreach($compare_fields as $field) {
@@ -2327,306 +2533,6 @@ function tsml_compare_meetings($db_meeting, $import_meeting)
         }
     }
     return count($diff_fields) ? $diff_fields : null;
-}
-
-//function:	applies transformation code found in tsml_import_buffer_set function to comparison code
-//used:		here (called from tsml_import_buffer_set and tsml_get_import_changes_only.)
-function tsml_transform_import_meeting_fields($meetings, $data_source_url = null, $data_source_parent_region_id = null)
-{
-    global $tsml_programs, $tsml_program, $tsml_days, $tsml_meeting_attendance_options, $tsml_data_sources;
-
-    //uppercasing for value matching later
-    $upper_types = array_map('strtoupper', $tsml_programs[$tsml_program]['types']);
-    $upper_days = array_map('strtoupper', $tsml_days);
-
-    //get users, keyed by username
-    $users = [];
-    foreach (get_users(['fields' => ['ID', 'user_login'],]) as $user) {
-        $users[$user->user_login] = $user->ID;
-    }
-
-    $user_id = get_current_user_id();
-
-    //convert the array to UTF-8
-    array_walk_recursive($meetings, function (&$item) {
-        if (!mb_detect_encoding($item, 'utf-8', true)) {
-            $item = utf8_encode($item);
-        }
-    });
-
-    //trim everything
-    array_walk_recursive($meetings, function ($value) {
-        //preserve <br>s as line breaks if present, otherwise clean up
-        $value = preg_replace('/\<br(\s*)?\/?\>/i', PHP_EOL, $value);
-        $value = stripslashes($value);
-        $value = trim($value);
-
-        //turn "string" into string (only do if on both ends though)
-        if ((substr($value, 0, 1) == '"') && (substr($value, -1) == '"')) {
-            $value = trim(trim($value, '"'));
-        }
-
-        return $value;
-    });
-
-    //check for any meetings with arrays of days and creates an individual meeting for each day in array
-    $meetings_to_add = $indexes_to_remove = [];
-
-    for ($i = 0; $i < count($meetings); $i++) {
-        if (isset($meetings[$i]['day']) && is_array($meetings[$i]['day'])) {
-            array_push($indexes_to_remove, $i);
-            foreach ($meetings[$i]['day'] as $single_day) {
-                $temp_meeting = $meetings[$i];
-                $temp_meeting['day'] = $single_day;
-                $temp_meeting['slug'] = $meetings[$i]['slug'] . "-" . $single_day;
-                array_push($meetings_to_add, $temp_meeting);
-            }
-        }
-    }
-
-    for ($i = 0; $i < count($indexes_to_remove); $i++) {
-        unset($meetings[$indexes_to_remove[$i]]);
-    }
-
-    $meetings = array_merge($meetings, $meetings_to_add);
-
-    //prepare array for import buffer
-    $count_meetings = count($meetings);
-    for ($i = 0; $i < $count_meetings; $i++) {
-
-        // If the meeting doesn't have a data_source, use the one from the function call
-        if (empty($meetings[$i]['data_source'])) {
-            $meetings[$i]['data_source'] = $data_source_url;
-        } else {
-            // Check if this data sources is in our list of feeds
-            if (!array_key_exists($meetings[$i]['data_source'], $tsml_data_sources)) {
-                // Not already there, so add it
-                $tsml_data_sources[$meetings[$i]['data_source']] = [
-                    'status' => 'OK',
-                    'last_import' => current_time('timestamp'),
-                    'count_meetings' => 0,
-                    'name' => parse_url($meetings[$i]['data_source'], PHP_URL_HOST),
-                    'parent_region_id' => $data_source_parent_region_id,
-                    'type' => 'JSON',
-                ];
-            }
-        }
-        $meetings[$i]['data_source_parent_region_id'] = $data_source_parent_region_id;
-
-        //do wordpress sanitization
-        foreach ($meetings[$i] as $key => $value) {
-
-            //have to compress types down real quick (only happens with json)
-            if (is_array($value))
-                $value = implode(',', $value);
-
-            if (tsml_string_ends($key, 'notes')) {
-                $meetings[$i][$key] = tsml_sanitize_text_area($value);
-            } else {
-                $meetings[$i][$key] = sanitize_text_field($value);
-            }
-        }
-
-        //column aliases
-        if (empty($meetings[$i]['postal_code']) && !empty($meetings[$i]['postal_code'])) {
-            $meetings[$i]['postal_code'] = $meetings[$i]['postal_code'];
-        }
-        if (empty($meetings[$i]['name']) && !empty($meetings[$i]['meeting'])) {
-            $meetings[$i]['name'] = $meetings[$i]['meeting'];
-        }
-        if (empty($meetings[$i]['location']) && !empty($meetings[$i]['location_name'])) {
-            $meetings[$i]['location'] = $meetings[$i]['location_name'];
-        }
-
-        if (empty($meetings[$i]['time']) && !empty($meetings[$i]['start_time'])) {
-            $meetings[$i]['time'] = $meetings[$i]['start_time'];
-        }
-
-        //if '@' is in address, remove it and everything after
-        if (!empty($meetings[$i]['address']) && $pos = strpos($meetings[$i]['address'], '@'))
-            $meetings[$i]['address'] = trim(substr($meetings[$i]['address'], 0, $pos));
-
-        //if location name is missing, use address
-        if (empty($meetings[$i]['location'])) {
-            $meetings[$i]['location'] = empty($meetings[$i]['address']) ? __('Meeting Location', '12-step-meeting-list') : $meetings[$i]['address'];
-        }
-
-        //day can either be 0, 1, 2, 3 or Sunday, Monday, or empty
-        if (isset($meetings[$i]['day']) && !array_key_exists($meetings[$i]['day'], $upper_days)) {
-            $meetings[$i]['day'] = array_search(strtoupper($meetings[$i]['day']), $upper_days);
-        }
-
-        //sanitize time & day
-        if (empty($meetings[$i]['time']) || ($meetings[$i]['day'] === false)) {
-            $meetings[$i]['time'] = $meetings[$i]['end_time'] = $meetings[$i]['day'] = false; //by appointment
-
-            //if meeting name missing, use location
-            if (empty($meetings[$i]['name'])) {
-                $meetings[$i]['name'] = sprintf(__('%s by Appointment', '12-step-meeting-list'), $meetings[$i]['location']);
-            }
-        } else {
-            //if meeting name missing, use location, day, and time
-            if (empty($meetings[$i]['name'])) {
-                $meetings[$i]['name'] = sprintf(__('%s %ss at %s', '12-step-meeting-list'), $meetings[$i]['location'], $tsml_days[$meetings[$i]['day']], $meetings[$i]['time']);
-            }
-
-            $meetings[$i]['time'] = tsml_format_time_reverse($meetings[$i]['time']);
-            if (!empty($meetings[$i]['end_time']))
-                $meetings[$i]['end_time'] = tsml_format_time_reverse($meetings[$i]['end_time']);
-        }
-
-        //google prefers USA for geocoding
-        if (!empty($meetings[$i]['country']) && $meetings[$i]['country'] == 'US')
-            $meetings[$i]['country'] = 'USA';
-
-        //build address
-        if (empty($meetings[$i]['formatted_address'])) {
-            $meetings[$i]['formatted_address'] = tsml_build_source_address($meetings[$i]);
-        }
-        $meetings[$i]['source_formatted_address'] = $meetings[$i]['formatted_address'];
-
-        //source_slug
-        if (empty($meetings[$i]['source_slug'])) {
-            $meetings[$i]['source_slug'] = $meetings[$i]['slug'];
-        }
-
-        //notes
-        if (empty($meetings[$i]['notes'])) {
-            $meetings[$i]['notes'] = '';
-        }
-        if (empty($meetings[$i]['location_notes'])) {
-            $meetings[$i]['location_notes'] = '';
-        }
-        if (empty($meetings[$i]['group_notes'])) {
-            $meetings[$i]['group_notes'] = '';
-        }
-
-        //updated
-        if (empty($meetings[$i]['updated']) || (!$meetings[$i]['updated'] = strtotime($meetings[$i]['updated']))) {
-            $meetings[$i]['updated'] = time();
-        }
-        $meetings[$i]['post_modified'] = date('Y-m-d H:i:s', $meetings[$i]['updated']);
-        $meetings[$i]['post_modified_gmt'] = get_gmt_from_date($meetings[$i]['post_modified']);
-
-        //author
-        if (!empty($meetings[$i]['author']) && array_key_exists($meetings[$i]['author'], $users)) {
-            $meetings[$i]['post_author'] = $users[$meetings[$i]['author']];
-        } else {
-            $meetings[$i]['post_author'] = $user_id;
-        }
-
-        //default region to city if not specified
-        if (empty($meetings[$i]['region']) && !empty($meetings[$i]['city'])) {
-            $meetings[$i]['region'] = $meetings[$i]['city'];
-        }
-        if (!array_key_exists('regions', $meetings[$i]) && !empty($meetings[$i]['sub_region'])) {
-            $meetings[$i]['regions'][0] = $meetings[$i]['region'];
-            $meetings[$i]['regions'][1] = $meetings[$i]['sub_region'];
-        }
-
-        if (array_key_exists('entity', $meetings[$i])) {
-            $meetings[$i]['district'] = $meetings[$i]['entity'];
-            if (!array_key_exists('entity_email', $meetings[$i])) {
-                $meetings[$i]['entity_email'] = $meetings[$i]['entity_email'];
-            }
-            if (!array_key_exists('entity_feedback_emails', $meetings[$i])) {
-                $meetings[$i]['entity_feedback_emails'] = $meetings[$i]['entity_feedback_emails'];
-            }
-            if (!array_key_exists('entity_location', $meetings[$i])) {
-                $meetings[$i]['entity_location'] = $meetings[$i]['entity_location'];
-            }
-            if (!array_key_exists('entity_logo ', $meetings[$i])) {
-                $meetings[$i]['entity_logo'] = $meetings[$i]['entity_logo'];
-            }
-            if (!array_key_exists('entity_phone ', $meetings[$i])) {
-                $meetings[$i]['entity_phone'] = $meetings[$i]['entity_phone'];
-            }
-            if (!array_key_exists('entity_website_url', $meetings[$i])) {
-                $meetings[$i]['entity_website_url'] = $meetings[$i]['entity_website_url'];
-            }
-        }
-
-        if (!empty($meetings[$i]['district'])) {
-            $meetings[$i]['district'] = $meetings[$i]['district'];
-            if (!array_key_exists('entity', $meetings[$i])) {
-                $meetings[$i]['entity'] = $meetings[$i]['district'];
-            }
-        }
-
-        //sanitize types (they can be Closed or C)
-        if (empty($meetings[$i]['types'])) {
-            $meetings[$i]['types'] = '';
-        }
-        $types = explode(',', $meetings[$i]['types']);
-        $meetings[$i]['types'] = $unused_types = [];
-        foreach ($types as $type) {
-            $upper_type = trim(strtoupper($type));
-            if (in_array($upper_type, array_map('strtoupper', array_keys($upper_types)))) {
-                $meetings[$i]['types'][] = $type;
-            } elseif (in_array($upper_type, array_values($upper_types))) {
-                $meetings[$i]['types'][] = array_search($upper_type, $upper_types);
-            } else {
-                $unused_types[] = $type;
-            }
-        }
-
-        //if a meeting is both open and closed, make it closed
-        if (in_array('C', $meetings[$i]['types']) && in_array('O', $meetings[$i]['types'])) {
-            $meetings[$i]['types'] = array_diff($meetings[$i]['types'], ['O']);
-        }
-
-        //append unused types to notes
-        if (count($unused_types)) {
-            if (!empty($meetings[$i]['notes'])) {
-                $meetings[$i]['notes'] .= str_repeat(PHP_EOL, 2);
-            }
-            $meetings[$i]['notes'] .= implode(', ', $unused_types);
-        }
-
-        // If Conference URL, validate; or if phone, force 'ONL' type, else remove 'ONL'
-        $meetings[$i]['types'] = array_values(array_diff($meetings[$i]['types'], ['ONL']));
-        if (!empty($meetings[$i]['conference_url'])) {
-            $url = tsml_sanitize('url', $meetings[$i]['conference_url']);
-            if (tsml_conference_provider($url)) {
-                $meetings[$i]['conference_url'] = $url;
-                $meetings[$i]['types'][] = 'ONL';
-            } else {
-                $meetings[$i]['conference_url'] = null;
-                $meetings[$i]['conference_url_notes'] = null;
-            }
-        }
-        if (!empty($meetings[$i]['conference_phone']) && empty($meetings[$i]['conference_url'])) {
-            $meetings[$i]['types'][] = 'ONL';
-        }
-        if (empty($meetings[$i]['conference_phone'])) {
-            $meetings[$i]['conference_phone_notes'] = null;
-        }
-
-        //Clean up attendance options
-        if (!empty($meetings[$i]['attendance_option'])) {
-            $meetings[$i]['attendance_option'] = trim(strtolower($meetings[$i]['attendance_option']));
-            if (!array_key_exists($meetings[$i]['attendance_option'], $tsml_meeting_attendance_options)) {
-                $meetings[$i]['attendance_option'] = '';
-            }
-        }
-
-        //make sure we're not double-listing types
-        $meetings[$i]['types'] = array_unique($meetings[$i]['types']);
-
-        //preserve row number for errors later
-        $meetings[$i]['row'] = $i + 2;
-    }
-
-    //save data source configuration
-    update_option('tsml_data_sources', $tsml_data_sources);
-
-    //allow user-defined function to filter the meetings (for gal-aa.org)
-    if (function_exists('tsml_import_filter')) {
-        $meetings = array_filter($meetings, 'tsml_import_filter');
-    }
-
-    return $meetings;
-
 }
 
 function tsml_header()
