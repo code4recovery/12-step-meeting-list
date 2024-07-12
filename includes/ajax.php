@@ -508,14 +508,18 @@ add_action('wp_ajax_tsml_import', function () {
             'post_modified_gmt' => $meeting['post_modified_gmt'],
             'post_author' => $meeting['post_author'],
         ];
+        //if ID is included, this is a meeting update
+        if (isset($meeting['ID']) && intval($meeting['ID'])) {
+            $options['ID'] = intval($meeting['ID']);
+        }
         if (!empty($meeting['slug'])) $options['post_name'] = $meeting['slug'];
         $meeting_id = wp_insert_post($options);
 
         //add day and time(s) if not appointment meeting
         if (!empty($meeting['time']) && (!empty($meeting['day']) || (string) $meeting['day'] === '0')) {
-            add_post_meta($meeting_id, 'day', $meeting['day']);
-            add_post_meta($meeting_id, 'time', $meeting['time']);
-            if (!empty($meeting['end_time'])) add_post_meta($meeting_id, 'end_time', $meeting['end_time']);
+            update_post_meta($meeting_id, 'day', $meeting['day']);
+            update_post_meta($meeting_id, 'time', $meeting['time']);
+            if (!empty($meeting['end_time'])) update_post_meta($meeting_id, 'end_time', $meeting['end_time']);
         }
 
         //add custom meeting fields if available
@@ -524,13 +528,13 @@ add_action('wp_ajax_tsml_import', function () {
             $custom_meeting_fields = array_merge($custom_meeting_fields, array_keys($tsml_custom_meeting_fields));
         }
         foreach ($custom_meeting_fields as $key) {
-            if (!empty($meeting[$key])) add_post_meta($meeting_id, $key, $meeting[$key]);
+            if (!empty($meeting[$key])) update_post_meta($meeting_id, $key, $meeting[$key]);
         }
 
         // Add Group Id and group specific info if applicable
         if (!empty($group_id)) {
             //link group to meeting
-            add_post_meta($meeting_id, 'group_id', $group_id);
+            update_post_meta($meeting_id, 'group_id', $group_id);
         }
 
         //handle contact information (could be meeting or group)

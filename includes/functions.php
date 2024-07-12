@@ -1538,12 +1538,22 @@ function tsml_sanitize_import_meetings($meetings, $data_source_url = null, $data
     $indexes_to_remove = [];
 
     for ($i = 0; $i < count($meetings); $i++) {
+
+        // sanitize slug
+        foreach (array('slug','post_name', 'name') as $field) {
+            if (!isset($meetings[$i]['slug']) || !$meetings[$i]['slug']) { 
+                $meetings[$i]['slug'] = isset($meetings[$i][$field]) ? sanitize_title($meetings[$i][$field]) : '';
+            }
+        }
+        $meetings[$i]['source_slug'] = $meetings[$i]['slug'];
+
         if (isset($meetings[$i]['day']) && is_array($meetings[$i]['day'])) {
             array_push($indexes_to_remove, $i);
             foreach ($meetings[$i]['day'] as $single_day) {
                 $temp_meeting = $meetings[$i];
                 $temp_meeting['day'] = $single_day;
                 $temp_meeting['slug'] = $meetings[$i]['slug'] . "-" . $single_day;
+                $temp_meeting['source_slug'] = $temp_meeting['slug'];
                 array_push($meetings_to_add, $temp_meeting);
             }
         }
@@ -2406,8 +2416,8 @@ function tsml_date_localised($format, $timestamp = null)
  */
 function tsml_get_import_changes_only($feed_meetings, $data_source_url, $data_source_parent_region_id)
 {
-    $import_meetings = $delete_meeting_ids = $source_meetings = $feed_slugs = $meeting = [];
-    $change_log = array();
+    $import_meetings = $delete_meeting_ids = $source_meetings = $found_meeting_ids = [];
+    $change_log = [];
 
     //get local meetings
     $data_source_ids = tsml_get_data_source_ids($data_source_url);
@@ -2420,6 +2430,7 @@ function tsml_get_import_changes_only($feed_meetings, $data_source_url, $data_so
 
     //create array of database slugs for matching
     $meeting_slugs_map = array_column($source_meetings, 'slug', 'id');
+    $meeting_ids = array_keys($meeting_slugs_map);
     //create another array of the database source_slugs for matching to the original slug which may be overriden by the importer
     $meeting_source_slugs_map = array_column($source_meetings, 'source_slug', 'id');
 
@@ -2431,34 +2442,18 @@ function tsml_get_import_changes_only($feed_meetings, $data_source_url, $data_so
             continue;
         }
         
-        if (array_key_exists('slug', $feed_meeting)) {
-            $feed_meeting_slug = trim(strtolower(strval($feed_meeting['slug'])));
-        }
-        $source_meeting_id = array_search($feed_meeting_slug, $meeting_slugs_map);
+        $feed_meeting_slug = isset($feed_meeting['slug']) ? $feed_meeting['slug'] : null; 
+        $source_meeting_id = array_search($feed_meeting_slug, $meeting_source_slugs_map);
         if (!$source_meeting_id) {
-            $source_meeting_id = array_search($feed_meeting_slug, $meeting_source_slugs_map);
+            $source_meeting_id = array_search($feed_meeting_slug, $meeting_slugs_map);
         }
-        
         if ($source_meeting_id) {
             $source_meeting = tsml_get_meeting($source_meeting_id);
         }
+        // if we found a local meeting, compare for update need
         if ($source_meeting) {
             $source_meeting = (array) $source_meeting;
-        }
-
-        //add slug to feed array to help determine current db removals later on...
-        if ($feed_meeting_slug) {
-            $feed_slugs[] = $feed_meeting_slug;
-        }
-
-        //compare matched records to see if there's been changes
-        if (!$source_meeting) {
-            $change_log[] = array(
-                'action'  => 'add',
-                'meeting' => $feed_meeting,
-            );
-            $import_meetings[] = $feed_meeting;
-        } else {
+            $found_meeting_ids[] = $source_meeting['ID'];
             $changed_fields = tsml_compare_meetings($source_meeting, $feed_meeting);
             if (!empty($changed_fields)) {
                 $change_log[] = array(
@@ -2467,25 +2462,22 @@ function tsml_get_import_changes_only($feed_meetings, $data_source_url, $data_so
                     'changed_fields' => $changed_fields,
                     'post_id'        => $source_meeting_id,
                 );
+                $feed_meeting['ID'] = $source_meeting_id;
                 //add changed record id to list of db records to be removed (changes will get added back in by the importer)
-                $delete_meeting_ids[] = $source_meeting_id;            
                 $import_meetings[] = $feed_meeting;
             }
+        } else {
+            $change_log[] = array(
+                'action'  => 'add',
+                'meeting' => $feed_meeting,
+            );
+            $import_meetings[] = $feed_meeting;
         }
     }
 
-    //add to removal array (i.e. $delete_meeting_ids) for only those meetings in local database which are not matched with the import feed
-    foreach ($source_meetings as $source_meeting) {
-        $feed_meeting_slug = $source_meeting['slug'];
-        if (!in_array($feed_meeting_slug, $feed_slugs)) {
-            $change_log[] = array(
-                'action'  => 'remove',
-                'meeting' => $source_meeting,
-                'post_id' => $source_meeting['id'],
-            );
-            $delete_meeting_ids[] = $source_meeting['id'];
-        }
-    }
+    // meetings to delete will be any we didn't find in feed
+    $delete_meeting_ids = array_diff( $meeting_ids, $found_meeting_ids );
+
     return array($import_meetings, $delete_meeting_ids, $change_log);
 }
 
@@ -2501,7 +2493,8 @@ function tsml_compare_meetings($meeting_1, $meeting_2)
     $compare_fields = array_diff(
         array_keys($tsml_export_columns),
         //these fields are unique internal fields, not content fields for comparison
-        explode(',', 'id,name,slug,author,data_source,data_source_name')
+        // @TODO: should NOT test on region? That's ours to define
+        explode(',', 'id,name,slug,author,region,data_source,data_source_name')
     );
 
     // normalize meetings for comparison
