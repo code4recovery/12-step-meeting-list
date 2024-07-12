@@ -2476,32 +2476,37 @@ function tsml_get_import_changes_only($feed_meetings, $data_source_url, $data_so
     }
 
     // meetings to delete will be any we didn't find in feed
-    $delete_meeting_ids = array_diff( $meeting_ids, $found_meeting_ids );
+    $delete_meeting_ids = array_diff($meeting_ids, $found_meeting_ids);
 
     return array($import_meetings, $delete_meeting_ids, $change_log);
 }
 
 /**
- * Compares content of two meetings, not internal system fields, returns differing fields or null if equal
- * @param array $meeting_1 Meeting 1
- * @param array $meeting_2 Meeting 2
+ * Compares content of an import meeting against local meeting
+ * @param array $local_meeting  Local meeting
+ * @param array $import_meeting Import meeting
  * @return array|null
  */
-function tsml_compare_meetings($meeting_1, $meeting_2)
+function tsml_compare_meetings($local_meeting, $import_meeting)
 {
     global $tsml_export_columns;
     $compare_fields = array_diff(
         array_keys($tsml_export_columns),
         //these fields are unique internal fields, not content fields for comparison
-        // @TODO: should NOT test on region? That's ours to define
-        explode(',', 'id,name,slug,author,region,data_source,data_source_name')
+        explode(',', 'id,name,slug,author,sub_region,data_source,data_source_name')
     );
+
+    $local_meeting = (array) $local_meeting;
+    $import_meeting = (array) $import_meeting;
+    // import meeting 'sub_region' pulls in as local 'region'
+    if (isset($import_meeting['sub_region'])) {
+        $import_meeting['region'] = $import_meeting['sub_region'];
+    }
 
     // normalize meetings for comparison
     $normalized_meetings = array();
-    foreach(array($meeting_1, $meeting_2) as $meeting) {
+    foreach(array($local_meeting, $import_meeting) as $meeting) {
         $normalized_meeting = array();
-        $meeting = (array) $meeting;
         foreach($compare_fields as $field) {
             $value = isset($meeting[$field]) ? $meeting[$field] : '';
             //import meeting: post_title <=> name
