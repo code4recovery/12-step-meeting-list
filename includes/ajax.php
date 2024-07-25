@@ -605,7 +605,19 @@ add_action('wp_ajax_tsml_import', function () {
         }
     }
 
-    //have to update the cache of types in use
+    //get latest counts
+    $meetings = tsml_count_meetings();
+    $locations = tsml_count_locations();
+    $regions = tsml_count_regions();
+    $groups = tsml_count_groups();
+
+    //update the data source counts in the database
+    foreach ($tsml_data_sources as $url => $props) {
+        $tsml_data_sources[$url]['count_meetings'] = count(tsml_get_data_source_ids($url));
+    }
+    update_option('tsml_data_sources', $tsml_data_sources);
+
+    //update ths TSML cache
     tsml_cache_rebuild();
 
     //have to update the cache of types in use
@@ -616,18 +628,6 @@ add_action('wp_ajax_tsml_import', function () {
 
     //remove post_modified thing added earlier
     remove_filter('wp_insert_post_data', 'tsml_import_post_modified', 99);
-
-    //send json result to browser
-    $meetings = tsml_count_meetings();
-    $locations = tsml_count_locations();
-    $regions = tsml_count_regions();
-    $groups = tsml_count_groups();
-
-    //update the data source counts for the database
-    foreach ($tsml_data_sources as $url => $props) {
-        $tsml_data_sources[$url]['count_meetings'] = count(tsml_get_data_source_ids($url));
-    }
-    update_option('tsml_data_sources', $tsml_data_sources);
 
     //now format the counts for JSON output
     foreach ($tsml_data_sources as $url => $props) {
