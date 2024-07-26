@@ -425,7 +425,7 @@ add_action('wp_ajax_tsml_import', function () {
         //geocode address
         $geocoded = tsml_geocode($meeting['formatted_address']);
 
-        if (!empty($geocoded['status']) && $geocoded['status'] == 'error') {
+        if (array_key_exists('status', $geocoded) && $geocoded['status'] == 'error') {
             $errors[] = '<li value="' . $meeting['row'] . '">' . $geocoded['reason'] . '</li>';
             continue;
         }
