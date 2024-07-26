@@ -242,7 +242,7 @@ function tsml_count_regions()
 function tsml_custom_addresses($custom_overrides)
 {
     global $tsml_google_overrides;
-    $tsml_google_overrides = array_merge($tsml_google_overrides, $custom_overrides);
+    $tsml_google_overrides = array_merge((array) $tsml_google_overrides, (array) $custom_overrides);
 }
 
 //fuction:	define custom type descriptions
@@ -649,6 +649,7 @@ function tsml_geocode($address)
         if (empty($tsml_google_overrides[$address]['approximate'])) {
             $tsml_google_overrides[$address]['approximate'] = 'no';
         }
+        $tsml_google_overrides[$address]['status'] = 'override';
         return $tsml_google_overrides[$address];
     }
 
