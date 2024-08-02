@@ -1232,12 +1232,8 @@ function tsml_get_meetings($arguments = [], $from_cache = true, $full_export = f
                 $meeting['data_source_name'] = $tsml_data_sources[$meeting_meta[$post->ID]['data_source']]['name'];
             }
 
-            // @TODO: Looking to remove, adding new fields just opens up new problems
-            // Include the original guid, source slug, modified slug, and formatted address
+            // Include the source slug, modified slug, and formatted address
             if (!empty($meeting_meta[$post->ID]['data_source'])) {
-                // todo we should discuss adding this new field here - i think we can use URL
-                $meeting['guid'] = isset($post->guid) ? $post->guid : null;
-
                 if (!empty($meeting_meta[$post->ID]['source_slug'])) {
                     $meeting['source_slug'] = isset($meeting_meta[$post->ID]['source_slug']) ? $meeting_meta[$post->ID]['source_slug'] : null;
                 }
@@ -1406,6 +1402,8 @@ function tsml_get_meta($type, $id = null)
                 'data_source',
                 'source_formatted_address',
                 'source_slug',
+                'source_region',
+                'source_sub_region',
             ],
             array_keys($tsml_contact_fields),
             empty($tsml_custom_meeting_fields) ? [] : array_keys($tsml_custom_meeting_fields)
@@ -2454,7 +2452,7 @@ function tsml_get_import_changes_only($feed_meetings, $data_source_url, $data_so
         if ($source_meeting) {
             $source_meeting = (array) $source_meeting;
             $found_meeting_ids[] = $source_meeting['ID'];
-            $changed_fields = tsml_compare_meetings($source_meeting, $feed_meeting);
+            $changed_fields = tsml_compare_imported_meeting($source_meeting, $feed_meeting);
             if (!empty($changed_fields)) {
                 $change_log[] = array(
                     'action'         => 'update',
@@ -2487,21 +2485,26 @@ function tsml_get_import_changes_only($feed_meetings, $data_source_url, $data_so
  * @param array $import_meeting Import meeting
  * @return array|null
  */
-function tsml_compare_meetings($local_meeting, $import_meeting)
+function tsml_compare_imported_meeting($local_meeting, $import_meeting)
 {
     global $tsml_export_columns;
-    $compare_fields = array_diff(
-        array_keys($tsml_export_columns),
-        //these fields are unique internal fields, not content fields for comparison
-        explode(',', 'id,name,slug,author,sub_region,data_source,data_source_name')
-    );
 
     $local_meeting = (array) $local_meeting;
     $import_meeting = (array) $import_meeting;
-    // import meeting 'sub_region' pulls in as local 'region'
-    if (isset($import_meeting['sub_region'])) {
-        $import_meeting['region'] = $import_meeting['sub_region'];
+
+    //local meeting - source_region / source_sub_region are previous imported values used for comparison
+    if (isset($local_meeting['source_region'])) {
+        $local_meeting['region'] = $local_meeting['source_region'];
     }
+    if (isset($local_meeting['source_sub_region'])) {
+        $local_meeting['sub_region'] = $local_meeting['source_sub_region'];
+    }
+
+    $compare_fields = array_diff(
+        array_keys($tsml_export_columns),
+        //these fields are unique internal fields, not content fields for comparison
+        explode(',', 'id,name,slug,author,data_source,data_source_name')
+    );
 
     // normalize meetings for comparison
     $normalized_meetings = array();
