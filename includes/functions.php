@@ -2483,8 +2483,8 @@ function tsml_get_changed_import_meetings($feed_meetings, $data_source_url, $dat
                     'meeting'        => $feed_meeting,
                     'meeting_id'     => $source_meeting_id,
                 );
+                //add `ID` field to meeting to trigger a existing post update versus new post insert
                 $feed_meeting['ID'] = $source_meeting_id;
-                //add changed record id to list of db records to be removed (changes will get added back in by the importer)
                 $import_meetings[] = $feed_meeting;
             }
         } else {
