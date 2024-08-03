@@ -182,7 +182,7 @@ if (!function_exists('tsml_import_page')) {
                 $import_meetings = array();
                 $updated_meeting_count = 0;
 
-                //new feed OR Google, import all meetings
+                //for new data sources we import every meeting, otherwise test for changed meetings
                 if (!array_key_exists($data_source_url, $tsml_data_sources)) {
                     $import_meetings = $meetings;
                 } else {
@@ -190,7 +190,7 @@ if (!function_exists('tsml_import_page')) {
                     //get updated feed import record set 
                     list($import_meetings, $delete_meeting_ids, $change_log) = tsml_get_changed_import_meetings($meetings, $data_source_url, $data_source_parent_region_id);
 
-                    //drop database records which are being updated, or removed from the feed 
+                    //drop meetings that weren't found in the import
                     if (count($delete_meeting_ids)) {
                         tsml_delete($delete_meeting_ids);
                     }
@@ -315,12 +315,10 @@ if (!function_exists('tsml_import_page')) {
                     </h2>
                     <p>
                         <?php printf(__('Data sources are JSON feeds that contain a website\'s public meeting data. They can be used to aggregate meetings from different sites into a single master list. 
-            Data sources listed below will pull meeting information into this website. A configurable schedule allows for each data source to be scanned at least once per day looking 
-            for updates to the listing. Change Notification email addresses are sent an email when action is required to re-sync a data source with its meeting list information. 
-            Please note: records that you intend to maintain on your website should always be imported using the Import CSV feature below. <b>For data sources based on the Meeting Guide API specification, 
-            only changes detected will be used to overwrite your meeting list records during a feed refresh operation. Other import sources (i.e. Google Sheets or the CSV Import) will continue to do a  
-            full update of all records during a refresh.</b> More information is available at the 
-            <a href="%s" target="_blank">Meeting Guide API Specification</a>.', '12-step-meeting-list'), 'https://github.com/code4recovery/spec') ?>
+				Data sources listed below will pull meeting information into this website. A configurable schedule allows for each enabled data source to be scanned at least once per day looking 
+				for updates to the listing. Change Notification email addresses are sent an email when action is required to re-sync a data source with its meeting list information. 
+				Please note: records that you intend to maintain on your website should always be imported using the Import CSV feature below. <b>Data Source records will be overwritten when the 
+				parent data source is refreshed.</b> More information is available at the <a href="%s" target="_blank">Meeting Guide API Specification</a>.', '12-step-meeting-list'), 'https://github.com/code4recovery/spec') ?>
                     </p>
                     <?php if (!empty($tsml_data_sources)) { ?>
                         <table>

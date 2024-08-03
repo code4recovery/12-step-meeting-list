@@ -603,7 +603,7 @@ $tsml_days = $tsml_days_order = $tsml_programs = $tsml_types_in_use = $tsml_stri
 if (!isset($tsml_slug)) $tsml_slug = null;
 
 //toggle debug mode
-$tsml_debug = true;
+$tsml_debug = false;
 
 // set up globals, common variables once plugins are loaded, but before init
 function tsml_load_config()
