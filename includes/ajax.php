@@ -370,7 +370,7 @@ function tsml_ajax_geocodes()
 //ajax function to import the meetings in the import buffer
 //used by admin_import.php
 add_action('wp_ajax_tsml_import', function () {
-    global $tsml_data_sources, $tsml_custom_meeting_fields;
+    global $tsml_data_sources, $tsml_custom_meeting_fields, $tsml_source_fields_map;
 
     tsml_require_meetings_permission();
 
@@ -400,18 +400,15 @@ add_action('wp_ajax_tsml_import', function () {
     add_filter('wp_insert_post_data', 'tsml_import_post_modified', 99, 2); 
     $data_source_parent_region_id = 0; 
     foreach ($meetings as $meeting) {
-        //store incoming source region and sub_region for future comparisons
-        if (isset($meeting['region'])) {
-            $meeting['source_region'] = $meeting['region'];
-        }
-        if (isset($meeting['sub_region'])) {
-            $meeting['source_sub_region'] = $meeting['sub_region'];
-        }
-        
         //check address
         if (empty($meeting['formatted_address'])) {
             $errors[] = '<li value="' . $meeting['row'] . '">' . sprintf(__('No location information provided for <code>%s</code>.', '12-step-meeting-list'), $meeting['name']) . '</li>';
             continue;
+        }
+
+        //store incoming $tsml_source_fields_map fields for future comparisons: formatted_address, region, sub_region, slug
+        foreach($tsml_source_fields_map as $source_field => $field) {
+            $meeting[$source_field] = isset($meeting[$field]) ? $meeting[$field] : '';
         }
 
         //geocode address
@@ -531,7 +528,10 @@ add_action('wp_ajax_tsml_import', function () {
         }
 
         //add custom meeting fields if available
-        $custom_meeting_fields = ['types', 'data_source', 'conference_url', 'conference_url_notes', 'conference_phone', 'conference_phone_notes', 'source_formatted_address', 'source_slug', 'source_region', 'source_sub_region'];
+        $custom_meeting_fields = array_merge(
+            ['types', 'data_source', 'conference_url', 'conference_url_notes', 'conference_phone', 'conference_phone_notes'],
+            array_keys($tsml_source_fields_map)
+        );
         if (!empty($tsml_custom_meeting_fields)) {
             $custom_meeting_fields = array_merge($custom_meeting_fields, array_keys($tsml_custom_meeting_fields));
         }

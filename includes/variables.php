@@ -147,6 +147,14 @@ $tsml_export_columns = [
     'id' => 'ID',
 ];
 
+//define fields used for tracking changes in imported meetings
+$tsml_source_fields_map = [
+    'source_formatted_address' => 'formatted_address',
+    'source_region' => 'region',
+    'source_sub_region' => 'sub_region',
+    'source_slug' => 'slug',
+];
+
 //load email addresses to send user feedback about meetings
 $tsml_feedback_addresses = tsml_get_option_array('tsml_feedback_addresses');
 
@@ -595,7 +603,7 @@ $tsml_days = $tsml_days_order = $tsml_programs = $tsml_types_in_use = $tsml_stri
 if (!isset($tsml_slug)) $tsml_slug = null;
 
 //toggle debug mode
-$tsml_debug = false;
+$tsml_debug = true;
 
 // set up globals, common variables once plugins are loaded, but before init
 function tsml_load_config()

@@ -188,21 +188,17 @@ if (!function_exists('tsml_import_page')) {
                 } else {
                     
                     //get updated feed import record set 
-                    list($import_meetings, $delete_meeting_ids, $change_log) = tsml_get_import_changes_only($meetings, $data_source_url, $data_source_parent_region_id);
+                    list($import_meetings, $delete_meeting_ids, $change_log) = tsml_get_changed_import_meetings($meetings, $data_source_url, $data_source_parent_region_id);
 
                     //drop database records which are being updated, or removed from the feed 
                     if (count($delete_meeting_ids)) {
                         tsml_delete($delete_meeting_ids);
-
-                        //reset the data source meetings count for this feed
-                        $updated_meeting_count = count(tsml_get_data_source_ids($data_source_url));
                     }
                     
                     tsml_delete_orphans();
 
-                    // @TODO: flesh out change report
                     if (count($change_log) && $tsml_debug) {
-                        $message = tsml_build_change_report($data_source_name, $change_log);
+                        $message = tsml_build_import_change_report($data_source_name, $change_log);
                         tsml_alert($message, 'info');
                     }
                     
@@ -215,7 +211,7 @@ if (!function_exists('tsml_import_page')) {
                 $tsml_data_sources[$data_source_url] = [
                     'status' => 'OK',
                     'last_import' => current_time('timestamp'),
-                    'count_meetings' => $updated_meeting_count,
+                    'count_meetings' => count($import_meetings),
                     'name' => $data_source_name,
                     'parent_region_id' => $data_source_parent_region_id,
                     'change_detect' => $data_source_change_detect,
