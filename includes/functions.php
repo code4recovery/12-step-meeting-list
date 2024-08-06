@@ -1553,13 +1553,10 @@ function tsml_sanitize_import_meetings($meetings, $data_source_url = null, $data
 
         //figure out a singular slug from available sources, starting with 'slug' (of course)
         $meeting_slug = '';
-        foreach (array('slug','post_name', 'ID', 'name', 'title', 'group', 'location') as $field) {
-            $value = isset($meetings[$i][$field]) ? sanitize_title($meetings[$i][$field]) : '';
-            // ID is a possible slug value, but only if it's non-numeric
-            if ('ID' === $field && is_numeric($value)) {
-                continue;
+        foreach (array('slug','post_name', 'ID', 'id', 'name', 'title', 'group', 'location') as $field) {
+            if (isset($meetings[$i][$field])) {
+                $meeting_slug = sanitize_title($meetings[$i][$field]);
             }
-            $meeting_slug = $value;
             if ($meeting_slug) { 
                 break;
             }
