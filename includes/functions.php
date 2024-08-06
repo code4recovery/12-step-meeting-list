@@ -278,7 +278,7 @@ function tsml_count_regions()
 function tsml_custom_addresses($custom_overrides)
 {
     global $tsml_google_overrides;
-    $tsml_google_overrides = array_merge($tsml_google_overrides, $custom_overrides);
+    $tsml_google_overrides = array_merge((array) $tsml_google_overrides, (array) $custom_overrides);
 }
 
 //fuction:	define custom type descriptions
@@ -685,6 +685,7 @@ function tsml_geocode($address)
         if (empty($tsml_google_overrides[$address]['approximate'])) {
             $tsml_google_overrides[$address]['approximate'] = 'no';
         }
+        $tsml_google_overrides[$address]['status'] = 'override';
         return $tsml_google_overrides[$address];
     }
 
@@ -1227,8 +1228,8 @@ function tsml_get_meetings($arguments = [], $from_cache = true, $full_export = f
                 'author' => get_the_author_meta('user_login', $post->post_author)
             ], $locations[$post->post_parent]);
 
-            // include user-defined meeting fields
-            if (!empty($tsml_custom_meeting_fields)) {
+            // include user-defined meeting fields when doing a full export
+            if ($full_export && !empty($tsml_custom_meeting_fields)) {
                 foreach ($tsml_custom_meeting_fields as $field => $title) {
                     if (!empty($meeting_meta[$post->ID][$field])) {
                         $meeting[$field] = $meeting_meta[$post->ID][$field];
