@@ -120,10 +120,11 @@ function tsml_build_import_change_report($data_source_name, $change_log)
     $hdr_change = __('Change', '12-step-meeting-list');
     $hdr_meeting_name = __('Meeting Name', '12-step-meeting-list');
     $hdr_day_time = __('Day / Time', '12-step-meeting-list');
+    $hdr_slug = __('Meeting Slug', '12-step-meeting-list');
     $hdr_group = __('Group Name', '12-step-meeting-list');
     $hdr_notes = __('Notes', '12-step-meeting-list');
     $message = __('<h2>' . $data_source_name . __(' Feed Update Report', '12-step-meeting-list') . '</h2>');
-    $message .= "<table style=\"text-align:left\" cellspacing=\"5\"><tbody><tr><th>$hdr_change</th><th>$hdr_meeting_name</th><th>$hdr_day_time</th><th>$hdr_group</th><th>$hdr_notes</th></tr>";
+    $message .= "<table style=\"text-align:left\" cellspacing=\"5\"><tbody><tr><th>$hdr_change</th><th>$hdr_meeting_name</th><th>$hdr_day_time</th><th>$hdr_slug</th><th>$hdr_group</th><th>$hdr_notes</th></tr>";
     foreach($change_log as $change_entry) {
         $meeting = (array) $change_entry['meeting'];
         $meeting_name = isset($meeting['name']) ? $meeting['name'] : '?';
@@ -136,6 +137,7 @@ function tsml_build_import_change_report($data_source_name, $change_log)
             '<td>' . $change_entry['description'] . '</td>' .
             '<td>' . $meeting_name . '</td>' .
             '<td>' . $meeting_day . ' @ ' . $meeting_time . '</td>' .
+            '<td>' . $meeting['slug'] . '</td>' .
             '<td>' . $meeting_group . '</td>' .
             '<td>' . $notes . '</td>' .
         '</tr>';    
