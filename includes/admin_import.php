@@ -180,11 +180,21 @@ if (!function_exists('tsml_import_page')) {
 
                 //actual meetings to import
                 $import_meetings = array();
-                $updated_meeting_count = 0;
+                //data source
+                $current_data_source = array_key_exists($data_source_url, $tsml_data_sources) ? $tsml_data_sources[$data_source_url] : null;
 
                 //for new data sources we import every meeting, otherwise test for changed meetings
-                if (!array_key_exists($data_source_url, $tsml_data_sources)) {
+                if (!$current_data_source) {
                     $import_meetings = $meetings;
+                    $current_data_source = [
+                        'status' => 'OK',
+                        'last_import' => current_time('timestamp'),
+                        'count_meetings' => 0,
+                        'name' => $data_source_name,
+                        'parent_region_id' => $data_source_parent_region_id,
+                        'change_detect' => $data_source_change_detect,
+                        'type' => 'JSON',
+                    ];
                 } else {
                     
                     //get updated feed import record set 
@@ -206,22 +216,17 @@ if (!function_exists('tsml_import_page')) {
                     if (!count($change_log)) {
                         tsml_alert(__('Your meeting list is already in sync with the feed.', '12-step-meeting-list'), 'success');                    
                     }
-                }
 
-                $tsml_data_sources[$data_source_url] = [
-                    'status' => 'OK',
-                    'last_import' => current_time('timestamp'),
-                    'count_meetings' => count($import_meetings),
-                    'name' => $data_source_name,
-                    'parent_region_id' => $data_source_parent_region_id,
-                    'change_detect' => $data_source_change_detect,
-                    'type' => 'JSON',
-                ];
+                    //update data source timestamp
+                    $current_data_source['last_import'] = current_time('timestamp');
+                }
 
                 //import feed
                 tsml_import_buffer_set($import_meetings, $data_source_url, $data_source_parent_region_id);
 
+
                 //save data source configuration
+                $tsml_data_sources[$data_source_url] = $current_data_source;
                 update_option('tsml_data_sources', $tsml_data_sources);
 
                 // Create a cron job to run daily when Change Detection is enabled for the new data source

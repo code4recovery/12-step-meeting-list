@@ -492,12 +492,20 @@ add_action('wp_ajax_tsml_import', function () {
                 $groups[$meeting['group']] = $group_id;
             } else {
                 $group_id = $groups[$meeting['group']];
+                wp_update_post([
+                    'ID' => $group_id,
+                    'post_content' => empty($meeting['group_notes']) ? '' : $meeting['group_notes'],
+                ]);
             }
         }
 
         //save location if not already in the database
         if (array_key_exists($geocoded['formatted_address'], $locations)) {
             $location_id = $locations[$geocoded['formatted_address']];
+            wp_update_post([
+                'ID' => $location_id,
+                'post_content' => $meeting['location_notes'],
+            ]);
         } else {
             $location_id = wp_insert_post([
                 'post_title' => $meeting['location'],
@@ -506,16 +514,17 @@ add_action('wp_ajax_tsml_import', function () {
                 'post_status' => 'publish',
             ]);
             $locations[$geocoded['formatted_address']] = $location_id;
-            add_post_meta($location_id, 'formatted_address', $geocoded['formatted_address']);
-            add_post_meta($location_id, 'latitude', $geocoded['latitude']);
-            add_post_meta($location_id, 'longitude', $geocoded['longitude']);
-            add_post_meta($location_id, 'approximate', $geocoded['approximate']);
+        }
+        if ($location_id) {
+            update_post_meta($location_id, 'formatted_address', $geocoded['formatted_address']);
+            update_post_meta($location_id, 'latitude', $geocoded['latitude']);
+            update_post_meta($location_id, 'longitude', $geocoded['longitude']);
+            update_post_meta($location_id, 'approximate', $geocoded['approximate']);
             wp_set_object_terms($location_id, $region_id, 'tsml_region');
-
             // timezone
             if (!empty($meeting['timezone']) && in_array($meeting['timezone'], DateTimeZone::listIdentifiers())) {
-                add_post_meta($location_id, 'timezone', $meeting['timezone']);
-            }
+                update_post_meta($location_id, 'timezone', $meeting['timezone']);
+            }        
         }
 
         //save meeting to this location
@@ -543,7 +552,7 @@ add_action('wp_ajax_tsml_import', function () {
             update_post_meta($meeting_id, 'day', $meeting['day']);
             update_post_meta($meeting_id, 'time', $meeting['time']);
             if (!empty($meeting['end_time'])) {
-                add_post_meta($meeting_id, 'end_time', $meeting['end_time']);
+                update_post_meta($meeting_id, 'end_time', $meeting['end_time']);
             }
         }
 

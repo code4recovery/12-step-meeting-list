@@ -123,7 +123,7 @@ function tsml_build_import_change_report($data_source_name, $change_log)
     $hdr_group = __('Group Name', '12-step-meeting-list');
     $hdr_notes = __('Notes', '12-step-meeting-list');
     $message = __('<h2>' . $data_source_name . __(' Feed Update Report', '12-step-meeting-list') . '</h2>');
-    $message .= "<table><tbody><tr><th>$hdr_change</th><th>$hdr_meeting_name</th><th>$hdr_day_time</th><th>$hdr_group</th><th>$hdr_notes</th></tr>";
+    $message .= "<table style=\"text-align:left\" cellspacing=\"5\"><tbody><tr><th>$hdr_change</th><th>$hdr_meeting_name</th><th>$hdr_day_time</th><th>$hdr_group</th><th>$hdr_notes</th></tr>";
     foreach($change_log as $change_entry) {
         $meeting = (array) $change_entry['meeting'];
         $meeting_name = isset($meeting['name']) ? $meeting['name'] : '?';
@@ -1551,9 +1551,15 @@ function tsml_sanitize_import_meetings($meetings, $data_source_url = null, $data
 
         //figure out a singular slug from available sources, starting with 'slug' (of course)
         $meeting_slug = '';
-        foreach (array('slug','post_name', 'name', 'title', 'group', 'location') as $field) {
-            if (!$meeting_slug) { 
-                $meeting_slug = isset($meetings[$i][$field]) ? sanitize_title($meetings[$i][$field]) : '';
+        foreach (array('slug','post_name', 'ID', 'name', 'title', 'group', 'location') as $field) {
+            $value = isset($meetings[$i][$field]) ? sanitize_title($meetings[$i][$field]) : '';
+            // ID is a possible slug value, but only if it's non-numeric
+            if ('ID' === $field && is_numeric($value)) {
+                continue;
+            }
+            $meeting_slug = $value;
+            if ($meeting_slug) { 
+                break;
             }
         }
 
