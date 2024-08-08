@@ -551,9 +551,7 @@ add_action('wp_ajax_tsml_import', function () {
         if (!empty($meeting['time']) && (!empty($meeting['day']) || (string) $meeting['day'] === '0')) {
             update_post_meta($meeting_id, 'day', $meeting['day']);
             update_post_meta($meeting_id, 'time', $meeting['time']);
-            if (!empty($meeting['end_time'])) {
-                update_post_meta($meeting_id, 'end_time', $meeting['end_time']);
-            }
+            update_post_meta($meeting_id, 'end_time', isset($meeting['end_time']) ? $meeting['end_time'] : '');
         }
 
         //add custom meeting fields if available
@@ -565,9 +563,7 @@ add_action('wp_ajax_tsml_import', function () {
             $custom_meeting_fields = array_merge($custom_meeting_fields, array_keys($tsml_custom_meeting_fields));
         }
         foreach ($custom_meeting_fields as $key) {
-            if (!empty($meeting[$key])) {
-                update_post_meta($meeting_id, $key, $meeting[$key]);
-            }
+            update_post_meta($meeting_id, $key, isset($meeting[$key]) ? $meeting[$key] : '');
         }
 
         // Add Group Id and group specific info if applicable
