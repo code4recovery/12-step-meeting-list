@@ -378,7 +378,7 @@ function tsml_ajax_geocodes()
 //ajax function to import the meetings in the import buffer
 //used by admin_import.php
 add_action('wp_ajax_tsml_import', function () {
-    global $tsml_data_sources, $tsml_custom_meeting_fields, $tsml_source_fields_map;
+    global $tsml_data_sources, $tsml_custom_meeting_fields, $tsml_source_fields_map, $tsml_contact_fields;
 
     tsml_require_meetings_permission();
 
@@ -586,41 +586,21 @@ add_action('wp_ajax_tsml_import', function () {
                 }
             }
         }
-
-        if (!empty($meeting['website'])) {
-            update_post_meta($contact_entity_id, 'website', esc_url_raw($meeting['website'], ['http', 'https']));
-        }
-
-        if (!empty($meeting['website_2'])) {
-            update_post_meta($contact_entity_id, 'website_2', esc_url_raw($meeting['website_2'], ['http', 'https']));
-        }
-
-        if (!empty($meeting['email'])) {
-            update_post_meta($contact_entity_id, 'email', $meeting['email']);
-        }
-
-        if (!empty($meeting['phone'])) {
-            update_post_meta($contact_entity_id, 'phone', $meeting['phone']);
-        }
-
-        if (!empty($meeting['mailing_address'])) {
-            update_post_meta($contact_entity_id, 'mailing_address', $meeting['mailing_address']);
-        }
-
-        if (!empty($meeting['venmo'])) {
-            update_post_meta($contact_entity_id, 'venmo', $meeting['venmo']);
-        }
-
-        if (!empty($meeting['square'])) {
-            update_post_meta($contact_entity_id, 'square', $meeting['square']);
-        }
-
-        if (!empty($meeting['paypal'])) {
-            update_post_meta($contact_entity_id, 'paypal', $meeting['paypal']);
-        }
-
-        if (!empty($meeting['last_contact']) && ($last_contact = strtotime($meeting['last_contact']))) {
-            update_post_meta($contact_entity_id, 'last_contact', date('Y-m-d', $last_contact));
+        //update all contact fields (incoming blanks overwrite local blanks)
+        foreach ($tsml_contact_fields as $contact_field => $field_type) {
+            $value = isset($meeting[$contact_field]) ? $meeting[$contact_field] : '';
+            if ('url' === $field_type) {
+                $value = esc_url_raw($value, ['http', 'https']);
+            }
+            if ('date' === $field_type) {
+                $date = strtotime($value);
+                if ($date) {
+                    $value = date('Y-m-d', $date);
+                } else {
+                    $value = '';
+                }
+            }
+            update_post_meta($contact_entity_id, $contact_field, $value);
         }
     }
 
