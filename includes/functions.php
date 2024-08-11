@@ -242,7 +242,7 @@ function tsml_count_regions()
 function tsml_custom_addresses($custom_overrides)
 {
     global $tsml_google_overrides;
-    $tsml_google_overrides = array_merge($tsml_google_overrides, $custom_overrides);
+    $tsml_google_overrides = array_merge((array) $tsml_google_overrides, (array) $custom_overrides);
 }
 
 //fuction:	define custom type descriptions
@@ -642,17 +642,19 @@ function tsml_geocode($address)
 {
     global $tsml_google_overrides;
 
+    $address = stripslashes($address);
+
     //check overrides first before anything
     if (array_key_exists($address, $tsml_google_overrides)) {
         if (empty($tsml_google_overrides[$address]['approximate'])) {
             $tsml_google_overrides[$address]['approximate'] = 'no';
         }
+        $tsml_google_overrides[$address]['status'] = 'override';
         return $tsml_google_overrides[$address];
     }
 
     //check cache
-    $addresses = get_option('tsml_addresses', []);
-
+    $addresses = tsml_get_option_array('tsml_addresses');
 
     //if key exists && approximate is set for that address, return it
     if (array_key_exists($address, $addresses) && !empty($addresses[$address]['approximate'])) {
@@ -987,6 +989,7 @@ function tsml_get_locations()
             'approximate' => empty($location_meta[$post->ID]['approximate']) ? null : $location_meta[$post->ID]['approximate'],
             'latitude' => empty($location_meta[$post->ID]['latitude']) ? null : $location_meta[$post->ID]['latitude'],
             'longitude' => empty($location_meta[$post->ID]['longitude']) ? null : $location_meta[$post->ID]['longitude'],
+            'timezone' => empty($location_meta[$post->ID]['timezone']) ? null : $location_meta[$post->ID]['timezone'],
             'region_id' => $region_id,
             'region' => $region,
             'sub_region' => $sub_region,
@@ -1045,11 +1048,18 @@ function tsml_get_meeting($meeting_id = false)
     if (empty($meeting->approximate)) $meeting->approximate = 'no';
 
     //escape meeting values
+    $meeting->types = [];
     foreach ($custom as $key => $value) {
-        $meeting->{$key} = ($key == 'types') ? $value[0] : htmlentities($value[0], ENT_QUOTES);
+        if (is_array($value)) {
+            $value = count($value) ? $value[0] : '';
+        }
+        if ('types' === $key) {
+            $value = (array) maybe_unserialize($value);
+        } else {
+            $value = htmlentities(strval($value), ENT_QUOTES);
+        }
+        $meeting->{$key} = $value;
     }
-    if (empty($meeting->types)) $meeting->types = [];
-    if (!is_array($meeting->types)) $meeting->types = unserialize($meeting->types);
     $meeting->post_title = htmlentities($meeting->post_title, ENT_QUOTES);
     $meeting->notes = esc_html($meeting->post_content);
 
@@ -1184,8 +1194,8 @@ function tsml_get_meetings($arguments = [], $from_cache = true, $full_export = f
                 'author' => get_the_author_meta('user_login', $post->post_author)
             ], $locations[$post->post_parent]);
 
-            // include user-defined meeting fields
-            if (!empty($tsml_custom_meeting_fields)) {
+            // include user-defined meeting fields when doing a full export
+            if ($full_export && !empty($tsml_custom_meeting_fields)) {
                 foreach ($tsml_custom_meeting_fields as $field => $title) {
                     if (!empty($meeting_meta[$post->ID][$field])) {
                         $meeting[$field] = $meeting_meta[$post->ID][$field];
@@ -1347,7 +1357,7 @@ function tsml_get_meta($type, $id = null)
     global $wpdb, $tsml_custom_meeting_fields, $tsml_contact_fields;
     $keys = [
         'tsml_group' => array_keys($tsml_contact_fields),
-        'tsml_location' => ['formatted_address', 'latitude', 'longitude', 'approximate'],
+        'tsml_location' => ['formatted_address', 'latitude', 'longitude', 'approximate', 'timezone'],
         'tsml_meeting' => array_merge(
             [
                 'day',
@@ -1412,6 +1422,12 @@ function tsml_get_meta($type, $id = null)
     return $meta;
 }
 
+// get an array from wp options and confirm it's an array
+function tsml_get_option_array($option, $default = []) {
+    $value = get_option($option, $default);
+    return is_array($value) ? $value : $default;
+}
+
 //return spelled-out meeting types
 //called from save.php (updates) and archive-meetings.php (display)
 function tsml_meeting_types($types)
@@ -1456,11 +1472,14 @@ function tsml_import_buffer_set($meetings, $data_source_url = null, $data_source
     $user_id = get_current_user_id();
 
     //convert the array to UTF-8
-    array_walk_recursive($meetings, function (&$item) {
-        if (!mb_detect_encoding($item, 'utf-8', true)) {
-            $item = utf8_encode($item);
-        }
-    });
+    if (function_exists('mb_detect_encoding')) {
+        array_walk_recursive($meetings, function ($value) {
+            if (!mb_detect_encoding($value, 'utf-8', true)) {
+                return (string) mb_convert_encoding($value, 'UTF-8', 'auto');
+            }
+            return $value;
+        });
+    }
 
     //trim everything
     array_walk_recursive($meetings, function ($value) {
@@ -1867,7 +1886,7 @@ function tsml_link($url, $string, $exclude = '', $class = false)
 function tsml_log($type, $info = null, $input = null)
 {
     //load
-    $tsml_log = get_option('tsml_log', []);
+    $tsml_log = tsml_get_option_array('tsml_log');
 
     //default variables
     $entry = [
@@ -2063,7 +2082,11 @@ function tsml_sanitize_data_sort($string)
     }
 
     # Unicode-aware lowercase of characters in string
-    return mb_strtolower($t);
+    if (function_exists('mb_strtolower')) {
+        return mb_strtolower($t);
+    } else {
+        return strtolower($t);
+    }
 }
 
 
@@ -2103,8 +2126,8 @@ if (!function_exists('tsml_scan_data_source')) {
         $data_source_count_meetings = 0;
         $data_source_last_import = null;
 
-        $tsml_notification_addresses = get_option('tsml_notification_addresses', array());
-        $tsml_data_sources = get_option('tsml_data_sources', array());
+        $tsml_notification_addresses = tsml_get_option_array('tsml_notification_addresses');
+        $tsml_data_sources = tsml_get_option_array('tsml_data_sources');
         $data_source_count_meetings = (int) $tsml_data_sources[$data_source_url]['count_meetings'];
 
         if (!empty($tsml_notification_addresses) && $data_source_count_meetings !== 0) {

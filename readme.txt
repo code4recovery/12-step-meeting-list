@@ -1,9 +1,12 @@
 === 12 Step Meeting List ===
-Contributors: Code for Recovery
+Contributors: code4recovery
+Donate link: https://code4recovery.org/contribute
 Requires at least: 3.2
 Requires PHP: 5.6
-Tested up to: 6.4.3
-Stable tag: 3.14.32
+Tested up to: 6.6
+Stable tag: 3.14.38
+License: GPLv2 or later
+License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
 This plugin helps twelve step recovery programs list their meetings. It standardizes addresses, and displays results in a searchable list and map.
 
@@ -200,11 +203,6 @@ Another approach is to adjust which meeting types are "flagged" in the meeting n
 
 The code above will add "Open" and "Closed" flags to the meeting name.
 
-= When there are notes on a meeting, can I indicate that somehow in the meeting list? =
-Yes, with CSS. Rows that have meeting notes will have a 'notes' class. To add an asterisk, for example, try this:
-
-	div#tsml tr.notes a:after { content: "*"; }
-
 = Can I import a custom spreadsheet format? =
 If you don't mind some PHP programming, then yes! Create a function called `tsml_import_reformat`, and use it to
 reformat your incoming data to the standard format
@@ -302,6 +300,32 @@ Yes, you will need to know the key name of the field. Then include an array in y
 1. Edit location
 
 == Changelog ==
+
+= 3.14.38 =
+* Fixing more import errors [more info](https://github.com/code4recovery/12-step-meeting-list/issues/1469)
+
+= 3.14.37 =
+* Fix import errors [more info](https://github.com/code4recovery/12-step-meeting-list/issues/1469)
+
+= 3.14.36 =
+* Add Eating Disorders Anonymous [more info](https://github.com/code4recovery/12-step-meeting-list/pull/1447)
+* Don't include custom fields in JSON feed [more info](https://github.com/code4recovery/12-step-meeting-list/issues/1436)
+* Update messaging about TSML UI supporting Mapbox only [more info](https://github.com/code4recovery/12-step-meeting-list/issues/1453)
+* Fix error when multibyte functions are not installed [more info](https://github.com/code4recovery/12-step-meeting-list/discussions/1443)
+
+= 3.14.35 =
+* Add timezone support [more info](https://github.com/code4recovery/12-step-meeting-list/issues/930)
+* Import custom fields from CSV file [more info](https://github.com/code4recovery/12-step-meeting-list/issues/1416)
+* New tools to debug geocode cache [more info](https://github.com/code4recovery/12-step-meeting-list/issues/1432)
+
+= 3.14.34 =
+* Fix PHP vulnerability [more info](https://github.com/code4recovery/12-step-meeting-list/issues/1415)
+* Fix PHP deprecation warning [more info](https://github.com/code4recovery/12-step-meeting-list/issues/1399)
+* Improve coverage of translatable strings [more info](https://github.com/code4recovery/12-step-meeting-list/issues/1402)
+
+= 3.14.33 =
+* Fix PHP warning [more info](https://github.com/code4recovery/12-step-meeting-list/issues/1366)
+* Update "tested up to" value [more info](https://github.com/code4recovery/12-step-meeting-list/issues/1390)
 
 = 3.14.32 =
 * Fix bug preventing removal of online meeting URLs [more info](https://github.com/code4recovery/12-step-meeting-list/issues/1354)

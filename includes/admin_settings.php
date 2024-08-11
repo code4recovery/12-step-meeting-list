@@ -7,13 +7,13 @@ if (!function_exists('tsml_settings_page')) {
     {
         global $tsml_data_sources, $tsml_programs, $tsml_program, $tsml_nonce, $tsml_feedback_addresses, $tsml_notification_addresses,
         $tsml_distance_units, $tsml_sharing, $tsml_sharing_keys, $tsml_contact_display, $tsml_google_maps_key, $tsml_mapbox_key,
-        $tsml_user_interface;
+        $tsml_user_interface, $tsml_timezone;
 
         // todo consider whether this check is necessary, since it is run from add_submenu_page() which is already checking for the same permission
         // potentially tsml_settings_page() could be a closure within the call to add_submenu_page which would prevent it from being reused elsewhere
         tsml_require_settings_permission();
 
-        $tsml_data_sources = get_option('tsml_data_sources', array());
+        $tsml_data_sources = tsml_get_option_array('tsml_data_sources');
 
         //change program
         if (!empty($_POST['tsml_program']) && isset($_POST['tsml_nonce']) && wp_verify_nonce($_POST['tsml_nonce'], $tsml_nonce)) {
@@ -178,28 +178,37 @@ if (!function_exists('tsml_settings_page')) {
             delete_option('tsml_mapbox_key');
         }
 
-        //change user interface
-        if (!empty($_POST['tsml_user_interface']) && isset($_POST['tsml_nonce']) && wp_verify_nonce($_POST['tsml_nonce'], $tsml_nonce)) {
-            $tsml_user_interface = sanitize_text_field($_POST['tsml_user_interface']);
-            update_option('tsml_user_interface', $tsml_user_interface);
-            if ($tsml_user_interface == 'tsml_ui') {
-                $tsml_ui = "TSML UI";
+		//change user interface
+		if (!empty($_POST['tsml_user_interface']) && isset($_POST['tsml_nonce']) && wp_verify_nonce($_POST['tsml_nonce'], $tsml_nonce)) {
+			$tsml_user_interface = sanitize_text_field($_POST['tsml_user_interface']);
+			update_option('tsml_user_interface', $tsml_user_interface);
+			
+			if ($tsml_user_interface == 'tsml_ui') {
+				$tsml_ui = "TSML UI";
+			} else {
+				$tsml_ui = "LEGACY UI";
+			}
+
+			tsml_alert(__('User interface is now set to <strong>' . $tsml_ui . '</strong>', '12-step-meeting-list'));
+		}
+
+        //change timezone
+        if (isset($_POST['timezone']) && isset($_POST['tsml_nonce']) && wp_verify_nonce($_POST['tsml_nonce'], $tsml_nonce)) {
+            if (empty($_POST['timezone']) || tsml_timezone_is_valid($_POST['timezone'])) {
+                $tsml_timezone = sanitize_text_field($_POST['timezone']);
+                update_option('tsml_timezone', $tsml_timezone);
+                tsml_alert(__('Timezone updated.', '12-step-meeting-list'));
             } else {
-                $tsml_ui = "LEGACY UI";
-            }
-            tsml_alert(__('User interface is now set to <strong>' . $tsml_ui . '</strong>', '12-step-meeting-list'));
-            if (empty($tsml_mapbox_key) && ($tsml_user_interface == 'tsml_ui')) {
-                tsml_alert(__('<b>Please note</b> that TSML UI only supports Mapbox. To enable mapping you will need a <a href="https://www.mapbox.com/" target="_blank">Mapbox access token</a>. Paste it in the Maps section\'s <b>Mapbox Access Token</b> field.', '12-step-meeting-list'), 'warning');
+                tsml_alert(__('Invalid timezone selected.', '12-step-meeting-list'), 'error');
             }
         }
-
         ?>
 
         <!-- Admin page content should all be inside .wrap -->
         <div class="wrap">
 
-            <h1></h1> <!-- Set alerts here -->
-
+			<h1></h1> <!-- Set alerts here -->
+			
             <?php if (!is_ssl()) { ?>
                 <div class="notice notice-warning inline">
                     <p>
@@ -396,7 +405,9 @@ if (!function_exists('tsml_settings_page')) {
                                     <?php _e('The following feed contains your publicly available meeting information.', '12-step-meeting-list') ?>
                                 </p>
                                 <p>
-                                    <?php printf(__('<a class="public_feed" href="%s" target="_blank">Public Data Source</a>', '12-step-meeting-list'), admin_url('admin-ajax.php?action=meetings')) ?>
+                                    <a class="public_feed" href="<?php echo esc_attr(admin_url('admin-ajax.php?action=meetings')); ?>" target="_blank">
+                                        <?php echo __('Public Data Source', '12-step-meeting-list'); ?>
+                                    </a>
                                 </p>
                             </div>
                         <?php } ?>
@@ -411,13 +422,13 @@ if (!function_exists('tsml_settings_page')) {
                                 <?php _e('User Interface Display', '12-step-meeting-list') ?>
                             </h2>
                             <p>
-                                <?php _e('Please select the user interface that is right for your site. Choose between our latest design that we call <b>TSML UI</b> or stay with the standard <b>Legacy UI</b>.', '12-step-meeting-list') ?>
+                                <?php echo sprintf(__('Please select the user interface that is right for your <a href="%s" target="_blank">meeting finder page</a>. Choose between our latest design that we call <b>TSML UI</b> or stay with the standard <b>Legacy UI</b>.', '12-step-meeting-list'), get_post_type_archive_link('tsml_meeting')) ?>
                             </p>
 
                             <form method="post" action="<?php echo $_SERVER['REQUEST_URI'] ?>">
                                 <?php wp_nonce_field($tsml_nonce, 'tsml_nonce', false) ?>
                                 <select name="tsml_user_interface" onchange="this.form.submit()">
-                                    <option value="legacy" <?php selected($tsml_user_interface, 'legacy_ui') ?>>
+                                    <option value="legacy_ui" <?php selected($tsml_user_interface, 'legacy_ui') ?>>
                                         <?php _e('Legacy UI', '12-step-meeting-list') ?>
                                     </option>
                                     <option value="tsml_ui" <?php selected($tsml_user_interface, 'tsml_ui') ?>>
@@ -428,15 +439,45 @@ if (!function_exists('tsml_settings_page')) {
                         </div>
                     </div>
 
+                    <div class="postbox stack">
+                        <!-- Timezone -->
+                        <div class="stack compact">
+                            <h2>
+                                <?php _e('Timezone', '12-step-meeting-list') ?>
+                            </h2>
+                            <?php if ($tsml_user_interface === 'tsml_ui') { ?>
+                                <p>
+                                    <?php _e('If your site features meetings in a variety of timezones, leave this blank and meetings will be displayed in the user\'s timezone. This requires a timezone to be set on each meeting location.', '12-step-meeting-list') ?>
+                                </p>
+
+                                <p>
+                                    <?php _e('If your site features meetings in a single timezone, select it here and meetings will be displayed in that timezone. There is no need to specify a timezone for each meeting.', '12-step-meeting-list') ?>
+                                </p>
+
+                                <form method="post" action="<?php echo $_SERVER['REQUEST_URI'] ?>" onchange="this.submit()">
+                                    <?php wp_nonce_field($tsml_nonce, 'tsml_nonce', false) ?>
+                                    <?php echo tsml_timezone_select($tsml_timezone)?>
+                                </form>
+                            <?php } else {?>
+                                <p>
+                                    <?php _e('Timezone settings are only relevant to the TSML UI interface.', '12-step-meeting-list') ?>
+                                </p>
+                            <?php } ?>
+                        </div>
+                    </div>
+
                     <!-- Map Settings -->
                     <div class="postbox stack">
                         <div class="stack compact">
                             <h2>
                                 <?php _e('Maps', '12-step-meeting-list') ?>
                             </h2>
-                            <p>
-                                <?php _e('Display of maps requires an authorization key from <strong><a href="https://www.mapbox.com/" target="_blank">Mapbox</a></strong> or <strong><a href="https://console.cloud.google.com/home/" target="_blank">Google</a></strong>.', '12-step-meeting-list') ?>
-                            </p>
+								<p>
+									<?php _e('Display of maps requires an authorization key from <strong><a href="https://www.mapbox.com/" target="_blank">Mapbox</a></strong> or <strong><a href="https://console.cloud.google.com/home/" target="_blank">Google</a></strong>.', '12-step-meeting-list') ?>
+								</p>
+								<p>
+									<?php _e('Please note that TSML UI only supports Mapbox.', '12-step-meeting-list') ?>
+								</p>
                         </div>
                         <div class="stack compact">
                             <h3>

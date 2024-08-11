@@ -161,7 +161,7 @@ add_action('admin_init', function () {
         'location',
         __('Location Information', '12-step-meeting-list'),
         function () {
-            global $tsml_mapbox_key, $tsml_google_maps_key;
+            global $tsml_mapbox_key, $tsml_google_maps_key, $tsml_timezone, $tsml_user_interface;
             $meeting = tsml_get_meeting();
             $location = $meetings = [];
             if ($meeting->post_parent) {
@@ -272,6 +272,22 @@ add_action('admin_init', function () {
                 <?php } ?>
             </div>
         </div>
+
+        <div class="meta_form_row">
+            <label for="timezone">
+                <?php _e('Timezone', '12-step-meeting-list') ?>
+            </label>
+
+            <?php echo tsml_timezone_select(@$location->timezone) ?>
+        </div>
+
+        <?php if (empty($location->timezone) && empty($tsml_timezone) && $tsml_user_interface === 'tsml_ui') {?>
+            <div class="meta_form_separator">
+                <p>
+                    <?php _e('Because your site does not have a default timezone set, a timezone must be selected here for the meeting to appear on the meeting finder page.', '12-step-meeting-list') ?>
+                </p>
+            </div>
+        <?php } ?>
 
         <?php if (count($meetings) > 1) { ?>
             <div class="meta_form_row">

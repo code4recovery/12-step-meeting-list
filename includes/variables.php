@@ -25,14 +25,14 @@ $tsml_meeting_attendance_options = [
 
 //load the set of columns that should be present in the list (not sure why this shouldn't go after plugins_loaded below)
 $tsml_columns = [
-    'time' => 'Time',
-    'distance' => 'Distance',
-    'name' => 'Meeting',
-    'location_group' => 'Location / Group',
-    'address' => 'Address',
-    'region' => 'Region',
-    'district' => 'District',
-    'types' => 'Types',
+    'time' => __('Time', '12-step-meeting-list'),
+    'distance' => __('Distance', '12-step-meeting-list'),
+    'name' => __('Meeting', '12-step-meeting-list'),
+    'location_group' => __('Location / Group', '12-step-meeting-list'),
+    'address' => __('Address', '12-step-meeting-list'),
+    'region' => __('Region', '12-step-meeting-list'),
+    'district' => __('District', '12-step-meeting-list'),
+    'types' => __('Types', '12-step-meeting-list'),
 ];
 
 //list of valid conference providers (matches Meeting Guide app). set this to null in your theme if you don't want to validate
@@ -80,7 +80,7 @@ for ($i = 1; $i <= TSML_GROUP_CONTACT_COUNT; $i++) {
 $tsml_curl_handle = null;
 
 //load the array of URLs that we're using
-$tsml_data_sources = get_option('tsml_data_sources', []);
+$tsml_data_sources = tsml_get_option_array('tsml_data_sources');
 
 //meeting search defaults
 $tsml_defaults = [
@@ -112,6 +112,7 @@ $tsml_export_columns = [
     'types' => 'Types',
     'notes' => 'Notes',
     'location_notes' => 'Location Notes',
+    'timezone' => 'Timezone',
     'group' => 'Group',
     'district' => 'District',
     'sub_district' => 'Sub District',
@@ -147,7 +148,7 @@ $tsml_export_columns = [
 ];
 
 //load email addresses to send user feedback about meetings
-$tsml_feedback_addresses = get_option('tsml_feedback_addresses', []);
+$tsml_feedback_addresses = tsml_get_option_array('tsml_feedback_addresses');
 
 //load the API key user saved, if any
 $tsml_google_maps_key = get_option('tsml_google_maps_key');
@@ -548,7 +549,7 @@ $tsml_mapbox_key = get_option('tsml_mapbox_key');
 
 //if no maps key, check to see if the events calendar plugin has one
 if (empty($tsml_google_maps_key) && empty($tsml_mapbox_key)) {
-    if ($tribe_options = get_option('tribe_events_calendar_options', [])) {
+    if ($tribe_options = tsml_get_option_array('tribe_events_calendar_options')) {
         if (array_key_exists('google_maps_js_api_key', $tribe_options)) {
             $tsml_google_maps_key = $tribe_options['google_maps_js_api_key'];
             update_option('tsml_google_maps_key', $tsml_google_maps_key);
@@ -560,7 +561,7 @@ if (empty($tsml_google_maps_key) && empty($tsml_mapbox_key)) {
 $tsml_nonce = plugin_basename(__FILE__);
 
 //load email addresses to send emails when there is a meeting change
-$tsml_notification_addresses = get_option('tsml_notification_addresses', []);
+$tsml_notification_addresses = tsml_get_option_array('tsml_notification_addresses');
 
 //load the program setting (NA, AA, etc)
 $tsml_program = get_option('tsml_program', 'aa');
@@ -569,7 +570,7 @@ $tsml_program = get_option('tsml_program', 'aa');
 $tsml_sharing = get_option('tsml_sharing', 'restricted');
 
 //get the sharing policy
-$tsml_sharing_keys = get_option('tsml_sharing_keys', []);
+$tsml_sharing_keys = tsml_get_option_array('tsml_sharing_keys');
 
 //the default meetings sort order
 $tsml_sort_by = 'time';
@@ -580,6 +581,10 @@ $tsml_street_only = true;
 //for timing
 $tsml_timestamp = microtime(true);
 
+//timezone
+$default_tz = tsml_timezone_is_valid(wp_timezone_string()) ? wp_timezone_string() : null;
+$tsml_timezone = get_option('tsml_timezone', $default_tz);
+
 //for customizing TSML-UI
 $tsml_ui_config = [];
 
@@ -587,7 +592,9 @@ $tsml_ui_config = [];
 $tsml_days = $tsml_days_order = $tsml_programs = $tsml_types_in_use = $tsml_strings = [];
 
 //string url for the meeting finder, or false for no automatic archive page
-if (!isset($tsml_slug)) $tsml_slug = null;
+if (!isset($tsml_slug)) {
+    $tsml_slug = null;
+}
 
 // set up globals, common variables once plugins are loaded, but before init
 function tsml_load_config()
@@ -960,6 +967,51 @@ function tsml_load_config()
                 'SS' => __('Step Speaker', '12-step-meeting-list'),
                 'W' => __('Women', '12-step-meeting-list'),
                 'YP' => __('Young People', '12-step-meeting-list'),
+            ],
+        ],
+        'eda' => [
+            'abbr' => __('EDA', '12-step-meeting-list'),
+            'flags' => ['M', 'W', 'TC', 'ONL'], //for /men and /women at end of meeting name (used in tsml_format_name())
+            'name' => __('Eating Disorders Anonymous', '12-step-meeting-list'),
+            'types' => [
+                '11' => __('11th Step Meditation', '12-step-meeting-list'),
+                '12x12' => __('12 Steps & 12 Traditions', '12-step-meeting-list'),
+                'BA' => __('Babysitting Available', '12-step-meeting-list'),
+                'BEG' => __('Beginners\'', '12-step-meeting-list'),
+                'B' => __('Big Book', '12-step-meeting-list'),
+                'CC' => __('Chair\'s Choice', '12-step-meeting-list'),
+                'CF' => __('Child-Friendly', '12-step-meeting-list'),
+                'C' => __('Closed', '12-step-meeting-list'),
+                'NL' => __('Dutch', '12-step-meeting-list'),
+                'EN' => __('English', '12-step-meeting-list'),
+                'DE' => __('German', '12-step-meeting-list'),
+                'KA' => __('Georgian', '12-step-meeting-list'),
+                'EL' => __('Greek', '12-step-meeting-list'),
+                'NDG' => __('Indigenous', '12-step-meeting-list'),
+                'IS' => __('Icelandic', '12-step-meeting-list'),
+                'ITA' => __('Italian', '12-step-meeting-list'),
+                'LIT' => __('Literature', '12-step-meeting-list'),
+                'LGBTQ' => __('LGBTQ+', '12-step-meeting-list'),
+                'MED' => __('Meditation', '12-step-meeting-list'),
+                'M' => __('Men', '12-step-meeting-list'),
+                'ONL' => __('Online', '12-step-meeting-list'),
+                'O' => __('Open', '12-step-meeting-list'),
+                'OUT' => __('Outdoor', '12-step-meeting-list'),
+                'POC' => __('People of Color', '12-step-meeting-list'),
+                'RF' => __('Rotating Format', '12-step-meeting-list'),
+                'A' => __('Secular', '12-step-meeting-list'),
+                'SEN' => __('Seniors', '12-step-meeting-list'),
+                'S' => __('Spanish', '12-step-meeting-list'),
+                'SP' => __('Speaker', '12-step-meeting-list'),
+                'ST' => __('Step', '12-step-meeting-list'),
+                'TO' => __('Topic/Discussion', '12-step-meeting-list'),
+                'TR' => __('Tradition Study', '12-step-meeting-list'),
+                'T' => __('Transgender', '12-step-meeting-list'),
+                'X' => __('Wheelchair Access', '12-step-meeting-list'),
+                'XB' => __('Wheelchair-Accessible Bathroom', '12-step-meeting-list'),
+                'W' => __('Women', '12-step-meeting-list'),
+                'WR' => __('Writing', '12-step-meeting-list'),
+                'Y' => __('Young People', '12-step-meeting-list'),
             ],
         ],
         'ga' => [
@@ -1419,8 +1471,10 @@ function tsml_load_config()
         'women' => __('Women', '12-step-meeting-list'),
     ];
 
-    $tsml_types_in_use = get_option('tsml_types_in_use', []);
-    if (!is_array($tsml_types_in_use)) $tsml_types_in_use = [];
+    $tsml_types_in_use = tsml_get_option_array('tsml_types_in_use');
+    if (!is_array($tsml_types_in_use)) {
+        $tsml_types_in_use = [];
+    }
 }
 ;
 

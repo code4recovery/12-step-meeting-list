@@ -28,6 +28,7 @@ These help improve code readability and maintainability:
 - Functions ought to be useful in multiple places (except functions that are available to end users such as `tsml_custom_types`)
 - Use anonymous functions when possible (we are PHP 5.6+)
 - Use bracket syntax for arrays (we are PHP 5.6+)
+- We are [PSR-12 compliant](https://www.php-fig.org/psr/psr-12/)
 
 Also some best practices:
 

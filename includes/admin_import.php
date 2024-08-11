@@ -13,7 +13,7 @@ if (!function_exists('tsml_import_page')) {
         tsml_require_meetings_permission();
 
         $error = false;
-        $tsml_data_sources = get_option('tsml_data_sources', array());
+        $tsml_data_sources = tsml_get_option_array('tsml_data_sources');
 
         //if posting a CSV, check for errors and add it to the import buffer
         if (isset($_FILES['tsml_import']) && isset($_POST['tsml_nonce']) && wp_verify_nonce($_POST['tsml_nonce'], $tsml_nonce)) {
@@ -232,7 +232,7 @@ if (!function_exists('tsml_import_page')) {
         }
 
         //check for existing import buffer
-        $meetings = get_option('tsml_import_buffer', []);
+        $meetings = tsml_get_option_array('tsml_import_buffer');
 
         //remove data source
         if (!empty($_POST['tsml_remove_data_source']) && isset($_POST['tsml_nonce']) && wp_verify_nonce($_POST['tsml_nonce'], $tsml_nonce)) {
