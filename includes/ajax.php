@@ -414,6 +414,10 @@ add_action('wp_ajax_tsml_import', function () {
     $data_source_parent_region_id = 0; 
     
     foreach ($meetings as $meeting) {
+        //if meeting id is passed, this is an update vs new meeting
+        $meeting_id = intval(isset($meeting['ID']) ? $meeting['ID'] : 0);
+        $is_new_meeting = !$meeting_id;
+        
         //check address
         if (empty($meeting['formatted_address'])) {
             $errors[] = '<li value="' . $meeting['row'] . '">' . sprintf(__('No location information provided for <code>%s</code>.', '12-step-meeting-list'), $meeting['name']) . '</li>';
@@ -463,6 +467,7 @@ add_action('wp_ajax_tsml_import', function () {
         if (empty($meeting['group'])) {
             $group_id = null;
         } else {
+            //has group
             if (!array_key_exists($meeting['group'], $groups)) {
                 $group_id = wp_insert_post([
                     'post_type' => 'tsml_group',
@@ -470,25 +475,6 @@ add_action('wp_ajax_tsml_import', function () {
                     'post_title' => $meeting['group'],
                     'post_content' => empty($meeting['group_notes']) ? '' : $meeting['group_notes'],
                 ]);
-
-                //add district to taxonomy if it doesn't exist yet
-                if (!empty($meeting['district'])) {
-                    if (!$term = term_exists($meeting['district'], 'tsml_district', 0)) {
-                        $term = wp_insert_term($meeting['district'], 'tsml_district', 0);
-                    }
-                    $district_id = intval($term['term_id']);
-
-                    //can only have a subdistrict if you already have a district
-                    if (!empty($meeting['sub_district'])) {
-                        if (!$term = term_exists($meeting['sub_district'], 'tsml_district', $district_id)) {
-                            $term = wp_insert_term($meeting['sub_district'], 'tsml_district', ['parent' => $district_id]);
-                        }
-                        $district_id = intval($term['term_id']);
-                    }
-
-                    wp_set_object_terms($group_id, $district_id, 'tsml_district');
-                }
-
                 $groups[$meeting['group']] = $group_id;
             } else {
                 $group_id = $groups[$meeting['group']];
@@ -496,6 +482,25 @@ add_action('wp_ajax_tsml_import', function () {
                     'ID' => $group_id,
                     'post_content' => empty($meeting['group_notes']) ? '' : $meeting['group_notes'],
                 ]);
+            }
+
+            //add district to taxonomy if it doesn't exist yet
+            if (!empty($meeting['district'])) {
+                if (!$term = term_exists($meeting['district'], 'tsml_district', 0)) {
+                    $term = wp_insert_term($meeting['district'], 'tsml_district', 0);
+                }
+                $district_id = intval($term['term_id']);
+
+                //can only have a subdistrict if you already have a district
+                if (!empty($meeting['sub_district'])) {
+                    if (!$term = term_exists($meeting['sub_district'], 'tsml_district', $district_id)) {
+                        $term = wp_insert_term($meeting['sub_district'], 'tsml_district', ['parent' => $district_id]);
+                    }
+                    $district_id = intval($term['term_id']);
+                }
+                wp_set_object_terms($group_id, $district_id, 'tsml_district');
+            } elseif (!$is_new_meeting) {
+                wp_set_object_terms($group_id, null, 'tsml_district');
             }
         }
 
@@ -539,8 +544,8 @@ add_action('wp_ajax_tsml_import', function () {
             'post_author' => $meeting['post_author'],
         ];
         //if ID is included, this is a meeting update
-        if (isset($meeting['ID']) && intval($meeting['ID'])) {
-            $options['ID'] = intval($meeting['ID']);
+        if ($meeting_id) {
+            $options['ID'] = $meeting_id;
         }
         if (!empty($meeting['slug'])) {
             $options['post_name'] = $meeting['slug'];
@@ -563,7 +568,13 @@ add_action('wp_ajax_tsml_import', function () {
             $custom_meeting_fields = array_merge($custom_meeting_fields, array_keys($tsml_custom_meeting_fields));
         }
         foreach ($custom_meeting_fields as $key) {
-            update_post_meta($meeting_id, $key, isset($meeting[$key]) ? $meeting[$key] : '');
+            if (!isset($meeting[$key])) {
+                if (!$is_new_meeting) {
+                    delete_post_meta($meeting_id, $key);
+                }
+            } else {
+                update_post_meta($meeting_id, $key, $meeting[$key]);
+            }
         }
 
         // Add Group Id and group specific info if applicable
@@ -577,9 +588,7 @@ add_action('wp_ajax_tsml_import', function () {
         for ($i = 1; $i <= TSML_GROUP_CONTACT_COUNT; $i++) {
             foreach (['name', 'phone', 'email'] as $field) {
                 $key = 'contact_' . $i . '_' . $field;
-                if (!empty($meeting[$key])) {
-                    update_post_meta($contact_entity_id, $key, $meeting[$key]);
-                }
+                update_post_meta($contact_entity_id, $key, isset($meeting[$key]) ? $meeting[$key] : '');
             }
         }
         //update all contact fields (incoming blanks overwrite local blanks)
@@ -599,6 +608,9 @@ add_action('wp_ajax_tsml_import', function () {
             update_post_meta($contact_entity_id, $contact_field, $value);
         }
     }
+
+    //clean up orphaned locations & groups
+    tsml_delete_orphans();
 
     //get latest counts
     $meetings = tsml_count_meetings();
