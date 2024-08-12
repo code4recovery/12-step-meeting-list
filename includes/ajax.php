@@ -568,8 +568,8 @@ add_action('wp_ajax_tsml_import', function () {
             $custom_meeting_fields = array_merge($custom_meeting_fields, array_keys($tsml_custom_meeting_fields));
         }
         foreach ($custom_meeting_fields as $key) {
-            if (!isset($meeting[$key])) {
-                if (!$is_new_meeting) {
+            if (empty(isset($meeting[$key]) ? $meeting[$key] : '')) {
+                if (metadata_exists('post', $meeting_id, $key)) {
                     delete_post_meta($meeting_id, $key);
                 }
             } else {
@@ -585,10 +585,12 @@ add_action('wp_ajax_tsml_import', function () {
 
         //handle contact information (could be meeting or group)
         $contact_entity_id = empty($group_id) ? $meeting_id : $group_id;
+        $contact_meta = array();
+
         for ($i = 1; $i <= TSML_GROUP_CONTACT_COUNT; $i++) {
             foreach (['name', 'phone', 'email'] as $field) {
                 $key = 'contact_' . $i . '_' . $field;
-                update_post_meta($contact_entity_id, $key, isset($meeting[$key]) ? $meeting[$key] : '');
+                $contact_meta[$key] = isset($meeting[$key]) ? $meeting[$key] : '';
             }
         }
         //update all contact fields (incoming blanks overwrite local blanks)
@@ -599,13 +601,19 @@ add_action('wp_ajax_tsml_import', function () {
             }
             if ('date' === $field_type) {
                 $date = strtotime($value);
-                if ($date) {
-                    $value = date('Y-m-d', $date);
-                } else {
-                    $value = '';
-                }
+                $value = ($date) ? date('Y-m-d', $date) : '';
             }
-            update_post_meta($contact_entity_id, $contact_field, $value);
+            $contact_meta[$contact_field] = $value;
+        }
+        //apply contact updates
+        foreach ($contact_meta as $key => $value) {
+            if (empty($value)) {
+                if (metadata_exists('post', $contact_entity_id, $key)) {
+                    delete_post_meta($contact_entity_id, $key);
+                }
+            } else {
+                update_post_meta($contact_entity_id, $key, $value);
+            }
         }
     }
 

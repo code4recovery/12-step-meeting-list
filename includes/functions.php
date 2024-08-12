@@ -1494,7 +1494,17 @@ function tsml_meeting_types($types)
 //sanitizes imported meetings before processing
 function tsml_sanitize_import_meetings($meetings, $data_source_url = null, $data_source_parent_region_id = null) {
 
-    global $tsml_programs, $tsml_program, $tsml_days, $tsml_meeting_attendance_options, $tsml_data_sources;
+    global $tsml_programs, $tsml_program, $tsml_days, $tsml_meeting_attendance_options, $tsml_data_sources, $tsml_contact_fields;
+
+    //track group fields and unique_group_values
+    $group_fields = array_keys($tsml_contact_fields);
+    for ($i = 1; $i <= TSML_GROUP_CONTACT_COUNT; $i++) {
+        foreach (['name', 'phone', 'email'] as $field) {
+            $group_fields[] = 'contact_' . $i . '_' . $field;
+        }
+    }
+    $group_fields[] = 'group_notes';
+    $groups = [];
 
     //track sanitized meeting slug counts
     $meeting_slugs = array();
@@ -1755,9 +1765,34 @@ function tsml_sanitize_import_meetings($meetings, $data_source_url = null, $data
             if (isset($meetings[$i][$key])) unset($meetings[$i][$key]);
         }
 
+        //track group values
+        if (isset($meetings[$i]['group']) && !empty($meetings[$i]['group'])) {
+            $group = $meetings[$i]['group'];
+            if (!isset($groups[$group])) {
+                $groups[$group] = array();
+            }
+            //currently first group value wins
+            //@TODO: add some weighting to track / use most common value by occurence
+            foreach ($group_fields as $group_field) {
+                if (isset($meetings[$i][$group_field]) && !empty($meetings[$i][$group_field]) && !isset($groups[$group][$group_field])) {
+                    $groups[$group][$group_field] = $meetings[$i][$group_field];
+                }
+            }
+        }
+
         //preserve row number for errors later
         $meetings[$i]['row'] = $i + 2;
     }
+
+    //normalize group fields across potentially blank rows
+    foreach($meetings as $i => $meeting) {
+        $group = isset($meeting['group']) ? $meeting['group'] : '';
+        if (!$group) continue;
+        foreach ($groups[$group] as $field => $value) {
+            $meetings[$i][$field] = $value;        
+        }    
+    }
+
 
     //allow user-defined function to filter the meetings (for gal-aa.org)
     if (function_exists('tsml_import_filter')) {
