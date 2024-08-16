@@ -1,9 +1,12 @@
 === 12 Step Meeting List ===
-Contributors: Code for Recovery
+Contributors: code4recovery
+Donate link: https://code4recovery.org/contribute
 Requires at least: 3.2
 Requires PHP: 5.6
-Tested up to: 6.5
-Stable tag: 3.14.36
+Tested up to: 6.6
+Stable tag: 3.14.38
+License: GPLv2 or later
+License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
 This plugin helps twelve step recovery programs list their meetings. It standardizes addresses, and displays results in a searchable list and map.
 
@@ -297,6 +300,12 @@ Yes, you will need to know the key name of the field. Then include an array in y
 1. Edit location
 
 == Changelog ==
+
+= 3.14.38 =
+* Fixing more import errors [more info](https://github.com/code4recovery/12-step-meeting-list/issues/1469)
+
+= 3.14.37 =
+* Fix import errors [more info](https://github.com/code4recovery/12-step-meeting-list/issues/1469)
 
 = 3.14.36 =
 * Add Eating Disorders Anonymous [more info](https://github.com/code4recovery/12-step-meeting-list/pull/1447)
