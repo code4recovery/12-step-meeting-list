@@ -1793,7 +1793,6 @@ function tsml_sanitize_import_meetings($meetings, $data_source_url = null, $data
         }    
     }
 
-
     //allow user-defined function to filter the meetings (for gal-aa.org)
     if (function_exists('tsml_import_filter')) {
         $meetings = array_filter($meetings, 'tsml_import_filter');
@@ -2578,7 +2577,7 @@ function tsml_compare_imported_meeting($local_meeting, $import_meeting)
     $compare_fields = array_diff(
         array_keys($tsml_export_columns),
         //these fields are unique internal fields, not content fields for comparison
-        explode(',', 'id,name,slug,author,data_source,data_source_name')
+        explode(',', 'id,slug,author,data_source,data_source_name')
     );
 
     // normalize meetings for comparison
@@ -2588,8 +2587,8 @@ function tsml_compare_imported_meeting($local_meeting, $import_meeting)
         foreach($compare_fields as $field) {
             $value = isset($meeting[$field]) ? $meeting[$field] : '';
             //import meeting: post_title <=> name
-            if (!$value && 'post_title' === $field) {
-                $value = isset($meeting['name']) ? $meeting['name'] : '';
+            if (!$value && 'name' === $field) {
+                $value = isset($meeting['post_title']) ? $meeting['post_title'] : '';
             }
             if (is_object($value) || is_array($value)) {
                 $value = json_encode($value);

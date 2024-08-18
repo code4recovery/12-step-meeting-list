@@ -605,7 +605,7 @@ if (!isset($tsml_slug)) {
 }
 
 //toggle debug mode
-$tsml_debug = false;
+$tsml_debug = !false;
 
 // set up globals, common variables once plugins are loaded, but before init
 function tsml_load_config()
