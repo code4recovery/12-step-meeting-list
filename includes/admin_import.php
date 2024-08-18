@@ -195,6 +195,11 @@ if (!function_exists('tsml_import_page')) {
                         'change_detect' => $data_source_change_detect,
                         'type' => 'JSON',
                     ];
+
+                    // Create a cron job to run daily when Change Detection is enabled for the new data source
+                    if ($data_source_change_detect === 'enabled') {
+                        tsml_schedule_import_scan($data_source_url, $data_source_name);
+                    }                    
                 } else {
                     
                     //get updated feed import record set 
@@ -229,10 +234,6 @@ if (!function_exists('tsml_import_page')) {
                 $tsml_data_sources[$data_source_url] = $current_data_source;
                 update_option('tsml_data_sources', $tsml_data_sources);
 
-                // Create a cron job to run daily when Change Detection is enabled for the new data source
-                if ($data_source_change_detect === 'enabled') {
-                    tsml_schedule_import_scan($data_source_url, $data_source_name);
-                }
             } elseif (!is_array($response)) {
 
                 tsml_alert(__('Invalid response, <pre>' . print_r($response, true) . '</pre>.', '12-step-meeting-list'), 'error');

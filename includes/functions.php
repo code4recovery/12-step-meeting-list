@@ -131,7 +131,7 @@ function tsml_build_import_change_report($data_source_name, $change_log)
         $meeting_day_val = intval(isset($meeting['day']) ? $meeting['day'] : -1);
         $meeting_day = isset($tsml_days[$meeting_day_val]) ? $tsml_days[$meeting_day_val] : '?';
         $meeting_time = isset($meeting['time']) ? $meeting['time'] : '?';
-        $meeting_group = isset($meeting['group']) ? $meeting['group'] : '?';
+        $meeting_group = isset($meeting['group']) ? $meeting['group'] : 'No group';
         $notes = isset($change_entry['notes']) ? $change_entry['notes'] : '';
         $message .= '<tr>' .
             '<td>' . $change_entry['description'] . '</td>' .
@@ -2601,6 +2601,13 @@ function tsml_compare_imported_meeting($local_meeting, $import_meeting)
         }
         $normalized_meetings[] = $normalized_meeting;
     }
+
+    // if 'group' is blank on both, we don't compare group_notes or district
+    if ( ! $normalized_meetings[0]['group'] && ! $normalized_meetings[1]['group'] ) {
+        unset( $compare_fields['district'] );
+        unset( $compare_fields['group_notes'] );
+    }
+
     $diff_fields = array();
     foreach($compare_fields as $field) {
         if ($normalized_meetings[0][$field] !== $normalized_meetings[1][$field]) {
