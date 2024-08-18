@@ -1727,7 +1727,7 @@ function tsml_sanitize_import_meetings($meetings, $data_source_url = null, $data
         //append unused types to notes
         if (count($unused_types)) {
             if (!empty($meetings[$i]['notes'])) $meetings[$i]['notes'] .= str_repeat(PHP_EOL, 2);
-            $meetings[$i]['notes'] .= implode(', ', $unused_types);
+            $meetings[$i]['notes'] .= trim(implode(', ', $unused_types));
         }
 
         // If Conference URL, validate; or if phone, force 'ONL' type, else remove 'ONL'
@@ -2582,8 +2582,8 @@ function tsml_compare_imported_meeting($local_meeting, $import_meeting)
 
     // normalize meetings for comparison
     $normalized_meetings = array();
-    foreach(array($local_meeting, $import_meeting) as $meeting) {
-        $normalized_meeting = array();
+    foreach(array($local_meeting, $import_meeting) as $index => $meeting) {
+        $normalized_meetings[$index] = array();
         foreach($compare_fields as $field) {
             $value = isset($meeting[$field]) ? $meeting[$field] : '';
             //import meeting: post_title <=> name
@@ -2597,15 +2597,13 @@ function tsml_compare_imported_meeting($local_meeting, $import_meeting)
             } else {
                 $value = '';
             }
-            $normalized_meeting[$field] = $value;
+            $normalized_meetings[$index][$field] = $value;
         }
-        $normalized_meetings[] = $normalized_meeting;
     }
 
     // if 'group' is blank on both, we don't compare group_notes or district
     if ( ! $normalized_meetings[0]['group'] && ! $normalized_meetings[1]['group'] ) {
-        unset( $compare_fields['district'] );
-        unset( $compare_fields['group_notes'] );
+        $compare_fields = array_diff($compare_fields, ['district', 'group_notes']);
     }
 
     $diff_fields = array();
