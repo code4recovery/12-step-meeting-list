@@ -2302,7 +2302,7 @@ if (!function_exists('tsml_scan_data_source')) {
                     $message .= tsml_build_import_change_report($data_source_name, $change_log, true);
                     $refresh_form_name = tsml_make_refresh_attr_name($data_source_name, 'frm');
                     $import_page_url = admin_url('/edit.php?post_type=tsml_meeting&page=import');
-                    $button_text = "Refresh $data_source_name Data Source";
+		    $button_text = __("Refresh $data_source_name Data Source", '12-step-meeting-list');
                     $message .= "<a href='" . $import_page_url . "' style=' margin: 0 auto;background-color: #4CAF50;border: none;color: white;padding: 25px 32px;text-align: center;text-decoration: none;display: block;font-size: 18px;'>$button_text</a>";
 
                     // send Changes Detected email
