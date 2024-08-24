@@ -117,8 +117,6 @@ function tsml_bounds()
 function tsml_build_import_change_report($data_source_name, $change_log, $embed_in_email = false)
 {
     global $tsml_days;
-    //$message .= "<tr   style=\"text-align:left;border:1px solid #dddddd;padding: 8px;\" ><tbody>";
-
     if (!$embed_in_email) {
         $hdr_meeting_day_time = __('Meeting', '12-step-meeting-list');
         $hdr_slug = __('Slug', '12-step-meeting-list');
