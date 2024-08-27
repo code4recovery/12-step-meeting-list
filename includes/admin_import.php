@@ -213,8 +213,7 @@ if (!function_exists('tsml_import_page')) {
                     tsml_delete_orphans();
 
                     if (count($change_log) && $tsml_debug) {
-                        $message = __('<h2>' . $data_source_name . __(' Feed Update Report', '12-step-meeting-list') . '</h2>');
-                        $message .= tsml_build_import_change_report($data_source_name, $change_log);
+                        $message = tsml_build_import_change_report($data_source_name, $change_log);
                         tsml_alert($message, 'info');
                     }
                     
@@ -354,11 +353,7 @@ if (!function_exists('tsml_import_page')) {
                                 <?php foreach ($tsml_data_sources as $feed => $properties) { ?>
                                     <tr data-source="<?php echo $feed ?>">
                                         <td class="small ">
-                                            <?php
-                                            $refresh_form_name = 'frm_' . tsml_make_refresh_attr_name(@$properties['name'], 'frm');
-                                            ?>
-
-                                            <form name="<?php echo $refresh_form_name ?>" method="post" action="<?php echo $_SERVER['REQUEST_URI'] ?>">
+                                            <form method="post" action="<?php echo $_SERVER['REQUEST_URI'] ?>">
                                                 <?php wp_nonce_field($tsml_nonce, 'tsml_nonce', false) ?>
                                                 <input type="hidden" name="tsml_add_data_source" value="<?php echo $feed ?>">
                                                 <input type="hidden" name="tsml_add_data_source_name"

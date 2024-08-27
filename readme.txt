@@ -3,8 +3,8 @@ Contributors: code4recovery
 Donate link: https://code4recovery.org/contribute
 Requires at least: 3.2
 Requires PHP: 5.6
-Tested up to: 6.6.1
-Stable tag: 3.15
+Tested up to: 6.6
+Stable tag: 3.15.1
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -300,6 +300,9 @@ Yes, you will need to know the key name of the field. Then include an array in y
 1. Edit location
 
 == Changelog ==
+
+= 3.15.1 =
+* Reformat 'Change Detection Email' for better legability. [more info](https://github.com/code4recovery/12-step-meeting-list/issues/1497)
 
 = 3.15 =
 * Modifies Import Data Source feature so that only the changes detected between an import feed and the local database are applied as updates. [more info](https://github.com/code4recovery/12-step-meeting-list/issues/1075)
