@@ -114,31 +114,27 @@ function tsml_bounds()
  * @param array $change_log Built from tsml_get_changed_import_meetings()
  * @return string
  */
-function tsml_build_import_change_report($data_source_name, $change_log, $embed_in_email = false)
+function tsml_build_import_change_report($data_source_name, $change_log)
 {
     global $tsml_days;
-    if (!$embed_in_email) {
-        $message = "<table style=\"margin-bottom:10px;text-align:left;border:1px solid #dddddd;padding: 8px;\" cellspacing=\"5\">";
-    } else {
-        $message = "<table style=\"width:100%;margin-bottom:10px;text-align:left;border:1px solid #dddddd;padding: 8px;\" cellspacing=\"5\">";
-    }
+    $message = "<table style=\"width:100%;margin-bottom:10px;text-align:left;border:1px solid #dddddd;padding: 8px;\" cellspacing=\"5\">";
 
     foreach($change_log as $change_entry) {
+        $meeting_id = isset($change_entry['meeting_id']) ? $change_entry['meeting_id'] : '';
         $meeting = (array) $change_entry['meeting'];
-        $meeting_name = isset($meeting['name']) ? $meeting['name'] : '?';
+        $meeting_name = isset($meeting['name']) ? $meeting['name'] : $meeting['slug'];
         $meeting_day_val = intval(isset($meeting['day']) ? $meeting['day'] : -1);
         $meeting_day = isset($tsml_days[$meeting_day_val]) ? $tsml_days[$meeting_day_val] : '?';
         $meeting_time = isset($meeting['time']) ? tsml_format_time($meeting['time']) : '?';
         $notes = isset($change_entry['notes']) ? $change_entry['notes'] : '';
 
-        if ($embed_in_email) {
-            $message .= '<tr><td style=\"width:60%;\" >' . $meeting_name . ' → ' . $meeting_day . ' @ ' . $meeting_time . ' </td>' .
-                            '<td style=\"width:50%;\" >' . $notes . ' </td></tr>';
+        $permalink = get_permalink($meeting_id);
+        if ($permalink !== false) {
+            $meeting_name_linked = '<a href=' . $permalink . '>' . $meeting_name . '</a><br>';
         } else {
-            $message .= '<tr><td>' . $meeting_name . ' → ' . $meeting_day . ' @ ' . $meeting_time . ' </td>' .
-                '<td>' . $meeting['slug'] . ' </td>' .
-                '<td>' . $notes . ' </td></tr>';
+            $meeting_name_linked = $meeting_name;
         }
+        $message .= '<tr><td>' . $meeting_name_linked . '  ' . $meeting_day . ' @ ' . $meeting_time . ' </td>' . '<td>' . $notes . ' </td></tr>';
     }
     $message .= "</tbody></table>";
     return $message;
@@ -2285,7 +2281,7 @@ if (!function_exists('tsml_scan_data_source')) {
                 if (is_array($change_log) && count($change_log)) {
                     // Send Email notifying Admins that this Data Source needs updating
                     $message = sprintf(__("<p>Please sign in to your website and refresh the <b> %s </b> feed on the Import & Export page.</p><br>", '12-step-meeting-list'), $data_source_name);
-                    $message .= tsml_build_import_change_report($data_source_name, $change_log, true);
+                    $message .= tsml_build_import_change_report($data_source_name, $change_log);
                     $import_page_url = admin_url('/edit.php?post_type=tsml_meeting&page=import');
                     $button_text = __(' Go to Import & Export page', '12-step-meeting-list');
                     $message .= "<a href='" . $import_page_url . "' style=' margin: 0 auto;background-color: #4CAF50;border: none;border-radius: 3px; color: white;padding: 25px 32px;text-align: center;text-decoration: none;display: block;font-size: 18px;'>$button_text</a>";
