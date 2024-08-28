@@ -747,7 +747,7 @@ function tsml_load_config()
                 'P' => __('Professionals', '12-step-meeting-list'),
                 'A' => __('Secular', '12-step-meeting-list'),
                 'SEN' => __('Seniors', '12-step-meeting-list'),
-				'ASL' => __('American Sign Language', '12-step-meeting-list'),
+				'ASL' => __('Sign Language', '12-step-meeting-list'),
                 'SM' => __('Smoking Permitted', '12-step-meeting-list'),
                 'S' => __('Spanish', '12-step-meeting-list'),
                 'SP' => __('Speaker', '12-step-meeting-list'),
@@ -1406,14 +1406,13 @@ function tsml_load_config()
 	];
 
 	// Apply languages to all programs
-	foreach ($tsml_programs as &$program) {
+	foreach ($tsml_programs as $key => $program) {
 		if (!isset($program['languages'])) {
 			foreach ($tsml_languages as $language) {
-				$program['languages'][$language] = __($language, '12-step-meeting-list');
+				$tsml_programs[$key]['languages'][$language] = __($language, '12-step-meeting-list');
 			}
 		}
 	}
-	unset($program);
 
     //remove 'TC' and 'ONL' from default flags if meeting finder is TSML UI
     if ($tsml_user_interface === 'tsml_ui') {

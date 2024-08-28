@@ -43,8 +43,6 @@ add_action('admin_init', function () {
 
         $meeting = tsml_get_meeting();
 
-		$meeting_languages = isset($meeting->languages) && is_array($meeting->languages) ? $meeting->languages : []; // forces an array
-
         //time is before the end of april and not currently using temporary closure
         if (!in_array('TC', $tsml_types_in_use) && time() < strtotime('2020-04-30')) {
             tsml_alert('Please note: a new “Temporary Closure” meeting type has recently been added. Use this to indicate meetings that are temporarily not meeting. Find it under “View all” below.', 'warning');
@@ -112,35 +110,36 @@ add_action('admin_init', function () {
                     </div>
                 </div>
             </div>
-		<div class="meta_form_row">
-			<label for="languages">
-				<?php _e('Languages', '12-step-meeting-list') ?>
-			</label>
-			<div class="checkboxes<?php if (!empty($tsml_types_in_use) && count($tsml_types_in_use) !== count($tsml_programs[$tsml_program]['languages'])) { ?> has_more<?php } ?>">
-				<?php 
-                foreach ($tsml_programs[$tsml_program]['languages'] as $key => $type) { 
-                    ?>
+            <div class="meta_form_row">
+                <label for="languages">
+                    <?php _e('Languages', '12-step-meeting-list') ?>
+                </label>
+                <div
+                    class="checkboxes<?php if (!empty($tsml_types_in_use) && count($tsml_types_in_use) !== count($tsml_programs[$tsml_program]['languages'])) { ?> has_more<?php } ?>">
+                    <?php
+                    foreach ($tsml_programs[$tsml_program]['languages'] as $key => $type) {
+                        ?>
                         <label <?php if (!empty($tsml_types_in_use) && !in_array($key, $tsml_types_in_use)) {
                             echo ' class="not_in_use"';
                         } ?>>
-						<input type="checkbox" name="types[]" value="<?php echo $key ?>" <?php checked(in_array($key, @$meeting->types)) ?>>
-						<?php echo $type ?>
-					</label>
-				<?php } ?>
-				<div class="toggle_more">
-					<div class="more">
-						<span class="dashicons dashicons-arrow-down-alt2"></span> <a href="#more-types">
-							<?php _e('View all', '12-step-meeting-list') ?>
-						</a>
-					</div>
-					<div class="less">
-						<span class="dashicons dashicons-arrow-up-alt2"></span> <a href="#more-types">
-							<?php _e('Hide types not in use', '12-step-meeting-list') ?>
-						</a>
-					</div>
-				</div>
-			</div>
-		</div>
+                                        <input type="checkbox" name="types[]" value="<?php echo $key ?>" <?php checked(in_array($key, @$meeting->types)) ?>>
+                            <?php echo $type ?>
+                        </label>
+                    <?php } ?>
+                    <div class="toggle_more">
+                        <div class="more">
+                            <span class="dashicons dashicons-arrow-down-alt2"></span> <a href="#more-types">
+                                <?php _e('View all', '12-step-meeting-list') ?>
+                            </a>
+                        </div>
+                        <div class="less">
+                            <span class="dashicons dashicons-arrow-up-alt2"></span> <a href="#more-types">
+                                <?php _e('Hide types not in use', '12-step-meeting-list') ?>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
         <?php } ?>
         <div class="meta_form_row">
             <label for="content">
@@ -186,7 +185,7 @@ add_action('admin_init', function () {
                 value="<?php echo $meeting->conference_phone_notes ?>">
         </div>
         <?php
-	}, 'tsml_meeting', 'normal', 'low');
+    }, 'tsml_meeting', 'normal', 'low');
 
     add_meta_box(
         'location',
@@ -312,7 +311,7 @@ add_action('admin_init', function () {
             <?php echo tsml_timezone_select(@$location->timezone) ?>
         </div>
 
-        <?php if (empty($location->timezone) && empty($tsml_timezone) && $tsml_user_interface === 'tsml_ui') {?>
+        <?php if (empty($location->timezone) && empty($tsml_timezone) && $tsml_user_interface === 'tsml_ui') { ?>
             <div class="meta_form_separator">
                 <p>
                     <?php _e('Because your site does not have a default timezone set, a timezone must be selected here for the meeting to appear on the meeting finder page.', '12-step-meeting-list') ?>
