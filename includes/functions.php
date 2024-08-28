@@ -2283,7 +2283,7 @@ if (!function_exists('tsml_scan_data_source')) {
                     $message = sprintf(__("<p>Please sign in to your website and refresh the <b> %s </b> feed on the Import & Export page.</p><br>", '12-step-meeting-list'), $data_source_name);
                     $message .= tsml_build_import_change_report($data_source_name, $change_log);
                     $import_page_url = admin_url('/edit.php?post_type=tsml_meeting&page=import');
-                    $button_text = __(' Go to Import & Export page', '12-step-meeting-list');
+                    $button_text = __('Go to Import & Export page', '12-step-meeting-list');
                     $message .= "<a href='" . $import_page_url . "' style=' margin: 0 auto;background-color: #4CAF50;border: none;border-radius: 3px; color: white;padding: 25px 32px;text-align: center;text-decoration: none;display: block;font-size: 18px;'>$button_text</a>";
 
                     // send Changes Detected email
