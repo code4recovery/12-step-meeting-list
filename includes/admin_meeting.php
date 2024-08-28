@@ -41,9 +41,9 @@ add_action('admin_init', function () {
     add_meta_box('info', __('Meeting Information', '12-step-meeting-list'), function () {
         global $tsml_days, $tsml_programs, $tsml_program, $tsml_nonce, $tsml_types_in_use;
 
-		$meeting_languages = isset($meeting->languages) && is_array($meeting->languages) ? $meeting->languages : []; // forces an array
-
         $meeting = tsml_get_meeting();
+
+		$meeting_languages = isset($meeting->languages) && is_array($meeting->languages) ? $meeting->languages : []; // forces an array
 
         //time is before the end of april and not currently using temporary closure
         if (!in_array('TC', $tsml_types_in_use) && time() < strtotime('2020-04-30')) {
@@ -112,16 +112,19 @@ add_action('admin_init', function () {
                     </div>
                 </div>
             </div>
-        <?php } ?>
 		<div class="meta_form_row">
 			<label for="languages">
 				<?php _e('Languages', '12-step-meeting-list') ?>
 			</label>
-			<div class="checkboxes">
-				<?php foreach ($tsml_programs[$tsml_program]['languages'] as $key => $language) { ?>
-					<label>
-						<input type="checkbox" name="languages[]" value="<?php echo $key ?>" <?php checked(in_array($key, $meeting_languages)) ?>>
-						<?php echo $language ?>
+			<div class="checkboxes<?php if (!empty($tsml_types_in_use) && count($tsml_types_in_use) !== count($tsml_programs[$tsml_program]['languages'])) { ?> has_more<?php } ?>">
+				<?php 
+                foreach ($tsml_programs[$tsml_program]['languages'] as $key => $type) { 
+                    ?>
+                        <label <?php if (!empty($tsml_types_in_use) && !in_array($key, $tsml_types_in_use)) {
+                            echo ' class="not_in_use"';
+                        } ?>>
+						<input type="checkbox" name="types[]" value="<?php echo $key ?>" <?php checked(in_array($key, @$meeting->types)) ?>>
+						<?php echo $type ?>
 					</label>
 				<?php } ?>
 				<div class="toggle_more">
@@ -138,6 +141,7 @@ add_action('admin_init', function () {
 				</div>
 			</div>
 		</div>
+        <?php } ?>
         <div class="meta_form_row">
             <label for="content">
                 <?php _e('Notes', '12-step-meeting-list') ?>
@@ -182,7 +186,7 @@ add_action('admin_init', function () {
                 value="<?php echo $meeting->conference_phone_notes ?>">
         </div>
         <?php
-    }, 'tsml_meeting', 'normal', 'low');
+	}, 'tsml_meeting', 'normal', 'low');
 
     add_meta_box(
         'location',

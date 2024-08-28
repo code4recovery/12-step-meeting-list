@@ -599,7 +599,7 @@ if (!isset($tsml_slug)) {
 // set up globals, common variables once plugins are loaded, but before init
 function tsml_load_config()
 {
-    global $tsml_days, $tsml_days_order, $tsml_languages, $tsml_programs, $tsml_slug, $tsml_strings, $tsml_user_interface, $tsml_types_in_use, $tsml_languages;
+    global $tsml_days, $tsml_days_order, $tsml_languages, $tsml_programs, $tsml_slug, $tsml_strings, $tsml_user_interface, $tsml_types_in_use;
 
     //load internationalization
     load_plugin_textdomain('12-step-meeting-list', false, '12-step-meeting-list/languages');
