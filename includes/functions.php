@@ -117,30 +117,24 @@ function tsml_bounds()
 function tsml_build_import_change_report($data_source_name, $change_log)
 {
     global $tsml_days;
-    $hdr_change = __('Change', '12-step-meeting-list');
-    $hdr_meeting_name = __('Meeting Name', '12-step-meeting-list');
-    $hdr_day_time = __('Day / Time', '12-step-meeting-list');
-    $hdr_slug = __('Meeting Slug', '12-step-meeting-list');
-    $hdr_group = __('Group Name', '12-step-meeting-list');
-    $hdr_notes = __('Notes', '12-step-meeting-list');
-    $message = __('<h2>' . $data_source_name . __(' Feed Update Report', '12-step-meeting-list') . '</h2>');
-    $message .= "<table style=\"text-align:left\" cellspacing=\"5\"><tbody><tr><th>$hdr_change</th><th>$hdr_meeting_name</th><th>$hdr_day_time</th><th>$hdr_slug</th><th>$hdr_group</th><th>$hdr_notes</th></tr>";
+    $message = "<table style=\"width:100%;margin-bottom:10px;text-align:left;border:1px solid #dddddd;padding: 8px;\" cellspacing=\"5\">";
+
     foreach($change_log as $change_entry) {
+        $meeting_id = isset($change_entry['meeting_id']) ? $change_entry['meeting_id'] : '';
         $meeting = (array) $change_entry['meeting'];
-        $meeting_name = isset($meeting['name']) ? $meeting['name'] : '?';
+        $meeting_name = isset($meeting['name']) ? $meeting['name'] : $meeting['slug'];
         $meeting_day_val = intval(isset($meeting['day']) ? $meeting['day'] : -1);
         $meeting_day = isset($tsml_days[$meeting_day_val]) ? $tsml_days[$meeting_day_val] : '?';
-        $meeting_time = isset($meeting['time']) ? $meeting['time'] : '?';
-        $meeting_group = isset($meeting['group']) ? $meeting['group'] : 'No group';
+        $meeting_time = isset($meeting['time']) ? tsml_format_time($meeting['time']) : '?';
         $notes = isset($change_entry['notes']) ? $change_entry['notes'] : '';
-        $message .= '<tr>' .
-            '<td>' . $change_entry['description'] . '</td>' .
-            '<td>' . $meeting_name . '</td>' .
-            '<td>' . $meeting_day . ' @ ' . $meeting_time . '</td>' .
-            '<td>' . $meeting['slug'] . '</td>' .
-            '<td>' . $meeting_group . '</td>' .
-            '<td>' . $notes . '</td>' .
-        '</tr>';    
+
+        $permalink = get_permalink($meeting_id);
+        if ($permalink !== false) {
+            $meeting_name_linked = '<a href=' . $permalink . '>' . $meeting_name . '</a><br>';
+        } else {
+            $meeting_name_linked = $meeting_name;
+        }
+        $message .= '<tr><td>' . $meeting_name_linked . '  ' . $meeting_day . ' @ ' . $meeting_time . ' </td>' . '<td>' . $notes . ' </td></tr>';
     }
     $message .= "</tbody></table>";
     return $message;
@@ -1567,7 +1561,7 @@ function tsml_sanitize_import_meetings($meetings, $data_source_url = null, $data
             if (isset($meetings[$i][$field])) {
                 $meeting_slug = sanitize_title($meetings[$i][$field]);
             }
-            if ($meeting_slug) { 
+            if ($meeting_slug) {
                 break;
             }
         }
@@ -1789,8 +1783,8 @@ function tsml_sanitize_import_meetings($meetings, $data_source_url = null, $data
         $group = isset($meeting['group']) ? $meeting['group'] : '';
         if (!$group) continue;
         foreach ($groups[$group] as $field => $value) {
-            $meetings[$i][$field] = $value;        
-        }    
+            $meetings[$i][$field] = $value;
+        }
     }
 
     //allow user-defined function to filter the meetings (for gal-aa.org)
@@ -2286,22 +2280,14 @@ if (!function_exists('tsml_scan_data_source')) {
                 list($import_meetings, $delete_meeting_ids,  $change_log) = tsml_get_changed_import_meetings($meetings, $data_source_url, $data_source_parent_region_id);
                 if (is_array($change_log) && count($change_log)) {
                     // Send Email notifying Admins that this Data Source needs updating
-                    $message = "Data Source changes were detected during a scheduled sychronization check with this feed: $data_source_url. Your website meeting list details based on the $data_source_name feed are no longer in sync. <br><br>Please sign-in to your website and refresh the $data_source_name Data Source feed found on the Meetings Import & Export page.<br><br>";
-                    $message .= "data_source_name: $data_source_name <br>";
-                    $term = get_term_by('term_id', $data_source_parent_region_id, 'tsml_region');
-                    $parent_region = $term->name;
-                    $message .= "parent_region: $parent_region <br>";
-                    $message .= "database record count: $data_source_count_meetings <br>";
-                    $feedCount = count($meetings);
-                    $message .= "data source feed count: $feedCount<br>";
-                    $message .= "Last Refresh: <span style='color:red;'>*</span>" . Date("l F j, Y  h:i a", $data_source_last_import) . '<br>';
-                    $message .= "<br><b><u>Detected Difference</b></u><br>";
+                    $message = sprintf(__("<p>Please sign in to your website and refresh the <b> %s </b> feed on the Import & Export page.</p><br>", '12-step-meeting-list'), $data_source_name);
                     $message .= tsml_build_import_change_report($data_source_name, $change_log);
-                    $import_page_url = admin_url('edit.php?post_type=tsml_meeting&page=import');
-                    $message .= "<a href='" . $import_page_url . "' style=' margin: 0 auto;background-color: #4CAF50;border: none;color: white;padding: 25px 32px;text-align: center;text-decoration: none;display: block;font-size: 18px;'>Go to Import & Settings page</a>";
+                    $import_page_url = admin_url('/edit.php?post_type=tsml_meeting&page=import');
+                    $button_text = __('Go to Import & Export page', '12-step-meeting-list');
+                    $message .= "<a href='" . $import_page_url . "' style=' margin: 0 auto;background-color: #4CAF50;border: none;border-radius: 3px; color: white;padding: 25px 32px;text-align: center;text-decoration: none;display: block;font-size: 18px;'>$button_text</a>";
 
                     // send Changes Detected email
-                    $subject = __('Data Source Changes Detected', '12-step-meeting-list') . ': ' . $data_source_name;
+                    $subject = __('Data Source Changes Detected', '12-step-meeting-list');
                     if (tsml_email($tsml_notification_addresses, str_replace("'s", "s", $subject), $message)) {
                         _e("<div class='bg-success text-light'>Data Source changes were detected during the daily sychronization check with this feed: $data_source_url.<br></div>", '12-step-meeting-list');
                     } else {
@@ -2500,8 +2486,8 @@ function tsml_get_changed_import_meetings($feed_meetings, $data_source_url, $dat
         if (empty($feed_meeting) || !is_array($feed_meeting)) {
             continue;
         }
-        
-        $feed_meeting_slug = isset($feed_meeting['slug']) ? $feed_meeting['slug'] : null; 
+
+        $feed_meeting_slug = isset($feed_meeting['slug']) ? $feed_meeting['slug'] : null;
         $source_meeting_id = array_search($feed_meeting_slug, $meeting_source_slugs_map);
         if (!$source_meeting_id) {
             $source_meeting_id = array_search($feed_meeting_slug, $meeting_slugs_map);
@@ -2518,12 +2504,12 @@ function tsml_get_changed_import_meetings($feed_meetings, $data_source_url, $dat
                 $change_log[] = array(
                     'action'         => 'update',
                     'description'    => __('Updated', '12-step-meeting-list'),
-                    'notes'          => __('Fields changed', '12-step-meeting-list') . ': ' . implode(', ', $changed_fields),
+                    'notes'          => __('Changed', '12-step-meeting-list') . ': ' . implode(', ', $changed_fields),
                     'changed_fields' => $changed_fields,
                     'meeting'        => $feed_meeting,
                     'meeting_id'     => $source_meeting_id,
                 );
-                //add `ID` field to meeting to trigger a existing post update versus new post insert
+                //add `ID` field to meeting to trigger an existing post update versus new post insert
                 $feed_meeting['ID'] = $source_meeting_id;
                 $import_meetings[] = $feed_meeting;
             }
@@ -2531,6 +2517,7 @@ function tsml_get_changed_import_meetings($feed_meetings, $data_source_url, $dat
             $change_log[] = array(
                 'action'      => 'add',
                 'description' => __('New', '12-step-meeting-list'),
+                'notes' => __('New', '12-step-meeting-list'),
                 'meeting'     => $feed_meeting,
             );
             $import_meetings[] = $feed_meeting;
@@ -2546,6 +2533,7 @@ function tsml_get_changed_import_meetings($feed_meetings, $data_source_url, $dat
         $change_log[] = array(
             'action'      => 'remove',
             'description' => __('Removed / Missing', '12-step-meeting-list'),
+            'notes' => __('Removed', '12-step-meeting-list'),
             'meeting'     => $delete_meeting,
             'meeting_id'  => $delete_meeting_id,
         );
@@ -2609,7 +2597,7 @@ function tsml_compare_imported_meeting($local_meeting, $import_meeting)
     $diff_fields = array();
     foreach($compare_fields as $field) {
         if ($normalized_meetings[0][$field] !== $normalized_meetings[1][$field]) {
-            $diff_fields[] = $field;
+            $diff_fields[] = $tsml_export_columns[$field];
         }
     }
     return count($diff_fields) ? $diff_fields : null;
