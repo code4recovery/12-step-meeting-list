@@ -1408,8 +1408,8 @@ function tsml_load_config()
 	// Apply languages to all programs
 	foreach ($tsml_programs as $key => $program) {
 		if (!isset($program['languages'])) {
-			foreach ($tsml_languages as $language) {
-				$tsml_programs[$key]['languages'][$language] = __($language, '12-step-meeting-list');
+			foreach ($tsml_languages as $lang_key => $language) {
+				$tsml_programs[$key]['languages'][$lang_key] = __($language, '12-step-meeting-list');
 			}
 		}
 	}
