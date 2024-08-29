@@ -610,7 +610,7 @@ $tsml_debug = false;
 // set up globals, common variables once plugins are loaded, but before init
 function tsml_load_config()
 {
-    global $tsml_days, $tsml_days_order, $tsml_programs, $tsml_slug, $tsml_strings, $tsml_user_interface, $tsml_types_in_use;
+    global $tsml_days, $tsml_days_order, $tsml_languages, $tsml_programs, $tsml_slug, $tsml_strings, $tsml_user_interface, $tsml_types_in_use;
 
     //load internationalization
     load_plugin_textdomain('12-step-meeting-list', false, '12-step-meeting-list/languages');
@@ -632,7 +632,7 @@ function tsml_load_config()
         $tsml_days = $remainder + $tsml_days;
     }
 
-    //used by tsml_meetings_sort() over and over
+	//used by tsml_meetings_sort() over and over
     $tsml_days_order = array_keys($tsml_days);
 
     //supported program names (alpha by the 'name' key)
@@ -659,7 +659,6 @@ function tsml_load_config()
                 'ONL' => __('Online Meeting', '12-step-meeting-list'),
                 'O' => __('Open', '12-step-meeting-list'),
                 'S' => __('Speaker', '12-step-meeting-list'),
-                'SP' => __('Spanish', '12-step-meeting-list'),
                 'ST' => __('Steps', '12-step-meeting-list'),
                 'W' => __('Women', '12-step-meeting-list'),
                 'Y' => __('Yellow Workbook Study', '12-step-meeting-list'),
@@ -681,7 +680,6 @@ function tsml_load_config()
                 'BE' => __('Beginner', '12-step-meeting-list'),
                 'AA' => __('Concurrent with AA Meeting', '12-step-meeting-list'),
                 'AL' => __('Concurrent with Alateen Meeting', '12-step-meeting-list'),
-                'EN' => __('English', '12-step-meeting-list'),
                 'O' => __('Families Friends and Observers Welcome', '12-step-meeting-list'),
                 'C' => __('Families and Friends Only', '12-step-meeting-list'),
                 'FF' => __('Fragrance Free', '12-step-meeting-list'),
@@ -694,7 +692,6 @@ function tsml_load_config()
                 'POA' => __('Parents of Alcoholics', '12-step-meeting-list'),
                 'POC' => __('People of Color', '12-step-meeting-list'),
                 'SM' => __('Smoking Permitted', '12-step-meeting-list'),
-                'S' => __('Spanish', '12-step-meeting-list'),
                 'SP' => __('Speaker', '12-step-meeting-list'),
                 'ST' => __('Step Meeting', '12-step-meeting-list'),
                 'T' => __('Transgender', '12-step-meeting-list'),
@@ -729,16 +726,10 @@ function tsml_load_config()
                 'DB' => __('Digital Basket', '12-step-meeting-list'),
                 'D' => __('Discussion', '12-step-meeting-list'),
                 'DD' => __('Dual Diagnosis', '12-step-meeting-list'),
-                'EN' => __('English', '12-step-meeting-list'),
                 'FF' => __('Fragrance Free', '12-step-meeting-list'),
-                'FR' => __('French', '12-step-meeting-list'),
                 'G' => __('Gay', '12-step-meeting-list'),
                 'GR' => __('Grapevine', '12-step-meeting-list'),
-                'HE' => __('Hebrew', '12-step-meeting-list'),
                 'NDG' => __('Indigenous', '12-step-meeting-list'),
-                'ITA' => __('Italian', '12-step-meeting-list'),
-                'JA' => __('Japanese', '12-step-meeting-list'),
-                'KOR' => __('Korean', '12-step-meeting-list'),
                 'L' => __('Lesbian', '12-step-meeting-list'),
                 'LIT' => __('Literature', '12-step-meeting-list'),
                 'LS' => __('Living Sober', '12-step-meeting-list'),
@@ -753,14 +744,10 @@ function tsml_load_config()
                 'O' => __('Open', '12-step-meeting-list'),
                 'OUT' => __('Outdoor Meeting', '12-step-meeting-list'),
                 'POC' => __('People of Color', '12-step-meeting-list'),
-                'POL' => __('Polish', '12-step-meeting-list'),
-                'POR' => __('Portuguese', '12-step-meeting-list'),
                 'P' => __('Professionals', '12-step-meeting-list'),
-                'PUN' => __('Punjabi', '12-step-meeting-list'),
-                'RUS' => __('Russian', '12-step-meeting-list'),
                 'A' => __('Secular', '12-step-meeting-list'),
                 'SEN' => __('Seniors', '12-step-meeting-list'),
-                'ASL' => __('Sign Language', '12-step-meeting-list'),
+				'ASL' => __('Sign Language', '12-step-meeting-list'),
                 'SM' => __('Smoking Permitted', '12-step-meeting-list'),
                 'S' => __('Spanish', '12-step-meeting-list'),
                 'SP' => __('Speaker', '12-step-meeting-list'),
@@ -782,8 +769,8 @@ function tsml_load_config()
                 'O' => __('Open meetings are available to anyone interested in Crystal Meth Anonymous’ program of recovery from using. Non users may attend open meetings as observers.', '12-step-meeting-list'),
             ],
             'types' => [
-                'ASL' => __('Sign Language', '12-step-meeting-list'),
-                'C' => __('Closed', '12-step-meeting-list'),
+				'ASL' => __('Sign Language', '12-step-meeting-list'),
+				'C' => __('Closed', '12-step-meeting-list'),
                 'LGBTQ' => __('LGBTQ', '12-step-meeting-list'),
                 'LIT' => __('Literature', '12-step-meeting-list'),
                 'M' => __('Men', '12-step-meeting-list'),
@@ -793,7 +780,6 @@ function tsml_load_config()
                 'OUT' => __('Outdoor Meeting', '12-step-meeting-list'),
                 'POC' => __('People of Color', '12-step-meeting-list'),
                 'SM' => __('Smoking Permitted', '12-step-meeting-list'),
-                'S' => __('Spanish', '12-step-meeting-list'),
                 'SP' => __('Speaker', '12-step-meeting-list'),
                 'ST' => __('Step Meeting', '12-step-meeting-list'),
                 'T' => __('Transgender', '12-step-meeting-list'),
@@ -837,7 +823,6 @@ function tsml_load_config()
                 'SHARE' => __('Sharing', '12-step-meeting-list'),
                 'ASL' => __('Sign Language', '12-step-meeting-list'),
                 'SM' => __('Smoking Permitted', '12-step-meeting-list'),
-                'S' => __('Spanish', '12-step-meeting-list'),
                 'SP' => __('Speaker', '12-step-meeting-list'),
                 'ST' => __('Step Meeting', '12-step-meeting-list'),
                 'TEEN' => __('Teens', '12-step-meeting-list'),
@@ -877,13 +862,9 @@ function tsml_load_config()
                 'DR' => __('Daily Reflections', '12-step-meeting-list'),
                 'D' => __('Discussion', '12-step-meeting-list'),
                 'DD' => __('Dual Diagnosis', '12-step-meeting-list'),
-                'EN' => __('English', '12-step-meeting-list'),
                 'FF' => __('Fragrance Free', '12-step-meeting-list'),
-                'FR' => __('French', '12-step-meeting-list'),
                 'G' => __('Gay', '12-step-meeting-list'),
                 'GR' => __('Grapevine', '12-step-meeting-list'),
-                'ITA' => __('Italian', '12-step-meeting-list'),
-                'KOR' => __('Korean', '12-step-meeting-list'),
                 'L' => __('Lesbian', '12-step-meeting-list'),
                 'LIT' => __('Literature', '12-step-meeting-list'),
                 'LS' => __('Living Sober', '12-step-meeting-list'),
@@ -895,13 +876,8 @@ function tsml_load_config()
                 'BE' => __('Newcomer', '12-step-meeting-list'),
                 'ONL' => __('Online Meeting', '12-step-meeting-list'),
                 'O' => __('Open', '12-step-meeting-list'),
-                'POL' => __('Polish', '12-step-meeting-list'),
-                'POR' => __('Portuguese', '12-step-meeting-list'),
-                'PUN' => __('Punjabi', '12-step-meeting-list'),
-                'RUS' => __('Russian', '12-step-meeting-list'),
-                'ASL' => __('Sign Language', '12-step-meeting-list'),
+				'ASL' => __('Sign Language', '12-step-meeting-list'),
                 'SM' => __('Smoking Permitted', '12-step-meeting-list'),
-                'S' => __('Spanish', '12-step-meeting-list'),
                 'SP' => __('Speaker', '12-step-meeting-list'),
                 'ST' => __('Step Meeting', '12-step-meeting-list'),
                 'TR' => __('Tradition Study', '12-step-meeting-list'),
@@ -993,14 +969,7 @@ function tsml_load_config()
                 'CC' => __('Chair\'s Choice', '12-step-meeting-list'),
                 'CF' => __('Child-Friendly', '12-step-meeting-list'),
                 'C' => __('Closed', '12-step-meeting-list'),
-                'NL' => __('Dutch', '12-step-meeting-list'),
-                'EN' => __('English', '12-step-meeting-list'),
-                'DE' => __('German', '12-step-meeting-list'),
-                'KA' => __('Georgian', '12-step-meeting-list'),
-                'EL' => __('Greek', '12-step-meeting-list'),
                 'NDG' => __('Indigenous', '12-step-meeting-list'),
-                'IS' => __('Icelandic', '12-step-meeting-list'),
-                'ITA' => __('Italian', '12-step-meeting-list'),
                 'LIT' => __('Literature', '12-step-meeting-list'),
                 'LGBTQ' => __('LGBTQ+', '12-step-meeting-list'),
                 'MED' => __('Meditation', '12-step-meeting-list'),
@@ -1012,7 +981,6 @@ function tsml_load_config()
                 'RF' => __('Rotating Format', '12-step-meeting-list'),
                 'A' => __('Secular', '12-step-meeting-list'),
                 'SEN' => __('Seniors', '12-step-meeting-list'),
-                'S' => __('Spanish', '12-step-meeting-list'),
                 'SP' => __('Speaker', '12-step-meeting-list'),
                 'ST' => __('Step', '12-step-meeting-list'),
                 'TO' => __('Topic/Discussion', '12-step-meeting-list'),
@@ -1044,11 +1012,7 @@ function tsml_load_config()
                 'CRC' => __('Cross Comment', '12-step-meeting-list'),
                 'DR' => __('Daily Reflections', '12-step-meeting-list'),
                 'D' => __('Discussion', '12-step-meeting-list'),
-                'EN' => __('English', '12-step-meeting-list'),
-                'FR' => __('French', '12-step-meeting-list'),
                 'GAM' => __('Gam Anon', '12-step-meeting-list'),
-                'ITA' => __('Italian', '12-step-meeting-list'),
-                'KOR' => __('Korean', '12-step-meeting-list'),
                 'LIT' => __('Literature', '12-step-meeting-list'),
                 'LGBTQ' => __('LGBTQ', '12-step-meeting-list'),
                 'TC' => __('Location Temporarily Closed', '12-step-meeting-list'),
@@ -1058,13 +1022,8 @@ function tsml_load_config()
                 'ONL' => __('Online Meeting', '12-step-meeting-list'),
                 'O' => __('Open', '12-step-meeting-list'),
                 'PAR' => __('Parking Meters Available', '12-step-meeting-list'),
-                'POL' => __('Polish', '12-step-meeting-list'),
-                'POR' => __('Portuguese', '12-step-meeting-list'),
-                'PUN' => __('Punjabi', '12-step-meeting-list'),
-                'RUS' => __('Russian', '12-step-meeting-list'),
-                'ASL' => __('Sign Language', '12-step-meeting-list'),
+				'ASL' => __('Sign Language', '12-step-meeting-list'),
                 'SM' => __('Smoking Permitted', '12-step-meeting-list'),
-                'S' => __('Spanish', '12-step-meeting-list'),
                 'SP' => __('Speaker', '12-step-meeting-list'),
                 'ST' => __('Step Meeting', '12-step-meeting-list'),
                 'TOP' => __('Topic', '12-step-meeting-list'),
@@ -1221,14 +1180,8 @@ function tsml_load_config()
                 'BB' => __('Book Study', '12-step-meeting-list'),
                 'CC' => __('Child Care Available', '12-step-meeting-list'),
                 'C' => __('Closed', '12-step-meeting-list'),
-                'DA' => __('Danish', '12-step-meeting-list'),
                 'DF' => __('Dog Friendly', '12-step-meeting-list'),
-                'NL' => __('Dutch', '12-step-meeting-list'),
                 '8F' => __('Eightfold Path Study', '12-step-meeting-list'),
-                'EN' => __('English', '12-step-meeting-list'),
-                'FI' => __('Finnish', '12-step-meeting-list'),
-                'FR' => __('French', '12-step-meeting-list'),
-                'DE' => __('German', '12-step-meeting-list'),
                 'IS' => __('Inquiry Study', '12-step-meeting-list'),
                 'IW' => __('Inquiry Writing', '12-step-meeting-list'),
                 'LGBTQ' => __('LGBTQ', '12-step-meeting-list'),
@@ -1238,9 +1191,6 @@ function tsml_load_config()
                 'ONL' => __('Online Meeting', '12-step-meeting-list'),
                 'O' => __('Open', '12-step-meeting-list'),
                 'PR' => __('Process Addictions', '12-step-meeting-list'),
-                'ES' => __('Spanish', '12-step-meeting-list'),
-                'SV' => __('Swedish', '12-step-meeting-list'),
-                'TH' => __('Thai', '12-step-meeting-list'),
                 'WA' => __('Wheelchair Access', '12-step-meeting-list'),
                 'W' => __('Women', '12-step-meeting-list'),
             ],
@@ -1258,14 +1208,8 @@ function tsml_load_config()
                 'BB' => __('Book Study', '12-step-meeting-list'),
                 'CC' => __('Child Care Available', '12-step-meeting-list'),
                 'C' => __('Closed', '12-step-meeting-list'),
-                'DA' => __('Danish', '12-step-meeting-list'),
                 'DF' => __('Dog Friendly', '12-step-meeting-list'),
-                'NL' => __('Dutch', '12-step-meeting-list'),
                 '8F' => __('Eightfold Path Study', '12-step-meeting-list'),
-                'EN' => __('English', '12-step-meeting-list'),
-                'FI' => __('Finnish', '12-step-meeting-list'),
-                'FR' => __('French', '12-step-meeting-list'),
-                'DE' => __('German', '12-step-meeting-list'),
                 'IS' => __('Inventory Study', '12-step-meeting-list'),
                 'IW' => __('Inventory Writing', '12-step-meeting-list'),
                 'LGBTQ' => __('LGBTQ', '12-step-meeting-list'),
@@ -1275,9 +1219,6 @@ function tsml_load_config()
                 'ONL' => __('Online Meeting', '12-step-meeting-list'),
                 'O' => __('Open', '12-step-meeting-list'),
                 'PR' => __('Process Addictions', '12-step-meeting-list'),
-                'ES' => __('Spanish', '12-step-meeting-list'),
-                'SV' => __('Swedish', '12-step-meeting-list'),
-                'TH' => __('Thai', '12-step-meeting-list'),
                 'WA' => __('Wheelchair Access', '12-step-meeting-list'),
                 'W' => __('Women', '12-step-meeting-list'),
             ],
@@ -1357,7 +1298,6 @@ function tsml_load_config()
                 'ONL' => __('Online Meeting', '12-step-meeting-list'),
                 'O' => __('Open', '12-step-meeting-list'),
                 'PRI' => __('Prison', '12-step-meeting-list'),
-                'S' => __('Spanish', '12-step-meeting-list'),
                 'SP' => __('Speaker', '12-step-meeting-list'),
                 'ST' => __('Step Study', '12-step-meeting-list'),
                 'D' => __('Topic Discussion', '12-step-meeting-list'),
@@ -1376,22 +1316,12 @@ function tsml_load_config()
             'name' => __('Survivors of Incest Anonymous', '12-step-meeting-list'),
             'types' => [
                 '12x12' => __('12 Steps & 12 Traditions', '12-step-meeting-list'),
-                'AF' => __('Afrikaans', '12-step-meeting-list'),
-                'ASL' => __('American Sign Language', '12-step-meeting-list'),
-                'AR' => __('Arabic', '12-step-meeting-list'),
+				'ASL' => __('Sign Language', '12-step-meeting-list'),
                 'B' => __('Big Book', '12-step-meeting-list'),
                 'C' => __('Closed', '12-step-meeting-list'),
-                'NL' => __('Dutch', '12-step-meeting-list'),
-                'EN' => __('English', '12-step-meeting-list'),
-                'FI' => __('Finnish', '12-step-meeting-list'),
                 'FF' => __('Fragrance Free', '12-step-meeting-list'),
-                'FR' => __('French', '12-step-meeting-list'),
                 'GQ' => __('Genderqueer', '12-step-meeting-list'),
-                'HE' => __('Hebrew', '12-step-meeting-list'),
                 'NDG' => __('Indigenous', '12-step-meeting-list'),
-                'ITA' => __('Italian', '12-step-meeting-list'),
-                'JA' => __('Japanese', '12-step-meeting-list'),
-                'KOR' => __('Korean', '12-step-meeting-list'),
                 'LGBTQ' => __('LGBTQ', '12-step-meeting-list'),
                 'LIT' => __('Literature', '12-step-meeting-list'),
                 'TC' => __('Location Temporarily Closed', '12-step-meeting-list'),
@@ -1402,21 +1332,11 @@ function tsml_load_config()
                 'O' => __('Open', '12-step-meeting-list'),
                 'OSH' => __('Open Share Format', '12-step-meeting-list'),
                 'POC' => __('People of Color', '12-step-meeting-list'),
-                'FA' => __('Persian', '12-step-meeting-list'),
-                'POL' => __('Polish', '12-step-meeting-list'),
-                'POR' => __('Portuguese', '12-step-meeting-list'),
-                'PUN' => __('Punjabi', '12-step-meeting-list'),
                 'RIT' => __('Ritual Abuse', '12-step-meeting-list'),
-                'RUS' => __('Russian', '12-step-meeting-list'),
-                'SL' => __('Slovenian', '12-step-meeting-list'),
-                'S' => __('Spanish', '12-step-meeting-list'),
                 'SP' => __('Speaker', '12-step-meeting-list'),
                 'ST' => __('Step Study', '12-step-meeting-list'),
                 'STW' => __('Steps Workshop', '12-step-meeting-list'),
-                'TH' => __('Thai', '12-step-meeting-list'),
                 'T' => __('Transgender', '12-step-meeting-list'),
-                'TR' => __('Turkish', '12-step-meeting-list'),
-                'UA' => __('Ukrainian', '12-step-meeting-list'),
                 'X' => __('Wheelchair Access', '12-step-meeting-list'),
                 'XB' => __('Wheelchair-Accessible Bathroom', '12-step-meeting-list'),
                 'W' => __('Women', '12-step-meeting-list'),
@@ -1429,7 +1349,6 @@ function tsml_load_config()
             'types' => [
                 'BIPOC' => __('BIPOC', '12-step-meeting-list'),
                 'M' => __('Men', '12-step-meeting-list'),
-                'ES' => __('Spanish', '12-step-meeting-list'),
                 'ST' => __('Steps', '12-step-meeting-list'),
                 'T' => __('Tools', '12-step-meeting-list'),
                 'W' => __('Women', '12-step-meeting-list'),
@@ -1450,12 +1369,90 @@ function tsml_load_config()
         ],
     ];
 
+	$tsml_languages =[
+		'AF' => __('Afrikaans', '12-step-meeting-list'),
+		'AM' => __('Amharic', '12-step-meeting-list'),
+		'AR' => __('Arabic', '12-step-meeting-list'),
+		'HR' => __('Croatian', '12-step-meeting-list'),
+		'DA' => __('Danish', '12-step-meeting-list'),
+		'NL' => __('Dutch', '12-step-meeting-list'),
+		'EN' => __('English', '12-step-meeting-list'),
+		'FI' => __('Finnish', '12-step-meeting-list'),
+		'FR' => __('French', '12-step-meeting-list'),
+		'KA' => __('Georgian', '12-step-meeting-list'),
+		'DE' => __('German', '12-step-meeting-list'),
+		'EL' => __('Greek', '12-step-meeting-list'),
+		'HE' => __('Hebrew', '12-step-meeting-list'),
+		'HI' => __('Hindi', '12-step-meeting-list'),
+		'IS' => __('Icelandic', '12-step-meeting-list'), //conflict w RD Inquiry Study; RS Inventory study
+		'ITA' => __('Italian', '12-step-meeting-list'),
+		'JA' => __('Japanese', '12-step-meeting-list'),
+		'KOR' => __('Korean', '12-step-meeting-list'),
+		'LT' => __('Lithuanian', '12-step-meeting-list'),
+		'ML' => __('Malayam', '12-step-meeting-list'),
+		'FA' => __('Persian', '12-step-meeting-list'),
+		'POL' => __('Polish', '12-step-meeting-list'),
+		'POR' => __('Portuguese', '12-step-meeting-list'),
+		'PUN' => __('Punjabi', '12-step-meeting-list'),
+		'RUS' => __('Russian', '12-step-meeting-list'),
+		'SK' => __('Slovak', '12-step-meeting-list'),
+		'SL' => __('Slovenian', '12-step-meeting-list'),
+		'S' => __('Spanish', '12-step-meeting-list'),
+		'SV' => __('Swedish', '12-step-meeting-list'),
+		'TL' => __('Tagalog', '12-step-meeting-list'),
+		'TH' => __('Thai', '12-step-meeting-list'),
+		'TR' => __('Turkish', '12-step-meeting-list'),
+		'UA' => __('Ukrainian', '12-step-meeting-list')
+	];
+
+	// Apply languages to all programs
+	foreach ($tsml_programs as $key => $program) {
+		if (!isset($program['languages'])) {
+			foreach ($tsml_languages as $language) {
+				$tsml_programs[$key]['languages'][$language] = __($language, '12-step-meeting-list');
+			}
+		}
+	}
+
     //remove 'TC' and 'ONL' from default flags if meeting finder is TSML UI
     if ($tsml_user_interface === 'tsml_ui') {
         foreach ($tsml_programs as $key => $value) {
             $tsml_programs[$key]['flags'] = array_diff($value['flags'], ['TC', 'ONL']);
         }
     }
+	
+	// preserve legacy inconsistencies
+	// ACA
+	unset($tsml_programs['ACA']['types']['S']);
+	unset($tsml_programs['ACA']['types']['SP']);
+	$tsml_programs['ACA']['types']['S'] = __('Speaker', '12-step-meeting-list');
+	$tsml_programs['ACA']['types']['SP'] = __('Spanish', '12-step-meeting-list');
+
+	// Recovery Dharma
+	unset($tsml_programs['Recovery Dharma']['types']['S']);
+	$tsml_programs['Recovery Dharma']['types']['ES'] = __('Spanish', '12-step-meeting-list');
+	unset($tsml_programs['Recovery Dharma']['types']['IS']);
+	$tsml_programs['Recovery Dharma']['types']['IS'] =  __('Inquiry Study', '12-step-meeting-list');
+
+	// Refuge Recovery
+	unset($tsml_programs['Refuge Recovery']['types']['S']);
+	unset($tsml_programs['Refuge Recovery']['types']['IS']);
+	$tsml_programs['Refuge Recovery']['types']['ES'] =  __('Spanish', '12-step-meeting-list');
+	$tsml_programs['Refuge Recovery']['types']['IS'] =  __('Inventory Study', '12-step-meeting-list');
+
+	// UA
+	unset($tsml_programs['UA']['types']['S']);
+	$tsml_programs['UA']['types']['ES'] = __('Spanish', '12-step-meeting-list');
+
+	// SIA
+	unset($tsml_programs['SIA']['types']['UK']);
+	$tsml_programs['SIA']['types']['UA'] = __('Ukrainian', '12-step-meeting-list');
+
+	// SLAA
+	unset($tsml_programs['SLAA']['types']['HR']);
+	$tsml_programs['SLAA']['types']['HR'] = __('Healthy Relationships', '12-step-meeting-list');
+	$tsml_programs['SLAA']['types']['CR'] = __('Croatian', '12-step-meeting-list');
+
 
     //the location where the list will show up, eg https://intergroup.org/meetings
     if ($tsml_slug === null) {
