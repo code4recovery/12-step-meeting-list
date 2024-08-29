@@ -116,13 +116,11 @@ add_action('admin_init', function () {
                     <?php _e('Languages', '12-step-meeting-list') ?>
                 </label>
                 <div
-                    class="checkboxes<?php if (!empty($tsml_types_in_use) && count($tsml_types_in_use) !== count($tsml_programs[$tsml_program]['languages'])) { ?> has_more<?php } ?>">
+                    class="checkboxes">
                     <?php
                     foreach ($tsml_programs[$tsml_program]['languages'] as $key => $type) {
                         ?>
-                        <label <?php if (!empty($tsml_types_in_use) && !in_array($key, $tsml_types_in_use)) {
-                            echo ' class="not_in_use"';
-                        } ?>>
+                        <label>
                             <input type="checkbox" name="types[]" value="<?php echo $key ?>" <?php checked(in_array($key, @$meeting->types)) ?>>
                             <?php echo $type ?>
                         </label>
