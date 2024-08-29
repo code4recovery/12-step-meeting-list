@@ -303,6 +303,7 @@ Yes, you will need to know the key name of the field. Then include an array in y
 
 = 3.15.1 =
 * Reformat 'Change Detection Email' for better legibility. [more info](https://github.com/code4recovery/12-step-meeting-list/issues/1497)
+* Add "Proof of Attendance" type [more info](https://github.com/code4recovery/spec/issues/92)
 
 = 3.15 =
 * Modifies Import Data Source feature so that only the changes detected between an import feed and the local database are applied as updates. [more info](https://github.com/code4recovery/12-step-meeting-list/issues/1075)

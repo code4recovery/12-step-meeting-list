@@ -756,6 +756,7 @@ function tsml_load_config()
                 'POL' => __('Polish', '12-step-meeting-list'),
                 'POR' => __('Portuguese', '12-step-meeting-list'),
                 'P' => __('Professionals', '12-step-meeting-list'),
+                'POA' => __('Proof of Attendance', '12-step-meeting-list'),
                 'PUN' => __('Punjabi', '12-step-meeting-list'),
                 'RUS' => __('Russian', '12-step-meeting-list'),
                 'A' => __('Secular', '12-step-meeting-list'),
