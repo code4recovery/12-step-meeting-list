@@ -87,7 +87,8 @@ add_action('admin_init', function () {
                     class="checkboxes<?php if (!empty($tsml_types_in_use) && count($tsml_types_in_use) !== count($tsml_programs[$tsml_program]['types'])) { ?> has_more<?php } ?>">
                     <?php
                     foreach ($tsml_programs[$tsml_program]['types'] as $key => $type) {
-                        if ($key == 'ONL' || $key == 'TC') continue; //hide "Online Meeting" since it's not manually settable, neither is location Temporarily Closed
+                        if ($key == 'ONL' || $key == 'TC')
+                            continue; //hide "Online Meeting" since it's not manually settable, neither is location Temporarily Closed
                         ?>
                         <label <?php if (!empty($tsml_types_in_use) && !in_array($key, $tsml_types_in_use)) {
                             echo ' class="not_in_use"';
@@ -122,7 +123,7 @@ add_action('admin_init', function () {
                         <label <?php if (!empty($tsml_types_in_use) && !in_array($key, $tsml_types_in_use)) {
                             echo ' class="not_in_use"';
                         } ?>>
-                                        <input type="checkbox" name="types[]" value="<?php echo $key ?>" <?php checked(in_array($key, @$meeting->types)) ?>>
+                            <input type="checkbox" name="types[]" value="<?php echo $key ?>" <?php checked(in_array($key, @$meeting->types)) ?>>
                             <?php echo $type ?>
                         </label>
                     <?php } ?>
@@ -134,7 +135,7 @@ add_action('admin_init', function () {
                         </div>
                         <div class="less">
                             <span class="dashicons dashicons-arrow-up-alt2"></span> <a href="#more-types">
-                                <?php _e('Hide types not in use', '12-step-meeting-list') ?>
+                                <?php _e('Hide languages not in use', '12-step-meeting-list') ?>
                             </a>
                         </div>
                     </div>
