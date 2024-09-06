@@ -147,6 +147,14 @@ $tsml_export_columns = [
     'id' => 'ID',
 ];
 
+//define fields used for tracking changes in imported meetings
+$tsml_source_fields_map = [
+    'source_formatted_address' => 'formatted_address',
+    'source_region' => 'region',
+    'source_sub_region' => 'sub_region',
+    'source_slug' => 'slug',
+];
+
 //load email addresses to send user feedback about meetings
 $tsml_feedback_addresses = tsml_get_option_array('tsml_feedback_addresses');
 
@@ -596,6 +604,9 @@ if (!isset($tsml_slug)) {
     $tsml_slug = null;
 }
 
+//toggle debug mode
+$tsml_debug = false;
+
 // set up globals, common variables once plugins are loaded, but before init
 function tsml_load_config()
 {
@@ -745,6 +756,7 @@ function tsml_load_config()
                 'POL' => __('Polish', '12-step-meeting-list'),
                 'POR' => __('Portuguese', '12-step-meeting-list'),
                 'P' => __('Professionals', '12-step-meeting-list'),
+                'POA' => __('Proof of Attendance', '12-step-meeting-list'),
                 'PUN' => __('Punjabi', '12-step-meeting-list'),
                 'RUS' => __('Russian', '12-step-meeting-list'),
                 'A' => __('Secular', '12-step-meeting-list'),
@@ -1476,7 +1488,6 @@ function tsml_load_config()
         $tsml_types_in_use = [];
     }
 }
-;
 
 add_action('plugins_loaded', 'tsml_load_config');
 // load config if we always passed plugins_loaded action
