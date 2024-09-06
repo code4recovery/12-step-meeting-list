@@ -4,8 +4,8 @@
 		"build": "wp-scripts build --webpack-src-dir=assets/src --output-path=assets/build"
 	},
 	"devDependencies": {
-		"@wordpress/babel-preset-default": "^7.37.0",
-		"@wordpress/scripts": "^27.5.0",
+		"@wordpress/babel-preset-default": "^8.7.0",
+		"@wordpress/scripts": "^29.0.0",
 		"bootstrap-sass": "^3.4.0",
 		"laravel-mix": "^6.0.49",
 		"mapbox-gl": "^2.11.1",
