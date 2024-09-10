@@ -98,6 +98,17 @@
 		}
 	}
 
+    small {
+        display: none;
+        margin-left: 15%;
+        &.error_message{
+            color: #d40047;
+        }
+        &.show {
+            display: inline-block;
+        }
+    }
+
 	input,
 	select {
 		border: 1px solid #ccc;

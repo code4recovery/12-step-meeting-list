@@ -97,19 +97,42 @@ jQuery(function ($) {
             last_contact:      $form.find('input[name=last_contact]'),
         };
 
-		function formIsValid() {
-			form_valid = true;
-			$('#publish').removeClass('disabled');
-		}
+        // set a state for $fields 
+        //    state: loading, error, warning
+        //    code:  a code that corresponds with a field <small data-message> attribute
+        $.fn.setState = function(state, code) {
+            var $field = $(this);
+            $field.siblings('[data-message]').removeClass('show');
+            $field.removeClass('error warning');
+            if (-1 === ['warning','loading','error'].indexOf(state)) {
+                state = '';
+            }
+            $field.data('state', state);
+            if ('error' === state || 'warning' === state) {
+                $field.addClass(state);
+                if (code) {
+                    $field.siblings(`[data-message=${code}]`).addClass('show');
+                }
+            }
+            updateFormState();
+            return this;
+        };
 
-		function formIsNotValid() {
-			form_valid = false;
-			$('#publish').addClass('disabled');
-		}
+        // after field states update, toggle publish button
+        function updateFormState() {
+            var pendingFields = [];
+            Object.keys($fields).forEach(function(field) {
+                var state = $fields[field].data('state');
+                if (-1 < ['error','loading'].indexOf(state)) {
+                    pendingFields.push($fields[field][0])
+                }
+            });
+            form_valid = !pendingFields.length;
+            $('#publish').toggleClass('disabled', !form_valid);
+        }
 
 		// Hide all errors/warnings
 		function resetClasses() {
-			$('div.form_not_valid').addClass('hidden');
 			$('div.need_approximate_address').addClass('hidden');
 			$fields.formatted_address.removeClass('error');
 			$fields.location.removeClass('warning');
@@ -127,7 +150,7 @@ jQuery(function ($) {
 		});
 
 		//day picker
-		$fields.day.change(function () {
+		$fields.day.on('change', function () {
 			var val = $(this).val();
 			// If a day is selected, not Appointment
 			if (val) {
@@ -149,7 +172,7 @@ jQuery(function ($) {
 		$('input.time').timepicker();
 
 		//auto-suggest end time (todo maybe think about using moment for this)
-		$fields.time.change(function () {
+		$fields.time.on('change', function () {
 			//get time parts
 			var parts = $(this).val().split(':');
 			if (parts.length !== 2) return;
@@ -234,7 +257,7 @@ jQuery(function ($) {
 			});
 		});
 
-		$fields.group_status.change(function () {
+		$fields.group_status.on('change', function () {
 			$('#contact-type').attr('data-type', $(this).val());
 			if ($(this).val() == 'meeting') {
 				$fields.group.val('');
@@ -244,7 +267,7 @@ jQuery(function ($) {
 			}
 		});
 
-		$fields.group.change(function () {
+		$fields.group.on('change', function () {
 			$('div#group .apply_group_to_location').removeClass('hidden');
 		});
 
@@ -252,7 +275,7 @@ jQuery(function ($) {
 		$fields.formatted_address
 			.on('change', function () {
 				//disable submit until geocoding completes
-				formIsNotValid();
+				$fields.formatted_address.setState('loading');
 
 				//setting new form
 				$fields.latitude.val('');
@@ -263,7 +286,7 @@ jQuery(function ($) {
 				if (!val.length) {
 					createMap(false);
 					$fields.formatted_address.val(''); //clear any spaces
-					formIsValid();
+					$fields.formatted_address.setState();
 					return;
 				}
 
@@ -277,7 +300,10 @@ jQuery(function ($) {
 					function (geocoded) {
 						console.log('Geocoded: ', geocoded);
 						//check status first, eg REQUEST_DENIED, ZERO_RESULTS
-						if (geocoded.status == 'error') return;
+						if (geocoded.status == 'error') {
+                            $fields.formatted_address.setState('warning', 2);
+                            return;
+                        }
 
 						//set lat + lng
 						$fields.latitude.val(geocoded.latitude);
@@ -330,17 +356,14 @@ jQuery(function ($) {
 								meeting_is_online = $fields.conference_url.val() != '' || $fields.conference_phone.val() != '';
 								// In-person meetings can't have approximate addresses
 								if ($('input[name=in_person]:checked').val() == 'yes' && $fields.approximate.val() == 'yes') {
-									$('div.form_not_valid').removeClass('hidden');
-									$fields.formatted_address.addClass('error');
-									formIsNotValid();
+									$fields.formatted_address.setState('error', 1);
 								} else if ($('input[name=in_person]:checked').val() == 'no' && $fields.approximate.val() == 'no' && meeting_is_online) {
-									$('div.need_approximate_address').removeClass('hidden');
+                                    $('div.need_approximate_address').removeClass('hidden');
 									$fields.location.addClass('warning');
 									$fields.formatted_address.addClass('warning');
-									formIsValid();
 								} else {
-									//form is ok to submit again
-									formIsValid();
+									//field is good
+                                    $fields.formatted_address.setState();
 								}
 							}
 						);
@@ -351,7 +374,7 @@ jQuery(function ($) {
 				//disable submit, will need to do geocoding on change
 				var original_address = $(this).attr('data-original-value');
 				if (original_address != $(this).val()) {
-					formIsNotValid();
+					$fields.formatted_address.setState('loading');
 				}
 
 				//unhide apply address to location?
@@ -370,7 +393,7 @@ jQuery(function ($) {
 		});
 
         // Conference URL validation
-		$fields.conference_url.on('change', function () {
+        $fields.conference_url.validate = function() {
             var conferenceUrl = $fields.conference_url.val();
             if (
                 // if is zoom
@@ -378,15 +401,16 @@ jQuery(function ($) {
                 // but doesn't include meeting number
                 ! conferenceUrl.match(/^(https?:\/\/)*([a-z0-9]+\.)*zoom.us\/j\/(\d{8,12})/i)
             ) {
-                formIsNotValid();
-                $fields.conference_url.addClass('error');
+                $fields.conference_url.setState('error', 1);
             } else {
-                formIsValid();
-                $fields.conference_url.removeClass('error');           
+                $fields.conference_url.setState();
             }
+        };
 
-			$fields.formatted_address.trigger('change');
-		});
+        // validate conference url on change and once on initial load
+		$fields.conference_url.on('change', $fields.conference_url.validate);
+        $fields.conference_url.validate();
+
 		$fields.conference_phone.on('change', function () {
 			$fields.formatted_address.trigger('change');
 		});
