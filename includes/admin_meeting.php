@@ -133,7 +133,7 @@ add_action('admin_init', function () {
             <input type="url" name="conference_url" id="conference_url" placeholder="https://"
                 value="<?php echo $meeting->conference_url ?>">
             <small class="error_message" data-message="1">
-                <?php _e('Zoom conference urls require a valid meeting number.', '12-step-meeting-list') ?>
+                <?php _e('Zoom conference urls require a valid meeting number. Example: https://zoom.us/j/1234567890', '12-step-meeting-list') ?>
             </small>
             <small class="error_warning" data-message="2">
                 <?php _e('Your conference url has been updated to follow the Zoom url standard.', '12-step-meeting-list') ?>
