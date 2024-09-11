@@ -111,7 +111,7 @@ jQuery(function ($) {
             if ('error' === state || 'warning' === state) {
                 $field.addClass(state);
                 if (code) {
-                    $field.siblings(`[data-message=${code}]`).addClass('show');
+                    $field.siblings('[data-message=' + code + ']').addClass('show');
                 }
             }
             updateFormState();
@@ -370,7 +370,7 @@ jQuery(function ($) {
 					}
 				);
 			})
-			.keyup(function () {
+			.on('keyup', function () {
 				//disable submit, will need to do geocoding on change
 				var original_address = $(this).attr('data-original-value');
 				if (original_address != $(this).val()) {
@@ -394,16 +394,26 @@ jQuery(function ($) {
 
         // Conference URL validation
         $fields.conference_url.validate = function() {
-            var conferenceUrl = $fields.conference_url.val();
-            if (
-                // if is zoom
-                conferenceUrl.match(/^(https?:\/\/)*([a-z0-9]+\.)*zoom.us/i) &&
-                // but doesn't include meeting number
-                ! conferenceUrl.match(/^(https?:\/\/)*([a-z0-9]+\.)*zoom.us\/j\/(\d{8,12})/i)
-            ) {
-                $fields.conference_url.setState('error', 1);
-            } else {
-                $fields.conference_url.setState();
+            $fields.conference_url.setState();
+            var conferenceUrl = decodeURI($fields.conference_url.val());
+            // if is zoom...
+            if (conferenceUrl.match(/\bzoom\.us\b/i)) {
+                // but doesn't include meeting number, error
+                var zoomUrlParts = conferenceUrl.match(/^(https?:\/\/)*([a-z0-9]+\.)*zoom\.us\/j\/(\d{8,20})(.*)$/i);
+                if (! zoomUrlParts ) {
+                    $fields.conference_url.setState('error', 1);
+                    return;
+                }
+                // else cleanup zoom url
+                var newZoomUrl = 'https://zoom.us/j/' + zoomUrlParts[3];
+                var zoomPwd = conferenceUrl.match(/[\?\&](pwd=[a-z0-9]{28,36})/i);
+                if (zoomPwd) {
+                    newZoomUrl += '?' + zoomPwd[1];
+                }
+                if (conferenceUrl !== newZoomUrl) {
+                    $fields.conference_url.val(newZoomUrl);
+                    $fields.conference_url.setState('warning', 2);
+                }
             }
         };
 

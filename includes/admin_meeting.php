@@ -132,8 +132,11 @@ add_action('admin_init', function () {
             </label>
             <input type="url" name="conference_url" id="conference_url" placeholder="https://"
                 value="<?php echo $meeting->conference_url ?>">
-            <small class="error_message hidden" data-message="1">
+            <small class="error_message" data-message="1">
                 <?php _e('Zoom conference urls require a valid meeting number.', '12-step-meeting-list') ?>
+            </small>
+            <small class="error_warning" data-message="2">
+                <?php _e('Your conference url has been updated to follow the Zoom url standard.', '12-step-meeting-list') ?>
             </small>
         </div>
         <div class="meta_form_row">
@@ -235,10 +238,10 @@ add_action('admin_init', function () {
             <input value="<?php tsml_echo($location, 'approximate') ?>" type="hidden" name="approximate" id="approximate">
             <input value="<?php tsml_echo($location, 'latitude') ?>" type="hidden" name="latitude" id="latitude">
             <input value="<?php tsml_echo($location, 'latitude') ?>" type="hidden" name="longitude" id="longitude">
-            <small class="error_message hidden" data-message="1">
+            <small class="error_message" data-message="1">
                 <?php _e('Error: In person meetings must have a specific address.', '12-step-meeting-list') ?>
             </small>
-            <small class="warning_message hidden" data-message="2">
+            <small class="warning_message" data-message="2">
                 <?php _e('Warning: Unable to process this address for exact location.', '12-step-meeting-list') ?>
             </small>
         </div>
