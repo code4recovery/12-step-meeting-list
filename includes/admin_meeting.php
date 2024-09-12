@@ -241,8 +241,8 @@ add_action('admin_init', function () {
             <small class="error_message" data-message="1">
                 <?php _e('Error: In person meetings must have a specific address.', '12-step-meeting-list') ?>
             </small>
-            <small class="warning_message" data-message="2">
-                <?php _e('Warning: Unable to process this address for exact location.', '12-step-meeting-list') ?>
+            <small class="error_message" data-message="2">
+                <?php _e('Error: Unable to process this address for exact location.', '12-step-meeting-list') ?>
             </small>
         </div>
         <?php if (count($meetings) > 1) { ?>

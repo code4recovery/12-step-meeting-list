@@ -301,7 +301,7 @@ jQuery(function ($) {
 						console.log('Geocoded: ', geocoded);
 						//check status first, eg REQUEST_DENIED, ZERO_RESULTS
 						if (geocoded.status == 'error') {
-                            $fields.formatted_address.setState('warning', 2);
+                            $fields.formatted_address.setState('error', 2);
                             return;
                         }
 
