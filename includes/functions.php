@@ -2168,6 +2168,7 @@ function tsml_to_css_classes($types, $prefix = 'type-')
     }
 
     $types = array_map('strtolower', $types);
+    $types = array_map('trim', $types);
 
     return $prefix . implode(' ' . $prefix, $types);
 }
