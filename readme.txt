@@ -240,8 +240,6 @@ Use `[tsml_types_list]` and `[tsml_regions_list]` to output linked lists to your
 
 Use `[tsml_ui]` to display the TSML UI meeting finder. Parameters can be passed to display just a certain type: `[tsml_ui key="type" value="women"]`.
 
-Parameters can also be passed for the Legacy UI to display just a certain type: `[tsml_legacy_ui key="type" value="women"]`.
-
 = Are there translations to other languages? =
 It is translated into Polish. If you would like to volunteer to help translate another language, we would be pleased to work with you.
 
@@ -303,8 +301,8 @@ Yes, you will need to know the key name of the field. Then include an array in y
 
 == Changelog ==
 
-= 3.15.1 =
-* Create/modified shortcodes to filter meetings by passed types. [more info]
+= 3.15.2 =
+* Modified shortcodes tsml_ui to filter meetings by passed types. [more info] (https://github.com/code4recovery/12-step-meeting-list/pull/1513)
 
 = 3.15.1 =
 * Reformat 'Change Detection Email' for better legibility. [more info](https://github.com/code4recovery/12-step-meeting-list/issues/1497)
