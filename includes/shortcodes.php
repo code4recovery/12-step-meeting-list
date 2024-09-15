@@ -9,23 +9,23 @@ add_shortcode('tsml_region_count', 'tsml_count_regions');
 //function for shortcode: get a table of the next $count meetings
 //used here and in widgets.php
 //example: [tsml_next_meetings count="5"]
-function tsml_next_meetings($atts)
+function tsml_next_meetings($arguments)
 {
     global $tsml_meeting_attendance_options;
-    $atts = shortcode_atts(['count' => 5, 'message' => ''], $atts, 'tsml_next_meetings');
+    $arguments = shortcode_atts(['count' => 5, 'message' => ''], $arguments, 'tsml_next_meetings');
     $meetings = tsml_get_meetings([
         'day' => intval(current_time('w')),
         'time' => 'upcoming',
         'attendance_option' => 'active',
     ]);
-    if (!count($meetings) && empty($atts['message'])) {
+    if (!count($meetings) && empty($arguments['message'])) {
         return false;
     }
-    if (!count($meetings) && !empty($atts['message'])) {
-        return '<div class="tsml-no-upcoming-meetings">' . $atts['message'] . '</div>';
+    if (!count($meetings) && !empty($arguments['message'])) {
+        return '<div class="tsml-no-upcoming-meetings">' . $arguments['message'] . '</div>';
     }
 
-    $meetings = array_slice($meetings, 0, $atts['count']);
+    $meetings = array_slice($meetings, 0, $arguments['count']);
     $rows = '';
     foreach ($meetings as $meeting) {
         $meeting_types = $classes = '';
@@ -138,8 +138,8 @@ add_shortcode('tsml_types_list', function () {
 });
 
 //output a react meeting finder widget https://github.com/code4recovery/tsml-ui
-//examples: [tsml_ui], with parameters: [tsml_ui key="type" value="women"] 
-function tsml_ui($atts)
+//examples: [tsml_ui], with parameters: [tsml_ui key="type" first_value="women" second_value="closed" third_value=""] 
+function tsml_ui($arguments)
 {
     global $tsml_mapbox_key, $tsml_nonce, $tsml_conference_providers, $tsml_language, $tsml_programs, $tsml_program, $tsml_ui_config,
     $tsml_feedback_addresses, $tsml_cache, $tsml_cache_writable, $tsml_distance_units, $tsml_columns, $tsml_timezone;
@@ -156,10 +156,27 @@ function tsml_ui($atts)
         ? $tsml_programs[$tsml_program]['type_descriptions']
         : [];
 
-    //Load Shortcode values passed, overriding default values
-    $parms = shortcode_atts(array('key' => '', 'value' => '', ), $atts);
-    $key = (isset($parms['key'])) ? sanitize_text_field($parms['key']) : '';
-    $value = (isset($parms['value'])) ? sanitize_text_field($parms['value']) : 'Any Type';
+    // normalize attribute keys, lowercase
+    $arguments = array_change_key_case((array) $arguments, CASE_LOWER);
+
+    //Load Shortcode values passed, overriding default 
+    $types = shortcode_atts(array('key' => '', 'first_value' => '', 'second_value' => '', 'third_value' => '',), $arguments);
+    $key = (isset($types['key'])) ? sanitize_text_field($types['key']) : '';
+    $first_value = (isset($types['first_value'])) ? sanitize_text_field($types['first_value']) : '';
+    $second_value = (isset($types['second_value'])) ? sanitize_text_field($types['second_value']) : '';
+    $third_value = (isset($types['third_value'])) ? sanitize_text_field($types['third_value']) : '';
+
+    //create values array that contains no empty items
+    $values = [];
+    if (!empty($first_value)) {
+        $values[] = $first_value;
+    }
+    if (!empty($second_value)) {
+        $values[] = $second_value;
+    }
+    if (!empty($third_value)) {
+        $values[] = $third_value;
+    }
 
     //apply settings with parameters passed
     wp_localize_script(
@@ -167,7 +184,7 @@ function tsml_ui($atts)
         'tsml_react_config',
         array_merge(
             [
-                'defaults' => [$key => explode(',', $value)],
+                'defaults' => [$key => array_values($values)],
                 'columns' => array_keys($tsml_columns),
                 'conference_providers' => $tsml_conference_providers,
                 'distance_unit' => $tsml_distance_units,
