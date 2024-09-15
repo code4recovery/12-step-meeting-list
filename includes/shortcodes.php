@@ -160,11 +160,11 @@ function tsml_ui($arguments)
     $arguments = array_change_key_case((array) $arguments, CASE_LOWER);
 
     //Load Shortcode values passed, overriding default 
-    $types = shortcode_atts(array('key' => '', 'first_value' => '', 'second_value' => '', 'third_value' => '',), $arguments);
-    $key = (isset($types['key'])) ? sanitize_text_field($types['key']) : '';
-    $first_value = (isset($types['first_value'])) ? sanitize_text_field($types['first_value']) : '';
-    $second_value = (isset($types['second_value'])) ? sanitize_text_field($types['second_value']) : '';
-    $third_value = (isset($types['third_value'])) ? sanitize_text_field($types['third_value']) : '';
+    $arguments = shortcode_atts(array('key' => '', 'first_value' => '', 'second_value' => '', 'third_value' => '',), $arguments);
+    $key = (isset($arguments['key'])) ? sanitize_text_field($arguments['key']) : '';
+    $first_value = (isset($arguments['first_value'])) ? sanitize_text_field($arguments['first_value']) : '';
+    $second_value = (isset($arguments['second_value'])) ? sanitize_text_field($arguments['second_value']) : '';
+    $third_value = (isset($arguments['third_value'])) ? sanitize_text_field($arguments['third_value']) : '';
 
     //create values array that contains no empty items
     $values = [];
