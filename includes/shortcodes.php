@@ -9,7 +9,7 @@ add_shortcode('tsml_region_count', 'tsml_count_regions');
 //function for shortcode: get a table of the next $count meetings
 //used here and in widgets.php
 //example: [tsml_next_meetings count="5"]
-function tsml_next_meetings($arguments)
+function tsml_next_meetings($arguments = array())
 {
     global $tsml_meeting_attendance_options;
     $arguments = shortcode_atts(['count' => 5, 'message' => ''], $arguments, 'tsml_next_meetings');
@@ -139,7 +139,7 @@ add_shortcode('tsml_types_list', function () {
 
 //output a react meeting finder widget https://github.com/code4recovery/tsml-ui
 //examples: [tsml_ui], with parameters: [tsml_ui key="type" first_value="women" second_value="closed" third_value=""] 
-function tsml_ui($arguments)
+function tsml_ui($arguments = array())
 {
     global $tsml_mapbox_key, $tsml_nonce, $tsml_conference_providers, $tsml_language, $tsml_programs, $tsml_program, $tsml_ui_config,
     $tsml_feedback_addresses, $tsml_cache, $tsml_cache_writable, $tsml_distance_units, $tsml_columns, $tsml_timezone;
