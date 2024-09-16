@@ -1,5 +1,9 @@
 {
 	"private": true,
+    "scripts": {
+        "start": "npx mix watch",
+        "build": "npx mix --production"
+    },
 	"devDependencies": {
 		"bootstrap-sass": "^3.4.0",
 		"laravel-mix": "^6.0.49",

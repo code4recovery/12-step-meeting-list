@@ -60,26 +60,86 @@ jQuery(function ($) {
 		//make sure geocoding is finished (basic form validation)
 		var form_valid = true;
 
-		function formIsValid() {
-			form_valid = true;
-			$('#publish').removeClass('disabled');
-		}
+        var $form = $('form#post');
+        var $fields = {
+            day:               $form.find('select#day'),
+            time:              $form.find('input#time'),
+            end_time:          $form.find('input#end_time'),
+            types:             $form.find('input[name="types[]"]'),
+            conference_url:    $form.find('input#conference_url'),
+            conference_phone:  $form.find('input#conference_phone'),
+            in_person:         $form.find('input[name=in_person]'),
+            location:          $form.find('input#location'),
+            location_notes:    $form.find('textarea[name=location_notes]'),
+            formatted_address: $form.find('input#formatted_address'),
+            approximate:       $form.find('input#approximate'),
+            latitude:          $form.find('input[name=latitude]'),
+            longitude:         $form.find('input[name=longitude]'),
+			group:             $form.find('input#group'),
+			group_notes:       $form.find('textarea[name=group_notes]'),
+			group_status:      $form.find('input[name="group_status"]'),
+            region:            $form.find('select[name=region]'),
+            district:          $form.find('select[name=district]'),
+            website:           $form.find('input[name=website]'),
+            email:             $form.find('input[name=email]'),
+            phone:             $form.find('input[name=phone]'),
+            contact_1_name:    $form.find('input[name=contact_1_name]'),
+            contact_1_email:   $form.find('input[name=contact_1_email]'),
+            contact_1_phone:   $form.find('input[name=contact_1_phone]'),
+            contact_2_name:    $form.find('input[name=contact_2_name]'),
+            contact_2_email:   $form.find('input[name=contact_2_email]'),
+            contact_2_phone:   $form.find('input[name=contact_2_phone]'),
+            contact_3_name:    $form.find('input[name=contact_3_name]'),
+            contact_3_email:   $form.find('input[name=contact_3_email]'),
+            contact_3_phone:   $form.find('input[name=contact_3_phone]'),
+            mailing_address:   $form.find('input[name=mailing_address]'),
+            venmo:             $form.find('input[name=venmo]'),
+            last_contact:      $form.find('input[name=last_contact]'),
+        };
 
-		function formIsNotValid() {
-			form_valid = false;
-			$('#publish').addClass('disabled');
-		}
+        // set a state for $fields 
+        //    state: loading, error, warning
+        //    code:  a code that corresponds with a field <small data-message> attribute
+        $.fn.setState = function(state, code) {
+            var $field = $(this);
+            $field.siblings('[data-message]').removeClass('show');
+            $field.removeClass('error warning');
+            if (-1 === ['warning','loading','error'].indexOf(state)) {
+                state = '';
+            }
+            $field.data('state', state);
+            if ('error' === state || 'warning' === state) {
+                $field.addClass(state);
+                if (code) {
+                    $field.siblings('[data-message=' + code + ']').addClass('show');
+                }
+            }
+            updateFormState();
+            return this;
+        };
+
+        // after field states update, toggle publish button
+        function updateFormState() {
+            var pendingFields = [];
+            Object.keys($fields).forEach(function(field) {
+                var state = $fields[field].data('state');
+                if (-1 < ['error','loading'].indexOf(state)) {
+                    pendingFields.push($fields[field][0])
+                }
+            });
+            form_valid = !pendingFields.length;
+            $('#publish').toggleClass('disabled', !form_valid);
+        }
 
 		// Hide all errors/warnings
 		function resetClasses() {
-			$('div.form_not_valid').addClass('hidden');
 			$('div.need_approximate_address').addClass('hidden');
-			$('input#formatted_address').removeClass('error');
-			$('input#location').removeClass('warning');
-			$('input#formatted_address').removeClass('warning');
+			$fields.formatted_address.removeClass('error');
+			$fields.location.removeClass('warning');
+			$fields.formatted_address.removeClass('warning');
 		}
 
-		$('form#post').submit(function () {
+		$form.submit(function () {
 			return form_valid;
 		});
 
@@ -90,31 +150,29 @@ jQuery(function ($) {
 		});
 
 		//day picker
-		$('select#day').change(function () {
+		$fields.day.on('change', function () {
 			var val = $(this).val();
-			var $time = $('input#time');
-			var $end_time = $('input#end_time');
 			// If a day is selected, not Appointment
 			if (val) {
-				$time.removeAttr('disabled');
-				$end_time.removeAttr('disabled');
+				$fields.time.removeAttr('disabled');
+				$fields.end_time.removeAttr('disabled');
 				// Put a value in time and end_time if they don't already have a value
-				if (!$time.val()) {
-					$time.val('00:00').timepicker();
-					$end_time.val('01:00').timepicker();
+				if (!$fields.time.val()) {
+					$fields.time.val('00:00').timepicker();
+					$fields.end_time.val('01:00').timepicker();
 				}
 			} else {
 				// Appointment is sellected
-				$time.attr('data-value', $time.val()).val('').attr('disabled', 'disabled');
-				$end_time.attr('data-value', $end_time.val()).val('').attr('disabled', 'disabled');
+				$fields.time.attr('data-value', $fields.time.val()).val('').attr('disabled', 'disabled');
+				$fields.end_time.attr('data-value', $fields.end_time.val()).val('').attr('disabled', 'disabled');
 			}
 		});
 
-		//time picker
+		//time pickeres
 		$('input.time').timepicker();
 
 		//auto-suggest end time (todo maybe think about using moment for this)
-		$('input#time').change(function () {
+		$fields.time.on('change', function () {
 			//get time parts
 			var parts = $(this).val().split(':');
 			if (parts.length !== 2) return;
@@ -136,99 +194,99 @@ jQuery(function ($) {
 			hours += '';
 
 			//set field value
-			$('input#end_time').val(hours + ':' + minutes + ' ' + ampm);
+			$fields.end_time.val(hours + ':' + minutes + ' ' + ampm);
 		});
 
 		//types checkboxes: ensure not both open and closed
-		$('body.post-type-meetings form#post').on('change', 'input[name="types[]"]', function () {
+        $fields.types.on('change', function () {
 			if (
-				$('body.post-type-meetings form#post input[name="types[]"][value="C"]').prop('checked') &&
-				$('body.post-type-meetings form#post input[name="types[]"][value="O"]').prop('checked')
+				$fields.types.filter('[value="C"]').prop('checked') &&
+				$fields.types.filter('[value="O"]').prop('checked')
 			) {
 				if ($(this).val() == 'C') {
-					$('body.post-type-meetings form#post input[name="types[]"][value="O"]').prop('checked', false);
+					$fields.types.filter('[value="O"]').prop('checked', false);
 				} else {
-					$('body.post-type-meetings form#post input[name="types[]"][value="C"]').prop('checked', false);
+					$fields.types.filter('[value="C"]').prop('checked', false);
 				}
 			}
 		});
 
 		// location typeahead
 		$.getJSON(tsml.ajaxurl + '?action=tsml_locations', function (data) {
-			$('input#location').autocomplete({
+			$fields.location.autocomplete({
 				source: data,
 				minLength: 1,
 				select: function ($e, selected) {
 					var location = selected.item;
 					if (tsml.debug) console.log('Location: ', location);
-					$('input[name=formatted_address]').val(location.formatted_address).trigger('change');
-					$('input[name=latitude]').val(location.latitude);
-					$('input[name=longitude]').val(location.longitude);
+					$fields.formatted_address.val(location.formatted_address).trigger('change');
+					$fields.latitude.val(location.latitude);
+					$fields.longitude.val(location.longitude);
 					$('select[name=region] option[value=' + location.region + ']').prop('selected', true);
-					$('textarea[name=location_notes]').val(location.notes);
+					$fields.location_notes.val(location.notes);
 				}
 			});
 		});
 
 		// group typeahead
 		$.getJSON(tsml.ajaxurl + '?action=tsml_groups', function (data) {
-			$('input#group').autocomplete({
+			$fields.group.autocomplete({
 				source: data,
 				minLength: 1,
 				select: function ($e, selected) {
 					var group = selected.item;
 					if (tsml.debug) console.log('Selected: ', selected);
-					$('select[name=district]').val(group.district);
-					$('input[name=website]').val(group.website);
-					$('input[name=email]').val(group.email);
-					$('input[name=phone]').val(group.phone);
-					$('input[name=contact_1_name]').val(group.contact_1_name);
-					$('input[name=contact_1_email]').val(group.contact_1_email);
-					$('input[name=contact_1_phone]').val(group.contact_1_phone);
-					$('input[name=contact_2_name]').val(group.contact_2_name);
-					$('input[name=contact_2_email]').val(group.contact_2_email);
-					$('input[name=contact_2_phone]').val(group.contact_2_phone);
-					$('input[name=contact_3_name]').val(group.contact_3_name);
-					$('input[name=contact_3_email]').val(group.contact_3_email);
-					$('input[name=contact_3_phone]').val(group.contact_3_phone);
-					$('input[name=mailing_address]').val(group.mailing_address);
-					$('input[name=venmo]').val(group.venmo);
-					$('input[name=last_contact]').val(group.last_contact);
-					$('textarea[name=group_notes]').val(group.notes);
+					$fields.district.val(group.district);
+					$fields.website.val(group.website);
+					$fields.email.val(group.email);
+					$fields.phone.val(group.phone);
+					$fields.contact_1_name.val(group.contact_1_name);
+					$fields.contact_1_email.val(group.contact_1_email);
+					$fields.contact_1_phone.val(group.contact_1_phone);
+					$fields.contact_2_name.val(group.contact_2_name);
+					$fields.contact_2_email.val(group.contact_2_email);
+					$fields.contact_2_phone.val(group.contact_2_phone);
+					$fields.contact_3_name.val(group.contact_3_name);
+					$fields.contact_3_email.val(group.contact_3_email);
+					$fields.contact_3_phone.val(group.contact_3_phone);
+					$fields.mailing_address.val(group.mailing_address);
+					$fields.venmo.val(group.venmo);
+					$fields.last_contact.val(group.last_contact);
+					$fields.group_notes.val(group.notes);
 				}
 			});
 		});
 
-		$('input[name="group_status"]').change(function () {
+		$fields.group_status.on('change', function () {
 			$('#contact-type').attr('data-type', $(this).val());
 			if ($(this).val() == 'meeting') {
-				$('input#group').val('');
-				$('textarea#group_notes').val('');
-				$('select#district').val('');
+				$fields.group.val('');
+				$fields.group_notes.val('');
+				$fields.district.val('');
 				$('.apply_group_to_location').addClass('hidden');
 			}
 		});
 
-		$('input#group').change(function () {
+		$fields.group.on('change', function () {
 			$('div#group .apply_group_to_location').removeClass('hidden');
 		});
 
 		//address / map
-		$('input#formatted_address')
-			.change(function () {
+		$fields.formatted_address
+			.on('change', function () {
 				//disable submit until geocoding completes
-				formIsNotValid();
+				$fields.formatted_address.setState('loading');
 
 				//setting new form
-				$('input#latitude').val('');
-				$('input#longitude').val('');
+				$fields.latitude.val('');
+				$fields.longitude.val('');
 
 				var val = $(this).val().trim();
 
 				if (!val.length) {
 					createMap(false);
-					$('input#formatted_address').val(''); //clear any spaces
-					formIsValid();
+					$fields.formatted_address.val(''); //clear any spaces
+					$fields.formatted_address.setState();
 					return;
 				}
 
@@ -242,11 +300,14 @@ jQuery(function ($) {
 					function (geocoded) {
 						console.log('Geocoded: ', geocoded);
 						//check status first, eg REQUEST_DENIED, ZERO_RESULTS
-						if (geocoded.status == 'error') return;
+						if (geocoded.status == 'error') {
+                            $fields.formatted_address.setState('error', 2);
+                            return;
+                        }
 
 						//set lat + lng
-						$('input#latitude').val(geocoded.latitude);
-						$('input#longitude').val(geocoded.longitude);
+						$fields.latitude.val(geocoded.latitude);
+						$fields.longitude.val(geocoded.longitude);
 						createMap(false, {0: geocoded});
 
 						//guess region if not set
@@ -263,9 +324,9 @@ jQuery(function ($) {
 						}
 
 						//save address and check apply change box status
-						$('input#formatted_address').val(geocoded.formatted_address).trigger('keyup');
+						$fields.formatted_address.val(geocoded.formatted_address).trigger('keyup');
 
-						$('input#approximate').val(geocoded.approximate);
+						$fields.approximate.val(geocoded.approximate);
 
 						//check if location with same address is already in the system, populate form
 						$.getJSON(
@@ -276,12 +337,12 @@ jQuery(function ($) {
 							},
 							function (data) {
 								if (data) {
-									$('input[name=location]').val(data.location);
-									if (data.region != $('select[name=region]').val()) {
+									$fields.location.val(data.location);
+									if (data.region != $fields.region.val()) {
 										$('select[name=region] option').prop('selected', false);
 										$('select[name=region] option[value=' + data.region + ']').prop('selected', true);
 									}
-									$('textarea[name=location_notes]').val(data.location_notes);
+									$fields.location_notes.val(data.location_notes);
 								}
 
 								if ((!data || !data.region) && !$('select#region option[selected]').length && region_id) {
@@ -292,31 +353,28 @@ jQuery(function ($) {
 								// hide error/warning messages
 								resetClasses();
 
-								meeting_is_online = $('input#conference_url').val() != '' || $('input#conference_phone').val() != '';
+								meeting_is_online = $fields.conference_url.val() != '' || $fields.conference_phone.val() != '';
 								// In-person meetings can't have approximate addresses
-								if ($('input[name=in_person]:checked').val() == 'yes' && $('input#approximate').val() == 'yes') {
-									$('div.form_not_valid').removeClass('hidden');
-									$('input#formatted_address').addClass('error');
-									formIsNotValid();
-								} else if ($('input[name=in_person]:checked').val() == 'no' && $('input#approximate').val() == 'no' && meeting_is_online) {
-									$('div.need_approximate_address').removeClass('hidden');
-									$('input#location').addClass('warning');
-									$('input#formatted_address').addClass('warning');
-									formIsValid();
+								if ($('input[name=in_person]:checked').val() == 'yes' && $fields.approximate.val() == 'yes') {
+									$fields.formatted_address.setState('error', 1);
+								} else if ($('input[name=in_person]:checked').val() == 'no' && $fields.approximate.val() == 'no' && meeting_is_online) {
+                                    $('div.need_approximate_address').removeClass('hidden');
+									$fields.location.addClass('warning');
+									$fields.formatted_address.addClass('warning');
 								} else {
-									//form is ok to submit again
-									formIsValid();
+									//field is good
+                                    $fields.formatted_address.setState();
 								}
 							}
 						);
 					}
 				);
 			})
-			.keyup(function () {
+			.on('keyup', function () {
 				//disable submit, will need to do geocoding on change
 				var original_address = $(this).attr('data-original-value');
 				if (original_address != $(this).val()) {
-					formIsNotValid();
+					$fields.formatted_address.setState('loading');
 				}
 
 				//unhide apply address to location?
@@ -330,17 +388,44 @@ jQuery(function ($) {
 			});
 
 		// Verify address when a change to in_person question
-		$('input[name=in_person]').change(function () {
-			$('input#formatted_address').change();
+		$fields.in_person.on('change', function () {
+			$fields.formatted_address.trigger('change');
 		});
-		$('input#conference_url').change(function () {
-			$('input#formatted_address').change();
-		});
-		$('input#conference_phone').change(function () {
-			$('input#formatted_address').change();
+
+        // Conference URL validation
+        $fields.conference_url.validate = function() {
+            $fields.conference_url.setState();
+            var conferenceUrl = decodeURI($fields.conference_url.val());
+            // if is zoom...
+            if (conferenceUrl.match(/\bzoom\.us\b/i)) {
+                // but doesn't include meeting number, error
+                var zoomUrlParts = conferenceUrl.match(/^(https?:\/\/)*([a-z0-9]+\.)*zoom\.us\/j\/(\d{8,20})(.*)$/i);
+                if (! zoomUrlParts ) {
+                    $fields.conference_url.setState('error', 1);
+                    return;
+                }
+                // else cleanup zoom url
+                var newZoomUrl = 'https://zoom.us/j/' + zoomUrlParts[3];
+                var zoomPwd = conferenceUrl.match(/[\?\&](pwd=[a-z0-9]{28,36})/i);
+                if (zoomPwd) {
+                    newZoomUrl += '?' + zoomPwd[1];
+                }
+                if (conferenceUrl !== newZoomUrl) {
+                    $fields.conference_url.val(newZoomUrl);
+                    $fields.conference_url.setState('warning', 2);
+                }
+            }
+        };
+
+        // validate conference url on change and once on initial load
+		$fields.conference_url.on('change', $fields.conference_url.validate);
+        $fields.conference_url.validate();
+
+		$fields.conference_phone.on('change', function () {
+			$fields.formatted_address.trigger('change');
 		});
 
 		//when page loads, run lookup
-		if ($('input#formatted_address').val()) $('input#formatted_address').trigger('change');
+		if ($fields.formatted_address.val()) $fields.formatted_address.trigger('change');
 	}
 });

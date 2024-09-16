@@ -132,6 +132,12 @@ add_action('admin_init', function () {
             </label>
             <input type="url" name="conference_url" id="conference_url" placeholder="https://"
                 value="<?php echo $meeting->conference_url ?>">
+            <small class="error_message" data-message="1">
+                <?php _e('Zoom conference urls require a valid meeting number. Example: https://zoom.us/j/1234567890', '12-step-meeting-list') ?>
+            </small>
+            <small class="error_warning" data-message="2">
+                <?php _e('Your conference url has been updated to follow the Zoom url standard.', '12-step-meeting-list') ?>
+            </small>
         </div>
         <div class="meta_form_row">
             <label for="conference_url_notes">
@@ -208,9 +214,6 @@ add_action('admin_init', function () {
                     </li>
                 </ul>
             </div>
-            <div class="location_error form_not_valid hidden">
-                <?php _e('Error: In person meetings must have a specific address.', '12-step-meeting-list') ?>
-            </div>
             <div class="location_warning need_approximate_address hidden">
                 <?php _e('Warning: Online meetings with a specific address will appear that the location temporarily closed. Meetings that are Online only should use appoximate addresses.', '12-step-meeting-list') ?><br /><br />
                 <?php _e('Example:', '12-step-meeting-list') ?><br />
@@ -235,6 +238,12 @@ add_action('admin_init', function () {
             <input value="<?php tsml_echo($location, 'approximate') ?>" type="hidden" name="approximate" id="approximate">
             <input value="<?php tsml_echo($location, 'latitude') ?>" type="hidden" name="latitude" id="latitude">
             <input value="<?php tsml_echo($location, 'latitude') ?>" type="hidden" name="longitude" id="longitude">
+            <small class="error_message" data-message="1">
+                <?php _e('Error: In person meetings must have a specific address.', '12-step-meeting-list') ?>
+            </small>
+            <small class="error_message" data-message="2">
+                <?php _e('Error: Unable to process this address for exact location.', '12-step-meeting-list') ?>
+            </small>
         </div>
         <?php if (count($meetings) > 1) { ?>
             <div class="meta_form_row checkbox apply_address_to_location hidden">
