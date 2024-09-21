@@ -94,6 +94,7 @@ jQuery(function ($) {
             contact_3_phone:   $form.find('input[name=contact_3_phone]'),
             mailing_address:   $form.find('input[name=mailing_address]'),
             venmo:             $form.find('input[name=venmo]'),
+            paypal:            $form.find('input[name=paypal]'),
             last_contact:      $form.find('input[name=last_contact]'),
         };
 
@@ -117,6 +118,10 @@ jQuery(function ($) {
             updateFormState();
             return this;
         };
+        // clear state, meaning the field is good
+        $.fn.clearState = function() {
+            return $(this).setState();
+        }
 
         // after field states update, toggle publish button
         function updateFormState() {
@@ -286,7 +291,7 @@ jQuery(function ($) {
 				if (!val.length) {
 					createMap(false);
 					$fields.formatted_address.val(''); //clear any spaces
-					$fields.formatted_address.setState();
+					$fields.formatted_address.clearState();
 					return;
 				}
 
@@ -363,7 +368,7 @@ jQuery(function ($) {
 									$fields.formatted_address.addClass('warning');
 								} else {
 									//field is good
-                                    $fields.formatted_address.setState();
+									$fields.formatted_address.clearState();
 								}
 							}
 						);
@@ -394,7 +399,7 @@ jQuery(function ($) {
 
         // Conference URL validation
         $fields.conference_url.validate = function() {
-            $fields.conference_url.setState();
+            $fields.conference_url.clearState();
             var conferenceUrl = decodeURI($fields.conference_url.val());
             // if is zoom...
             if (conferenceUrl.match(/\bzoom\.us\b/i)) {
@@ -424,6 +429,20 @@ jQuery(function ($) {
 		$fields.conference_phone.on('change', function () {
 			$fields.formatted_address.trigger('change');
 		});
+
+        // validate paypal name
+        $fields.paypal.validate = function() {
+            var value = $fields.paypal.val().trim();
+            // must be letters and numbers, under 20 characters
+            // reference: https://www.paypal.com/us/cshelp/article/what-is-paypalme-help432
+            if (value && !value.match(/^[a-z0-9]{1,20}$/i)) {
+                $fields.paypal.setState('error', 1);
+            } else {
+                $fields.paypal.clearState();
+            }
+        }
+        $fields.paypal.on('change', $fields.paypal.validate);
+        $fields.paypal.validate();
 
 		//when page loads, run lookup
 		if ($fields.formatted_address.val()) $fields.formatted_address.trigger('change');
