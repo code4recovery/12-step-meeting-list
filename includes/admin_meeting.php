@@ -463,6 +463,9 @@ add_action('admin_init', function () {
                     <?php _e('PayPal', '12-step-meeting-list') ?>
                 </label>
                 <input type="text" name="paypal" placeholder="PayPalUsername" value="<?php tsml_echo($meeting, 'paypal') ?>">
+                <small class="error_message" data-message="1">
+                    <?php _e('A valid PayPal username can only contain letters and numbers, and be less than 20 characters.', '12-step-meeting-list') ?>
+                </small>
             </div>
             <div class="meta_form_row">
                 <label>
