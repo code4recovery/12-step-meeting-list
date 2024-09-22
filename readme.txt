@@ -304,7 +304,7 @@ Yes, you will need to know the key name of the field. Then include an array in y
 = 3.15.2 =
 * Improve Zoom URL validation [more info](https://github.com/code4recovery/12-step-meeting-list/issues/1500)
 * Improve PayPal username validation [more info](https://github.com/code4recovery/12-step-meeting-list/issues/1074)
-* Allow `[tsml_ui]` shortcode to accept search and filter parameters [more info](https://github.com/code4recovery/12-step-meeting-list/discussions/1481)
+* Allow `[tsml_ui]` shortcode to accept search and filter parameters [more info](https://github.com/code4recovery/12-step-meeting-list/issues/1511)
 
 = 3.15.1 =
 * Reformat 'Change Detection Email' for better legibility. [more info](https://github.com/code4recovery/12-step-meeting-list/issues/1497)
