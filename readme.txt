@@ -238,7 +238,7 @@ Yes, you can use `[tsml_meeting_count]`, `[tsml_location_count]`, `[tsml_group_c
 
 Use `[tsml_types_list]` and `[tsml_regions_list]` to output linked lists to your meeting finder.
 
-Use `[tsml_ui]` to display the TSML UI meeting finder. Optionally you many pass parameters, for example: `[tsml_ui weekday="sunday" type="women,closed"]`
+Use `[tsml_ui]` to display the TSML UI meeting finder. Optionally you may pass parameters, for example: `[tsml_ui weekday="sunday" type="women,closed"]`
 
 = Are there translations to other languages? =
 It is translated into Polish. If you would like to volunteer to help translate another language, we would be pleased to work with you.
