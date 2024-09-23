@@ -378,7 +378,7 @@ function tsml_ajax_geocodes()
 //ajax function to import the meetings in the import buffer
 //used by admin_import.php
 add_action('wp_ajax_tsml_import', function () {
-    global $tsml_data_sources, $tsml_custom_meeting_fields, $tsml_source_fields_map, $tsml_contact_fields;
+    global $tsml_data_sources, $tsml_custom_meeting_fields, $tsml_source_fields_map, $tsml_contact_fields, $tsml_entity_fields;
 
     tsml_require_meetings_permission();
 
@@ -565,7 +565,8 @@ add_action('wp_ajax_tsml_import', function () {
         //add custom meeting fields if available
         $custom_meeting_fields = array_merge(
             ['types', 'data_source', 'conference_url', 'conference_url_notes', 'conference_phone', 'conference_phone_notes'],
-            array_keys($tsml_source_fields_map)
+            array_keys($tsml_source_fields_map),
+            $tsml_entity_fields
         );
         if (!empty($tsml_custom_meeting_fields)) {
             $custom_meeting_fields = array_merge($custom_meeting_fields, array_keys($tsml_custom_meeting_fields));

@@ -1169,7 +1169,9 @@ function tsml_feedback_url($meeting)
 //used:		tsml_ajax_meetings(), single-locations.php, archive-meetings.php
 function tsml_get_meetings($arguments = [], $from_cache = true, $full_export = false)
 {
-    global $tsml_cache, $tsml_cache_writable, $tsml_contact_fields, $tsml_contact_display, $tsml_data_sources, $tsml_custom_meeting_fields, $tsml_source_fields_map;
+    global $tsml_cache, $tsml_cache_writable, $tsml_contact_fields, $tsml_contact_display, $tsml_data_sources, $tsml_custom_meeting_fields, $tsml_source_fields_map, $tsml_entity_fields;
+
+    $tsml_entity = tsml_get_entity();
 
     //start by grabbing all meetings
     if ($from_cache && $tsml_cache_writable && $meetings = file_get_contents(WP_CONTENT_DIR . $tsml_cache)) {
@@ -1221,7 +1223,7 @@ function tsml_get_meetings($arguments = [], $from_cache = true, $full_export = f
                 'conference_phone' => isset($meeting_meta[$post->ID]['conference_phone']) ? $meeting_meta[$post->ID]['conference_phone'] : null,
                 'conference_phone_notes' => isset($meeting_meta[$post->ID]['conference_phone_notes']) ? $meeting_meta[$post->ID]['conference_phone_notes'] : null,
                 'types' => empty($meeting_meta[$post->ID]['types']) ? [] : array_values(unserialize($meeting_meta[$post->ID]['types'])),
-                'author' => get_the_author_meta('user_login', $post->post_author)
+                'author' => get_the_author_meta('user_login', $post->post_author),
             ], $locations[$post->post_parent]);
 
             // include user-defined meeting fields when doing a full export
@@ -1285,8 +1287,22 @@ function tsml_get_meetings($arguments = [], $from_cache = true, $full_export = f
             }
 
             //add feedback_url only if present
+            //@TODO: check if this is in use? conflict with entity?
             if ($feedback_url = tsml_feedback_url($meeting)) {
                 $meeting['feedback_url'] = $feedback_url;
+            }
+
+            //add entity fields
+            if (!empty($meeting_meta[$post->ID]['data_source'])) {
+                //add sourced entity fields
+                foreach ($tsml_entity_fields as $entity_field) {
+                    if (isset($meeting_meta[$post->ID][$entity_field])) {
+                        $meeting[$entity_field] = $meeting_meta[$post->ID][$entity_field];
+                    }
+                }
+            } else {
+                //else add local entity info
+                $meeting = array_merge($meeting, $tsml_entity);
             }
 
             $meetings[] = $meeting;
@@ -1392,7 +1408,7 @@ function tsml_get_meetings($arguments = [], $from_cache = true, $full_export = f
 //called in tsml_get_meetings(), tsml_get_locations()
 function tsml_get_meta($type, $id = null)
 {
-    global $wpdb, $tsml_custom_meeting_fields, $tsml_contact_fields, $tsml_source_fields_map;
+    global $wpdb, $tsml_custom_meeting_fields, $tsml_contact_fields, $tsml_source_fields_map, $tsml_entity_fields;
     $keys = [
         'tsml_group' => array_keys($tsml_contact_fields),
         'tsml_location' => ['formatted_address', 'latitude', 'longitude', 'approximate', 'timezone'],
@@ -1411,6 +1427,7 @@ function tsml_get_meta($type, $id = null)
             ],
             array_keys($tsml_contact_fields),
             array_keys($tsml_source_fields_map),
+            $tsml_entity_fields,
             empty($tsml_custom_meeting_fields) ? [] : array_keys($tsml_custom_meeting_fields)
         ),
     ];
@@ -1488,7 +1505,7 @@ function tsml_meeting_types($types)
 //sanitizes imported meetings before processing
 function tsml_sanitize_import_meetings($meetings, $data_source_url = null, $data_source_parent_region_id = null) {
 
-    global $tsml_programs, $tsml_program, $tsml_days, $tsml_meeting_attendance_options, $tsml_data_sources, $tsml_contact_fields;
+    global $tsml_programs, $tsml_program, $tsml_days, $tsml_meeting_attendance_options, $tsml_data_sources, $tsml_contact_fields, $tsml_entity_fields;
 
     //track group fields and unique_group_values
     $group_fields = array_keys($tsml_contact_fields);
@@ -1774,6 +1791,11 @@ function tsml_sanitize_import_meetings($meetings, $data_source_url = null, $data
             }
         }
 
+        //cleanup entity fields
+        foreach($tsml_entity_fields as $field) {
+            $meetings[$i][$field] = substr(trim(strval(isset($meetings[$i][$field]) ? $meetings[$i][$field] : '')), 0, 100);
+        }
+
         //preserve row number for errors later
         $meetings[$i]['row'] = $i + 2;
     }
@@ -2027,6 +2049,20 @@ function tsml_log($type, $info = null, $input = null)
 
     //save
     update_option('tsml_log', $tsml_log);
+}
+
+//function: build and return the entity array of fields
+//used:     tsml_get_meetings, to supply entity for locally managed meetings / non-imported meetings
+function tsml_get_entity()
+{
+    $saved_tsml_entity = tsml_get_option_array('tsml_entity');
+    return [
+        'entity'          => isset($saved_tsml_entity['entity']) ? $saved_tsml_entity['entity'] : get_bloginfo('name'),
+        'entity_email'    => isset($saved_tsml_entity['entity_email']) ? $saved_tsml_entity['entity_email'] : get_bloginfo('admin_email'),
+        'entity_phone'    => isset($saved_tsml_entity['entity_phone']) ? $saved_tsml_entity['entity_phone'] : '',
+        'entity_location' => isset($saved_tsml_entity['entity_location']) ? $saved_tsml_entity['entity_location'] : '',
+        'entity_url'      => isset($saved_tsml_entity['entity_url']) ? $saved_tsml_entity['entity_url'] : get_bloginfo('url'),
+    ];
 }
 
 //function: link to meetings page with parameters (added to link dropdown menus for SEO)
@@ -2550,7 +2586,7 @@ function tsml_get_changed_import_meetings($feed_meetings, $data_source_url, $dat
  */
 function tsml_compare_imported_meeting($local_meeting, $import_meeting)
 {
-    global $tsml_export_columns, $tsml_source_fields_map;
+    global $tsml_export_columns, $tsml_source_fields_map, $tsml_entity_fields;
 
     $local_meeting = (array) $local_meeting;
     $import_meeting = (array) $import_meeting;
@@ -2561,9 +2597,9 @@ function tsml_compare_imported_meeting($local_meeting, $import_meeting)
             $local_meeting[$field] = $local_meeting[$source_field];
         }
     }
-
+    $compare_fields = array_merge(array_keys($tsml_export_columns), $tsml_entity_fields);
     $compare_fields = array_diff(
-        array_keys($tsml_export_columns),
+        $compare_fields,
         //these fields are unique internal fields, not content fields for comparison
         explode(',', 'id,slug,author,data_source,data_source_name')
     );

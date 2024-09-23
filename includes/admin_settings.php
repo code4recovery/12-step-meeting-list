@@ -211,7 +211,7 @@ if (!function_exists('tsml_settings_page')) {
             foreach ( $tsml_entity_fields as $field ) {
                 $tsml_entity[$field] = isset($current_tsml_entity[$field]) ? $current_tsml_entity[$field] : '';
                 if (isset($_POST["tsml_$field"])) {
-                    $tsml_entity[$field] = trim(strval($_POST["tsml_$field"]));
+                    $tsml_entity[$field] = substr(trim(strval($_POST["tsml_$field"])), 0, 100);
                 }
             }
             update_option('tsml_entity', $tsml_entity);
@@ -375,7 +375,7 @@ if (!function_exists('tsml_settings_page')) {
                                     <?php _e('Entity Contact Phone', '12-step-meeting-list') ?>
                                 </h3>
                                 <input type="text" name="tsml_entity_phone" value="<?php echo esc_attr(isset($tsml_entity['entity_phone']) ? $tsml_entity['entity_phone'] : ''); ?>" 
-                                    placeholder="+18005551212" maxlength="30">
+                                    placeholder="+18005551212" maxlength="50">
                                 <h3>
                                     <?php _e('Entity Location', '12-step-meeting-list') ?>
                                 </h3>
@@ -388,7 +388,7 @@ if (!function_exists('tsml_settings_page')) {
                                     This will default to your current WordPress url
                                 </p>
                                 <input type="text" name="tsml_entity_url" value="<?php echo esc_attr(isset($tsml_entity['entity_url']) ? $tsml_entity['entity_url'] : ''); ?>" 
-                                    placeholder="https://" maxlength="40">
+                                    placeholder="https://" maxlength="50">
                                 <p>
                                     <input type="submit" class="button" value="<?php esc_attr_e('Save', '12-step-meeting-list'); ?>">
                                 </p>
