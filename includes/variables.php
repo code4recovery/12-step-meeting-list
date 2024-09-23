@@ -76,6 +76,15 @@ for ($i = 1; $i <= TSML_GROUP_CONTACT_COUNT; $i++) {
     }
 }
 
+//define entity fields (stored in option tsml_entity)
+$tsml_entity_fields = [
+    'name',
+    'email',
+    'phone',
+    'location',
+    'url',
+];
+
 //empty global curl handle in case we need it
 $tsml_curl_handle = null;
 

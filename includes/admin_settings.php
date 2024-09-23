@@ -202,6 +202,20 @@ if (!function_exists('tsml_settings_page')) {
                 tsml_alert(__('Invalid timezone selected.', '12-step-meeting-list'), 'error');
             }
         }
+
+        //save entity fields
+        if (isset($_POST['tsml_entity_name']) && isset($_POST['tsml_nonce']) && wp_verify_nonce($_POST['tsml_nonce'], $tsml_nonce)) {
+            $current_tsml_entity = tsml_get_option_array('tsml_entity');
+            $tsml_entity = [];
+            global $tsml_entity_fields;
+            foreach ( $tsml_entity_fields as $field ) {
+                $tsml_entity[$field] = isset($current_tsml_entity[$field]) ? $current_tsml_entity[$field] : '';
+                if (isset($_POST["tsml_entity_$field"])) {
+                    $tsml_entity[$field] = trim(strval($_POST["tsml_entity_$field"]));
+                }
+            }
+            update_option('tsml_entity', $tsml_entity);
+        }
         ?>
 
         <!-- Admin page content should all be inside .wrap -->
@@ -332,7 +346,59 @@ if (!function_exists('tsml_settings_page')) {
                         </form>
                     </div>
 
-                    <div class="postbox stack">
+                    <div class="postbox stack">                        
+                        <!-- Entity Form -->
+                        <?php
+                        $tsml_entity = tsml_get_option_array('tsml_entity');
+                        ?>
+                        <div class="stack compact">
+                            <h2>
+                                <?php _e('Service Entity Information', '12-step-meeting-list') ?>
+                            </h2>
+                            <p>
+                                <?php echo sprintf(__('Enter information for your service entity here to help identity the meeting source when sharing feeds with others.', '12-step-meeting-list'), get_post_type_archive_link('tsml_meeting')) ?>
+                            </p>
+
+                            <form method="post" class="stack compact" action="<?php echo $_SERVER['REQUEST_URI'] ?>">
+                                <?php wp_nonce_field($tsml_nonce, 'tsml_nonce', false) ?>
+                                <h3>
+                                    <?php _e('Entity Name', '12-step-meeting-list') ?>
+                                </h3>
+                                <input type="text" name="tsml_entity_name" value="<?php echo esc_attr(isset($tsml_entity['name']) ? $tsml_entity['name'] : ''); ?>" 
+                                    placeholder="<?php esc_attr_e('Entity Name', '12-step-meeting-list'); ?>">
+                                <h3>
+                                    <?php _e('Entity Contact Email', '12-step-meeting-list') ?>
+                                </h3>
+                                <input type="text" name="tsml_entity_email" value="<?php echo esc_attr(isset($tsml_entity['email']) ? $tsml_entity['email'] : ''); ?>" 
+                                    placeholder="group@website.org">
+                                <h3>
+                                    <?php _e('Entity Contact Phone', '12-step-meeting-list') ?>
+                                </h3>
+                                <input type="text" name="tsml_entity_phone" value="<?php echo esc_attr(isset($tsml_entity['phone']) ? $tsml_entity['phone'] : ''); ?>" 
+                                    placeholder="+18005551212">
+                                <h3>
+                                    <?php _e('Entity Location', '12-step-meeting-list') ?>
+                                </h3>
+                                <input type="text" name="tsml_entity_location" value="<?php echo esc_attr(isset($tsml_entity['location']) ? $tsml_entity['location'] : ''); ?>" 
+                                    placeholder="<?php esc_attr_e('City, State, Country', '12-step-meeting-list')?>">
+                                <h3>
+                                    <?php _e('Entity Website', '12-step-meeting-list') ?>
+                                </h3>
+                                <p>
+                                    This will default to your current WordPress url
+                                </p>
+                                <input type="text" name="tsml_entity_url" value="<?php echo esc_attr(isset($tsml_entity['url']) ? $tsml_entity['url'] : ''); ?>" 
+                                    placeholder="https://">
+                                <p>
+                                    <input type="submit" class="button" value="<?php esc_attr_e('Save', '12-step-meeting-list'); ?>">
+                                </p>
+                            </form>
+                        </div>
+                    </div>
+                 </div>
+
+                <div class="stack">
+                   <div class="postbox stack">
                         <!-- Feed Management -->
                         <h2>
                             <?php _e('Feed Management', '12-step-meeting-list') ?>
@@ -412,9 +478,7 @@ if (!function_exists('tsml_settings_page')) {
                             </div>
                         <?php } ?>
                     </div>
-                </div>
 
-                <div class="stack">
                     <div class="postbox stack">
                         <!-- Switch UI -->
                         <div class="stack compact">
