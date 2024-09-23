@@ -204,14 +204,14 @@ if (!function_exists('tsml_settings_page')) {
         }
 
         //save entity fields
-        if (isset($_POST['tsml_entity_name']) && isset($_POST['tsml_nonce']) && wp_verify_nonce($_POST['tsml_nonce'], $tsml_nonce)) {
+        if (isset($_POST['tsml_entity']) && isset($_POST['tsml_nonce']) && wp_verify_nonce($_POST['tsml_nonce'], $tsml_nonce)) {
             $current_tsml_entity = tsml_get_option_array('tsml_entity');
             $tsml_entity = [];
             global $tsml_entity_fields;
             foreach ( $tsml_entity_fields as $field ) {
                 $tsml_entity[$field] = isset($current_tsml_entity[$field]) ? $current_tsml_entity[$field] : '';
-                if (isset($_POST["tsml_entity_$field"])) {
-                    $tsml_entity[$field] = trim(strval($_POST["tsml_entity_$field"]));
+                if (isset($_POST["tsml_$field"])) {
+                    $tsml_entity[$field] = trim(strval($_POST["tsml_$field"]));
                 }
             }
             update_option('tsml_entity', $tsml_entity);
@@ -364,31 +364,31 @@ if (!function_exists('tsml_settings_page')) {
                                 <h3>
                                     <?php _e('Entity Name', '12-step-meeting-list') ?>
                                 </h3>
-                                <input type="text" name="tsml_entity_name" value="<?php echo esc_attr(isset($tsml_entity['name']) ? $tsml_entity['name'] : ''); ?>" 
-                                    placeholder="<?php esc_attr_e('Entity Name', '12-step-meeting-list'); ?>">
+                                <input type="text" name="tsml_entity" value="<?php echo esc_attr(isset($tsml_entity['entity']) ? $tsml_entity['entity'] : ''); ?>" 
+                                    placeholder="<?php esc_attr_e('Entity Name', '12-step-meeting-list'); ?>" maxlength="100">
                                 <h3>
                                     <?php _e('Entity Contact Email', '12-step-meeting-list') ?>
                                 </h3>
-                                <input type="text" name="tsml_entity_email" value="<?php echo esc_attr(isset($tsml_entity['email']) ? $tsml_entity['email'] : ''); ?>" 
-                                    placeholder="group@website.org">
+                                <input type="text" name="tsml_entity_email" value="<?php echo esc_attr(isset($tsml_entity['entity_email']) ? $tsml_entity['entity_email'] : ''); ?>" 
+                                    placeholder="group@website.org" maxlength="80">
                                 <h3>
                                     <?php _e('Entity Contact Phone', '12-step-meeting-list') ?>
                                 </h3>
-                                <input type="text" name="tsml_entity_phone" value="<?php echo esc_attr(isset($tsml_entity['phone']) ? $tsml_entity['phone'] : ''); ?>" 
-                                    placeholder="+18005551212">
+                                <input type="text" name="tsml_entity_phone" value="<?php echo esc_attr(isset($tsml_entity['entity_phone']) ? $tsml_entity['entity_phone'] : ''); ?>" 
+                                    placeholder="+18005551212" maxlength="30">
                                 <h3>
                                     <?php _e('Entity Location', '12-step-meeting-list') ?>
                                 </h3>
-                                <input type="text" name="tsml_entity_location" value="<?php echo esc_attr(isset($tsml_entity['location']) ? $tsml_entity['location'] : ''); ?>" 
-                                    placeholder="<?php esc_attr_e('City, State, Country', '12-step-meeting-list')?>">
+                                <input type="text" name="tsml_entity_location" value="<?php echo esc_attr(isset($tsml_entity['entity_location']) ? $tsml_entity['entity_location'] : ''); ?>" 
+                                    placeholder="<?php esc_attr_e('City, State, Country', '12-step-meeting-list')?>" maxlength="50">
                                 <h3>
                                     <?php _e('Entity Website', '12-step-meeting-list') ?>
                                 </h3>
                                 <p>
                                     This will default to your current WordPress url
                                 </p>
-                                <input type="text" name="tsml_entity_url" value="<?php echo esc_attr(isset($tsml_entity['url']) ? $tsml_entity['url'] : ''); ?>" 
-                                    placeholder="https://">
+                                <input type="text" name="tsml_entity_url" value="<?php echo esc_attr(isset($tsml_entity['entity_url']) ? $tsml_entity['entity_url'] : ''); ?>" 
+                                    placeholder="https://" maxlength="40">
                                 <p>
                                     <input type="submit" class="button" value="<?php esc_attr_e('Save', '12-step-meeting-list'); ?>">
                                 </p>
