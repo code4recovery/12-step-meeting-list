@@ -359,8 +359,35 @@ tsml_header();
                                     <?php
                                 } ?>
                                 <li class="list-group-item list-group-item-updated">
-                                    <?php _e('Updated', '12-step-meeting-list') ?>
-                                    <?php the_modified_date() ?>
+                                    <p class="meeting-updated">
+                                        <?php _e('Updated', '12-step-meeting-list') ?>
+                                        <?php the_modified_date() ?>
+                                    </p>
+                                    <?php
+                                    if (!empty($meeting->{'data_source'})) {
+                                        $entity = !empty($meeting->{'entity'}) ? $meeting->{'entity'} : '';
+                                        $entity_url = !empty($meeting->{'entity_url'}) ? $meeting->{'entity_url'} : '';
+                                        $entity_label = ($entity_url) ? '<a href="'. esc_attr($entity_url) . '" target="_blank">' . $entity . '</a>' : $entity;
+                                        $entity_lines = [];
+                                        if (trim($entity_label)) {
+                                            $entity_lines[] = $entity_label;
+                                        }
+                                        if (!empty($meeting->{'entity_location'})) {
+                                            $entity_lines[] = $meeting->{'entity_location'};
+                                        }
+                                        if (!empty($meeting->{'entity_email'})) {
+                                            $entity_lines[] = '<a href="mailto:' . esc_attr($meeting->{'entity_email'}) . '">' . $meeting->{'entity_email'} . '</a>';
+                                        }
+                                        if (!empty($meeting->{'entity_phone'})) {
+                                            $entity_lines[] = '<a href="tel:' . esc_attr($meeting->{'entity_phone'}) . '">' . $meeting->{'entity_phone'} . '</a>';
+                                        }
+                                        if (count($entity_lines)) {
+                                            ?>
+                                            <p class="meeting-entity"><?php echo implode( '<br/>' . PHP_EOL, $entity_lines ); ?></p>
+                                            <?php
+                                        }
+                                    }
+                                    ?>
                                 </li>
                             </ul>
                         </div>
