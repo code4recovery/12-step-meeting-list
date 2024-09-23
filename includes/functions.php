@@ -2057,11 +2057,11 @@ function tsml_get_entity()
 {
     $saved_tsml_entity = tsml_get_option_array('tsml_entity');
     return [
-        'entity'          => isset($saved_tsml_entity['entity']) ? $saved_tsml_entity['entity'] : get_bloginfo('name'),
-        'entity_email'    => isset($saved_tsml_entity['entity_email']) ? $saved_tsml_entity['entity_email'] : get_bloginfo('admin_email'),
-        'entity_phone'    => isset($saved_tsml_entity['entity_phone']) ? $saved_tsml_entity['entity_phone'] : '',
-        'entity_location' => isset($saved_tsml_entity['entity_location']) ? $saved_tsml_entity['entity_location'] : '',
-        'entity_url'      => isset($saved_tsml_entity['entity_url']) ? $saved_tsml_entity['entity_url'] : get_bloginfo('url'),
+        'entity'          => !empty($saved_tsml_entity['entity']) ? $saved_tsml_entity['entity'] : get_bloginfo('name'),
+        'entity_email'    => !empty($saved_tsml_entity['entity_email']) ? $saved_tsml_entity['entity_email'] : get_bloginfo('admin_email'),
+        'entity_phone'    => !empty($saved_tsml_entity['entity_phone']) ? $saved_tsml_entity['entity_phone'] : '',
+        'entity_location' => !empty($saved_tsml_entity['entity_location']) ? $saved_tsml_entity['entity_location'] : '',
+        'entity_url'      => !empty($saved_tsml_entity['entity_url']) ? $saved_tsml_entity['entity_url'] : get_bloginfo('url'),
     ];
 }
 
@@ -2633,7 +2633,7 @@ function tsml_compare_imported_meeting($local_meeting, $import_meeting)
     $diff_fields = array();
     foreach($compare_fields as $field) {
         if ($normalized_meetings[0][$field] !== $normalized_meetings[1][$field]) {
-            $diff_fields[] = $tsml_export_columns[$field];
+            $diff_fields[] = isset($tsml_export_columns[$field]) ? $tsml_export_columns[$field] : $field;
         }
     }
     return count($diff_fields) ? $diff_fields : null;

@@ -9,7 +9,7 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"POT-Creation-Date: 2024-09-23T13:34:13+00:00\n"
+"POT-Creation-Date: 2024-09-23T14:05:08+00:00\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "X-Generator: WP-CLI 2.10.0\n"
 "X-Domain: 12-step-meeting-list\n"
@@ -651,7 +651,7 @@ msgid "Map"
 msgstr ""
 
 #: includes/admin_meeting.php:287
-#: includes/admin_settings.php:510
+#: includes/admin_settings.php:514
 msgid "Timezone"
 msgstr ""
 
@@ -747,12 +747,12 @@ msgid "Contacts"
 msgstr ""
 
 #: includes/admin_meeting.php:476
-#: includes/admin_settings.php:340
+#: includes/admin_settings.php:341
 msgid "Public"
 msgstr ""
 
 #: includes/admin_meeting.php:478
-#: includes/admin_settings.php:340
+#: includes/admin_settings.php:341
 msgid "Private"
 msgstr ""
 
@@ -878,106 +878,114 @@ msgstr ""
 msgid "Invalid timezone selected."
 msgstr ""
 
-#: includes/admin_settings.php:229
+#: includes/admin_settings.php:230
 msgid "If you enable SSL (https), your users will be able to search near their location."
 msgstr ""
 
-#: includes/admin_settings.php:256
-#: includes/admin_settings.php:284
-#: includes/admin_settings.php:462
-#: includes/admin_settings.php:556
-#: includes/admin_settings.php:575
-#: includes/admin_settings.php:666
-#: includes/admin_settings.php:699
+#: includes/admin_settings.php:257
+#: includes/admin_settings.php:285
+#: includes/admin_settings.php:466
+#: includes/admin_settings.php:560
+#: includes/admin_settings.php:579
+#: includes/admin_settings.php:670
+#: includes/admin_settings.php:703
 msgid "Add"
 msgstr ""
 
-#: includes/admin_settings.php:295
+#: includes/admin_settings.php:296
 msgid "General"
 msgstr ""
 
-#: includes/admin_settings.php:299
+#: includes/admin_settings.php:300
 msgid "Program"
 msgstr ""
 
-#: includes/admin_settings.php:302
+#: includes/admin_settings.php:303
 msgid "Select the recovery program your site targets here."
 msgstr ""
 
-#: includes/admin_settings.php:315
+#: includes/admin_settings.php:316
 msgid "Distance Units"
 msgstr ""
 
-#: includes/admin_settings.php:318
+#: includes/admin_settings.php:319
 msgid "This determines which units are used on the meeting list page."
 msgstr ""
 
-#: includes/admin_settings.php:323
+#: includes/admin_settings.php:324
 msgid "Kilometers"
 msgstr ""
 
-#: includes/admin_settings.php:323
+#: includes/admin_settings.php:324
 msgid "Miles"
 msgstr ""
 
-#: includes/admin_settings.php:332
+#: includes/admin_settings.php:333
 msgid "Contact Visibility"
 msgstr ""
 
-#: includes/admin_settings.php:335
+#: includes/admin_settings.php:336
 msgid "This determines whether contacts are displayed publicly on meeting detail pages."
 msgstr ""
 
-#: includes/admin_settings.php:356
+#: includes/admin_settings.php:357
 msgid "Service Entity Information"
 msgstr ""
 
-#: includes/admin_settings.php:359
+#: includes/admin_settings.php:360
 msgid "Enter information for your service entity here to help identity the meeting source when sharing feeds with others."
 msgstr ""
 
-#: includes/admin_settings.php:365
-#: includes/admin_settings.php:368
+#: includes/admin_settings.php:366
+#: includes/admin_settings.php:372
 msgid "Entity Name"
 msgstr ""
 
-#: includes/admin_settings.php:370
+#: includes/admin_settings.php:369
+msgid "This will default to your current WordPress site name"
+msgstr ""
+
+#: includes/admin_settings.php:374
 msgid "Entity Contact Email"
 msgstr ""
 
-#: includes/admin_settings.php:375
+#: includes/admin_settings.php:379
 msgid "Entity Contact Phone"
 msgstr ""
 
-#: includes/admin_settings.php:380
+#: includes/admin_settings.php:384
 msgid "Entity Location"
 msgstr ""
 
-#: includes/admin_settings.php:383
+#: includes/admin_settings.php:387
 msgid "City, State, Country"
 msgstr ""
 
-#: includes/admin_settings.php:385
+#: includes/admin_settings.php:389
 msgid "Entity Website"
 msgstr ""
 
-#: includes/admin_settings.php:393
+#: includes/admin_settings.php:392
+msgid "This will default to your current WordPress website"
+msgstr ""
+
+#: includes/admin_settings.php:397
 msgid "Save"
 msgstr ""
 
-#: includes/admin_settings.php:404
+#: includes/admin_settings.php:408
 msgid "Feed Management"
 msgstr ""
 
-#: includes/admin_settings.php:408
+#: includes/admin_settings.php:412
 msgid "Feed Sharing"
 msgstr ""
 
-#: includes/admin_settings.php:411
+#: includes/admin_settings.php:415
 msgid "Open means your feeds are available publicly. Restricted means people need a key or to be logged in to get the feed."
 msgstr ""
 
-#: includes/admin_settings.php:416
+#: includes/admin_settings.php:420
 #: includes/variables.php:669
 #: includes/variables.php:762
 #: includes/variables.php:802
@@ -1001,132 +1009,132 @@ msgstr ""
 msgid "Open"
 msgstr ""
 
-#: includes/admin_settings.php:416
+#: includes/admin_settings.php:420
 msgid "Restricted"
 msgstr ""
 
-#: includes/admin_settings.php:428
+#: includes/admin_settings.php:432
 msgid "Authorized Apps"
 msgstr ""
 
-#: includes/admin_settings.php:432
+#: includes/admin_settings.php:436
 msgid "You may allow access to your meeting data for specific purposes, such as the <a target=\"_blank\" href=\"https://meetingguide.org/\">Meeting Guide App</a>."
 msgstr ""
 
-#: includes/admin_settings.php:461
+#: includes/admin_settings.php:465
 msgid "Meeting Guide"
 msgstr ""
 
-#: includes/admin_settings.php:468
+#: includes/admin_settings.php:472
 msgid "Public Feed"
 msgstr ""
 
-#: includes/admin_settings.php:471
+#: includes/admin_settings.php:475
 msgid "The following feed contains your publicly available meeting information."
 msgstr ""
 
-#: includes/admin_settings.php:475
+#: includes/admin_settings.php:479
 msgid "Public Data Source"
 msgstr ""
 
-#: includes/admin_settings.php:486
+#: includes/admin_settings.php:490
 msgid "User Interface Display"
 msgstr ""
 
-#: includes/admin_settings.php:489
+#: includes/admin_settings.php:493
 msgid "Please select the user interface that is right for your <a href=\"%s\" target=\"_blank\">meeting finder page</a>. Choose between our latest design that we call <b>TSML UI</b> or stay with the standard <b>Legacy UI</b>."
 msgstr ""
 
-#: includes/admin_settings.php:496
+#: includes/admin_settings.php:500
 msgid "Legacy UI"
 msgstr ""
 
-#: includes/admin_settings.php:499
+#: includes/admin_settings.php:503
 msgid "TSML UI"
 msgstr ""
 
-#: includes/admin_settings.php:514
+#: includes/admin_settings.php:518
 msgid "If your site features meetings in a variety of timezones, leave this blank and meetings will be displayed in the user's timezone. This requires a timezone to be set on each meeting location."
 msgstr ""
 
-#: includes/admin_settings.php:518
+#: includes/admin_settings.php:522
 msgid "If your site features meetings in a single timezone, select it here and meetings will be displayed in that timezone. There is no need to specify a timezone for each meeting."
 msgstr ""
 
-#: includes/admin_settings.php:527
+#: includes/admin_settings.php:531
 msgid "Timezone settings are only relevant to the TSML UI interface."
 msgstr ""
 
-#: includes/admin_settings.php:537
+#: includes/admin_settings.php:541
 msgid "Maps"
 msgstr ""
 
-#: includes/admin_settings.php:540
+#: includes/admin_settings.php:544
 msgid "Display of maps requires an authorization key from <strong><a href=\"https://www.mapbox.com/\" target=\"_blank\">Mapbox</a></strong> or <strong><a href=\"https://console.cloud.google.com/home/\" target=\"_blank\">Google</a></strong>."
 msgstr ""
 
-#: includes/admin_settings.php:543
+#: includes/admin_settings.php:547
 msgid "Please note that TSML UI only supports Mapbox."
 msgstr ""
 
-#: includes/admin_settings.php:548
+#: includes/admin_settings.php:552
 msgid "Mapbox Access Token"
 msgstr ""
 
-#: includes/admin_settings.php:558
-#: includes/admin_settings.php:577
+#: includes/admin_settings.php:562
+#: includes/admin_settings.php:581
 msgid "Update"
 msgstr ""
 
-#: includes/admin_settings.php:565
+#: includes/admin_settings.php:569
 msgid "Google Maps API Key"
 msgstr ""
 
-#: includes/admin_settings.php:568
+#: includes/admin_settings.php:572
 msgid "Be sure to enable JavaScript Maps API (<a href=\"https://developers.google.com/maps/documentation/javascript/get-api-key\" target=\"_blank\">read more</a>)."
 msgstr ""
 
-#: includes/admin_settings.php:590
+#: includes/admin_settings.php:594
 msgid "About Us"
 msgstr ""
 
-#: includes/admin_settings.php:597
+#: includes/admin_settings.php:601
 msgid "This <b>12 Step Meeting List</b> plugin (TSML) is one of the free services offered by the nonprofit organization <b>Code For Recovery</b> whose volunteer members build and maintain technology services for recovery fellowships such as AA and Al-Anon."
 msgstr ""
 
-#: includes/admin_settings.php:609
+#: includes/admin_settings.php:613
 msgid "Need Help?"
 msgstr ""
 
-#: includes/admin_settings.php:613
+#: includes/admin_settings.php:617
 msgid "To get information about this product or our organization, simply use one of the linked buttons below which are great sources for information and answers."
 msgstr ""
 
-#: includes/admin_settings.php:622
+#: includes/admin_settings.php:626
 msgid "View Documentation"
 msgstr ""
 
-#: includes/admin_settings.php:626
+#: includes/admin_settings.php:630
 msgid "Ask a Question"
 msgstr ""
 
-#: includes/admin_settings.php:634
+#: includes/admin_settings.php:638
 msgid "Email Addresses"
 msgstr ""
 
-#: includes/admin_settings.php:639
+#: includes/admin_settings.php:643
 msgid "User Feedback Emails"
 msgstr ""
 
-#: includes/admin_settings.php:642
+#: includes/admin_settings.php:646
 msgid "Enable a meeting info feedback form by adding email addresses here."
 msgstr ""
 
-#: includes/admin_settings.php:672
+#: includes/admin_settings.php:676
 msgid "Change Notification Emails"
 msgstr ""
 
-#: includes/admin_settings.php:675
+#: includes/admin_settings.php:679
 msgid "Receive notifications of meeting changes at the email addresses below."
 msgstr ""
 
