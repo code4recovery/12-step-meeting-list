@@ -9,7 +9,7 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"POT-Creation-Date: 2024-09-23T14:05:08+00:00\n"
+"POT-Creation-Date: 2024-09-23T14:13:56+00:00\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "X-Generator: WP-CLI 2.10.0\n"
 "X-Domain: 12-step-meeting-list\n"
@@ -96,47 +96,47 @@ msgid "Your meeting list is already in sync with the feed."
 msgstr ""
 
 #: includes/admin_import.php:239
-#: includes/functions.php:2342
+#: includes/functions.php:2341
 msgid "Invalid response, <pre>"
 msgstr ""
 
 #: includes/admin_import.php:242
-#: includes/functions.php:2345
+#: includes/functions.php:2344
 msgid "Data source gave an empty response, you might need to try again."
 msgstr ""
 
 #: includes/admin_import.php:247
-#: includes/functions.php:2350
+#: includes/functions.php:2349
 msgid "JSON: no errors."
 msgstr ""
 
 #: includes/admin_import.php:250
-#: includes/functions.php:2353
+#: includes/functions.php:2352
 msgid "JSON: Maximum stack depth exceeded."
 msgstr ""
 
 #: includes/admin_import.php:253
-#: includes/functions.php:2356
+#: includes/functions.php:2355
 msgid "JSON: Underflow or the modes mismatch."
 msgstr ""
 
 #: includes/admin_import.php:256
-#: includes/functions.php:2359
+#: includes/functions.php:2358
 msgid "JSON: Unexpected control character found."
 msgstr ""
 
 #: includes/admin_import.php:259
-#: includes/functions.php:2362
+#: includes/functions.php:2361
 msgid "JSON: Syntax error, malformed JSON."
 msgstr ""
 
 #: includes/admin_import.php:262
-#: includes/functions.php:2365
+#: includes/functions.php:2364
 msgid "JSON: Malformed UTF-8 characters, possibly incorrectly encoded."
 msgstr ""
 
 #: includes/admin_import.php:265
-#: includes/functions.php:2368
+#: includes/functions.php:2367
 msgid "JSON: Unknown error."
 msgstr ""
 
@@ -651,7 +651,7 @@ msgid "Map"
 msgstr ""
 
 #: includes/admin_meeting.php:287
-#: includes/admin_settings.php:514
+#: includes/admin_settings.php:508
 msgid "Timezone"
 msgstr ""
 
@@ -884,11 +884,11 @@ msgstr ""
 
 #: includes/admin_settings.php:257
 #: includes/admin_settings.php:285
-#: includes/admin_settings.php:466
-#: includes/admin_settings.php:560
-#: includes/admin_settings.php:579
-#: includes/admin_settings.php:670
-#: includes/admin_settings.php:703
+#: includes/admin_settings.php:460
+#: includes/admin_settings.php:554
+#: includes/admin_settings.php:573
+#: includes/admin_settings.php:664
+#: includes/admin_settings.php:697
 msgid "Add"
 msgstr ""
 
@@ -937,55 +937,47 @@ msgid "Enter information for your service entity here to help identity the meeti
 msgstr ""
 
 #: includes/admin_settings.php:366
-#: includes/admin_settings.php:372
+#: includes/admin_settings.php:369
 msgid "Entity Name"
 msgstr ""
 
-#: includes/admin_settings.php:369
-msgid "This will default to your current WordPress site name"
-msgstr ""
-
-#: includes/admin_settings.php:374
+#: includes/admin_settings.php:371
 msgid "Entity Contact Email"
 msgstr ""
 
-#: includes/admin_settings.php:379
+#: includes/admin_settings.php:376
 msgid "Entity Contact Phone"
 msgstr ""
 
-#: includes/admin_settings.php:384
+#: includes/admin_settings.php:381
 msgid "Entity Location"
 msgstr ""
 
-#: includes/admin_settings.php:387
+#: includes/admin_settings.php:384
 msgid "City, State, Country"
 msgstr ""
 
-#: includes/admin_settings.php:389
+#: includes/admin_settings.php:386
 msgid "Entity Website"
 msgstr ""
 
-#: includes/admin_settings.php:392
-msgid "This will default to your current WordPress website"
-msgstr ""
-
-#: includes/admin_settings.php:397
+#: includes/admin_settings.php:391
 msgid "Save"
 msgstr ""
 
-#: includes/admin_settings.php:408
+#: includes/admin_settings.php:402
 msgid "Feed Management"
 msgstr ""
 
-#: includes/admin_settings.php:412
+#: includes/admin_settings.php:406
 msgid "Feed Sharing"
 msgstr ""
 
-#: includes/admin_settings.php:415
+#: includes/admin_settings.php:409
 msgid "Open means your feeds are available publicly. Restricted means people need a key or to be logged in to get the feed."
 msgstr ""
 
-#: includes/admin_settings.php:420
+#: includes/admin_settings.php:414
 #: includes/variables.php:669
 #: includes/variables.php:762
 #: includes/variables.php:802
@@ -1009,132 +1001,132 @@ msgstr ""
 msgid "Open"
 msgstr ""
 
-#: includes/admin_settings.php:420
+#: includes/admin_settings.php:414
 msgid "Restricted"
 msgstr ""
 
-#: includes/admin_settings.php:432
+#: includes/admin_settings.php:426
 msgid "Authorized Apps"
 msgstr ""
 
-#: includes/admin_settings.php:436
+#: includes/admin_settings.php:430
 msgid "You may allow access to your meeting data for specific purposes, such as the <a target=\"_blank\" href=\"https://meetingguide.org/\">Meeting Guide App</a>."
 msgstr ""
 
-#: includes/admin_settings.php:465
+#: includes/admin_settings.php:459
 msgid "Meeting Guide"
 msgstr ""
 
-#: includes/admin_settings.php:472
+#: includes/admin_settings.php:466
 msgid "Public Feed"
 msgstr ""
 
-#: includes/admin_settings.php:475
+#: includes/admin_settings.php:469
 msgid "The following feed contains your publicly available meeting information."
 msgstr ""
 
-#: includes/admin_settings.php:479
+#: includes/admin_settings.php:473
 msgid "Public Data Source"
 msgstr ""
 
-#: includes/admin_settings.php:490
+#: includes/admin_settings.php:484
 msgid "User Interface Display"
 msgstr ""
 
-#: includes/admin_settings.php:493
+#: includes/admin_settings.php:487
 msgid "Please select the user interface that is right for your <a href=\"%s\" target=\"_blank\">meeting finder page</a>. Choose between our latest design that we call <b>TSML UI</b> or stay with the standard <b>Legacy UI</b>."
 msgstr ""
 
-#: includes/admin_settings.php:500
+#: includes/admin_settings.php:494
 msgid "Legacy UI"
 msgstr ""
 
-#: includes/admin_settings.php:503
+#: includes/admin_settings.php:497
 msgid "TSML UI"
 msgstr ""
 
-#: includes/admin_settings.php:518
+#: includes/admin_settings.php:512
 msgid "If your site features meetings in a variety of timezones, leave this blank and meetings will be displayed in the user's timezone. This requires a timezone to be set on each meeting location."
 msgstr ""
 
-#: includes/admin_settings.php:522
+#: includes/admin_settings.php:516
 msgid "If your site features meetings in a single timezone, select it here and meetings will be displayed in that timezone. There is no need to specify a timezone for each meeting."
 msgstr ""
 
-#: includes/admin_settings.php:531
+#: includes/admin_settings.php:525
 msgid "Timezone settings are only relevant to the TSML UI interface."
 msgstr ""
 
-#: includes/admin_settings.php:541
+#: includes/admin_settings.php:535
 msgid "Maps"
 msgstr ""
 
-#: includes/admin_settings.php:544
+#: includes/admin_settings.php:538
 msgid "Display of maps requires an authorization key from <strong><a href=\"https://www.mapbox.com/\" target=\"_blank\">Mapbox</a></strong> or <strong><a href=\"https://console.cloud.google.com/home/\" target=\"_blank\">Google</a></strong>."
 msgstr ""
 
-#: includes/admin_settings.php:547
+#: includes/admin_settings.php:541
 msgid "Please note that TSML UI only supports Mapbox."
 msgstr ""
 
-#: includes/admin_settings.php:552
+#: includes/admin_settings.php:546
 msgid "Mapbox Access Token"
 msgstr ""
 
-#: includes/admin_settings.php:562
-#: includes/admin_settings.php:581
+#: includes/admin_settings.php:556
+#: includes/admin_settings.php:575
 msgid "Update"
 msgstr ""
 
-#: includes/admin_settings.php:569
+#: includes/admin_settings.php:563
 msgid "Google Maps API Key"
 msgstr ""
 
-#: includes/admin_settings.php:572
+#: includes/admin_settings.php:566
 msgid "Be sure to enable JavaScript Maps API (<a href=\"https://developers.google.com/maps/documentation/javascript/get-api-key\" target=\"_blank\">read more</a>)."
 msgstr ""
 
-#: includes/admin_settings.php:594
+#: includes/admin_settings.php:588
 msgid "About Us"
 msgstr ""
 
-#: includes/admin_settings.php:601
+#: includes/admin_settings.php:595
 msgid "This <b>12 Step Meeting List</b> plugin (TSML) is one of the free services offered by the nonprofit organization <b>Code For Recovery</b> whose volunteer members build and maintain technology services for recovery fellowships such as AA and Al-Anon."
 msgstr ""
 
-#: includes/admin_settings.php:613
+#: includes/admin_settings.php:607
 msgid "Need Help?"
 msgstr ""
 
-#: includes/admin_settings.php:617
+#: includes/admin_settings.php:611
 msgid "To get information about this product or our organization, simply use one of the linked buttons below which are great sources for information and answers."
 msgstr ""
 
-#: includes/admin_settings.php:626
+#: includes/admin_settings.php:620
 msgid "View Documentation"
 msgstr ""
 
-#: includes/admin_settings.php:630
+#: includes/admin_settings.php:624
 msgid "Ask a Question"
 msgstr ""
 
-#: includes/admin_settings.php:638
+#: includes/admin_settings.php:632
 msgid "Email Addresses"
 msgstr ""
 
-#: includes/admin_settings.php:643
+#: includes/admin_settings.php:637
 msgid "User Feedback Emails"
 msgstr ""
 
-#: includes/admin_settings.php:646
+#: includes/admin_settings.php:640
 msgid "Enable a meeting info feedback form by adding email addresses here."
 msgstr ""
 
-#: includes/admin_settings.php:676
+#: includes/admin_settings.php:670
 msgid "Change Notification Emails"
 msgstr ""
 
-#: includes/admin_settings.php:679
+#: includes/admin_settings.php:673
 msgid "Receive notifications of meeting changes at the email addresses below."
 msgstr ""
 
@@ -1163,7 +1155,7 @@ msgid "Thank you for your feedback."
 msgstr ""
 
 #: includes/ajax.php:317
-#: includes/functions.php:2332
+#: includes/functions.php:2331
 msgid "Error: %s"
 msgstr ""
 
@@ -1427,67 +1419,67 @@ msgstr ""
 msgid "Midnight"
 msgstr ""
 
-#: includes/functions.php:1657
+#: includes/functions.php:1656
 msgid "Meeting Location"
 msgstr ""
 
-#: includes/functions.php:1670
+#: includes/functions.php:1669
 msgid "%s by Appointment"
 msgstr ""
 
-#: includes/functions.php:1674
+#: includes/functions.php:1673
 msgid "%s %ss at %s"
 msgstr ""
 
-#: includes/functions.php:1957
+#: includes/functions.php:1956
 msgid "District %s"
 msgstr ""
 
-#: includes/functions.php:2103
-#: includes/functions.php:2111
+#: includes/functions.php:2102
+#: includes/functions.php:2110
 msgid "You do not have sufficient permissions to access this page (<code>"
 msgstr ""
 
-#: includes/functions.php:2319
+#: includes/functions.php:2318
 msgid "<p>Please sign in to your website and refresh the <b> %s </b> feed on the Import & Export page.</p><br>"
 msgstr ""
 
-#: includes/functions.php:2322
+#: includes/functions.php:2321
 msgid "Go to Import & Export page"
 msgstr ""
 
-#: includes/functions.php:2326
+#: includes/functions.php:2325
 msgid "Data Source Changes Detected"
 msgstr ""
 
-#: includes/functions.php:2334
+#: includes/functions.php:2333
 msgid "<div class='bg-warning text-dark'>An error occurred while sending email!</div>"
 msgstr ""
 
-#: includes/functions.php:2338
+#: includes/functions.php:2337
 msgid "Send Email: Data Source Changes Detected."
 msgstr ""
 
-#: includes/functions.php:2542
+#: includes/functions.php:2541
 #: templates/single-locations.php:122
 #: templates/single-meetings.php:363
 msgid "Updated"
 msgstr ""
 
-#: includes/functions.php:2543
+#: includes/functions.php:2542
 msgid "Changed"
 msgstr ""
 
+#: includes/functions.php:2554
 #: includes/functions.php:2555
-#: includes/functions.php:2556
 msgid "New"
 msgstr ""
 
-#: includes/functions.php:2571
+#: includes/functions.php:2570
 msgid "Removed / Missing"
 msgstr ""
 
-#: includes/functions.php:2572
+#: includes/functions.php:2571
 msgid "Removed"
 msgstr ""
 
