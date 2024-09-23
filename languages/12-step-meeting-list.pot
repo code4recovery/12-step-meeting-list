@@ -2,7 +2,7 @@
 # This file is distributed under the same license as the 12 Step Meeting List plugin.
 msgid ""
 msgstr ""
-"Project-Id-Version: 12 Step Meeting List 3.15.1\n"
+"Project-Id-Version: 12 Step Meeting List 3.15.2\n"
 "Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/12-step-meeting-list\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
