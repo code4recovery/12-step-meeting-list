@@ -1223,7 +1223,7 @@ function tsml_get_meetings($arguments = [], $from_cache = true, $full_export = f
                 'conference_phone' => isset($meeting_meta[$post->ID]['conference_phone']) ? $meeting_meta[$post->ID]['conference_phone'] : null,
                 'conference_phone_notes' => isset($meeting_meta[$post->ID]['conference_phone_notes']) ? $meeting_meta[$post->ID]['conference_phone_notes'] : null,
                 'types' => empty($meeting_meta[$post->ID]['types']) ? [] : array_values(unserialize($meeting_meta[$post->ID]['types'])),
-                'author' => get_the_author_meta('user_login', $post->post_author),
+                'author' => get_the_author_meta('user_login', $post->post_author)
             ], $locations[$post->post_parent]);
 
             // include user-defined meeting fields when doing a full export
@@ -1287,7 +1287,6 @@ function tsml_get_meetings($arguments = [], $from_cache = true, $full_export = f
             }
 
             //add feedback_url only if present
-            //@TODO: check if this is in use? conflict with entity?
             if ($feedback_url = tsml_feedback_url($meeting)) {
                 $meeting['feedback_url'] = $feedback_url;
             }
