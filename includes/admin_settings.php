@@ -216,6 +216,7 @@ if (!function_exists('tsml_settings_page')) {
             }
             update_option('tsml_entity', $tsml_entity);
             tsml_cache_rebuild(); //these values affects what's in the cache
+            tsml_alert(__('Entity details saved.', '12-step-meeting-list'));
         }
         ?>
 
@@ -357,7 +358,7 @@ if (!function_exists('tsml_settings_page')) {
                                 <?php _e('Service Entity Information', '12-step-meeting-list') ?>
                             </h2>
                             <p>
-                                <?php echo sprintf(__('Enter information for your service entity here to help identity the meeting source when sharing feeds with others.', '12-step-meeting-list'), get_post_type_archive_link('tsml_meeting')) ?>
+                                <?php _e('Enter information for your service entity here to help identity the meeting source when sharing feeds with others.', '12-step-meeting-list') ?>
                             </p>
 
                             <form method="post" class="stack compact" action="<?php echo $_SERVER['REQUEST_URI'] ?>">
@@ -368,22 +369,22 @@ if (!function_exists('tsml_settings_page')) {
                                 <input type="text" name="tsml_entity" value="<?php echo esc_attr($tsml_entity['entity']); ?>" 
                                     placeholder="<?php esc_attr_e('Entity Name', '12-step-meeting-list'); ?>" maxlength="100">
                                 <h3>
-                                    <?php _e('Entity Contact Email', '12-step-meeting-list') ?>
+                                    <?php _e('Administrative Contact Email', '12-step-meeting-list') ?>
                                 </h3>
                                 <input type="text" name="tsml_entity_email" value="<?php echo esc_attr($tsml_entity['entity_email']); ?>" 
                                     placeholder="group@website.org" maxlength="100">
                                 <h3>
-                                    <?php _e('Entity Contact Phone', '12-step-meeting-list') ?>
+                                    <?php _e('Public Phone Number', '12-step-meeting-list') ?>
                                 </h3>
                                 <input type="text" name="tsml_entity_phone" value="<?php echo esc_attr($tsml_entity['entity_phone']); ?>" 
                                     placeholder="+18005551212" maxlength="100">
                                 <h3>
-                                    <?php _e('Entity Location', '12-step-meeting-list') ?>
+                                    <?php _e('Service Area', '12-step-meeting-list') ?>
                                 </h3>
                                 <input type="text" name="tsml_entity_location" value="<?php echo esc_attr($tsml_entity['entity_location']); ?>" 
                                     placeholder="<?php esc_attr_e('City, State, Country', '12-step-meeting-list')?>" maxlength="100">
                                 <h3>
-                                    <?php _e('Entity Website', '12-step-meeting-list') ?>
+                                    <?php _e('Website Address', '12-step-meeting-list') ?>
                                 </h3>
                                 <input type="text" name="tsml_entity_url" value="<?php echo esc_attr($tsml_entity['entity_url']); ?>" 
                                     placeholder="https://" maxlength="100">

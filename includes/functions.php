@@ -1792,7 +1792,9 @@ function tsml_sanitize_import_meetings($meetings, $data_source_url = null, $data
 
         //cleanup entity fields
         foreach($tsml_entity_fields as $field) {
-            $meetings[$i][$field] = substr(trim(strval(isset($meetings[$i][$field]) ? $meetings[$i][$field] : '')), 0, 100);
+            if (isset($meetings[$i][$field])) {
+                $meetings[$i][$field] = substr(trim(strval($meetings[$i][$field])), 0, 100);
+            }
         }
 
         //preserve row number for errors later
