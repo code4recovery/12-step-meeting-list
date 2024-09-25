@@ -60,8 +60,9 @@ jQuery(function ($) {
 		//make sure geocoding is finished (basic form validation)
 		var form_valid = true;
 
-        var $form = $('form#post');
-        var $fields = {
+		var $form = $('form#post');
+		// prettier-ignore
+		var $fields = {
             day:               $form.find('select#day'),
             time:              $form.find('input#time'),
             end_time:          $form.find('input#end_time'),
@@ -98,43 +99,43 @@ jQuery(function ($) {
             last_contact:      $form.find('input[name=last_contact]'),
         };
 
-        // set a state for $fields 
-        //    state: loading, error, warning
-        //    code:  a code that corresponds with a field <small data-message> attribute
-        $.fn.setState = function(state, code) {
-            var $field = $(this);
-            $field.siblings('[data-message]').removeClass('show');
-            $field.removeClass('error warning');
-            if (-1 === ['warning','loading','error'].indexOf(state)) {
-                state = '';
-            }
-            $field.data('state', state);
-            if ('error' === state || 'warning' === state) {
-                $field.addClass(state);
-                if (code) {
-                    $field.siblings('[data-message=' + code + ']').addClass('show');
-                }
-            }
-            updateFormState();
-            return this;
-        };
-        // clear state, meaning the field is good
-        $.fn.clearState = function() {
-            return $(this).setState();
-        }
+		// set a state for $fields
+		//    state: loading, error, warning
+		//    code:  a code that corresponds with a field <small data-message> attribute
+		$.fn.setState = function (state, code) {
+			var $field = $(this);
+			$field.siblings('[data-message]').removeClass('show');
+			$field.removeClass('error warning');
+			if (-1 === ['warning', 'loading', 'error'].indexOf(state)) {
+				state = '';
+			}
+			$field.data('state', state);
+			if ('error' === state || 'warning' === state) {
+				$field.addClass(state);
+				if (code) {
+					$field.siblings('[data-message=' + code + ']').addClass('show');
+				}
+			}
+			updateFormState();
+			return this;
+		};
+		// clear state, meaning the field is good
+		$.fn.clearState = function () {
+			return $(this).setState();
+		};
 
-        // after field states update, toggle publish button
-        function updateFormState() {
-            var pendingFields = [];
-            Object.keys($fields).forEach(function(field) {
-                var state = $fields[field].data('state');
-                if (-1 < ['error','loading'].indexOf(state)) {
-                    pendingFields.push($fields[field][0])
-                }
-            });
-            form_valid = !pendingFields.length;
-            $('#publish').toggleClass('disabled', !form_valid);
-        }
+		// after field states update, toggle publish button
+		function updateFormState() {
+			var pendingFields = [];
+			Object.keys($fields).forEach(function (field) {
+				var state = $fields[field].data('state');
+				if (-1 < ['error', 'loading'].indexOf(state)) {
+					pendingFields.push($fields[field][0]);
+				}
+			});
+			form_valid = !pendingFields.length;
+			$('#publish').toggleClass('disabled', !form_valid);
+		}
 
 		// Hide all errors/warnings
 		function resetClasses() {
@@ -203,11 +204,8 @@ jQuery(function ($) {
 		});
 
 		//types checkboxes: ensure not both open and closed
-        $fields.types.on('change', function () {
-			if (
-				$fields.types.filter('[value="C"]').prop('checked') &&
-				$fields.types.filter('[value="O"]').prop('checked')
-			) {
+		$fields.types.on('change', function () {
+			if ($fields.types.filter('[value="C"]').prop('checked') && $fields.types.filter('[value="O"]').prop('checked')) {
 				if ($(this).val() == 'C') {
 					$fields.types.filter('[value="O"]').prop('checked', false);
 				} else {
@@ -306,9 +304,9 @@ jQuery(function ($) {
 						console.log('Geocoded: ', geocoded);
 						//check status first, eg REQUEST_DENIED, ZERO_RESULTS
 						if (geocoded.status == 'error') {
-                            $fields.formatted_address.setState('error', 2);
-                            return;
-                        }
+							$fields.formatted_address.setState('error', 2);
+							return;
+						}
 
 						//set lat + lng
 						$fields.latitude.val(geocoded.latitude);
@@ -363,7 +361,7 @@ jQuery(function ($) {
 								if ($('input[name=in_person]:checked').val() == 'yes' && $fields.approximate.val() == 'yes') {
 									$fields.formatted_address.setState('error', 1);
 								} else if ($('input[name=in_person]:checked').val() == 'no' && $fields.approximate.val() == 'no' && meeting_is_online) {
-                                    $('div.need_approximate_address').removeClass('hidden');
+									$('div.need_approximate_address').removeClass('hidden');
 									$fields.location.addClass('warning');
 									$fields.formatted_address.addClass('warning');
 								} else {
@@ -397,52 +395,52 @@ jQuery(function ($) {
 			$fields.formatted_address.trigger('change');
 		});
 
-        // Conference URL validation
-        $fields.conference_url.validate = function() {
-            $fields.conference_url.clearState();
-            var conferenceUrl = decodeURI($fields.conference_url.val());
-            // if is zoom...
-            if (conferenceUrl.match(/\bzoom\.us\b/i)) {
-                // but doesn't include meeting number, error
-                var zoomUrlParts = conferenceUrl.match(/^(https?:\/\/)*([a-z0-9]+\.)*zoom\.us\/j\/(\d{8,20})(.*)$/i);
-                if (! zoomUrlParts ) {
-                    $fields.conference_url.setState('error', 1);
-                    return;
-                }
-                // else cleanup zoom url
-                var newZoomUrl = 'https://zoom.us/j/' + zoomUrlParts[3];
-                var zoomPwd = conferenceUrl.match(/[\?\&](pwd=[a-z0-9]{28,36})/i);
-                if (zoomPwd) {
-                    newZoomUrl += '?' + zoomPwd[1];
-                }
-                if (conferenceUrl !== newZoomUrl) {
-                    $fields.conference_url.val(newZoomUrl);
-                    $fields.conference_url.setState('warning', 2);
-                }
-            }
-        };
+		// Conference URL validation
+		$fields.conference_url.validate = function () {
+			$fields.conference_url.clearState();
+			var conferenceUrl = decodeURI($fields.conference_url.val());
+			// if is zoom...
+			if (conferenceUrl.match(/\bzoom\.us\b/i)) {
+				// but doesn't include meeting number, error
+				var zoomUrlParts = conferenceUrl.match(/^(https?:\/\/)*([a-z0-9]+\.)*zoom\.us\/j\/(\d{8,20})(.*)$/i);
+				if (!zoomUrlParts) {
+					$fields.conference_url.setState('warning', 1);
+					return;
+				}
+				// else cleanup zoom url
+				var newZoomUrl = 'https://zoom.us/j/' + zoomUrlParts[3];
+				var zoomPwd = conferenceUrl.match(/[\?\&](pwd=[a-z0-9]{28,36})/i);
+				if (zoomPwd) {
+					newZoomUrl += '?' + zoomPwd[1];
+				}
+				if (conferenceUrl !== newZoomUrl) {
+					$fields.conference_url.val(newZoomUrl);
+					$fields.conference_url.setState('warning', 2);
+				}
+			}
+		};
 
-        // validate conference url on change and once on initial load
+		// validate conference url on change and once on initial load
 		$fields.conference_url.on('change', $fields.conference_url.validate);
-        $fields.conference_url.validate();
+		$fields.conference_url.validate();
 
 		$fields.conference_phone.on('change', function () {
 			$fields.formatted_address.trigger('change');
 		});
 
-        // validate paypal name
-        $fields.paypal.validate = function() {
-            var value = $fields.paypal.val().trim();
-            // must be letters and numbers, under 20 characters
-            // reference: https://www.paypal.com/us/cshelp/article/what-is-paypalme-help432
-            if (value && !value.match(/^[a-z0-9]{1,20}$/i)) {
-                $fields.paypal.setState('error', 1);
-            } else {
-                $fields.paypal.clearState();
-            }
-        }
-        $fields.paypal.on('change', $fields.paypal.validate);
-        $fields.paypal.validate();
+		// validate paypal name
+		$fields.paypal.validate = function () {
+			var value = $fields.paypal.val().trim();
+			// must be letters and numbers, under 20 characters
+			// reference: https://www.paypal.com/us/cshelp/article/what-is-paypalme-help432
+			if (value && !value.match(/^[a-z0-9]{1,20}$/i)) {
+				$fields.paypal.setState('error', 1);
+			} else {
+				$fields.paypal.clearState();
+			}
+		};
+		$fields.paypal.on('change', $fields.paypal.validate);
+		$fields.paypal.validate();
 
 		//when page loads, run lookup
 		if ($fields.formatted_address.val()) $fields.formatted_address.trigger('change');
