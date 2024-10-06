@@ -365,30 +365,30 @@ if (!function_exists('tsml_settings_page')) {
 
                             <form method="post" class="stack compact" action="<?php echo $_SERVER['REQUEST_URI'] ?>">
                                 <?php wp_nonce_field($tsml_nonce, 'tsml_nonce', false) ?>
-                                <h3>
+                                <label class="h3" for="tsml_entity">
                                     <?php _e('Entity Name', '12-step-meeting-list') ?>
-                                </h3>
-                                <input type="text" name="tsml_entity" value="<?php echo esc_attr($tsml_entity['entity']); ?>" 
+                                </label>
+                                <input type="text" id="tsml_entity" name="tsml_entity" value="<?php echo esc_attr($tsml_entity['entity']); ?>" 
                                     placeholder="<?php esc_attr_e('Entity Name', '12-step-meeting-list'); ?>" maxlength="100">
-                                <h3>
+                                <label class="h3" for="tsml_entity_email">
                                     <?php _e('Administrative Contact Email', '12-step-meeting-list') ?>
-                                </h3>
-                                <input type="text" name="tsml_entity_email" value="<?php echo esc_attr($tsml_entity['entity_email']); ?>" 
+                                </label>
+                                <input type="text" id="tsml_entity_email" name="tsml_entity_email" value="<?php echo esc_attr($tsml_entity['entity_email']); ?>" 
                                     placeholder="group@website.org" maxlength="100">
-                                <h3>
+                                <label class="h3" for="tsml_entity_phone">
                                     <?php _e('Public Phone Number', '12-step-meeting-list') ?>
-                                </h3>
-                                <input type="text" name="tsml_entity_phone" value="<?php echo esc_attr($tsml_entity['entity_phone']); ?>" 
+                                </label>
+                                <input type="text" id="tsml_entity_phone" name="tsml_entity_phone" value="<?php echo esc_attr($tsml_entity['entity_phone']); ?>" 
                                     placeholder="+18005551212" maxlength="100">
-                                <h3>
+                                <label class="h3" for="tsml_entity_location">
                                     <?php _e('Service Area', '12-step-meeting-list') ?>
-                                </h3>
-                                <input type="text" name="tsml_entity_location" value="<?php echo esc_attr($tsml_entity['entity_location']); ?>" 
+                                </label>
+                                <input type="text" id="tsml_entity_location" name="tsml_entity_location" value="<?php echo esc_attr($tsml_entity['entity_location']); ?>" 
                                     placeholder="<?php esc_attr_e('City, State, Country', '12-step-meeting-list')?>" maxlength="100">
-                                <h3>
+                                <label class="h3" for="tsml_entity_url">
                                     <?php _e('Website Address', '12-step-meeting-list') ?>
-                                </h3>
-                                <input type="text" name="tsml_entity_url" value="<?php echo esc_attr($tsml_entity['entity_url']); ?>" 
+                                </label>
+                                <input type="text" id="tsml_entity_url" name="tsml_entity_url" value="<?php echo esc_attr($tsml_entity['entity_url']); ?>" 
                                     placeholder="https://" maxlength="100">
                                 <p>
                                     <input type="submit" class="button" value="<?php esc_attr_e('Save', '12-step-meeting-list'); ?>">
