@@ -1049,7 +1049,7 @@ function tsml_get_locations()
 //used: single-meetings.php
 function tsml_get_meeting($meeting_id = false)
 {
-    global $tsml_program, $tsml_programs, $tsml_contact_fields;
+    global $tsml_program, $tsml_programs, $tsml_contact_fields, $tsml_array_fields;
 
     $meeting = get_post($meeting_id);
     $custom = get_post_meta($meeting->ID);
@@ -1084,7 +1084,7 @@ function tsml_get_meeting($meeting_id = false)
         if (is_array($value)) {
             $value = count($value) ? $value[0] : '';
         }
-        if ('types' === $key) {
+        if (in_array($key, $tsml_array_fields, true)) {
             $value = (array) maybe_unserialize($value);
         } else {
             $value = htmlentities(strval($value), ENT_QUOTES);
@@ -1169,7 +1169,7 @@ function tsml_feedback_url($meeting)
 //used:		tsml_ajax_meetings(), single-locations.php, archive-meetings.php
 function tsml_get_meetings($arguments = [], $from_cache = true, $full_export = false)
 {
-    global $tsml_cache, $tsml_cache_writable, $tsml_contact_fields, $tsml_contact_display, $tsml_data_sources, $tsml_custom_meeting_fields, $tsml_source_fields_map, $tsml_entity_fields;
+    global $tsml_cache, $tsml_cache_writable, $tsml_contact_fields, $tsml_contact_display, $tsml_data_sources, $tsml_custom_meeting_fields, $tsml_source_fields_map, $tsml_entity_fields, $tsml_array_fields;
 
     $tsml_entity = tsml_get_entity();
 
@@ -1222,7 +1222,7 @@ function tsml_get_meetings($arguments = [], $from_cache = true, $full_export = f
                 'conference_url_notes' => isset($meeting_meta[$post->ID]['conference_url_notes']) ? $meeting_meta[$post->ID]['conference_url_notes'] : null,
                 'conference_phone' => isset($meeting_meta[$post->ID]['conference_phone']) ? $meeting_meta[$post->ID]['conference_phone'] : null,
                 'conference_phone_notes' => isset($meeting_meta[$post->ID]['conference_phone_notes']) ? $meeting_meta[$post->ID]['conference_phone_notes'] : null,
-                'types' => empty($meeting_meta[$post->ID]['types']) ? [] : array_values(unserialize($meeting_meta[$post->ID]['types'])),
+                'types' => empty($meeting_meta[$post->ID]['types']) ? [] : array_values((array) ($meeting_meta[$post->ID]['types'])),
                 'author' => get_the_author_meta('user_login', $post->post_author)
             ], $locations[$post->post_parent]);
 
@@ -1302,6 +1302,13 @@ function tsml_get_meetings($arguments = [], $from_cache = true, $full_export = f
             } else {
                 //else add local entity info
                 $meeting = array_merge($meeting, $tsml_entity);
+            }
+
+            //ensure array fields are arrays
+            foreach($tsml_array_fields as $array_field) {
+                if (isset($meeting[$array_field]) && !is_array($meeting[$array_field])) {
+                    $meeting[$array_field] = (array) $meeting[$array_field];
+                }
             }
 
             $meetings[] = $meeting;
@@ -1407,7 +1414,7 @@ function tsml_get_meetings($arguments = [], $from_cache = true, $full_export = f
 //called in tsml_get_meetings(), tsml_get_locations()
 function tsml_get_meta($type, $id = null)
 {
-    global $wpdb, $tsml_custom_meeting_fields, $tsml_contact_fields, $tsml_source_fields_map, $tsml_entity_fields;
+    global $wpdb, $tsml_custom_meeting_fields, $tsml_contact_fields, $tsml_source_fields_map, $tsml_entity_fields, $tsml_array_fields;
     $keys = [
         'tsml_group' => array_keys($tsml_contact_fields),
         'tsml_location' => ['formatted_address', 'latitude', 'longitude', 'approximate', 'timezone'],
@@ -1441,6 +1448,9 @@ function tsml_get_meta($type, $id = null)
 		post_id ' . ($id ? '= ' . $id : 'IN (SELECT id FROM ' . $wpdb->posts . ' WHERE post_type = "' . $type . '")');
     $values = $wpdb->get_results($query);
     foreach ($values as $value) {
+        if (in_array($value->meta_key, $tsml_array_fields, true)) {
+            $value->meta_value = maybe_unserialize($value->meta_value);
+        }
         $meta[$value->post_id][$value->meta_key] = $value->meta_value;
     }
 
@@ -1504,7 +1514,7 @@ function tsml_meeting_types($types)
 //sanitizes imported meetings before processing
 function tsml_sanitize_import_meetings($meetings, $data_source_url = null, $data_source_parent_region_id = null) {
 
-    global $tsml_programs, $tsml_program, $tsml_days, $tsml_meeting_attendance_options, $tsml_data_sources, $tsml_contact_fields, $tsml_entity_fields;
+    global $tsml_programs, $tsml_program, $tsml_days, $tsml_meeting_attendance_options, $tsml_data_sources, $tsml_contact_fields, $tsml_entity_fields, $tsml_array_fields;
 
     //track group fields and unique_group_values
     $group_fields = array_keys($tsml_contact_fields);
@@ -1550,8 +1560,8 @@ function tsml_sanitize_import_meetings($meetings, $data_source_url = null, $data
         });
     }
 
-    //trim everything
-    array_walk_recursive($meetings, function ($value) {
+    //trim and sanitize everything
+    array_walk_recursive($meetings, function ($value, $key) {
         //preserve <br>s as line breaks if present, otherwise clean up
         $value = preg_replace('/\<br(\s*)?\/?\>/i', PHP_EOL, $value);
         $value = stripslashes($value);
@@ -1560,6 +1570,12 @@ function tsml_sanitize_import_meetings($meetings, $data_source_url = null, $data
         //turn "string" into string (only do if on both ends though)
         if ((substr($value, 0, 1) == '"') && (substr($value, -1) == '"')) {
             $value = trim(trim($value, '"'));
+        }
+        //sanitize
+        if (tsml_string_ends($key, 'notes')) {
+            $value = tsml_sanitize_text_area($value);
+        } else {
+            $value = sanitize_text_field($value);
         }
 
         return $value;
@@ -1620,19 +1636,6 @@ function tsml_sanitize_import_meetings($meetings, $data_source_url = null, $data
     //prepare array for import buffer
     $count_meetings = count($meetings);
     for ($i = 0; $i < $count_meetings; $i++) {
-
-        //do wordpress sanitization
-        foreach ($meetings[$i] as $key => $value) {
-
-            //have to compress types down real quick (only happens with json)
-            if (is_array($value)) $value = implode(',', $value);
-
-            if (tsml_string_ends($key, 'notes')) {
-                $meetings[$i][$key] = tsml_sanitize_text_area($value);
-            } else {
-                $meetings[$i][$key] = sanitize_text_field($value);
-            }
-        }
 
         //column aliases
         if (empty($meetings[$i]['postal_code']) && !empty($meetings[$i]['zip'])) {
@@ -1715,11 +1718,13 @@ function tsml_sanitize_import_meetings($meetings, $data_source_url = null, $data
         if (empty($meetings[$i]['region']) && !empty($meetings[$i]['city'])) $meetings[$i]['region'] = $meetings[$i]['city'];
 
         //sanitize types (they can be Closed or C)
-        if (empty($meetings[$i]['types'])) $meetings[$i]['types'] = '';
-        $types = explode(',', $meetings[$i]['types']);
+        if (empty($meetings[$i]['types'])) $meetings[$i]['types'] = [];
+        $types = (array) $meetings[$i]['types'];
         $meetings[$i]['types'] = $unused_types = [];
         foreach ($types as $type) {
-            $upper_type = trim(strtoupper($type));
+            $type = trim($type);
+            $upper_type = strtoupper($type);
+            if (!$type) continue;
             if (in_array($upper_type, array_map('strtoupper', array_keys($upper_types)))) {
                 $meetings[$i]['types'][] = $type;
             } elseif (in_array($upper_type, array_values($upper_types))) {
@@ -1793,7 +1798,12 @@ function tsml_sanitize_import_meetings($meetings, $data_source_url = null, $data
         //cleanup entity fields
         foreach($tsml_entity_fields as $field) {
             if (isset($meetings[$i][$field])) {
-                $meetings[$i][$field] = substr(trim(strval($meetings[$i][$field])), 0, 100);
+                //feedback_emails is an array
+                if (in_array($field, $tsml_array_fields, true)) {
+                    $meetings[$i][$field] = (array) $meetings[$i][$field];
+                } else {
+                    $meetings[$i][$field] = substr(trim(strval($meetings[$i][$field])), 0, 100);
+                }
             }
         }
 
@@ -2056,14 +2066,23 @@ function tsml_log($type, $info = null, $input = null)
 //used:     tsml_get_meetings, to supply entity for locally managed meetings / non-imported meetings
 function tsml_get_entity()
 {
+    global $tsml_feedback_addresses;
     $saved_tsml_entity = tsml_get_option_array('tsml_entity');
-    return [
+    $tsml_entity = [
         'entity'          => !empty($saved_tsml_entity['entity']) ? $saved_tsml_entity['entity'] : get_bloginfo('name'),
         'entity_email'    => !empty($saved_tsml_entity['entity_email']) ? $saved_tsml_entity['entity_email'] : get_bloginfo('admin_email'),
-        'entity_phone'    => !empty($saved_tsml_entity['entity_phone']) ? $saved_tsml_entity['entity_phone'] : '',
-        'entity_location' => !empty($saved_tsml_entity['entity_location']) ? $saved_tsml_entity['entity_location'] : '',
         'entity_url'      => !empty($saved_tsml_entity['entity_url']) ? $saved_tsml_entity['entity_url'] : get_bloginfo('url'),
     ];
+    if (!empty($saved_tsml_entity['entity_phone'])) {
+        $tsml_entity['entity_phone'] = $saved_tsml_entity['entity_phone'];
+    }
+    if (!empty($saved_tsml_entity['entity_location'])) {
+        $tsml_entity['entity_location'] = $saved_tsml_entity['entity_location'];
+    }
+    if (!empty($tsml_feedback_addresses)) {
+        $tsml_entity['feedback_emails'] = $tsml_feedback_addresses;
+    }
+    return $tsml_entity;
 }
 
 //function: link to meetings page with parameters (added to link dropdown menus for SEO)

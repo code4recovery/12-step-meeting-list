@@ -378,7 +378,7 @@ function tsml_ajax_geocodes()
 //ajax function to import the meetings in the import buffer
 //used by admin_import.php
 add_action('wp_ajax_tsml_import', function () {
-    global $tsml_data_sources, $tsml_custom_meeting_fields, $tsml_source_fields_map, $tsml_contact_fields, $tsml_entity_fields;
+    global $tsml_data_sources, $tsml_custom_meeting_fields, $tsml_source_fields_map, $tsml_contact_fields, $tsml_entity_fields, $tsml_array_fields;
 
     tsml_require_meetings_permission();
 
@@ -572,7 +572,7 @@ add_action('wp_ajax_tsml_import', function () {
             $custom_meeting_fields = array_merge($custom_meeting_fields, array_keys($tsml_custom_meeting_fields));
         }
         foreach ($custom_meeting_fields as $key) {
-            if (empty(isset($meeting[$key]) ? $meeting[$key] : '')) {
+            if (empty($meeting[$key])) {
                 if (metadata_exists('post', $meeting_id, $key)) {
                     delete_post_meta($meeting_id, $key);
                 }

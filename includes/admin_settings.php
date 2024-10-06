@@ -93,6 +93,7 @@ if (!function_exists('tsml_settings_page')) {
                 sort($tsml_feedback_addresses);
                 update_option('tsml_feedback_addresses', $tsml_feedback_addresses);
                 tsml_alert(__('Feedback address added.', '12-step-meeting-list'));
+                tsml_cache_rebuild(); //these values affects what's in the cache
             }
         }
 
@@ -107,6 +108,7 @@ if (!function_exists('tsml_settings_page')) {
                     update_option('tsml_feedback_addresses', $tsml_feedback_addresses);
                 }
                 tsml_alert(__('Feedback address removed.', '12-step-meeting-list'));
+                tsml_cache_rebuild(); //these values affects what's in the cache
             } else {
                 //theoretically should never get here, because user is choosing from a list
                 tsml_alert(sprintf(esc_html__('<p><code>%s</code> was not found in the list of addresses. Please try again.</p>', '12-step-meeting-list'), $email), 'error');

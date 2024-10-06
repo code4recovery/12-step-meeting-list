@@ -83,6 +83,14 @@ $tsml_entity_fields = [
     'entity_phone',
     'entity_location',
     'entity_url',
+    //feedback emails is sourced from $tsml_feedback_addresses locally
+    'feedback_emails',
+];
+
+//define meeting fields that are stored as arrays
+$tsml_array_fields = [
+    'types',
+    'feedback_emails',
 ];
 
 //empty global curl handle in case we need it
