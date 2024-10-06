@@ -44,11 +44,14 @@ run `npx mix watch` to compile assets as you make changes. When you are ready to
 
 ## Rebuilding the POT file
 
-To support other languages, the pluging wraps output language with:
+To support other languages, the plugin wraps output language with:
+
 ```php
-echo _e('English message', '12-step-meeting-list')
+echo __('English message', '12-step-meeting-list')
 ```
+
 To update the `./languages/12-step-meeting-list.pot` file, install [WP Cli](https://make.wordpress.org/cli/handbook/guides/installing/) and run:
+
 ```bash
 wp i18n make-pot . ./languages/12-step-meeting-list.pot --exclude=assets/
 ```

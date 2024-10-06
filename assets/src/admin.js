@@ -406,7 +406,7 @@ jQuery(function ($) {
                 // but doesn't include meeting number, error
                 var zoomUrlParts = conferenceUrl.match(/^(https?:\/\/)*([a-z0-9]+\.)*zoom\.us\/j\/(\d{8,20})(.*)$/i);
                 if (! zoomUrlParts ) {
-                    $fields.conference_url.setState('error', 1);
+                    $fields.conference_url.setState('warning', 1);
                     return;
                 }
                 // else cleanup zoom url
