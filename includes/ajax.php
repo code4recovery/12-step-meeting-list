@@ -301,15 +301,21 @@ function tsml_ajax_feedback()
         $message .= '<p>' . $key . ': ' . $value . '</p>';
     }
 
+    //if meeting was imported and has feedback_emails set, email them instead
+    $to_email_addresses = $tsml_feedback_addresses;
+    if (!empty($meeting->data_source) && !empty($meeting->feedback_emails)) {
+        $to_email_addresses = $meeting->feedback_emails;
+    }
+
     //email vars
     if (!isset($_POST['tsml_nonce']) || !wp_verify_nonce($_POST['tsml_nonce'], $tsml_nonce)) {
         _e('Error: nonce value not set correctly. Email was not sent.', '12-step-meeting-list');
-    } elseif (empty($tsml_feedback_addresses) || empty($name) || !is_email($email) || empty($message)) {
+    } elseif (empty($to_email_addresses) || empty($name) || !is_email($email) || empty($message)) {
         _e('Error: required form value missing. Email was not sent.', '12-step-meeting-list');
     } else {
         //send HTML email
         $subject = __('Meeting Feedback Form', '12-step-meeting-list') . ': ' . $meeting->post_title;
-        if (tsml_email($tsml_feedback_addresses, $subject, $message, $name . ' <' . $email . '>')) {
+        if (tsml_email($to_email_addresses, $subject, $message, $name . ' <' . $email . '>')) {
             _e('Thank you for your feedback.', '12-step-meeting-list');
         } else {
             global $phpmailer;
