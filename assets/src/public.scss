@@ -879,6 +879,29 @@ $height: 550px; //height of map and min-height of list
 							}
 						}
 					}
+
+                    .tsml-button-link {
+                        display: inline-block;
+                        background: transparent;
+                        border: 1px solid $color_gray;
+                        border-radius: 5px;
+                        color: $color_black;
+                        text-align: center;
+                        width: 100%;
+                        padding: 0.25rem 0;
+                        transition: all 0.15s ease-in-out;
+                        &:hover {
+                            text-decoration: none;
+                            color: $color_white;
+                            background-color: $color_gray;
+                        }
+                        svg {
+                            vertical-align: baseline;
+                            max-height: 20px;
+                            width: 1rem;
+                            height: 1rem;
+                        }
+                    }
 				}
 			}
 
@@ -910,6 +933,20 @@ $height: 550px; //height of map and min-height of list
 				}
 			}
 		}
+
+        .meeting {
+            &-entity-title {
+                font-size: 0.8rem;
+            }
+            &-entity-name {
+                text-align: center;
+                font-weight: bold;
+            }
+            &-entity-location {
+                text-align: center;
+            }
+        }
+
 	}
 
 	body.tsml_fullscreen {

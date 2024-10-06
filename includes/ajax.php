@@ -301,15 +301,21 @@ function tsml_ajax_feedback()
         $message .= '<p>' . $key . ': ' . $value . '</p>';
     }
 
+    //if meeting was imported and has feedback_emails set, email them instead
+    $to_email_addresses = $tsml_feedback_addresses;
+    if (!empty($meeting->data_source) && !empty($meeting->feedback_emails)) {
+        $to_email_addresses = $meeting->feedback_emails;
+    }
+
     //email vars
     if (!isset($_POST['tsml_nonce']) || !wp_verify_nonce($_POST['tsml_nonce'], $tsml_nonce)) {
         _e('Error: nonce value not set correctly. Email was not sent.', '12-step-meeting-list');
-    } elseif (empty($tsml_feedback_addresses) || empty($name) || !is_email($email) || empty($message)) {
+    } elseif (empty($to_email_addresses) || empty($name) || !is_email($email) || empty($message)) {
         _e('Error: required form value missing. Email was not sent.', '12-step-meeting-list');
     } else {
         //send HTML email
         $subject = __('Meeting Feedback Form', '12-step-meeting-list') . ': ' . $meeting->post_title;
-        if (tsml_email($tsml_feedback_addresses, $subject, $message, $name . ' <' . $email . '>')) {
+        if (tsml_email($to_email_addresses, $subject, $message, $name . ' <' . $email . '>')) {
             _e('Thank you for your feedback.', '12-step-meeting-list');
         } else {
             global $phpmailer;
@@ -378,7 +384,7 @@ function tsml_ajax_geocodes()
 //ajax function to import the meetings in the import buffer
 //used by admin_import.php
 add_action('wp_ajax_tsml_import', function () {
-    global $tsml_data_sources, $tsml_custom_meeting_fields, $tsml_source_fields_map, $tsml_contact_fields;
+    global $tsml_data_sources, $tsml_custom_meeting_fields, $tsml_source_fields_map, $tsml_contact_fields, $tsml_entity_fields, $tsml_array_fields;
 
     tsml_require_meetings_permission();
 
@@ -565,13 +571,14 @@ add_action('wp_ajax_tsml_import', function () {
         //add custom meeting fields if available
         $custom_meeting_fields = array_merge(
             ['types', 'data_source', 'conference_url', 'conference_url_notes', 'conference_phone', 'conference_phone_notes'],
-            array_keys($tsml_source_fields_map)
+            array_keys($tsml_source_fields_map),
+            $tsml_entity_fields
         );
         if (!empty($tsml_custom_meeting_fields)) {
             $custom_meeting_fields = array_merge($custom_meeting_fields, array_keys($tsml_custom_meeting_fields));
         }
         foreach ($custom_meeting_fields as $key) {
-            if (empty(isset($meeting[$key]) ? $meeting[$key] : '')) {
+            if (empty($meeting[$key])) {
                 if (metadata_exists('post', $meeting_id, $key)) {
                     delete_post_meta($meeting_id, $key);
                 }
