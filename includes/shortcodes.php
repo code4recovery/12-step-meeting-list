@@ -152,7 +152,7 @@ function tsml_ui($arguments = [])
 
     //enqueue app script
     $js = defined('TSML_UI_PATH') ? TSML_UI_PATH : 'https://tsml-ui.code4recovery.org/app.js';
-    wp_enqueue_script('tsml_ui', $js, [], false, true);
+    wp_enqueue_script('tsml_ui', $js, [], false, ['in_footer' => true, 'strategy' => 'async']);
 
     //get program types and type descriptions
     $types = !empty($tsml_programs[$tsml_program]['types'])
