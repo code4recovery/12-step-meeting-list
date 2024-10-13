@@ -354,6 +354,12 @@ if (!function_exists('tsml_settings_page')) {
                         <!-- Entity Form -->
                         <?php
                         $tsml_entity = tsml_get_entity();
+                        if (!isset($tsml_entity['entity_phone'])) {
+                            $tsml_entity['entity_phone'] = '';
+                        }
+                        if (!isset($tsml_entity['entity_location'])) {
+                            $tsml_entity['entity_location'] = '';
+                        }
                         ?>
                         <div class="stack compact">
                             <h2>

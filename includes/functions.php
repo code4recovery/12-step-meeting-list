@@ -1085,7 +1085,7 @@ function tsml_get_meeting($meeting_id = false)
             $value = count($value) ? $value[0] : '';
         }
         if (in_array($key, $tsml_array_fields, true)) {
-            $value = (array) maybe_unserialize($value);
+            $value = array_values((array) maybe_unserialize($value));
         } else {
             $value = htmlentities(strval($value), ENT_QUOTES);
         }
@@ -1307,7 +1307,7 @@ function tsml_get_meetings($arguments = [], $from_cache = true, $full_export = f
             //ensure array fields are arrays
             foreach($tsml_array_fields as $array_field) {
                 if (isset($meeting[$array_field]) && !is_array($meeting[$array_field])) {
-                    $meeting[$array_field] = (array) $meeting[$array_field];
+                    $meeting[$array_field] = array_values((array) $meeting[$array_field]);
                 }
             }
 
@@ -1449,7 +1449,7 @@ function tsml_get_meta($type, $id = null)
     $values = $wpdb->get_results($query);
     foreach ($values as $value) {
         if (in_array($value->meta_key, $tsml_array_fields, true)) {
-            $value->meta_value = maybe_unserialize($value->meta_value);
+            $value->meta_value = array_values((array) maybe_unserialize($value->meta_value));
         }
         $meta[$value->post_id][$value->meta_key] = $value->meta_value;
     }
@@ -1800,7 +1800,7 @@ function tsml_sanitize_import_meetings($meetings, $data_source_url = null, $data
             if (isset($meetings[$i][$field])) {
                 //feedback_emails is an array
                 if (in_array($field, $tsml_array_fields, true)) {
-                    $meetings[$i][$field] = (array) $meetings[$i][$field];
+                    $meetings[$i][$field] = array_values((array) $meetings[$i][$field]);
                 } else {
                     $meetings[$i][$field] = substr(trim(strval($meetings[$i][$field])), 0, 100);
                 }
