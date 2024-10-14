@@ -53,6 +53,8 @@ $height: 550px; //height of map and min-height of list
 	svg.icon {
 		margin: 0 3px -2px 0 !important;
 		display: inline;
+		width: 1em;
+		height: 1em;
 	}
 
 	@keyframes spin {
