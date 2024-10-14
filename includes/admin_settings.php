@@ -592,47 +592,12 @@ if (!function_exists('tsml_settings_page')) {
                 <div class="stack">
                     <!-- About Us -->
                     <div class="postbox stack">
-                        <div class="stack compact">
+                        <div class="stack">
                             <h2>
                                 <?php _e('About Us', '12-step-meeting-list') ?>
                             </h2>
-                            <p>
-                                <a href="https://code4recovery.org/" target="_blank" class="logo">
-                                    <img src="<?php echo plugin_dir_url(__FILE__) . '../assets/img/code4recovery.svg'; ?>"
-                                        alt="Code for Recovery">
-                                </a>
-                                <?php _e(
-                                    'This <b>12 Step Meeting List</b> plugin (TSML) is one of the free services offered by the nonprofit organization <b>Code For Recovery</b> whose volunteer members build and maintain technology services for recovery fellowships such as AA and Al-Anon.',
-                                    '12-step-meeting-list'
-                                ) ?>
-                            </p>
+                            <?php tsml_about_message()?>
                         </div>
-                    </div>
-
-                    <div class="postbox stack">
-                        <!-- Need Help -->
-                        <div class="stack compact">
-                            <h2>
-                                <?php _e('Need Help?', '12-step-meeting-list') ?>
-                            </h2>
-
-                            <p>
-                                <?php _e(
-                                    'To get information about this product or our organization, simply use one of the linked buttons below which are great sources for information and answers.',
-                                    '12-step-meeting-list'
-                                ) ?>
-                            </p>
-                        </div>
-                        <p class="row">
-                            <a href="https://wordpress.org/plugins/12-step-meeting-list/#faq-header" target="_blank"
-                                class="button">
-                                <?php _e('View Documentation', '12-step-meeting-list') ?>
-                            </a>
-                            <a href="https://github.com/code4recovery/12-step-meeting-list/discussions" target="_blank"
-                                class="button">
-                                <?php _e('Ask a Question', '12-step-meeting-list') ?>
-                            </a>
-                        </p>
                     </div>
 
                     <!-- Email Settings -->

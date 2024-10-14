@@ -69,16 +69,7 @@ add_action('admin_menu', function () {
 add_action(
     'wp_dashboard_setup',
     function () {
-        wp_add_dashboard_widget('tsml_help_widget', '12 Step Meeting List Plugin', function () {
-            printf(
-                '<p>' . __('%1$s is a nonprofit organization of volunteer members building technology services for recovery fellowships, such as AA and Al-Anon. If you need help, please %2$s join our discussion forum%3$s. If you would like to make a tax-deductible contribution, please %4$s visit our website%5$s.', '12-step-meeting-list') . '</p>',
-                '<a href="https://code4recovery.org/">Code for Recovery</a>',
-                '<a href="https://github.com/code4recovery/12-step-meeting-list/discussions">',
-                '</a>',
-                '<a href="https://code4recovery.org/">',
-                '</a>'
-            );
-        }, null, null, 'normal', 'high');
+        wp_add_dashboard_widget('tsml_help_widget', '12 Step Meeting List Plugin', 'tsml_about_message', null, null, 'normal', 'high');
     }
 );
 
