@@ -76,6 +76,23 @@ for ($i = 1; $i <= TSML_GROUP_CONTACT_COUNT; $i++) {
     }
 }
 
+//define entity fields (stored in option tsml_entity)
+$tsml_entity_fields = [
+    'entity',
+    'entity_email',
+    'entity_phone',
+    'entity_location',
+    'entity_url',
+    //feedback emails is sourced from $tsml_feedback_addresses locally
+    'feedback_emails',
+];
+
+//define meeting fields that are stored as arrays
+$tsml_array_fields = [
+    'types',
+    'feedback_emails',
+];
+
 //empty global curl handle in case we need it
 $tsml_curl_handle = null;
 

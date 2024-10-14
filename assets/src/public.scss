@@ -910,6 +910,20 @@ $height: 550px; //height of map and min-height of list
 				}
 			}
 		}
+
+		.meeting {
+			&-entity-title {
+				font-size: 0.8rem;
+			}
+			&-entity-name {
+				text-align: center;
+				font-weight: bold;
+			}
+			&-entity-location {
+				text-align: center;
+			}
+		}
+
 	}
 
 	body.tsml_fullscreen {
