@@ -1561,7 +1561,7 @@ function tsml_sanitize_import_meetings($meetings, $data_source_url = null, $data
     }
 
     //trim and sanitize everything
-    array_walk_recursive($meetings, function ($value, $key) {
+    array_walk_recursive($meetings, function (&$value, $key) {
         //preserve <br>s as line breaks if present, otherwise clean up
         $value = preg_replace('/\<br(\s*)?\/?\>/i', PHP_EOL, $value);
         $value = stripslashes($value);
