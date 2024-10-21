@@ -1719,7 +1719,10 @@ function tsml_sanitize_import_meetings($meetings, $data_source_url = null, $data
 
         //sanitize types (they can be Closed or C)
         if (empty($meetings[$i]['types'])) $meetings[$i]['types'] = [];
-        $types = (array) $meetings[$i]['types'];
+        $types = $meetings[$i]['types'];
+        if (is_string($types)) {
+            $types = explode(',', $types);
+        }
         $meetings[$i]['types'] = $unused_types = [];
         foreach ($types as $type) {
             $type = trim($type);
