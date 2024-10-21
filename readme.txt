@@ -4,7 +4,7 @@ Donate link: https://code4recovery.org/contribute
 Requires at least: 3.2
 Requires PHP: 5.6
 Tested up to: 6.6
-Stable tag: 3.16.1
+Stable tag: 3.16.2
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -300,6 +300,9 @@ Yes, you will need to know the key name of the field. Then include an array in y
 1. Edit location
 
 == Changelog ==
+
+= 3.16.2 =
+* Fix bug when importing types from CSV [more info](https://github.com/code4recovery/12-step-meeting-list/issues/1544)
 
 = 3.16.1 =
 * Improve sanitization of imported data [more info](https://github.com/code4recovery/12-step-meeting-list/discussions/1542)
