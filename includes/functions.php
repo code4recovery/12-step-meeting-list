@@ -2695,5 +2695,76 @@ function tsml_footer()
     } else {
         get_footer();
     }
+}
 
+/**
+ * Redirect legacy query parameters to TSML UI's url structure
+ */
+function tsml_redirect_legacy_query_params()
+{
+
+    global $tsml_program, $tsml_programs;
+
+    $replacements = [];
+
+    if (isset($_GET['tsml-attendance_option'])) {
+        if ($_GET['tsml-attendance_option'] === 'active') {
+            $replacements['type'][] = 'active';
+        } elseif ($_GET['tsml-attendance_option'] === 'in_person') {
+            $replacements['type'][] = 'in-person';
+        } elseif ($_GET['tsml-attendance_option'] === 'online') {
+            $replacements['type'][] = 'online';
+        }
+    }
+
+    if (isset($_GET['tsml-day'])) {
+        $days = ['sunday', 'monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday'];
+        if (array_key_exists($_GET['tsml-day'], $days)) {
+            $replacements['weekday'] = $days[$_GET['tsml-day']];
+        }
+    }
+
+    if (isset($_GET['tsml-mode'])) {
+        $replacements['mode'] = $_GET['tsml-mode'];
+
+        if (isset($_GET['tsml-distance'])) {
+            $replacements['distance'] = $_GET['tsml-distance'];
+        } else {
+            $replacements['distance'] = 10;
+        }
+    }
+
+    if (isset($_GET['tsml-query'])) {
+        $replacements['search'] = $_GET['tsml-query'];
+    }
+
+    if (isset($_GET['tsml-region'])) {
+        $replacements['region'] = $_GET['tsml-region'];
+    }
+
+    if (isset($_GET['tsml-time'])) {
+        $replacements['time'] = $_GET['tsml-time'];
+    }
+
+    if (isset($_GET['tsml-type'])) {
+        $types = explode(',', $_GET['tsml-type']);
+        foreach ($types as $type) {
+            if (array_key_exists($type, $tsml_programs[$tsml_program]['types']))
+                $replacements['type'][] = sanitize_title($tsml_programs[$tsml_program]['types'][$type]);
+        }
+    }
+
+    if (isset($replacements['type'])) {
+        $replacements['type'] = implode('/', $replacements['type']);
+    }
+
+    if (count($replacements) > 0) {
+        $url = get_post_type_archive_link('tsml_meeting');
+
+        foreach ($replacements as $key => $value) {
+            $url = add_query_arg($key, $value, $url);
+        }
+
+        wp_redirect($url);
+    }
 }
