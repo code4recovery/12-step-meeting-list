@@ -352,7 +352,7 @@ function tsml_custom_post_types()
                 'name' => __('Meetings', '12-step-meeting-list'),
                 'singular_name' => __('Meeting', '12-step-meeting-list'),
                 'not_found' => __('No meetings added yet.', '12-step-meeting-list'),
-                'add_new' => __('Add New Meeting', '12-step-meeting-list'),
+                'add_new_item' => __('Add New Meeting', '12-step-meeting-list'),
                 'search_items' => __('Search Meetings', '12-step-meeting-list'),
                 'edit_item' => __('Edit Meeting', '12-step-meeting-list'),
                 'view_item' => __('View Meeting', '12-step-meeting-list'),
