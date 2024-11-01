@@ -76,6 +76,23 @@ for ($i = 1; $i <= TSML_GROUP_CONTACT_COUNT; $i++) {
     }
 }
 
+//define entity fields (stored in option tsml_entity)
+$tsml_entity_fields = [
+    'entity',
+    'entity_email',
+    'entity_phone',
+    'entity_location',
+    'entity_url',
+    //feedback emails is sourced from $tsml_feedback_addresses locally
+    'feedback_emails',
+];
+
+//define meeting fields that are stored as arrays
+$tsml_array_fields = [
+    'types',
+    'feedback_emails',
+];
+
 //empty global curl handle in case we need it
 $tsml_curl_handle = null;
 
@@ -145,6 +162,14 @@ $tsml_export_columns = [
     'data_source_name' => 'Data Source Name',
     'updated' => 'Updated',
     'id' => 'ID',
+];
+
+//define fields used for tracking changes in imported meetings
+$tsml_source_fields_map = [
+    'source_formatted_address' => 'formatted_address',
+    'source_region' => 'region',
+    'source_sub_region' => 'sub_region',
+    'source_slug' => 'slug',
 ];
 
 //load email addresses to send user feedback about meetings
@@ -592,7 +617,12 @@ $tsml_ui_config = [];
 $tsml_days = $tsml_days_order = $tsml_programs = $tsml_types_in_use = $tsml_strings = [];
 
 //string url for the meeting finder, or false for no automatic archive page
-if (!isset($tsml_slug)) $tsml_slug = null;
+if (!isset($tsml_slug)) {
+    $tsml_slug = null;
+}
+
+//toggle debug mode
+$tsml_debug = false;
 
 // set up globals, common variables once plugins are loaded, but before init
 function tsml_load_config()
@@ -743,6 +773,7 @@ function tsml_load_config()
                 'POL' => __('Polish', '12-step-meeting-list'),
                 'POR' => __('Portuguese', '12-step-meeting-list'),
                 'P' => __('Professionals', '12-step-meeting-list'),
+                'POA' => __('Proof of Attendance', '12-step-meeting-list'),
                 'PUN' => __('Punjabi', '12-step-meeting-list'),
                 'RUS' => __('Russian', '12-step-meeting-list'),
                 'A' => __('Secular', '12-step-meeting-list'),
@@ -967,26 +998,26 @@ function tsml_load_config()
                 'YP' => __('Young People', '12-step-meeting-list'),
             ],
         ],
-		'eda' => [
-			'abbr' => __('EDA', '12-step-meeting-list'),
+        'eda' => [
+            'abbr' => __('EDA', '12-step-meeting-list'),
             'flags' => ['M', 'W', 'TC', 'ONL'], //for /men and /women at end of meeting name (used in tsml_format_name())
-			'name' => __('Eating Disorders Anonymous', '12-step-meeting-list'),
-			'types' => [
+            'name' => __('Eating Disorders Anonymous', '12-step-meeting-list'),
+            'types' => [
                 '11' => __('11th Step Meditation', '12-step-meeting-list'),
                 '12x12' => __('12 Steps & 12 Traditions', '12-step-meeting-list'),
                 'BA' => __('Babysitting Available', '12-step-meeting-list'),
-				'BEG' => __('Beginners\'', '12-step-meeting-list'),
+                'BEG' => __('Beginners\'', '12-step-meeting-list'),
                 'B' => __('Big Book', '12-step-meeting-list'),
-				'CC' => __('Chair\'s Choice', '12-step-meeting-list'),
+                'CC' => __('Chair\'s Choice', '12-step-meeting-list'),
                 'CF' => __('Child-Friendly', '12-step-meeting-list'),
                 'C' => __('Closed', '12-step-meeting-list'),
-				'NL' => __('Dutch', '12-step-meeting-list'),
+                'NL' => __('Dutch', '12-step-meeting-list'),
                 'EN' => __('English', '12-step-meeting-list'),
-				'DE' => __('German', '12-step-meeting-list'),
-				'GE' => __('Georgian', '12-step-meeting-list'),
-				'GR' => __('Greek', '12-step-meeting-list'),
+                'DE' => __('German', '12-step-meeting-list'),
+                'KA' => __('Georgian', '12-step-meeting-list'),
+                'EL' => __('Greek', '12-step-meeting-list'),
                 'NDG' => __('Indigenous', '12-step-meeting-list'),
-				'IC' => __('Icelandic', '12-step-meeting-list'),
+                'IS' => __('Icelandic', '12-step-meeting-list'),
                 'ITA' => __('Italian', '12-step-meeting-list'),
                 'LIT' => __('Literature', '12-step-meeting-list'),
                 'LGBTQ' => __('LGBTQ+', '12-step-meeting-list'),
@@ -996,19 +1027,19 @@ function tsml_load_config()
                 'O' => __('Open', '12-step-meeting-list'),
                 'OUT' => __('Outdoor', '12-step-meeting-list'),
                 'POC' => __('People of Color', '12-step-meeting-list'),
-				'RF' => __('Rotating Format', '12-step-meeting-list'),
+                'RF' => __('Rotating Format', '12-step-meeting-list'),
                 'A' => __('Secular', '12-step-meeting-list'),
                 'SEN' => __('Seniors', '12-step-meeting-list'),
                 'S' => __('Spanish', '12-step-meeting-list'),
                 'SP' => __('Speaker', '12-step-meeting-list'),
                 'ST' => __('Step', '12-step-meeting-list'),
-				'TO' => __('Topic/Discussion', '12-step-meeting-list'),
+                'TO' => __('Topic/Discussion', '12-step-meeting-list'),
                 'TR' => __('Tradition Study', '12-step-meeting-list'),
                 'T' => __('Transgender', '12-step-meeting-list'),
                 'X' => __('Wheelchair Access', '12-step-meeting-list'),
                 'XB' => __('Wheelchair-Accessible Bathroom', '12-step-meeting-list'),
                 'W' => __('Women', '12-step-meeting-list'),
-				'WR' => __('Writing', '12-step-meeting-list'),
+                'WR' => __('Writing', '12-step-meeting-list'),
                 'Y' => __('Young People', '12-step-meeting-list'),
             ],
         ],
@@ -1470,9 +1501,10 @@ function tsml_load_config()
     ];
 
     $tsml_types_in_use = tsml_get_option_array('tsml_types_in_use');
-    if (!is_array($tsml_types_in_use)) $tsml_types_in_use = [];
+    if (!is_array($tsml_types_in_use)) {
+        $tsml_types_in_use = [];
+    }
 }
-;
 
 add_action('plugins_loaded', 'tsml_load_config');
 // load config if we always passed plugins_loaded action

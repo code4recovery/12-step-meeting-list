@@ -41,3 +41,17 @@ Also some best practices:
 
 If you're making changes to JavaScript or CSS, you will want to install SASS and webpack one time by running `npm i`. Then, while developing,
 run `npx mix watch` to compile assets as you make changes. When you are ready to make a pull request, run `npx mix --production`.
+
+## Rebuilding the POT file
+
+To support other languages, the plugin wraps output language with:
+
+```php
+echo __('English message', '12-step-meeting-list')
+```
+
+To update the `./languages/12-step-meeting-list.pot` file, install [WP Cli](https://make.wordpress.org/cli/handbook/guides/installing/) and run:
+
+```bash
+wp i18n make-pot . ./languages/12-step-meeting-list.pot --exclude=assets/
+```

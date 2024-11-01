@@ -93,6 +93,7 @@ if (!function_exists('tsml_settings_page')) {
                 sort($tsml_feedback_addresses);
                 update_option('tsml_feedback_addresses', $tsml_feedback_addresses);
                 tsml_alert(__('Feedback address added.', '12-step-meeting-list'));
+                tsml_cache_rebuild(); //these values affects what's in the cache
             }
         }
 
@@ -107,6 +108,7 @@ if (!function_exists('tsml_settings_page')) {
                     update_option('tsml_feedback_addresses', $tsml_feedback_addresses);
                 }
                 tsml_alert(__('Feedback address removed.', '12-step-meeting-list'));
+                tsml_cache_rebuild(); //these values affects what's in the cache
             } else {
                 //theoretically should never get here, because user is choosing from a list
                 tsml_alert(sprintf(esc_html__('<p><code>%s</code> was not found in the list of addresses. Please try again.</p>', '12-step-meeting-list'), $email), 'error');
@@ -178,20 +180,19 @@ if (!function_exists('tsml_settings_page')) {
             delete_option('tsml_mapbox_key');
         }
 
-        //change user interface
-        if (!empty($_POST['tsml_user_interface']) && isset($_POST['tsml_nonce']) && wp_verify_nonce($_POST['tsml_nonce'], $tsml_nonce)) {
-            $tsml_user_interface = sanitize_text_field($_POST['tsml_user_interface']);
-            update_option('tsml_user_interface', $tsml_user_interface);
-            if ($tsml_user_interface == 'tsml_ui') {
-                $tsml_ui = "TSML UI";
-            } else {
-                $tsml_ui = "LEGACY UI";
-            }
-            tsml_alert(__('User interface is now set to <strong>' . $tsml_ui . '</strong>', '12-step-meeting-list'));
-            if (empty($tsml_mapbox_key) && ($tsml_user_interface == 'tsml_ui')) {
-                tsml_alert(__('<b>Please note</b> that TSML UI only supports Mapbox. To enable mapping you will need a <a href="https://www.mapbox.com/" target="_blank">Mapbox access token</a>. Paste it in the Maps section\'s <b>Mapbox Access Token</b> field.', '12-step-meeting-list'), 'warning');
-            }
-        }
+		//change user interface
+		if (!empty($_POST['tsml_user_interface']) && isset($_POST['tsml_nonce']) && wp_verify_nonce($_POST['tsml_nonce'], $tsml_nonce)) {
+			$tsml_user_interface = sanitize_text_field($_POST['tsml_user_interface']);
+			update_option('tsml_user_interface', $tsml_user_interface);
+			
+			if ($tsml_user_interface == 'tsml_ui') {
+				$tsml_ui = "TSML UI";
+			} else {
+				$tsml_ui = "LEGACY UI";
+			}
+
+			tsml_alert(__('User interface is now set to <strong>' . $tsml_ui . '</strong>', '12-step-meeting-list'));
+		}
 
         //change timezone
         if (isset($_POST['timezone']) && isset($_POST['tsml_nonce']) && wp_verify_nonce($_POST['tsml_nonce'], $tsml_nonce)) {
@@ -203,13 +204,29 @@ if (!function_exists('tsml_settings_page')) {
                 tsml_alert(__('Invalid timezone selected.', '12-step-meeting-list'), 'error');
             }
         }
+
+        //save entity fields
+        if (isset($_POST['tsml_entity']) && isset($_POST['tsml_nonce']) && wp_verify_nonce($_POST['tsml_nonce'], $tsml_nonce)) {
+            $current_tsml_entity = tsml_get_option_array('tsml_entity');
+            $tsml_entity = [];
+            global $tsml_entity_fields;
+            foreach ( $tsml_entity_fields as $field ) {
+                $tsml_entity[$field] = isset($current_tsml_entity[$field]) ? $current_tsml_entity[$field] : '';
+                if (isset($_POST["tsml_$field"])) {
+                    $tsml_entity[$field] = substr(trim(strval($_POST["tsml_$field"])), 0, 100);
+                }
+            }
+            update_option('tsml_entity', $tsml_entity);
+            tsml_cache_rebuild(); //these values affects what's in the cache
+            tsml_alert(__('Entity details saved.', '12-step-meeting-list'));
+        }
         ?>
 
         <!-- Admin page content should all be inside .wrap -->
         <div class="wrap">
 
-            <h1></h1> <!-- Set alerts here -->
-
+			<h1></h1> <!-- Set alerts here -->
+			
             <?php if (!is_ssl()) { ?>
                 <div class="notice notice-warning inline">
                     <p>
@@ -333,7 +350,62 @@ if (!function_exists('tsml_settings_page')) {
                         </form>
                     </div>
 
-                    <div class="postbox stack">
+                    <div class="postbox stack">                        
+                        <!-- Entity Form -->
+                        <?php
+                        $tsml_entity = tsml_get_entity();
+                        if (!isset($tsml_entity['entity_phone'])) {
+                            $tsml_entity['entity_phone'] = '';
+                        }
+                        if (!isset($tsml_entity['entity_location'])) {
+                            $tsml_entity['entity_location'] = '';
+                        }
+                        ?>
+                        <div class="stack compact">
+                            <h2>
+                                <?php _e('Service Entity Information', '12-step-meeting-list') ?>
+                            </h2>
+                            <p>
+                                <?php _e('Enter information for your service entity here to help identity the meeting source when sharing feeds with others.', '12-step-meeting-list') ?>
+                            </p>
+
+                            <form method="post" class="stack compact" action="<?php echo $_SERVER['REQUEST_URI'] ?>">
+                                <?php wp_nonce_field($tsml_nonce, 'tsml_nonce', false) ?>
+                                <label class="h3" for="tsml_entity">
+                                    <?php _e('Entity Name', '12-step-meeting-list') ?>
+                                </label>
+                                <input type="text" id="tsml_entity" name="tsml_entity" value="<?php echo esc_attr($tsml_entity['entity']); ?>" 
+                                    placeholder="<?php esc_attr_e('Entity Name', '12-step-meeting-list'); ?>" maxlength="100">
+                                <label class="h3" for="tsml_entity_email">
+                                    <?php _e('Administrative Contact Email', '12-step-meeting-list') ?>
+                                </label>
+                                <input type="text" id="tsml_entity_email" name="tsml_entity_email" value="<?php echo esc_attr($tsml_entity['entity_email']); ?>" 
+                                    placeholder="group@website.org" maxlength="100">
+                                <label class="h3" for="tsml_entity_phone">
+                                    <?php _e('Public Phone Number', '12-step-meeting-list') ?>
+                                </label>
+                                <input type="text" id="tsml_entity_phone" name="tsml_entity_phone" value="<?php echo esc_attr($tsml_entity['entity_phone']); ?>" 
+                                    placeholder="+18005551212" maxlength="100">
+                                <label class="h3" for="tsml_entity_location">
+                                    <?php _e('Service Area', '12-step-meeting-list') ?>
+                                </label>
+                                <input type="text" id="tsml_entity_location" name="tsml_entity_location" value="<?php echo esc_attr($tsml_entity['entity_location']); ?>" 
+                                    placeholder="<?php esc_attr_e('City, State, Country', '12-step-meeting-list')?>" maxlength="100">
+                                <label class="h3" for="tsml_entity_url">
+                                    <?php _e('Website Address', '12-step-meeting-list') ?>
+                                </label>
+                                <input type="text" id="tsml_entity_url" name="tsml_entity_url" value="<?php echo esc_attr($tsml_entity['entity_url']); ?>" 
+                                    placeholder="https://" maxlength="100">
+                                <p>
+                                    <input type="submit" class="button" value="<?php esc_attr_e('Save', '12-step-meeting-list'); ?>">
+                                </p>
+                            </form>
+                        </div>
+                    </div>
+                 </div>
+
+                <div class="stack">
+                   <div class="postbox stack">
                         <!-- Feed Management -->
                         <h2>
                             <?php _e('Feed Management', '12-step-meeting-list') ?>
@@ -413,9 +485,7 @@ if (!function_exists('tsml_settings_page')) {
                             </div>
                         <?php } ?>
                     </div>
-                </div>
 
-                <div class="stack">
                     <div class="postbox stack">
                         <!-- Switch UI -->
                         <div class="stack compact">
@@ -473,9 +543,12 @@ if (!function_exists('tsml_settings_page')) {
                             <h2>
                                 <?php _e('Maps', '12-step-meeting-list') ?>
                             </h2>
-                            <p>
-                                <?php _e('Display of maps requires an authorization key from <strong><a href="https://www.mapbox.com/" target="_blank">Mapbox</a></strong> or <strong><a href="https://console.cloud.google.com/home/" target="_blank">Google</a></strong>.', '12-step-meeting-list') ?>
-                            </p>
+								<p>
+									<?php _e('Display of maps requires an authorization key from <strong><a href="https://www.mapbox.com/" target="_blank">Mapbox</a></strong> or <strong><a href="https://console.cloud.google.com/home/" target="_blank">Google</a></strong>.', '12-step-meeting-list') ?>
+								</p>
+								<p>
+									<?php _e('Please note that TSML UI only supports Mapbox.', '12-step-meeting-list') ?>
+								</p>
                         </div>
                         <div class="stack compact">
                             <h3>

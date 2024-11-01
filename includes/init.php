@@ -7,14 +7,13 @@ add_action('init', function () {
     tsml_custom_post_types();
 
     //meeting list page
-    add_filter('archive_template', 'tsml_archive_template');
-    function tsml_archive_template($template)
-    {
+    add_filter('archive_template', function ($template) {
         global $tsml_user_interface;
 
         if (is_post_type_archive('tsml_meeting')) {
             // when UI switch set to tsml_ui we use special template
             if ($tsml_user_interface == 'tsml_ui') {
+                tsml_redirect_legacy_query_params();
                 return dirname(__FILE__) . '/../templates/archive-tsml-ui.php';
             } else { // legacy_ui
                 $user_theme_file = get_stylesheet_directory() . '/archive-meetings.php';
@@ -25,12 +24,11 @@ add_action('init', function () {
             }
         }
         return $template;
-    }
+    });
+
 
     //meeting & location detail pages
-    add_filter('single_template', 'tsml_single_template');
-    function tsml_single_template($template)
-    {
+    add_filter('single_template', function ($template) {
         global $post, $tsml_user_interface;
 
         if ($post->post_type === 'tsml_meeting') {
@@ -69,16 +67,16 @@ add_action('init', function () {
             return dirname(__FILE__) . '/../templates/single-locations.php';
         }
         return $template;
-    }
+    });
+
 
     //add theme name to body class, for per-theme CSS fixes
-    add_filter('body_class', 'tsml_theme_name');
-    function tsml_theme_name($classes)
-    {
+    add_filter('body_class', function ($classes) {
         $theme = wp_get_theme();
         $classes[] = sanitize_title($theme->Template);
         return $classes;
-    }
+    });
+
 });
 
 if (is_admin()) {

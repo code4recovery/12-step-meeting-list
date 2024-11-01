@@ -1,9 +1,12 @@
 === 12 Step Meeting List ===
-Contributors: Code for Recovery
+Contributors: code4recovery
+Donate link: https://code4recovery.org/contribute
 Requires at least: 3.2
 Requires PHP: 5.6
-Tested up to: 6.5
-Stable tag: 3.14.36
+Tested up to: 6.6
+Stable tag: 3.16.3
+License: GPLv2 or later
+License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
 This plugin helps twelve step recovery programs list their meetings. It standardizes addresses, and displays results in a searchable list and map.
 
@@ -200,11 +203,6 @@ Another approach is to adjust which meeting types are "flagged" in the meeting n
 
 The code above will add "Open" and "Closed" flags to the meeting name.
 
-= When there are notes on a meeting, can I indicate that somehow in the meeting list? =
-Yes, with CSS. Rows that have meeting notes will have a 'notes' class. To add an asterisk, for example, try this:
-
-	div#tsml tr.notes a:after { content: "*"; }
-
 = Can I import a custom spreadsheet format? =
 If you don't mind some PHP programming, then yes! Create a function called `tsml_import_reformat`, and use it to
 reformat your incoming data to the standard format
@@ -240,7 +238,7 @@ Yes, you can use `[tsml_meeting_count]`, `[tsml_location_count]`, `[tsml_group_c
 
 Use `[tsml_types_list]` and `[tsml_regions_list]` to output linked lists to your meeting finder.
 
-Use `[tsml_ui]` to display the TSML UI meeting finder.
+Use `[tsml_ui]` to display the TSML UI meeting finder. Optionally you may pass parameters, for example: `[tsml_ui weekday="sunday" type="women,closed"]`
 
 = Are there translations to other languages? =
 It is translated into Polish. If you would like to volunteer to help translate another language, we would be pleased to work with you.
@@ -303,8 +301,42 @@ Yes, you will need to know the key name of the field. Then include an array in y
 
 == Changelog ==
 
+= 3.16.3 =
+* Redirect legacy UI query parameters when using TSML UI [more info](https://github.com/code4recovery/12-step-meeting-list/issues/1461)
+
+= 3.16.2 =
+* Fix bug when importing types from CSV [more info](https://github.com/code4recovery/12-step-meeting-list/issues/1544)
+
+= 3.16.1 =
+* Improve sanitization of imported data [more info](https://github.com/code4recovery/12-step-meeting-list/discussions/1542)
+
+= 3.16 =
+* Add entity description fields to meeting listings [more info](https://github.com/code4recovery/12-step-meeting-list/issues/1498)
+* Add `async` property to TSML UI script tag to fix potential issue with next release [more info](https://github.com/code4recovery/tsml-ui/pull/423)
+
+= 3.15.2 =
+* Improve Zoom URL validation [more info](https://github.com/code4recovery/12-step-meeting-list/issues/1500)
+* Improve PayPal username validation [more info](https://github.com/code4recovery/12-step-meeting-list/issues/1074)
+* Allow `[tsml_ui]` shortcode to accept search and filter parameters [more info](https://github.com/code4recovery/12-step-meeting-list/issues/1511)
+
+= 3.15.1 =
+* Reformat 'Change Detection Email' for better legibility. [more info](https://github.com/code4recovery/12-step-meeting-list/issues/1497)
+* Add "Proof of Attendance" type [more info](https://github.com/code4recovery/spec/issues/92)
+
+= 3.15 =
+* Modifies Import Data Source feature so that only the changes detected between an import feed and the local database are applied as updates. [more info](https://github.com/code4recovery/12-step-meeting-list/issues/1075)
+
+= 3.14.38 =
+* Fixing more import errors [more info](https://github.com/code4recovery/12-step-meeting-list/issues/1469)
+
+= 3.14.37 =
+* Fix import errors [more info](https://github.com/code4recovery/12-step-meeting-list/issues/1469)
+
 = 3.14.36 =
-* Fix error when multibyte functions are not installed
+* Add Eating Disorders Anonymous [more info](https://github.com/code4recovery/12-step-meeting-list/pull/1447)
+* Don't include custom fields in JSON feed [more info](https://github.com/code4recovery/12-step-meeting-list/issues/1436)
+* Update messaging about TSML UI supporting Mapbox only [more info](https://github.com/code4recovery/12-step-meeting-list/issues/1453)
+* Fix error when multibyte functions are not installed [more info](https://github.com/code4recovery/12-step-meeting-list/discussions/1443)
 
 = 3.14.35 =
 * Add timezone support [more info](https://github.com/code4recovery/12-step-meeting-list/issues/930)
