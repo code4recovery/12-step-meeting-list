@@ -303,6 +303,7 @@ Yes, you will need to know the key name of the field. Then include an array in y
 
 = 3.16.3 =
 * Redirect legacy UI query parameters when using TSML UI [more info](https://github.com/code4recovery/12-step-meeting-list/issues/1461)
+* Filter for meeting types on admin page [more info](https://github.com/code4recovery/12-step-meeting-list/issues/370)
 
 = 3.16.2 =
 * Fix bug when importing types from CSV [more info](https://github.com/code4recovery/12-step-meeting-list/issues/1544)
