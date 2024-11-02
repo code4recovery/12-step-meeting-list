@@ -2,7 +2,8 @@
 
 /**
  * Plugin Name: 12 Step Meeting List
- * Plugin URI: https://wordpress.org/plugins/12-step-meeting-list/
+ * License: GPLv2 or later
+ * License URI: https://www.gnu.org/licenses/gpl-2.0.html
  * Description: Manage a list of recovery meetings
  * Version: 3.16.3
  * Requires PHP: 5.6

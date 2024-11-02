@@ -3,7 +3,7 @@ Contributors: code4recovery
 Donate link: https://code4recovery.org/contribute
 Requires at least: 3.2
 Requires PHP: 5.6
-Tested up to: 6.6
+Tested up to: 6.7
 Stable tag: 3.16.3
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
@@ -303,6 +303,8 @@ Yes, you will need to know the key name of the field. Then include an array in y
 
 = 3.16.3 =
 * Redirect legacy UI query parameters when using TSML UI [more info](https://github.com/code4recovery/12-step-meeting-list/issues/1461)
+* Import Google Sheets directly [more info](https://github.com/code4recovery/12-step-meeting-list/issues/1348)
+* Test with WordPress 6.7 [more info](https://github.com/code4recovery/12-step-meeting-list/issues/1553)
 * Fix counts on region admin screen [more info](https://github.com/code4recovery/12-step-meeting-list/issues/1204)
 * Filter for meeting types on admin page [more info](https://github.com/code4recovery/12-step-meeting-list/issues/370)
 * Fix TSML UI widget layout on some themes [more info](https://github.com/code4recovery/12-step-meeting-list/issues/1427)
