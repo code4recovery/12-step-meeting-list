@@ -1554,8 +1554,25 @@ function tsml_sanitize_import_meetings($meetings, $data_source_url = null, $data
     //track sanitized meeting slug counts
     $meeting_slugs = array();
 
+    //handle requests to Google Sheets API (obsolete - remove on or after May 2025)
     if (strpos($data_source_url, "sheets.googleapis.com") !== false) {
+        tsml_alert(__('You can now add a Google Sheet directly to TSML. Please replace this feed with the Sheet URL. We will be dropping support for the Google Sheets API in a future release.', '12-step-meeting-list'), 'warning');
         $meetings = tsml_import_reformat_googlesheet($meetings);
+    }
+
+    //handle requests to C4R sheets service
+    if (strpos($data_source_url, "sheets.code4recovery.org/tsml") !== false) {
+        if (count($meetings['warnings'])) {
+            $warnings = __('The following issues were detected with this Google Sheet:', '12-step-meeting-list') . '</p><ol>' . 
+                implode(array_map(function($warning) {
+                    return '<li><a href="' . $warning['link'] . '">' . $warning['error'] . '</a>: ' .
+                        implode(array_map(function($value) { return '<code>' . $value . '</code>'; }, $warning['value'])) . 
+                    '</li>';
+                }, $meetings['warnings'])) . 
+            '</ol><p hidden>';
+            tsml_alert($warnings, 'warning');
+        }
+        $meetings = $meetings['meetings'];
     }
 
     //allow theme-defined function to reformat data source import - issue #439
@@ -1586,7 +1603,7 @@ function tsml_sanitize_import_meetings($meetings, $data_source_url = null, $data
     }
 
     //trim and sanitize everything
-    array_walk_recursive($meetings, function ($value, $key) {
+    array_walk_recursive($meetings, function (&$value, $key) {
         //preserve <br>s as line breaks if present, otherwise clean up
         $value = preg_replace('/\<br(\s*)?\/?\>/i', PHP_EOL, $value);
         $value = stripslashes($value);
@@ -1744,7 +1761,10 @@ function tsml_sanitize_import_meetings($meetings, $data_source_url = null, $data
 
         //sanitize types (they can be Closed or C)
         if (empty($meetings[$i]['types'])) $meetings[$i]['types'] = [];
-        $types = (array) $meetings[$i]['types'];
+        $types = $meetings[$i]['types'];
+        if (is_string($types)) {
+            $types = explode(',', $types);
+        }
         $meetings[$i]['types'] = $unused_types = [];
         foreach ($types as $type) {
             $type = trim($type);
@@ -2700,5 +2720,76 @@ function tsml_footer()
     } else {
         get_footer();
     }
+}
 
+/**
+ * Redirect legacy query parameters to TSML UI's url structure
+ */
+function tsml_redirect_legacy_query_params()
+{
+
+    global $tsml_program, $tsml_programs;
+
+    $replacements = [];
+
+    if (isset($_GET['tsml-attendance_option'])) {
+        if ($_GET['tsml-attendance_option'] === 'active') {
+            $replacements['type'][] = 'active';
+        } elseif ($_GET['tsml-attendance_option'] === 'in_person') {
+            $replacements['type'][] = 'in-person';
+        } elseif ($_GET['tsml-attendance_option'] === 'online') {
+            $replacements['type'][] = 'online';
+        }
+    }
+
+    if (isset($_GET['tsml-day'])) {
+        $days = ['sunday', 'monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday'];
+        if (array_key_exists($_GET['tsml-day'], $days)) {
+            $replacements['weekday'] = $days[$_GET['tsml-day']];
+        }
+    }
+
+    if (isset($_GET['tsml-mode'])) {
+        $replacements['mode'] = $_GET['tsml-mode'];
+
+        if (isset($_GET['tsml-distance'])) {
+            $replacements['distance'] = $_GET['tsml-distance'];
+        } else {
+            $replacements['distance'] = 10;
+        }
+    }
+
+    if (isset($_GET['tsml-query'])) {
+        $replacements['search'] = $_GET['tsml-query'];
+    }
+
+    if (isset($_GET['tsml-region'])) {
+        $replacements['region'] = $_GET['tsml-region'];
+    }
+
+    if (isset($_GET['tsml-time'])) {
+        $replacements['time'] = $_GET['tsml-time'];
+    }
+
+    if (isset($_GET['tsml-type'])) {
+        $types = explode(',', $_GET['tsml-type']);
+        foreach ($types as $type) {
+            if (array_key_exists($type, $tsml_programs[$tsml_program]['types']))
+                $replacements['type'][] = sanitize_title($tsml_programs[$tsml_program]['types'][$type]);
+        }
+    }
+
+    if (isset($replacements['type'])) {
+        $replacements['type'] = implode('/', $replacements['type']);
+    }
+
+    if (count($replacements) > 0) {
+        $url = get_post_type_archive_link('tsml_meeting');
+
+        foreach ($replacements as $key => $value) {
+            $url = add_query_arg($key, $value, $url);
+        }
+
+        wp_redirect($url);
+    }
 }

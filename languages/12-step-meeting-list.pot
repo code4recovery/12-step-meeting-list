@@ -2,14 +2,14 @@
 # This file is distributed under the same license as the 12 Step Meeting List plugin.
 msgid ""
 msgstr ""
-"Project-Id-Version: 12 Step Meeting List 3.16\n"
+"Project-Id-Version: 12 Step Meeting List 3.16.3\n"
 "Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/12-step-meeting-list\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"POT-Creation-Date: 2024-11-02T17:50:02+00:00\n"
+"POT-Creation-Date: 2024-11-02T17:58:04+00:00\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "X-Generator: WP-CLI 2.10.0\n"
 "X-Domain: 12-step-meeting-list\n"
@@ -91,86 +91,86 @@ msgstr ""
 msgid "Either Address or City is required."
 msgstr ""
 
-#: includes/admin_import.php:222
+#: includes/admin_import.php:225
 msgid "Your meeting list is already in sync with the feed."
 msgstr ""
 
-#: includes/admin_import.php:239
-#: includes/functions.php:2387
+#: includes/admin_import.php:242
+#: includes/functions.php:2407
 msgid "Invalid response, <pre>"
 msgstr ""
 
-#: includes/admin_import.php:242
-#: includes/functions.php:2390
+#: includes/admin_import.php:245
+#: includes/functions.php:2410
 msgid "Data source gave an empty response, you might need to try again."
 msgstr ""
 
-#: includes/admin_import.php:247
-#: includes/functions.php:2395
+#: includes/admin_import.php:250
+#: includes/functions.php:2415
 msgid "JSON: no errors."
 msgstr ""
 
-#: includes/admin_import.php:250
-#: includes/functions.php:2398
+#: includes/admin_import.php:253
+#: includes/functions.php:2418
 msgid "JSON: Maximum stack depth exceeded."
 msgstr ""
 
-#: includes/admin_import.php:253
-#: includes/functions.php:2401
+#: includes/admin_import.php:256
+#: includes/functions.php:2421
 msgid "JSON: Underflow or the modes mismatch."
 msgstr ""
 
-#: includes/admin_import.php:256
-#: includes/functions.php:2404
+#: includes/admin_import.php:259
+#: includes/functions.php:2424
 msgid "JSON: Unexpected control character found."
 msgstr ""
 
-#: includes/admin_import.php:259
-#: includes/functions.php:2407
+#: includes/admin_import.php:262
+#: includes/functions.php:2427
 msgid "JSON: Syntax error, malformed JSON."
 msgstr ""
 
-#: includes/admin_import.php:262
-#: includes/functions.php:2410
+#: includes/admin_import.php:265
+#: includes/functions.php:2430
 msgid "JSON: Malformed UTF-8 characters, possibly incorrectly encoded."
 msgstr ""
 
-#: includes/admin_import.php:265
-#: includes/functions.php:2413
+#: includes/admin_import.php:268
+#: includes/functions.php:2433
 msgid "JSON: Unknown error."
 msgstr ""
 
-#: includes/admin_import.php:292
+#: includes/admin_import.php:295
 msgid "Data source removed."
 msgstr ""
 
-#: includes/admin_import.php:320
+#: includes/admin_import.php:323
 msgid "Import Data Sources"
 msgstr ""
 
-#: includes/admin_import.php:323
+#: includes/admin_import.php:326
 msgid ""
-"Data sources are JSON feeds that contain a website's public meeting data. They can be used to aggregate meetings from different sites into a single master list. \n"
+"Data sources are JSON feeds or Google Sheets that contain a website's public meeting data. They can be used to aggregate meetings from different sites into a single master list. \n"
 "\t\t\t\tData sources listed below will pull meeting information into this website. A configurable schedule allows for each enabled data source to be scanned at least once per day looking \n"
 "\t\t\t\tfor updates to the listing. Change Notification email addresses are sent an email when action is required to re-sync a data source with its meeting list information. \n"
 "\t\t\t\tPlease note: records that you intend to maintain on your website should always be imported using the Import CSV feature below. <b>Data Source records will be overwritten when the \n"
 "\t\t\t\tparent data source is refreshed.</b> More information is available at the <a href=\"%s\" target=\"_blank\">Meeting Guide API Specification</a>."
 msgstr ""
 
-#: includes/admin_import.php:335
-msgid "Feed"
+#: includes/admin_import.php:338
+msgid "Source"
 msgstr ""
 
-#: includes/admin_import.php:338
+#: includes/admin_import.php:341
 #: includes/functions.php:340
 msgid "Parent Region"
 msgstr ""
 
-#: includes/admin_import.php:341
+#: includes/admin_import.php:344
 msgid "Change Detection"
 msgstr ""
 
-#: includes/admin_import.php:344
+#: includes/admin_import.php:347
 #: includes/admin_meeting.php:304
 #: includes/functions.php:377
 #: includes/variables.php:1496
@@ -179,256 +179,256 @@ msgstr ""
 msgid "Meetings"
 msgstr ""
 
-#: includes/admin_import.php:347
+#: includes/admin_import.php:350
 msgid "Last Refresh"
 msgstr ""
 
-#: includes/admin_import.php:370
+#: includes/admin_import.php:373
 msgid "Unnamed Feed"
 msgstr ""
 
-#: includes/admin_import.php:377
-#: includes/admin_import.php:383
+#: includes/admin_import.php:380
+#: includes/admin_import.php:386
 msgid "Top-level region"
 msgstr ""
 
-#: includes/admin_import.php:396
+#: includes/admin_import.php:399
 msgid "Disabled"
 msgstr ""
 
-#: includes/admin_import.php:428
+#: includes/admin_import.php:431
 msgid "District or Intergroup Name"
 msgstr ""
 
-#: includes/admin_import.php:439
+#: includes/admin_import.php:442
 msgid "Append regions created by this data source to… (top-level, if none selected)"
 msgstr ""
 
-#: includes/admin_import.php:440
+#: includes/admin_import.php:443
 msgid "Parent Region…"
 msgstr ""
 
-#: includes/admin_import.php:446
+#: includes/admin_import.php:449
 msgid "Change Detection Disabled"
 msgstr ""
 
-#: includes/admin_import.php:446
+#: includes/admin_import.php:449
 msgid "Change Detection Enabled"
 msgstr ""
 
-#: includes/admin_import.php:453
+#: includes/admin_import.php:456
 msgid "Add Data Source"
 msgstr ""
 
-#: includes/admin_import.php:461
+#: includes/admin_import.php:464
 msgid "Import CSV"
 msgstr ""
 
-#: includes/admin_import.php:468
+#: includes/admin_import.php:471
 msgid "When importing..."
 msgstr ""
 
-#: includes/admin_import.php:471
+#: includes/admin_import.php:474
 msgid "don't delete anything"
 msgstr ""
 
-#: includes/admin_import.php:472
+#: includes/admin_import.php:475
 msgid "delete only the meetings, locations, and groups for the regions present in this CSV"
 msgstr ""
 
-#: includes/admin_import.php:473
+#: includes/admin_import.php:476
 msgid "delete all meetings, locations, groups, districts, and regions"
 msgstr ""
 
-#: includes/admin_import.php:476
+#: includes/admin_import.php:479
 msgid "delete all meetings, locations, and groups not from a data source"
 msgstr ""
 
-#: includes/admin_import.php:486
+#: includes/admin_import.php:489
 msgid "Begin"
 msgstr ""
 
-#: includes/admin_import.php:492
+#: includes/admin_import.php:495
 msgid "Example CSV"
 msgstr ""
 
-#: includes/admin_import.php:497
+#: includes/admin_import.php:500
 msgid "Example spreadsheet"
 msgstr ""
 
-#: includes/admin_import.php:505
+#: includes/admin_import.php:508
 msgid "<strong>Time</strong>, if present, should be in a standard date format such as 6:00 AM or 06:00. Non-standard or empty dates will be imported as \"by appointment.\""
 msgstr ""
 
-#: includes/admin_import.php:508
+#: includes/admin_import.php:511
 msgid "<strong>End Time</strong>, if present, should be in a standard date format such as <code>6:00 AM</code> or <code>06:00</code>."
 msgstr ""
 
-#: includes/admin_import.php:511
+#: includes/admin_import.php:514
 msgid "<strong>Day</strong> if present, should either <code>Sunday</code>, <code>Monday</code>, <code>Tuesday</code>, <code>Wednesday</code>, <code>Thursday</code>, <code>Friday</code>, or <code>Saturday</code>. Meetings that occur on multiple days should be listed separately. 'Daily' or 'Mondays' will not work. Non-standard days will be imported as \"by appointment.\""
 msgstr ""
 
-#: includes/admin_import.php:514
+#: includes/admin_import.php:517
 msgid "<strong>Name</strong> is the name of the meeting, and is optional, although it's valuable information for the user. If it's missing, a name will be created by combining the location, day, and time."
 msgstr ""
 
-#: includes/admin_import.php:517
+#: includes/admin_import.php:520
 msgid "<strong>Slug</strong> optional, and sets the meeting post's \"slug\" or unique string, which is used in the URL. This should be unique to the meeting. Setting this helps preserve user bookmarks."
 msgstr ""
 
-#: includes/admin_import.php:520
+#: includes/admin_import.php:523
 msgid "<strong>Location</strong> is the name of the location, and is optional. Generally it's the group or building name. If it's missing, the address will be used. In the event that there are multiple location names for the same address, the first location name will be used."
 msgstr ""
 
-#: includes/admin_import.php:523
+#: includes/admin_import.php:526
 msgid "<strong>Address</strong> is strongly encouraged and will be corrected by Google, so it may look different afterward. Ideally, every address for the same location should be exactly identical, and not contain extra information about the address, such as the building name or descriptors like \"around back.\""
 msgstr ""
 
-#: includes/admin_import.php:526
+#: includes/admin_import.php:529
 msgid "If <strong>Address</strong> is specified, then <strong>City</strong>, <strong>State</strong>, and <strong>Country</strong> are optional, but they might be useful if your addresses sound ambiguous to Google. If address is not specified, then these fields are required."
 msgstr ""
 
-#: includes/admin_import.php:529
+#: includes/admin_import.php:532
 msgid "<strong>Notes</strong> are freeform notes that are specific to the meeting. For example, <code>last Saturday is birthday night</code>."
 msgstr ""
 
-#: includes/admin_import.php:532
+#: includes/admin_import.php:535
 msgid "<strong>Conference URL</strong> is an optional URL to a specific public videoconference meeting. This should be a common videoconferencing service such as Zoom or Google Hangouts. It should launch directly into the meeting and not link to an intermediary page."
 msgstr ""
 
-#: includes/admin_import.php:535
+#: includes/admin_import.php:538
 msgid "<strong>Conference URL Notes</strong> is an optional string which contains metadata about the Conference URL (e.g. meeting password in plain text for those groups unwilling to publish a one-tap URL)."
 msgstr ""
 
-#: includes/admin_import.php:538
+#: includes/admin_import.php:541
 msgid "<strong>Conference Phone</strong> is the telephone number to dial into a specific meeting. Should be numeric, except a plus('+') symbol may be used for international dialers, and the comma(','), asterisk('*'), and pound('#') symbols can be used to form one-tap phone links."
 msgstr ""
 
-#: includes/admin_import.php:541
+#: includes/admin_import.php:544
 msgid "<strong>Conference Phone Notes</strong> is an optional string with metadata about the 'Conference Phone' (e.g. a numeric meeting password or other user instructions)."
 msgstr ""
 
-#: includes/admin_import.php:544
+#: includes/admin_import.php:547
 msgid "<strong>Region</strong> is user-defined and can be anything. Often this is a small municipality or neighborhood. Since these go in a dropdown, ideally you would have 10 to 20 regions, although it's ok to be over or under."
 msgstr ""
 
-#: includes/admin_import.php:547
+#: includes/admin_import.php:550
 msgid "<strong>Sub Region</strong> makes the Region hierarchical; in San Jose we have sub regions for East San Jose, West San Jose, etc. New York City might have Manhattan be a Region, and Greenwich Village be a Sub Region."
 msgstr ""
 
-#: includes/admin_import.php:550
+#: includes/admin_import.php:553
 msgid "<strong>Location Notes</strong> are freeform notes that will show up on every meeting that this location. For example, \"Enter from the side.\""
 msgstr ""
 
-#: includes/admin_import.php:553
+#: includes/admin_import.php:556
 msgid "<strong>Group</strong> is a way of grouping contacts. Meetings with the same group name will be linked and share contact information."
 msgstr ""
 
-#: includes/admin_import.php:556
+#: includes/admin_import.php:559
 msgid "<strong>District</strong> is user-defined and can be anything, but should be a string rather than an integer (e.g. <b>District 01</b> rather than <b>1</b>). A group name must also be specified."
 msgstr ""
 
-#: includes/admin_import.php:559
+#: includes/admin_import.php:562
 msgid "<strong>Sub District</strong> makes the District hierachical."
 msgstr ""
 
-#: includes/admin_import.php:562
+#: includes/admin_import.php:565
 msgid "<strong>Group Notes</strong> is for stuff like a short group history, or when the business meeting meets."
 msgstr ""
 
-#: includes/admin_import.php:565
+#: includes/admin_import.php:568
 msgid "<strong>Website</strong> and <strong>Website 2</strong> are optional."
 msgstr ""
 
-#: includes/admin_import.php:568
+#: includes/admin_import.php:571
 msgid "<strong>Email</strong> is optional. This is a public email address."
 msgstr ""
 
-#: includes/admin_import.php:571
+#: includes/admin_import.php:574
 msgid "<strong>Phone</strong> is optional. This is a public phone number."
 msgstr ""
 
-#: includes/admin_import.php:574
+#: includes/admin_import.php:577
 msgid "<strong>Venmo</strong> is an optional string and should be a valid Venmo handle, (e.g. <code>@AAGroupName</code>). This is understood to be the address for 7th Tradition contributions to the meeting, and not any other entity."
 msgstr ""
 
-#: includes/admin_import.php:577
+#: includes/admin_import.php:580
 msgid "<strong>Square</strong> is an optional string and should be a valid Square Cash App cashtag, (e.g. <code>$AAGroupName</code>). This is understood to be the address for 7th Tradition contributions to the meeting, and not any other entity."
 msgstr ""
 
-#: includes/admin_import.php:580
+#: includes/admin_import.php:583
 msgid "<strong>PayPal</strong> is an optional string and should be a valid PayPal username, (e.g. <code>AAGroupName</code>). This is understood to be the address for 7th Tradition contributions to the meeting, and not any other entity."
 msgstr ""
 
-#: includes/admin_import.php:583
+#: includes/admin_import.php:586
 msgid "<strong>URL</strong> is optional and should point to the meeting's listing on the area website."
 msgstr ""
 
-#: includes/admin_import.php:586
+#: includes/admin_import.php:589
 msgid "<strong>Feedback URL</strong> is an optional string URL that can be used to provide feedback about the meeting. These could be local links (e.g. <code>https://mywebsite.org/feedback?meeting=meeting-slug-1</code>), remote links (e.g. <code>https://typeform.com/to/23904203?meeting=meeting-slug-1</code>), or email links (e.g. <code>mailto:webservant@domain.org?subject=meeting-slug-1</code>)."
 msgstr ""
 
-#: includes/admin_import.php:589
+#: includes/admin_import.php:592
 msgid "<strong>Edit URL</strong> is an optional string URL that trusted servants can use to edit the specific meeting's listing."
 msgstr ""
 
-#: includes/admin_import.php:592
+#: includes/admin_import.php:595
 msgid "<strong>Contact 1/2/3 Name/Email/Phone</strong> (nine fields in total) are all optional. By default, contact information is only visible inside the WordPress dashboard."
 msgstr ""
 
-#: includes/admin_import.php:595
+#: includes/admin_import.php:598
 msgid "<strong>Last Contact</strong> is an optional date."
 msgstr ""
 
-#: includes/admin_import.php:599
+#: includes/admin_import.php:602
 msgid "<strong>Types</strong> should be a comma-separated list of the following options. This list is determined by which program is selected on the Settings tab."
 msgstr ""
 
-#: includes/admin_import.php:630
+#: includes/admin_import.php:633
 msgid "Where's My Info?"
 msgstr ""
 
-#: includes/admin_import.php:634
+#: includes/admin_import.php:637
 msgid "Your public meetings page is <a href=\"%s\">right here</a>. Link that page from your site's nav menu to make it visible to the public."
 msgstr ""
 
-#: includes/admin_import.php:642
+#: includes/admin_import.php:645
 msgid "You have:"
 msgstr ""
 
-#: includes/admin_import.php:647
+#: includes/admin_import.php:650
 #: includes/ajax.php:668
 msgid "%s meeting"
 msgid_plural "%s meetings"
 msgstr[0] ""
 msgstr[1] ""
 
-#: includes/admin_import.php:650
+#: includes/admin_import.php:653
 #: includes/ajax.php:669
 msgid "%s location"
 msgid_plural "%s locations"
 msgstr[0] ""
 msgstr[1] ""
 
-#: includes/admin_import.php:653
+#: includes/admin_import.php:656
 #: includes/ajax.php:670
 msgid "%s group"
 msgid_plural "%s groups"
 msgstr[0] ""
 msgstr[1] ""
 
-#: includes/admin_import.php:656
+#: includes/admin_import.php:659
 #: includes/ajax.php:671
 msgid "%s region"
 msgid_plural "%s regions"
 msgstr[0] ""
 msgstr[1] ""
 
-#: includes/admin_import.php:666
+#: includes/admin_import.php:669
 msgid "Export Meeting List"
 msgstr ""
 
-#: includes/admin_import.php:682
+#: includes/admin_import.php:685
 msgid "Want to send a mass email to your contacts? <a href=\"%s\" target=\"_blank\">Click here</a> to see their email addresses."
 msgstr ""
 
@@ -1135,7 +1135,7 @@ msgid "Thank you for your feedback."
 msgstr ""
 
 #: includes/ajax.php:323
-#: includes/functions.php:2377
+#: includes/functions.php:2397
 msgid "Error: %s"
 msgstr ""
 
@@ -1415,67 +1415,75 @@ msgstr ""
 msgid "Midnight"
 msgstr ""
 
-#: includes/functions.php:1684
-msgid "Meeting Location"
+#: includes/functions.php:1559
+msgid "You can now add a Google Sheet directly to TSML. Please replace this feed with the Sheet URL. We will be dropping support for the Google Sheets API in a future release."
 msgstr ""
 
-#: includes/functions.php:1697
-msgid "%s by Appointment"
+#: includes/functions.php:1566
+msgid "The following issues were detected with this Google Sheet:"
 msgstr ""
 
 #: includes/functions.php:1701
+msgid "Meeting Location"
+msgstr ""
+
+#: includes/functions.php:1714
+msgid "%s by Appointment"
+msgstr ""
+
+#: includes/functions.php:1718
 msgid "%s %ss at %s"
 msgstr ""
 
-#: includes/functions.php:1993
+#: includes/functions.php:2013
 msgid "District %s"
 msgstr ""
 
-#: includes/functions.php:2148
-#: includes/functions.php:2156
+#: includes/functions.php:2168
+#: includes/functions.php:2176
 msgid "You do not have sufficient permissions to access this page (<code>"
 msgstr ""
 
-#: includes/functions.php:2364
+#: includes/functions.php:2384
 msgid "<p>Please sign in to your website and refresh the <b> %s </b> feed on the Import & Export page.</p><br>"
 msgstr ""
 
-#: includes/functions.php:2367
+#: includes/functions.php:2387
 msgid "Go to Import & Export page"
 msgstr ""
 
-#: includes/functions.php:2371
+#: includes/functions.php:2391
 msgid "Data Source Changes Detected"
 msgstr ""
 
-#: includes/functions.php:2379
+#: includes/functions.php:2399
 msgid "<div class='bg-warning text-dark'>An error occurred while sending email!</div>"
 msgstr ""
 
-#: includes/functions.php:2383
+#: includes/functions.php:2403
 msgid "Send Email: Data Source Changes Detected."
 msgstr ""
 
-#: includes/functions.php:2587
+#: includes/functions.php:2607
 #: templates/single-locations.php:122
 #: templates/single-meetings.php:397
 msgid "Updated"
 msgstr ""
 
-#: includes/functions.php:2588
+#: includes/functions.php:2608
 msgid "Changed"
 msgstr ""
 
-#: includes/functions.php:2600
-#: includes/functions.php:2601
+#: includes/functions.php:2620
+#: includes/functions.php:2621
 msgid "New"
 msgstr ""
 
-#: includes/functions.php:2616
+#: includes/functions.php:2636
 msgid "Removed / Missing"
 msgstr ""
 
-#: includes/functions.php:2617
+#: includes/functions.php:2637
 msgid "Removed"
 msgstr ""
 
