@@ -486,7 +486,7 @@ add_action('save_post', function ($post_id, $post, $update) {
                 }
                 $new = empty($_POST['end_time']) ? '' : tsml_format_time($_POST['end_time'], '');
             } elseif ($field == 'region') {
-                if ($term = get_term($_POST['region'], 'tsml_region')) {
+                if (!empty($_POST['region']) && $term = get_term($_POST['region'], 'tsml_region')) {
                     $new = $term->name;
                 }
                 if ($update && !empty($old_meeting->region)) {
@@ -500,10 +500,12 @@ add_action('save_post', function ($post_id, $post, $update) {
                     $old = $old_meeting->district;
                 }
             } else {
-                if ($update) {
+                if ($update && !empty($old_meeting->{$field})) {
                     $old = $old_meeting->{$field};
                 }
-                $new = $_POST[$field];
+                if (!empty($_POST[$field])) {
+                    $new = $_POST[$field];
+                }
             }
 
             if (in_array($field, $changes)) {
@@ -520,6 +522,5 @@ add_action('save_post', function ($post_id, $post, $update) {
         $subject = $update ? __('Meeting Change Notification', '12-step-meeting-list') : __('New Meeting Notification', '12-step-meeting-list');
         $subject .= ': ' . sanitize_text_field($_POST['post_title']);
         tsml_email($tsml_notification_addresses, $subject, $message);
-
     }
 }, 10, 3);
