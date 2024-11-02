@@ -11,7 +11,6 @@ function tsml_about_message() {
     </p>
     <p><strong><?php _e('Support Our Mission with a Monthly or Yearly Contribution!')?></strong></p>
     <p><?php _e('Your donations help cover hosting fees, content delivery, geocoding, and other essential services that enable recovery communities to thrive. Every contribution makes a difference.')?></p>
-    <p><?php _e('Our recommended donation for the use of 12 Step Meeting List is $20/year, but all contributions are appreciated!')?></p>
     <p>
         <a href="https://wordpress.org/plugins/12-step-meeting-list/#faq-header" target="_blank" class="button">
             <?php _e('View Documentation', '12-step-meeting-list') ?>
