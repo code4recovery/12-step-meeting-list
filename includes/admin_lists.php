@@ -2,6 +2,7 @@
 
 # Adding region dropdown to filter
 add_action('restrict_manage_posts', function ($post_type) {
+    global $tsml_program, $tsml_programs, $tsml_types_in_use;
 
     if ($post_type !== 'tsml_meeting') {
         return;
@@ -16,6 +17,19 @@ add_action('restrict_manage_posts', function ($post_type) {
         'taxonomy' => 'tsml_region',
         'hide_if_empty' => true,
     ]);
+
+    $types = [];
+    foreach ($tsml_types_in_use as $type) {
+        $types[$type] = $tsml_programs[$tsml_program]['types'][$type];
+    }
+    asort($types);
+
+    echo '<select name="type">';
+    echo '<option value="">' . _e('Type', '12-step-meeting-list') . '</option>';
+    foreach ($types as $key => $value) {
+        echo '<option value="' . $key . '"' . selected(isset($_GET['type']) && $_GET['type'] == $key) . '>' . $value . '</option>';
+    }
+    echo '</select>';
 }, 10, 1);
 
 # If filter is set, restrict results
@@ -24,17 +38,30 @@ add_filter(
     function ($query) {
         global $post_type, $pagenow, $wpdb;
 
-        if (!empty($_GET['region']) && $pagenow === 'edit.php' && $post_type === 'tsml_meeting' && $query->is_main_query()) {
-            $parent_ids = $wpdb->get_col(
-                $wpdb->prepare(
-                    "SELECT p.ID FROM $wpdb->posts p 
+        if ($pagenow === 'edit.php' && $post_type === 'tsml_meeting' && $query->is_main_query()) {
+
+            if (!empty($_GET['region'])) {
+                $parent_ids = $wpdb->get_col(
+                    $wpdb->prepare(
+                        "SELECT p.ID FROM $wpdb->posts p 
 	                    JOIN $wpdb->term_relationships r ON r.object_id = p.ID 
 	                    JOIN $wpdb->term_taxonomy x ON x.term_taxonomy_id = r.term_taxonomy_id 
 	                    WHERE x.term_id = %d",
-                    intval(sanitize_text_field($_GET['region']))
-                )
-            );
-            $query->query_vars['post_parent__in'] = empty($parent_ids) ? [0] : $parent_ids;
+                        intval(sanitize_text_field($_GET['region']))
+                    )
+                );
+                $query->query_vars['post_parent__in'] = empty($parent_ids) ? [0] : $parent_ids;
+            }
+
+            if (!empty($_GET['type'])) {
+                $query->set('meta_query', [
+                    [
+                        'key' => 'types',
+                        'value' => '"' . sanitize_text_field($_GET['type']) . '"',
+                        'compare' => 'LIKE',
+                    ],
+                ]);
+            }
         }
     }
 );
