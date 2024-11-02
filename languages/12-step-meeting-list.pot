@@ -2,14 +2,14 @@
 # This file is distributed under the same license as the 12 Step Meeting List plugin.
 msgid ""
 msgstr ""
-"Project-Id-Version: 12 Step Meeting List 3.16.2\n"
+"Project-Id-Version: 12 Step Meeting List 3.16.3\n"
 "Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/trunk\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"POT-Creation-Date: 2024-10-26T17:13:30+00:00\n"
+"POT-Creation-Date: 2024-11-02T23:48:58+00:00\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "X-Generator: WP-CLI 2.10.0\n"
 "X-Domain: 12-step-meeting-list\n"
@@ -96,47 +96,47 @@ msgid "Your meeting list is already in sync with the feed."
 msgstr ""
 
 #: includes/admin_import.php:242
-#: includes/functions.php:2382
+#: includes/functions.php:2407
 msgid "Invalid response, <pre>"
 msgstr ""
 
 #: includes/admin_import.php:245
-#: includes/functions.php:2385
+#: includes/functions.php:2410
 msgid "Data source gave an empty response, you might need to try again."
 msgstr ""
 
 #: includes/admin_import.php:250
-#: includes/functions.php:2390
+#: includes/functions.php:2415
 msgid "JSON: no errors."
 msgstr ""
 
 #: includes/admin_import.php:253
-#: includes/functions.php:2393
+#: includes/functions.php:2418
 msgid "JSON: Maximum stack depth exceeded."
 msgstr ""
 
 #: includes/admin_import.php:256
-#: includes/functions.php:2396
+#: includes/functions.php:2421
 msgid "JSON: Underflow or the modes mismatch."
 msgstr ""
 
 #: includes/admin_import.php:259
-#: includes/functions.php:2399
+#: includes/functions.php:2424
 msgid "JSON: Unexpected control character found."
 msgstr ""
 
 #: includes/admin_import.php:262
-#: includes/functions.php:2402
+#: includes/functions.php:2427
 msgid "JSON: Syntax error, malformed JSON."
 msgstr ""
 
 #: includes/admin_import.php:265
-#: includes/functions.php:2405
+#: includes/functions.php:2430
 msgid "JSON: Malformed UTF-8 characters, possibly incorrectly encoded."
 msgstr ""
 
 #: includes/admin_import.php:268
-#: includes/functions.php:2408
+#: includes/functions.php:2433
 msgid "JSON: Unknown error."
 msgstr ""
 
@@ -162,7 +162,7 @@ msgid "Source"
 msgstr ""
 
 #: includes/admin_import.php:341
-#: includes/functions.php:315
+#: includes/functions.php:340
 msgid "Parent Region"
 msgstr ""
 
@@ -171,8 +171,9 @@ msgid "Change Detection"
 msgstr ""
 
 #: includes/admin_import.php:347
+#: includes/admin_lists.php:318
 #: includes/admin_meeting.php:304
-#: includes/functions.php:352
+#: includes/functions.php:377
 #: includes/variables.php:1496
 #: templates/archive-meetings.php:199
 #: templates/archive-meetings.php:215
@@ -432,20 +433,24 @@ msgstr ""
 msgid "Want to send a mass email to your contacts? <a href=\"%s\" target=\"_blank\">Click here</a> to see their email addresses."
 msgstr ""
 
-#: includes/admin_lists.php:48
+#: includes/admin_lists.php:28
+msgid "Type"
+msgstr ""
+
+#: includes/admin_lists.php:75
 #: includes/ajax.php:272
-#: includes/functions.php:353
+#: includes/functions.php:378
 #: includes/shortcodes.php:81
 #: includes/variables.php:30
 msgid "Meeting"
 msgstr ""
 
-#: includes/admin_lists.php:49
+#: includes/admin_lists.php:76
 #: includes/admin_meeting.php:60
 msgid "Day"
 msgstr ""
 
-#: includes/admin_lists.php:50
+#: includes/admin_lists.php:77
 #: includes/admin_meeting.php:76
 #: includes/shortcodes.php:80
 #: includes/variables.php:28
@@ -453,24 +458,24 @@ msgstr ""
 msgid "Time"
 msgstr ""
 
-#: includes/admin_lists.php:51
+#: includes/admin_lists.php:78
 #: includes/admin_meeting.php:259
 #: includes/admin_meeting.php:268
 #: includes/ajax.php:293
-#: includes/functions.php:307
+#: includes/functions.php:332
 #: includes/shortcodes.php:83
 #: includes/variables.php:33
 msgid "Region"
 msgstr ""
 
-#: includes/admin_lists.php:52
+#: includes/admin_lists.php:79
 msgid "Date"
 msgstr ""
 
 #. translators: Appt is abbreviation for Appointment
-#: includes/admin_lists.php:74
+#: includes/admin_lists.php:101
 #: includes/admin_meeting.php:70
-#: includes/functions.php:581
+#: includes/functions.php:606
 #: includes/save.php:479
 #: includes/save.php:481
 #: includes/variables.php:1485
@@ -478,7 +483,7 @@ msgstr ""
 msgid "Appointment"
 msgstr ""
 
-#: includes/admin_lists.php:129
+#: includes/admin_lists.php:156
 msgid "Reopen for In Person Attendees"
 msgstr ""
 
@@ -622,7 +627,7 @@ msgstr ""
 
 #: includes/admin_meeting.php:227
 #: includes/ajax.php:285
-#: includes/functions.php:374
+#: includes/functions.php:399
 #: includes/shortcodes.php:82
 msgid "Location"
 msgstr ""
@@ -681,7 +686,7 @@ msgid "Part of a group"
 msgstr ""
 
 #: includes/admin_meeting.php:362
-#: includes/functions.php:403
+#: includes/functions.php:428
 msgid "Group"
 msgstr ""
 
@@ -690,9 +695,9 @@ msgid "Apply this group to all meetings at this location"
 msgstr ""
 
 #: includes/admin_meeting.php:394
-#: includes/functions.php:328
-#: includes/functions.php:329
-#: includes/functions.php:330
+#: includes/functions.php:353
+#: includes/functions.php:354
+#: includes/functions.php:355
 #: includes/variables.php:34
 msgid "District"
 msgstr ""
@@ -766,8 +771,8 @@ msgstr ""
 
 #: includes/admin_menu.php:21
 #: includes/admin_menu.php:22
-#: includes/functions.php:306
-#: includes/functions.php:308
+#: includes/functions.php:331
+#: includes/functions.php:333
 #: includes/variables.php:1499
 msgid "Regions"
 msgstr ""
@@ -785,10 +790,6 @@ msgstr ""
 #: includes/admin_menu.php:43
 #: includes/admin_menu.php:44
 msgid "Settings"
-msgstr ""
-
-#: includes/admin_menu.php:74
-msgid "%1$s is a nonprofit organization of volunteer members building technology services for recovery fellowships, such as AA and Al-Anon. If you need help, please %2$s join our discussion forum%3$s. If you would like to make a tax-deductible contribution, please %4$s visit our website%5$s."
 msgstr ""
 
 #: includes/admin_region.php:19
@@ -891,8 +892,8 @@ msgstr ""
 #: includes/admin_settings.php:469
 #: includes/admin_settings.php:563
 #: includes/admin_settings.php:582
-#: includes/admin_settings.php:673
-#: includes/admin_settings.php:706
+#: includes/admin_settings.php:638
+#: includes/admin_settings.php:671
 msgid "Add"
 msgstr ""
 
@@ -1094,43 +1095,23 @@ msgstr ""
 msgid "About Us"
 msgstr ""
 
-#: includes/admin_settings.php:604
-msgid "This <b>12 Step Meeting List</b> plugin (TSML) is one of the free services offered by the nonprofit organization <b>Code For Recovery</b> whose volunteer members build and maintain technology services for recovery fellowships such as AA and Al-Anon."
-msgstr ""
-
-#: includes/admin_settings.php:616
-msgid "Need Help?"
-msgstr ""
-
-#: includes/admin_settings.php:620
-msgid "To get information about this product or our organization, simply use one of the linked buttons below which are great sources for information and answers."
-msgstr ""
-
-#: includes/admin_settings.php:629
-msgid "View Documentation"
-msgstr ""
-
-#: includes/admin_settings.php:633
-msgid "Ask a Question"
-msgstr ""
-
-#: includes/admin_settings.php:641
+#: includes/admin_settings.php:606
 msgid "Email Addresses"
 msgstr ""
 
-#: includes/admin_settings.php:646
+#: includes/admin_settings.php:611
 msgid "User Feedback Emails"
 msgstr ""
 
-#: includes/admin_settings.php:649
+#: includes/admin_settings.php:614
 msgid "Enable a meeting info feedback form by adding email addresses here."
 msgstr ""
 
-#: includes/admin_settings.php:679
+#: includes/admin_settings.php:644
 msgid "Change Notification Emails"
 msgstr ""
 
-#: includes/admin_settings.php:682
+#: includes/admin_settings.php:647
 msgid "Receive notifications of meeting changes at the email addresses below."
 msgstr ""
 
@@ -1159,7 +1140,7 @@ msgid "Thank you for your feedback."
 msgstr ""
 
 #: includes/ajax.php:323
-#: includes/functions.php:2372
+#: includes/functions.php:2397
 msgid "Error: %s"
 msgstr ""
 
@@ -1171,327 +1152,343 @@ msgstr ""
 msgid "No location information provided for <code>%s</code>."
 msgstr ""
 
-#: includes/functions.php:47
+#: includes/functions.php:10
+msgid "<strong>Code for Recovery</strong> is a nonprofit organization of volunteer members building technology services for recovery fellowships, such as A.A. and Al-Anon."
+msgstr ""
+
+#: includes/functions.php:16
+msgid "View Documentation"
+msgstr ""
+
+#: includes/functions.php:19
+msgid "Request Help"
+msgstr ""
+
+#: includes/functions.php:22
+msgid "Contribute"
+msgstr ""
+
+#: includes/functions.php:72
 #: includes/variables.php:637
 msgid "Sunday"
 msgstr ""
 
-#: includes/functions.php:48
+#: includes/functions.php:73
 #: includes/variables.php:638
 msgid "Monday"
 msgstr ""
 
-#: includes/functions.php:49
+#: includes/functions.php:74
 #: includes/variables.php:639
 msgid "Tuesday"
 msgstr ""
 
-#: includes/functions.php:50
+#: includes/functions.php:75
 #: includes/variables.php:640
 msgid "Wednesday"
 msgstr ""
 
-#: includes/functions.php:51
+#: includes/functions.php:76
 #: includes/variables.php:641
 msgid "Thursday"
 msgstr ""
 
-#: includes/functions.php:52
+#: includes/functions.php:77
 #: includes/variables.php:642
 msgid "Friday"
 msgstr ""
 
-#: includes/functions.php:53
+#: includes/functions.php:78
 #: includes/variables.php:643
 msgid "Saturday"
 msgstr ""
 
-#: includes/functions.php:309
+#: includes/functions.php:334
 msgid "All Regions"
 msgstr ""
 
-#: includes/functions.php:310
+#: includes/functions.php:335
 msgid "Edit Region"
 msgstr ""
 
-#: includes/functions.php:311
+#: includes/functions.php:336
 msgid "View Region"
 msgstr ""
 
-#: includes/functions.php:312
+#: includes/functions.php:337
 msgid "Update Region"
 msgstr ""
 
-#: includes/functions.php:313
+#: includes/functions.php:338
 msgid "Add New Region"
 msgstr ""
 
-#: includes/functions.php:314
+#: includes/functions.php:339
 msgid "New Region"
 msgstr ""
 
-#: includes/functions.php:316
+#: includes/functions.php:341
 msgid "Parent Region:"
 msgstr ""
 
-#: includes/functions.php:317
+#: includes/functions.php:342
 msgid "Search Regions"
 msgstr ""
 
-#: includes/functions.php:318
+#: includes/functions.php:343
 msgid "Popular Regions"
 msgstr ""
 
-#: includes/functions.php:319
+#: includes/functions.php:344
 msgid "No regions found."
 msgstr ""
 
-#: includes/functions.php:331
+#: includes/functions.php:356
 msgid "All Districts"
 msgstr ""
 
-#: includes/functions.php:332
+#: includes/functions.php:357
 msgid "Edit District"
 msgstr ""
 
-#: includes/functions.php:333
+#: includes/functions.php:358
 msgid "View District"
 msgstr ""
 
-#: includes/functions.php:334
+#: includes/functions.php:359
 msgid "Update District"
 msgstr ""
 
-#: includes/functions.php:335
+#: includes/functions.php:360
 msgid "Add New District"
 msgstr ""
 
-#: includes/functions.php:336
+#: includes/functions.php:361
 msgid "New District"
 msgstr ""
 
-#: includes/functions.php:337
+#: includes/functions.php:362
 msgid "Parent Area"
 msgstr ""
 
-#: includes/functions.php:338
+#: includes/functions.php:363
 msgid "Parent Area:"
 msgstr ""
 
-#: includes/functions.php:339
+#: includes/functions.php:364
 msgid "Search Districts"
 msgstr ""
 
-#: includes/functions.php:340
+#: includes/functions.php:365
 msgid "Popular Districts"
 msgstr ""
 
-#: includes/functions.php:341
+#: includes/functions.php:366
 msgid "No districts found."
 msgstr ""
 
-#: includes/functions.php:354
+#: includes/functions.php:379
 msgid "No meetings added yet."
 msgstr ""
 
-#: includes/functions.php:355
+#: includes/functions.php:380
 msgid "Add New Meeting"
 msgstr ""
 
-#: includes/functions.php:356
+#: includes/functions.php:381
 msgid "Search Meetings"
 msgstr ""
 
-#: includes/functions.php:357
+#: includes/functions.php:382
 msgid "Edit Meeting"
 msgstr ""
 
-#: includes/functions.php:358
+#: includes/functions.php:383
 msgid "View Meeting"
 msgstr ""
 
-#: includes/functions.php:373
-#: includes/functions.php:375
+#: includes/functions.php:398
+#: includes/functions.php:400
 #: includes/variables.php:1495
 msgid "Locations"
 msgstr ""
 
-#: includes/functions.php:376
+#: includes/functions.php:401
 msgid "All Locations"
 msgstr ""
 
-#: includes/functions.php:377
+#: includes/functions.php:402
 msgid "Edit Location"
 msgstr ""
 
-#: includes/functions.php:378
+#: includes/functions.php:403
 msgid "View Location"
 msgstr ""
 
-#: includes/functions.php:379
+#: includes/functions.php:404
 msgid "Update Location"
 msgstr ""
 
-#: includes/functions.php:380
+#: includes/functions.php:405
 msgid "Add New Location"
 msgstr ""
 
-#: includes/functions.php:381
+#: includes/functions.php:406
 msgid "New Location"
 msgstr ""
 
-#: includes/functions.php:382
+#: includes/functions.php:407
 msgid "Parent Location"
 msgstr ""
 
-#: includes/functions.php:383
+#: includes/functions.php:408
 msgid "Parent Location:"
 msgstr ""
 
-#: includes/functions.php:384
+#: includes/functions.php:409
 msgid "Search Locations"
 msgstr ""
 
-#: includes/functions.php:385
+#: includes/functions.php:410
 msgid "Popular Locations"
 msgstr ""
 
-#: includes/functions.php:386
+#: includes/functions.php:411
 msgid "No locations found."
 msgstr ""
 
-#: includes/functions.php:402
-#: includes/functions.php:404
+#: includes/functions.php:427
+#: includes/functions.php:429
 #: includes/variables.php:1494
 msgid "Groups"
 msgstr ""
 
-#: includes/functions.php:405
+#: includes/functions.php:430
 msgid "All Groups"
 msgstr ""
 
-#: includes/functions.php:406
+#: includes/functions.php:431
 msgid "Edit Group"
 msgstr ""
 
-#: includes/functions.php:407
+#: includes/functions.php:432
 msgid "View Group"
 msgstr ""
 
-#: includes/functions.php:408
+#: includes/functions.php:433
 msgid "Update Group"
 msgstr ""
 
-#: includes/functions.php:409
+#: includes/functions.php:434
 msgid "Add New Group"
 msgstr ""
 
-#: includes/functions.php:410
+#: includes/functions.php:435
 msgid "New Group"
 msgstr ""
 
-#: includes/functions.php:411
+#: includes/functions.php:436
 msgid "Parent Group"
 msgstr ""
 
-#: includes/functions.php:412
+#: includes/functions.php:437
 msgid "Parent Group:"
 msgstr ""
 
-#: includes/functions.php:413
+#: includes/functions.php:438
 msgid "Search Groups"
 msgstr ""
 
-#: includes/functions.php:414
+#: includes/functions.php:439
 msgid "Popular Groups"
 msgstr ""
 
-#: includes/functions.php:415
+#: includes/functions.php:440
 msgid "No groups found."
 msgstr ""
 
 #. translators: Appt is abbreviation for Appointment
-#: includes/functions.php:581
+#: includes/functions.php:606
 msgid "Appt"
 msgstr ""
 
-#: includes/functions.php:632
+#: includes/functions.php:657
 msgid "Noon"
 msgstr ""
 
-#: includes/functions.php:633
+#: includes/functions.php:658
 msgid "Midnight"
 msgstr ""
 
-#: includes/functions.php:1534
+#: includes/functions.php:1559
 msgid "You can now add a Google Sheet directly to TSML. Please replace this feed with the Sheet URL. We will be dropping support for the Google Sheets API in a future release."
 msgstr ""
 
-#: includes/functions.php:1541
+#: includes/functions.php:1566
 msgid "The following issues were detected with this Google Sheet:"
 msgstr ""
 
-#: includes/functions.php:1676
+#: includes/functions.php:1701
 msgid "Meeting Location"
 msgstr ""
 
-#: includes/functions.php:1689
+#: includes/functions.php:1714
 msgid "%s by Appointment"
 msgstr ""
 
-#: includes/functions.php:1693
+#: includes/functions.php:1718
 msgid "%s %ss at %s"
 msgstr ""
 
-#: includes/functions.php:1988
+#: includes/functions.php:2013
 msgid "District %s"
 msgstr ""
 
-#: includes/functions.php:2143
-#: includes/functions.php:2151
+#: includes/functions.php:2168
+#: includes/functions.php:2176
 msgid "You do not have sufficient permissions to access this page (<code>"
 msgstr ""
 
-#: includes/functions.php:2359
+#: includes/functions.php:2384
 msgid "<p>Please sign in to your website and refresh the <b> %s </b> feed on the Import & Export page.</p><br>"
 msgstr ""
 
-#: includes/functions.php:2362
+#: includes/functions.php:2387
 msgid "Go to Import & Export page"
 msgstr ""
 
-#: includes/functions.php:2366
+#: includes/functions.php:2391
 msgid "Data Source Changes Detected"
 msgstr ""
 
-#: includes/functions.php:2374
+#: includes/functions.php:2399
 msgid "<div class='bg-warning text-dark'>An error occurred while sending email!</div>"
 msgstr ""
 
-#: includes/functions.php:2378
+#: includes/functions.php:2403
 msgid "Send Email: Data Source Changes Detected."
 msgstr ""
 
-#: includes/functions.php:2582
+#: includes/functions.php:2607
 #: templates/single-locations.php:122
 #: templates/single-meetings.php:397
 msgid "Updated"
 msgstr ""
 
-#: includes/functions.php:2583
+#: includes/functions.php:2608
 msgid "Changed"
 msgstr ""
 
-#: includes/functions.php:2595
-#: includes/functions.php:2596
+#: includes/functions.php:2620
+#: includes/functions.php:2621
 msgid "New"
 msgstr ""
 
-#: includes/functions.php:2611
+#: includes/functions.php:2636
 msgid "Removed / Missing"
 msgstr ""
 
-#: includes/functions.php:2612
+#: includes/functions.php:2637
 msgid "Removed"
 msgstr ""
 

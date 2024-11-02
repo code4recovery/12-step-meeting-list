@@ -305,6 +305,9 @@ Yes, you will need to know the key name of the field. Then include an array in y
 * Redirect legacy UI query parameters when using TSML UI [more info](https://github.com/code4recovery/12-step-meeting-list/issues/1461)
 * Import Google Sheets directly [more info](https://github.com/code4recovery/12-step-meeting-list/issues/1348)
 * Test with WordPress 6.7 [more info](https://github.com/code4recovery/12-step-meeting-list/issues/1553)
+* Fix counts on region admin screen [more info](https://github.com/code4recovery/12-step-meeting-list/issues/1204)
+* Filter for meeting types on admin page [more info](https://github.com/code4recovery/12-step-meeting-list/issues/370)
+* Fix TSML UI widget layout on some themes [more info](https://github.com/code4recovery/12-step-meeting-list/issues/1427)
 
 = 3.16.2 =
 * Fix bug when importing types from CSV [more info](https://github.com/code4recovery/12-step-meeting-list/issues/1544)

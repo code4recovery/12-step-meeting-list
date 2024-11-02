@@ -2,6 +2,7 @@
 
 # Adding region dropdown to filter
 add_action('restrict_manage_posts', function ($post_type) {
+    global $tsml_program, $tsml_programs, $tsml_types_in_use;
 
     if ($post_type !== 'tsml_meeting') {
         return;
@@ -16,6 +17,19 @@ add_action('restrict_manage_posts', function ($post_type) {
         'taxonomy' => 'tsml_region',
         'hide_if_empty' => true,
     ]);
+
+    $types = [];
+    foreach ($tsml_types_in_use as $type) {
+        $types[$type] = $tsml_programs[$tsml_program]['types'][$type];
+    }
+    asort($types);
+
+    echo '<select name="type">';
+    echo '<option value="">' . _e('Type', '12-step-meeting-list') . '</option>';
+    foreach ($types as $key => $value) {
+        echo '<option value="' . $key . '"' . selected(isset($_GET['type']) && $_GET['type'] == $key) . '>' . $value . '</option>';
+    }
+    echo '</select>';
 }, 10, 1);
 
 # If filter is set, restrict results
@@ -24,17 +38,30 @@ add_filter(
     function ($query) {
         global $post_type, $pagenow, $wpdb;
 
-        if (!empty($_GET['region']) && $pagenow === 'edit.php' && $post_type === 'tsml_meeting' && $query->is_main_query()) {
-            $parent_ids = $wpdb->get_col(
-                $wpdb->prepare(
-                    "SELECT p.ID FROM $wpdb->posts p 
+        if ($pagenow === 'edit.php' && $post_type === 'tsml_meeting' && $query->is_main_query()) {
+
+            if (!empty($_GET['region'])) {
+                $parent_ids = $wpdb->get_col(
+                    $wpdb->prepare(
+                        "SELECT p.ID FROM $wpdb->posts p 
 	                    JOIN $wpdb->term_relationships r ON r.object_id = p.ID 
 	                    JOIN $wpdb->term_taxonomy x ON x.term_taxonomy_id = r.term_taxonomy_id 
 	                    WHERE x.term_id = %d",
-                    intval(sanitize_text_field($_GET['region']))
-                )
-            );
-            $query->query_vars['post_parent__in'] = empty($parent_ids) ? [0] : $parent_ids;
+                        intval(sanitize_text_field($_GET['region']))
+                    )
+                );
+                $query->query_vars['post_parent__in'] = empty($parent_ids) ? [0] : $parent_ids;
+            }
+
+            if (!empty($_GET['type'])) {
+                $query->set('meta_query', [
+                    [
+                        'key' => 'types',
+                        'value' => '"' . sanitize_text_field($_GET['type']) . '"',
+                        'compare' => 'LIKE',
+                    ],
+                ]);
+            }
         }
     }
 );
@@ -200,9 +227,13 @@ add_filter('handle_bulk_actions-edit-tsml_meeting', function ($redirect, $doacti
         foreach ($object_ids as $post_id) {
             $meeting = tsml_get_meeting($post_id);
 
-            if ($meeting->attendance_option == 'in_person' || $meeting->attendance_option == 'hybrid') continue;
+            if ($meeting->attendance_option == 'in_person' || $meeting->attendance_option == 'hybrid') {
+                continue;
+            }
 
-            if (empty($meeting->formatted_address) || tsml_geocode($meeting->formatted_address)['approximate'] != 'no') continue;
+            if (empty($meeting->formatted_address) || tsml_geocode($meeting->formatted_address)['approximate'] != 'no') {
+                continue;
+            }
 
             // For each select post, remove TC if it's selected in "types"
             $types = get_post_meta($post_id, 'types', false)[0];
@@ -263,3 +294,46 @@ add_action(
         }
     }
 );
+
+// special global var to store region counts
+$tsml_region_counts = [];
+
+// customizing the "count" column for regions - would be nice if we could use the existing 'posts' column for sorting
+add_filter('manage_edit-tsml_region_columns', function ($columns) {
+    global $wpdb, $tsml_region_counts;
+
+    // get region meeting counts (regions are associated with locations, not meetings)
+    $results = $wpdb->get_results('SELECT 
+        x.term_id, 
+        (SELECT COUNT(*) FROM ' . $wpdb->posts . ' p WHERE p.post_parent IN 
+            (SELECT tr.object_id FROM ' . $wpdb->term_relationships . ' tr WHERE tr.term_taxonomy_id = x.term_taxonomy_id )
+        ) AS meetings
+        FROM wp_term_taxonomy x
+        WHERE x.taxonomy = "tsml_region"');
+    foreach ($results as $result) {
+        $tsml_region_counts[$result->term_id] = $result->meetings;
+    }
+
+    unset($columns['posts']);
+    $columns['meetings'] = __('Meetings', '12-step-meeting-list');
+    return $columns;
+});
+
+// customizing the "count" column for regions
+add_action('manage_tsml_region_custom_column', function ($string, $column_name, $term_id) {
+    global $tsml_region_counts;
+    if ($column_name === 'meetings') {
+        $term = get_term($term_id, 'tsml_region');
+        $query = http_build_query([
+            'post_status' => 'all',
+            'post_type' => 'tsml_meeting',
+            'region' => $term->term_id,
+            'filter_action' => 'Filter',
+            'paged' => 1,
+        ]);
+        return '<a href="' . admin_url("edit.php?$query") . '">' .
+            array_key_exists($term->term_id, $tsml_region_counts) ? $tsml_region_counts[$term->term_id] : '' .
+            '</a>';
+    }
+    return $string;
+}, 10, 3);

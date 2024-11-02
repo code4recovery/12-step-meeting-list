@@ -1,5 +1,30 @@
 <?php
 
+function tsml_about_message() {
+    tsml_assets();
+    ?>
+    <p>
+        <a href="https://code4recovery.org/" target="_blank" class="logo">
+            <img src="<?php echo plugin_dir_url(__FILE__) . '../assets/img/code4recovery.svg'; ?>" alt="Code for Recovery">
+        </a>
+        <?php _e('<strong>Code for Recovery</strong> is a nonprofit organization of volunteer members building technology services for recovery fellowships, such as A.A. and Al-Anon.', '12-step-meeting-list') ?>
+    </p>
+    <p><strong><?php _e('Support our mission with a recurring contribution!')?></strong></p>
+    <p><?php _e('Your donations help cover hosting fees, content delivery, geocoding, and other essential services that enable recovery communities to thrive. Every contribution makes a difference.')?></p>
+    <p>
+        <a href="https://wordpress.org/plugins/12-step-meeting-list/#faq-header" target="_blank" class="button">
+            <?php _e('View Documentation', '12-step-meeting-list') ?>
+        </a>
+        <a href="https://github.com/code4recovery/12-step-meeting-list/discussions" target="_blank" class="button">
+            <?php _e('Request Help', '12-step-meeting-list') ?>
+        </a>
+        <a href="https://code4recovery.org/contribute" target="_blank" class="button button-primary">
+            <?php _e('Contribute', '12-step-meeting-list') ?>
+        </a>
+    </p>
+    <?php
+}
+
 //function:	add an admin screen update message
 //used:		tsml_import() and admin_types.php
 //$type:	can be success, warning, info, or error
