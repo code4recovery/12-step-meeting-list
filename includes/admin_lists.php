@@ -25,7 +25,7 @@ add_action('restrict_manage_posts', function ($post_type) {
     asort($types);
 
     echo '<select name="type">';
-    echo '<option value="">' . _e('Type', '12-step-meeting-list') . '</option>';
+    echo '<option value="">' . __('Type', '12-step-meeting-list') . '</option>';
     foreach ($types as $key => $value) {
         echo '<option value="' . $key . '"' . selected(isset($_GET['type']) && $_GET['type'] == $key) . '>' . $value . '</option>';
     }
