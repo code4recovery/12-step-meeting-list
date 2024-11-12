@@ -23,7 +23,7 @@ add_filter('wp_insert_post_data', function ($post) {
 
 //handle all the metadata, location
 add_action('save_post', function ($post_id, $post, $update) {
-    global $tsml_nonce, $wpdb, $tsml_notification_addresses, $tsml_days, $tsml_contact_fields;
+    global $tsml_nonce, $wpdb, $tsml_notification_addresses, $tsml_days, $tsml_contact_fields, $tsml_export_columns;
 
     //security
     if (defined('DOING_AUTOSAVE') && DOING_AUTOSAVE) {
@@ -161,7 +161,7 @@ add_action('save_post', function ($post_id, $post, $update) {
     }
 
     //compare types
-    if (tsml_program_has_types() && (!$update || implode(', ', $old_meeting->types) != tsml_meeting_types($_POST['types']))) {
+    if (tsml_program_has_types() && (!$update || tsml_meeting_types($old_meeting->types) != tsml_meeting_types($_POST['types']))) {
         $changes[] = 'types';
         if (empty($_POST['types'])) {
             delete_post_meta($post->ID, 'types');
@@ -298,7 +298,7 @@ add_action('save_post', function ($post_id, $post, $update) {
 
     // save timezone
     if (!$update || strcmp($old_meeting->timezone, $_POST['timezone']) !== 0) {
-        $changes[] = 'timezone'	;
+        $changes[] = 'timezone';
         if (!tsml_timezone_is_valid($_POST['timezone'])) {
             delete_post_meta($location_id, 'timezone');
         } else {
@@ -444,7 +444,7 @@ add_action('save_post', function ($post_id, $post, $update) {
     //don't notify for lat / lon changes
     $changes = array_diff($changes, ['latitude', 'longitude']);
 
-    if (count($tsml_notification_addresses) && count($changes)) {
+    if (count($tsml_notification_addresses) && count($changes) && $_POST['post_status'] === 'publish') {
         $message = ' <p>';
         if ($update) {
             $message .= sprintf(__('This is to notify you that %s updated a <a href="%s">meeting</a> on the %s site.', '12-step-meeting-list'), $user->display_name, get_permalink($post->ID), get_bloginfo('name'));
@@ -452,16 +452,12 @@ add_action('save_post', function ($post_id, $post, $update) {
             $message .= sprintf(__('This is to notify you that %s created a <a href="%s">new meeting</a> on the %s site.', '12-step-meeting-list'), $user->display_name, get_permalink($post->ID), get_bloginfo('name'));
         }
         $message .= '</p><table style="font:14px arial;width:100%;border-collapse:collapse;padding:0;">';
-        $fields = array_merge(
-            ['name', 'day', 'time', 'end_time', 'types', 'notes', 'location', 'formatted_address', 'region', 'location_notes', 'group', 'district', 'group_notes'],
-            array_keys($tsml_contact_fields)
-        );
-        foreach ($fields as $field) {
+        foreach ($tsml_export_columns as $field => $field_name) {
             $new = $old = '';
 
             if ($field == 'types') {
                 if ($update) {
-                    $old = implode(', ', $old_meeting->types);
+                    $old = tsml_meeting_types($old_meeting->types);
                 }
                 $new = tsml_meeting_types($_POST['types']);
             } elseif ($field == 'name') {
@@ -490,7 +486,7 @@ add_action('save_post', function ($post_id, $post, $update) {
                 }
                 $new = empty($_POST['end_time']) ? '' : tsml_format_time($_POST['end_time'], '');
             } elseif ($field == 'region') {
-                if ($term = get_term($_POST['region'], 'tsml_region')) {
+                if (!empty($_POST['region']) && $term = get_term($_POST['region'], 'tsml_region')) {
                     $new = $term->name;
                 }
                 if ($update && !empty($old_meeting->region)) {
@@ -504,13 +500,13 @@ add_action('save_post', function ($post_id, $post, $update) {
                     $old = $old_meeting->district;
                 }
             } else {
-                if ($update) {
+                if ($update && !empty($old_meeting->{$field})) {
                     $old = $old_meeting->{$field};
                 }
-                $new = $_POST[$field];
+                if (!empty($_POST[$field])) {
+                    $new = $_POST[$field];
+                }
             }
-
-            $field_name = __(ucwords(str_replace('_', ' ', $field)), '12-step-meeting-list');
 
             if (in_array($field, $changes)) {
                 $message .= '<tr style="border:1px solid #999;background-color:#fff;"><td style="width:150px;padding:5px">' . $field_name . '</td><td style="padding:5px">';
