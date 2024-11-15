@@ -2,7 +2,7 @@
 tsml_header();
 
 // protect against parents using display: flex
-echo '<div>';
+echo '<div style="width: 100%">';
 
 if (is_active_sidebar('tsml_meetings_top')) { ?>
     <div class="widgets meetings-widgets meetings-widgets-top" role="complementary">
