@@ -100,7 +100,7 @@ tsml_header();
                                     </p>
                                     <ul class="meeting-types">
                                         <?php
-                                        $li_marker = '<svg class="icon" width="1em" height="1em" viewBox="0 0 16 16" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+                                        $li_marker = '<svg class="icon" viewBox="0 0 16 16" fill="currentColor">
 													<path fill-rule="evenodd" d="M10.97 4.97a.75.75 0 0 1 1.071 1.05l-3.992 4.99a.75.75 0 0 1-1.08.02L4.324 8.384a.75.75 0 1 1 1.06-1.06l2.094 2.093 3.473-4.425a.236.236 0 0 1 .02-.022z"/>
 												</svg>';
                                         if ($meeting->attendance_option === 'hybrid') {
@@ -141,8 +141,7 @@ tsml_header();
                                         if (!empty($meeting->conference_url) && $provider = tsml_conference_provider($meeting->conference_url)) { ?>
                                             <a class="btn btn-default btn-block" href="<?php echo $meeting->conference_url ?>"
                                                 target="_blank">
-                                                <svg class="icon" width="1em" height="1em" viewBox="0 0 16 16"
-                                                    fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+                                                <svg class="icon" viewBox="0 0 16 16" fill="currentColor">
                                                     <path fill-rule="evenodd"
                                                         d="M2.667 3.5c-.645 0-1.167.522-1.167 1.167v6.666c0 .645.522 1.167 1.167 1.167h6.666c.645 0 1.167-.522 1.167-1.167V4.667c0-.645-.522-1.167-1.167-1.167H2.667zM.5 4.667C.5 3.47 1.47 2.5 2.667 2.5h6.666c1.197 0 2.167.97 2.167 2.167v6.666c0 1.197-.97 2.167-2.167 2.167H2.667A2.167 2.167 0 0 1 .5 11.333V4.667z" />
                                                     <path fill-rule="evenodd"
@@ -159,8 +158,7 @@ tsml_header();
                                         if (!empty($meeting->conference_phone)) { ?>
                                             <a class="btn btn-default btn-block"
                                                 href="tel:<?php echo $meeting->conference_phone ?>">
-                                                <svg class="icon" width="1em" height="1em" viewBox="0 0 16 16"
-                                                    fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+                                                <svg class="icon" viewBox="0 0 16 16" fill="currentColor">
                                                     <path fill-rule="evenodd"
                                                         d="M3.925 1.745a.636.636 0 0 0-.951-.059l-.97.97c-.453.453-.62 1.095-.421 1.658A16.47 16.47 0 0 0 5.49 10.51a16.471 16.471 0 0 0 6.196 3.907c.563.198 1.205.032 1.658-.421l.97-.97a.636.636 0 0 0-.06-.951l-2.162-1.682a.636.636 0 0 0-.544-.115l-2.052.513a1.636 1.636 0 0 1-1.554-.43L5.64 8.058a1.636 1.636 0 0 1-.43-1.554l.513-2.052a.636.636 0 0 0-.115-.544L3.925 1.745zM2.267.98a1.636 1.636 0 0 1 2.448.153l1.681 2.162c.309.396.418.913.296 1.4l-.513 2.053a.636.636 0 0 0 .167.604L8.65 9.654a.636.636 0 0 0 .604.167l2.052-.513a1.636 1.636 0 0 1 1.401.296l2.162 1.681c.777.604.849 1.753.153 2.448l-.97.97c-.693.693-1.73.998-2.697.658a17.47 17.47 0 0 1-6.571-4.144A17.47 17.47 0 0 1 .639 4.646c-.34-.967-.035-2.004.658-2.698l.97-.969z" />
                                                 </svg>
@@ -207,8 +205,7 @@ tsml_header();
                                                 <a id="<?php echo $field ?>-link" class="btn btn-default btn-block"
                                                     href="<?php echo $service['url'] . substr($meeting->{$field}, $service['substr']) ?>"
                                                     target="_blank">
-                                                    <svg class="icon" width="1em" height="1em" viewBox="0 0 16 16"
-                                                        fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+                                                    <svg class="icon" viewBox="0 0 16 16" fill="currentColor">
                                                         <path d="M14 3H1a1 1 0 0 1 1-1h12a1 1 0 0 1 1 1h-1z" />
                                                         <path fill-rule="evenodd"
                                                             d="M15 5H1v8h14V5zM1 4a1 1 0 0 0-1 1v8a1 1 0 0 0 1 1h14a1 1 0 0 0 1-1V5a1 1 0 0 0-1-1H1z" />
@@ -273,8 +270,7 @@ tsml_header();
                                         if (!empty($meeting->website)) { ?>
                                             <a href="<?php echo $meeting->website ?>"
                                                 class="btn btn-default btn-block group-website" target="_blank">
-                                                <svg class="icon" width="1em" height="1em" viewBox="0 0 16 16"
-                                                    fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+                                                <svg class="icon" viewBox="0 0 16 16" fill="currentColor">
                                                     <path
                                                         d="M4.715 6.542L3.343 7.914a3 3 0 1 0 4.243 4.243l1.828-1.829A3 3 0 0 0 8.586 5.5L8 6.086a1.001 1.001 0 0 0-.154.199 2 2 0 0 1 .861 3.337L6.88 11.45a2 2 0 1 1-2.83-2.83l.793-.792a4.018 4.018 0 0 1-.128-1.287z" />
                                                     <path
@@ -290,8 +286,7 @@ tsml_header();
                                         if (!empty($meeting->website_2)) { ?>
                                             <a href="<?php echo $meeting->website_2 ?>"
                                                 class="btn btn-default btn-block group-website_2" target="_blank">
-                                                <svg class="icon" width="1em" height="1em" viewBox="0 0 16 16"
-                                                    fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+                                                <svg class="icon" viewBox="0 0 16 16" fill="currentColor">
                                                     <path
                                                         d="M4.715 6.542L3.343 7.914a3 3 0 1 0 4.243 4.243l1.828-1.829A3 3 0 0 0 8.586 5.5L8 6.086a1.001 1.001 0 0 0-.154.199 2 2 0 0 1 .861 3.337L6.88 11.45a2 2 0 1 1-2.83-2.83l.793-.792a4.018 4.018 0 0 1-.128-1.287z" />
                                                     <path
@@ -359,14 +354,55 @@ tsml_header();
                                     <?php
                                 } ?>
                                 <li class="list-group-item list-group-item-updated">
-                                    <?php _e('Updated', '12-step-meeting-list') ?>
-                                    <?php the_modified_date() ?>
+                                    <?php
+                                    if (!empty($meeting->data_source)) {
+                                        if (!empty($meeting->entity) || !empty($meeting->entity_url)) {
+                                            echo '<p class="meeting-entity-title">' . __('This listing is provided by:', '12-step-meeting-list') . '</p>' . PHP_EOL;
+                                            if (!empty($meeting->entity)) {
+                                                echo '<h3 class="meeting-entity-name">' . $meeting->entity . '</h3>' . PHP_EOL;
+                                            }
+                                            if (!empty($meeting->entity_location)) {
+                                                echo '<p class="meeting-entity-location">' . $meeting->entity_location . '</p>' . PHP_EOL;
+                                            }
+                                            if (!empty($meeting->entity_phone)) {
+                                                ?>
+                                                <a class="btn btn-default btn-block meeting-entity-phone"
+                                                    href="sms:<?php echo esc_attr($meeting->entity_phone); ?>">
+                                                    <svg class="icon" viewBox="0 0 16 16" fill="currentColor">
+                                                        <path
+                                                            d="M3.925 1.745a.636.636 0 0 0-.951-.059l-.97.97c-.453.453-.62 1.095-.421 1.658A16.47 16.47 0 0 0 5.49 10.51a16.471 16.471 0 0 0 6.196 3.907c.563.198 1.205.032 1.658-.421l.97-.97a.636.636 0 0 0-.06-.951l-2.162-1.682a.636.636 0 0 0-.544-.115l-2.052.513a1.636 1.636 0 0 1-1.554-.43L5.64 8.058a1.636 1.636 0 0 1-.43-1.554l.513-2.052a.636.636 0 0 0-.115-.544L3.925 1.745zM2.267.98a1.636 1.636 0 0 1 2.448.153l1.681 2.162c.309.396.418.913.296 1.4l-.513 2.053a.636.636 0 0 0 .167.604L8.65 9.654a.636.636 0 0 0 .604.167l2.052-.513a1.636 1.636 0 0 1 1.401.296l2.162 1.681c.777.604.849 1.753.153 2.448l-.97.97c-.693.693-1.73.998-2.697.658a17.47 17.47 0 0 1-6.571-4.144A17.47 17.47 0 0 1 .639 4.646c-.34-.967-.035-2.004.658-2.698l.97-.969z" />
+                                                    </svg>
+                                                    <?php echo $meeting->entity_phone; ?>
+                                                </a>
+                                                <?php
+                                            }
+                                            if (!empty($meeting->entity_url)) {
+                                                ?>
+                                                <a class="btn btn-default btn-block meeting-entity-phone"
+                                                    href="<?php echo esc_attr($meeting->entity_url); ?>">
+                                                    <svg class="icon" viewBox="0 0 16 16" fill="currentColor">
+                                                        <path
+                                                            d="M6.354 5.5H4a3 3 0 0 0 0 6h3a3 3 0 0 0 2.83-4H9c-.086 0-.17.01-.25.031A2 2 0 0 1 7 10.5H4a2 2 0 1 1 0-4h1.535c.218-.376.495-.714.82-1z" />
+                                                        <path
+                                                            d="M9 5.5a3 3 0 0 0-2.83 4h1.098A2 2 0 0 1 9 6.5h3a2 2 0 1 1 0 4h-1.535a4.02 4.02 0 0 1-.82 1H12a3 3 0 1 0 0-6H9z" />
+                                                    </svg>
+                                                    <?php echo preg_replace('%^https?\:\/+%', '', $meeting->entity_url); ?>
+                                                </a>
+                                                <?php
+                                            }
+                                        }
+                                    }
+                                    ?>
+                                    <p class="meeting-updated">
+                                        <?php _e('Updated', '12-step-meeting-list') ?>
+                                        <?php the_modified_date() ?>
+                                    </p>
                                 </li>
                             </ul>
                         </div>
 
                         <?php
-                        if (!empty($tsml_feedback_addresses)) { ?>
+                        if (!empty($tsml_feedback_addresses) || !empty($meeting->feedback_emails)) { ?>
                             <form id="feedback">
                                 <input type="hidden" name="action" value="tsml_feedback">
                                 <input type="hidden" name="meeting_id" value="<?php echo $meeting->ID ?>">

@@ -107,14 +107,52 @@ add_shortcode('tsml_types_list', function () {
 });
 
 //output a react meeting finder widget https://github.com/code4recovery/tsml-ui
-function tsml_ui()
+function tsml_ui($arguments = [])
 {
     global $tsml_mapbox_key, $tsml_nonce, $tsml_conference_providers, $tsml_language, $tsml_programs, $tsml_program, $tsml_ui_config,
     $tsml_feedback_addresses, $tsml_cache, $tsml_cache_writable, $tsml_distance_units, $tsml_columns, $tsml_timezone;
 
+    $defaults = shortcode_atts([
+        'distance' => '',
+        'mode' => '',
+        'region' => '',
+        'search' => '',
+        'time' => '',
+        'type' => '',
+        'view' => '',
+        'weekday' => '',
+    ], $arguments, 'tsml_ui');
+
+    // sanitize arrays
+    foreach (['region', 'time', 'type', 'weekday'] as $key) {
+        $defaults[$key] = explode(',', $defaults[$key]);
+        $defaults[$key] = array_map('sanitize_title', $defaults[$key]);
+        $defaults[$key] = array_filter($defaults[$key]);
+    }
+
+    // sanitize search
+    $defaults['search'] = sanitize_text_field($defaults['search']);
+
+    // view must either be table or map
+    if (!in_array($defaults['view'], ['table', 'map'])) {
+        $defaults['view'] = 'table';
+    }
+
+    // mode must either be search, location, or me
+    if (!in_array($defaults['mode'], ['search', 'location', 'me'])) {
+        $defaults['mode'] = 'search';
+    }
+
+    // distance must be an integer
+    $defaults['distance'] = intval($defaults['distance']);
+    $defaults['distance'] = in_array($defaults['distance'], [1, 2, 5, 10, 15, 25, 50, 100])
+        ? [strval($defaults['distance'])]
+        : [];
+
+
     //enqueue app script
     $js = defined('TSML_UI_PATH') ? TSML_UI_PATH : 'https://tsml-ui.code4recovery.org/app.js';
-    wp_enqueue_script('tsml_ui', $js, [], false, true);
+    wp_enqueue_script('tsml_ui', $js, [], false, ['in_footer' => true, 'strategy' => 'async']);
 
     //get program types and type descriptions
     $types = !empty($tsml_programs[$tsml_program]['types'])
@@ -131,6 +169,7 @@ function tsml_ui()
         array_merge(
             [
                 'columns' => array_keys($tsml_columns),
+                'defaults' => $defaults,
                 'conference_providers' => $tsml_conference_providers,
                 'distance_unit' => $tsml_distance_units,
                 'feedback_emails' => array_values($tsml_feedback_addresses),

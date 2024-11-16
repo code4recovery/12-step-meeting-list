@@ -8,8 +8,9 @@ h2 {
 	margin: 0;
 }
 
-h3 {
+h3,.h3 {
 	margin-top: 10px !important;
+    font-weight: bold;
 }
 
 p,
@@ -111,14 +112,7 @@ a.button-large {
 	}
 
 	.logo {
-		display: block;
-		float: right;
-		margin: -30px 0 0 10px;
-		img {
-			display: block;
-			height: auto;
-			width: 85px;
-		}
+		margin-top: -30px;
 	}
 
 	details {

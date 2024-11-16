@@ -44,10 +44,17 @@ $tsml_conference_providers = [
     'goto.com' => 'GoTo',
     'gotomeet.me' => 'GoTo',
     'gotomeeting.com' => 'GoTo',
-    'meet.google.com' => 'Google Hangouts',
+    'horizon.meta.com' => 'Virtual Reality',
+    'maps.secondlife.com' => 'Virtual Reality',
+    'meet.google.com' => 'Google Meet',
     'meet.jit.si' => 'Jitsi',
     'meetings.dialpad.com' => 'Dialpad',
+    'signal.group' => 'Signal',
     'skype.com' => 'Skype',
+    'slurl.com' => 'Virtual Reality',
+    'teams.live.com' => 'Teams',
+    'teams.microsoft.com' => 'Teams',
+    'vrchat.com' => 'Virtual Reality',
     'webex.com' => 'WebEx',
     'zoho.com' => 'Zoho',
     'zoom.us' => 'Zoom',
@@ -75,6 +82,23 @@ for ($i = 1; $i <= TSML_GROUP_CONTACT_COUNT; $i++) {
         $tsml_contact_fields['contact_' . $i . '_' . $field] = $field == 'phone' ? 'phone' : 'string';
     }
 }
+
+//define entity fields (stored in option tsml_entity)
+$tsml_entity_fields = [
+    'entity',
+    'entity_email',
+    'entity_phone',
+    'entity_location',
+    'entity_url',
+    //feedback emails is sourced from $tsml_feedback_addresses locally
+    'feedback_emails',
+];
+
+//define meeting fields that are stored as arrays
+$tsml_array_fields = [
+    'types',
+    'feedback_emails',
+];
 
 //empty global curl handle in case we need it
 $tsml_curl_handle = null;

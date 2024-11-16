@@ -3,8 +3,8 @@ Contributors: code4recovery
 Donate link: https://code4recovery.org/contribute
 Requires at least: 3.2
 Requires PHP: 5.6
-Tested up to: 6.6
-Stable tag: 3.15.1
+Tested up to: 6.7
+Stable tag: 3.16.4
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -238,7 +238,7 @@ Yes, you can use `[tsml_meeting_count]`, `[tsml_location_count]`, `[tsml_group_c
 
 Use `[tsml_types_list]` and `[tsml_regions_list]` to output linked lists to your meeting finder.
 
-Use `[tsml_ui]` to display the TSML UI meeting finder.
+Use `[tsml_ui]` to display the TSML UI meeting finder. Optionally you may pass parameters, for example: `[tsml_ui weekday="sunday" type="women,closed"]`
 
 = Are there translations to other languages? =
 It is translated into Polish. If you would like to volunteer to help translate another language, we would be pleased to work with you.
@@ -300,6 +300,32 @@ Yes, you will need to know the key name of the field. Then include an array in y
 1. Edit location
 
 == Changelog ==
+
+= 3.16.4 =
+* Add conference providers [more info](https://github.com/code4recovery/12-step-meeting-list/issues/1564)
+
+= 3.16.3 =
+* Redirect legacy UI query parameters when using TSML UI [more info](https://github.com/code4recovery/12-step-meeting-list/issues/1461)
+* Import Google Sheets directly [more info](https://github.com/code4recovery/12-step-meeting-list/issues/1348)
+* Test with WordPress 6.7 [more info](https://github.com/code4recovery/12-step-meeting-list/issues/1553)
+* Fix counts on region admin screen [more info](https://github.com/code4recovery/12-step-meeting-list/issues/1204)
+* Filter for meeting types on admin page [more info](https://github.com/code4recovery/12-step-meeting-list/issues/370)
+* Fix TSML UI widget layout on some themes [more info](https://github.com/code4recovery/12-step-meeting-list/issues/1427)
+
+= 3.16.2 =
+* Fix bug when importing types from CSV [more info](https://github.com/code4recovery/12-step-meeting-list/issues/1544)
+
+= 3.16.1 =
+* Improve sanitization of imported data [more info](https://github.com/code4recovery/12-step-meeting-list/discussions/1542)
+
+= 3.16 =
+* Add entity description fields to meeting listings [more info](https://github.com/code4recovery/12-step-meeting-list/issues/1498)
+* Add `async` property to TSML UI script tag to fix potential issue with next release [more info](https://github.com/code4recovery/tsml-ui/pull/423)
+
+= 3.15.2 =
+* Improve Zoom URL validation [more info](https://github.com/code4recovery/12-step-meeting-list/issues/1500)
+* Improve PayPal username validation [more info](https://github.com/code4recovery/12-step-meeting-list/issues/1074)
+* Allow `[tsml_ui]` shortcode to accept search and filter parameters [more info](https://github.com/code4recovery/12-step-meeting-list/issues/1511)
 
 = 3.15.1 =
 * Reformat 'Change Detection Email' for better legibility. [more info](https://github.com/code4recovery/12-step-meeting-list/issues/1497)

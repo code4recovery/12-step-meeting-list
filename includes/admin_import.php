@@ -160,23 +160,29 @@ if (!function_exists('tsml_import_page')) {
         if (!empty($_POST['tsml_add_data_source']) && isset($_POST['tsml_nonce']) && wp_verify_nonce($_POST['tsml_nonce'], $tsml_nonce)) {
 
             //sanitize URL, name, parent region id, and Change Detection values
-            $data_source_url = trim(esc_url_raw($_POST['tsml_add_data_source'], array('http', 'https')));
+            $data_source_url = $imported_data_source_url = trim(esc_url_raw($_POST['tsml_add_data_source'], array('http', 'https')));
             $data_source_name = sanitize_text_field($_POST['tsml_add_data_source_name']);
             $data_source_parent_region_id = (int) $_POST['tsml_add_data_source_parent_region_id'];
             $data_source_change_detect = sanitize_text_field($_POST['tsml_add_data_source_change_detect']);
 
+            //use c4r sheets service for Google Sheets URLs
+            if (strpos($data_source_url, 'docs.google.com/spreadsheets') !== false) {
+                $url_parts = explode('/', $data_source_url);
+                $sheet_id = $url_parts[5];
+                $imported_data_source_url = 'https://sheets.code4recovery.org/tsml/' . $sheet_id;
+            }
+
             //initialize variables 
             $import_meetings = $delete_meeting_ids = [];
-            
             //try fetching	
-            $response = wp_safe_remote_get($data_source_url, [
+            $response = wp_safe_remote_get($imported_data_source_url, [
                 'timeout' => 30,
                 'sslverify' => false,
             ]);
             if (is_array($response) && !empty($response['body']) && ($meetings = json_decode($response['body'], true))) {
 
                 //allow reformatting as necessary
-                $meetings = tsml_sanitize_import_meetings($meetings, $data_source_url, $data_source_parent_region_id);
+                $meetings = tsml_sanitize_import_meetings($meetings, $imported_data_source_url, $data_source_parent_region_id);
 
                 //actual meetings to import
                 $import_meetings = array();
@@ -199,9 +205,8 @@ if (!function_exists('tsml_import_page')) {
                     // Create a cron job to run daily when Change Detection is enabled for the new data source
                     if ($data_source_change_detect === 'enabled') {
                         tsml_schedule_import_scan($data_source_url, $data_source_name);
-                    }                    
+                    }
                 } else {
-                    
                     //get updated feed import record set 
                     list($import_meetings, $delete_meeting_ids, $change_log) = tsml_get_changed_import_meetings($meetings, $data_source_url, $data_source_parent_region_id);
 
@@ -209,17 +214,15 @@ if (!function_exists('tsml_import_page')) {
                     if (count($delete_meeting_ids)) {
                         tsml_delete($delete_meeting_ids);
                     }
-                    
                     tsml_delete_orphans();
 
                     if (count($change_log) && $tsml_debug) {
                         $message = tsml_build_import_change_report($data_source_name, $change_log);
                         tsml_alert($message, 'info');
                     }
-                    
                     //empty change log means we're up to date
                     if (!count($change_log)) {
-                        tsml_alert(__('Your meeting list is already in sync with the feed.', '12-step-meeting-list'), 'success');                    
+                        tsml_alert(__('Your meeting list is already in sync with the feed.', '12-step-meeting-list'), 'success');
                     }
 
                     //update data source timestamp
@@ -320,7 +323,7 @@ if (!function_exists('tsml_import_page')) {
                         <?php _e('Import Data Sources', '12-step-meeting-list') ?>
                     </h2>
                     <p>
-                        <?php printf(__('Data sources are JSON feeds that contain a website\'s public meeting data. They can be used to aggregate meetings from different sites into a single master list. 
+                        <?php printf(__('Data sources are JSON feeds or Google Sheets that contain a website\'s public meeting data. They can be used to aggregate meetings from different sites into a single master list. 
 				Data sources listed below will pull meeting information into this website. A configurable schedule allows for each enabled data source to be scanned at least once per day looking 
 				for updates to the listing. Change Notification email addresses are sent an email when action is required to re-sync a data source with its meeting list information. 
 				Please note: records that you intend to maintain on your website should always be imported using the Import CSV feature below. <b>Data Source records will be overwritten when the 
@@ -332,7 +335,7 @@ if (!function_exists('tsml_import_page')) {
                                 <tr>
                                     <th class="small align-center"></th>
                                     <th>
-                                        <?php _e('Feed', '12-step-meeting-list') ?>
+                                        <?php _e('Source', '12-step-meeting-list') ?>
                                     </th>
                                     <th class="align-left">
                                         <?php _e('Parent Region', '12-step-meeting-list') ?>
