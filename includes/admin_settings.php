@@ -133,7 +133,7 @@ if (!function_exists('tsml_settings_page')) {
             if (!is_email($email)) {
                 // theoretically should never get here, because WordPress checks entry first
                 tsml_alert(sprintf(
-                    // translators: %s is the email address that was not found
+                    // translators: %s is the email address that was not valid
                     esc_html__('<code>%s</code> is not a valid email address. Please try again.', '12-step-meeting-list'),
                     $email
                 ), 'error');

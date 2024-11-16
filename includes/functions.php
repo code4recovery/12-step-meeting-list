@@ -1022,7 +1022,7 @@ function tsml_program_has_types()
 function tsml_require_meetings_permission()
 {
     if (!current_user_can(TSML_MEETINGS_PERMISSION)) {
-        // translators: %s is the permission required to edit posts
+        // translators: %s is the permission required
         wp_die(wp_kses(sprintf(__('You do not have sufficient permissions to access this page (<code>%s</code>).', '12-step-meeting-list'), TSML_MEETINGS_PERMISSION), TSML_ALLOWED_HTML));
     }
 }
@@ -1035,7 +1035,7 @@ function tsml_require_meetings_permission()
 function tsml_require_settings_permission()
 {
     if (!current_user_can(TSML_SETTINGS_PERMISSION)) {
-        // translators: %s is the permission required to edit settings
+        // translators: %s is the permission required
         wp_die(wp_kses(sprintf(__('You do not have sufficient permissions to access this page (<code>%s</code>).', '12-step-meeting-list'), TSML_SETTINGS_PERMISSION), TSML_ALLOWED_HTML));
     }
 }
