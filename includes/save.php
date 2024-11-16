@@ -1,14 +1,14 @@
 <?php
 
-//catch meetings without locations and save them as a draft, also format text
+// catch meetings without locations and save them as a draft, also format text
 add_filter('wp_insert_post_data', function ($post) {
     global $tsml_days;
 
-    //sanitize text (remove html, trim)
+    // sanitize text (remove html, trim)
     if ($post['post_type'] == 'tsml_meeting') {
         $post['post_content'] = tsml_sanitize_text_area($post['post_content']);
 
-        //check for blank title. if empty, build one from entered values
+        // check for blank title. if empty, build one from entered values
         if (empty($post['post_title'])) {
             $title = empty($_POST['location']) ? __('New Meeting', '12-step-meeting-list') : $_POST['location'];
             $title .= in_array($_POST['day'], ['0', '1', '2', '3', '4', '5', '6']) ? ' ' . $tsml_days[$_POST['day']] : '';
@@ -21,11 +21,11 @@ add_filter('wp_insert_post_data', function ($post) {
 }, '99', 2);
 
 
-//handle all the metadata, location
+// handle all the metadata, location
 add_action('save_post', function ($post_id, $post, $update) {
     global $tsml_nonce, $wpdb, $tsml_notification_addresses, $tsml_days, $tsml_contact_fields;
 
-    //security
+    // security
     if (defined('DOING_AUTOSAVE') && DOING_AUTOSAVE) {
         return;
     }
@@ -40,10 +40,10 @@ add_action('save_post', function ($post_id, $post, $update) {
     }
     tsml_require_meetings_permission();
 
-    //update is always 1, probably because it's actually 'created' when the edit screen first loads (due to autosave)
+    // update is always 1, probably because it's actually 'created' when the edit screen first loads (due to autosave)
     $update = ($post->post_date !== $post->post_modified);
 
-    //sanitize strings (website, website_2, paypal are not included)
+    // sanitize strings (website, website_2, paypal are not included)
     $strings = ['post_title', 'location', 'formatted_address', 'timezone', 'mailing_address', 'venmo', 'square', 'post_status', 'group', 'last_contact', 'conference_url_notes', 'conference_phone', 'conference_phone_notes'];
     foreach ($strings as $string) {
         if (isset($_POST[$string])) {
@@ -51,7 +51,7 @@ add_action('save_post', function ($post_id, $post, $update) {
         }
     }
 
-    //sanitize textareas
+    // sanitize textareas
     $textareas = ['post_content', 'location_notes', 'group_notes'];
     foreach ($textareas as $textarea) {
         if (isset($_POST[$textarea])) {
@@ -59,7 +59,7 @@ add_action('save_post', function ($post_id, $post, $update) {
         }
     }
 
-    //get current meeting state to compare against
+    // get current meeting state to compare against
     $old_meeting = null;
     if ($update) {
         $old_meeting = tsml_get_meeting($post_id);
@@ -71,7 +71,7 @@ add_action('save_post', function ($post_id, $post, $update) {
         }
     }
 
-    //track changes to meeting
+    // track changes to meeting
     $changes = [];
 
     if (!$update || strcmp($old_meeting->post_title, $_POST['post_title']) !== 0) {
@@ -82,22 +82,22 @@ add_action('save_post', function ($post_id, $post, $update) {
         $changes[] = 'notes';
     }
 
-    //check types for not-array-ness
+    // check types for not-array-ness (happens if program doesn't have types)
     if (empty($_POST['types']) || !is_array($_POST['types'])) {
         $_POST['types'] = [];
-    } //happens if program doesn't have types
+    }
 
-    //don't allow it to be both open and closed
+    // don't allow it to be both open and closed
     if (in_array('C', $_POST['types']) && in_array('O', $_POST['types'])) {
         $_POST['types'] = array_values(array_diff($_POST['types'], ['C']));
     }
 
-    //don't allow it to be both men and women
+    // don't allow it to be both men and women
     if (in_array('M', $_POST['types']) && in_array('W', $_POST['types'])) {
         $_POST['types'] = array_values(array_diff($_POST['types'], ['W']));
     }
 
-    //video conference information (doing this here because it affects types)
+    // video conference information (doing this here because it affects types)
     // If either Conference URL or phone have values, we allow/set type ONL
     $valid_conference_url = null;
     $_POST['types'] = array_values(array_diff($_POST['types'], ['ONL']));
@@ -113,15 +113,15 @@ add_action('save_post', function ($post_id, $post, $update) {
         $_POST['types'][] = 'ONL';
     }
 
-    //re-geocode to determine whether location is approximate
+    // re-geocode to determine whether location is approximate
     $approximate = (empty($_POST['formatted_address']) || tsml_geocode($_POST['formatted_address'])['approximate'] === 'yes');
 
-    //add TC if location is specific and and can't attend in person
+    // add TC if location is specific and and can't attend in person
     if ($_POST['in_person'] === 'no' && !$approximate) {
         $_POST['types'][] = 'TC';
     }
 
-    //video conferencing info
+    // video conferencing info
     if (!$update || @strcmp($old_meeting->conference_url, $valid_conference_url) !== 0) {
         $changes[] = 'conference_url';
         if (empty($valid_conference_url)) {
@@ -160,7 +160,7 @@ add_action('save_post', function ($post_id, $post, $update) {
         }
     }
 
-    //compare types
+    // compare types
     if (tsml_program_has_types() && (!$update || implode(', ', $old_meeting->types) != tsml_meeting_types($_POST['types']))) {
         $changes[] = 'types';
         if (empty($_POST['types'])) {
@@ -170,7 +170,7 @@ add_action('save_post', function ($post_id, $post, $update) {
         }
     }
 
-    //day could be null for appointment meeting
+    // day could be null for appointment meeting
     if (in_array($_POST['day'], ['0', '1', '2', '3', '4', '5', '6'])) {
         if (!$update || !isset($old_meeting->day) || $old_meeting->day != intval($_POST['day'])) {
             $changes[] = 'day';
@@ -197,7 +197,7 @@ add_action('save_post', function ($post_id, $post, $update) {
             }
         }
     } else {
-        //appointment meeting
+        // appointment meeting
         if (!$update || !empty($old_meeting->day) || $old_meeting->day == '0') {
             $changes[] = 'day';
             delete_post_meta($post->ID, 'day');
@@ -212,15 +212,15 @@ add_action('save_post', function ($post_id, $post, $update) {
         }
     }
 
-    //exit here if the location is not ready
+    // exit here if the location is not ready
     if (empty($_POST['formatted_address'])) {
         $location_id = null;
     } else {
 
-        //save location information (set this value or get caught in a loop)
+        // save location information (set this value or get caught in a loop)
         $_POST['post_type'] = 'tsml_location';
 
-        //location name changed?
+        // location name changed?
         if (!$update || $old_meeting->location != $_POST['location']) {
             $changes[] = 'location';
         }
@@ -228,7 +228,7 @@ add_action('save_post', function ($post_id, $post, $update) {
             $changes[] = 'location_notes';
         }
 
-        //see if address is already in the database
+        // see if address is already in the database
         if (
             $locations = get_posts([
                 'post_type' => 'tsml_location',
@@ -254,7 +254,7 @@ add_action('save_post', function ($post_id, $post, $update) {
                 wp_update_post(['ID' => $location_id, 'post_status' => 'publish']);
             }
 
-            //latitude longitude only if updated
+            // latitude longitude only if updated
             foreach (['latitude', 'longitude'] as $field) {
                 if (!$update || $old_meeting->{$field} != $_POST[$field]) {
                     $changes[] = $field;
@@ -263,12 +263,13 @@ add_action('save_post', function ($post_id, $post, $update) {
             }
             update_post_meta($location_id, 'approximate', $approximate ? 'yes' : 'no');
 
-            //update region
+            // update region
             if (!$update || @$old_meeting->region_id != @$_POST['region']) {
                 $changes[] = 'region';
                 if (!empty($_POST['region'])) {
                     wp_set_object_terms($location_id, intval($_POST['region']), 'tsml_region');
                 } else {
+                    // phpcs:ignore
                     wp_remove_object_terms($location_id, get_terms(['taxonomy' => 'tsml_region']), 'tsml_region');
                 }
             }
@@ -280,7 +281,7 @@ add_action('save_post', function ($post_id, $post, $update) {
                 'post_content' => $_POST['location_notes'],
             ]);
 
-            //set latitude, longitude, approximate and region
+            // set latitude, longitude, approximate and region
             update_post_meta($location_id, 'latitude', floatval($_POST['latitude']));
             update_post_meta($location_id, 'longitude', floatval($_POST['longitude']));
             update_post_meta($location_id, 'approximate', $approximate ? 'yes' : 'no');
@@ -289,7 +290,7 @@ add_action('save_post', function ($post_id, $post, $update) {
             }
         }
 
-        //update address & info on location
+        // update address & info on location
         if ($location_id && (!$update || html_entity_decode($old_meeting->formatted_address) != $_POST['formatted_address'])) {
             $changes[] = 'formatted_address';
             update_post_meta($location_id, 'formatted_address', $_POST['formatted_address']);
@@ -298,7 +299,7 @@ add_action('save_post', function ($post_id, $post, $update) {
 
     // save timezone
     if (!$update || strcmp($old_meeting->timezone, $_POST['timezone']) !== 0) {
-        $changes[] = 'timezone'	;
+        $changes[] = 'timezone';
         if (!tsml_timezone_is_valid($_POST['timezone'])) {
             delete_post_meta($location_id, 'timezone');
         } else {
@@ -306,7 +307,7 @@ add_action('save_post', function ($post_id, $post, $update) {
         }
     }
 
-    //set parent on this post (or all meetings at location) without re-triggering the save_posts hook (update 7/25/17: removing post_status from this)
+    // set parent on this post (or all meetings at location) without re-triggering the save_posts hook (update 7/25/17: removing post_status from this)
     if (!$update || ($old_meeting->post_parent != $location_id)) {
         if (empty($_POST['apply_address_to_location'])) {
             $wpdb->query($wpdb->prepare('UPDATE ' . $wpdb->posts . ' SET post_parent = %d WHERE ID = %d', $location_id, $post->ID));
@@ -317,24 +318,24 @@ add_action('save_post', function ($post_id, $post, $update) {
         }
     }
 
-    //location-less meetings should all be drafts
+    // location-less meetings should all be drafts
     $wpdb->query('UPDATE ' . $wpdb->posts . ' SET post_status = "draft" WHERE post_type = "tsml_meeting" AND post_status = "publish" AND post_parent = 0');
 
-    //save group information (set this value or get caught in a loop)
+    // save group information (set this value or get caught in a loop)
     $_POST['post_type'] = 'tsml_group';
 
-    //group name is required for groups, not used for individual meetings
+    // group name is required for groups, not used for individual meetings
     if ($_POST['group_status'] == 'meeting') {
         $_POST['group'] = null;
     }
 
     if (empty($_POST['group'])) {
-        //individual meeting
+        // individual meeting
         $contact_entity_id = $post->ID;
 
         delete_post_meta($post->ID, 'group_id');
 
-        //switching from group
+        // switching from group
         if (!empty($old_meeting->group)) {
             $changes[] = 'group';
             if (!empty($old_meeting->group_notes)) {
@@ -342,7 +343,7 @@ add_action('save_post', function ($post_id, $post, $update) {
             }
         }
     } else {
-        //group
+        // group
         if ($groups = $wpdb->get_results($wpdb->prepare('SELECT ID, post_title, post_content FROM ' . $wpdb->posts . ' WHERE post_type = "tsml_group" AND post_title = "%s" ORDER BY id', stripslashes($_POST['group'])))) {
             $contact_entity_id = $groups[0]->ID;
             if ($groups[0]->post_title != $_POST['group'] || $groups[0]->post_content != $_POST['group_notes']) {
@@ -358,7 +359,7 @@ add_action('save_post', function ($post_id, $post, $update) {
                     'post_content' => $_POST['group_notes'],
                 ]);
             }
-            //update region
+            // update region
             if (!empty($_POST['district'])) {
                 if (!$update || $old_meeting->district_id != $_POST['district']) {
                     $changes[] = 'district';
@@ -382,7 +383,7 @@ add_action('save_post', function ($post_id, $post, $update) {
             }
         }
 
-        //save to meetings(s)
+        // save to meetings(s)
         if ($old_meeting->group_id != $contact_entity_id) {
             if (empty($_POST['apply_group_to_location'])) {
                 update_post_meta($post->ID, 'group_id', $contact_entity_id);
@@ -393,16 +394,16 @@ add_action('save_post', function ($post_id, $post, $update) {
             }
         }
 
-        //switching from individual meeting
+        // switching from individual meeting
         if ($update && empty($old_meeting->group)) {
             foreach ($tsml_contact_fields as $field => $type) {
-                //clear out contact information associated with meeting
+                // clear out contact information associated with meeting
                 delete_post_meta($post->ID, $field);
             }
         }
     }
 
-    //special validation, todo warn user on fail
+    // special validation, todo warn user on fail
     if (!empty($_POST['venmo']) && substr($_POST['venmo'], 0, 1) != '@') {
         $_POST['venmo'] = null;
     }
@@ -413,7 +414,7 @@ add_action('save_post', function ($post_id, $post, $update) {
         $_POST['paypal'] = strtok($_POST['paypal'], '/');
     }
 
-    //loop through and validate each field
+    // loop through and validate each field
     foreach ($tsml_contact_fields as $field => $type) {
         if (!$update || @strcmp($old_meeting->{$field}, $_POST[$field]) !== 0) {
             $changes[] = $field;
@@ -425,31 +426,43 @@ add_action('save_post', function ($post_id, $post, $update) {
         }
     }
 
-    //deleted orphaned locations and groups
+    // deleted orphaned locations and groups
     tsml_delete_orphans();
 
-    //update types in use
+    // update types in use
     tsml_update_types_in_use();
 
-    //update bounds for geocoding
+    // update bounds for geocoding
     tsml_bounds();
 
-    //rebuild cache
+    // rebuild cache
     tsml_cache_rebuild();
 
-    //remove self
+    // remove self
     $user = wp_get_current_user();
     $tsml_notification_addresses = array_diff($tsml_notification_addresses, [$user->user_email]);
 
-    //don't notify for lat / lon changes
+    // don't notify for lat / lon changes
     $changes = array_diff($changes, ['latitude', 'longitude']);
 
     if (count($tsml_notification_addresses) && count($changes)) {
         $message = ' <p>';
         if ($update) {
-            $message .= sprintf(__('This is to notify you that %s updated a <a href="%s">meeting</a> on the %s site.', '12-step-meeting-list'), $user->display_name, get_permalink($post->ID), get_bloginfo('name'));
+            $message .= sprintf(
+                // translators: %1$s is the user's name, %2$s is the meeting URL, %3$s is the site name
+                __('This is to notify you that %1$s updated a <a href="%2$s">meeting</a> on the %3$s site.', '12-step-meeting-list'),
+                $user->display_name,
+                get_permalink($post->ID),
+                get_bloginfo('name')
+            );
         } else {
-            $message .= sprintf(__('This is to notify you that %s created a <a href="%s">new meeting</a> on the %s site.', '12-step-meeting-list'), $user->display_name, get_permalink($post->ID), get_bloginfo('name'));
+            $message .= sprintf(
+                // translators: %1$s is the user's name, %2$s is the meeting URL, %3$s is the site name
+                __('This is to notify you that %1$s created a <a href="%2$s">new meeting</a> on the %3$s site.', '12-step-meeting-list'),
+                $user->display_name,
+                get_permalink($post->ID),
+                get_bloginfo('name')
+            );
         }
         $message .= '</p><table style="font:14px arial;width:100%;border-collapse:collapse;padding:0;">';
         $fields = array_merge(
@@ -481,14 +494,14 @@ add_action('save_post', function ($post_id, $post, $update) {
                 $new = in_array($_POST['day'], ['0', '1', '2', '3', '4', '5', '6']) ? $tsml_days[$_POST['day']] : __('Appointment', '12-step-meeting-list');
             } elseif ($field == 'time') {
                 if ($update) {
-                    $old = empty($old_meeting->time) ? '' : tsml_format_time($old_meeting->time, '');
+                    $old = empty($old_meeting->time) ? '' : tsml_format_time($old_meeting->time);
                 }
-                $new = empty($_POST['time']) ? '' : tsml_format_time($_POST['time'], '');
+                $new = empty($_POST['time']) ? '' : tsml_format_time($_POST['time']);
             } elseif ($field == 'end_time') {
                 if ($update) {
-                    $old = empty($old_meeting->end_time) ? '' : tsml_format_time($old_meeting->end_time, '');
+                    $old = empty($old_meeting->end_time) ? '' : tsml_format_time($old_meeting->end_time);
                 }
-                $new = empty($_POST['end_time']) ? '' : tsml_format_time($_POST['end_time'], '');
+                $new = empty($_POST['end_time']) ? '' : tsml_format_time($_POST['end_time']);
             } elseif ($field == 'region') {
                 if ($term = get_term($_POST['region'], 'tsml_region')) {
                     $new = $term->name;
@@ -510,7 +523,7 @@ add_action('save_post', function ($post_id, $post, $update) {
                 $new = $_POST[$field];
             }
 
-            $field_name = __(ucwords(str_replace('_', ' ', $field)), '12-step-meeting-list');
+            $field_name = ucwords(str_replace('_', ' ', $field));
 
             if (in_array($field, $changes)) {
                 $message .= '<tr style="border:1px solid #999;background-color:#fff;"><td style="width:150px;padding:5px">' . $field_name . '</td><td style="padding:5px">';

@@ -1,29 +1,31 @@
 <?php
 
-//get assets for page
+// get assets for page
 tsml_assets();
 
-//define search dropdown options
+// define search dropdown options
 $modes = [
     'search' => ['title' => __('Search', '12-step-meeting-list'), 'icon' => 'glyphicon glyphicon-search'],
     'location' => ['title' => __('Near Location', '12-step-meeting-list'), 'icon' => 'glyphicon glyphicon-map-marker'],
 ];
-//proximity only enabled over SSL
+// proximity only enabled over SSL
 if (is_ssl()) {
     $modes['me'] = ['title' => __('Near Me', '12-step-meeting-list'), 'icon' => 'glyphicon glyphicon-user'];
 }
 
-//define distance dropdown
+// define distance dropdown
 $distances = [];
 foreach ([1, 2, 5, 10, 25, 50, 100] as $distance) {
     if ($tsml_distance_units == 'mi') {
+        // translators: %d is the distance in miles
         $distances[$distance] = sprintf(_n('Within %d Mile', 'Within %d Miles', $distance, '12-step-meeting-list'), $distance);
     } else {
+        // translators: %d is the distance in kilometers
         $distances[$distance] = sprintf(_n('Within %d Kilometer', 'Within %d Kilometers', $distance, '12-step-meeting-list'), $distance);
     }
 }
 
-//define times dropdown
+// define times dropdown
 $times = [
     'morning' => __('Morning', '12-step-meeting-list'),
     'midday' => __('Midday', '12-step-meeting-list'),
@@ -31,7 +33,7 @@ $times = [
     'night' => __('Night', '12-step-meeting-list'),
 ];
 
-//legacy query string stuff, we don't want to break everyone's links (just yet)
+// legacy query string stuff, we don't want to break everyone's links (just yet)
 if (isset($_GET['d'])) {
     $_GET['tsml-day'] = $_GET['d'];
 }
@@ -60,7 +62,7 @@ extract($tsml_defaults);
 
 $region = $district = null;
 
-//parse query string
+// parse query string
 if (isset($_GET['tsml-query'])) {
     $query = sanitize_text_field(stripslashes($_GET['tsml-query']));
 }
@@ -69,7 +71,7 @@ if (isset($_GET['tsml-region'])) {
     if (term_exists(sanitize_text_field($_GET['tsml-region']), 'tsml_region')) {
         $region = $_GET['tsml-region'];
     } elseif (term_exists(intval($_GET['tsml-region']), 'tsml_region')) {
-        //legacy integer region, redirect
+        // legacy integer region, redirect
         $term = get_term(intval($_GET['tsml-region']), 'tsml_region');
         wp_redirect(add_query_arg('tsml-region', $term->slug));
     } else {
@@ -79,7 +81,7 @@ if (isset($_GET['tsml-region'])) {
     if (term_exists(sanitize_text_field($_GET['tsml-district']), 'tsml_district')) {
         $district = $_GET['tsml-district'];
     } elseif (term_exists(intval($_GET['tsml-district']), 'tsml_district')) {
-        //legacy integer district, redirect
+        // legacy integer district, redirect
         $term = get_term(intval($_GET['tsml-district']), 'tsml_district');
         wp_redirect(add_query_arg('tsml-district', $term->slug));
     } else {
@@ -100,7 +102,6 @@ if (!empty($_GET['tsml-type'])) {
 $attendance_options = [];
 if (!empty($_GET['tsml-attendance_option'])) {
     $attendance_option_queries = explode(',', $_GET['tsml-attendance_option']);
-    // $tsml_meeting_attendance_options['active'] = null;
     foreach ($attendance_option_queries as $attendance_option_query) {
         if ((array_key_exists($attendance_option_query, $tsml_meeting_attendance_options)) || ($attendance_option_query === 'active')) {
             $attendance_options[] = $attendance_option_query;
@@ -130,19 +131,19 @@ if ($tsml_mapbox_key || $tsml_google_maps_key) {
     $view = 'list';
 }
 
-//day default
+// day default
 $today = true;
 if (isset($_GET['tsml-day'])) {
     $today = false;
     $day = ($_GET['tsml-day'] == 'any') ? null : intval($_GET['tsml-day']);
 }
 
-//time can only be upcoming if it's today
+// time can only be upcoming if it's today
 if (($time == 'upcoming') && ($day != intval(current_time('w')))) {
     $time = null;
 }
 
-//labels
+// labels
 $day_default = __('Any Day', '12-step-meeting-list');
 $day_label = ($day === null) ? $day_default : $tsml_days[$day];
 $time_default = __('Any Time', '12-step-meeting-list');
@@ -182,7 +183,7 @@ if (!count($types) && (!count($attendance_options))) {
 $mode_label = array_key_exists($mode, $modes) ? $modes[$mode]['title'] : $modes[0]['title'];
 $distance_label = $distances[$distance];
 
-//create page title (todo redo with sprintf)
+// create page title (todo redo with sprintf)
 $tsml_page_title = [];
 if ($day !== null) {
     $tsml_page_title[] = $today ? __('Today\'s', '12-step-meeting-list') : $tsml_days[$day];
@@ -203,7 +204,7 @@ if ($region) {
 
 $tsml_page_title = implode(' ', $tsml_page_title);
 
-//set page title for SEO (only applies to this page)
+// set page title for SEO (only applies to this page)
 add_filter('wp_title', function ($title, $separator = null) {
     global $tsml_page_title;
     if (empty($separator)) {
@@ -219,11 +220,11 @@ add_filter('wp_title', function ($title, $separator = null) {
     return implode(' ' . $separator . ' ', $title_parts);
 }, 10, 2);
 
-//need these later
+// need these later
 $meetings = $locations = [];
 $message = '';
 
-//run query
+// run query
 if ($mode == 'search') {
     $type = implode(',', $types);
     $attendance_option = implode(',', $attendance_options);
@@ -303,13 +304,13 @@ $districts_dropdown = wp_list_categories([
     'echo' => false,
 ]);
 
-//adding custom body classes
+// adding custom body classes
 add_filter('body_class', function ($classes) {
     $classes[] = 'tsml tsml-meetings';
     return $classes;
 });
 
-//do this after everything is loaded
+// do this after everything is loaded
 tsml_header();
 ?>
 <div id="tsml">
@@ -338,7 +339,7 @@ tsml_header();
             <div class="col-sm-6 col-md-2 control-search">
                 <form id="search" role="search" action=".">
                     <div class="input-group">
-                        <input type="search" name="query" class="form-control" value="<?php esc_attr_e($query) ?>"
+                        <input type="search" name="query" class="form-control" value="<?php esc_attr($query) ?>"
                             placeholder="<?php echo $mode_label ?>" aria-label="Search" <?php echo ($mode == 'me') ? 'disabled' : '' ?>>
                         <div class="input-group-btn" id="mode">
                             <button class="btn btn-default" data-toggle="tsml-dropdown" type="button">
@@ -519,14 +520,16 @@ tsml_header();
                                 </a>
                             </li>
                             <li class="divider"></li>
-                            <li <?php if (in_array('active', $attendance_options)) echo ' class="active"'; ?>>
+                            <li <?php if (in_array('active', $attendance_options))
+                                echo ' class="active"'; ?>>
                                 <a href="<?php echo tsml_meetings_url(['tsml-attendance_option' => 'active']) ?>"
                                     data-id="active">Active</a>
                             </li>
                             <?php
                             global $tsml_meeting_attendance_options;
                             foreach ($tsml_meeting_attendance_options as $key => $value) {
-                                if ($key == 'inactive' || $key == 'hybrid') continue; ?>
+                                if ($key == 'inactive' || $key == 'hybrid')
+                                    continue; ?>
                                 <li <?php
                                 if (in_array($key, $attendance_options)) {
                                     echo ' class="active"';
@@ -544,9 +547,11 @@ tsml_header();
                             <?php
                             $types_to_list = array_intersect_key($tsml_programs[$tsml_program]['types'], array_flip($tsml_types_in_use));
                             foreach ($types_to_list as $key => $thistype) {
-                                if ($key == 'ONL' || $key == 'TC') continue; //hide "Online Meeting" since it's not manually settable, neither is location Temporarily Closed
+                                if ($key == 'ONL' || $key == 'TC')
+                                    continue; //hide "Online Meeting" since it's not manually settable, neither is location Temporarily Closed
                                 ?>
-                                <li <?php if (in_array($key, $types)) echo ' class="active"' ?>>
+                                <li <?php if (in_array($key, $types))
+                                    echo ' class="active"' ?>>
                                         <a href="<?php echo tsml_meetings_url(['tsml-type' => $key]) ?>"
                                         data-id="<?php echo $key ?>">
                                         <?php echo $thistype ?>
@@ -571,7 +576,7 @@ tsml_header();
                         <thead class="hidden-print">
                             <tr>
                                 <?php foreach ($tsml_columns as $key => $column) {
-                                    echo '<th class="' . $key . '"' . ($tsml_sort_by == $key ? ' data-sort="asc"' : '') . '>' . __($column, '12-step-meeting-list') . '</th>';
+                                    echo '<th class="' . $key . '"' . ($tsml_sort_by == $key ? ' data-sort="asc"' : '') . '>' . $column . '</th>';
                                 } ?>
                             </tr>
                         </thead>
@@ -595,14 +600,12 @@ tsml_header();
                                     $meeting['types'] = [];
                                 }
 
-                                //$meeting['link'] = tsml_link($meeting['url'], tsml_format_name($meeting['name'], $meeting['types']), 'post_type');
-                            
                                 if (!isset($locations[$meeting['location_id']])) {
                                     $locations[$meeting['location_id']] = [
                                         'name' => $meeting['location'],
                                         'latitude' => $meeting['latitude'] - 0,
                                         'longitude' => $meeting['longitude'] - 0,
-                                        'url' => $meeting['location_url'], //can't use link here, unfortunately
+                                        'url' => $meeting['location_url'], // can't use link here, unfortunately
                                         'formatted_address' => $meeting['formatted_address'],
                                         'meetings' => [],
                                     ];
@@ -612,7 +615,7 @@ tsml_header();
                                     'time' => @$meeting['time_formatted'],
                                     'day' => @$meeting['day'],
                                     'name' => $meeting['name'],
-                                    'url' => $meeting['url'], //can't use link here, unfortunately
+                                    'url' => $meeting['url'], // can't use link here, unfortunately
                                     'types' => $meeting['types'],
                                 ];
 
@@ -623,7 +626,6 @@ tsml_header();
                                     $classes[] = 'notes';
                                 }
 
-                                // Fixes issue 41
                                 if (intval(current_time('w')) === @$meeting['day']) {
                                     if (date('H:i', strtotime($meeting['time'])) <= date('H:i', current_time('U'))) {
                                         $classes[] = 'past';
@@ -657,12 +659,13 @@ tsml_header();
                                                 break;
 
                                             case 'distance': ?>
-                                                <td class="distance"
-                                                    data-sort="<?php if (isset($meeting['distance'])) echo $meeting['distance'] ?>">
-                                                    <?php if (isset($meeting['distance'])) echo $meeting['distance'] ?>
+                                                <td class="distance" data-sort="<?php if (isset($meeting['distance']))
+                                                    echo $meeting['distance'] ?>">
+                                                    <?php if (isset($meeting['distance']))
+                                                    echo $meeting['distance'] ?>
                                                     </td>
                                                     <?php
-                                                    break;
+                                                break;
 
                                             case 'name': ?>
                                                 <td class="name"
@@ -686,7 +689,8 @@ tsml_header();
                                                     </div>
                                                     <div class="attendance-<?php echo $meeting['attendance_option'] ?>">
                                                         <small>
-                                                            <?php if ($meeting['attendance_option'] != 'in_person') echo $tsml_meeting_attendance_options[$meeting['attendance_option']] ?>
+                                                            <?php if ($meeting['attendance_option'] != 'in_person')
+                                                                echo $tsml_meeting_attendance_options[$meeting['attendance_option']] ?>
                                                             </small>
                                                         </div>
                                                     </td>
@@ -706,7 +710,8 @@ tsml_header();
                                                         <?php echo $meeting_location; ?>
                                                     </div>
                                                     <div class="attendance-<?php echo $meeting['attendance_option']; ?>"><small>
-                                                            <?php if ($meeting['attendance_option'] != 'in_person') echo $tsml_meeting_attendance_options[$meeting['attendance_option']]; ?>
+                                                            <?php if ($meeting['attendance_option'] != 'in_person')
+                                                                echo $tsml_meeting_attendance_options[$meeting['attendance_option']]; ?>
                                                         </small></div>
                                                 </td>
                                                 <?php

@@ -1,5 +1,5 @@
 <?php
-//customizing region administration
+// customizing region administration
 
 add_action('tsml_region_edit_form_fields', function ($term) {
     if (
@@ -43,13 +43,13 @@ add_action(
     function ($region_id) {
         tsml_require_meetings_permission();
 
-        //set updated time for all meetings in region if a region is edited
+        // set updated time for all meetings in region if a region is edited
         $meetings = tsml_get_meetings(['region' => $region_id]);
         foreach ($meetings as $meeting) {
             wp_update_post(['ID' => $meeting['id']]);
         }
 
-        //delete this region and reassign its locations to another region
+        // delete this region and reassign its locations to another region
         if (!empty($_POST['delete_and_reassign'])) {
             $location_ids = get_posts([
                 'post_type' => 'tsml_location',
@@ -63,15 +63,15 @@ add_action(
                 ],
             ]);
 
-            //assign new region to each location
+            // assign new region to each location
             foreach ($location_ids as $location_id) {
                 wp_set_object_terms($location_id, intval($_POST['delete_and_reassign']), 'tsml_region');
             }
 
-            //delete term
+            // delete term
             wp_delete_term($region_id, 'tsml_region');
 
-            //redirect to regions list
+            // redirect to regions list
             wp_safe_redirect(admin_url('edit-tags.php?taxonomy=tsml_region&post_type=tsml_location'));
         }
     },

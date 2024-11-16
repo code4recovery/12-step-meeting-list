@@ -1,10 +1,10 @@
 <?php
 
-//upcoming meetings widget
+// upcoming meetings widget
 class TSML_Widget_Upcoming extends WP_Widget
 {
 
-    //constructor
+    // constructor
     public function __construct()
     {
         parent::__construct(
@@ -16,7 +16,7 @@ class TSML_Widget_Upcoming extends WP_Widget
         );
     }
 
-    //front-end display of widget
+    // front-end display of widget
     public function widget($args, $instance)
     {
         $table = tsml_next_meetings($instance);
@@ -100,7 +100,7 @@ class TSML_Widget_Upcoming extends WP_Widget
 			</style>';
         }
 
-        //don't know how to set this properly
+        // don't know how to set this properly
         $args['before_widget'] = str_replace(' class="', ' class="tsml-widget-upcoming ', $args['before_widget']);
 
         echo $args['before_widget'];
@@ -119,7 +119,7 @@ class TSML_Widget_Upcoming extends WP_Widget
         echo $args['after_widget'];
     }
 
-    //backend form
+    // backend form
     public function form($instance)
     {
         $title = !empty($instance['title']) ? $instance['title'] : __('Upcoming Meetings', '12-step-meeting-list');
@@ -165,7 +165,7 @@ class TSML_Widget_Upcoming extends WP_Widget
         <?php
     }
 
-    //sanitize widget form values as they are saved
+    // sanitize widget form values as they are saved
     public function update($new_instance, $old_instance)
     {
         return [
@@ -177,11 +177,11 @@ class TSML_Widget_Upcoming extends WP_Widget
     }
 }
 
-//app store links widget
+// app store links widget
 class TSML_Widget_App_Store extends WP_Widget
 {
 
-    //constructor
+    // constructor
     public function __construct()
     {
         parent::__construct(
@@ -193,7 +193,7 @@ class TSML_Widget_App_Store extends WP_Widget
         );
     }
 
-    //backend form
+    // backend form
     public function form($instance)
     {
         $title = empty($instance['title']) ? '' : $instance['title'];
@@ -216,7 +216,7 @@ class TSML_Widget_App_Store extends WP_Widget
         <?php
     }
 
-    //sanitize widget form values as they are saved
+    // sanitize widget form values as they are saved
     public function update($new_instance, $old_instance)
     {
         $instance = [];
@@ -225,14 +225,14 @@ class TSML_Widget_App_Store extends WP_Widget
         return $instance;
     }
 
-    //front-end display of widget
+    // front-end display of widget
     public function widget($args, $instance)
     {
         if (empty($instance['title'])) {
             $instance['title'] = '';
         }
 
-        //don't know how to set this properly
+        // don't know how to set this properly
         $args['before_widget'] = str_replace(' class="', ' class="tsml-widget-app-store ', $args['before_widget']);
 
         echo $args['before_widget'];
@@ -292,7 +292,7 @@ class TSML_Widget_App_Store extends WP_Widget
     }
 }
 
-//register widgets
+// register widgets
 add_action('widgets_init', function () {
     register_widget('TSML_Widget_Upcoming');
     register_widget('TSML_Widget_App_Store');

@@ -3,7 +3,7 @@ tsml_assets();
 
 $meeting = tsml_get_meeting();
 
-//define some vars for the map
+// define some vars for the map
 wp_localize_script('tsml_public', 'tsml_map', [
     'directions' => __('Directions', '12-step-meeting-list'),
     'directions_url' => in_array('TC', $meeting->types) ? null : $meeting->directions,
@@ -16,7 +16,7 @@ wp_localize_script('tsml_public', 'tsml_map', [
     'longitude' => $meeting->longitude,
 ]);
 
-//adding custom body classes
+// adding custom body classes
 add_filter('body_class', function ($classes) {
     global $meeting;
 
@@ -26,7 +26,7 @@ add_filter('body_class', function ($classes) {
         $classes[] = $type_classes;
     }
 
-    // Add the attendance option class to the body tag
+    // add the attendance option class to the body tag
     $classes[] = 'attendance-' . sanitize_title($meeting->attendance_option);
     $classes[] = ($meeting->approximate === 'yes') ? 'address-approximate' : 'address-specific';
 
@@ -48,11 +48,11 @@ tsml_header();
                     <?php
                     $meeting_types = tsml_format_types($meeting->types);
                     if (!empty($meeting_types)) {
-                        echo '<small><span class="meeting_types">(' . __($meeting_types, "12-step-meeting-list") . ')</span></small>';
+                        echo '<small><span class="meeting_types">(' . $meeting_types . ')</span></small>';
                     }
                     ?>
                     <div class="attendance-option">
-                        <?php _e($tsml_meeting_attendance_options[$meeting->attendance_option], "12-step-meeting-list") ?>
+                        <?php echo $tsml_meeting_attendance_options[$meeting->attendance_option] ?>
                     </div>
                     <br />
                     <?php echo tsml_link(get_post_type_archive_link('tsml_meeting'), '<i class="glyphicon glyphicon-chevron-right"></i> ' . __('Back to Meetings', '12-step-meeting-list'), 'tsml_meeting') ?>
@@ -93,7 +93,7 @@ tsml_header();
                                         <?php
                                         echo tsml_format_day_and_time($meeting->day, $meeting->time);
                                         if (!empty($meeting->end_time)) {
-                                            /* translators: until */
+                                            // translators: until
                                             echo __(' to ', '12-step-meeting-list'), tsml_format_time($meeting->end_time);
                                         }
                                         ?>
@@ -115,14 +115,13 @@ tsml_header();
                                         </li>
                                         <?php foreach ($meeting->types_expanded as $type) { ?>
                                             <li>
-                                                <?php echo $li_marker;
-                                                _e($type, '12-step-meeting-list'); ?>
+                                                <?php echo $li_marker . $type; ?>
                                             </li>
                                         <?php } ?>
                                     </ul>
                                     <?php if (!empty($meeting->type_description)) { ?>
                                         <p class="meeting-type-description">
-                                            <?php _e($meeting->type_description, '12-step-meeting-list') ?>
+                                            <?php echo $meeting->type_description ?>
                                         </p>
                                     <?php }
 
@@ -147,7 +146,9 @@ tsml_header();
                                                     <path fill-rule="evenodd"
                                                         d="M11.25 5.65l2.768-1.605a.318.318 0 0 1 .482.263v7.384c0 .228-.26.393-.482.264l-2.767-1.605-.502.865 2.767 1.605c.859.498 1.984-.095 1.984-1.129V4.308c0-1.033-1.125-1.626-1.984-1.128L10.75 4.785l.502.865z" />
                                                 </svg>
-                                                <?php echo $provider === true ? $meeting->conference_url : sprintf(__('Join with %s', '12-step-meeting-list'), $provider) ?>
+                                                <?php echo $provider === true ? $meeting->conference_url :
+                                                    // translators: %s is the name of the conference provider
+                                                    sprintf(__('Join with %s', '12-step-meeting-list'), $provider) ?>
                                             </a>
                                             <?php if ($meeting->conference_url_notes) { ?>
                                                 <p style="margin: 7.5px 0 15px; color: #777; font-size: 90%;">
@@ -212,7 +213,11 @@ tsml_header();
                                                         <path
                                                             d="M13 5a2 2 0 0 0 2 2V5h-2zM3 5a2 2 0 0 1-2 2V5h2zm10 8a2 2 0 0 1 2-2v2h-2zM3 13a2 2 0 0 0-2-2v2h2zm7-4a2 2 0 1 1-4 0 2 2 0 0 1 4 0z" />
                                                     </svg>
-                                                    <?php echo sprintf(__('Contribute with %s', '12-step-meeting-list'), $service['name']) ?>
+                                                    <?php echo sprintf(
+                                                        // translators: %s is the name of the contribution service
+                                                        __('Contribute with %s', '12-step-meeting-list'),
+                                                        $service['name']
+                                                    ) ?>
                                                 </a>
                                             <?php }
                                         }
@@ -225,7 +230,11 @@ tsml_header();
 										<h3 class="list-group-item-heading notranslate">' . $meeting->location . '</h3>';
 
                                     if ($other_meetings = count($meeting->location_meetings) - 1) {
-                                        $location_info .= '<p class="location-other-meetings">' . sprintf(_n('%d other meeting at this location', '%d other meetings at this location', $other_meetings, '12-step-meeting-list'), $other_meetings) . '</p>';
+                                        $location_info .= '<p class="location-other-meetings">' . sprintf(
+                                            // translators: %d is the number of other meetings at this location
+                                            _n('%d other meeting at this location', '%d other meetings at this location', $other_meetings, '12-step-meeting-list'),
+                                            $other_meetings
+                                        ) . '</p>';
                                     }
 
                                     $location_info .= '<p class="location-address notranslate">' . tsml_format_address($meeting->formatted_address) . '</p>';
@@ -246,7 +255,7 @@ tsml_header();
                                     );
                                 }
 
-                                //whether this meeting has public contact info to show
+                                // whether this meeting has public contact info to show
                                 $hasContactInformation = (($tsml_contact_display == 'public') && (!empty($meeting->contact_1_name) || !empty($meeting->contact_1_email) || !empty($meeting->contact_1_phone) ||
                                     !empty($meeting->contact_2_name) || !empty($meeting->contact_2_email) || !empty($meeting->contact_2_phone) ||
                                     !empty($meeting->contact_3_name) || !empty($meeting->contact_3_email) || !empty($meeting->contact_3_phone)));
@@ -323,7 +332,11 @@ tsml_header();
                                         <?php }
                                         if ($hasContactInformation) {
                                             for ($i = 1; $i <= TSML_GROUP_CONTACT_COUNT; $i++) {
-                                                $name = empty($meeting->{'contact_' . $i . '_name'}) ? sprintf(__('Contact %s', '12-step-meeting-list'), $i) : $meeting->{'contact_' . $i . '_name'};
+                                                $name = empty($meeting->{'contact_' . $i . '_name'}) ? sprintf(
+                                                    // translators: %s is the contact's ordinal number
+                                                    __('Contact %s', '12-step-meeting-list'),
+                                                    $i
+                                                ) : $meeting->{'contact_' . $i . '_name'};
                                                 if (!empty($meeting->{'contact_' . $i . '_email'})) { ?>
                                                     <a href="mailto:<?php echo $meeting->{'contact_' . $i . '_email'} ?>"
                                                         class="btn btn-default btn-block contact-email">
@@ -332,7 +345,11 @@ tsml_header();
                                                             <path fill-rule="evenodd"
                                                                 d="M0 4a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2V4zm2-1a1 1 0 0 0-1 1v.217l7 4.2 7-4.2V4a1 1 0 0 0-1-1H2zm13 2.383l-4.758 2.855L15 11.114v-5.73zm-.034 6.878L9.271 8.82 8 9.583 6.728 8.82l-5.694 3.44A1 1 0 0 0 2 13h12a1 1 0 0 0 .966-.739zM1 11.114l4.758-2.876L1 5.383v5.73z" />
                                                         </svg>
-                                                        <?php echo sprintf(__('%s’s Email', '12-step-meeting-list'), $name) ?>
+                                                        <?php echo sprintf(
+                                                            // translators: %s is the contact's name
+                                                            __('%s’s Email', '12-step-meeting-list'),
+                                                            $name
+                                                        ) ?>
                                                     </a>
                                                     <?php
                                                 }
@@ -344,7 +361,11 @@ tsml_header();
                                                             <path fill-rule="evenodd"
                                                                 d="M3.925 1.745a.636.636 0 0 0-.951-.059l-.97.97c-.453.453-.62 1.095-.421 1.658A16.47 16.47 0 0 0 5.49 10.51a16.471 16.471 0 0 0 6.196 3.907c.563.198 1.205.032 1.658-.421l.97-.97a.636.636 0 0 0-.06-.951l-2.162-1.682a.636.636 0 0 0-.544-.115l-2.052.513a1.636 1.636 0 0 1-1.554-.43L5.64 8.058a1.636 1.636 0 0 1-.43-1.554l.513-2.052a.636.636 0 0 0-.115-.544L3.925 1.745zM2.267.98a1.636 1.636 0 0 1 2.448.153l1.681 2.162c.309.396.418.913.296 1.4l-.513 2.053a.636.636 0 0 0 .167.604L8.65 9.654a.636.636 0 0 0 .604.167l2.052-.513a1.636 1.636 0 0 1 1.401.296l2.162 1.681c.777.604.849 1.753.153 2.448l-.97.97c-.693.693-1.73.998-2.697.658a17.47 17.47 0 0 1-6.571-4.144A17.47 17.47 0 0 1 .639 4.646c-.34-.967-.035-2.004.658-2.698l.97-.969z" />
                                                         </svg>
-                                                        <?php echo sprintf(__('%s’s Phone', '12-step-meeting-list'), $name) ?>
+                                                        <?php echo sprintf(
+                                                            // translators: %s is the contact's name
+                                                            __('%s’s Phone', '12-step-meeting-list'),
+                                                            $name
+                                                        ) ?>
                                                     </a>
                                                 <?php }
                                             }

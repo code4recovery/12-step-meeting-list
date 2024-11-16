@@ -3,7 +3,7 @@
 add_action('admin_menu', function () {
     global $tsml_google_maps_key, $tsml_mapbox_key;
 
-    //badge the settings page
+    // badge the settings page
     $warnings = 0;
     if (empty($tsml_google_maps_key) && empty($tsml_mapbox_key)) {
         $warnings++;
@@ -15,7 +15,7 @@ add_action('admin_menu', function () {
 
     $badge = $warnings ? ' <span class="update-plugins"><span class="update-count">1</span></span>' : '';
 
-    //add menu items
+    // add menu items
     add_submenu_page(
         'edit.php?post_type=tsml_meeting',
         __('Regions', '12-step-meeting-list'),
@@ -65,7 +65,7 @@ add_action('admin_menu', function () {
     });
 });
 
-// Add a Widget to the main WordPress Dashboard Page
+// add a widget to the main dashboard page
 add_action(
     'wp_dashboard_setup',
     function () {

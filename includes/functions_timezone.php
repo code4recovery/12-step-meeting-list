@@ -1,7 +1,6 @@
 <?php
 
 /**
- *
  * Check if the timezone is valid
  * Used in variables, save, and settings
  *
@@ -14,12 +13,11 @@ function tsml_timezone_is_valid($timezone)
 }
 
 /**
- *
  * Render the timezone select menu
  * Used in admin_edit and settings
  *
  * @param $selected
- * @return string
+ * @return void
  */
 function tsml_timezone_select($selected = null)
 {

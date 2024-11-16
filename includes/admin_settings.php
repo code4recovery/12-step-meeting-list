@@ -15,36 +15,36 @@ if (!function_exists('tsml_settings_page')) {
 
         $tsml_data_sources = tsml_get_option_array('tsml_data_sources');
 
-        //change program
+        // change program
         if (!empty($_POST['tsml_program']) && isset($_POST['tsml_nonce']) && wp_verify_nonce($_POST['tsml_nonce'], $tsml_nonce)) {
             $tsml_program = sanitize_text_field($_POST['tsml_program']);
             update_option('tsml_program', $tsml_program);
             tsml_alert(__('Program setting updated.', '12-step-meeting-list'));
         }
 
-        //change distance units
+        // change distance units
         if (!empty($_POST['tsml_distance_units']) && isset($_POST['tsml_nonce']) && wp_verify_nonce($_POST['tsml_nonce'], $tsml_nonce)) {
             $tsml_distance_units = ($_POST['tsml_distance_units'] == 'mi') ? 'mi' : 'km';
             update_option('tsml_distance_units', $tsml_distance_units);
             tsml_alert(__('Distance units updated.', '12-step-meeting-list'));
         }
 
-        //change contact display
+        // change contact display
         if (!empty($_POST['tsml_contact_display']) && isset($_POST['tsml_nonce']) && wp_verify_nonce($_POST['tsml_nonce'], $tsml_nonce)) {
             $tsml_contact_display = ($_POST['tsml_contact_display'] == 'public') ? 'public' : 'private';
             update_option('tsml_contact_display', $tsml_contact_display);
-            tsml_cache_rebuild(); //this value affects what's in the cache
+            tsml_cache_rebuild(); // this value affects what's in the cache
             tsml_alert(__('Contact privacy updated.', '12-step-meeting-list'));
         }
 
-        //change sharing setting
+        // change sharing setting
         if (!empty($_POST['tsml_sharing']) && isset($_POST['tsml_nonce']) && wp_verify_nonce($_POST['tsml_nonce'], $tsml_nonce)) {
             $tsml_sharing = ($_POST['tsml_sharing'] == 'open') ? 'open' : 'restricted';
             update_option('tsml_sharing', $tsml_sharing);
             tsml_alert(__('Sharing setting updated.', '12-step-meeting-list'));
         }
 
-        //add a sharing key
+        // add a sharing key
         if (!empty($_POST['tsml_add_sharing_key']) && isset($_POST['tsml_nonce']) && wp_verify_nonce($_POST['tsml_nonce'], $tsml_nonce)) {
             $name = sanitize_text_field($_POST['tsml_add_sharing_key']);
             $key = md5(uniqid($name, true));
@@ -53,7 +53,7 @@ if (!function_exists('tsml_settings_page')) {
             update_option('tsml_sharing_keys', $tsml_sharing_keys);
             tsml_alert(__('Sharing key added.', '12-step-meeting-list'));
 
-            //users might expect that if they add "meeting guide" that then they are added to the app
+            // users might expect that if they add "meeting guide" that then they are added to the app
             if (strtolower($name) == 'meeting guide') {
                 $current_user = wp_get_current_user();
                 $message = admin_url('admin-ajax.php?') . http_build_query([
@@ -64,7 +64,7 @@ if (!function_exists('tsml_settings_page')) {
             }
         }
 
-        //remove a sharing key
+        // remove a sharing key
         if (!empty($_POST['tsml_remove_sharing_key']) && isset($_POST['tsml_nonce']) && wp_verify_nonce($_POST['tsml_nonce'], $tsml_nonce)) {
             $key = sanitize_text_field($_POST['tsml_remove_sharing_key']);
             if (array_key_exists($key, $tsml_sharing_keys)) {
@@ -76,28 +76,36 @@ if (!function_exists('tsml_settings_page')) {
                 }
                 tsml_alert(__('Sharing key removed.', '12-step-meeting-list'));
             } else {
-                //theoretically should never get here, because user is choosing from a list
-                tsml_alert(sprintf(esc_html__('<p><code>%s</code> was not found in the list of sharing keys. Please try again.</p>', '12-step-meeting-list'), $key), 'error');
+                // theoretically should never get here, because user is choosing from a list
+                tsml_alert(sprintf(
+                    // translators: %s is the key that was not found
+                    esc_html__('<code>%s</code> was not found in the list of sharing keys. Please try again.', '12-step-meeting-list'),
+                    $key
+                ), 'error');
             }
         }
 
-        //add a feedback email
+        // add a feedback email
         if (!empty($_POST['tsml_add_feedback_address']) && isset($_POST['tsml_nonce']) && wp_verify_nonce($_POST['tsml_nonce'], $tsml_nonce)) {
             $email = sanitize_text_field($_POST['tsml_add_feedback_address']);
             if (!is_email($email)) {
-                //theoretically should never get here, because WordPress checks entry first
-                tsml_alert(sprintf(esc_html__('<code>%s</code> is not a valid email address. Please try again.', '12-step-meeting-list'), $email), 'error');
+                // theoretically should never get here, because WordPress checks entry first
+                tsml_alert(sprintf(
+                    // translators: %s is the email address that was not valid
+                    esc_html__('<code>%s</code> is not a valid email address. Please try again.', '12-step-meeting-list'),
+                    $email
+                ), 'error');
             } else {
                 $tsml_feedback_addresses[] = $email;
                 $tsml_feedback_addresses = array_unique($tsml_feedback_addresses);
                 sort($tsml_feedback_addresses);
                 update_option('tsml_feedback_addresses', $tsml_feedback_addresses);
                 tsml_alert(__('Feedback address added.', '12-step-meeting-list'));
-                tsml_cache_rebuild(); //these values affects what's in the cache
+                tsml_cache_rebuild(); // these values affect what's in the cache
             }
         }
 
-        //remove a feedback email
+        // remove a feedback email
         if (!empty($_POST['tsml_remove_feedback_address']) && isset($_POST['tsml_nonce']) && wp_verify_nonce($_POST['tsml_nonce'], $tsml_nonce)) {
             $email = sanitize_text_field($_POST['tsml_remove_feedback_address']);
             if (($key = array_search($email, $tsml_feedback_addresses)) !== false) {
@@ -108,19 +116,27 @@ if (!function_exists('tsml_settings_page')) {
                     update_option('tsml_feedback_addresses', $tsml_feedback_addresses);
                 }
                 tsml_alert(__('Feedback address removed.', '12-step-meeting-list'));
-                tsml_cache_rebuild(); //these values affects what's in the cache
+                tsml_cache_rebuild(); // these values affect what's in the cache
             } else {
-                //theoretically should never get here, because user is choosing from a list
-                tsml_alert(sprintf(esc_html__('<p><code>%s</code> was not found in the list of addresses. Please try again.</p>', '12-step-meeting-list'), $email), 'error');
+                // theoretically should never get here, because user is choosing from a list
+                tsml_alert(sprintf(
+                    // translators: %s is the email address that was not found
+                    esc_html__('<code>%s</code> was not found in the list of addresses. Please try again.', '12-step-meeting-list'),
+                    $email
+                ), 'error');
             }
         }
 
-        //add a notification email
+        // add a notification email
         if (!empty($_POST['tsml_add_notification_address']) && isset($_POST['tsml_nonce']) && wp_verify_nonce($_POST['tsml_nonce'], $tsml_nonce)) {
             $email = sanitize_text_field($_POST['tsml_add_notification_address']);
             if (!is_email($email)) {
-                //theoretically should never get here, because WordPress checks entry first
-                tsml_alert(sprintf(esc_html__('<p><code>%s</code> is not a valid email address. Please try again.</p>', '12-step-meeting-list'), $email), 'error');
+                // theoretically should never get here, because WordPress checks entry first
+                tsml_alert(sprintf(
+                    // translators: %s is the email address that was not found
+                    esc_html__('<code>%s</code> is not a valid email address. Please try again.', '12-step-meeting-list'),
+                    $email
+                ), 'error');
             } else {
                 $tsml_notification_addresses[] = $email;
                 $tsml_notification_addresses = array_unique($tsml_notification_addresses);
@@ -130,7 +146,7 @@ if (!function_exists('tsml_settings_page')) {
             }
         }
 
-        //remove a notification email
+        // remove a notification email
         if (!empty($_POST['tsml_remove_notification_address']) && isset($_POST['tsml_nonce']) && wp_verify_nonce($_POST['tsml_nonce'], $tsml_nonce)) {
             $email = sanitize_text_field($_POST['tsml_remove_notification_address']);
             if (($key = array_search($email, $tsml_notification_addresses)) !== false) {
@@ -142,12 +158,16 @@ if (!function_exists('tsml_settings_page')) {
                 }
                 tsml_alert(__('Notification address removed.', '12-step-meeting-list'));
             } else {
-                //theoretically should never get here, because user is choosing from a list
-                tsml_alert(sprintf(esc_html__('<p><code>%s</code> was not found in the list of addresses. Please try again.</p>', '12-step-meeting-list'), $email), 'error');
+                // theoretically should never get here, because user is choosing from a list
+                tsml_alert(sprintf(
+                    // translators: %s is the email address that was not found
+                    esc_html__('<code>%s</code> was not found in the list of addresses. Please try again.', '12-step-meeting-list'),
+                    $email
+                ), 'error');
             }
         }
 
-        //add a Mapbox access token
+        // add a Mapbox access token
         if (isset($_POST['tsml_add_mapbox_key']) && isset($_POST['tsml_nonce']) && wp_verify_nonce($_POST['tsml_nonce'], $tsml_nonce)) {
             $tsml_mapbox_key = sanitize_text_field($_POST['tsml_add_mapbox_key']);
             if (empty($tsml_mapbox_key)) {
@@ -158,12 +178,12 @@ if (!function_exists('tsml_settings_page')) {
                 tsml_alert(__('API key saved.', '12-step-meeting-list'));
             }
 
-            //there can be only one
+            // there can be only one
             $tsml_google_maps_key = null;
             delete_option('tsml_google_maps_key');
         }
 
-        //add a Google API key
+        // add a Google API key
         if (isset($_POST['tsml_add_google_maps_key']) && isset($_POST['tsml_nonce']) && wp_verify_nonce($_POST['tsml_nonce'], $tsml_nonce)) {
             $key = sanitize_text_field($_POST['tsml_add_google_maps_key']);
             if (empty($key)) {
@@ -175,26 +195,30 @@ if (!function_exists('tsml_settings_page')) {
                 tsml_alert(__('API key saved.', '12-step-meeting-list'));
             }
 
-            //there can be only one
+            // there can be only one
             $tsml_mapbox_key = null;
             delete_option('tsml_mapbox_key');
         }
 
-		//change user interface
-		if (!empty($_POST['tsml_user_interface']) && isset($_POST['tsml_nonce']) && wp_verify_nonce($_POST['tsml_nonce'], $tsml_nonce)) {
-			$tsml_user_interface = sanitize_text_field($_POST['tsml_user_interface']);
-			update_option('tsml_user_interface', $tsml_user_interface);
-			
-			if ($tsml_user_interface == 'tsml_ui') {
-				$tsml_ui = "TSML UI";
-			} else {
-				$tsml_ui = "LEGACY UI";
-			}
+        // change user interface
+        if (!empty($_POST['tsml_user_interface']) && isset($_POST['tsml_nonce']) && wp_verify_nonce($_POST['tsml_nonce'], $tsml_nonce)) {
+            $tsml_user_interface = sanitize_text_field($_POST['tsml_user_interface']);
+            update_option('tsml_user_interface', $tsml_user_interface);
 
-			tsml_alert(__('User interface is now set to <strong>' . $tsml_ui . '</strong>', '12-step-meeting-list'));
-		}
+            if ($tsml_user_interface == 'tsml_ui') {
+                $tsml_ui = "TSML UI";
+            } else {
+                $tsml_ui = "LEGACY UI";
+            }
 
-        //change timezone
+            tsml_alert(sprintf(
+                // translators: %s is the user interface that was selected
+                __('User interface is now set to <strong>%s</strong>', '12-step-meeting-list'),
+                $tsml_ui
+            ));
+        }
+
+        // change timezone
         if (isset($_POST['timezone']) && isset($_POST['tsml_nonce']) && wp_verify_nonce($_POST['tsml_nonce'], $tsml_nonce)) {
             if (empty($_POST['timezone']) || tsml_timezone_is_valid($_POST['timezone'])) {
                 $tsml_timezone = sanitize_text_field($_POST['timezone']);
@@ -205,19 +229,19 @@ if (!function_exists('tsml_settings_page')) {
             }
         }
 
-        //save entity fields
+        // save entity fields
         if (isset($_POST['tsml_entity']) && isset($_POST['tsml_nonce']) && wp_verify_nonce($_POST['tsml_nonce'], $tsml_nonce)) {
             $current_tsml_entity = tsml_get_option_array('tsml_entity');
             $tsml_entity = [];
             global $tsml_entity_fields;
-            foreach ( $tsml_entity_fields as $field ) {
+            foreach ($tsml_entity_fields as $field) {
                 $tsml_entity[$field] = isset($current_tsml_entity[$field]) ? $current_tsml_entity[$field] : '';
                 if (isset($_POST["tsml_$field"])) {
                     $tsml_entity[$field] = substr(trim(strval($_POST["tsml_$field"])), 0, 100);
                 }
             }
             update_option('tsml_entity', $tsml_entity);
-            tsml_cache_rebuild(); //these values affects what's in the cache
+            tsml_cache_rebuild(); // these values affects what's in the cache
             tsml_alert(__('Entity details saved.', '12-step-meeting-list'));
         }
         ?>
@@ -225,8 +249,8 @@ if (!function_exists('tsml_settings_page')) {
         <!-- Admin page content should all be inside .wrap -->
         <div class="wrap">
 
-			<h1></h1> <!-- Set alerts here -->
-			
+            <h1></h1> <!-- Set alerts here -->
+
             <?php if (!is_ssl()) { ?>
                 <div class="notice notice-warning inline">
                     <p>
@@ -350,7 +374,7 @@ if (!function_exists('tsml_settings_page')) {
                         </form>
                     </div>
 
-                    <div class="postbox stack">                        
+                    <div class="postbox stack">
                         <!-- Entity Form -->
                         <?php
                         $tsml_entity = tsml_get_entity();
@@ -374,38 +398,45 @@ if (!function_exists('tsml_settings_page')) {
                                 <label class="h3" for="tsml_entity">
                                     <?php _e('Entity Name', '12-step-meeting-list') ?>
                                 </label>
-                                <input type="text" id="tsml_entity" name="tsml_entity" value="<?php echo esc_attr($tsml_entity['entity']); ?>" 
+                                <input type="text" id="tsml_entity" name="tsml_entity"
+                                    value="<?php echo esc_attr($tsml_entity['entity']); ?>"
                                     placeholder="<?php esc_attr_e('Entity Name', '12-step-meeting-list'); ?>" maxlength="100">
                                 <label class="h3" for="tsml_entity_email">
                                     <?php _e('Administrative Contact Email', '12-step-meeting-list') ?>
                                 </label>
-                                <input type="text" id="tsml_entity_email" name="tsml_entity_email" value="<?php echo esc_attr($tsml_entity['entity_email']); ?>" 
+                                <input type="text" id="tsml_entity_email" name="tsml_entity_email"
+                                    value="<?php echo esc_attr($tsml_entity['entity_email']); ?>"
                                     placeholder="group@website.org" maxlength="100">
                                 <label class="h3" for="tsml_entity_phone">
                                     <?php _e('Public Phone Number', '12-step-meeting-list') ?>
                                 </label>
-                                <input type="text" id="tsml_entity_phone" name="tsml_entity_phone" value="<?php echo esc_attr($tsml_entity['entity_phone']); ?>" 
-                                    placeholder="+18005551212" maxlength="100">
+                                <input type="text" id="tsml_entity_phone" name="tsml_entity_phone"
+                                    value="<?php echo esc_attr($tsml_entity['entity_phone']); ?>" placeholder="+18005551212"
+                                    maxlength="100">
                                 <label class="h3" for="tsml_entity_location">
                                     <?php _e('Service Area', '12-step-meeting-list') ?>
                                 </label>
-                                <input type="text" id="tsml_entity_location" name="tsml_entity_location" value="<?php echo esc_attr($tsml_entity['entity_location']); ?>" 
-                                    placeholder="<?php esc_attr_e('City, State, Country', '12-step-meeting-list')?>" maxlength="100">
+                                <input type="text" id="tsml_entity_location" name="tsml_entity_location"
+                                    value="<?php echo esc_attr($tsml_entity['entity_location']); ?>"
+                                    placeholder="<?php esc_attr_e('City, State, Country', '12-step-meeting-list') ?>"
+                                    maxlength="100">
                                 <label class="h3" for="tsml_entity_url">
                                     <?php _e('Website Address', '12-step-meeting-list') ?>
                                 </label>
-                                <input type="text" id="tsml_entity_url" name="tsml_entity_url" value="<?php echo esc_attr($tsml_entity['entity_url']); ?>" 
-                                    placeholder="https://" maxlength="100">
+                                <input type="text" id="tsml_entity_url" name="tsml_entity_url"
+                                    value="<?php echo esc_attr($tsml_entity['entity_url']); ?>" placeholder="https://"
+                                    maxlength="100">
                                 <p>
-                                    <input type="submit" class="button" value="<?php esc_attr_e('Save', '12-step-meeting-list'); ?>">
+                                    <input type="submit" class="button"
+                                        value="<?php esc_attr_e('Save', '12-step-meeting-list'); ?>">
                                 </p>
                             </form>
                         </div>
                     </div>
-                 </div>
+                </div>
 
                 <div class="stack">
-                   <div class="postbox stack">
+                    <div class="postbox stack">
                         <!-- Feed Management -->
                         <h2>
                             <?php _e('Feed Management', '12-step-meeting-list') ?>
@@ -478,7 +509,8 @@ if (!function_exists('tsml_settings_page')) {
                                     <?php _e('The following feed contains your publicly available meeting information.', '12-step-meeting-list') ?>
                                 </p>
                                 <p>
-                                    <a class="public_feed" href="<?php echo esc_attr(admin_url('admin-ajax.php?action=meetings')); ?>" target="_blank">
+                                    <a class="public_feed"
+                                        href="<?php echo esc_attr(admin_url('admin-ajax.php?action=meetings')); ?>" target="_blank">
                                         <?php echo __('Public Data Source', '12-step-meeting-list'); ?>
                                     </a>
                                 </p>
@@ -493,7 +525,11 @@ if (!function_exists('tsml_settings_page')) {
                                 <?php _e('User Interface Display', '12-step-meeting-list') ?>
                             </h2>
                             <p>
-                                <?php echo sprintf(__('Please select the user interface that is right for your <a href="%s" target="_blank">meeting finder page</a>. Choose between our latest design that we call <b>TSML UI</b> or stay with the standard <b>Legacy UI</b>.', '12-step-meeting-list'), get_post_type_archive_link('tsml_meeting')) ?>
+                                <?php echo sprintf(
+                                    // translators: %s is a link to the meeting finder page
+                                    __('Please select the user interface that is right for your <a href="%s" target="_blank">meeting finder page</a>. Choose between our latest design that we call <b>TSML UI</b> or stay with the standard <b>Legacy UI</b>.', '12-step-meeting-list'),
+                                    get_post_type_archive_link('tsml_meeting')
+                                ) ?>
                             </p>
 
                             <form method="post" action="<?php echo $_SERVER['REQUEST_URI'] ?>">
@@ -527,9 +563,9 @@ if (!function_exists('tsml_settings_page')) {
 
                                 <form method="post" action="<?php echo $_SERVER['REQUEST_URI'] ?>" onchange="this.submit()">
                                     <?php wp_nonce_field($tsml_nonce, 'tsml_nonce', false) ?>
-                                    <?php echo tsml_timezone_select($tsml_timezone)?>
+                                    <?php echo tsml_timezone_select($tsml_timezone) ?>
                                 </form>
-                            <?php } else {?>
+                            <?php } else { ?>
                                 <p>
                                     <?php _e('Timezone settings are only relevant to the TSML UI interface.', '12-step-meeting-list') ?>
                                 </p>
@@ -543,12 +579,12 @@ if (!function_exists('tsml_settings_page')) {
                             <h2>
                                 <?php _e('Maps', '12-step-meeting-list') ?>
                             </h2>
-								<p>
-									<?php _e('Display of maps requires an authorization key from <strong><a href="https://www.mapbox.com/" target="_blank">Mapbox</a></strong> or <strong><a href="https://console.cloud.google.com/home/" target="_blank">Google</a></strong>.', '12-step-meeting-list') ?>
-								</p>
-								<p>
-									<?php _e('Please note that TSML UI only supports Mapbox.', '12-step-meeting-list') ?>
-								</p>
+                            <p>
+                                <?php _e('Display of maps requires an authorization key from <strong><a href="https://www.mapbox.com/" target="_blank">Mapbox</a></strong> or <strong><a href="https://console.cloud.google.com/home/" target="_blank">Google</a></strong>.', '12-step-meeting-list') ?>
+                            </p>
+                            <p>
+                                <?php _e('Please note that TSML UI only supports Mapbox.', '12-step-meeting-list') ?>
+                            </p>
                         </div>
                         <div class="stack compact">
                             <h3>
@@ -596,7 +632,7 @@ if (!function_exists('tsml_settings_page')) {
                             <h2>
                                 <?php _e('About Us', '12-step-meeting-list') ?>
                             </h2>
-                            <?php tsml_about_message()?>
+                            <?php tsml_about_message() ?>
                         </div>
                     </div>
 
