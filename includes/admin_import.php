@@ -373,7 +373,7 @@ if (!function_exists('tsml_import_page')) {
                                             </form>
                                         </td>
                                         <td>
-                                            <a href="<?php echo $feed ?>" target="_blank">
+                                            <a href="<?php echo $feed ?>" target="_blank" data-source-name>
                                                 <?php echo !empty($properties['name']) ? $properties['name'] : __('Unnamed Feed', '12-step-meeting-list') ?>
                                             </a>
                                         </td>
