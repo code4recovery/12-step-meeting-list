@@ -51,7 +51,10 @@ jQuery(function ($) {
 
 	//delete data source or email contact
 	$('table form span').click(function () {
-		$(this).parent().submit();
+		const feedName = $(this).parents('[data-source]').find('[data-source-name]').text().trim();
+        if (confirm(`Remove the ${feedName} feed?`)) {
+            $(this).parent().submit();
+        }
 	});
 
 	//meeting add / edit page
