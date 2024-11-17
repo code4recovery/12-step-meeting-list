@@ -1,6 +1,6 @@
 <?php
 
-# Adding region dropdown to filter
+// adding region dropdown to filter
 add_action('restrict_manage_posts', function ($post_type) {
     global $tsml_program, $tsml_programs, $tsml_types_in_use;
 
@@ -32,7 +32,7 @@ add_action('restrict_manage_posts', function ($post_type) {
     echo '</select>';
 }, 10, 1);
 
-# If filter is set, restrict results
+// if filter is set, restrict results
 add_filter(
     'pre_get_posts',
     function ($query) {
@@ -66,7 +66,7 @@ add_filter(
     }
 );
 
-# Custom columns for meetings
+// custom columns for meetings
 add_filter(
     'manage_edit-tsml_meeting_columns',
     function () {
@@ -81,7 +81,7 @@ add_filter(
     }
 );
 
-# If you're deleting meetings, also delete locations
+// if you're deleting meetings, also delete locations
 add_action(
     'delete_post',
     function ($post_id) {
@@ -93,7 +93,7 @@ add_action(
     }
 );
 
-# Custom list values for meetings
+// custom list values for meetings
 add_action('manage_tsml_meeting_posts_custom_column', function ($column_name, $post_ID) {
     global $tsml_days, $wpdb;
     if ($column_name == 'day') {
@@ -102,7 +102,7 @@ add_action('manage_tsml_meeting_posts_custom_column', function ($column_name, $p
     } elseif ($column_name == 'time') {
         echo tsml_format_time(get_post_meta($post_ID, 'time', true));
     } elseif ($column_name == 'region') {
-        //don't know how to do this with fewer queries
+        // don't know how to do this with fewer queries
         echo $wpdb->get_var('SELECT t.name
 			FROM ' . $wpdb->terms . ' t
 			JOIN ' . $wpdb->term_taxonomy . ' x ON t.term_id = x.term_id
@@ -113,7 +113,7 @@ add_action('manage_tsml_meeting_posts_custom_column', function ($column_name, $p
 }, 10, 2);
 
 
-# Set custom meetings columns to be sortable
+// set custom meetings columns to be sortable
 add_filter('manage_edit-tsml_meeting_sortable_columns', function ($columns) {
     $columns['day'] = 'day';
     $columns['time'] = 'time';
@@ -121,7 +121,7 @@ add_filter('manage_edit-tsml_meeting_sortable_columns', function ($columns) {
 });
 
 
-# Apply sorting
+// apply sorting
 add_filter('request', function ($vars) {
     if (isset($vars['orderby'])) {
         switch ($vars['orderby']) {
@@ -141,7 +141,7 @@ add_filter('request', function ($vars) {
 });
 
 
-//remove quick edit because meetings could get messed up without custom fields
+// remove quick edit because meetings could get messed up without custom fields
 add_filter('post_row_actions', function ($actions) {
     global $post;
     if ($post->post_type == 'tsml_meeting') {
@@ -151,7 +151,7 @@ add_filter('post_row_actions', function ($actions) {
 }, 10, 2);
 
 
-# Adding "Remove Temporary Closure" to Bulk Actions dropdown
+// adding "Remove Temporary Closure" to Bulk Actions dropdown
 add_filter('bulk_actions-edit-tsml_meeting', function ($bulk_array) {
     $bulk_array['tsml_open_in_person'] = __('Reopen for In Person Attendees', '12-step-meeting-list');
     return $bulk_array;
@@ -159,11 +159,11 @@ add_filter('bulk_actions-edit-tsml_meeting', function ($bulk_array) {
 
 
 
-# Handle removing Temporary Closures
+// handle removing Temporary Closures
 add_filter('handle_bulk_actions-edit-tsml_meeting', function ($redirect, $doaction, $object_ids) {
     tsml_require_meetings_permission();
 
-    // Handle tsml_add_tc
+    // handle tsml_add_tc
     // let's remove query args first
     $redirect = remove_query_arg(['tsml_add_tc'], $redirect);
     $redirect = remove_query_arg(['tsml_remove_tc'], $redirect);
@@ -173,7 +173,7 @@ add_filter('handle_bulk_actions-edit-tsml_meeting', function ($redirect, $doacti
     if ($doaction == 'tsml_add_tc') {
         $count = 0;
         foreach ($object_ids as $post_id) {
-            // For each select post, add TC if it's not selected in "types"
+            // for each select post, add TC if it's not selected in "types"
             $types = get_post_meta($post_id, 'types', false)[0];
             if (!in_array('TC', array_values($types))) {
                 $types[] = 'TC';
@@ -184,9 +184,9 @@ add_filter('handle_bulk_actions-edit-tsml_meeting', function ($redirect, $doacti
         }
 
         if ($count > 0) {
-            //rebuild cache
+            // rebuild cache
             tsml_cache_rebuild();
-            //update types in use
+            // update types in use
             tsml_update_types_in_use();
             // add number of meetings changed to query args
             $redirect = add_query_arg('tsml_add_tc', $count, $redirect);
@@ -212,9 +212,9 @@ add_filter('handle_bulk_actions-edit-tsml_meeting', function ($redirect, $doacti
         }
 
         if ($count > 0) {
-            //rebuild cache
+            // rebuild cache
             tsml_cache_rebuild();
-            //update types in use
+            // update types in use
             tsml_update_types_in_use();
             // add number of meetings changed to query args
             $redirect = add_query_arg('tsml_remove_tc', $count, $redirect);
@@ -235,7 +235,7 @@ add_filter('handle_bulk_actions-edit-tsml_meeting', function ($redirect, $doacti
                 continue;
             }
 
-            // For each select post, remove TC if it's selected in "types"
+            // for each select post, remove TC if it's selected in "types"
             $types = get_post_meta($post_id, 'types', false)[0];
             if (!empty($types) && in_array('TC', array_values($types))) {
                 $types = array_diff($types, ['TC']);
@@ -249,9 +249,9 @@ add_filter('handle_bulk_actions-edit-tsml_meeting', function ($redirect, $doacti
         }
 
         if ($count > 0) {
-            //rebuild cache
+            // rebuild cache
             tsml_cache_rebuild();
-            //update types in use
+            // update types in use
             tsml_update_types_in_use();
             // add number of meetings changed to query args
             $redirect = add_query_arg('tsml_open_in_person', $count, $redirect);
@@ -261,36 +261,48 @@ add_filter('handle_bulk_actions-edit-tsml_meeting', function ($redirect, $doacti
     return $redirect;
 }, 10, 3);
 
-// Notify how many Temporary Closures where removed
+// notify how many Temporary Closures were removed
 add_action(
     'admin_notices',
     function () {
         if (!empty($_REQUEST['tsml_add_tc'])) {
             // depending on how many posts were changed, make the message different
-            printf('<div id="message" class="updated notice is-dismissible"><p>' .
+            tsml_alert(sprintf(
+                // translators: %s is the number of meetings that were changed
                 _n(
                     'Temporary Closure added to %s meeting',
                     'Temporary Closure added to %s meetings',
-                    intval($_REQUEST['tsml_add_tc'])
-                ) . '</p></div>', intval($_REQUEST['tsml_add_tc']));
+                    intval($_REQUEST['tsml_add_tc']),
+                    '12-step-meeting-list'
+                ),
+                intval($_REQUEST['tsml_add_tc'])
+            ));
         }
         if (!empty($_REQUEST['tsml_remove_tc'])) {
             // depending on how many posts were changed, make the message different
-            printf('<div id="message" class="updated notice is-dismissible"><p>' .
+            tsml_alert(sprintf(
+                // translators: %s is the number of meetings that were changed
                 _n(
                     'Temporary Closure removed from %s meeting',
                     'Temporary Closure removed from %s meetings',
-                    intval($_REQUEST['tsml_remove_tc'])
-                ) . '</p></div>', intval($_REQUEST['tsml_remove_tc']));
+                    intval($_REQUEST['tsml_remove_tc']),
+                    '12-step-meeting-list'
+                ),
+                intval($_REQUEST['tsml_remove_tc'])
+            ));
         }
         if (!empty($_REQUEST['tsml_open_in_person'])) {
             // depending on how many posts were changed, make the message different
-            printf('<div id="message" class="updated notice is-dismissible"><p>' .
+            tsml_alert(sprintf(
+                // translators: %s is the number of meetings that were changed
                 _n(
                     '%s meeting reopened for in person attendees',
                     '%s meetings reopended for in person attendees',
-                    intval($_REQUEST['tsml_open_in_person'])
-                ) . '</p></div>', intval($_REQUEST['tsml_open_in_person']));
+                    intval($_REQUEST['tsml_open_in_person']),
+                    '12-step-meeting-list'
+                ),
+                intval($_REQUEST['tsml_open_in_person'])
+            ));
         }
     }
 );

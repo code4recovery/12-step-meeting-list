@@ -1,7 +1,7 @@
 <?php
-//customizations for the add/edit meeting administration screens
+// customizations for the add/edit meeting administration screens
 
-//custom title
+// custom title
 add_filter('enter_title_here', function ($title) {
     $screen = get_current_screen();
     if ($screen->post_type == 'tsml_meeting') {
@@ -11,7 +11,7 @@ add_filter('enter_title_here', function ($title) {
 });
 
 
-//move author meta box to right side
+// move author meta box to right side
 add_action('do_meta_boxes', function () {
     remove_meta_box('authordiv', 'tsml_meeting', 'normal');
     add_meta_box('authordiv', __('Editor', '12-step-meeting-list'), 'post_author_meta_box', 'tsml_meeting', 'side', 'default');
@@ -25,15 +25,15 @@ add_action('admin_enqueue_scripts', function () {
     }
 });
 
-//edit page
+// edit page
 add_action('admin_init', function () {
 
-    // Compares versions and updates databases as needed for upgrades
+    // compares versions and updates databases as needed for upgrades
     $tsml_version = get_option('tsml_version');
     if (version_compare($tsml_version, TSML_VERSION, '<')) {
 
 
-        //do this every time
+        // do this every time
         update_option('tsml_version', TSML_VERSION);
         flush_rewrite_rules();
     };
@@ -43,7 +43,7 @@ add_action('admin_init', function () {
 
         $meeting = tsml_get_meeting();
 
-        //time is before the end of april and not currently using temporary closure
+        // time is before the end of april and not currently using temporary closure
         if (!in_array('TC', $tsml_types_in_use) && time() < strtotime('2020-04-30')) {
             tsml_alert('Please note: a new “Temporary Closure” meeting type has recently been added. Use this to indicate meetings that are temporarily not meeting. Find it under “View all” below.', 'warning');
         }
@@ -52,7 +52,7 @@ add_action('admin_init', function () {
             tsml_alert(__('This meeting was imported from an external data source. Any changes you make here will be overwritten when you refresh the data.', '12-step-meeting-list'), 'warning');
         }
 
-        //nonce field
+        // nonce field
         wp_nonce_field($tsml_nonce, 'tsml_nonce', false);
         ?>
         <div class="meta_form_row">
@@ -87,7 +87,10 @@ add_action('admin_init', function () {
                     class="checkboxes<?php if (!empty($tsml_types_in_use) && count($tsml_types_in_use) !== count($tsml_programs[$tsml_program]['types'])) { ?> has_more<?php } ?>">
                     <?php
                     foreach ($tsml_programs[$tsml_program]['types'] as $key => $type) {
-                        if ($key == 'ONL' || $key == 'TC') continue; //hide "Online Meeting" since it's not manually settable, neither is location Temporarily Closed
+                        if ($key == 'ONL' || $key == 'TC') {
+                            // hide "Online Meeting" since it's not manually settable, neither is location Temporarily Closed
+                            continue;
+                        }
                         ?>
                         <label <?php if (!empty($tsml_types_in_use) && !in_array($key, $tsml_types_in_use)) {
                             echo ' class="not_in_use"';
@@ -123,7 +126,12 @@ add_action('admin_init', function () {
                 <?php _e('Online Meeting Details', '12-step-meeting-list') ?>
             </h4>
             <p>
-                <?php echo sprintf(__('If this meeting has videoconference information, please enter the full valid URL here. Currently supported providers: %s. If other details are required, such as a password, they can be included in the Notes field above, but a ‘one tap’ experience is ideal. Passwords can be appended to phone numbers using this format <code>+12125551212,,123456789#,,#,,444444#</code>', '12-step-meeting-list'), implode(', ', tsml_conference_providers())) ?>
+                <?php echo sprintf(
+                    // translators: %s is the list of supported conference providers
+                    __('If this meeting has videoconference information, please enter the full valid URL here. Currently supported providers: %s. If other details are required, such as a password, they can be included in the Notes field above, but a ‘one tap’ experience is ideal. Passwords can be appended to phone numbers using this format <code>+12125551212,,123456789#,,#,,444444#</code>', '12-step-meeting-list')
+                    ,
+                    implode(', ', tsml_conference_providers())
+                ) ?>
             </p>
         </div>
         <div class="meta_form_row">
@@ -168,6 +176,7 @@ add_action('admin_init', function () {
         __('Location Information', '12-step-meeting-list'),
         function () {
             global $tsml_mapbox_key, $tsml_google_maps_key, $tsml_timezone, $tsml_user_interface;
+            // phpcs:ignore
             $meeting = tsml_get_meeting();
             $location = $meetings = [];
             if ($meeting->post_parent) {
@@ -253,6 +262,7 @@ add_action('admin_init', function () {
                 </label>
             </div>
         <?php }
+            // phpcs:ignore
             if (wp_count_terms('tsml_region')) { ?>
             <div class="meta_form_row">
                 <label for="region">
@@ -290,7 +300,7 @@ add_action('admin_init', function () {
             <?php echo tsml_timezone_select(@$location->timezone) ?>
         </div>
 
-        <?php if (empty($location->timezone) && empty($tsml_timezone) && $tsml_user_interface === 'tsml_ui') {?>
+        <?php if (empty($location->timezone) && empty($tsml_timezone) && $tsml_user_interface === 'tsml_ui') { ?>
             <div class="meta_form_separator">
                 <p>
                     <?php _e('Because your site does not have a default timezone set, a timezone must be selected here for the meeting to appear on the meeting finder page.', '12-step-meeting-list') ?>
@@ -388,6 +398,7 @@ add_action('admin_init', function () {
                     </ol>
                 </div>
             <?php }
+            // phpcs:ignore
             if (wp_count_terms('tsml_district')) { ?>
                 <div class="meta_form_row group-visible">
                     <label for="district">

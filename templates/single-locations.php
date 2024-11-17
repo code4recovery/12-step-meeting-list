@@ -3,7 +3,7 @@ tsml_assets();
 
 $location = tsml_get_location();
 
-//define some vars for the map
+// define some vars for the map
 wp_localize_script('tsml_public', 'tsml_map', [
     'formatted_address' => $location->formatted_address,
     'approximate' => $location->approximate,
@@ -16,7 +16,7 @@ wp_localize_script('tsml_public', 'tsml_map', [
     'longitude' => $location->longitude,
 ]);
 
-//adding custom body classes
+// adding custom body classes
 add_filter('body_class', function ($classes) {
     $classes[] = 'tsml tsml-detail tsml-location';
     return $classes;
@@ -78,7 +78,7 @@ tsml_header();
                                 $meetings = tsml_get_meetings(['location_id' => $location->ID]);
                                 $location_days = [];
                                 foreach ($meetings as $meeting) {
-                                    // Set types to be empty if it's not given, prevents php notices in log
+                                    // set types to be empty if it's not given, prevents php notices in log
                                     if (empty($meeting['types'])) {
                                         $meeting['types'] = [];
                                     }
@@ -93,9 +93,9 @@ tsml_header();
                                     $meeting_link .= tsml_link($meeting['url'], $meeting['name'], '', 'notranslate');
                                     $meeting_types = tsml_format_types($meeting['types']);
                                     if (!empty($meeting_types)) {
-                                        $meeting_link .= '<div class="meeting_types"><small>(' . __($meeting_types, "12-step-meeting-list") . ')</small></div>';
+                                        $meeting_link .= '<div class="meeting_types"><small>(' . $meeting_types . ')</small></div>';
                                     }
-                                    $meeting_link .= '<div class="attendance-option">' . __($tsml_meeting_attendance_options[$meeting['attendance_option']], "12-step-meeting-list") . '</div>';
+                                    $meeting_link .= '<div class="attendance-option">' . $tsml_meeting_attendance_options[$meeting['attendance_option']] . '</div>';
                                     $meeting_link .= '</li>';
                                     $location_days[$meeting['day']][] = $meeting_link;
                                 }

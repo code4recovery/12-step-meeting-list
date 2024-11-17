@@ -1,13 +1,13 @@
 <?php
 
-//make shortcodes from functions in functions.php
+// make shortcodes from functions in functions.php
 add_shortcode('tsml_group_count', 'tsml_count_groups');
 add_shortcode('tsml_location_count', 'tsml_count_locations');
 add_shortcode('tsml_meeting_count', 'tsml_count_meetings');
 add_shortcode('tsml_region_count', 'tsml_count_regions');
 
-//function for shortcode: get a table of the next $count meetings
-//used here and in widgets.php
+// function for shortcode: get a table of the next $count meetings
+// used here and in widgets.php
 function tsml_next_meetings($arguments)
 {
     global $tsml_meeting_attendance_options;
@@ -88,7 +88,7 @@ function tsml_next_meetings($arguments)
 }
 add_shortcode('tsml_next_meetings', 'tsml_next_meetings');
 
-//output a list of types with links for AA-DC
+// output a list of types with links for AA-DC
 add_shortcode('tsml_types_list', function () {
     global $tsml_types_in_use, $tsml_programs, $tsml_program, $tsml_user_interface;
     $types = [];
@@ -106,7 +106,7 @@ add_shortcode('tsml_types_list', function () {
     return '<h3>Types</h3><ul>' . implode($types) . '</ul>';
 });
 
-//output a react meeting finder widget https://github.com/code4recovery/tsml-ui
+// output a react meeting finder widget https://github.com/code4recovery/tsml-ui
 function tsml_ui($arguments = [])
 {
     global $tsml_mapbox_key, $tsml_nonce, $tsml_conference_providers, $tsml_language, $tsml_programs, $tsml_program, $tsml_ui_config,
@@ -150,11 +150,11 @@ function tsml_ui($arguments = [])
         : [];
 
 
-    //enqueue app script
+    // enqueue app script
     $js = defined('TSML_UI_PATH') ? TSML_UI_PATH : 'https://tsml-ui.code4recovery.org/app.js';
-    wp_enqueue_script('tsml_ui', $js, [], false, ['in_footer' => true, 'strategy' => 'async']);
+    wp_enqueue_script('tsml_ui', $js, [], TSML_VERSION, ['in_footer' => true, 'strategy' => 'async']);
 
-    //get program types and type descriptions
+    // get program types and type descriptions
     $types = !empty($tsml_programs[$tsml_program]['types'])
         ? $tsml_programs[$tsml_program]['types']
         : [];
@@ -162,7 +162,7 @@ function tsml_ui($arguments = [])
         ? $tsml_programs[$tsml_program]['type_descriptions']
         : [];
 
-    //apply settings
+    // apply settings
     wp_localize_script(
         'tsml_ui',
         'tsml_react_config',
@@ -199,13 +199,14 @@ function tsml_ui($arguments = [])
 add_shortcode('tsml_react', 'tsml_ui');
 add_shortcode('tsml_ui', 'tsml_ui');
 
-//output a list of regions with links for AA-DC
+// output a list of regions with links for AA-DC
 add_shortcode('tsml_regions_list', function () {
-    //run function recursively
+    // run function recursively
     function get_regions($parent = 0)
     {
         global $tsml_user_interface;
         $taxonomy = 'tsml_region';
+        // phpcs:ignore
         $terms = get_terms(compact('taxonomy', 'parent'));
         if (!count($terms)) {
             return;

@@ -1,6 +1,6 @@
 <?php
 
-//import and settings
+// import and settings
 
 if (!function_exists('tsml_import_page')) {
 
@@ -15,7 +15,7 @@ if (!function_exists('tsml_import_page')) {
         $error = false;
         $tsml_data_sources = tsml_get_option_array('tsml_data_sources');
 
-        //if posting a CSV, check for errors and add it to the import buffer
+        // if posting a CSV, check for errors and add it to the import buffer
         if (isset($_FILES['tsml_import']) && isset($_POST['tsml_nonce']) && wp_verify_nonce($_POST['tsml_nonce'], $tsml_nonce)) {
             ini_set('auto_detect_line_endings', 1); //to handle mac \r line endings
             $extension = explode('.', strtolower($_FILES['tsml_import']['name']));
@@ -36,17 +36,19 @@ if (!function_exists('tsml_import_page')) {
                 } elseif ($_FILES['tsml_import']['error'] == 8) {
                     $error = __('A PHP extension stopped the file upload.', '12-step-meeting-list');
                 } else {
+                    // translators: %d is the error
                     $error = sprintf(__('File upload error #%d', '12-step-meeting-list'), $_FILES['tsml_import']['error']);
                 }
             } elseif (empty($extension)) {
                 $error = __('Uploaded file did not have a file extension. Please add .csv to the end of the file name.', '12-step-meeting-list');
             } elseif (!in_array($extension, ['csv', 'txt'])) {
+                // translators: %s is the file extension
                 $error = sprintf(__('Please upload a csv file. Your file ended in .%s.', '12-step-meeting-list'), $extension);
             } elseif (!$handle = fopen($_FILES['tsml_import']['tmp_name'], 'r')) {
                 $error = __('Error opening CSV file', '12-step-meeting-list');
             } else {
 
-                //extract meetings from CSV
+                // extract meetings from CSV
                 while (($data = fgetcsv($handle, 3000, ',')) !== false) {
                     //skip empty rows
                     if (strlen(trim(implode($data)))) {
@@ -54,60 +56,58 @@ if (!function_exists('tsml_import_page')) {
                     }
                 }
 
-                //remove any rows that aren't arrays
+                // remove any rows that aren't arrays
                 $meetings = array_filter($meetings, 'is_array');
 
-                //crash if no data
+                // crash if no data
                 if (count($meetings) < 2) {
                     $error = __('Nothing was imported because no data rows were found.', '12-step-meeting-list');
                 } else {
 
-                    //allow theme-defined function to reformat CSV prior to import (New Hampshire, Ventura)
+                    // allow theme-defined function to reformat CSV prior to import (New Hampshire, Ventura)
                     if (function_exists('tsml_import_reformat')) {
+                        // phpcs:ignore
                         $meetings = tsml_import_reformat($meetings);
                     }
 
-                    //if it's FNV data, reformat it
-                    $meetings = tsml_import_reformat_fnv($meetings);
-
-                    //get header
+                    // get header
                     $header = array_shift($meetings);
                     $header = array_map('sanitize_title_with_dashes', $header);
                     $header = str_replace('-', '_', $header);
                     $header_count = count($header);
 
-                    //check header for required fields
+                    // check header for required fields
                     if (!in_array('address', $header) && !in_array('city', $header)) {
                         $error = __('Either Address or City is required.', '12-step-meeting-list');
                     } else {
 
-                        //loop through data and convert to array
+                        // loop through data and convert to array
                         foreach ($meetings as &$meeting) {
-                            //check length
+                            // check length
                             if ($header_count > count($meeting)) {
                                 $meeting = array_pad($meeting, $header_count, null);
                             } elseif ($header_count < count($meeting)) {
                                 $meeting = array_slice($meeting, 0, $header_count);
                             }
 
-                            //associate
+                            // associate
                             $meeting = array_combine($header, $meeting);
                         }
 
-                        //import into buffer, also done this way in data source import
-                        $meetings = tsml_sanitize_import_meetings($meetings);
+                        // import into buffer, also done this way in data source import
+                        $meetings = tsml_import_sanitize_meetings($meetings);
                         tsml_import_buffer_set($meetings);
 
-                        //run deletes
+                        // run deletes
                         if ($_POST['delete'] == 'regions') {
 
-                            //get all regions present in array
+                            // get all regions present in array
                             $regions = [];
                             foreach ($meetings as $meeting) {
                                 $regions[] = empty($meeting['sub_region']) ? $meeting['region'] : $meeting['sub_region'];
                             }
 
-                            //get locations for those meetings
+                            // get locations for those meetings
                             $location_ids = get_posts([
                                 'post_type' => 'tsml_location',
                                 'numberposts' => -1,
@@ -121,7 +121,7 @@ if (!function_exists('tsml_import_page')) {
                                 ],
                             ]);
 
-                            //get posts for those meetings
+                            // get posts for those meetings
                             $meeting_ids = get_posts([
                                 'post_type' => 'tsml_meeting',
                                 'numberposts' => -1,
@@ -156,40 +156,40 @@ if (!function_exists('tsml_import_page')) {
             }
         }
 
-        //add data source
+        // add data source
         if (!empty($_POST['tsml_add_data_source']) && isset($_POST['tsml_nonce']) && wp_verify_nonce($_POST['tsml_nonce'], $tsml_nonce)) {
 
-            //sanitize URL, name, parent region id, and Change Detection values
+            // sanitize URL, name, parent region id, and Change Detection values
             $data_source_url = $imported_data_source_url = trim(esc_url_raw($_POST['tsml_add_data_source'], array('http', 'https')));
             $data_source_name = sanitize_text_field($_POST['tsml_add_data_source_name']);
             $data_source_parent_region_id = (int) $_POST['tsml_add_data_source_parent_region_id'];
             $data_source_change_detect = sanitize_text_field($_POST['tsml_add_data_source_change_detect']);
 
-            //use c4r sheets service for Google Sheets URLs
+            // use c4r sheets service for Google Sheets URLs
             if (strpos($data_source_url, 'docs.google.com/spreadsheets') !== false) {
                 $url_parts = explode('/', $data_source_url);
                 $sheet_id = $url_parts[5];
                 $imported_data_source_url = 'https://sheets.code4recovery.org/tsml/' . $sheet_id;
             }
 
-            //initialize variables 
+            // initialize variables 
             $import_meetings = $delete_meeting_ids = [];
-            //try fetching	
+            // try fetching	
             $response = wp_safe_remote_get($imported_data_source_url, [
                 'timeout' => 30,
                 'sslverify' => false,
             ]);
             if (is_array($response) && !empty($response['body']) && ($meetings = json_decode($response['body'], true))) {
 
-                //allow reformatting as necessary
-                $meetings = tsml_sanitize_import_meetings($meetings, $imported_data_source_url, $data_source_parent_region_id);
+                // allow reformatting as necessary
+                $meetings = tsml_import_sanitize_meetings($meetings, $imported_data_source_url, $data_source_parent_region_id);
 
-                //actual meetings to import
+                // actual meetings to import
                 $import_meetings = array();
-                //data source
+                // data source
                 $current_data_source = array_key_exists($data_source_url, $tsml_data_sources) ? $tsml_data_sources[$data_source_url] : null;
 
-                //for new data sources we import every meeting, otherwise test for changed meetings
+                // for new data sources we import every meeting, otherwise test for changed meetings
                 if (!$current_data_source) {
                     $import_meetings = $meetings;
                     $current_data_source = [
@@ -202,44 +202,44 @@ if (!function_exists('tsml_import_page')) {
                         'type' => 'JSON',
                     ];
 
-                    // Create a cron job to run daily when Change Detection is enabled for the new data source
+                    // create a cron job to run daily when Change Detection is enabled for the new data source
                     if ($data_source_change_detect === 'enabled') {
                         tsml_schedule_import_scan($data_source_url, $data_source_name);
                     }
                 } else {
-                    //get updated feed import record set 
-                    list($import_meetings, $delete_meeting_ids, $change_log) = tsml_get_changed_import_meetings($meetings, $data_source_url, $data_source_parent_region_id);
+                    // get updated feed import record set 
+                    list($import_meetings, $delete_meeting_ids, $change_log) = tsml_import_get_changed_meetings($meetings, $data_source_url, $data_source_parent_region_id);
 
-                    //drop meetings that weren't found in the import
+                    // drop meetings that weren't found in the import
                     if (count($delete_meeting_ids)) {
                         tsml_delete($delete_meeting_ids);
                     }
                     tsml_delete_orphans();
 
                     if (count($change_log) && $tsml_debug) {
-                        $message = tsml_build_import_change_report($data_source_name, $change_log);
+                        $message = tsml_import_build_change_report($change_log);
                         tsml_alert($message, 'info');
                     }
-                    //empty change log means we're up to date
+                    // empty change log means we're up to date
                     if (!count($change_log)) {
                         tsml_alert(__('Your meeting list is already in sync with the feed.', '12-step-meeting-list'), 'success');
                     }
 
-                    //update data source timestamp
+                    // update data source timestamp
                     $current_data_source['last_import'] = current_time('timestamp');
                 }
 
-                //import feed
+                // import feed
                 tsml_import_buffer_set($import_meetings, $data_source_url, $data_source_parent_region_id);
 
 
-                //save data source configuration
+                // save data source configuration
                 $tsml_data_sources[$data_source_url] = $current_data_source;
                 update_option('tsml_data_sources', $tsml_data_sources);
 
             } elseif (!is_array($response)) {
-
-                tsml_alert(__('Invalid response, <pre>' . print_r($response, true) . '</pre>.', '12-step-meeting-list'), 'error');
+                // translators: %s is the invalid response from the data source
+                tsml_alert(sprintf(__('Invalid response: <pre>%s</pre>.', '12-step-meeting-list'), print_r($response, true)), 'error');
             } elseif (empty($response['body'])) {
 
                 tsml_alert(__('Data source gave an empty response, you might need to try again.', '12-step-meeting-list'), 'error');
@@ -271,24 +271,24 @@ if (!function_exists('tsml_import_page')) {
             }
         }
 
-        //check for existing import buffer
+        // check for existing import buffer
         $meetings = tsml_get_option_array('tsml_import_buffer');
 
-        //remove data source
+        // remove data source
         if (!empty($_POST['tsml_remove_data_source']) && isset($_POST['tsml_nonce']) && wp_verify_nonce($_POST['tsml_nonce'], $tsml_nonce)) {
 
-            //sanitize URL
+            // sanitize URL
             $_POST['tsml_remove_data_source'] = esc_url_raw($_POST['tsml_remove_data_source'], ['http', 'https']);
 
             if (array_key_exists($_POST['tsml_remove_data_source'], $tsml_data_sources)) {
 
-                //remove all meetings for this data source
+                // remove all meetings for this data source
                 tsml_delete(tsml_get_data_source_ids($_POST['tsml_remove_data_source']));
 
-                //clean up orphaned locations & groups
+                // clean up orphaned locations & groups
                 tsml_delete_orphans();
 
-                //remove data source
+                // remove data source
                 unset($tsml_data_sources[$_POST['tsml_remove_data_source']]);
                 update_option('tsml_data_sources', $tsml_data_sources);
 
@@ -323,11 +323,15 @@ if (!function_exists('tsml_import_page')) {
                         <?php _e('Import Data Sources', '12-step-meeting-list') ?>
                     </h2>
                     <p>
-                        <?php printf(__('Data sources are JSON feeds or Google Sheets that contain a website\'s public meeting data. They can be used to aggregate meetings from different sites into a single master list. 
+                        <?php printf(
+                            // translators: %s is the link to the Meeting Guide API Specification
+                            __('Data sources are JSON feeds or Google Sheets that contain a website\'s public meeting data. They can be used to aggregate meetings from different sites into a single master list. 
 				Data sources listed below will pull meeting information into this website. A configurable schedule allows for each enabled data source to be scanned at least once per day looking 
 				for updates to the listing. Change Notification email addresses are sent an email when action is required to re-sync a data source with its meeting list information. 
 				Please note: records that you intend to maintain on your website should always be imported using the Import CSV feature below. <b>Data Source records will be overwritten when the 
-				parent data source is refreshed.</b> More information is available at the <a href="%s" target="_blank">Meeting Guide API Specification</a>.', '12-step-meeting-list'), 'https://github.com/code4recovery/spec') ?>
+				parent data source is refreshed.</b> More information is available at the <a href="%s" target="_blank">Meeting Guide API Specification</a>.', '12-step-meeting-list'),
+                            'https://github.com/code4recovery/spec'
+                        ) ?>
                     </p>
                     <?php if (!empty($tsml_data_sources)) { ?>
                         <table>
@@ -380,7 +384,6 @@ if (!function_exists('tsml_import_page')) {
                                                 $parent_region = __('Top-level region', '12-step-meeting-list');
                                             } elseif (empty($regions[$properties['parent_region_id']])) {
                                                 $term = get_term_by('term_id', $properties['parent_region_id'], 'tsml_region');
-                                                //$parent_region = $term[3];
                                                 $parent_region = $term->name;
                                                 if ($parent_region == null) {
                                                     $parent_region = __('Top-level region', '12-step-meeting-list');
@@ -634,7 +637,11 @@ if (!function_exists('tsml_import_page')) {
                         </h2>
                         <?php if ($tsml_slug) { ?>
                             <p>
-                                <?php printf(__('Your public meetings page is <a href="%s">right here</a>. Link that page from your site\'s nav menu to make it visible to the public.', '12-step-meeting-list'), get_post_type_archive_link('tsml_meeting')) ?>
+                                <?php printf(
+                                    // translators: %s is the link to the public meetings page
+                                    __('Your public meetings page is <a href="%s">right here</a>. Link that page from your site\'s nav menu to make it visible to the public.', '12-step-meeting-list'),
+                                    get_post_type_archive_link('tsml_meeting')
+                                ) ?>
                             </p>
                             <?php
                         } ?>
@@ -647,16 +654,32 @@ if (!function_exists('tsml_import_page')) {
                             <div class="table">
                                 <ul class="ul-disc">
                                     <li class="meetings<?php if (!$meetings) { ?> hidden<?php } ?>">
-                                        <?php printf(_n('%s meeting', '%s meetings', $meetings, '12-step-meeting-list'), number_format_i18n($meetings)) ?>
+                                        <?php printf(
+                                            // translators: %s is the number of meetings
+                                            _n('%s meeting', '%s meetings', $meetings, '12-step-meeting-list'),
+                                            number_format_i18n($meetings)
+                                        ) ?>
                                     </li>
                                     <li class="locations<?php if (!$locations) { ?> hidden<?php } ?>">
-                                        <?php printf(_n('%s location', '%s locations', $locations, '12-step-meeting-list'), number_format_i18n($locations)) ?>
+                                        <?php printf(
+                                            // translators: %s is the number of locations
+                                            _n('%s location', '%s locations', $locations, '12-step-meeting-list'),
+                                            number_format_i18n($locations)
+                                        ) ?>
                                     </li>
                                     <li class="groups<?php if (!$groups) { ?> hidden<?php } ?>">
-                                        <?php printf(_n('%s group', '%s groups', $groups, '12-step-meeting-list'), number_format_i18n($groups)) ?>
+                                        <?php printf(
+                                            // translators: %s is the number of groups
+                                            _n('%s group', '%s groups', $groups, '12-step-meeting-list'),
+                                            number_format_i18n($groups)
+                                        ) ?>
                                     </li>
                                     <li class="regions<?php if (!$regions) { ?> hidden<?php } ?>">
-                                        <?php printf(_n('%s region', '%s regions', $regions, '12-step-meeting-list'), number_format_i18n($regions)) ?>
+                                        <?php printf(
+                                            // translators: %s is the number of regions
+                                            _n('%s region', '%s regions', $regions, '12-step-meeting-list'),
+                                            number_format_i18n($regions)
+                                        ) ?>
                                     </li>
                                 </ul>
                             </div>
@@ -672,17 +695,21 @@ if (!function_exists('tsml_import_page')) {
                         if ($meetings) { ?>
                             <p>
                                 <a href="<?php echo admin_url('admin-ajax.php') . '?action=csv' ?>" target="_blank" class="button">
-                                    <?php _e('Download CSV') ?>
+                                    <?php _e('Download CSV', '12-step-meeting-list') ?>
                                 </a>
                                 &nbsp;
                                 <a href="<?php echo $pdf_link ?>" target="_blank" class="button">
-                                    <?php _e('Generate PDF') ?>
+                                    <?php _e('Generate PDF', '12-step-meeting-list') ?>
                                 </a>
                             </p>
 
                         <?php } ?>
                         <p>
-                            <?php printf(__('Want to send a mass email to your contacts? <a href="%s" target="_blank">Click here</a> to see their email addresses.', '12-step-meeting-list'), admin_url('admin-ajax.php') . '?action=contacts') ?>
+                            <?php printf(
+                                // translators: %s is the link to the contacts page
+                                __('Want to send a mass email to your contacts? <a href="%s" target="_blank">Click here</a> to see their email addresses.', '12-step-meeting-list'),
+                                admin_url('admin-ajax.php') . '?action=contacts'
+                            ) ?>
                         </p>
                     </div>
                 </div>

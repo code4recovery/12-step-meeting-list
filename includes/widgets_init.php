@@ -1,5 +1,5 @@
 <?php
-//enables widgets on the meeting archive page
+// enables widgets on the meeting archive page
 add_action('widgets_init', function () {
 
     $areas = [
