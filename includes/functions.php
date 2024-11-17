@@ -45,7 +45,7 @@ function tsml_about_message()
  */
 function tsml_alert($message, $type = 'success')
 {
-    echo '<div class="notice notice-' . esc_attr($type) . ' is-dismissible"><p>' . esc_html($message) . '</p></div>';
+    echo '<div class="notice notice-' . esc_attr($type) . ' is-dismissible"><p>' . $message . '</p></div>';
 }
 
 /**
@@ -1248,7 +1248,7 @@ add_action('tsml_scan_data_source', function ($data_source_url) {
     $meetings = tsml_import_sanitize_meetings($body, $data_source_url, $data_source_parent_region_id);
 
     // check import feed for changes and return array summing up changes detected
-    list($import_meetings, $delete_meeting_ids, $change_log) = tsml_get_changed_import_meetings($meetings, $data_source_url, $data_source_parent_region_id);
+    list($import_meetings, $delete_meeting_ids, $change_log) = tsml_import_get_changed_meetings($meetings, $data_source_url, $data_source_parent_region_id);
 
     // send email notifying admins that this data source needs updating
     if (is_array($change_log) && count($change_log)) {

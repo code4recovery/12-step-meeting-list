@@ -208,7 +208,7 @@ if (!function_exists('tsml_import_page')) {
                     }
                 } else {
                     // get updated feed import record set 
-                    list($import_meetings, $delete_meeting_ids, $change_log) = tsml_get_changed_import_meetings($meetings, $data_source_url, $data_source_parent_region_id);
+                    list($import_meetings, $delete_meeting_ids, $change_log) = tsml_import_get_changed_meetings($meetings, $data_source_url, $data_source_parent_region_id);
 
                     // drop meetings that weren't found in the import
                     if (count($delete_meeting_ids)) {
