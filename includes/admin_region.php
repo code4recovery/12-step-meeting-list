@@ -16,7 +16,7 @@ add_action('tsml_region_edit_form_fields', function ($term) {
     <tr class="form-field">
         <th valign="top" scope="row">
             <label for="delete_and_reassign">
-                <?php _e('Delete and Reassign', '12-step-meeting-list'); ?>
+                <?php esc_html_e('Delete and Reassign', '12-step-meeting-list'); ?>
             </label>
         </th>
         <td>
@@ -32,7 +32,7 @@ add_action('tsml_region_edit_form_fields', function ($term) {
             ]);
             ?>
             <p class="description">
-                <?php _e('Delete this region and reassign its locations to another region.', '12-step-meeting-list') ?>
+                <?php esc_html_e('Delete this region and reassign its locations to another region.', '12-step-meeting-list') ?>
             </p>
         </td>
     </tr>

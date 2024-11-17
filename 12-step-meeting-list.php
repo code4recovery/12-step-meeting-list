@@ -13,7 +13,16 @@
  */
 
 // define constants
-define('TSML_ALLOWED_HTML', ['a' => ['href' => [], 'title' => []], 'code' => [], 'em' => [], 'strong' => []]);
+define('TSML_ALLOWED_HTML', [
+    'a' => ['href' => [], 'title' => []],
+    'code' => [],
+    'em' => [],
+    'pre' => [],
+    'strong' => [],
+    'table' => ['style' => []],
+    'td' => [],
+    'tr' => []
+]);
 define('TSML_GROUP_CONTACT_COUNT', 3);
 define('TSML_MEETING_GUIDE_APP_NOTIFY', 'appsupport@aa.org');
 define('TSML_PATH', plugin_dir_path(__FILE__));
@@ -27,6 +36,7 @@ include TSML_PATH . '/includes/functions.php';
 include TSML_PATH . '/includes/functions_format.php';
 include TSML_PATH . '/includes/functions_get.php';
 include TSML_PATH . '/includes/functions_import.php';
+include TSML_PATH . '/includes/functions_input.php';
 include TSML_PATH . '/includes/functions_timezone.php';
 include TSML_PATH . '/includes/variables.php';
 

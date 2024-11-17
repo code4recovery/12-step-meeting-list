@@ -185,7 +185,7 @@ add_action('wp_ajax_contacts', function () {
     $emails = $wpdb->get_col('SELECT meta_value FROM ' . $wpdb->postmeta . ' WHERE meta_key IN ("email", "contact_1_email", "contact_2_email", "contact_3_email") AND post_id IN (' . implode(',', $post_ids) . ')');
     $emails = array_unique(array_filter($emails));
     sort($emails);
-    die(implode(',<br>', $emails));
+    die(wp_kses_post(implode(',<br>', $emails)));
 });
 
 
@@ -251,7 +251,7 @@ add_action('wp_ajax_csv', function () {
     header('Content-Disposition: attachment; filename="meetings.csv"');
 
     // output
-    wp_die($return);
+    wp_die(wp_kses($return, []));
 });
 
 // function: receives user feedback, sends email to admin
@@ -310,21 +310,21 @@ function tsml_ajax_feedback()
 
     // email vars
     if (!isset($_POST['tsml_nonce']) || !wp_verify_nonce($_POST['tsml_nonce'], $tsml_nonce)) {
-        _e('Error: nonce value not set correctly. Email was not sent.', '12-step-meeting-list');
+        esc_html_e('Error: nonce value not set correctly. Email was not sent.', '12-step-meeting-list');
     } elseif (empty($to_email_addresses) || empty($name) || !is_email($email) || empty($message)) {
-        _e('Error: required form value missing. Email was not sent.', '12-step-meeting-list');
+        esc_html_e('Error: required form value missing. Email was not sent.', '12-step-meeting-list');
     } else {
         // send HTML email
         $subject = __('Meeting Feedback Form', '12-step-meeting-list') . ': ' . $meeting->post_title;
         if (tsml_email($to_email_addresses, $subject, $message, $name . ' <' . $email . '>')) {
-            _e('Thank you for your feedback.', '12-step-meeting-list');
+            esc_html_e('Thank you for your feedback.', '12-step-meeting-list');
         } else {
             global $phpmailer;
             if (!empty($phpmailer->ErrorInfo)) {
                 // translators: %s is the error message
-                printf(__('Error: %s', '12-step-meeting-list'), $phpmailer->ErrorInfo);
+                echo esc_html(sprintf(__('Error: %s', '12-step-meeting-list'), $phpmailer->ErrorInfo));
             } else {
-                _e('An error occurred while sending email!', '12-step-meeting-list');
+                esc_html_e('An error occurred while sending email!', '12-step-meeting-list');
             }
         }
     }

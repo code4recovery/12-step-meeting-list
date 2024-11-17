@@ -9,7 +9,7 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"POT-Creation-Date: 2024-11-16T21:35:44+00:00\n"
+"POT-Creation-Date: 2024-11-17T18:26:17+00:00\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "X-Generator: WP-CLI 2.10.0\n"
 "X-Domain: 12-step-meeting-list\n"
@@ -88,106 +88,111 @@ msgstr ""
 msgid "Either Address or City is required."
 msgstr ""
 
-#: includes/admin_import.php:225
+#: includes/admin_import.php:226
 msgid "Your meeting list is already in sync with the feed."
 msgstr ""
 
 #. translators: %s is the invalid response from the data source
-#: includes/admin_import.php:242
+#: includes/admin_import.php:243
 msgid "Invalid response: <pre>%s</pre>."
 msgstr ""
 
-#: includes/admin_import.php:245
+#: includes/admin_import.php:246
 msgid "Data source gave an empty response, you might need to try again."
 msgstr ""
 
-#: includes/admin_import.php:250
+#: includes/admin_import.php:251
 msgid "JSON: no errors."
 msgstr ""
 
-#: includes/admin_import.php:253
+#: includes/admin_import.php:254
 msgid "JSON: Maximum stack depth exceeded."
 msgstr ""
 
-#: includes/admin_import.php:256
+#: includes/admin_import.php:257
 msgid "JSON: Underflow or the modes mismatch."
 msgstr ""
 
-#: includes/admin_import.php:259
+#: includes/admin_import.php:260
 msgid "JSON: Unexpected control character found."
 msgstr ""
 
-#: includes/admin_import.php:262
+#: includes/admin_import.php:263
 msgid "JSON: Syntax error, malformed JSON."
 msgstr ""
 
-#: includes/admin_import.php:265
+#: includes/admin_import.php:266
 msgid "JSON: Malformed UTF-8 characters, possibly incorrectly encoded."
 msgstr ""
 
-#: includes/admin_import.php:268
+#: includes/admin_import.php:269
 msgid "JSON: Unknown error."
 msgstr ""
 
-#: includes/admin_import.php:295
+#: includes/admin_import.php:296
 msgid "Data source removed."
 msgstr ""
 
-#: includes/admin_import.php:323
+#: includes/admin_import.php:324
 msgid "Import Data Sources"
 msgstr ""
 
 #. translators: %s is the link to the Meeting Guide API Specification
-#: includes/admin_import.php:328
+#: includes/admin_import.php:330
 msgid ""
 "Data sources are JSON feeds or Google Sheets that contain a website's public meeting data. They can be used to aggregate meetings from different sites into a single master list. \n"
 "\t\t\t\tData sources listed below will pull meeting information into this website. A configurable schedule allows for each enabled data source to be scanned at least once per day looking \n"
 "\t\t\t\tfor updates to the listing. Change Notification email addresses are sent an email when action is required to re-sync a data source with its meeting list information. \n"
-"\t\t\t\tPlease note: records that you intend to maintain on your website should always be imported using the Import CSV feature below. <b>Data Source records will be overwritten when the \n"
-"\t\t\t\tparent data source is refreshed.</b> More information is available at the <a href=\"%s\" target=\"_blank\">Meeting Guide API Specification</a>."
+"\t\t\t\tPlease note: records that you intend to maintain on your website should always be imported using the Import CSV feature below. <strong>Data Source records will be overwritten when the \n"
+"\t\t\t\tparent data source is refreshed.</strong> More information is available at the <a href=\"%s\" target=\"_blank\">Meeting Guide API Specification</a>."
 msgstr ""
 
-#: includes/admin_import.php:342
+#: includes/admin_import.php:344
 msgid "Source"
 msgstr ""
 
-#: includes/admin_import.php:345
-#: includes/functions.php:399
+#: includes/admin_import.php:347
+#: includes/functions.php:426
 msgid "Parent Region"
 msgstr ""
 
-#: includes/admin_import.php:348
+#: includes/admin_import.php:350
 msgid "Change Detection"
 msgstr ""
 
-#: includes/admin_import.php:351
+#: includes/admin_import.php:353
 #: includes/admin_lists.php:330
-#: includes/admin_meeting.php:314
-#: includes/functions.php:436
+#: includes/admin_meeting.php:320
+#: includes/admin_meeting.php:377
+#: includes/functions.php:463
 #: includes/variables.php:1503
 #: templates/archive-meetings.php:200
 #: templates/archive-meetings.php:216
 msgid "Meetings"
 msgstr ""
 
-#: includes/admin_import.php:354
+#: includes/admin_import.php:356
 msgid "Last Refresh"
 msgstr ""
 
-#: includes/admin_import.php:377
+#: includes/admin_import.php:372
+msgid "Refresh"
+msgstr ""
+
+#: includes/admin_import.php:378
 msgid "Unnamed Feed"
 msgstr ""
 
-#: includes/admin_import.php:384
-#: includes/admin_import.php:389
+#: includes/admin_import.php:385
+#: includes/admin_import.php:390
 msgid "Top-level region"
 msgstr ""
 
-#: includes/admin_import.php:402
+#: includes/admin_import.php:403
 msgid "Disabled"
 msgstr ""
 
-#: includes/admin_import.php:434
+#: includes/admin_import.php:435
 msgid "District or Intergroup Name"
 msgstr ""
 
@@ -199,19 +204,19 @@ msgstr ""
 msgid "Parent Region…"
 msgstr ""
 
-#: includes/admin_import.php:452
+#: includes/admin_import.php:453
 msgid "Change Detection Disabled"
 msgstr ""
 
-#: includes/admin_import.php:452
+#: includes/admin_import.php:453
 msgid "Change Detection Enabled"
 msgstr ""
 
-#: includes/admin_import.php:459
+#: includes/admin_import.php:460
 msgid "Add Data Source"
 msgstr ""
 
-#: includes/admin_import.php:467
+#: includes/admin_import.php:468
 msgid "Import CSV"
 msgstr ""
 
@@ -245,6 +250,10 @@ msgstr ""
 
 #: includes/admin_import.php:503
 msgid "Example spreadsheet"
+msgstr ""
+
+#: includes/admin_import.php:508
+msgid "Field definitions"
 msgstr ""
 
 #: includes/admin_import.php:511
@@ -424,16 +433,16 @@ msgstr[1] ""
 msgid "Export Meeting List"
 msgstr ""
 
-#: includes/admin_import.php:698
+#: includes/admin_import.php:699
 msgid "Download CSV"
 msgstr ""
 
-#: includes/admin_import.php:702
+#: includes/admin_import.php:703
 msgid "Generate PDF"
 msgstr ""
 
 #. translators: %s is the link to the contacts page
-#: includes/admin_import.php:710
+#: includes/admin_import.php:711
 msgid "Want to send a mass email to your contacts? <a href=\"%s\" target=\"_blank\">Click here</a> to see their email addresses."
 msgstr ""
 
@@ -443,7 +452,7 @@ msgstr ""
 
 #: includes/admin_lists.php:75
 #: includes/ajax.php:273
-#: includes/functions.php:437
+#: includes/functions.php:464
 #: includes/shortcodes.php:81
 #: includes/variables.php:30
 msgid "Meeting"
@@ -463,10 +472,10 @@ msgid "Time"
 msgstr ""
 
 #: includes/admin_lists.php:78
-#: includes/admin_meeting.php:269
-#: includes/admin_meeting.php:278
+#: includes/admin_meeting.php:271
+#: includes/admin_meeting.php:280
 #: includes/ajax.php:294
-#: includes/functions.php:391
+#: includes/functions.php:418
 #: includes/shortcodes.php:83
 #: includes/variables.php:33
 msgid "Region"
@@ -529,276 +538,281 @@ msgstr ""
 msgid "This meeting was imported from an external data source. Any changes you make here will be overwritten when you refresh the data."
 msgstr ""
 
-#: includes/admin_meeting.php:84
+#: includes/admin_meeting.php:86
 #: includes/ajax.php:278
 #: includes/variables.php:35
 msgid "Types"
 msgstr ""
 
-#: includes/admin_meeting.php:105
+#: includes/admin_meeting.php:107
 msgid "View all"
 msgstr ""
 
-#: includes/admin_meeting.php:110
+#: includes/admin_meeting.php:112
 msgid "Hide types not in use"
 msgstr ""
 
-#: includes/admin_meeting.php:119
+#: includes/admin_meeting.php:121
 #: includes/ajax.php:282
 msgid "Notes"
 msgstr ""
 
-#: includes/admin_meeting.php:122
+#: includes/admin_meeting.php:124
 msgid "eg. Birthday speaker meeting last Saturday of the month"
 msgstr ""
 
-#: includes/admin_meeting.php:126
+#: includes/admin_meeting.php:128
 msgid "Online Meeting Details"
 msgstr ""
 
 #. translators: %s is the list of supported conference providers
-#: includes/admin_meeting.php:131
+#: includes/admin_meeting.php:134
 msgid "If this meeting has videoconference information, please enter the full valid URL here. Currently supported providers: %s. If other details are required, such as a password, they can be included in the Notes field above, but a ‘one tap’ experience is ideal. Passwords can be appended to phone numbers using this format <code>+12125551212,,123456789#,,#,,444444#</code>"
 msgstr ""
 
-#: includes/admin_meeting.php:139
+#: includes/admin_meeting.php:145
 msgid "URL"
 msgstr ""
 
-#: includes/admin_meeting.php:144
+#: includes/admin_meeting.php:149
 msgid "Zoom conference urls require a valid meeting number. Example: https://zoom.us/j/1234567890"
 msgstr ""
 
-#: includes/admin_meeting.php:147
+#: includes/admin_meeting.php:152
 msgid "Your conference url has been updated to follow the Zoom url standard."
 msgstr ""
 
-#: includes/admin_meeting.php:152
+#: includes/admin_meeting.php:157
 msgid "URL Notes"
 msgstr ""
 
-#: includes/admin_meeting.php:159
-#: includes/admin_meeting.php:448
-#: includes/admin_meeting.php:498
+#: includes/admin_meeting.php:163
+#: includes/admin_meeting.php:425
+#: includes/admin_meeting.php:473
 msgid "Phone"
 msgstr ""
 
-#: includes/admin_meeting.php:166
+#: includes/admin_meeting.php:169
 msgid "Phone Notes"
 msgstr ""
 
-#: includes/admin_meeting.php:176
+#: includes/admin_meeting.php:178
 msgid "Location Information"
 msgstr ""
 
-#: includes/admin_meeting.php:190
+#: includes/admin_meeting.php:192
 msgid "Can I currently attend this meeting in person?"
 msgstr ""
 
-#: includes/admin_meeting.php:194
+#: includes/admin_meeting.php:196
 msgid "Yes"
 msgstr ""
 
-#: includes/admin_meeting.php:198
+#: includes/admin_meeting.php:200
 msgid "No"
 msgstr ""
 
-#: includes/admin_meeting.php:202
+#: includes/admin_meeting.php:204
 msgid "Select Yes for in-person or hybrid meetings."
 msgstr ""
 
-#: includes/admin_meeting.php:203
+#: includes/admin_meeting.php:205
 msgid "Select No for online-only meetings, or meetings that are temporarily inactive."
 msgstr ""
 
-#: includes/admin_meeting.php:205
+#: includes/admin_meeting.php:207
 msgid "For meetings I can attend in person:"
 msgstr ""
 
-#: includes/admin_meeting.php:208
+#: includes/admin_meeting.php:210
 msgid "A specific address is required"
 msgstr ""
 
-#: includes/admin_meeting.php:212
+#: includes/admin_meeting.php:214
 msgid "For online or hybrid meetings:"
 msgstr ""
 
-#: includes/admin_meeting.php:215
+#: includes/admin_meeting.php:217
 msgid "Fill in the \"Online Meeting Details\" above"
 msgstr ""
 
-#: includes/admin_meeting.php:219
+#: includes/admin_meeting.php:221
 msgid "For online-only meetings:"
 msgstr ""
 
-#: includes/admin_meeting.php:222
+#: includes/admin_meeting.php:224
 msgid "Use an approximate address, example: Philadelphia, PA, USA. It may help to think of it as the meeting's origin. The Meeting Guide app uses this information to infer the meeting's time zone."
 msgstr ""
 
-#: includes/admin_meeting.php:227
+#: includes/admin_meeting.php:229
 msgid "Warning: Online meetings with a specific address will appear that the location temporarily closed. Meetings that are Online only should use appoximate addresses."
 msgstr ""
 
-#: includes/admin_meeting.php:228
+#: includes/admin_meeting.php:230
 msgid "Example:"
 msgstr ""
 
-#: includes/admin_meeting.php:229
+#: includes/admin_meeting.php:231
 msgid "Location: Online-Philadelphia"
 msgstr ""
 
-#: includes/admin_meeting.php:230
+#: includes/admin_meeting.php:232
 msgid "Address: Philadelphia, PA, USA"
 msgstr ""
 
-#: includes/admin_meeting.php:236
+#: includes/admin_meeting.php:238
 #: includes/ajax.php:286
-#: includes/functions.php:458
+#: includes/functions.php:485
 #: includes/shortcodes.php:82
 msgid "Location"
 msgstr ""
 
-#: includes/admin_meeting.php:242
+#: includes/admin_meeting.php:244
 #: includes/ajax.php:290
 #: includes/variables.php:32
 msgid "Address"
 msgstr ""
 
-#: includes/admin_meeting.php:251
+#: includes/admin_meeting.php:253
 msgid "Error: In person meetings must have a specific address."
 msgstr ""
 
-#: includes/admin_meeting.php:254
+#: includes/admin_meeting.php:256
 msgid "Error: Unable to process this address for exact location."
 msgstr ""
 
-#: includes/admin_meeting.php:261
+#: includes/admin_meeting.php:263
 msgid "Apply this updated address to all meetings at this location"
 msgstr ""
 
-#: includes/admin_meeting.php:285
+#: includes/admin_meeting.php:287
 #: templates/archive-meetings.php:374
 msgid "Map"
 msgstr ""
 
-#: includes/admin_meeting.php:297
-#: includes/admin_settings.php:553
+#. translators: %s is the link to the Import & Settings page
+#: includes/admin_meeting.php:294
+msgid "Enable maps on the <a href=\"%s\">Import & Settings</a> page."
+msgstr ""
+
+#: includes/admin_meeting.php:304
+#: includes/admin_settings.php:557
 msgid "Timezone"
 msgstr ""
 
-#: includes/admin_meeting.php:306
+#: includes/admin_meeting.php:312
 msgid "Because your site does not have a default timezone set, a timezone must be selected here for the meeting to appear on the meeting finder page."
 msgstr ""
 
-#: includes/admin_meeting.php:334
+#: includes/admin_meeting.php:327
 #: includes/ajax.php:298
 msgid "Location Notes"
 msgstr ""
 
-#: includes/admin_meeting.php:337
+#: includes/admin_meeting.php:330
 msgid "eg. Around back, basement, ring buzzer"
 msgstr ""
 
-#: includes/admin_meeting.php:346
+#: includes/admin_meeting.php:339
 msgid "Contact Information <small>Optional</small>"
 msgstr ""
 
-#: includes/admin_meeting.php:363
+#: includes/admin_meeting.php:356
 msgid "Individual meeting"
 msgstr ""
 
-#: includes/admin_meeting.php:367
+#: includes/admin_meeting.php:360
 msgid "Part of a group"
 msgstr ""
 
-#: includes/admin_meeting.php:372
-#: includes/functions.php:487
+#: includes/admin_meeting.php:365
+#: includes/functions.php:514
 msgid "Group"
 msgstr ""
 
-#: includes/admin_meeting.php:379
+#: includes/admin_meeting.php:372
 msgid "Apply this group to all meetings at this location"
 msgstr ""
 
-#: includes/admin_meeting.php:405
-#: includes/functions.php:412
-#: includes/functions.php:413
-#: includes/functions.php:414
+#: includes/admin_meeting.php:385
+#: includes/functions.php:439
+#: includes/functions.php:440
+#: includes/functions.php:441
 #: includes/variables.php:34
 msgid "District"
 msgstr ""
 
-#: includes/admin_meeting.php:414
+#: includes/admin_meeting.php:394
 msgid "None"
 msgstr ""
 
-#: includes/admin_meeting.php:420
+#: includes/admin_meeting.php:400
 msgid "Group Notes"
 msgstr ""
 
-#: includes/admin_meeting.php:423
+#: includes/admin_meeting.php:403
 msgid "eg. Group history, when the business meeting is, etc."
 msgstr ""
 
-#: includes/admin_meeting.php:427
+#: includes/admin_meeting.php:407
 msgid "Website"
 msgstr ""
 
-#: includes/admin_meeting.php:434
+#: includes/admin_meeting.php:413
 msgid "Website 2"
 msgstr ""
 
-#: includes/admin_meeting.php:441
-#: includes/admin_meeting.php:498
+#: includes/admin_meeting.php:419
+#: includes/admin_meeting.php:473
 msgid "Email"
 msgstr ""
 
-#: includes/admin_meeting.php:455
+#: includes/admin_meeting.php:431
 msgid "Mailing Address"
 msgstr ""
 
-#: includes/admin_meeting.php:462
+#: includes/admin_meeting.php:437
 msgid "Venmo"
 msgstr ""
 
-#: includes/admin_meeting.php:468
+#: includes/admin_meeting.php:443
 msgid "Square Cash"
 msgstr ""
 
-#: includes/admin_meeting.php:474
+#: includes/admin_meeting.php:449
 msgid "PayPal"
 msgstr ""
 
-#: includes/admin_meeting.php:478
+#: includes/admin_meeting.php:453
 msgid "A valid PayPal username can only contain letters and numbers, and be less than 20 characters."
 msgstr ""
 
-#: includes/admin_meeting.php:483
+#: includes/admin_meeting.php:458
 msgid "Contacts"
 msgstr ""
 
-#: includes/admin_meeting.php:487
-#: includes/admin_settings.php:368
+#: includes/admin_meeting.php:462
+#: includes/admin_settings.php:370
 msgid "Public"
 msgstr ""
 
-#: includes/admin_meeting.php:489
-#: includes/admin_settings.php:368
+#: includes/admin_meeting.php:464
+#: includes/admin_settings.php:370
 msgid "Private"
 msgstr ""
 
-#: includes/admin_meeting.php:498
+#: includes/admin_meeting.php:473
 msgid "Name"
 msgstr ""
 
-#: includes/admin_meeting.php:512
+#: includes/admin_meeting.php:486
 msgid "Last Contact"
 msgstr ""
 
 #: includes/admin_menu.php:21
 #: includes/admin_menu.php:22
-#: includes/functions.php:390
-#: includes/functions.php:392
+#: includes/functions.php:417
+#: includes/functions.php:419
 #: includes/variables.php:1506
 msgid "Regions"
 msgstr ""
@@ -914,102 +928,112 @@ msgstr ""
 msgid "If you enable SSL (https), your users will be able to search near their location."
 msgstr ""
 
-#: includes/admin_settings.php:284
-#: includes/admin_settings.php:312
-#: includes/admin_settings.php:500
-#: includes/admin_settings.php:599
+#: includes/admin_settings.php:282
+#: includes/admin_settings.php:601
+msgid "Enter Mapbox access token here"
+msgstr ""
+
+#: includes/admin_settings.php:285
+#: includes/admin_settings.php:314
+#: includes/admin_settings.php:504
+#: includes/admin_settings.php:602
 #: includes/admin_settings.php:618
 #: includes/admin_settings.php:674
-#: includes/admin_settings.php:707
+#: includes/admin_settings.php:710
 msgid "Add"
 msgstr ""
 
-#: includes/admin_settings.php:323
+#: includes/admin_settings.php:311
+#: includes/admin_settings.php:617
+msgid "Enter Google API key here"
+msgstr ""
+
+#: includes/admin_settings.php:325
 msgid "General"
 msgstr ""
 
-#: includes/admin_settings.php:327
+#: includes/admin_settings.php:329
 msgid "Program"
 msgstr ""
 
-#: includes/admin_settings.php:330
+#: includes/admin_settings.php:332
 msgid "Select the recovery program your site targets here."
 msgstr ""
 
-#: includes/admin_settings.php:343
+#: includes/admin_settings.php:345
 msgid "Distance Units"
 msgstr ""
 
-#: includes/admin_settings.php:346
+#: includes/admin_settings.php:348
 msgid "This determines which units are used on the meeting list page."
 msgstr ""
 
-#: includes/admin_settings.php:351
+#: includes/admin_settings.php:353
 msgid "Kilometers"
 msgstr ""
 
-#: includes/admin_settings.php:351
+#: includes/admin_settings.php:353
 msgid "Miles"
 msgstr ""
 
-#: includes/admin_settings.php:360
+#: includes/admin_settings.php:362
 msgid "Contact Visibility"
 msgstr ""
 
-#: includes/admin_settings.php:363
+#: includes/admin_settings.php:365
 msgid "This determines whether contacts are displayed publicly on meeting detail pages."
 msgstr ""
 
-#: includes/admin_settings.php:390
+#: includes/admin_settings.php:392
 msgid "Service Entity Information"
 msgstr ""
 
-#: includes/admin_settings.php:393
+#: includes/admin_settings.php:395
 msgid "Enter information for your service entity here to help identity the meeting source when sharing feeds with others."
 msgstr ""
 
-#: includes/admin_settings.php:399
-#: includes/admin_settings.php:403
+#: includes/admin_settings.php:401
+#: includes/admin_settings.php:405
 msgid "Entity Name"
 msgstr ""
 
-#: includes/admin_settings.php:405
+#: includes/admin_settings.php:408
 msgid "Administrative Contact Email"
 msgstr ""
 
-#: includes/admin_settings.php:411
+#: includes/admin_settings.php:415
 msgid "Public Phone Number"
 msgstr ""
 
-#: includes/admin_settings.php:417
+#: includes/admin_settings.php:422
 msgid "Service Area"
 msgstr ""
 
-#: includes/admin_settings.php:421
+#: includes/admin_settings.php:426
 msgid "City, State, Country"
 msgstr ""
 
-#: includes/admin_settings.php:424
+#: includes/admin_settings.php:429
 msgid "Website Address"
 msgstr ""
 
-#: includes/admin_settings.php:431
+#: includes/admin_settings.php:433
 msgid "Save"
 msgstr ""
 
-#: includes/admin_settings.php:442
+#: includes/admin_settings.php:444
 msgid "Feed Management"
 msgstr ""
 
-#: includes/admin_settings.php:446
+#: includes/admin_settings.php:448
 msgid "Feed Sharing"
 msgstr ""
 
-#: includes/admin_settings.php:449
+#: includes/admin_settings.php:451
 msgid "Open means your feeds are available publicly. Restricted means people need a key or to be logged in to get the feed."
 msgstr ""
 
-#: includes/admin_settings.php:454
+#: includes/admin_settings.php:456
 #: includes/variables.php:684
 #: includes/variables.php:777
 #: includes/variables.php:817
@@ -1033,113 +1057,113 @@ msgstr ""
 msgid "Open"
 msgstr ""
 
-#: includes/admin_settings.php:454
+#: includes/admin_settings.php:456
 msgid "Restricted"
 msgstr ""
 
-#: includes/admin_settings.php:466
+#: includes/admin_settings.php:468
 msgid "Authorized Apps"
 msgstr ""
 
-#: includes/admin_settings.php:470
-msgid "You may allow access to your meeting data for specific purposes, such as the <a target=\"_blank\" href=\"https://meetingguide.org/\">Meeting Guide App</a>."
+#: includes/admin_settings.php:472
+msgid "You may allow access to your meeting data for specific purposes, such as the Meeting Guide App."
 msgstr ""
 
-#: includes/admin_settings.php:499
+#: includes/admin_settings.php:503
 msgid "Meeting Guide"
 msgstr ""
 
-#: includes/admin_settings.php:506
+#: includes/admin_settings.php:511
 msgid "Public Feed"
 msgstr ""
 
-#: includes/admin_settings.php:509
+#: includes/admin_settings.php:514
 msgid "The following feed contains your publicly available meeting information."
 msgstr ""
 
-#: includes/admin_settings.php:514
+#: includes/admin_settings.php:518
 msgid "Public Data Source"
 msgstr ""
 
-#: includes/admin_settings.php:525
+#: includes/admin_settings.php:529
 msgid "User Interface Display"
 msgstr ""
 
 #. translators: %s is a link to the meeting finder page
-#: includes/admin_settings.php:530
+#: includes/admin_settings.php:534
 msgid "Please select the user interface that is right for your <a href=\"%s\" target=\"_blank\">meeting finder page</a>. Choose between our latest design that we call <b>TSML UI</b> or stay with the standard <b>Legacy UI</b>."
 msgstr ""
 
-#: includes/admin_settings.php:539
+#: includes/admin_settings.php:543
 msgid "Legacy UI"
 msgstr ""
 
-#: includes/admin_settings.php:542
+#: includes/admin_settings.php:546
 msgid "TSML UI"
 msgstr ""
 
-#: includes/admin_settings.php:557
+#: includes/admin_settings.php:561
 msgid "If your site features meetings in a variety of timezones, leave this blank and meetings will be displayed in the user's timezone. This requires a timezone to be set on each meeting location."
 msgstr ""
 
-#: includes/admin_settings.php:561
+#: includes/admin_settings.php:565
 msgid "If your site features meetings in a single timezone, select it here and meetings will be displayed in that timezone. There is no need to specify a timezone for each meeting."
 msgstr ""
 
-#: includes/admin_settings.php:570
+#: includes/admin_settings.php:574
 msgid "Timezone settings are only relevant to the TSML UI interface."
 msgstr ""
 
-#: includes/admin_settings.php:580
+#: includes/admin_settings.php:584
 msgid "Maps"
 msgstr ""
 
-#: includes/admin_settings.php:583
+#: includes/admin_settings.php:587
 msgid "Display of maps requires an authorization key from <strong><a href=\"https://www.mapbox.com/\" target=\"_blank\">Mapbox</a></strong> or <strong><a href=\"https://console.cloud.google.com/home/\" target=\"_blank\">Google</a></strong>."
 msgstr ""
 
-#: includes/admin_settings.php:586
+#: includes/admin_settings.php:590
 msgid "Please note that TSML UI only supports Mapbox."
 msgstr ""
 
-#: includes/admin_settings.php:591
+#: includes/admin_settings.php:595
 msgid "Mapbox Access Token"
 msgstr ""
 
-#: includes/admin_settings.php:601
-#: includes/admin_settings.php:620
+#: includes/admin_settings.php:602
+#: includes/admin_settings.php:618
 msgid "Update"
 msgstr ""
 
-#: includes/admin_settings.php:608
+#: includes/admin_settings.php:609
 msgid "Google Maps API Key"
 msgstr ""
 
-#: includes/admin_settings.php:611
+#: includes/admin_settings.php:612
 msgid "Be sure to enable JavaScript Maps API (<a href=\"https://developers.google.com/maps/documentation/javascript/get-api-key\" target=\"_blank\">read more</a>)."
 msgstr ""
 
-#: includes/admin_settings.php:633
+#: includes/admin_settings.php:631
 msgid "About Us"
 msgstr ""
 
-#: includes/admin_settings.php:642
+#: includes/admin_settings.php:640
 msgid "Email Addresses"
 msgstr ""
 
-#: includes/admin_settings.php:647
+#: includes/admin_settings.php:645
 msgid "User Feedback Emails"
 msgstr ""
 
-#: includes/admin_settings.php:650
+#: includes/admin_settings.php:648
 msgid "Enable a meeting info feedback form by adding email addresses here."
 msgstr ""
 
-#: includes/admin_settings.php:680
+#: includes/admin_settings.php:681
 msgid "Change Notification Emails"
 msgstr ""
 
-#: includes/admin_settings.php:683
+#: includes/admin_settings.php:684
 msgid "Receive notifications of meeting changes at the email addresses below."
 msgstr ""
 
@@ -1181,285 +1205,285 @@ msgstr ""
 msgid "No location information provided for <code>%s</code>."
 msgstr ""
 
-#: includes/functions.php:17
+#: includes/functions.php:18
 msgid "<strong>Code for Recovery</strong> is a nonprofit organization of volunteer members building technology services for recovery fellowships, such as A.A. and Al-Anon."
 msgstr ""
 
-#: includes/functions.php:20
+#: includes/functions.php:21
 msgid "Support our mission with a recurring contribution!"
 msgstr ""
 
-#: includes/functions.php:23
+#: includes/functions.php:24
 msgid "Your donations help cover hosting fees, content delivery, geocoding, and other essential services that enable recovery communities to thrive. Every contribution makes a difference."
 msgstr ""
 
-#: includes/functions.php:27
+#: includes/functions.php:28
 msgid "View Documentation"
 msgstr ""
 
-#: includes/functions.php:30
+#: includes/functions.php:31
 msgid "Request Help"
 msgstr ""
 
-#: includes/functions.php:33
+#: includes/functions.php:34
 msgid "Contribute"
 msgstr ""
 
-#: includes/functions.php:91
+#: includes/functions.php:118
 #: includes/variables.php:644
 msgid "Sunday"
 msgstr ""
 
-#: includes/functions.php:92
+#: includes/functions.php:119
 #: includes/variables.php:645
 msgid "Monday"
 msgstr ""
 
-#: includes/functions.php:93
+#: includes/functions.php:120
 #: includes/variables.php:646
 msgid "Tuesday"
 msgstr ""
 
-#: includes/functions.php:94
+#: includes/functions.php:121
 #: includes/variables.php:647
 msgid "Wednesday"
 msgstr ""
 
-#: includes/functions.php:95
+#: includes/functions.php:122
 #: includes/variables.php:648
 msgid "Thursday"
 msgstr ""
 
-#: includes/functions.php:96
+#: includes/functions.php:123
 #: includes/variables.php:649
 msgid "Friday"
 msgstr ""
 
-#: includes/functions.php:97
+#: includes/functions.php:124
 #: includes/variables.php:650
 msgid "Saturday"
 msgstr ""
 
-#: includes/functions.php:393
+#: includes/functions.php:420
 msgid "All Regions"
 msgstr ""
 
-#: includes/functions.php:394
+#: includes/functions.php:421
 msgid "Edit Region"
 msgstr ""
 
-#: includes/functions.php:395
+#: includes/functions.php:422
 msgid "View Region"
 msgstr ""
 
-#: includes/functions.php:396
+#: includes/functions.php:423
 msgid "Update Region"
 msgstr ""
 
-#: includes/functions.php:397
+#: includes/functions.php:424
 msgid "Add New Region"
 msgstr ""
 
-#: includes/functions.php:398
+#: includes/functions.php:425
 msgid "New Region"
 msgstr ""
 
-#: includes/functions.php:400
+#: includes/functions.php:427
 msgid "Parent Region:"
 msgstr ""
 
-#: includes/functions.php:401
+#: includes/functions.php:428
 msgid "Search Regions"
 msgstr ""
 
-#: includes/functions.php:402
+#: includes/functions.php:429
 msgid "Popular Regions"
 msgstr ""
 
-#: includes/functions.php:403
+#: includes/functions.php:430
 msgid "No regions found."
 msgstr ""
 
-#: includes/functions.php:415
+#: includes/functions.php:442
 msgid "All Districts"
 msgstr ""
 
-#: includes/functions.php:416
+#: includes/functions.php:443
 msgid "Edit District"
 msgstr ""
 
-#: includes/functions.php:417
+#: includes/functions.php:444
 msgid "View District"
 msgstr ""
 
-#: includes/functions.php:418
+#: includes/functions.php:445
 msgid "Update District"
 msgstr ""
 
-#: includes/functions.php:419
+#: includes/functions.php:446
 msgid "Add New District"
 msgstr ""
 
-#: includes/functions.php:420
+#: includes/functions.php:447
 msgid "New District"
 msgstr ""
 
-#: includes/functions.php:421
+#: includes/functions.php:448
 msgid "Parent Area"
 msgstr ""
 
-#: includes/functions.php:422
+#: includes/functions.php:449
 msgid "Parent Area:"
 msgstr ""
 
-#: includes/functions.php:423
+#: includes/functions.php:450
 msgid "Search Districts"
 msgstr ""
 
-#: includes/functions.php:424
+#: includes/functions.php:451
 msgid "Popular Districts"
 msgstr ""
 
-#: includes/functions.php:425
+#: includes/functions.php:452
 msgid "No districts found."
 msgstr ""
 
-#: includes/functions.php:438
+#: includes/functions.php:465
 msgid "No meetings added yet."
 msgstr ""
 
-#: includes/functions.php:439
+#: includes/functions.php:466
 msgid "Add New Meeting"
 msgstr ""
 
-#: includes/functions.php:440
+#: includes/functions.php:467
 msgid "Search Meetings"
 msgstr ""
 
-#: includes/functions.php:441
+#: includes/functions.php:468
 msgid "Edit Meeting"
 msgstr ""
 
-#: includes/functions.php:442
+#: includes/functions.php:469
 msgid "View Meeting"
 msgstr ""
 
-#: includes/functions.php:457
-#: includes/functions.php:459
+#: includes/functions.php:484
+#: includes/functions.php:486
 #: includes/variables.php:1502
 msgid "Locations"
 msgstr ""
 
-#: includes/functions.php:460
+#: includes/functions.php:487
 msgid "All Locations"
 msgstr ""
 
-#: includes/functions.php:461
+#: includes/functions.php:488
 msgid "Edit Location"
 msgstr ""
 
-#: includes/functions.php:462
+#: includes/functions.php:489
 msgid "View Location"
 msgstr ""
 
-#: includes/functions.php:463
+#: includes/functions.php:490
 msgid "Update Location"
 msgstr ""
 
-#: includes/functions.php:464
+#: includes/functions.php:491
 msgid "Add New Location"
 msgstr ""
 
-#: includes/functions.php:465
+#: includes/functions.php:492
 msgid "New Location"
 msgstr ""
 
-#: includes/functions.php:466
+#: includes/functions.php:493
 msgid "Parent Location"
 msgstr ""
 
-#: includes/functions.php:467
+#: includes/functions.php:494
 msgid "Parent Location:"
 msgstr ""
 
-#: includes/functions.php:468
+#: includes/functions.php:495
 msgid "Search Locations"
 msgstr ""
 
-#: includes/functions.php:469
+#: includes/functions.php:496
 msgid "Popular Locations"
 msgstr ""
 
-#: includes/functions.php:470
+#: includes/functions.php:497
 msgid "No locations found."
 msgstr ""
 
-#: includes/functions.php:486
-#: includes/functions.php:488
+#: includes/functions.php:513
+#: includes/functions.php:515
 #: includes/variables.php:1501
 msgid "Groups"
 msgstr ""
 
-#: includes/functions.php:489
+#: includes/functions.php:516
 msgid "All Groups"
 msgstr ""
 
-#: includes/functions.php:490
+#: includes/functions.php:517
 msgid "Edit Group"
 msgstr ""
 
-#: includes/functions.php:491
+#: includes/functions.php:518
 msgid "View Group"
 msgstr ""
 
-#: includes/functions.php:492
+#: includes/functions.php:519
 msgid "Update Group"
 msgstr ""
 
-#: includes/functions.php:493
+#: includes/functions.php:520
 msgid "Add New Group"
 msgstr ""
 
-#: includes/functions.php:494
+#: includes/functions.php:521
 msgid "New Group"
 msgstr ""
 
-#: includes/functions.php:495
+#: includes/functions.php:522
 msgid "Parent Group"
 msgstr ""
 
-#: includes/functions.php:496
+#: includes/functions.php:523
 msgid "Parent Group:"
 msgstr ""
 
-#: includes/functions.php:497
+#: includes/functions.php:524
 msgid "Search Groups"
 msgstr ""
 
-#: includes/functions.php:498
+#: includes/functions.php:525
 msgid "Popular Groups"
 msgstr ""
 
-#: includes/functions.php:499
+#: includes/functions.php:526
 msgid "No groups found."
 msgstr ""
 
 #. translators: %s is the permission required
-#: includes/functions.php:1026
-#: includes/functions.php:1039
+#: includes/functions.php:1038
+#: includes/functions.php:1051
 msgid "You do not have sufficient permissions to access this page (<code>%s</code>)."
 msgstr ""
 
 #. translators: %s is the name of the data source
-#: includes/functions.php:1256
+#: includes/functions.php:1268
 msgid "Please sign in to your website and refresh the <strong>%s</strong> feed on the Import & Export page."
 msgstr ""
 
-#: includes/functions.php:1259
+#: includes/functions.php:1271
 msgid "Go to Import & Export page"
 msgstr ""
 
-#: includes/functions.php:1261
+#: includes/functions.php:1273
 msgid "Data Source Changes Detected"
 msgstr ""
 
@@ -1475,48 +1499,48 @@ msgstr ""
 msgid "Midnight"
 msgstr ""
 
-#: includes/functions_get.php:125
+#: includes/functions_import.php:140
 #: templates/single-locations.php:122
 #: templates/single-meetings.php:418
 msgid "Updated"
 msgstr ""
 
-#: includes/functions_get.php:126
+#: includes/functions_import.php:141
 msgid "Changed"
 msgstr ""
 
-#: includes/functions_get.php:139
-#: includes/functions_get.php:140
+#: includes/functions_import.php:154
+#: includes/functions_import.php:155
 msgid "New"
 msgstr ""
 
-#: includes/functions_get.php:155
+#: includes/functions_import.php:170
 msgid "Removed / Missing"
 msgstr ""
 
-#: includes/functions_get.php:156
+#: includes/functions_import.php:171
 msgid "Removed"
 msgstr ""
 
-#: includes/functions_import.php:165
+#: includes/functions_import.php:261
 msgid "You can now add a Google Sheet directly to TSML. Please replace this feed with the Sheet URL. We will be dropping support for the Google Sheets API in a future release."
 msgstr ""
 
-#: includes/functions_import.php:172
+#: includes/functions_import.php:268
 msgid "The following issues were detected with this Google Sheet:"
 msgstr ""
 
-#: includes/functions_import.php:312
+#: includes/functions_import.php:408
 msgid "Meeting Location"
 msgstr ""
 
 #. translators: %s is the location name
-#: includes/functions_import.php:327
+#: includes/functions_import.php:423
 msgid "%s by Appointment"
 msgstr ""
 
 #. translators: %1s is the location name, %2s is the day, %3s is the time
-#: includes/functions_import.php:333
+#: includes/functions_import.php:429
 msgid "%1$1s %2$2s at %3$3s"
 msgstr ""
 
@@ -3036,7 +3060,7 @@ msgid "No meetings were found matching the selected criteria."
 msgstr ""
 
 #: includes/widgets.php:12
-#: includes/widgets.php:125
+#: includes/widgets.php:127
 msgid "Upcoming Meetings"
 msgstr ""
 
@@ -3048,32 +3072,32 @@ msgstr ""
 msgid "View More…"
 msgstr ""
 
-#: includes/widgets.php:131
+#: includes/widgets.php:133
 msgid "Title:"
 msgstr ""
 
-#: includes/widgets.php:139
+#: includes/widgets.php:141
 msgid "Show:"
 msgstr ""
 
-#: includes/widgets.php:152
-msgid "Message:<span class=\"description\">(displayed if no upcoming meetings, optional)</span>"
+#: includes/widgets.php:154
+msgid "Message (displayed if no upcoming meetings, optional):"
 msgstr ""
 
-#: includes/widgets.php:162
-#: includes/widgets.php:213
+#: includes/widgets.php:164
+#: includes/widgets.php:215
 msgid "Style with CSS?"
 msgstr ""
 
-#: includes/widgets.php:189
+#: includes/widgets.php:191
 msgid "App Store"
 msgstr ""
 
-#: includes/widgets.php:191
+#: includes/widgets.php:193
 msgid "Display links to the Meeting Guide app in the Apple and Android app stores."
 msgstr ""
 
-#: includes/widgets.php:203
+#: includes/widgets.php:205
 msgid "Title (optional):"
 msgstr ""
 

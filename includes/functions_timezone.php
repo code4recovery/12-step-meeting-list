@@ -38,10 +38,10 @@ function tsml_timezone_select($selected = null)
     <select name="timezone" id="timezone">
         <option value="" <?php selected($timezone, null) ?>></option>
         <?php foreach ($continents as $continent => $cities) { ?>
-            <optgroup label="<?php echo $continent ?>">
+            <optgroup label="<?php echo esc_attr($continent) ?>">
                 <?php foreach ($cities as $timezone => $city) { ?>
-                    <option value="<?php echo $timezone ?>" <?php selected($timezone, $selected) ?>>
-                        <?php echo $city ?>
+                    <option value="<?php echo esc_attr($timezone) ?>" <?php selected($timezone, $selected) ?>>
+                        <?php echo esc_html($city) ?>
                     </option>
                 <?php } ?>
             </optgroup>
