@@ -25,9 +25,9 @@ add_action('restrict_manage_posts', function ($post_type) {
     asort($types);
 
     echo '<select name="type">';
-    echo '<option value="">' . __('Type', '12-step-meeting-list') . '</option>';
+    echo '<option value="">' . esc_html__('Type', '12-step-meeting-list') . '</option>';
     foreach ($types as $key => $value) {
-        echo '<option value="' . $key . '"' . selected(isset($_GET['type']) && $_GET['type'] == $key) . '>' . $value . '</option>';
+        echo '<option value="' . esc_attr($key) . '"' . selected(isset($_GET['type']) && $_GET['type'] == $key) . '>' . esc_html($value) . '</option>';
     }
     echo '</select>';
 }, 10, 1);
@@ -98,17 +98,17 @@ add_action('manage_tsml_meeting_posts_custom_column', function ($column_name, $p
     global $tsml_days, $wpdb;
     if ($column_name == 'day') {
         $day = get_post_meta($post_ID, 'day', true);
-        echo (empty($day) && $day !== '0') ? __('Appointment', '12-step-meeting-list') : $tsml_days[$day];
+        echo (empty($day) && $day !== '0') ? esc_html__('Appointment', '12-step-meeting-list') : esc_html($tsml_days[$day]);
     } elseif ($column_name == 'time') {
-        echo tsml_format_time(get_post_meta($post_ID, 'time', true));
+        echo esc_html(tsml_format_time(get_post_meta($post_ID, 'time', true)));
     } elseif ($column_name == 'region') {
         // don't know how to do this with fewer queries
-        echo $wpdb->get_var('SELECT t.name
+        echo esc_html($wpdb->get_var('SELECT t.name
 			FROM ' . $wpdb->terms . ' t
 			JOIN ' . $wpdb->term_taxonomy . ' x ON t.term_id = x.term_id
 			JOIN ' . $wpdb->term_relationships . ' r ON x.term_taxonomy_id = r.term_taxonomy_id
 			JOIN ' . $wpdb->posts . ' p ON r.object_id = p.post_parent
-			WHERE p.ID = ' . intval($post_ID));
+			WHERE p.ID = ' . intval($post_ID)));
     }
 }, 10, 2);
 

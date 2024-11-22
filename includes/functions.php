@@ -3,6 +3,7 @@
 /**
  * "about this plugin" content
  * used: admin_menu.php and admin_settings.php
+ * 
  * @return void
  */
 function tsml_about_message()
@@ -37,15 +38,41 @@ function tsml_about_message()
 }
 
 /**
+ * render a list of meetings for a location or group
+ * used: admin_meeting.php
+ * 
+ * @param mixed $meetings
+ * @param mixed $meeting_id
+ * @return void
+ */
+function tsml_admin_meeting_list($meetings, $meeting_id)
+{
+    $output = '<ol>';
+    foreach ($meetings as $m) {
+        $output .= '<li>';
+        $output .= '<span>' . tsml_format_day_and_time($m['day'], $m['time'], ' ', true) . '</span>';
+        if ($m['id'] != $meeting_id) {
+            $output .= '<a href="' . get_edit_post_link($m['id']) . '">' . $m['name'] . '</a>';
+        } else {
+            $output .= $m['name'];
+        }
+        $output .= '</li>';
+    }
+    $output .= '</ol>';
+    echo wp_kses($output, ['ol' => [], 'li' => [], 'a' => ['href' => []], 'span' => [], 'time' => []]);
+}
+
+/**
  * add an admin screen update message
  * used: tsml_import() and admin_types.php
+ * 
  * @param mixed $message
  * @param mixed $type can be success, warning, info, or error
  * @return void
  */
 function tsml_alert($message, $type = 'success')
 {
-    echo '<div class="notice notice-' . esc_attr($type) . ' is-dismissible"><p>' . $message . '</p></div>';
+    echo '<div class="notice notice-' . esc_attr($type) . ' is-dismissible"><p>' . wp_kses($message, TSML_ALLOWED_HTML) . '</p></div>';
 }
 
 /**
@@ -603,21 +630,6 @@ function tsml_delete_orphans()
 			WHERE m.post_type="tsml_meeting" AND m.post_status="publish" AND m.post_parent = l.id) = 0');
     if (count($location_ids)) {
         $wpdb->query('UPDATE ' . $wpdb->posts . ' l SET l.post_status = "draft" WHERE ID IN (' . implode(', ', $location_ids) . ')');
-    }
-}
-
-/**
- * echo a property if it exists
- * used on admin_meeting.php
- * 
- * @param mixed $object
- * @param mixed $property
- * @return void
- */
-function tsml_echo($object, $property)
-{
-    if (!empty($object->{$property})) {
-        echo esc_html($object->{$property});
     }
 }
 
@@ -1279,7 +1291,7 @@ function tsml_schedule_import_scan($data_source_url, $data_source_name)
     $ts = wp_next_scheduled("tsml_scan_data_source", array($data_source_url));
     if ($ts) {
         $mydisplaytime = tsml_date_localised(get_option('date_format') . ' ' . get_option('time_format'), $ts); // Use tsml_date_localised to convert to specified format with local site timezone included.
-        tsml_alert("The $data_source_name data source's next scheduled run is $mydisplaytime.  You can adjust the recurrences and the times that the job ('<b>tsml_scan_data_source</b>') runs with the WP_Crontrol plugin.");
+        tsml_alert("The $data_source_name data source's next scheduled run is $mydisplaytime. You can adjust the recurrences and the times that the job ('<strong>tsml_scan_data_source</strong>') runs with the WP_Crontrol plugin.");
     } else {
         // When adding a data source we schedule its daily cron job
         register_activation_hook(__FILE__, 'tsml_activate_data_source_scan');
@@ -1289,7 +1301,7 @@ function tsml_schedule_import_scan($data_source_url, $data_source_name)
             tsml_alert("$data_source_name data source scan scheduling failed!");
         } else {
             $mydisplaytime = tsml_date_localised(get_option('date_format') . ' ' . get_option('time_format'), $timestamp); // Use tsml_date_localised to convert to specified format with local site timezone included.
-            tsml_alert("The $data_source_name data source's next scheduled run is $mydisplaytime.  You can adjust the recurrences and the times that the job ('<b>tsml_scan_data_source</b>') runs with the WP_Crontrol plugin.");
+            tsml_alert("The $data_source_name data source's next scheduled run is $mydisplaytime. You can adjust the recurrences and the times that the job ('<strong>tsml_scan_data_source</strong>') runs with the WP_Crontrol plugin.");
         }
     }
 }

@@ -149,7 +149,8 @@ a.button-large {
 			box-shadow: none;
 
 			&[type='text'],
-			&[type='email'] {
+			&[type='email'], 
+			&[type='url'] {
 				font-family: monospace;
 				width: 300px;
 			}

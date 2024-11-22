@@ -58,7 +58,7 @@ function tsml_import_buffer_set($meetings, $data_source_url = null, $data_source
 function tsml_import_build_change_report($change_log)
 {
     global $tsml_days;
-    $message = "<table style=\"width:100%;margin-bottom:10px;text-align:left;border:1px solid #dddddd;padding: 8px;\" cellspacing=\"5\">";
+    $message = '<table style="width:100%;margin-bottom:10px;text-align:left;border:1px solid #dddddd;padding:8px;border-spacing:5px">';
 
     foreach ($change_log as $change_entry) {
         $meeting_id = isset($change_entry['meeting_id']) ? $change_entry['meeting_id'] : '';
@@ -77,7 +77,7 @@ function tsml_import_build_change_report($change_log)
         }
         $message .= '<tr><td>' . $meeting_name_linked . '  ' . $meeting_day . ' @ ' . $meeting_time . ' </td>' . '<td>' . $notes . ' </td></tr>';
     }
-    $message .= "</tbody></table>";
+    $message .= '</table>';
     return $message;
 }
 
