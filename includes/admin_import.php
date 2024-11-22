@@ -365,7 +365,7 @@ if (!function_exists('tsml_import_page')) {
                                             <form method="post">
                                                 <?php
                                                 wp_nonce_field($tsml_nonce, 'tsml_nonce', false);
-                                                tsml_input_hidden('tsml_remove_data_source', $feed);
+                                                tsml_input_hidden('tsml_add_data_source', $feed);
                                                 tsml_input_hidden('tsml_add_data_source_name', @$properties['name']);
                                                 tsml_input_hidden('tsml_add_data_source_parent_region_id', @$properties['parent_region_id']);
                                                 tsml_input_hidden('tsml_add_data_source_change_detect', @$properties['change_detect']);
