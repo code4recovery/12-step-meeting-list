@@ -15,25 +15,9 @@ if (!$tsml_cache = get_option('tsml_cache')) {
 }
 $tsml_cache_writable = boolval(get_option('tsml_cache_writable', 0));
 
-// Define attendance options
-$tsml_meeting_attendance_options = [
-    'in_person' => __('In-person', '12-step-meeting-list'),
-    'hybrid' => __('In-person and Online', '12-step-meeting-list'),
-    'online' => __('Online', '12-step-meeting-list'),
-    'inactive' => __('Inactive', '12-step-meeting-list'),
-];
+// define global variables that need to wait for translation in init
+$tsml_meeting_attendance_options = $tsml_columns = [];
 
-// load the set of columns that should be present in the list (not sure why this shouldn't go after plugins_loaded below)
-$tsml_columns = [
-    'time' => __('Time', '12-step-meeting-list'),
-    'distance' => __('Distance', '12-step-meeting-list'),
-    'name' => __('Meeting', '12-step-meeting-list'),
-    'location_group' => __('Location / Group', '12-step-meeting-list'),
-    'address' => __('Address', '12-step-meeting-list'),
-    'region' => __('Region', '12-step-meeting-list'),
-    'district' => __('District', '12-step-meeting-list'),
-    'types' => __('Types', '12-step-meeting-list'),
-];
 
 // list of valid conference providers (matches Meeting Guide app). set this to null in your theme if you don't want to validate
 $tsml_conference_providers = [
@@ -634,10 +618,32 @@ $tsml_debug = false;
 // set up globals, common variables once plugins are loaded, but before init
 function tsml_load_config()
 {
-    global $tsml_days, $tsml_days_order, $tsml_programs, $tsml_slug, $tsml_strings, $tsml_user_interface, $tsml_types_in_use;
+    global $tsml_days, $tsml_days_order, $tsml_programs, $tsml_slug, $tsml_strings, $tsml_user_interface, $tsml_types_in_use, $tsml_meeting_attendance_options, $tsml_columns;
 
     // load internationalization
     load_plugin_textdomain('12-step-meeting-list', false, '12-step-meeting-list/languages');
+
+    // define attendance options
+    $tsml_meeting_attendance_options = [
+        'in_person' => __('In-person', '12-step-meeting-list'),
+        'hybrid' => __('In-person and Online', '12-step-meeting-list'),
+        'online' => __('Online', '12-step-meeting-list'),
+        'inactive' => __('Inactive', '12-step-meeting-list'),
+    ];
+
+    // load the set of columns that should be present in the list
+    if (!is_array($tsml_columns) || !count($tsml_columns)) {
+        $tsml_columns = [
+            'time' => __('Time', '12-step-meeting-list'),
+            'distance' => __('Distance', '12-step-meeting-list'),
+            'name' => __('Meeting', '12-step-meeting-list'),
+            'location_group' => __('Location / Group', '12-step-meeting-list'),
+            'address' => __('Address', '12-step-meeting-list'),
+            'region' => __('Region', '12-step-meeting-list'),
+            'district' => __('District', '12-step-meeting-list'),
+            'types' => __('Types', '12-step-meeting-list'),
+        ];
+    }
 
     // days of the week
     $tsml_days = [
@@ -1511,10 +1517,4 @@ function tsml_load_config()
     if (!is_array($tsml_types_in_use)) {
         $tsml_types_in_use = [];
     }
-}
-
-add_action('plugins_loaded', 'tsml_load_config');
-// load config if we always passed plugins_loaded action
-if (did_action('plugins_loaded')) {
-    tsml_load_config();
 }

@@ -3,6 +3,9 @@
 // for all users
 add_action('init', function () {
 
+    // load text domain
+    tsml_load_config();
+
     // register post types and taxonomies
     tsml_custom_post_types();
 
