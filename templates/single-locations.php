@@ -32,20 +32,27 @@ tsml_header();
 
                 <div class="page-header">
                     <h1>
-                        <?php echo $location->post_title ?>
+                        <?php echo esc_html($location->post_title) ?>
                     </h1>
-                    <?php echo tsml_link(get_post_type_archive_link('tsml_meeting'), '<i class="glyphicon glyphicon-chevron-right"></i> ' . __('Back to Meetings', '12-step-meeting-list'), 'tsml_location') ?>
+                    <div>
+                        <a
+                            href="<?php echo esc_url(tsml_link_url(get_post_type_archive_link('tsml_meeting'), 'tsml_location')) ?>">
+                            <em class="glyphicon glyphicon-chevron-right"></em>
+                            <?php esc_html_e('Back to Meetings', '12-step-meeting-list') ?>
+                        </a>
+                    </div>
                 </div>
 
                 <div class="row location">
                     <div class="col-md-4">
                         <?php if ($location->approximate !== 'yes') { ?>
                             <div class="panel panel-default">
-                                <a class="panel-heading tsml-directions" data-latitude="<?php echo $location->latitude ?>"
-                                    data-longitude="<?php echo $location->longitude ?>"
-                                    data-location="<?php echo $location->post_title ?>">
+                                <a class="panel-heading tsml-directions"
+                                    data-latitude="<?php echo esc_attr($location->latitude) ?>"
+                                    data-longitude="<?php echo esc_attr($location->longitude) ?>"
+                                    data-location="<?php echo esc_attr($location->post_title) ?>">
                                     <h3 class="panel-title">
-                                        <?php _e('Get Directions', '12-step-meeting-list') ?>
+                                        <?php esc_html_e('Get Directions', '12-step-meeting-list') ?>
                                         <span class="panel-title-buttons">
                                             <span class="glyphicon glyphicon-share-alt"></span>
                                         </span>
@@ -58,18 +65,18 @@ tsml_header();
                             <ul class="list-group">
                                 <li class="list-group-item list-group-item-address">
                                     <p class="notranslate">
-                                        <?php echo tsml_format_address($location->formatted_address) ?>
+                                        <?php echo wp_kses(tsml_format_address($location->formatted_address), TSML_ALLOWED_HTML) ?>
                                     </p>
 
                                     <?php if ($location->region && !strpos($location->formatted_address, $location->region)) { ?>
                                         <p class="notranslate">
-                                            <?php echo $location->region ?>
+                                            <?php echo esc_html($location->region) ?>
                                         </p>
                                     <?php }
 
                                     if ($location->notes) { ?>
                                         <p>
-                                            <?php echo $location->notes ?>
+                                            <?php echo wp_kses(wpautop($location->notes), TSML_ALLOWED_HTML) ?>
                                         </p>
                                     <?php } ?>
                                 </li>
@@ -87,17 +94,7 @@ tsml_header();
                                         $location_days[$meeting['day']] = [];
                                     }
 
-                                    $type_classes = tsml_to_css_classes($meeting['types']);
-
-                                    $meeting_link = '<li class="meeting attendance-' . $meeting['attendance_option'] . '"><span>' . $meeting['time_formatted'] . '</span> ';
-                                    $meeting_link .= tsml_link($meeting['url'], $meeting['name'], '', 'notranslate');
-                                    $meeting_types = tsml_format_types($meeting['types']);
-                                    if (!empty($meeting_types)) {
-                                        $meeting_link .= '<div class="meeting_types"><small>(' . $meeting_types . ')</small></div>';
-                                    }
-                                    $meeting_link .= '<div class="attendance-option">' . $tsml_meeting_attendance_options[$meeting['attendance_option']] . '</div>';
-                                    $meeting_link .= '</li>';
-                                    $location_days[$meeting['day']][] = $meeting_link;
+                                    $location_days[$meeting['day']][] = $meeting;
                                 }
                                 ksort($location_days);
 
@@ -107,19 +104,37 @@ tsml_header();
                                             <h4>
                                                 <?php
                                                 if (!empty($tsml_days[$day])) {
-                                                    echo $tsml_days[$day];
+                                                    echo esc_html($tsml_days[$day]);
                                                 }
                                                 ?>
                                             </h4>
                                             <ul>
-                                                <?php echo implode($meetings) ?>
+                                                <?php foreach ($meetings as $meeting) { ?>
+                                                    <li class="meeting attendance-<?php esc_attr($meeting['attendance_option']) ?>">
+                                                        <span><?php echo esc_html($meeting['time_formatted']) ?></span>
+                                                        <a href="<?php echo esc_url(tsml_link_url($meeting['url'])) ?>"
+                                                            class="notranslate">
+                                                            <?php echo esc_html($meeting['name']) ?>
+                                                        </a>
+                                                        <?php
+                                                        $meeting_types = tsml_format_types($meeting['types']);
+                                                        if (!empty($meeting_types)) { ?>
+                                                            <div class="meeting_types">
+                                                                <small>(<?php esc_html($meeting_types) ?>)</small>
+                                                            </div>
+                                                        <?php } ?>
+                                                        <div class="attendance-option">
+                                                            <?php esc_html($tsml_meeting_attendance_options[$meeting['attendance_option']]) ?>
+                                                        </div>
+                                                    </li>
+                                                <?php } ?>
                                             </ul>
                                         <?php } ?>
                                     </li>
                                 <?php } ?>
 
                                 <li class="list-group-item list-group-item-updated">
-                                    <?php _e('Updated', '12-step-meeting-list') ?>
+                                    <?php esc_html_e('Updated', '12-step-meeting-list') ?>
                                     <?php the_modified_date() ?>
                                 </li>
                             </ul>
