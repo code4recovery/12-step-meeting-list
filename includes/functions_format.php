@@ -42,7 +42,7 @@ function tsml_format_day_and_time($day, $time, $separator = ', ', $short = false
     if (empty($tsml_days[$day]) || empty($time)) {
         return $short ? __('Appt', '12-step-meeting-list') : __('Appointment', '12-step-meeting-list');
     }
-    return ($short ? substr($tsml_days[$day], 0, 3) : $tsml_days[$day]) . $separator . '<time>' . tsml_format_time($time) . '</time>';
+    return ($short ? substr($tsml_days[$day], 0, 3) : $tsml_days[$day]) . $separator . tsml_format_time($time);
 }
 
 /**

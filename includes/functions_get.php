@@ -427,7 +427,7 @@ function tsml_get_meetings($arguments = [], $from_cache = true, $full_export = f
     $tsml_entity = tsml_get_entity();
 
     // start by grabbing all meetings
-    if ($from_cache && $tsml_cache_writable && $meetings = file_get_contents(WP_CONTENT_DIR . $tsml_cache)) {
+    if ($from_cache && $tsml_cache_writable && file_exists(WP_CONTENT_DIR . $tsml_cache) && $meetings = file_get_contents(WP_CONTENT_DIR . $tsml_cache)) {
         $meetings = json_decode($meetings, true);
     } else {
         // from database
@@ -585,7 +585,7 @@ function tsml_get_meetings($arguments = [], $from_cache = true, $full_export = f
         if (!$full_export) {
             $filepath = WP_CONTENT_DIR . $tsml_cache;
             // Check if the file is writable, and if so, write it
-            if (is_writable($filepath) || (!file_exists($filepath) && is_writable(WP_CONTENT_DIR))) {
+            if (count($meetings) && is_writable($filepath) || (!file_exists($filepath) && is_writable(WP_CONTENT_DIR))) {
                 $filesize = file_put_contents($filepath, json_encode($meetings));
                 update_option('tsml_cache_writable', $filesize === false ? 0 : 1);
             } else {

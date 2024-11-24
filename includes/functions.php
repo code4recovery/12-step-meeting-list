@@ -238,6 +238,71 @@ function tsml_calculate_attendance_option($types, $approximate)
 }
 
 /**
+ * Render svg icon icon
+ * 
+ * @param string $icon cash|directions|email|link|phone
+ * @return void
+ */
+function tsml_icon($icon)
+{ ?>
+    <svg class="icon" viewBox="0 0 16 16" fill="currentColor">
+        <?php if ($icon === 'cash') { ?>
+            <path d="M14 3H1a1 1 0 0 1 1-1h12a1 1 0 0 1 1 1h-1z" />
+            <path fill-rule="evenodd"
+                d="M15 5H1v8h14V5zM1 4a1 1 0 0 0-1 1v8a1 1 0 0 0 1 1h14a1 1 0 0 0 1-1V5a1 1 0 0 0-1-1H1z" />
+            <path
+                d="M13 5a2 2 0 0 0 2 2V5h-2zM3 5a2 2 0 0 1-2 2V5h2zm10 8a2 2 0 0 1 2-2v2h-2zM3 13a2 2 0 0 0-2-2v2h2zm7-4a2 2 0 1 1-4 0 2 2 0 0 1 4 0z" />
+        <?php } elseif ($icon === 'check') { ?>
+            <path
+                d="M10.97 4.97a.75.75 0 0 1 1.071 1.05l-3.992 4.99a.75.75 0 0 1-1.08.02L4.324 8.384a.75.75 0 1 1 1.06-1.06l2.094 2.093 3.473-4.425a.236.236 0 0 1 .02-.022z" />
+        <?php } elseif ($icon === 'directions') { ?>
+            <path
+                d="M9.896 2.396a.5.5 0 0 0 0 .708l2.647 2.646-2.647 2.646a.5.5 0 1 0 .708.708l3-3a.5.5 0 0 0 0-.708l-3-3a.5.5 0 0 0-.708 0z" />
+            <path
+                d="M13.25 5.75a.5.5 0 0 0-.5-.5h-6.5a2.5 2.5 0 0 0-2.5 2.5v5.5a.5.5 0 0 0 1 0v-5.5a1.5 1.5 0 0 1 1.5-1.5h6.5a.5.5 0 0 0 .5-.5z" />
+        <?php } elseif ($icon === 'email') { ?>
+            <path
+                d="M0 4a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2V4zm2-1a1 1 0 0 0-1 1v.217l7 4.2 7-4.2V4a1 1 0 0 0-1-1H2zm13 2.383l-4.758 2.855L15 11.114v-5.73zm-.034 6.878L9.271 8.82 8 9.583 6.728 8.82l-5.694 3.44A1 1 0 0 0 2 13h12a1 1 0 0 0 .966-.739zM1 11.114l4.758-2.876L1 5.383v5.73z" />
+        <?php } elseif ($icon === 'link') { ?>
+            <path
+                d="M4.715 6.542L3.343 7.914a3 3 0 1 0 4.243 4.243l1.828-1.829A3 3 0 0 0 8.586 5.5L8 6.086a1.001 1.001 0 0 0-.154.199 2 2 0 0 1 .861 3.337L6.88 11.45a2 2 0 1 1-2.83-2.83l.793-.792a4.018 4.018 0 0 1-.128-1.287z" />
+            <path
+                d="M5.712 6.96l.167-.167a1.99 1.99 0 0 1 .896-.518 1.99 1.99 0 0 1 .518-.896l.167-.167A3.004 3.004 0 0 0 6 5.499c-.22.46-.316.963-.288 1.46z" />
+            <path
+                d="M6.586 4.672A3 3 0 0 0 7.414 9.5l.775-.776a2 2 0 0 1-.896-3.346L9.12 3.55a2 2 0 0 1 2.83 2.83l-.793.792c.112.42.155.855.128 1.287l1.372-1.372a3 3 0 0 0-4.243-4.243L6.586 4.672z" />
+            <path
+                d="M10 9.5a2.99 2.99 0 0 0 .288-1.46l-.167.167a1.99 1.99 0 0 1-.896.518 1.99 1.99 0 0 1-.518.896l-.167.167A3.004 3.004 0 0 0 10 9.501z" />
+        <?php } elseif ($icon === 'phone') { ?>
+            <path
+                d="M3.925 1.745a.636.636 0 0 0-.951-.059l-.97.97c-.453.453-.62 1.095-.421 1.658A16.47 16.47 0 0 0 5.49 10.51a16.471 16.471 0 0 0 6.196 3.907c.563.198 1.205.032 1.658-.421l.97-.97a.636.636 0 0 0-.06-.951l-2.162-1.682a.636.636 0 0 0-.544-.115l-2.052.513a1.636 1.636 0 0 1-1.554-.43L5.64 8.058a1.636 1.636 0 0 1-.43-1.554l.513-2.052a.636.636 0 0 0-.115-.544L3.925 1.745zM2.267.98a1.636 1.636 0 0 1 2.448.153l1.681 2.162c.309.396.418.913.296 1.4l-.513 2.053a.636.636 0 0 0 .167.604L8.65 9.654a.636.636 0 0 0 .604.167l2.052-.513a1.636 1.636 0 0 1 1.401.296l2.162 1.681c.777.604.849 1.753.153 2.448l-.97.97c-.693.693-1.73.998-2.697.658a17.47 17.47 0 0 1-6.571-4.144A17.47 17.47 0 0 1 .639 4.646c-.34-.967-.035-2.004.658-2.698l.97-.969z" />
+        <?php } elseif ($icon === 'video') { ?>
+            <path
+                d="M2.667 3.5c-.645 0-1.167.522-1.167 1.167v6.666c0 .645.522 1.167 1.167 1.167h6.666c.645 0 1.167-.522 1.167-1.167V4.667c0-.645-.522-1.167-1.167-1.167H2.667zM.5 4.667C.5 3.47 1.47 2.5 2.667 2.5h6.666c1.197 0 2.167.97 2.167 2.167v6.666c0 1.197-.97 2.167-2.167 2.167H2.667A2.167 2.167 0 0 1 .5 11.333V4.667z" />
+            <path
+                d="M11.25 5.65l2.768-1.605a.318.318 0 0 1 .482.263v7.384c0 .228-.26.393-.482.264l-2.767-1.605-.502.865 2.767 1.605c.859.498 1.984-.095 1.984-1.129V4.308c0-1.033-1.125-1.626-1.984-1.128L10.75 4.785l.502.865z" />
+        <?php } ?>
+    </svg>
+<?php }
+
+/**
+ * Used on frontend pages
+ * 
+ * @param mixed $link
+ * @param mixed $text
+ * @param mixed $icon cash|directions|email|link|phone
+ * @return void
+ */
+function tsml_icon_button($link, $text, $icon)
+{
+    ?>
+    <a href="<?php echo esc_attr($link) ?>" class="btn btn-default btn-block">
+        <?php tsml_icon($icon) ?>
+        <?php echo esc_html($text) ?>
+    </a>
+    <?php
+}
+
+/**
  * handle plugin activation
  * called by register_activation_hook in 12-step-meeting-list.php
  * 
@@ -919,16 +984,13 @@ function tsml_meeting_types($types)
 }
 
 /**
- * return an html link with current query string appended -- this is because query string permalink structure is an enormous pain in the ass
- * used archive-meetings.php, single-locations.php, single-meetings.php
+ * return string link with current query string appended
  * 
- * @param mixed $url
- * @param mixed $string
+ * @param string $url
  * @param mixed $exclude
- * @param mixed $class
  * @return string
  */
-function tsml_link($url, $string, $exclude = '', $class = false)
+function tsml_link_url($url, $exclude = '')
 {
     $appends = $_GET;
     if (array_key_exists($exclude, $appends)) {
@@ -938,12 +1000,7 @@ function tsml_link($url, $string, $exclude = '', $class = false)
         $url .= strstr($url, '?') ? '&' : '?';
         $url .= http_build_query($appends, '', '&amp;');
     }
-    $return = '<a href="' . $url . '"';
-    if ($class) {
-        $return .= ' class="' . $class . '"';
-    }
-    $return .= '>' . $string . '</a>';
-    return $return;
+    return $url;
 }
 
 /**
