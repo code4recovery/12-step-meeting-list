@@ -14,10 +14,13 @@
 
 // define constants
 define('TSML_ALLOWED_HTML', [
-    'a' => ['href' => [], 'title' => []],
+    'a' => ['class' => [], 'href' => [], 'title' => []],
+    'br' => [],
     'code' => [],
     'em' => [],
     'pre' => [],
+    'span' => ['class' => []],
+    'small' => [],
     'strong' => [],
     'table' => ['style' => []],
     'td' => [],
