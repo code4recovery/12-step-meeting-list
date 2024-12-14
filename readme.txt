@@ -4,7 +4,7 @@ Donate link: https://code4recovery.org/contribute
 Requires at least: 3.2
 Requires PHP: 5.6
 Tested up to: 6.7
-Stable tag: 3.16.4
+Stable tag: 3.16.5
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -300,6 +300,11 @@ Yes, you will need to know the key name of the field. Then include an array in y
 1. Edit location
 
 == Changelog ==
+
+= 3.16.5 =
+* Fix PHP notice about translations [more info](https://github.com/code4recovery/12-step-meeting-list/issues/1582)
+* Refactors suggeted by the Plugin Check plugin [more info](https://github.com/code4recovery/12-step-meeting-list/issues/1569)
+* Confirm when removing a feed [more info](https://github.com/code4recovery/12-step-meeting-list/pull/1570)
 
 = 3.16.4 =
 * Add conference providers [more info](https://github.com/code4recovery/12-step-meeting-list/issues/1564)
