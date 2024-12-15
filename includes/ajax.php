@@ -300,6 +300,8 @@ function tsml_ajax_geocode()
 add_action('wp_ajax_tsml_geocodes', function () {
     global $tsml_google_overrides;
 
+    tsml_require_meetings_permission();
+
     $addresses = tsml_get_option_array('tsml_addresses');
 
     // handle get request to remove an address from the cache
