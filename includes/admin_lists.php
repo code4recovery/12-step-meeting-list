@@ -344,7 +344,7 @@ add_action('manage_tsml_region_custom_column', function ($string, $column_name, 
             'paged' => 1,
         ]);
         return '<a href="' . admin_url("edit.php?$query") . '">' .
-            array_key_exists($term->term_id, $tsml_region_counts) ? $tsml_region_counts[$term->term_id] : '' .
+            @$tsml_region_counts[$term->term_id] .
             '</a>';
     }
     return $string;

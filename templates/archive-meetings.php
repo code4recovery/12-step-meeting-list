@@ -723,7 +723,7 @@ tsml_header();
                                             case 'address': ?>
                                                 <td class="address notranslate"
                                                     data-sort="<?php echo esc_attr(tsml_sanitize_data_sort($meeting['formatted_address']) . '-' . $sort_time) ?>">
-                                                    <?php echo esc_html(tsml_format_address($meeting['formatted_address'], $tsml_street_only)) ?>
+                                                    <?php echo wp_kses(tsml_format_address($meeting['formatted_address'], $tsml_street_only), ['br' => []]) ?>
                                                 </td>
                                                 <?php
                                                 break;
