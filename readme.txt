@@ -303,6 +303,7 @@ Yes, you will need to know the key name of the field. Then include an array in y
 
 = 3.16.6 =
 * Handle security vulnerabilities reported by outside service [more info](https://github.com/code4recovery/12-step-meeting-list/issues/1583)
+# Fix issues reported with 3.16.5 (mainly HTML being output as text) [more info](https://github.com/code4recovery/12-step-meeting-list/issues/1586)
 
 = 3.16.5 =
 * Fix PHP notice about translations [more info](https://github.com/code4recovery/12-step-meeting-list/issues/1582)
