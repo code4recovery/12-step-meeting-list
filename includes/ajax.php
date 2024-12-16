@@ -2,57 +2,6 @@
 
 // ajax functions
 
-// delete all meetings and locations
-add_action('wp_ajax_tsml_delete', function () {
-    tsml_require_meetings_permission();
-    tsml_delete('everything');
-    die('deleted');
-});
-
-// debug info
-add_action('wp_ajax_tsml_info', 'tsml_ajax_info');
-add_action('wp_ajax_nopriv_tsml_info', 'tsml_ajax_info');
-function tsml_ajax_info()
-{
-    global $tsml_sharing, $tsml_program, $tsml_data_sources, $tsml_google_maps_key, $tsml_mapbox_key, $tsml_sharing_keys,
-    $tsml_contact_display, $tsml_cache_writable, $tsml_feedback_addresses, $tsml_user_interface, $tsml_notification_addresses,
-    $tsml_google_geocoding_key, $tsml_timezone;
-
-    $theme = wp_get_theme();
-
-    $tsml_log = tsml_get_option_array('tsml_log');
-
-    wp_send_json([
-        'language' => get_bloginfo('language'),
-        'log' => array_slice($tsml_log, 0, 25), // limit to 25 events
-        'plugins' => array_map(function ($key) {
-            return explode('/', $key)[0];
-        }, array_keys(get_plugins())),
-        'settings' => [
-            'cache_writable' => $tsml_cache_writable,
-            'contact_display' => $tsml_contact_display,
-            'data_source_count' => count($tsml_data_sources),
-            'feedback_addresses' => count($tsml_feedback_addresses),
-            'has_google_geocoding_key' => !!$tsml_google_geocoding_key,
-            'has_google_maps_key' => !!$tsml_google_maps_key,
-            'has_mapbox_key' => !!$tsml_mapbox_key,
-            'notification_addresses_count' => count($tsml_notification_addresses),
-            'program' => strToUpper($tsml_program),
-            'sharing' => $tsml_sharing,
-            'sharing_keys_count' => count($tsml_sharing_keys),
-            'user_interface' => $tsml_user_interface,
-            'wp_debug' => defined('WP_DEBUG') && WP_DEBUG,
-        ],
-        'theme' => $theme->get_stylesheet(),
-        'theme_parent' => $theme->exists() && $theme->parent() ? $theme->parent()->get_stylesheet() : null,
-        'timezone' => $tsml_timezone,
-        'versions' => [
-            'php' => phpversion(),
-            'tsml' => TSML_VERSION,
-            'wordpress' => get_bloginfo('version'),
-        ],
-    ]);
-}
 
 // ajax for the location typeahead on the meeting edit page
 add_action('wp_ajax_tsml_locations', function () {
@@ -348,11 +297,10 @@ function tsml_ajax_geocode()
 
 // function: get a list of all the geocodes in the database
 // used: for debugging
-add_action('wp_ajax_tsml_geocodes', 'tsml_ajax_geocodes');
-add_action('wp_ajax_nopriv_tsml_geocodes', 'tsml_ajax_geocodes');
-function tsml_ajax_geocodes()
-{
+add_action('wp_ajax_tsml_geocodes', function () {
     global $tsml_google_overrides;
+
+    tsml_require_meetings_permission();
 
     $addresses = tsml_get_option_array('tsml_addresses');
 
@@ -379,8 +327,10 @@ function tsml_ajax_geocodes()
         }
     }
 
+    ksort($addresses);
+
     wp_send_json($addresses);
-}
+});
 
 // ajax function to import the meetings in the import buffer
 // used by admin_import.php
