@@ -118,7 +118,22 @@ class TSML_Widget_Upcoming extends WP_Widget
         $output .= '<p><a href="' . $link . '">' . __('View More…', '12-step-meeting-list') . '</a></p>';
         $output .= $args['after_widget'];
 
-        echo wp_kses_post($output);
+        echo wp_kses($output, [
+            'a' => ['href' => [], 'class' => []],
+            'aside' => ['class' => []],
+            'div' => ['class' => []],
+            'h1' => ['class' => []],
+            'p' => [],
+            'small' => [],
+            'span' => ['class' => []],
+            'style' => ['type' => []],
+            'table' => ['class' => []],
+            'tbody' => [],
+            'td' => ['class' => []],
+            'th' => ['class' => []],
+            'thead' => [],
+            'tr' => ['class' => []],
+        ]);
     }
 
     // backend form
