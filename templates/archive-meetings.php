@@ -408,7 +408,7 @@ tsml_header();
                                 </li>
                                 <li class="divider"></li>
                             <?php }
-                            $allowed_tags = ['li' => ['class' => ''], 'a' => ['href' => '', 'data-id' => '']];
+                            $allowed_tags = ['a' => ['href' => [], 'data-id' => []], 'div' => ['class' => []], 'li' => ['class' => []], 'ul' => ['class' => []]];
                             echo wp_kses($regions_dropdown, $allowed_tags);
                             echo wp_kses($districts_dropdown, $allowed_tags);
                             ?>
