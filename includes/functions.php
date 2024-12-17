@@ -984,6 +984,33 @@ function tsml_meeting_types($types)
 }
 
 /**
+ * Render an anchor tag with a class
+ * @deprecated this function is no longer used. it will be removed in the future
+ * @param mixed $url
+ * @param mixed $string
+ * @param mixed $exclude
+ * @param mixed $class
+ * @return string
+ */
+function tsml_link($url, $string, $exclude = '', $class = false)
+{
+    $appends = $_GET;
+    if (array_key_exists($exclude, $appends)) {
+        unset($appends[$exclude]);
+    }
+    if (!empty($appends)) {
+        $url .= strstr($url, '?') ? '&' : '?';
+        $url .= http_build_query($appends, '', '&amp;');
+    }
+    $return = '<a href="' . $url . '"';
+    if ($class) {
+        $return .= ' class="' . $class . '"';
+    }
+    $return .= '>' . $string . '</a>';
+    return $return;
+}
+
+/**
  * return string link with current query string appended
  * 
  * @param string $url
