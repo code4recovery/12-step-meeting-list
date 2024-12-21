@@ -76,7 +76,7 @@ tsml_header();
 
                                     if ($location->notes) { ?>
                                         <p>
-                                            <?php echo wp_kses(wpautop($location->notes), TSML_ALLOWED_HTML) ?>
+                                            <?php echo wp_kses(wpautop($location->notes), ['br' => [], 'p' => []]) ?>
                                         </p>
                                     <?php } ?>
                                 </li>
