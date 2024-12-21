@@ -74,11 +74,10 @@ tsml_header();
                                         </p>
                                     <?php }
 
-                                    if ($location->notes) { ?>
-                                        <p>
-                                            <?php echo wp_kses(wpautop($location->notes), ['br' => [], 'p' => []]) ?>
-                                        </p>
-                                    <?php } ?>
+                                    if ($location->notes) {
+                                        tsml_format_notes($location->notes);
+                                    }
+                                    ?>
                                 </li>
 
                                 <?php

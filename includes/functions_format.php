@@ -78,6 +78,17 @@ function tsml_format_name($name, $types = null)
 }
 
 /**
+ * format notes with sanitized paragraphs and line breaks
+ * 
+ * @param mixed $notes
+ * @return void
+ */
+function tsml_format_notes($notes)
+{
+    echo wpautop(nl2br(esc_html($notes)));
+}
+
+/**
  * get meeting types
  * used on archive-meetings.php
  * 

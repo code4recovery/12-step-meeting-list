@@ -123,7 +123,7 @@ tsml_header();
 
                                     if (!empty($meeting->notes)) { ?>
                                         <section class="meeting-notes">
-                                            <?php echo wp_kses(wpautop($meeting->notes), ['br' => [], 'p' => []]) ?>
+                                            <?php tsml_format_notes($meeting->notes) ?>
                                         </section>
                                     <?php } ?>
                                 </li>
@@ -218,7 +218,7 @@ tsml_header();
 
                                         <?php if (!empty($meeting->location_notes)) { ?>
                                             <section class="location-notes">
-                                                <?php echo wp_kses(wpautop($meeting->location_notes), ['br' => [], 'p' => []]) ?>
+                                                <?php tsml_format_notes($meeting->location_notes) ?>
                                             </section>
                                         <?php }
 
@@ -242,7 +242,7 @@ tsml_header();
                                         <?php
                                         if (!empty($meeting->group_notes)) { ?>
                                             <section class="group-notes">
-                                                <?php echo wp_kses(wpautop($meeting->group_notes), ['br' => [], 'p' => []]) ?>
+                                                <?php tsml_format_notes($meeting->group_notes) ?>
                                             </section>
                                         <?php }
                                         if (!empty($meeting->district)) { ?>
