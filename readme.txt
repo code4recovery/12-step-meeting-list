@@ -303,6 +303,7 @@ Yes, you will need to know the key name of the field. Then include an array in y
 
 = 3.16.9 =
 * Fix custom types [more info](https://github.com/code4recovery/12-step-meeting-list/issues/1595)
+* Fix address not displaying on meeting detail [more info](https://github.com/code4recovery/12-step-meeting-list/issues/1597)
 
 = 3.16.8 =
 * Fix compatibility with 12 Step Meeting List Feedback Enhancement plugin [more info](https://github.com/code4recovery/12-step-meeting-list/issues/1592)

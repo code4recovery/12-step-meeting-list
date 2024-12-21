@@ -213,7 +213,7 @@ tsml_header();
                                         <?php } ?>
 
                                         <p class="location-address notranslate">
-                                            <?php esc_html(tsml_format_address($meeting->formatted_address)) ?>
+                                            <?php echo wp_kses(tsml_format_address($meeting->formatted_address), TSML_ALLOWED_HTML) ?>
                                         </p>
 
                                         <?php if (!empty($meeting->location_notes)) { ?>
