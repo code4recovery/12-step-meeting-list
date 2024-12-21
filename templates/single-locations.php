@@ -76,7 +76,7 @@ tsml_header();
 
                                     if ($location->notes) { ?>
                                         <p>
-                                            <?php echo wp_kses(wpautop($location->notes), TSML_ALLOWED_HTML) ?>
+                                            <?php echo wp_kses(wpautop($location->notes), ['br' => [], 'p' => []]) ?>
                                         </p>
                                     <?php } ?>
                                 </li>
@@ -120,11 +120,11 @@ tsml_header();
                                                         $meeting_types = tsml_format_types($meeting['types']);
                                                         if (!empty($meeting_types)) { ?>
                                                             <div class="meeting_types">
-                                                                <small>(<?php esc_html($meeting_types) ?>)</small>
+                                                                <small>(<?php echo esc_html($meeting_types) ?>)</small>
                                                             </div>
                                                         <?php } ?>
                                                         <div class="attendance-option">
-                                                            <?php esc_html($tsml_meeting_attendance_options[$meeting['attendance_option']]) ?>
+                                                            <?php echo esc_html($tsml_meeting_attendance_options[$meeting['attendance_option']]) ?>
                                                         </div>
                                                     </li>
                                                 <?php } ?>

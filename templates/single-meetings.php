@@ -123,7 +123,7 @@ tsml_header();
 
                                     if (!empty($meeting->notes)) { ?>
                                         <section class="meeting-notes">
-                                            <?php echo wp_kses(wpautop($meeting->notes), TSML_ALLOWED_HTML) ?>
+                                            <?php echo wp_kses(wpautop($meeting->notes), ['br' => [], 'p' => []]) ?>
                                         </section>
                                     <?php } ?>
                                 </li>
@@ -213,12 +213,12 @@ tsml_header();
                                         <?php } ?>
 
                                         <p class="location-address notranslate">
-                                            <?php esc_html(tsml_format_address($meeting->formatted_address)) ?>
+                                            <?php echo wp_kses(tsml_format_address($meeting->formatted_address), TSML_ALLOWED_HTML) ?>
                                         </p>
 
                                         <?php if (!empty($meeting->location_notes)) { ?>
                                             <section class="location-notes">
-                                                <?php echo wp_kses(wpautop($meeting->location_notes), TSML_ALLOWED_HTML) ?>
+                                                <?php echo wp_kses(wpautop($meeting->location_notes), ['br' => [], 'p' => []]) ?>
                                             </section>
                                         <?php }
 
@@ -242,7 +242,7 @@ tsml_header();
                                         <?php
                                         if (!empty($meeting->group_notes)) { ?>
                                             <section class="group-notes">
-                                                <?php echo wp_kses(wpautop($meeting->group_notes), TSML_ALLOWED_HTML) ?>
+                                                <?php echo wp_kses(wpautop($meeting->group_notes), ['br' => [], 'p' => []]) ?>
                                             </section>
                                         <?php }
                                         if (!empty($meeting->district)) { ?>

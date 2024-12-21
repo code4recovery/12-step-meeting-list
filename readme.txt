@@ -4,7 +4,7 @@ Donate link: https://code4recovery.org/contribute
 Requires at least: 3.2
 Requires PHP: 5.6
 Tested up to: 6.7
-Stable tag: 3.16.8
+Stable tag: 3.16.9
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -300,6 +300,11 @@ Yes, you will need to know the key name of the field. Then include an array in y
 1. Edit location
 
 == Changelog ==
+
+= 3.16.9 =
+* Fix custom types [more info](https://github.com/code4recovery/12-step-meeting-list/issues/1595)
+* Fix address not displaying on meeting detail [more info](https://github.com/code4recovery/12-step-meeting-list/issues/1597)
+* Fix line breaks not showing up on meeting and location notes
 
 = 3.16.8 =
 * Fix compatibility with 12 Step Meeting List Feedback Enhancement plugin [more info](https://github.com/code4recovery/12-step-meeting-list/issues/1592)

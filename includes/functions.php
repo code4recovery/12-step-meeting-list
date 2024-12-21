@@ -608,11 +608,13 @@ function tsml_custom_post_types()
  */
 function tsml_custom_types($types)
 {
-    global $tsml_programs, $tsml_program;
-    foreach ($types as $key => $value) {
-        $tsml_programs[$tsml_program]['types'][$key] = $value;
-    }
-    asort($tsml_programs[$tsml_program]['types']);
+    add_action('init', function () use ($types) {
+        global $tsml_programs, $tsml_program;
+        foreach ($types as $key => $value) {
+            $tsml_programs[$tsml_program]['types'][$key] = $value;
+        }
+        asort($tsml_programs[$tsml_program]['types']);
+    });
 }
 
 /**
