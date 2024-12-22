@@ -131,10 +131,8 @@ add_action('admin_init', function () {
                 <?php echo wp_kses(
                     sprintf(
                         // translators: %s is the list of supported conference providers
-                        __('If this meeting has videoconference information, please enter the full valid URL here. Currently supported providers: %s. If other details are required, such as a password, they can be included in the Notes field above, but a ‘one tap’ experience is ideal. Passwords can be appended to phone numbers using this format <code>+12125551212,,123456789#,,#,,444444#</code>', '12-step-meeting-list')
-                        ,
+                        __('If this meeting has videoconference information, please enter the full valid URL here. Currently supported providers: %s. If other details are required, such as a password, they can be included in the Notes field above, but a ‘one tap’ experience is ideal. Passwords can be appended to phone numbers using this format <code>+12125551212,,123456789#,,#,,444444#</code>', '12-step-meeting-list'),
                         implode(', ', tsml_conference_providers()),
-
                     ),
                     TSML_ALLOWED_HTML
                 ) ?>
