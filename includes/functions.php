@@ -1506,7 +1506,7 @@ function tsml_compare_imported_meeting($local_meeting, $import_meeting)
             if (is_object($value) || is_array($value)) {
                 $value = json_encode($value);
             } elseif (null !== $value) {
-                $value = trim(html_entity_decode(strval($value)));
+                $value = trim(html_entity_decode(htmlspecialchars_decode(strval($value), ENT_QUOTES)));
             } else {
                 $value = '';
             }
