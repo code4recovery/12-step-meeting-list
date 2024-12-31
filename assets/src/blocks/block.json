@@ -1,0 +1,48 @@
+{
+	"$schema": "https://schemas.wp.org/trunk/block.json",
+	"apiVersion": 2,
+	"name": "tsml/meetings",
+	"title": "Meetings",
+	"description": "12 Step Meeting List Meeting Block",
+	"category": "embed",
+	"icon": "groups",
+	"attributes": {
+		"alertBackgroundColor": { "type": "string", "default": "#faf4e0" },
+		"alertTextColor": { "type": "string", "default": "#998a5e" },
+		"backgroundColor": { "type": "string", "default": "#fff" },
+		"borderRadius": { "type": "number", "default": 4 },
+		"focusColor": { "type": "string", "default": "#0d6efd40" },
+		"fontFamily": { "type": "string", "default": "system-ui, -apple-system, sans-serif" },
+		"inPersonBadgeColor": { "type": "string", "default": "#146c43" },
+		"inactiveBadgeColor": { "type": "string", "default": "#b02a37" },
+		"linkColor": { "type": "string", "default": "#0d6efd" },
+		"onlineBadgeColor": { "type": "string", "default": "#0a58ca" },
+		"onlineBackgroundImage": {
+			"type": "string",
+			"default": "url(https://images.unsplash.com/photo-1588196749597-9ff075ee6b5b?...)"
+		},
+		"textColor": { "type": "string", "default": "#212529" }
+	},
+	"supports": {
+		"html": false,
+		"align": true,
+		"alignWide": true,
+		"anchor": true,
+		"className": true,
+		"spacing": {
+			"margin": true,
+			"padding": false,
+			"blockGap": false
+		},
+		"typography": {
+			"fontSize": true,
+			"__experimentalFontFamily": true,
+			"__experimentalFontStyle": true,
+			"__experimentalFontWeight": true,
+			"__experimentalTextTransform": true
+		}
+	},
+	"textdomain": "12-step-meeting-list",
+	"render": "file:./render.php",
+	"editorScript": "file:./meetings.js"
+}
