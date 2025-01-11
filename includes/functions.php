@@ -448,8 +448,10 @@ function tsml_custom_addresses($custom_overrides)
  */
 function tsml_custom_descriptions($descriptions)
 {
-    global $tsml_programs, $tsml_program;
-    $tsml_programs[$tsml_program]['type_descriptions'] = $descriptions;
+    add_action('init', function () use ($descriptions) {
+        global $tsml_programs, $tsml_program;
+        $tsml_programs[$tsml_program]['type_descriptions'] = $descriptions;
+    });
 }
 
 /**
@@ -461,8 +463,10 @@ function tsml_custom_descriptions($descriptions)
  */
 function tsml_custom_flags($flags)
 {
-    global $tsml_programs, $tsml_program;
-    $tsml_programs[$tsml_program]['flags'] = $flags;
+    add_action('init', function () use ($flags) {
+        global $tsml_programs, $tsml_program;
+        $tsml_programs[$tsml_program]['flags'] = $flags;
+    });
 }
 
 /**
