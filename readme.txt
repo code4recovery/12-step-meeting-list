@@ -304,6 +304,7 @@ Yes, you will need to know the key name of the field. Then include an array in y
 = 3.16.12 =
 * New meetings block [more info](https://github.com/code4recovery/12-step-meeting-list/pull/1383)
 * Fix custom type descriptions and flags [more info](https://github.com/code4recovery/12-step-meeting-list/issues/1606)
+* Fix "near location" distance bug in legacy UI [more info](https://github.com/code4recovery/12-step-meeting-list/issues/1611)
 
 = 3.16.11 =
 * Fix meetings with apostrophe values always showing up as changed [more info](https://github.com/code4recovery/12-step-meeting-list/discussions/1599)
