@@ -427,7 +427,7 @@ tsml_header();
                         <?php foreach ($distances as $key => $value) { ?>
                             <li <?php if ($key === $distance) { ?> class="active" <?php } ?>>
                                 <a href="<?php esc_attr(tsml_meetings_url(['tsml-distance' => $key])) ?>"
-                                    data-id="<?php esc_attr($key) ?>">
+                                    data-id="<?php echo esc_attr($key) ?>">
                                     <?php echo esc_html($value) ?>
                                 </a>
                             </li>
