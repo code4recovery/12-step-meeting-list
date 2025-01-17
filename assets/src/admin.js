@@ -368,7 +368,7 @@ jQuery(function ($) {
 								} else if ($('input[name=in_person]:checked').val() == 'no' && $fields.approximate.val() == 'no' && meeting_is_online) {
                                     $('div.need_approximate_address').removeClass('hidden');
 									$fields.location.addClass('warning');
-									$fields.formatted_address.addClass('warning');
+                                    $fields.formatted_address.setState('warning');
 								} else {
 									//field is good
 									$fields.formatted_address.clearState();
