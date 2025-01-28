@@ -851,7 +851,11 @@ jQuery(function ($) {
 
 		var compareFunction;
 
-		if (window.Intl) {
+		if (sort === 'distance') {
+			compareFunction = function ([valueA], [valueB]) {
+				return order === 'asc' ? valueA - valueB : valueB - valueA;
+			};
+		} else if (window.Intl) {
 			// Do locale-aware sort, falling back on English if needed.
 			// NOTE: The locale follows whatever language Wordpress is configured to use
 			var locales = [document.documentElement.lang];
