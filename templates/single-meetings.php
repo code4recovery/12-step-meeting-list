@@ -373,6 +373,9 @@ tsml_header();
 
                     </div>
                     <div class="col-md-8">
+                        <?php if ('online' === $meeting->attendance_option) { ?>
+                            <div class="panel panel-default panel-online"></div>
+                        <?php } ?>
                         <?php if (!empty($tsml_mapbox_key) || !empty($tsml_google_maps_key)) { ?>
                             <div id="map" class="panel panel-default"></div>
                         <?php } ?>
