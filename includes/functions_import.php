@@ -147,8 +147,8 @@ function tsml_import_get_changed_meetings($feed_meetings, $data_source_url)
                     'meeting_id' => $source_meeting_id,
                 );
 
-                // add `id` field to meeting to trigger an existing post update versus new post insert
-                $feed_meeting['id'] = $source_meeting_id;
+                // add `ID` field to meeting to trigger an existing post update versus new post insert
+                $feed_meeting['ID'] = $source_meeting_id;
                 $import_meetings[] = $feed_meeting;
             }
         } else {

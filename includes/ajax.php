@@ -372,11 +372,7 @@ add_action('wp_ajax_tsml_import', function () {
 
     foreach ($meetings as $meeting) {
         // if meeting id is passed, this is an update vs new meeting
-        $meeting_id = intval(isset($meeting['id']) ? $meeting['id'] : 0);
-        // accept 'id' or 'ID' to reduce confusion later - WP Post uses 'ID'
-        if (!$meeting_id) {
-            $meeting_id = intval(isset($meeting['ID']) ? $meeting['ID'] : $meeting_id);
-        }
+        $meeting_id = intval(isset($meeting['ID']) ? $meeting['ID'] : 0);
         $is_new_meeting = !$meeting_id;
 
         // check address

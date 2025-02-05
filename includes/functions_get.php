@@ -597,6 +597,7 @@ function tsml_get_meetings($arguments = [], $from_cache = true, $full_export = f
     // check if we are filtering
     $allowed = [
         'mode',
+        'data_source',
         'day',
         'time',
         'region',
