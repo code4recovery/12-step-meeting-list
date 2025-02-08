@@ -125,12 +125,8 @@ function tsml_import_get_changed_meetings($feed_meetings, $data_source_url)
             $source_meeting_id = array_search($feed_meeting_slug, $meeting_slugs_map);
         }
         if ($source_meeting_id) {
-            foreach ($source_meetings as $meeting) {
-                if (isset($meeting['id']) && $meeting['id'] === $source_meeting_id) {
-                    $source_meeting = $meeting;
-                    break;
-                }
-            }
+            $source_meeting_index = array_search($source_meeting_id, $meeting_ids);
+            $source_meeting = ($source_meeting_index !== false) ? $source_meetings[$source_meeting_index] : null;
         }
         // if we found a local meeting, compare for update need
         if ($source_meeting) {
@@ -166,7 +162,7 @@ function tsml_import_get_changed_meetings($feed_meetings, $data_source_url)
     $delete_meeting_ids = array_diff($meeting_ids, $found_meeting_ids);
     // add to change log
     foreach ($delete_meeting_ids as $delete_meeting_id) {
-        $source_meeting_index = array_search($delete_meeting_id, array_column($source_meetings, 'id'));
+        $source_meeting_index = array_search($delete_meeting_id, $meeting_ids);
         $delete_meeting = ($source_meeting_index !== false) ? $source_meetings[$source_meeting_index] : null;
         $change_log[] = array(
             'action' => 'remove',
