@@ -4,6 +4,7 @@
 class tsml_filter_meetings
 {
 
+    public $data_source;
     public $day;
     public $distance;
     public $distance_units;
@@ -24,6 +25,9 @@ class tsml_filter_meetings
     // sanitize and save arguments (won't be passed to a database)
     public function __construct($arguments)
     {
+        if (!empty($arguments['data_source'])) {
+            $this->data_source = strval($arguments['data_source']);
+        }
 
         if (!empty($arguments['day']) || (isset($arguments['day']) && $arguments['day'] == 0)) {
             $this->day = is_array($arguments['day']) ? array_map('intval', $arguments['day']) : [intval($arguments['day'])];
@@ -105,6 +109,10 @@ class tsml_filter_meetings
     {
 
         // run filters
+        if ($this->data_source) {
+            $meetings = array_filter($meetings, [$this, 'filter_data_source']);
+        }
+
         if ($this->day) {
             $meetings = array_filter($meetings, [$this, 'filter_day']);
         }
@@ -167,6 +175,12 @@ class tsml_filter_meetings
 
         $meeting['distance'] = round($meeting['distance'], 1);
         return $meeting;
+    }
+
+    // callback function to pass to array_filter
+    public function filter_data_source($meeting)
+    {
+        return isset($meeting['data_source']) ? ($this->data_source === $meeting['data_source']) : false;
     }
 
     // callback function to pass to array_filter

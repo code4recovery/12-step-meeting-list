@@ -303,6 +303,7 @@ Yes, you will need to know the key name of the field. Then include an array in y
 
 = 3.16.14 =
 * Fix sorting by distance in Legacy UI [more info](https://github.com/code4recovery/12-step-meeting-list/issues/1619)
+* Updated meeting import comparison to bulk query meetings / run quicker [more info](https://github.com/code4recovery/12-step-meeting-list/discussions/1629)
 
 = 3.16.13 =
 * Fix issue saving online-only meetings with specific addresses [more info](https://github.com/code4recovery/12-step-meeting-list/issues/1614)
