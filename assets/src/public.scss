@@ -11,6 +11,7 @@ $color_black: #333;
 $color_white: #fdfdfc;
 $margin: 15px; //spacing between elements
 $height: 550px; //height of map and min-height of list
+$online_img: 'https://images.unsplash.com/photo-1588196749597-9ff075ee6b5b?crop=entropy&cs=tinysrgb&fit=crop&fm=jpg&h=1440&ixid=MnwxfDB8MXxhbGx8fHx8fHx8fHwxNjIyMTIzODkw&ixlib=rb-1.2.1&q=80&utm_campaign=api-credit&utm_medium=referral&utm_source=unsplash_source&w=1920';
 
 #tsml {
 	@import '../../node_modules/bootstrap-sass/assets/stylesheets/_bootstrap.scss';
@@ -1207,16 +1208,22 @@ body {
 		text-decoration: line-through;
 	}
 
-	/* temporary closure meetings */
-	/*
-    &.tsml-meeting.tsml-type-tc {
-        p.location-address,
-        address {
-            color: #999;
-            text-decoration: line-through;
+    &.attendance-online .panel-online {
+        min-height: $height;
+        max-height: 1000px;
+        position: relative;
+        &::after {
+            content: '';
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            background-image: url($online_img);
+            background-position: center center;
+            background-repeat: no-repeat;
+            background-size: cover;
+            opacity: 0.25;
         }
     }
-*/
 
 	/* Special per-theme fixes */
 	&.twentyfourteen {
