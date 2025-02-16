@@ -1350,7 +1350,7 @@ add_action('tsml_scan_data_source', function ($data_source_url) {
     $meetings = tsml_import_sanitize_meetings($body, $data_source_url, $data_source_parent_region_id);
 
     // check import feed for changes and return array summing up changes detected
-    list($import_meetings, $delete_meeting_ids, $change_log) = tsml_import_get_changed_meetings($meetings, $data_source_url, $data_source_parent_region_id);
+    list($import_meetings, $delete_meeting_ids, $change_log) = tsml_import_get_changed_meetings($meetings, $data_source_url);
 
     // send email notifying admins that this data source needs updating
     if (is_array($change_log) && count($change_log)) {
@@ -1473,13 +1473,14 @@ function tsml_date_localised($format, $timestamp = null)
 
 /**
  * Compares content of an import meeting against local meeting
- * @param array $local_meeting  Local meeting
- * @param array $import_meeting Import meeting
+ * @param array   $local_meeting   Local meeting
+ * @param array   $import_meeting  Import meeting
+ * @param boolean $translate_field [default true] Translate system fields to field labels
  * @return array|null
  */
-function tsml_compare_imported_meeting($local_meeting, $import_meeting)
+function tsml_compare_imported_meeting($local_meeting, $import_meeting, $translate_fields = true)
 {
-    global $tsml_export_columns, $tsml_source_fields_map, $tsml_entity_fields;
+    global $tsml_export_columns, $tsml_source_fields_map, $tsml_entity_fields, $tsml_array_fields;
 
     $local_meeting = (array) $local_meeting;
     $import_meeting = (array) $import_meeting;
@@ -1494,7 +1495,7 @@ function tsml_compare_imported_meeting($local_meeting, $import_meeting)
     $compare_fields = array_diff(
         $compare_fields,
         // these fields are unique internal fields, not content fields for comparison
-        explode(',', 'id,slug,author,data_source,data_source_name')
+        explode(',', 'id,slug,author,data_source,data_source_name,updated')
     );
 
     // normalize meetings for comparison
@@ -1503,6 +1504,9 @@ function tsml_compare_imported_meeting($local_meeting, $import_meeting)
         $normalized_meetings[$index] = array();
         foreach ($compare_fields as $field) {
             $value = isset($meeting[$field]) ? $meeting[$field] : '';
+            if (in_array($field, $tsml_array_fields, true)) {
+                $value = empty($value) ? [] : ((array) $value);
+            }
             // import meeting: post_title <=> name
             if (!$value && 'name' === $field) {
                 $value = isset($meeting['post_title']) ? $meeting['post_title'] : '';
@@ -1526,7 +1530,7 @@ function tsml_compare_imported_meeting($local_meeting, $import_meeting)
     $diff_fields = array();
     foreach ($compare_fields as $field) {
         if ($normalized_meetings[0][$field] !== $normalized_meetings[1][$field]) {
-            $diff_fields[] = isset($tsml_export_columns[$field]) ? $tsml_export_columns[$field] : $field;
+            $diff_fields[] = ($translate_fields && isset($tsml_export_columns[$field])) ? $tsml_export_columns[$field] : $field;
         }
     }
     return count($diff_fields) ? $diff_fields : null;

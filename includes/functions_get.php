@@ -468,7 +468,7 @@ function tsml_get_meetings($arguments = [], $from_cache = true, $full_export = f
                 'updated' => $post->post_modified_gmt,
                 'location_id' => $post->post_parent,
                 'url' => get_permalink($post->ID),
-                'day' => @$meeting_meta[$post->ID]['day'],
+                'day' => isset($meeting_meta[$post->ID]['day']) ? $meeting_meta[$post->ID]['day'] : null,
                 'time' => isset($meeting_meta[$post->ID]['time']) ? $meeting_meta[$post->ID]['time'] : null,
                 'end_time' => isset($meeting_meta[$post->ID]['end_time']) ? $meeting_meta[$post->ID]['end_time'] : null,
                 'time_formatted' => isset($meeting_meta[$post->ID]['time']) ? tsml_format_time($meeting_meta[$post->ID]['time']) : null,
@@ -597,6 +597,7 @@ function tsml_get_meetings($arguments = [], $from_cache = true, $full_export = f
     // check if we are filtering
     $allowed = [
         'mode',
+        'data_source',
         'day',
         'time',
         'region',
