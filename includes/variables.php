@@ -57,6 +57,7 @@ $tsml_contact_fields = [
     'venmo' => 'string',
     'square' => 'string',
     'paypal' => 'string',
+    'homegroup_online' => 'string',
     'last_contact' => 'date',
 ];
 
@@ -130,6 +131,7 @@ $tsml_export_columns = [
     'venmo' => 'Venmo',
     'square' => 'Square',
     'paypal' => 'Paypal',
+    'homegroup_online' => 'Homegroup Online',
     'email' => 'Email',
     'phone' => 'Phone',
     'group_notes' => 'Group Notes',
@@ -760,6 +762,7 @@ function tsml_load_config()
                 'D' => __('Discussion', '12-step-meeting-list'),
                 'DD' => __('Dual Diagnosis', '12-step-meeting-list'),
                 'EN' => __('English', '12-step-meeting-list'),
+                'FI' => __('Finnish', '12-step-meeting-list'),
                 'FF' => __('Fragrance Free', '12-step-meeting-list'),
                 'FR' => __('French', '12-step-meeting-list'),
                 'G' => __('Gay', '12-step-meeting-list'),

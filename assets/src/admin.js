@@ -97,7 +97,9 @@ jQuery(function ($) {
             contact_3_phone:   $form.find('input[name=contact_3_phone]'),
             mailing_address:   $form.find('input[name=mailing_address]'),
             venmo:             $form.find('input[name=venmo]'),
+            square:            $form.find('input[name=square]'),
             paypal:            $form.find('input[name=paypal]'),
+            homegroup_online:  $form.find('input[name=homegroup_online]'),
             last_contact:      $form.find('input[name=last_contact]'),
         };
 
@@ -446,6 +448,19 @@ jQuery(function ($) {
         }
         $fields.paypal.on('change', $fields.paypal.validate);
         $fields.paypal.validate();
+
+        // validate homegroup_online name
+        $fields.homegroup_online.validate = function() {
+            var value = $fields.homegroup_online.val().trim();
+            // must be letters and numbers
+            if (value && !value.match(/^[a-zA-Z0-9_-]*$/i)) {
+                $fields.homegroup_online.setState('error', 1);
+            } else {
+                $fields.homegroup_online.clearState();
+            }
+        }
+        $fields.homegroup_online.on('change', $fields.homegroup_online.validate);
+        $fields.homegroup_online.validate();
 
 		//when page loads, run lookup
 		if ($fields.formatted_address.val()) $fields.formatted_address.trigger('change');
