@@ -586,6 +586,9 @@ if (!function_exists('tsml_import_page')) {
                                     <?php echo wp_kses(__('<strong>PayPal</strong> is an optional string and should be a valid PayPal username, (e.g. <code>AAGroupName</code>). This is understood to be the address for 7th Tradition contributions to the meeting, and not any other entity.', '12-step-meeting-list'), TSML_ALLOWED_HTML) ?>
                                 </p>
                                 <p>
+                                    <?php echo wp_kses(__('<strong>Homegroup Online</strong> is an optional string and should be a Homegroup Online group code, (e.g. <code>tbc</code>). This is understood to be the address for 7th Tradition contributions to the meeting, and not any other entity.', '12-step-meeting-list'), TSML_ALLOWED_HTML) ?>
+                                </p>
+                                <p>
                                     <?php echo wp_kses(__('<strong>URL</strong> is optional and should point to the meeting\'s listing on the area website.', '12-step-meeting-list'), TSML_ALLOWED_HTML) ?>
                                 </p>
                                 <p>

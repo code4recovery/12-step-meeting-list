@@ -453,6 +453,15 @@ add_action('admin_init', function () {
             </div>
             <div class="meta_form_row">
                 <label>
+                    <?php esc_html_e('Homegroup Online', '12-step-meeting-list') ?>
+                </label>
+                <?php tsml_input_text('homegroup_online', @$meeting->homegroup_online, ['placeholder' => 'Homegroup Online group code']) ?>
+                <small class="error_message" data-message="1">
+                    <?php esc_html_e('A valid Homegroup Online group code can only contain letters and numbers.', '12-step-meeting-list') ?>
+                </small>
+            </div>
+            <div class="meta_form_row">
+                <label>
                     <?php esc_html_e('Contacts', '12-step-meeting-list') ?>
                     <span style="display: block;font-size:90%;color:#999;">
                         (

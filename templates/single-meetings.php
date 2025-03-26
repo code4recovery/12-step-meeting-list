@@ -171,6 +171,11 @@ tsml_header();
                                         'url' => 'https://www.paypal.me/',
                                         'substr' => 0,
                                     ],
+                                    'homegroup_online' => [
+                                        'name' => 'Homegroup Online',
+                                        'url' => 'https://donate.homegroup.online/',
+                                        'substr' => 0,
+                                    ],
                                 ];
                                 $active_services = array_filter(array_keys($services), function ($service) use ($meeting) {
                                     return !empty($meeting->{$service});

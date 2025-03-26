@@ -413,6 +413,9 @@ add_action('save_post', function ($post_id, $post, $update) {
     if (!empty($_POST['paypal']) && strpos($_POST['paypal'], '/') !== false) {
         $_POST['paypal'] = strtok($_POST['paypal'], '/');
     }
+    if (!empty($_POST['homegroup_online']) && strpos($_POST['homegroup_online'], '/') !== false) {
+        $_POST['homegroup_online'] = strtok($_POST['homegroup_online'], '/');
+    }
 
     // loop through and validate each field
     foreach ($tsml_contact_fields as $field => $type) {
