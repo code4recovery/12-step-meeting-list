@@ -339,7 +339,7 @@ tsml_header();
             <div class="col-sm-6 col-md-2 control-search">
                 <form id="search" role="search" action=".">
                     <div class="input-group">
-                        <input type="search" name="query" class="form-control" value="<?php esc_attr($query) ?>"
+                        <input type="search" name="query" class="form-control" value="<?php echo esc_attr($query) ?>"
                             placeholder="<?php echo esc_attr($mode_label) ?>" aria-label="Search" <?php echo ($mode == 'me') ? 'disabled' : '' ?>>
                         <div class="input-group-btn" id="mode">
                             <button class="btn btn-default" data-toggle="tsml-dropdown" type="button">
