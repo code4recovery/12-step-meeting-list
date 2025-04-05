@@ -304,6 +304,7 @@ Yes, you will need to know the key name of the field. Then include an array in y
 = 3.16.16 =
 * Add Types for ACA [more info](https://github.com/code4recovery/12-step-meeting-list/discussions/1650)
 * Fix Legacy UI search bookmarking [more info](https://github.com/code4recovery/12-step-meeting-list/discussions/1655)
+* Bump dependencies
 
 = 3.16.15 =
 * Add Finnish [more info](https://github.com/code4recovery/central/issues/31)
