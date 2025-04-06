@@ -1007,7 +1007,6 @@ function tsml_languages($types = [])
         'EL' => __('Greek', '12-step-meeting-list'),
         'EN' => __('English', '12-step-meeting-list'),
         'ES' => __('Spanish', '12-step-meeting-list'),
-        'ET' => __('Estonian', '12-step-meeting-list'),
         'FA' => __('Persian', '12-step-meeting-list'),
         'FI' => __('Finnish', '12-step-meeting-list'),
         'FR' => __('French', '12-step-meeting-list'),
