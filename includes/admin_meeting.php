@@ -43,6 +43,10 @@ add_action('admin_init', function () {
 
         $meeting = tsml_get_meeting();
 
+        $languages = tsml_languages();
+
+        $user_language = strtoupper(substr(get_user_locale(), 0, 2));
+
         // time is before the end of april and not currently using temporary closure
         if (!in_array('TC', $tsml_types_in_use) && time() < strtotime('2020-04-30')) {
             tsml_alert('Please note: a new “Temporary Closure” meeting type has recently been added. Use this to indicate meetings that are temporarily not meeting. Find it under “View all” below.', 'warning');
@@ -89,7 +93,7 @@ add_action('admin_init', function () {
                     class="checkboxes<?php if (!empty($tsml_types_in_use) && count($tsml_types_in_use) !== count($tsml_programs[$tsml_program]['types'])) { ?> has_more<?php } ?>">
                     <?php
                     foreach ($tsml_programs[$tsml_program]['types'] as $key => $type) {
-                        if ($key == 'ONL' || $key == 'TC') {
+                        if ($key == 'ONL' || $key == 'TC' || array_key_exists($key, $languages)) {
                             // hide "Online Meeting" since it's not manually settable, neither is location Temporarily Closed
                             continue;
                         }
@@ -116,6 +120,34 @@ add_action('admin_init', function () {
                 </div>
             </div>
         <?php } ?>
+        <div class="meta_form_row">
+            <label for="languages">
+                <?php esc_html_e('Languages', '12-step-meeting-list') ?>
+            </label>
+            <div
+                class="checkboxes<?php if (!empty($tsml_types_in_use) && count($tsml_types_in_use) !== count($tsml_programs[$tsml_program]['types'])) { ?> has_more<?php } ?>">
+                <?php foreach ($languages as $key => $type) { ?>
+                    <label <?php if (!empty($tsml_types_in_use) && !in_array($key, $tsml_types_in_use) && $key !== $user_language) {
+                        echo ' class="not_in_use"';
+                    } ?>>
+                        <input type="checkbox" name="types[]" value="<?php echo esc_attr($key) ?>" <?php checked(in_array($key, @$meeting->types)) ?>>
+                        <?php echo esc_html($type) ?>
+                    </label>
+                <?php } ?>
+                <div class="toggle_more">
+                    <div class="more">
+                        <span class="dashicons dashicons-arrow-down-alt2"></span> <a href="#more-types">
+                            <?php esc_html_e('View all', '12-step-meeting-list') ?>
+                        </a>
+                    </div>
+                    <div class="less">
+                        <span class="dashicons dashicons-arrow-up-alt2"></span> <a href="#more-types">
+                            <?php esc_html_e('Hide languages not in use', '12-step-meeting-list') ?>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
         <div class="meta_form_row">
             <label for="content">
                 <?php esc_html_e('Notes', '12-step-meeting-list') ?>
