@@ -1021,6 +1021,7 @@ function tsml_languages($types = [])
         'KA' => __('Georgian', '12-step-meeting-list'),
         'KO' => __('Korean', '12-step-meeting-list'),
         'LT' => __('Lithuanian', '12-step-meeting-list'),
+        'ML' => __('Malayalam', '12-step-meeting-list'),
         'MT' => __('Maltese', '12-step-meeting-list'),
         'NE' => __('Nepali', '12-step-meeting-list'),
         'NO' => __('Norwegian', '12-step-meeting-list'),
