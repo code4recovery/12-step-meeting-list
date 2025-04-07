@@ -3,13 +3,13 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: 12 Step Meeting List 3.16.16\n"
-"Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/trunk\n"
+"Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/12-step-meeting-list\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"POT-Creation-Date: 2025-04-05T14:50:38+00:00\n"
+"POT-Creation-Date: 2025-04-07T00:17:57+00:00\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "X-Generator: WP-CLI 2.10.0\n"
 "X-Domain: 12-step-meeting-list\n"
@@ -162,8 +162,8 @@ msgstr ""
 
 #: includes/admin_import.php:353
 #: includes/admin_lists.php:330
-#: includes/admin_meeting.php:318
-#: includes/admin_meeting.php:375
+#: includes/admin_meeting.php:330
+#: includes/admin_meeting.php:387
 #: includes/functions.php:532
 #: includes/variables.php:1530
 #: templates/archive-meetings.php:200
@@ -463,12 +463,12 @@ msgid "Meeting"
 msgstr ""
 
 #: includes/admin_lists.php:76
-#: includes/admin_meeting.php:60
+#: includes/admin_meeting.php:69
 msgid "Day"
 msgstr ""
 
 #: includes/admin_lists.php:77
-#: includes/admin_meeting.php:76
+#: includes/admin_meeting.php:85
 #: includes/shortcodes.php:80
 #: includes/variables.php:639
 #: includes/variables.php:1008
@@ -476,8 +476,8 @@ msgid "Time"
 msgstr ""
 
 #: includes/admin_lists.php:78
-#: includes/admin_meeting.php:269
-#: includes/admin_meeting.php:278
+#: includes/admin_meeting.php:281
+#: includes/admin_meeting.php:290
 #: includes/ajax.php:243
 #: includes/functions.php:487
 #: includes/shortcodes.php:83
@@ -490,7 +490,7 @@ msgid "Date"
 msgstr ""
 
 #: includes/admin_lists.php:101
-#: includes/admin_meeting.php:70
+#: includes/admin_meeting.php:79
 #: includes/functions_format.php:43
 #: includes/functions_format.php:128
 #: includes/save.php:495
@@ -542,203 +542,211 @@ msgstr ""
 msgid "This meeting was imported from an external data source. Any changes you make here will be overwritten when you refresh the data."
 msgstr ""
 
-#: includes/admin_meeting.php:86
+#: includes/admin_meeting.php:58
+msgid "Your meeting has errors that need attention"
+msgstr ""
+
+#: includes/admin_meeting.php:95
 #: includes/ajax.php:227
 #: includes/variables.php:646
 msgid "Types"
 msgstr ""
 
-#: includes/admin_meeting.php:107
+#: includes/admin_meeting.php:116
 msgid "View all"
 msgstr ""
 
-#: includes/admin_meeting.php:112
+#: includes/admin_meeting.php:121
 msgid "Hide types not in use"
 msgstr ""
 
-#: includes/admin_meeting.php:121
+#: includes/admin_meeting.php:130
 #: includes/ajax.php:231
 msgid "Notes"
 msgstr ""
 
-#: includes/admin_meeting.php:124
+#: includes/admin_meeting.php:133
 msgid "eg. Birthday speaker meeting last Saturday of the month"
 msgstr ""
 
-#: includes/admin_meeting.php:128
+#: includes/admin_meeting.php:137
 msgid "Online Meeting Details"
 msgstr ""
 
 #. translators: %s is the list of supported conference providers
-#: includes/admin_meeting.php:134
+#: includes/admin_meeting.php:143
 msgid "If this meeting has videoconference information, please enter the full valid URL here. Currently supported providers: %s. If other details are required, such as a password, they can be included in the Notes field above, but a ‘one tap’ experience is ideal. Passwords can be appended to phone numbers using this format <code>+12125551212,,123456789#,,#,,444444#</code>"
 msgstr ""
 
-#: includes/admin_meeting.php:143
+#: includes/admin_meeting.php:152
 msgid "URL"
 msgstr ""
 
-#: includes/admin_meeting.php:147
+#: includes/admin_meeting.php:156
 msgid "Zoom conference urls require a valid meeting number. Example: https://zoom.us/j/1234567890"
 msgstr ""
 
-#: includes/admin_meeting.php:150
+#: includes/admin_meeting.php:159
 msgid "Your conference url has been updated to follow the Zoom url standard."
 msgstr ""
 
-#: includes/admin_meeting.php:155
+#: includes/admin_meeting.php:164
 msgid "URL Notes"
 msgstr ""
 
-#: includes/admin_meeting.php:161
-#: includes/admin_meeting.php:423
-#: includes/admin_meeting.php:480
+#: includes/admin_meeting.php:170
+#: includes/admin_meeting.php:435
+#: includes/admin_meeting.php:492
 msgid "Phone"
 msgstr ""
 
-#: includes/admin_meeting.php:167
+#: includes/admin_meeting.php:176
 msgid "Phone Notes"
 msgstr ""
 
-#: includes/admin_meeting.php:176
+#: includes/admin_meeting.php:185
 msgid "Location Information"
 msgstr ""
 
-#: includes/admin_meeting.php:190
+#: includes/admin_meeting.php:199
 msgid "Can I currently attend this meeting in person?"
 msgstr ""
 
-#: includes/admin_meeting.php:194
+#: includes/admin_meeting.php:203
 msgid "Yes"
 msgstr ""
 
-#: includes/admin_meeting.php:198
+#: includes/admin_meeting.php:207
 msgid "No"
 msgstr ""
 
-#: includes/admin_meeting.php:202
+#: includes/admin_meeting.php:211
 msgid "Select Yes for in-person or hybrid meetings."
 msgstr ""
 
-#: includes/admin_meeting.php:203
+#: includes/admin_meeting.php:212
 msgid "Select No for online-only meetings, or meetings that are temporarily inactive."
 msgstr ""
 
-#: includes/admin_meeting.php:205
+#: includes/admin_meeting.php:214
 msgid "For meetings I can attend in person:"
 msgstr ""
 
-#: includes/admin_meeting.php:208
+#: includes/admin_meeting.php:217
 msgid "A specific address is required"
 msgstr ""
 
-#: includes/admin_meeting.php:212
+#: includes/admin_meeting.php:221
 msgid "For online or hybrid meetings:"
 msgstr ""
 
-#: includes/admin_meeting.php:215
+#: includes/admin_meeting.php:224
 msgid "Fill in the \"Online Meeting Details\" above"
 msgstr ""
 
-#: includes/admin_meeting.php:219
+#: includes/admin_meeting.php:228
 msgid "For online-only meetings:"
 msgstr ""
 
-#: includes/admin_meeting.php:222
+#: includes/admin_meeting.php:231
 msgid "Use an approximate address, example: Philadelphia, PA, USA. It may help to think of it as the meeting's origin. The Meeting Guide app uses this information to infer the meeting's time zone."
 msgstr ""
 
-#: includes/admin_meeting.php:227
-msgid "Warning: Online meetings with a specific address will appear that the location temporarily closed. Meetings that are Online only should use appoximate addresses."
-msgstr ""
-
-#: includes/admin_meeting.php:228
-msgid "Example:"
-msgstr ""
-
-#: includes/admin_meeting.php:229
-msgid "Location: Online-Philadelphia"
-msgstr ""
-
-#: includes/admin_meeting.php:230
-msgid "Address: Philadelphia, PA, USA"
-msgstr ""
-
-#: includes/admin_meeting.php:236
+#: includes/admin_meeting.php:239
 #: includes/ajax.php:235
 #: includes/functions.php:554
 #: includes/shortcodes.php:82
 msgid "Location"
 msgstr ""
 
-#: includes/admin_meeting.php:242
+#: includes/admin_meeting.php:245
 #: includes/ajax.php:239
 #: includes/variables.php:643
 msgid "Address"
 msgstr ""
 
-#: includes/admin_meeting.php:251
+#: includes/admin_meeting.php:254
 msgid "Error: In person meetings must have a specific address."
 msgstr ""
 
-#: includes/admin_meeting.php:254
+#: includes/admin_meeting.php:257
 msgid "Error: Unable to process this address for exact location."
 msgstr ""
 
-#: includes/admin_meeting.php:261
+#: includes/admin_meeting.php:260
+msgid "Online meetings must have a approximate address, like the nearest city or town."
+msgstr ""
+
+#: includes/admin_meeting.php:263
+msgid "Warning: Online meetings with a specific address will appear that the location temporarily closed. Meetings that are Online only should use appoximate addresses."
+msgstr ""
+
+#: includes/admin_meeting.php:264
+msgid "Example:"
+msgstr ""
+
+#: includes/admin_meeting.php:265
+msgid "Location: Online-Philadelphia"
+msgstr ""
+
+#: includes/admin_meeting.php:266
+msgid "Address: Philadelphia, PA, USA"
+msgstr ""
+
+#: includes/admin_meeting.php:273
 msgid "Apply this updated address to all meetings at this location"
 msgstr ""
 
-#: includes/admin_meeting.php:285
+#: includes/admin_meeting.php:297
 #: templates/archive-meetings.php:376
 msgid "Map"
 msgstr ""
 
 #. translators: %s is the link to the Import & Settings page
-#: includes/admin_meeting.php:292
+#: includes/admin_meeting.php:304
 msgid "Enable maps on the <a href=\"%s\">Import & Settings</a> page."
 msgstr ""
 
-#: includes/admin_meeting.php:302
+#: includes/admin_meeting.php:314
 #: includes/admin_settings.php:557
 msgid "Timezone"
 msgstr ""
 
-#: includes/admin_meeting.php:310
+#: includes/admin_meeting.php:322
 msgid "Because your site does not have a default timezone set, a timezone must be selected here for the meeting to appear on the meeting finder page."
 msgstr ""
 
-#: includes/admin_meeting.php:325
+#: includes/admin_meeting.php:337
 #: includes/ajax.php:247
 msgid "Location Notes"
 msgstr ""
 
-#: includes/admin_meeting.php:328
+#: includes/admin_meeting.php:340
 msgid "eg. Around back, basement, ring buzzer"
 msgstr ""
 
-#: includes/admin_meeting.php:337
+#: includes/admin_meeting.php:349
 msgid "Contact Information <small>Optional</small>"
 msgstr ""
 
-#: includes/admin_meeting.php:354
+#: includes/admin_meeting.php:366
 msgid "Individual meeting"
 msgstr ""
 
-#: includes/admin_meeting.php:358
+#: includes/admin_meeting.php:370
 msgid "Part of a group"
 msgstr ""
 
-#: includes/admin_meeting.php:363
+#: includes/admin_meeting.php:375
 #: includes/functions.php:583
 msgid "Group"
 msgstr ""
 
-#: includes/admin_meeting.php:370
+#: includes/admin_meeting.php:382
 msgid "Apply this group to all meetings at this location"
 msgstr ""
 
-#: includes/admin_meeting.php:383
+#: includes/admin_meeting.php:395
 #: includes/functions.php:508
 #: includes/functions.php:509
 #: includes/functions.php:510
@@ -746,78 +754,78 @@ msgstr ""
 msgid "District"
 msgstr ""
 
-#: includes/admin_meeting.php:392
+#: includes/admin_meeting.php:404
 msgid "None"
 msgstr ""
 
-#: includes/admin_meeting.php:398
+#: includes/admin_meeting.php:410
 msgid "Group Notes"
 msgstr ""
 
-#: includes/admin_meeting.php:401
+#: includes/admin_meeting.php:413
 msgid "eg. Group history, when the business meeting is, etc."
 msgstr ""
 
-#: includes/admin_meeting.php:405
+#: includes/admin_meeting.php:417
 msgid "Website"
 msgstr ""
 
-#: includes/admin_meeting.php:411
+#: includes/admin_meeting.php:423
 msgid "Website 2"
 msgstr ""
 
-#: includes/admin_meeting.php:417
-#: includes/admin_meeting.php:480
+#: includes/admin_meeting.php:429
+#: includes/admin_meeting.php:492
 msgid "Email"
 msgstr ""
 
-#: includes/admin_meeting.php:429
+#: includes/admin_meeting.php:441
 msgid "Mailing Address"
 msgstr ""
 
-#: includes/admin_meeting.php:435
+#: includes/admin_meeting.php:447
 msgid "Venmo"
 msgstr ""
 
-#: includes/admin_meeting.php:441
+#: includes/admin_meeting.php:453
 msgid "Square Cash"
 msgstr ""
 
-#: includes/admin_meeting.php:447
+#: includes/admin_meeting.php:459
 msgid "PayPal"
 msgstr ""
 
-#: includes/admin_meeting.php:451
+#: includes/admin_meeting.php:463
 msgid "A valid PayPal username can only contain letters and numbers, and be less than 20 characters."
 msgstr ""
 
-#: includes/admin_meeting.php:456
+#: includes/admin_meeting.php:468
 msgid "Homegroup Online"
 msgstr ""
 
-#: includes/admin_meeting.php:460
+#: includes/admin_meeting.php:472
 msgid "A valid Homegroup Online group code can only contain letters and numbers."
 msgstr ""
 
-#: includes/admin_meeting.php:465
+#: includes/admin_meeting.php:477
 msgid "Contacts"
 msgstr ""
 
-#: includes/admin_meeting.php:469
+#: includes/admin_meeting.php:481
 #: includes/admin_settings.php:370
 msgid "Public"
 msgstr ""
 
-#: includes/admin_meeting.php:471
+#: includes/admin_meeting.php:483
 #: includes/admin_settings.php:370
 msgid "Private"
 msgstr ""
 
-#: includes/admin_meeting.php:480
+#: includes/admin_meeting.php:492
 msgid "Name"
 msgstr ""
 
-#: includes/admin_meeting.php:493
+#: includes/admin_meeting.php:505
 msgid "Last Contact"
 msgstr ""
 

@@ -55,6 +55,10 @@ add_action('admin_init', function () {
         // nonce field
         wp_nonce_field($tsml_nonce, 'tsml_nonce', false);
         ?>
+        <div class="notice notice-error tsml-form-errors" style="display:none">
+            <p><?php esc_html_e('Your meeting has errors that need attention', '12-step-meeting-list'); ?></p>
+            <ul></ul>
+        </div>
         <div class="meta_form_row">
             <label for="day">
                 <?php esc_html_e('Day', '12-step-meeting-list') ?>
@@ -146,7 +150,7 @@ add_action('admin_init', function () {
             <small class="error_message" data-message="1">
                 <?php esc_html_e('Zoom conference urls require a valid meeting number. Example: https://zoom.us/j/1234567890', '12-step-meeting-list') ?>
             </small>
-            <small class="error_warning" data-message="2">
+            <small class="warning_message" data-message="2">
                 <?php esc_html_e('Your conference url has been updated to follow the Zoom url standard.', '12-step-meeting-list') ?>
             </small>
         </div>
@@ -223,12 +227,6 @@ add_action('admin_init', function () {
                     </li>
                 </ul>
             </div>
-            <div class="location_warning need_approximate_address hidden">
-                <?php esc_html_e('Warning: Online meetings with a specific address will appear that the location temporarily closed. Meetings that are Online only should use appoximate addresses.', '12-step-meeting-list') ?><br /><br />
-                <?php esc_html_e('Example:', '12-step-meeting-list') ?><br />
-                <?php esc_html_e('Location: Online-Philadelphia', '12-step-meeting-list') ?><br />
-                <?php esc_html_e('Address: Philadelphia, PA, USA', '12-step-meeting-list') ?>
-            </div>
         </div>
 
         <div class="meta_form_row">
@@ -252,6 +250,15 @@ add_action('admin_init', function () {
             </small>
             <small class="error_message" data-message="2">
                 <?php esc_html_e('Error: Unable to process this address for exact location.', '12-step-meeting-list') ?>
+            </small>
+            <small class="error_message" data-message="3">
+                <?php esc_html_e('Online meetings must have a approximate address, like the nearest city or town.', '12-step-meeting-list') ?>
+            </small>
+            <small class="warning_message" data-message="4">
+                <?php esc_html_e('Warning: Online meetings with a specific address will appear that the location temporarily closed. Meetings that are Online only should use appoximate addresses.', '12-step-meeting-list') ?><br /><br />
+                <?php esc_html_e('Example:', '12-step-meeting-list') ?><br />
+                <?php esc_html_e('Location: Online-Philadelphia', '12-step-meeting-list') ?><br />
+                <?php esc_html_e('Address: Philadelphia, PA, USA', '12-step-meeting-list') ?>
             </small>
         </div>
         <?php if (count($meetings) > 1) { ?>
