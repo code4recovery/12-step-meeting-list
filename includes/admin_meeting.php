@@ -39,7 +39,7 @@ add_action('admin_init', function () {
     };
 
     add_meta_box('info', __('Meeting Information', '12-step-meeting-list'), function () {
-        global $tsml_days, $tsml_programs, $tsml_program, $tsml_nonce, $tsml_types_in_use;
+        global $tsml_days, $tsml_programs, $tsml_program, $tsml_nonce, $tsml_types_in_use, $tsml_data_sources;
 
         $meeting = tsml_get_meeting();
 
@@ -49,7 +49,12 @@ add_action('admin_init', function () {
         }
 
         if (!empty($meeting->data_source)) {
-            tsml_alert(__('This meeting was imported from an external data source. Any changes you make here will be overwritten when you refresh the data.', '12-step-meeting-list'), 'warning');
+            $data_source_name = property_exists($meeting, 'data_source_name') ? $meeting->data_source_name : $meeting->data_source;
+            $message = sprintf(
+                __('This meeting was imported from an external feed %s. Any changes you make here will be overwritten when you refresh the data.', '12-step-meeting-list'),
+                "<strong>$data_source_name</strong>"
+            );
+            tsml_alert($message, 'warning');
         }
 
         // nonce field

@@ -85,6 +85,13 @@ $tsml_array_fields = [
     'feedback_emails',
 ];
 
+// define url fields that should avoid entity replacement
+$tsml_url_fields = [
+    'data_source',
+    'entity_url',
+    'conference_url',
+];
+
 // empty global curl handle in case we need it
 $tsml_curl_handle = null;
 

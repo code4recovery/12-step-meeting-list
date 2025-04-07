@@ -284,7 +284,7 @@ function tsml_get_locations()
  */
 function tsml_get_meeting($meeting_id = false)
 {
-    global $tsml_program, $tsml_programs, $tsml_contact_fields, $tsml_array_fields;
+    global $tsml_program, $tsml_programs, $tsml_contact_fields, $tsml_array_fields, $tsml_url_fields, $tsml_data_sources;
 
     $meeting = get_post($meeting_id);
     $custom = get_post_meta($meeting->ID);
@@ -323,6 +323,8 @@ function tsml_get_meeting($meeting_id = false)
         }
         if (in_array($key, $tsml_array_fields, true)) {
             $value = array_values((array) maybe_unserialize($value));
+        } elseif (in_array($key, $tsml_url_fields, true)) {
+            // leave url fields as is
         } else {
             $value = htmlentities(strval($value), ENT_QUOTES);
         }
@@ -330,6 +332,10 @@ function tsml_get_meeting($meeting_id = false)
     }
     $meeting->post_title = htmlentities($meeting->post_title, ENT_QUOTES);
     $meeting->notes = esc_html($meeting->post_content);
+
+    if (property_exists($meeting, 'data_source') && $meeting->data_source && !empty($tsml_data_sources[$meeting->data_source])) {
+        $meeting->data_source_name = $tsml_data_sources[$meeting->data_source]['name'];
+    }
 
     // type description? (todo support multiple)
     if (!empty($tsml_programs[$tsml_program]['type_descriptions'])) {

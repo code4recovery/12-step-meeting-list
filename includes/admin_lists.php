@@ -2,7 +2,7 @@
 
 // adding region dropdown to filter
 add_action('restrict_manage_posts', function ($post_type) {
-    global $tsml_program, $tsml_programs, $tsml_types_in_use;
+    global $tsml_program, $tsml_programs, $tsml_types_in_use, $tsml_data_sources;
 
     if ($post_type !== 'tsml_meeting') {
         return;
@@ -30,15 +30,32 @@ add_action('restrict_manage_posts', function ($post_type) {
         echo '<option value="' . esc_attr($key) . '"' . selected(isset($_GET['type']) && $_GET['type'] == $key) . '>' . esc_html($value) . '</option>';
     }
     echo '</select>';
+
+    $data_sources = [
+        -1 => __('None', '12-step-meeting-list')
+    ];
+    foreach (array_values($tsml_data_sources) as $index => $data_source) {
+        $data_sources[$index] = $data_source['name'];
+    }
+
+    echo '<select name="data_source">';
+    echo '<option value="">' . esc_html__('Data Source', '12-step-meeting-list') . '</option>';
+    foreach ($data_sources as $key => $value) {
+        echo '<option value="' . esc_attr($key) . '"' . selected(isset($_GET['data_source']) && $_GET['data_source'] == $key) . '>' . esc_html($value) . '</option>';
+    }
+    echo '</select>';
+
 }, 10, 1);
 
 // if filter is set, restrict results
 add_filter(
     'pre_get_posts',
     function ($query) {
-        global $post_type, $pagenow, $wpdb;
+        global $post_type, $pagenow, $wpdb, $tsml_data_sources;
 
         if ($pagenow === 'edit.php' && $post_type === 'tsml_meeting' && $query->is_main_query()) {
+            
+            $meta_query = [];
 
             if (!empty($_GET['region'])) {
                 $parent_ids = $wpdb->get_col(
@@ -54,13 +71,34 @@ add_filter(
             }
 
             if (!empty($_GET['type'])) {
-                $query->set('meta_query', [
-                    [
-                        'key' => 'types',
-                        'value' => '"' . sanitize_text_field($_GET['type']) . '"',
-                        'compare' => 'LIKE',
-                    ],
-                ]);
+                $meta_query[] = [
+                    'key' => 'types',
+                    'value' => '"' . sanitize_text_field($_GET['type']) . '"',
+                    'compare' => 'LIKE',
+                ];
+            }
+
+            if (isset($_GET['data_source']) && is_numeric($_GET['data_source'])) {
+                $index = intval($_GET['data_source']);
+                if (-1 === $index) {
+                    $meta_query[] = [
+                        'key' => 'data_source',
+                        'compare' => 'NOT EXISTS',
+                    ];
+                } else {
+                    $data_source = array_keys($tsml_data_sources)[$index];
+                    if ($data_source) {
+                        $meta_query[] = [
+                            'key' => 'data_source',
+                            'value' => $data_source,
+                            'compare' => '=',
+                        ];
+                    }
+                }
+            }
+
+            if (!empty($meta_query)) {
+                $query->set('meta_query', $meta_query);            
             }
         }
     }
@@ -76,6 +114,7 @@ add_filter(
             'day' => __('Day', '12-step-meeting-list'),
             'time' => __('Time', '12-step-meeting-list'),
             'region' => __('Region', '12-step-meeting-list'),
+            'data_source' => __('Data Source', '12-step-meeting-list'),
             'date' => __('Date', '12-step-meeting-list'),
         ];
     }
@@ -95,7 +134,7 @@ add_action(
 
 // custom list values for meetings
 add_action('manage_tsml_meeting_posts_custom_column', function ($column_name, $post_ID) {
-    global $tsml_days, $wpdb;
+    global $tsml_days, $wpdb, $tsml_data_sources;
     if ($column_name == 'day') {
         $day = get_post_meta($post_ID, 'day', true);
         echo (empty($day) && $day !== '0') ? esc_html__('Appointment', '12-step-meeting-list') : esc_html($tsml_days[$day]);
@@ -109,6 +148,11 @@ add_action('manage_tsml_meeting_posts_custom_column', function ($column_name, $p
 			JOIN ' . $wpdb->term_relationships . ' r ON x.term_taxonomy_id = r.term_taxonomy_id
 			JOIN ' . $wpdb->posts . ' p ON r.object_id = p.post_parent
 			WHERE p.ID = ' . intval($post_ID)));
+    } elseif ($column_name == 'data_source') {
+        $data_source = get_post_meta($post_ID, 'data_source', true);
+        if ($data_source && isset($tsml_data_sources[$data_source])) {
+            echo $tsml_data_sources[$data_source]['name'];
+        }
     }
 }, 10, 2);
 
@@ -119,7 +163,6 @@ add_filter('manage_edit-tsml_meeting_sortable_columns', function ($columns) {
     $columns['time'] = 'time';
     return $columns;
 });
-
 
 // apply sorting
 add_filter('request', function ($vars) {
