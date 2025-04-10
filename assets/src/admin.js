@@ -64,6 +64,7 @@ jQuery(function ($) {
 		var form_valid = true;
 
         var $form = $('form#post');
+        $form.errorMsg = $('.tsml-form-errors');
         var $fields = {
             day:               $form.find('select#day'),
             time:              $form.find('input#time'),
@@ -107,7 +108,8 @@ jQuery(function ($) {
         //    state: loading, error, warning
         //    code:  a code that corresponds with a field <small data-message> attribute
         $.fn.setState = function(state, code) {
-            var $field = $(this);
+            const $field = $(this);
+            let errorMsg = null;
             $field.siblings('[data-message]').removeClass('show');
             $field.removeClass('error warning');
             if (-1 === ['warning','loading','error'].indexOf(state)) {
@@ -117,9 +119,12 @@ jQuery(function ($) {
             if ('error' === state || 'warning' === state) {
                 $field.addClass(state);
                 if (code) {
-                    $field.siblings('[data-message=' + code + ']').addClass('show');
+                    let $error = $field.siblings('[data-message=' + code + ']');
+                    $error.addClass('show');
+                    errorMsg = $error[0] || null;
                 }
             }
+            $field[0].errorMsg = errorMsg;
             updateFormState();
             return this;
         };
@@ -130,20 +135,40 @@ jQuery(function ($) {
 
         // after field states update, toggle publish button
         function updateFormState() {
-            var pendingFields = [];
-            Object.keys($fields).forEach(function(field) {
-                var state = $fields[field].data('state');
-                if (-1 < ['error','loading'].indexOf(state)) {
-                    pendingFields.push($fields[field][0])
+            const pendingFields = [];
+            const errorFields = [];
+            
+            Object.values($fields).forEach($field => {
+                const state = $field.data('state');
+                const el = $field[0];
+                if ('loading' === state) {
+                    pendingFields.push(el)
+                }
+                if ('error' === state && el.errorMsg) {
+                    errorFields.push(el);
                 }
             });
-            form_valid = !pendingFields.length;
+            form_valid = !pendingFields.length && !errorFields.length;
             $('#publish').toggleClass('disabled', !form_valid);
+            
+            // update form error message
+            $form.errorMsg.toggle(!!errorFields.length);
+            if (errorFields.length) {
+                const $ul = $form.errorMsg.find('ul');
+                $ul.html('');
+                errorFields.forEach(errorField => {
+                    if (errorField.errorMsg?.innerText) {
+                        const $li = $(`<li>
+                            <a href="#${errorField.id}">${errorField.errorMsg.innerText}</a>
+                        </li>`);
+                        $ul.append($li);                  
+                    }
+                })            
+            }
         }
 
 		// Hide all errors/warnings
 		function resetClasses() {
-			$('div.need_approximate_address').addClass('hidden');
 			$fields.formatted_address.removeClass('error');
 			$fields.location.removeClass('warning');
 			$fields.formatted_address.removeClass('warning');
@@ -296,7 +321,13 @@ jQuery(function ($) {
 				if (!val.length) {
 					createMap(false);
 					$fields.formatted_address.val(''); //clear any spaces
-					$fields.formatted_address.clearState();
+                    if ($fields.in_person.filter('[value="yes"]').prop('checked')) {
+                        // inperson gets error 1, specific address
+                        $fields.formatted_address.setState('error', 1);
+                    } else {
+                        // online gets error 3, general / approximate address
+                        $fields.formatted_address.setState('error', 3);
+                    }
 					return;
 				}
 
@@ -368,9 +399,7 @@ jQuery(function ($) {
 								if ($('input[name=in_person]:checked').val() == 'yes' && $fields.approximate.val() == 'yes') {
 									$fields.formatted_address.setState('error', 1);
 								} else if ($('input[name=in_person]:checked').val() == 'no' && $fields.approximate.val() == 'no' && meeting_is_online) {
-                                    $('div.need_approximate_address').removeClass('hidden');
-									$fields.location.addClass('warning');
-                                    $fields.formatted_address.setState('warning');
+                                    $fields.formatted_address.setState('warning', 4);
 								} else {
 									//field is good
 									$fields.formatted_address.clearState();
@@ -411,7 +440,7 @@ jQuery(function ($) {
                 // but doesn't include meeting number, error
                 var zoomUrlParts = conferenceUrl.match(/^(https?:\/\/)*([a-z0-9]+\.)*zoom\.us\/j\/(\d{8,20})(.*)$/i);
                 if (! zoomUrlParts ) {
-                    $fields.conference_url.setState('warning', 1);
+                    $fields.conference_url.setState('error', 1);
                     return;
                 }
                 // else cleanup zoom url
@@ -462,7 +491,9 @@ jQuery(function ($) {
         $fields.homegroup_online.on('change', $fields.homegroup_online.validate);
         $fields.homegroup_online.validate();
 
-		//when page loads, run lookup
-		if ($fields.formatted_address.val()) $fields.formatted_address.trigger('change');
+		//after first save, check address on load
+        if (!$('#auto_draft').val()) {
+		    $fields.formatted_address.trigger('change');
+        }
 	}
 });

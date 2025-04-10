@@ -303,6 +303,7 @@ Yes, you will need to know the key name of the field. Then include an array in y
 
 = 3.16.17 =
 * Add standardized list of languages for all programs with backward compatibility [more info](https://github.com/code4recovery/12-step-meeting-list/issues/1252)
+* Add page level error messages on edit meeting form
 
 = 3.16.16 =
 * Add types for ACA [more info](https://github.com/code4recovery/12-step-meeting-list/discussions/1650)
