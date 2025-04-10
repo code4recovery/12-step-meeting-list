@@ -301,6 +301,9 @@ Yes, you will need to know the key name of the field. Then include an array in y
 
 == Changelog ==
 
+= 3.16.17 =
+* Add page level error messages on edit meeting form
+
 = 3.16.16 =
 * Add Types for ACA [more info](https://github.com/code4recovery/12-step-meeting-list/discussions/1650)
 * Fix Legacy UI search bookmarking [more info](https://github.com/code4recovery/12-step-meeting-list/discussions/1655)
