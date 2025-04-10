@@ -986,7 +986,134 @@ function tsml_meeting_types($types)
     }
     sort($return);
     return implode(', ', $return);
+}
 
+/**
+ * return an array of languages, with legacy code substitutions per-program
+ * used: variables.php, meeting-edit.php
+ */
+function tsml_languages($types = [])
+{
+    global $tsml_program;
+
+    // https://en.wikipedia.org/wiki/List_of_ISO_639_language_codes
+    $languages = [
+        'AF' => __('Afrikaans', '12-step-meeting-list'),
+        'AM' => __('Amharic', '12-step-meeting-list'),
+        'AR' => __('Arabic', '12-step-meeting-list'),
+        'BG' => __('Bulgarian', '12-step-meeting-list'),
+        'DA' => __('Danish', '12-step-meeting-list'),
+        'DE' => __('German', '12-step-meeting-list'),
+        'EL' => __('Greek', '12-step-meeting-list'),
+        'EN' => __('English', '12-step-meeting-list'),
+        'ES' => __('Spanish', '12-step-meeting-list'),
+        'FA' => __('Persian', '12-step-meeting-list'),
+        'FI' => __('Finnish', '12-step-meeting-list'),
+        'FR' => __('French', '12-step-meeting-list'),
+        'HE' => __('Hebrew', '12-step-meeting-list'),
+        'HI' => __('Hindi', '12-step-meeting-list'),
+        'HR' => __('Croatian', '12-step-meeting-list'),
+        'HU' => __('Hungarian', '12-step-meeting-list'),
+        'IS' => __('Icelandic', '12-step-meeting-list'),
+        'IT' => __('Italian', '12-step-meeting-list'),
+        'JA' => __('Japanese', '12-step-meeting-list'),
+        'KA' => __('Georgian', '12-step-meeting-list'),
+        'KO' => __('Korean', '12-step-meeting-list'),
+        'LT' => __('Lithuanian', '12-step-meeting-list'),
+        'ML' => __('Malayalam', '12-step-meeting-list'),
+        'MT' => __('Maltese', '12-step-meeting-list'),
+        'NE' => __('Nepali', '12-step-meeting-list'),
+        'NO' => __('Norwegian', '12-step-meeting-list'),
+        'NL' => __('Dutch', '12-step-meeting-list'),
+        'PL' => __('Polish', '12-step-meeting-list'),
+        'PT' => __('Portuguese', '12-step-meeting-list'),
+        'PA' => __('Punjabi', '12-step-meeting-list'),
+        'RU' => __('Russian', '12-step-meeting-list'),
+        'SK' => __('Slovak', '12-step-meeting-list'),
+        'SL' => __('Slovenian', '12-step-meeting-list'),
+        'SV' => __('Swedish', '12-step-meeting-list'),
+        'TH' => __('Thai', '12-step-meeting-list'),
+        'TL' => __('Tagalog', '12-step-meeting-list'),
+        'TR' => __('Turkish', '12-step-meeting-list'),
+        'UK' => __('Ukrainian', '12-step-meeting-list'),
+    ];
+
+    // substitutions
+    $substitutions = [
+        'aca' => [
+            'ES' => 'SP',
+        ],
+        'al-anon' => [
+            'ES' => 'S',
+        ],
+        'aa' => [
+            'ES' => 'S',
+            'IT' => 'ITA',
+            'KO' => 'KOR',
+            'PA' => 'PUN',
+            'PL' => 'POL',
+            'PT' => 'POR',
+            'RU' => 'RUS',
+            'TR' => 'TUR',
+        ],
+        'ca' => [
+            'ES' => 'S',
+            'IT' => 'ITA',
+            'KO' => 'KOR',
+            'PA' => 'PUN',
+            'PL' => 'POL',
+            'PT' => 'POR',
+            'RU' => 'RUS',
+        ],
+        'cma' => [
+            'ES' => 'S',
+        ],
+        'coda' => [
+            'ES' => 'S',
+        ],
+        'eda' => [
+            'ES' => 'S',
+            'IT' => 'ITA',
+        ],
+        'ga' => [
+            'ES' => 'S',
+            'IT' => 'ITA',
+            'KO' => 'KOR',
+            'PA' => 'PUN',
+            'PL' => 'POL',
+            'PT' => 'POR',
+            'RU' => 'RUS',
+        ],
+        'slaa' => [
+            'ES' => 'S',
+        ],
+        'sia' => [
+            'ES' => 'S',
+            'IT' => 'ITA',
+            'KO' => 'KOR',
+            'PA' => 'PUN',
+            'PL' => 'POL',
+            'PT' => 'POR',
+            'RU' => 'RUS',
+            'UK' => 'UA',
+        ],
+    ];
+
+    // if the program has no types, return the languages
+    if (array_key_exists($tsml_program, $substitutions)) {
+        foreach ($substitutions[$tsml_program] as $key => $value) {
+            if (array_key_exists($key, $languages)) {
+                $languages[$value] = $languages[$key];
+                unset($languages[$key]);
+            }
+        }
+    }
+
+    $languages = array_merge($types, $languages);
+
+    asort($languages);
+
+    return $languages;
 }
 
 /**
