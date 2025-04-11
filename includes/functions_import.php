@@ -1109,21 +1109,25 @@ function tsml_auto_import_check()
 {
     global $tsml_data_sources;
 
-    // check if buffer has items to process
-    //  - if buffer has items, pull another 5, with some timeout
+    //  1. If buffer has meetings to import, pull next 10
     $meetings = tsml_get_option_array('tsml_import_buffer');
     if (count($meetings)) {
         tsml_import_buffer_next(10);
     } else {
-        //  - if buffer is empty, check if any data source hasn't been pulled in last (x) hours/days
-        $tsml_data_sources;
+        //  2. If any data source hasn't been refreshed in last 24 hours, queue up oldest
+        $oldest_data_source_url = null;
+        $oldest_data_source_last_import = null;
         $cutoff = time() - (24 * 60 * 60); // 24 hours ago
+
         foreach ($tsml_data_sources as $data_source_url => $data_source) {
-            $last_updated = intval(isset($data_source['last_import']) ? $data_source['last_import'] : 0);
-            if ($cutoff > $last_updated) {
-                tsml_import_data_source($data_source_url);
-                break;
+            $last_import = intval(isset($data_source['last_import']) ? $data_source['last_import'] : 0);
+            if ($cutoff > $last_import && (!$oldest_data_source_last_import || $last_import < $oldest_data_source_last_import)) {
+                $oldest_data_source_last_import = $last_import;
+                $oldest_data_source_url = $data_source_url;
             }
+        }
+        if ($oldest_data_source_url) {
+            tsml_import_data_source($oldest_data_source_url);
         }
     }
 }
