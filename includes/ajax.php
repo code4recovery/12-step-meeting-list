@@ -335,7 +335,26 @@ add_action('wp_ajax_tsml_geocodes', function () {
 // ajax function to import the meetings in the import buffer
 // used by admin_import.php
 add_action('wp_ajax_tsml_import', function (){
+    tsml_require_meetings_permission();
     $response = tsml_import_buffer_next(25);
+    wp_send_json($response);
+});
+
+// ajax function to check import log
+// used by admin_import.php
+add_action('wp_ajax_tsml_import_log', function (){
+    tsml_require_meetings_permission();
+    $count = intval($_GET['count']);
+    $tsml_import_log = tsml_get_option_array('tsml_import_log');
+    if ($count) {
+        $tsml_import_log = array_slice($tsml_import_log, -$count, $count, true);
+    }
+    // reverse entries newest - oldest
+    $response = array_map(function($entry) {
+        $entry = (array) $entry;
+        $entry['date'] = isset($entry['date']) ? date('Y-m-d H:i', intval($entry['date'])) : '';
+        return $entry;
+    }, array_reverse($tsml_import_log));
     wp_send_json($response);
 });
 

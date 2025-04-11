@@ -4,6 +4,13 @@ Don't make changes to this file! You'll need to reapply them every time you upda
 To customize your site, please follow the instructions in our FAQ:
 👉 https://wordpress.org/plugins/12-step-meeting-list/#faq-header
 */
+add_filter('cron_schedules', function($schedules) {
+    $schedules['ten_minutes'] = array(
+        'interval' => 10 * 60,
+        'display'  => esc_html__('Every Ten Minutes')
+    );
+    return $schedules;
+});
 
 // get the current boundaries of the coverage map
 $tsml_bounds = get_option('tsml_bounds');

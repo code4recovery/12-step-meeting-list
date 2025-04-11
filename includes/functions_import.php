@@ -88,6 +88,23 @@ function tsml_import_data_source($data_source_url, $data_source_name = '', $data
                 tsml_alert(__('Your meeting list is already in sync with the feed.', '12-step-meeting-list'), 'success');
             }
 
+            // trim import log entries older than 14 days
+            $tsml_import_log = tsml_get_option_array('tsml_import_log');
+            $date_expiration = time() - (14 * 24 * 60 * 60);
+            
+            $tsml_import_log = array_filter($tsml_import_log, function($entry) use ($date_expiration) {
+                $entry_date = (is_array($entry) && isset($entry['date'])) ? intval($entry['date']) : 0;
+                return $date_expiration < $entry_date;
+            });
+            
+            // update import log
+            $new_log_entries = tsml_import_build_change_report($change_log, true);
+            foreach ($new_log_entries as $log_entry) {
+                $log_entry['data_source_name'] = $data_source_name;
+                $tsml_import_log[] = $log_entry;
+            }
+            update_option('tsml_import_log', $tsml_import_log);
+
             // update data source timestamp
             $current_data_source['last_import'] = current_time('timestamp');
         }
@@ -136,14 +153,12 @@ function tsml_import_data_source($data_source_url, $data_source_name = '', $data
 /**
  * pull a set of meetings from the import buffer to import
  *
- * @param mixed $limit How many meetings to import, default 25, max 50
+ * @param int $limit How many meetings to import, default 25, max 50
  * @return array an array for the upstream AJAX call
  */
 function tsml_import_buffer_next($limit = 25)
 {
     global $tsml_data_sources, $tsml_custom_meeting_fields, $tsml_source_fields_map, $tsml_contact_fields, $tsml_entity_fields, $tsml_array_fields;
-
-    tsml_require_meetings_permission();
 
     $meetings = tsml_get_option_array('tsml_import_buffer');
     $errors = $remaining = [];
@@ -489,12 +504,14 @@ function tsml_import_buffer_set($meetings, $data_source_url = null, $data_source
 
 /**
  * Build output table to report on import changes
- * @param array $change_log Built from tsml_import_get_changed_meetings()
- * @return string
+ * @param array   $change_log   Built from tsml_import_get_changed_meetings()
+ * @param boolean $return_array Optionally return report as array
+ * @return string|array
  */
-function tsml_import_build_change_report($change_log)
+function tsml_import_build_change_report($change_log, $return_array = false)
 {
     global $tsml_days;
+    $rows = [];
     $message = '<table style="width:100%;margin-bottom:10px;text-align:left;border:1px solid #dddddd;padding:8px;border-spacing:5px">';
 
     foreach ($change_log as $change_entry) {
@@ -512,9 +529,21 @@ function tsml_import_build_change_report($change_log)
         } else {
             $meeting_name_linked = $meeting_name;
         }
-        $message .= '<tr><td>' . $meeting_name_linked . '  ' . $meeting_day . ' @ ' . $meeting_time . ' </td>' . '<td>' . $notes . ' </td></tr>';
+        if ($return_array) {
+            $rows[] = [
+                'date' => time(),
+                'meeting_id' => $meeting_id,
+                'meeting' => "$meeting_name - $meeting_day @ $meeting_time",
+                'notes' => $notes,
+            ];
+        } else {
+            $message .= '<tr><td>' . $meeting_name_linked . '  ' . $meeting_day . ' @ ' . $meeting_time . ' </td>' . '<td>' . $notes . ' </td></tr>';
+        }
     }
     $message .= '</table>';
+    if ($return_array) {
+        return $rows;
+    }
     return $message;
 }
 
@@ -1060,25 +1089,41 @@ function tsml_import_sanitize_meetings($meetings, $data_source_url = null, $data
  * @param null|boolean $onoff Force schedule or unscheduling cron event (default use $tsml_auto_import setting)
  * @return void
  */
-function tsml_import_cron_check( $onoff = null )
+function tsml_import_cron_check($onoff = null)
 {
     global $tsml_auto_import;
 
-    $timestamp = wp_next_scheduled( 'tsml_auto_import' );
+    $timestamp = wp_next_scheduled('tsml_auto_import');
 
-    if ( ( ! $tsml_auto_import || false === $onoff ) && $timestamp ) {
-        wp_unschedule_event( $timestamp, 'tsml_auto_import' );
+    if ((!$tsml_auto_import || false === $onoff) && $timestamp) {
+        wp_unschedule_event($timestamp, 'tsml_auto_import');
     }
-    
-    if ( ( $tsml_auto_import || true === $onoff ) && ! $timestamp ) {
-        wp_schedule_event( time(), 'hourly', 'tsml_auto_import' );
+
+    if (($tsml_auto_import || true === $onoff) && !$timestamp) {
+        wp_schedule_event(time(), 'ten_minutes', 'tsml_auto_import');
     }
 }
 
 add_action( 'tsml_auto_import', 'tsml_auto_import_check' );
 function tsml_auto_import_check()
 {
-    // TODO: check if buffer has items to process
+    global $tsml_data_sources;
+
+    // check if buffer has items to process
     //  - if buffer has items, pull another 5, with some timeout
-    //  - if buffer is empty, check if any data source hasn't been pulled in last (x) hours/days
+    $meetings = tsml_get_option_array('tsml_import_buffer');
+    if (count($meetings)) {
+        tsml_import_buffer_next(10);
+    } else {
+        //  - if buffer is empty, check if any data source hasn't been pulled in last (x) hours/days
+        $tsml_data_sources;
+        $cutoff = time() - (24 * 60 * 60); // 24 hours ago
+        foreach ($tsml_data_sources as $data_source_url => $data_source) {
+            $last_updated = intval(isset($data_source['last_import']) ? $data_source['last_import'] : 0);
+            if ($cutoff > $last_updated) {
+                tsml_import_data_source($data_source_url);
+                break;
+            }
+        }
+    }
 }
