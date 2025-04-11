@@ -49,6 +49,64 @@ jQuery(function ($) {
 		runImport();
 	}
 
+    // import log widget
+    if ($('#tsml_import_log_widget').length) {
+        const $widget = $('#tsml_import_log_widget');
+        $widget.addClass('loading');
+        $.getJSON(`${tsml.ajaxurl}?action=tsml_import_log&count=5`).then(response => {
+            $widget.removeClass('loading');
+            const entries = Array.from(response);
+            entries.forEach(entry => {
+                let date = (entry.date) ? (new Date(entry.date * 1000)).toLocaleString() : '';
+                $widget.append(`
+                    <tr class="log__entry">
+                        <td>${date}</td>
+                        <td>${entry.data_source_name || ''}</td>
+                        <td>${entry.meeting || ''}</td>
+                        <td>${entry.notes || ''}</td>
+                    </tr>
+                `);
+            })
+            if (!entries.length) {
+                $widget.find('.log-table__empty').show();
+            }
+        }).catch(e => {
+            $widget.removeClass('loading').find('.log-table__empty').show();
+        })
+    }
+
+    // import log page
+    if ($('#tsml_import_log').length) {
+        const $log = $('#tsml_import_log');
+        $log.addClass('loading');
+        $.getJSON(`${tsml.ajaxurl}?action=tsml_import_log`).then(response => {
+            $log.removeClass('loading');
+            const entries = Array.from(response);
+            entries.forEach(entry => {
+                let date = (entry.date) ? (new Date(entry.date * 1000)).toLocaleString() : '';
+                let meetingLink = entry.meeting || '';
+                let meetingId = parseInt(entry.meeting_id || 0);
+                if (meetingId) {
+                    meetingLink = `<a href="${tsml.editurl.replace(/\%d/,meetingId)}">${meetingLink}</a>`;
+                }
+                $log.append(`
+                    <tr class="log__entry">
+                        <td>${date}</td>
+                        <td>${entry.data_source_name || ''}</td>
+                        <td>${meetingLink}</td>
+                        <td>${entry.notes || ''}</td>
+                    </tr>
+                `);
+            })
+            if (!entries.length) {
+                $log.find('.log-table__empty').show();
+            }
+        }).catch(e => {
+            console.warn(e);
+            $log.removeClass('loading').find('.log-table__empty').show();
+        })
+    }
+
 	//delete data source or email contact
 	$('table form span').click(function () {
 		const feedName = $(this).parents('[data-source]').find('[data-source-name]').text().trim();

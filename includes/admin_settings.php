@@ -250,7 +250,7 @@ if (!function_exists('tsml_settings_page')) {
         ?>
 
         <!-- Admin page content should all be inside .wrap -->
-        <div class="wrap">
+        <div class="wrap tsml_admin_settings">
 
             <h1></h1> <!-- Set alerts here -->
 

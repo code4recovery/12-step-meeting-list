@@ -205,7 +205,7 @@ if (!function_exists('tsml_import_page')) {
         ?>
 
         <!-- Admin page content should all be inside .wrap -->
-        <div class="wrap">
+        <div class="wrap tsml_admin_settings">
 
             <h1></h1> <!-- Set alerts here -->
 
@@ -632,6 +632,9 @@ if (!function_exists('tsml_import_page')) {
                             <h2>
                                 <?php esc_html_e('Automatic Imports', '12-step-meeting-list') ?>
                             </h2>
+                            <p>
+                                <?php esc_html_e('When enabled, meetings will be imported from your data sources automatically.', '12-step-meeting-list') ?>
+                            </p>
                             <form class="row" method="post">
                                 <?php
                                 wp_nonce_field($tsml_nonce, 'tsml_nonce', false);
@@ -648,6 +651,28 @@ if (!function_exists('tsml_import_page')) {
 
                         </div>
 
+                        <!-- Import Log -->
+                        <div class="postbox stack">
+                            <h2>
+                                <?php esc_html_e('Import Log', '12-step-meeting-list') ?>
+                            </h2>
+                            <table class="log-table">
+                                <thead>
+                                    <tr>
+                                        <th><?php esc_html_e('Date', '12-step-meeting-list') ?></th>
+                                        <th><?php esc_html_e('Source Name', '12-step-meeting-list') ?></th>
+                                        <th><?php esc_html_e('Meeting', '12-step-meeting-list') ?></th>
+                                        <th><?php esc_html_e('Action', '12-step-meeting-list') ?></th>
+                                    </tr>
+                                </thead>
+                                <tbody id="tsml_import_log_widget">
+                                    <tr class="log-table__empty">
+                                        <td colspan="4"><?php esc_html_e('Import log is empty', '12-step-meeting-list') ?></td>
+                                    </tr>                                
+                                </tbody>
+                            </table>                            
+                        </div>
+
                     </div>
 
                 </div>
@@ -655,4 +680,43 @@ if (!function_exists('tsml_import_page')) {
         </div>
         <?php
     }
+}
+
+// import log admin page
+function tsml_import_log_page()
+{
+    ?>
+
+    <!-- Admin page content should all be inside .wrap -->
+    <div class="wrap tsml_admin_settings">
+        <h1></h1> <!-- Set alerts here -->
+
+        <div class="stack">
+            <div class="postbox stack">
+                <h2>
+                    <?php esc_html_e('Import Log', '12-step-meeting-list') ?>
+                </h2>
+                <p>
+                    <?php esc_html_e('This log contains the results of site imports run in the last 14 days.', '12-step-meeting-list') ?>
+                </p>
+                <table class="log-table log-table--large">
+                    <thead>
+                        <tr>
+                            <th><?php esc_html_e('Date', '12-step-meeting-list') ?></th>
+                            <th><?php esc_html_e('Source Name', '12-step-meeting-list') ?></th>
+                            <th><?php esc_html_e('Meeting', '12-step-meeting-list') ?></th>
+                            <th><?php esc_html_e('Notes', '12-step-meeting-list') ?></th>
+                        </tr>
+                    </thead>
+                    <tbody id="tsml_import_log">
+                        <tr class="log-table__empty">
+                            <td colspan="4"><?php esc_html_e('Import log is empty', '12-step-meeting-list') ?></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <?php
 }
