@@ -671,6 +671,11 @@ if (!function_exists('tsml_import_page')) {
                                     </tr>                                
                                 </tbody>
                             </table>                            
+                            <p>
+                                <a href="<?php echo admin_url('edit.php?post_type=tsml_meeting&page=import_log'); ?>">
+                                    <?php esc_html_e('View full import log here', '12-step-meeting-list') ?>
+                                </a>
+                            </p>
                         </div>
 
                     </div>
