@@ -340,6 +340,7 @@ function tsml_plugin_deactivation()
     if (post_type_exists('tsml_group')) {
         unregister_post_type('tsml_group');
     }
+    tsml_import_cron_check( false );
     flush_rewrite_rules();
 }
 

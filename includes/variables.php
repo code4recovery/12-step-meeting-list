@@ -181,6 +181,9 @@ $tsml_google_maps_key = get_option('tsml_google_maps_key');
 // load the screen user interface choice
 $tsml_user_interface = get_option('tsml_user_interface', 'legacy_ui');
 
+// load automatic import setting
+$tsml_auto_import = get_option('tsml_auto_import');
+
 /*
 unfortunately the google geocoding API is not always perfect. used by tsml_import() and admin.js
 find correct coordinates with http://nominatim.openstreetmap.org/ and https://www.latlong.net/
