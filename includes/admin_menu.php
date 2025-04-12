@@ -40,11 +40,11 @@ add_action('admin_menu', function () {
     );
     add_submenu_page(
         'edit.php?post_type=tsml_meeting',
-        __('Import Log', '12-step-meeting-list'),
-        __('Import Log', '12-step-meeting-list'),
+        __('Event Log', '12-step-meeting-list'),
+        __('Event Log', '12-step-meeting-list'),
         TSML_SETTINGS_PERMISSION,
-        'import_log',
-        'tsml_import_log_page'
+        'log',
+        'tsml_log_page'
     );
     add_submenu_page(
         'edit.php?post_type=tsml_meeting',

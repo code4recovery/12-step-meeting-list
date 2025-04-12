@@ -344,18 +344,8 @@ add_action('wp_ajax_tsml_import', function (){
 // used by admin_import.php
 add_action('wp_ajax_tsml_import_log', function (){
     tsml_require_meetings_permission();
-    $tsml_import_log = tsml_get_option_array('tsml_import_log');
-    $count = intval(isset($_GET['count']) ? $_GET['count'] : 0);
-    if ($count) {
-        $tsml_import_log = array_slice($tsml_import_log, -$count, $count, true);
-    }
-    // reverse entries newest - oldest
-    $response = array_map(function($entry) {
-        $entry = (array) $entry;
-        $entry['date'] = intval(isset($entry['date']) ? $entry['date'] : 0);
-        return $entry;
-    }, array_reverse($tsml_import_log));
-    wp_send_json($response);
+    $tsml_log = tsml_log_get($_GET);
+    wp_send_json($tsml_log);
 });
 
 // api ajax function

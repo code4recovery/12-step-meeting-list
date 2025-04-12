@@ -38,6 +38,15 @@ ul {
     &--large {
         font-size: 1rem;
     }
+    thead {
+        position: sticky;
+        top: 2rem;
+        z-index: 30;
+        background: #ddd;    
+    }
+    td, th {
+        text-align: left !important;
+    }
     &__empty {
         display: none;
         td {

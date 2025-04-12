@@ -660,9 +660,7 @@ if (!function_exists('tsml_import_page')) {
                                 <thead>
                                     <tr>
                                         <th><?php esc_html_e('Date', '12-step-meeting-list') ?></th>
-                                        <th><?php esc_html_e('Source Name', '12-step-meeting-list') ?></th>
-                                        <th><?php esc_html_e('Meeting', '12-step-meeting-list') ?></th>
-                                        <th><?php esc_html_e('Action', '12-step-meeting-list') ?></th>
+                                        <th><?php esc_html_e('Info', '12-step-meeting-list') ?></th>
                                     </tr>
                                 </thead>
                                 <tbody id="tsml_import_log_widget">
@@ -672,8 +670,8 @@ if (!function_exists('tsml_import_page')) {
                                 </tbody>
                             </table>                            
                             <p>
-                                <a href="<?php echo admin_url('edit.php?post_type=tsml_meeting&page=import_log'); ?>">
-                                    <?php esc_html_e('View full import log here', '12-step-meeting-list') ?>
+                                <a href="<?php echo admin_url('edit.php?post_type=tsml_meeting&page=log'); ?>">
+                                    <?php esc_html_e('View full log here', '12-step-meeting-list') ?>
                                 </a>
                             </p>
                         </div>
@@ -688,7 +686,7 @@ if (!function_exists('tsml_import_page')) {
 }
 
 // import log admin page
-function tsml_import_log_page()
+function tsml_log_page()
 {
     ?>
 
@@ -699,18 +697,35 @@ function tsml_import_log_page()
         <div class="stack">
             <div class="postbox stack">
                 <h2>
-                    <?php esc_html_e('Import Log', '12-step-meeting-list') ?>
+                    <?php esc_html_e('Event Log', '12-step-meeting-list') ?>
                 </h2>
                 <p>
-                    <?php esc_html_e('This log contains the results of site imports run in the last 14 days.', '12-step-meeting-list') ?>
+                    <?php esc_html_e('These are TSML events that have occurred within the last 30 days.', '12-step-meeting-list') ?>
                 </p>
+
+                <div class="tablenav top">
+                    <div class="alignleft">
+                        <label for="filter_type" class="screen-reader-text">
+                            <?php esc_html_e('Filter by event type', '12-step-meeting-list') ?>
+                        </label>
+                        <select name="filter_type" id="filter_type">
+                            <option value="">
+                                <?php esc_html_e('Filter by event type', '12-step-meeting-list') ?>
+                            </option>
+                            <?php foreach(TSML_LOG_TYPES as $key => $value) {?>
+                                <option value="<?php echo $key; ?>"><?php echo $value; ?></option>
+                            <?php } ?>
+                        </select>
+                    </div>
+                </div>
+
                 <table class="log-table log-table--large">
                     <thead>
                         <tr>
                             <th><?php esc_html_e('Date', '12-step-meeting-list') ?></th>
-                            <th><?php esc_html_e('Source Name', '12-step-meeting-list') ?></th>
-                            <th><?php esc_html_e('Meeting', '12-step-meeting-list') ?></th>
-                            <th><?php esc_html_e('Notes', '12-step-meeting-list') ?></th>
+                            <th><?php esc_html_e('Type', '12-step-meeting-list') ?></th>
+                            <th><?php esc_html_e('Info', '12-step-meeting-list') ?></th>
+                            <th><?php esc_html_e('Data', '12-step-meeting-list') ?></th>
                         </tr>
                     </thead>
                     <tbody id="tsml_import_log">

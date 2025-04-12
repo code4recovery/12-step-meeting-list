@@ -1166,41 +1166,6 @@ function tsml_link_url($url, $exclude = '')
 }
 
 /**
- * add an entry to the activity log
- * used in tsml_ajax_info, tsml_geocode and anywhere else something could go wrong
- * 
- * @param mixed $type something short you can filter by, eg 'geocode_error'
- * @param mixed $info the bad result you got back
- * @param mixed $input any input that might have contributed to the result
- * @return void
- */
-function tsml_log($type, $info = null, $input = null)
-{
-    // load
-    $tsml_log = tsml_get_option_array('tsml_log');
-
-    // default variables
-    $entry = [
-        'type' => $type,
-        'timestamp' => current_time('mysql'),
-    ];
-
-    // optional variables
-    if ($info) {
-        $entry['info'] = $info;
-    }
-    if ($input) {
-        $entry['input'] = $input;
-    }
-
-    // prepend to array
-    array_unshift($tsml_log, $entry);
-
-    // save
-    update_option('tsml_log', $tsml_log);
-}
-
-/**
  * link to meetings page with parameters (added to link dropdown menus for SEO)
  * used: archive-meetings.php
  * 
@@ -1479,7 +1444,7 @@ add_action('tsml_scan_data_source', function ($data_source_url) {
     $meetings = tsml_import_sanitize_meetings($body, $data_source_url, $data_source_parent_region_id);
 
     // check import feed for changes and return array summing up changes detected
-    list($import_meetings, $delete_meeting_ids, $change_log) = tsml_import_get_changed_meetings($meetings, $data_source_url);
+    $change_log = tsml_import_get_changed_meetings($meetings, $data_source_url);
 
     // send email notifying admins that this data source needs updating
     if (is_array($change_log) && count($change_log)) {

@@ -52,18 +52,22 @@ jQuery(function ($) {
     // import log widget
     if ($('#tsml_import_log_widget').length) {
         const $widget = $('#tsml_import_log_widget');
-        $widget.addClass('loading');
-        $.getJSON(`${tsml.ajaxurl}?action=tsml_import_log&count=5`).then(response => {
-            $widget.removeClass('loading');
+        $.getJSON(`${tsml.ajaxurl}?action=tsml_import_log&count=5&type=import_meeting`).then(response => {
             const entries = Array.from(response);
             entries.forEach(entry => {
-                let date = (entry.date) ? (new Date(entry.date * 1000)).toLocaleString() : '';
+                let date = (new Date(entry.timestamp * 1000)).toLocaleDateString();
+                let detail = entry.input || '';
+                let meetingId = parseInt(entry.meeting_id || 0);
+                if (meetingId) {
+                    detail = `<a href="${tsml.editurl.replace(/\%d/,meetingId)}">${detail}</a>`;
+                }                   
                 $widget.append(`
                     <tr class="log__entry">
                         <td>${date}</td>
-                        <td>${entry.data_source_name || ''}</td>
-                        <td>${entry.meeting || ''}</td>
-                        <td>${entry.notes || ''}</td>
+                        <td>
+                            ${detail}</br>
+                            ${entry.info || ''}
+                        </td>
                     </tr>
                 `);
             })
@@ -71,30 +75,33 @@ jQuery(function ($) {
                 $widget.find('.log-table__empty').show();
             }
         }).catch(e => {
-            $widget.removeClass('loading').find('.log-table__empty').show();
+            $widget.find('.log-table__empty').show();
         })
     }
 
     // import log page
     if ($('#tsml_import_log').length) {
+        const types = {};
+        const $filter = $('#filter_type');
+        $filter.find('option[value]').each((i,e) => e.value && (types[e.value] = e.innerText))
         const $log = $('#tsml_import_log');
-        $log.addClass('loading');
         $.getJSON(`${tsml.ajaxurl}?action=tsml_import_log`).then(response => {
-            $log.removeClass('loading');
             const entries = Array.from(response);
             entries.forEach(entry => {
-                let date = (entry.date) ? (new Date(entry.date * 1000)).toLocaleString() : '';
-                let meetingLink = entry.meeting || '';
+                // date was saved as string, now an epoch number
+                let ts = String(entry.timestamp).match(/^\d+$/) ? entry.timestamp * 1000 : entry.timestamp;
+                let date = (new Date(ts)).toLocaleString();
+                let detail = entry.input || '';
                 let meetingId = parseInt(entry.meeting_id || 0);
                 if (meetingId) {
-                    meetingLink = `<a href="${tsml.editurl.replace(/\%d/,meetingId)}">${meetingLink}</a>`;
-                }
+                    detail = `<a href="${tsml.editurl.replace(/\%d/,meetingId)}">${detail}</a>`;
+                }                
                 $log.append(`
-                    <tr class="log__entry">
+                    <tr class="log-table__entry" data-type="${entry.type}">
                         <td>${date}</td>
-                        <td>${entry.data_source_name || ''}</td>
-                        <td>${meetingLink}</td>
-                        <td>${entry.notes || ''}</td>
+                        <td>${types[entry.type] || entry.type}</td>
+                        <td>${entry.info || ''}</td>
+                        <td>${detail}</td>
                     </tr>
                 `);
             })
@@ -103,7 +110,12 @@ jQuery(function ($) {
             }
         }).catch(e => {
             console.warn(e);
-            $log.removeClass('loading').find('.log-table__empty').show();
+            $log.find('.log-table__empty').show();
+        })
+        // watch for filter change
+        $filter.on('change',(e) => {
+            const type = $filter.val();
+            $log.find('tr').each((i,e) => $(e).toggle((!type && e.dataset?.type) || type === e.dataset?.type));
         })
     }
 
