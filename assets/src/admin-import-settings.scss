@@ -33,6 +33,33 @@ ul {
 	}
 }
 
+.log-table {
+    width: 100%;
+    &--large {
+        font-size: 1rem;
+    }
+    thead {
+        position: sticky;
+        top: 2rem;
+        z-index: 30;
+        background: #ddd;    
+    }
+    td, th {
+        text-align: left !important;
+    }
+    .error td {
+        color: #b00;
+    }
+    &__empty {
+        display: none;
+        td {
+            padding: 1rem !important;
+            text-align: center !important;
+            font-family: inherit !important;
+        };
+    }
+}
+
 a.button-large {
 	align-items: center;
 	display: inline-flex;
@@ -149,7 +176,7 @@ a.button-large {
 			box-shadow: none;
 
 			&[type='text'],
-			&[type='email'], 
+			&[type='email'],
 			&[type='url'] {
 				font-family: monospace;
 				width: 300px;

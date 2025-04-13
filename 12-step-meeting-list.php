@@ -40,6 +40,7 @@ include TSML_PATH . '/includes/functions_format.php';
 include TSML_PATH . '/includes/functions_get.php';
 include TSML_PATH . '/includes/functions_import.php';
 include TSML_PATH . '/includes/functions_input.php';
+include TSML_PATH . '/includes/functions_log.php';
 include TSML_PATH . '/includes/functions_timezone.php';
 include TSML_PATH . '/includes/variables.php';
 
