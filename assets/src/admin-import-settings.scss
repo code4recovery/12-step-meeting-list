@@ -47,6 +47,9 @@ ul {
     td, th {
         text-align: left !important;
     }
+    .error td {
+        color: #b00;
+    }
     &__empty {
         display: none;
         td {

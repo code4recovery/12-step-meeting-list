@@ -89,6 +89,7 @@ jQuery(function ($) {
             const entries = Array.from(response);
             entries.forEach(entry => {
                 // date was saved as string, now an epoch number
+                let type = entry.type || '';
                 let ts = String(entry.timestamp).match(/^\d+$/) ? entry.timestamp * 1000 : entry.timestamp;
                 let date = (new Date(ts)).toLocaleString();
                 let detail = entry.input || '';
@@ -97,9 +98,9 @@ jQuery(function ($) {
                     detail = `<a href="${tsml.editurl.replace(/\%d/,meetingId)}">${detail}</a>`;
                 }                
                 $log.append(`
-                    <tr class="log-table__entry" data-type="${entry.type}">
+                    <tr class="log-table__entry ${type.includes('error')?'error':''}" data-type="${type}">
                         <td>${date}</td>
-                        <td>${types[entry.type] || entry.type}</td>
+                        <td>${types[type] || type}</td>
                         <td>${entry.info || ''}</td>
                         <td>${detail}</td>
                     </tr>
