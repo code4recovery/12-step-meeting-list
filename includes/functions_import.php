@@ -69,9 +69,22 @@ function tsml_import_data_source($data_source_url, $data_source_name = '', $data
             if ($data_source_change_detect === 'enabled') {
                 tsml_schedule_import_scan($data_source_url, $data_source_name);
             }
+            
+            tsml_log(
+                'data_source', 
+                __('Added', '12-step-meeting-list') . ' - ' . $data_source_name, 
+                sprintf(__('%s meetings', '12-step-meeting-list'), count($import_meetings))
+            );
+
         } else {
             // get updated feed import record set 
             $change_log = tsml_import_get_changed_meetings($meetings, $data_source_url);
+
+            tsml_log(
+                'data_source', 
+                __('Updates queued', '12-step-meeting-list') . ' - ' . $data_source_name, 
+                sprintf(__('%s updates', '12-step-meeting-list'), count($change_log))
+            );
 
             // drop meetings that weren't found in the import
             foreach($change_log as $change) {
@@ -83,7 +96,11 @@ function tsml_import_data_source($data_source_url, $data_source_name = '', $data
                 $info = $change['info'];
                 if ('remove' === $change['action']) {
                     // log meeting delete
-                    tsml_log('import_meeting', $info, $data_source_name . ' - ' . $meeting['name'] . ' - ' . tsml_format_day_and_time($meeting['day'], $meeting['time'], ' @ ', true));
+                    tsml_log(
+                        'import_meeting', 
+                        $info, 
+                        $data_source_name . ' - ' . $meeting['name'] . ' - ' . tsml_format_day_and_time($meeting['day'], $meeting['time'], ' @ ', true)
+                    );
                     $delete_meeting_ids[] = $change['meeting_id'];
                 } else {
                     $import_meetings[] = $meeting;
@@ -116,38 +133,42 @@ function tsml_import_data_source($data_source_url, $data_source_name = '', $data
         $tsml_data_sources[$data_source_url] = $current_data_source;
         update_option('tsml_data_sources', $tsml_data_sources);
 
-    } elseif (!is_array($response)) {
-        // translators: %s is the invalid response from the data source
-        tsml_alert(sprintf(__('Invalid response: <pre>%s</pre>.', '12-step-meeting-list'), print_r($response, true)), 'error');
-    } elseif (empty($response['body'])) {
-
-        tsml_alert(__('Data source gave an empty response, you might need to try again.', '12-step-meeting-list'), 'error');
     } else {
-
-        switch (json_last_error()) {
-            case JSON_ERROR_NONE:
-                tsml_alert(__('JSON: no errors.', '12-step-meeting-list'), 'error');
-                break;
-            case JSON_ERROR_DEPTH:
-                tsml_alert(__('JSON: Maximum stack depth exceeded.', '12-step-meeting-list'), 'error');
-                break;
-            case JSON_ERROR_STATE_MISMATCH:
-                tsml_alert(__('JSON: Underflow or the modes mismatch.', '12-step-meeting-list'), 'error');
-                break;
-            case JSON_ERROR_CTRL_CHAR:
-                tsml_alert(__('JSON: Unexpected control character found.', '12-step-meeting-list'), 'error');
-                break;
-            case JSON_ERROR_SYNTAX:
-                tsml_alert(__('JSON: Syntax error, malformed JSON.', '12-step-meeting-list'), 'error');
-                break;
-            case JSON_ERROR_UTF8:
-                tsml_alert(__('JSON: Malformed UTF-8 characters, possibly incorrectly encoded.', '12-step-meeting-list'), 'error');
-                break;
-            default:
-                tsml_alert(__('JSON: Unknown error.', '12-step-meeting-list'), 'error');
-                break;
+        $error_msg = '';
+        if (!is_array($response)) {
+            // translators: %s is the invalid response from the data source
+            $error_msg = sprintf(__('Invalid response: <pre>%s</pre>.', '12-step-meeting-list'), print_r($response, true));
+        } elseif (empty($response['body'])) {
+            $error_msg = __('Data source gave an empty response, you might need to try again.', '12-step-meeting-list');
+        } else {
+            switch (json_last_error()) {
+                case JSON_ERROR_NONE:
+                    $error_msg = __('JSON: no errors.', '12-step-meeting-list');
+                    break;
+                case JSON_ERROR_DEPTH:
+                    $error_msg = __('JSON: Maximum stack depth exceeded.', '12-step-meeting-list');
+                    break;
+                case JSON_ERROR_STATE_MISMATCH:
+                    $error_msg = __('JSON: Underflow or the modes mismatch.', '12-step-meeting-list');
+                    break;
+                case JSON_ERROR_CTRL_CHAR:
+                    $error_msg = __('JSON: Unexpected control character found.', '12-step-meeting-list');
+                    break;
+                case JSON_ERROR_SYNTAX:
+                    $error_msg = __('JSON: Syntax error, malformed JSON.', '12-step-meeting-list');
+                    break;
+                case JSON_ERROR_UTF8:
+                    $error_msg = __('JSON: Malformed UTF-8 characters, possibly incorrectly encoded.', '12-step-meeting-list');
+                    break;
+                default:
+                    $error_msg = __('JSON: Unknown error.', '12-step-meeting-list');
+                    break;
+            }
         }
+        tsml_log('data_source_error', __('Import failed', '12-step-meeting-list') . ' - ' . $data_source_name, $error_msg);
+        tsml_alert($error_msg, 'error');
     }
+    
 }
 
 /**
@@ -569,10 +590,7 @@ function tsml_import_build_change_report($change_log, $return_array = false)
  * @param array  $feed_meetings                array of feed meetings to test for changes
  * @param string $data_source_url              feed source url
  * @param int    $data_source_parent_region_id feed parent region id
- * @return array[array, array, array]
- *       $import_meetings    array of imported meetings that need to be processes
- *       $delete_meeting_ids array of existing meeting post id's to delete
- *       $change_log         array of changes to existing
+ * @return array array of changes, including action (add, remove, update), meeting, and meeting_id if available
  */
 function tsml_import_get_changed_meetings($feed_meetings, $data_source_url)
 {

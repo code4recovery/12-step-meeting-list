@@ -180,6 +180,9 @@ if (!function_exists('tsml_import_page')) {
 
             if (array_key_exists($_POST['tsml_remove_data_source'], $tsml_data_sources)) {
 
+                // get data source for log entry
+                $data_source = $tsml_data_sources[$_POST['tsml_remove_data_source']];
+
                 // remove all meetings for this data source
                 tsml_delete(tsml_get_data_source_ids($_POST['tsml_remove_data_source']));
 
@@ -189,6 +192,8 @@ if (!function_exists('tsml_import_page')) {
                 // remove data source
                 unset($tsml_data_sources[$_POST['tsml_remove_data_source']]);
                 update_option('tsml_data_sources', $tsml_data_sources);
+
+                tsml_log('data_source', __('Removed', '12-step-meeting-list'), $data_source['name']);
 
                 tsml_alert(__('Data source removed.', '12-step-meeting-list'));
             }
