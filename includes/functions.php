@@ -1583,6 +1583,8 @@ function tsml_compare_imported_meeting($local_meeting, $import_meeting, $transla
     foreach ($tsml_source_fields_map as $source_field => $field) {
         if (isset($local_meeting[$source_field])) {
             $local_meeting[$field] = $local_meeting[$source_field];
+        } else {
+            unset($local_meeting[$field]);
         }
     }
     $compare_fields = array_merge(array_keys($tsml_export_columns), $tsml_entity_fields);
