@@ -203,10 +203,10 @@ if (!function_exists('tsml_import_page')) {
         if (isset($_POST['tsml_auto_import']) && $valid_nonce) {
             $tsml_auto_import = !!($_POST['tsml_auto_import']) ? 'on' : '';
             update_option('tsml_auto_import', $tsml_auto_import);
-            tsml_import_cron_check();
             tsml_alert(__('Automatic imports setting updated.', '12-step-meeting-list'));
         }
-
+        // ensure cron follows setting
+        tsml_import_cron_check();
         ?>
 
         <!-- Admin page content should all be inside .wrap -->
