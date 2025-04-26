@@ -83,7 +83,7 @@ function tsml_log_save_updates()
 }
 
 /**
- * get lot entries
+ * get log entries
  * @param array $args [optional] args to filters results
  *   [type] event type to filter
  *   [count] limit how many returned
