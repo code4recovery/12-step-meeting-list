@@ -72,8 +72,8 @@ function tsml_log_save_updates()
             if (!is_array($entry) || !isset($entry['timestamp'])) {
                 return false;
             }
-            // timestamp can be string (previous) or number (current)
-            $time = is_numeric($entry['timestamp']) ? intval($entry['timestamp']) : strtotime($entry['timestamp']);
+            // previous timestamps are mysqldate strings, new are epoch numbers
+            $time = intval($entry['timestamp']);
             return $time && $cutoff < $time;
         });
         // add updates
@@ -91,6 +91,8 @@ function tsml_log_save_updates()
  */
 function tsml_log_get($args = array())
 {
+    global $tsml_log_config;
+
     $args = (array) $args;
     $tsml_log = tsml_get_option_array('tsml_log');
     $tsml_log = array_filter($tsml_log, 'is_array');
@@ -103,6 +105,11 @@ function tsml_log_get($args = array())
     }
     $count = isset($args['count']) ? intval($args['count']) : 0;
     $start = isset($args['start']) ? intval($args['start']) : 0;
+
+    // upper limit to log entries
+    $max = intval($tsml_log_config['max'] ? $tsml_log_config['max'] : 1000); 
+    $tsml_log = array_slice($tsml_log, 0, $max);
+
     if ($count) {
         $tsml_log = array_slice($tsml_log, $start, $count);
     }
