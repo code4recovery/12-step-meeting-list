@@ -657,6 +657,9 @@ if (!function_exists('tsml_import_page')) {
                         </div>
 
                         <!-- Import Log -->
+                        <?php
+                        $log_entries = tsml_log_get(['count' => 5, 'type' => 'import_meeting']);
+                        ?>
                         <div class="postbox stack">
                             <h2>
                                 <?php esc_html_e('Import Log', '12-step-meeting-list') ?>
@@ -669,9 +672,27 @@ if (!function_exists('tsml_import_page')) {
                                     </tr>
                                 </thead>
                                 <tbody id="tsml_import_log_widget">
-                                    <tr class="log-table__empty">
-                                        <td colspan="4"><?php esc_html_e('Import log is empty', '12-step-meeting-list') ?></td>
-                                    </tr>                                
+                                    <?php if ( count( $log_entries ) ) {
+                                        foreach( $log_entries as $entry) {
+                                            $msg = tsml_log_format_entry_msg($entry);
+                                            if (!empty($entry['info'])) {
+                                                $msg = $entry['info'] . '<br/>' . PHP_EOL . $msg;                                            
+                                            }
+                                            ?>
+                                            <tr class="log-table">
+                                                <td><?php echo tsml_date_localised(get_option('date_format'), intval($entry['timestamp'])); ?></td>
+                                                <td><?php echo $msg; ?></td>
+                                            </tr>
+                                            <?php
+                                        }
+                                    } else {
+                                        ?>
+                                        <tr class="log-table__empty">
+                                            <td colspan="4"><?php esc_html_e('Import log is empty', '12-step-meeting-list') ?></td>
+                                        </tr>
+                                        <?php
+                                    }
+                                    ?>
                                 </tbody>
                             </table>                            
                             <p>
@@ -693,6 +714,7 @@ if (!function_exists('tsml_import_page')) {
 // import log admin page
 function tsml_log_page()
 {
+    $log_entries = tsml_log_get();
     ?>
 
     <!-- Admin page content should all be inside .wrap -->
@@ -734,9 +756,29 @@ function tsml_log_page()
                         </tr>
                     </thead>
                     <tbody id="tsml_import_log">
-                        <tr class="log-table__empty">
-                            <td colspan="4"><?php esc_html_e('Import log is empty', '12-step-meeting-list') ?></td>
-                        </tr>
+                        <?php if ( count( $log_entries ) ) {
+                            foreach( $log_entries as $entry) {
+                                $type = strval(!empty($entry['type']) ? $entry['type'] : '');
+                                $type_label = isset(TSML_LOG_TYPES[$type]) ? TSML_LOG_TYPES[$type] : $type;
+                                $msg = tsml_log_format_entry_msg($entry);
+                                $row_class = (false !== strpos($type, 'error')) ? 'error' : '';
+                                ?>
+                                <tr class="log-table <?php echo $row_class; ?>" data-type="<?php echo esc_attr($type); ?>">
+                                    <td><?php echo tsml_date_localised(get_option('date_format') . ' ' . get_option('time_format'), intval($entry['timestamp'])); ?></td>
+                                    <td><?php echo $type_label; ?></td>
+                                    <td><?php echo $entry['info']; ?></td>
+                                    <td><?php echo $msg; ?></td>
+                                </tr>
+                                <?php
+                            }
+                        } else {
+                            ?>
+                            <tr class="log-table__empty">
+                                <td colspan="4"><?php esc_html_e('Import log is empty', '12-step-meeting-list') ?></td>
+                            </tr>
+                            <?php
+                        }
+                        ?>
                     </tbody>
                 </table>
             </div>

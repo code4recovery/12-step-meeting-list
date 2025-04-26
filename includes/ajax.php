@@ -340,14 +340,6 @@ add_action('wp_ajax_tsml_import', function (){
     wp_send_json($response);
 });
 
-// ajax function to check import log
-// used by admin_import.php
-add_action('wp_ajax_tsml_import_log', function (){
-    tsml_require_meetings_permission();
-    $tsml_log = tsml_log_get($_GET);
-    wp_send_json($tsml_log);
-});
-
 // api ajax function
 // used by theme, web app, mobile app
 add_action('wp_ajax_meetings', 'tsml_ajax_meetings');

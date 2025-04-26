@@ -115,3 +115,18 @@ function tsml_log_get($args = array())
     }
     return $tsml_log;
 }
+
+/**
+ * Return string output for log entry message (input)
+ * @param array $entry
+ * @return string
+ */
+function tsml_log_format_entry_msg($entry) {
+    $entry = (array) $entry;
+    $msg = !empty($entry['input']) ? $entry['input'] : '';
+    if ($msg && !empty($entry['meeting_id'])) {
+        $url = admin_url('post.php?post=' . intval($entry['meeting_id']) . '&action=edit');
+        $msg = '<a href="'. esc_attr($url) . '">' . $msg . '</a>';
+    }
+    return $msg;
+}

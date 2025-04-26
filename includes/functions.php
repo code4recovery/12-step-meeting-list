@@ -97,7 +97,6 @@ function tsml_assets()
         wp_enqueue_script('tsml_admin', plugins_url('../assets/js/admin.min.js', __FILE__), ['jquery'], TSML_VERSION, true);
         wp_localize_script('tsml_admin', 'tsml', [
             'ajaxurl' => admin_url('admin-ajax.php'),
-            'editurl' => admin_url('post.php?post=%d&action=edit'),
             'debug' => WP_DEBUG,
             'google_maps_key' => $tsml_google_maps_key, // to see if map should have been called
             'mapbox_key' => $tsml_mapbox_key,

@@ -49,70 +49,10 @@ jQuery(function ($) {
 		runImport();
 	}
 
-    // import log widget
-    if ($('#tsml_import_log_widget').length) {
-        const $widget = $('#tsml_import_log_widget');
-        $.getJSON(`${tsml.ajaxurl}?action=tsml_import_log&count=5&type=import_meeting`).then(response => {
-            const entries = Array.from(response);
-            entries.forEach(entry => {
-                let date = (new Date(entry.timestamp * 1000)).toLocaleDateString();
-                let detail = entry.input || '';
-                let meetingId = parseInt(entry.meeting_id || 0);
-                if (meetingId) {
-                    detail = `<a href="${tsml.editurl.replace(/\%d/,meetingId)}">${detail}</a>`;
-                }                   
-                $widget.append(`
-                    <tr class="log__entry">
-                        <td>${date}</td>
-                        <td>
-                            ${detail}</br>
-                            ${entry.info || ''}
-                        </td>
-                    </tr>
-                `);
-            })
-            if (!entries.length) {
-                $widget.find('.log-table__empty').show();
-            }
-        }).catch(e => {
-            $widget.find('.log-table__empty').show();
-        })
-    }
-
     // import log page
     if ($('#tsml_import_log').length) {
-        const types = {};
         const $filter = $('#filter_type');
-        $filter.find('option[value]').each((i,e) => e.value && (types[e.value] = e.innerText))
         const $log = $('#tsml_import_log');
-        $.getJSON(`${tsml.ajaxurl}?action=tsml_import_log`).then(response => {
-            const entries = Array.from(response);
-            entries.forEach(entry => {
-                // date was saved as string, now an epoch number
-                let type = entry.type || '';
-                let ts = String(entry.timestamp).match(/^\d+$/) ? entry.timestamp * 1000 : entry.timestamp;
-                let date = (new Date(ts)).toLocaleString();
-                let detail = entry.input || '';
-                let meetingId = parseInt(entry.meeting_id || 0);
-                if (meetingId) {
-                    detail = `<a href="${tsml.editurl.replace(/\%d/,meetingId)}">${detail}</a>`;
-                }                
-                $log.append(`
-                    <tr class="log-table__entry ${type.includes('error')?'error':''}" data-type="${type}">
-                        <td>${date}</td>
-                        <td>${types[type] || type}</td>
-                        <td>${entry.info || ''}</td>
-                        <td>${detail}</td>
-                    </tr>
-                `);
-            })
-            if (!entries.length) {
-                $log.find('.log-table__empty').show();
-            }
-        }).catch(e => {
-            console.warn(e);
-            $log.find('.log-table__empty').show();
-        })
         // watch for filter change
         $filter.on('change',(e) => {
             const type = $filter.val();
