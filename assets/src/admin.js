@@ -49,6 +49,17 @@ jQuery(function ($) {
 		runImport();
 	}
 
+    // import log page
+    if ($('#tsml_import_log').length) {
+        const $filter = $('#filter_type');
+        const $log = $('#tsml_import_log');
+        // watch for filter change
+        $filter.on('change',(e) => {
+            const type = $filter.val();
+            $log.find('tr').each((i,e) => $(e).toggle((!type && e.dataset?.type) || type === e.dataset?.type));
+        })
+    }
+
 	//delete data source or email contact
 	$('table form span').click(function () {
 		const feedName = $(this).parents('[data-source]').find('[data-source-name]').text().trim();

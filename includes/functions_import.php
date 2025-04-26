@@ -1,6 +1,495 @@
 <?php
 
 /**
+ * trigger import of a data source to the import buffer
+ *
+ * @param mixed $data_source_url
+ * @param mixed $data_source_name
+ * @param mixed $data_source_parent_region_id
+ * @param mixed $data_source_change_detect
+ * @return void
+ */
+function tsml_import_data_source($data_source_url, $data_source_name = '', $data_source_parent_region_id = 0, $data_source_change_detect = 'disabled')
+{
+    global $tsml_data_sources, $tsml_debug;
+
+    // sanitize URL, name, parent region id, and Change Detection values
+    $data_source_url = $imported_data_source_url = trim(esc_url_raw($data_source_url, ['http', 'https']));
+    $data_source_name = sanitize_text_field($data_source_name);
+    $data_source_parent_region_id = (int) $data_source_parent_region_id;
+    $data_source_change_detect = sanitize_text_field($data_source_change_detect);    
+
+    // data source
+    $current_data_source = array_key_exists($data_source_url, $tsml_data_sources) ? $tsml_data_sources[$data_source_url] : null;
+
+    if ($current_data_source) {
+        $data_source_name = $current_data_source['name'];
+        $data_source_parent_region_id = $current_data_source['parent_region_id'];
+        $data_source_change_detect = $current_data_source['change_detect'];
+    }
+
+    // use c4r sheets service for Google Sheets URLs
+    if (strpos($data_source_url, 'docs.google.com/spreadsheets') !== false) {
+        $url_parts = explode('/', $data_source_url);
+        $sheet_id = $url_parts[5];
+        $imported_data_source_url = 'https://sheets.code4recovery.org/tsml/' . $sheet_id;
+    }
+
+    // initialize variables 
+    $import_meetings = $delete_meeting_ids = [];
+    
+    // try fetching	
+    $response = wp_safe_remote_get($imported_data_source_url, [
+        'timeout' => 30,
+        'sslverify' => false,
+    ]);
+    
+    if (is_array($response) && !empty($response['body']) && ($meetings = json_decode($response['body'], true))) {
+
+        // allow reformatting as necessary
+        $meetings = tsml_import_sanitize_meetings($meetings, $imported_data_source_url, $data_source_parent_region_id);
+
+        // actual meetings to import
+        $import_meetings = [];
+
+        // for new data sources we import every meeting, otherwise test for changed meetings
+        if (!$current_data_source) {
+            $import_meetings = $meetings;
+            $current_data_source = [
+                'status' => 'OK',
+                'last_import' => current_time('timestamp'),
+                'count_meetings' => 0,
+                'name' => $data_source_name,
+                'parent_region_id' => $data_source_parent_region_id,
+                'change_detect' => $data_source_change_detect,
+                'type' => 'JSON',
+            ];
+
+            // create a cron job to run daily when Change Detection is enabled for the new data source
+            if ($data_source_change_detect === 'enabled') {
+                tsml_schedule_import_scan($data_source_url, $data_source_name);
+            }
+            
+            tsml_log(
+                'data_source', 
+                __('Added', '12-step-meeting-list') . ' - ' . $data_source_name, 
+                sprintf(__('%s meetings', '12-step-meeting-list'), count($import_meetings))
+            );
+
+        } else {
+            // get updated feed import record set 
+            $change_log = tsml_import_get_changed_meetings($meetings, $data_source_url);
+
+            tsml_log(
+                'data_source', 
+                __('Updates queued', '12-step-meeting-list') . ' - ' . $data_source_name, 
+                sprintf(__('%s updates', '12-step-meeting-list'), count($change_log))
+            );
+
+            // drop meetings that weren't found in the import
+            foreach($change_log as $change) {
+                $meeting = (array) $change['meeting'];
+                // just avoiding bad returns
+                if (empty($meeting)) {
+                    continue;
+                }
+                $info = $change['info'];
+                if ('remove' === $change['action']) {
+                    // log meeting delete
+                    tsml_log(
+                        'import_meeting', 
+                        $info, 
+                        $data_source_name . ' - ' . $meeting['name'] . ' - ' . tsml_format_day_and_time($meeting['day'], $meeting['time'], ' @ ', true)
+                    );
+                    $delete_meeting_ids[] = $change['meeting_id'];
+                } else {
+                    $import_meetings[] = $meeting;
+                }
+            }
+            
+            if (count($delete_meeting_ids)) {
+                tsml_delete($delete_meeting_ids);
+            }
+
+            tsml_delete_orphans();
+
+            if (count($change_log) && $tsml_debug) {
+                $message = tsml_import_build_change_report($change_log);
+                tsml_alert($message, 'info');
+            }
+            // empty change log means we're up to date
+            if (!count($change_log)) {
+                tsml_alert(__('Your meeting list is already in sync with the feed.', '12-step-meeting-list'), 'success');
+            }
+
+            // update data source timestamp
+            $current_data_source['last_import'] = current_time('timestamp');
+        }
+
+        // import feed
+        tsml_import_buffer_set($import_meetings, $data_source_url, $data_source_parent_region_id);
+
+        // save data source configuration
+        $tsml_data_sources[$data_source_url] = $current_data_source;
+        update_option('tsml_data_sources', $tsml_data_sources);
+
+    } else {
+        $error_msg = '';
+        if (!is_array($response)) {
+            // translators: %s is the invalid response from the data source
+            $error_msg = sprintf(__('Invalid response: <pre>%s</pre>.', '12-step-meeting-list'), print_r($response, true));
+        } elseif (empty($response['body'])) {
+            $error_msg = __('Data source gave an empty response, you might need to try again.', '12-step-meeting-list');
+        } else {
+            switch (json_last_error()) {
+                case JSON_ERROR_NONE:
+                    $error_msg = __('JSON: no errors.', '12-step-meeting-list');
+                    break;
+                case JSON_ERROR_DEPTH:
+                    $error_msg = __('JSON: Maximum stack depth exceeded.', '12-step-meeting-list');
+                    break;
+                case JSON_ERROR_STATE_MISMATCH:
+                    $error_msg = __('JSON: Underflow or the modes mismatch.', '12-step-meeting-list');
+                    break;
+                case JSON_ERROR_CTRL_CHAR:
+                    $error_msg = __('JSON: Unexpected control character found.', '12-step-meeting-list');
+                    break;
+                case JSON_ERROR_SYNTAX:
+                    $error_msg = __('JSON: Syntax error, malformed JSON.', '12-step-meeting-list');
+                    break;
+                case JSON_ERROR_UTF8:
+                    $error_msg = __('JSON: Malformed UTF-8 characters, possibly incorrectly encoded.', '12-step-meeting-list');
+                    break;
+                default:
+                    $error_msg = __('JSON: Unknown error.', '12-step-meeting-list');
+                    break;
+            }
+        }
+        tsml_log('data_source_error', __('Import failed', '12-step-meeting-list') . ' - ' . $data_source_name, $error_msg);
+        tsml_alert($error_msg, 'error');
+    }
+    
+}
+
+/**
+ * pull a set of meetings from the import buffer to import
+ *
+ * @param int $limit How many meetings to import, default 25, max 50
+ * @return array an array for the upstream AJAX call
+ */
+function tsml_import_buffer_next($limit = 25)
+{
+    global $tsml_data_sources, $tsml_custom_meeting_fields, $tsml_source_fields_map, $tsml_contact_fields, $tsml_entity_fields, $tsml_array_fields;
+
+    $meetings = tsml_get_option_array('tsml_import_buffer');
+    $errors = $remaining = [];
+    $limit = max(1, min(50, intval($limit)));
+
+    // manage import buffer
+    if (count($meetings) > $limit) {
+        // slice off the first batch, save the remaining back to the import buffer
+        $remaining = array_slice($meetings, $limit);
+        update_option('tsml_import_buffer', $remaining);
+        $meetings = array_slice($meetings, 0, $limit);
+    } elseif (count($meetings)) {
+        // take them all and remove the option (don't wait, to prevent an endless loop)
+        delete_option('tsml_import_buffer');
+    }
+
+    // get lookups, todo consider adding regions to this
+    $locations = $groups = [];
+
+    $all_locations = tsml_get_locations();
+    foreach ($all_locations as $location) {
+        $locations[$location['formatted_address']] = $location['location_id'];
+    }
+    $all_groups = tsml_get_all_groups();
+    foreach ($all_groups as $group) {
+        $groups[$group->post_title] = $group->ID;
+        // passing post_modified and post_modified_gmt to wp_insert_post() below does not seem to work
+    }
+    //todo occasionally remove this to see if it is working
+    add_filter('wp_insert_post_data', 'tsml_import_post_modified', 99, 2);
+    $data_source_parent_region_id = 0;
+
+    foreach ($meetings as $meeting) {
+        // if meeting id is passed, this is an update vs new meeting
+        $meeting_id = intval(isset($meeting['ID']) ? $meeting['ID'] : 0);
+        $data_source_url = array_key_exists('data_source', $meeting) ? $meeting['data_source'] : '';
+        $data_source = array_key_exists($data_source_url, $tsml_data_sources) ? $tsml_data_sources[$data_source_url] : null;
+        $data_source_name = $data_source ? $data_source['name'] : '';
+        $is_new_meeting = !$meeting_id;
+
+        // check address
+        if (empty($meeting['formatted_address'])) {
+            $errors[] = '<li value="' . $meeting['row'] . '">' .
+                // translators: %s is the meeting name
+                sprintf(__('No location information provided for <code>%s</code>.', '12-step-meeting-list'), $meeting['name']) .
+                '</li>';
+            continue;
+        }
+
+        // store incoming $tsml_source_fields_map fields for future comparisons: formatted_address, region, sub_region, slug
+        foreach ($tsml_source_fields_map as $source_field => $field) {
+            $meeting[$source_field] = isset($meeting[$field]) ? $meeting[$field] : '';
+        }
+
+        // geocode address
+        $geocoded = tsml_geocode($meeting['formatted_address']);
+
+        if (array_key_exists('status', $geocoded) && $geocoded['status'] == 'error') {
+            $errors[] = '<li value="' . $meeting['row'] . '">' . $geocoded['reason'] . '</li>';
+            continue;
+        }
+
+        if ($data_source_parent_region_id == 0 && $data_source) {
+            $data_source_parent_region_id = intval($data_source['parent_region_id']) != -1 ? intval($data_source['parent_region_id']) : 0;
+        }
+
+        // try to guess region from geocode
+        if (empty($meeting['region']) && !empty($geocoded['city'])) {
+            $meeting['region'] = $geocoded['city'];
+        }
+
+        // add region to taxonomy if it doesn't exist yet
+        if (!empty($meeting['region'])) {
+            $args = ['parent' => $data_source_parent_region_id,];
+            if (!$term = term_exists($meeting['region'], 'tsml_region', $args['parent'])) {
+                $term = wp_insert_term($meeting['region'], 'tsml_region', $args);
+            }
+            $region_id = intval($term['term_id']);
+
+            // can only have a subregion if you already have a region
+            if (!empty($meeting['sub_region'])) {
+                if (!$term = term_exists($meeting['sub_region'], 'tsml_region', $region_id)) {
+                    $term = wp_insert_term($meeting['sub_region'], 'tsml_region', ['parent' => $region_id]);
+                }
+                $region_id = intval($term['term_id']);
+            }
+        }
+
+        // handle group (can't have a group if group name not specified)
+        if (empty($meeting['group'])) {
+            $group_id = null;
+        } else {
+            // has group
+            if (!array_key_exists($meeting['group'], $groups)) {
+                $group_id = wp_insert_post([
+                    'post_type' => 'tsml_group',
+                    'post_status' => 'publish',
+                    'post_title' => $meeting['group'],
+                    'post_content' => empty($meeting['group_notes']) ? '' : $meeting['group_notes'],
+                ]);
+                $groups[$meeting['group']] = $group_id;
+            } else {
+                $group_id = $groups[$meeting['group']];
+                wp_update_post([
+                    'ID' => $group_id,
+                    'post_content' => empty($meeting['group_notes']) ? '' : $meeting['group_notes'],
+                ]);
+            }
+
+            // add district to taxonomy if it doesn't exist yet
+            if (!empty($meeting['district'])) {
+                if (!$term = term_exists($meeting['district'], 'tsml_district', 0)) {
+                    $term = wp_insert_term($meeting['district'], 'tsml_district', 0);
+                }
+                $district_id = intval($term['term_id']);
+
+                // can only have a subdistrict if you already have a district
+                if (!empty($meeting['sub_district'])) {
+                    if (!$term = term_exists($meeting['sub_district'], 'tsml_district', $district_id)) {
+                        $term = wp_insert_term($meeting['sub_district'], 'tsml_district', ['parent' => $district_id]);
+                    }
+                    $district_id = intval($term['term_id']);
+                }
+                wp_set_object_terms($group_id, $district_id, 'tsml_district');
+            } elseif (!$is_new_meeting) {
+                wp_set_object_terms($group_id, null, 'tsml_district');
+            }
+        }
+
+        // save location if not already in the database
+        if (array_key_exists($geocoded['formatted_address'], $locations)) {
+            $location_id = $locations[$geocoded['formatted_address']];
+            wp_update_post([
+                'ID' => $location_id,
+                'post_title' => $meeting['location'],
+                'post_content' => $meeting['location_notes'],
+            ]);
+        } else {
+            $location_id = wp_insert_post([
+                'post_title' => $meeting['location'],
+                'post_type' => 'tsml_location',
+                'post_content' => $meeting['location_notes'],
+                'post_status' => 'publish',
+            ]);
+            $locations[$geocoded['formatted_address']] = $location_id;
+        }
+        if ($location_id) {
+            update_post_meta($location_id, 'formatted_address', $geocoded['formatted_address']);
+            update_post_meta($location_id, 'latitude', $geocoded['latitude']);
+            update_post_meta($location_id, 'longitude', $geocoded['longitude']);
+            update_post_meta($location_id, 'approximate', $geocoded['approximate']);
+            wp_set_object_terms($location_id, $region_id, 'tsml_region');
+            // timezone
+            if (!empty($meeting['timezone']) && in_array($meeting['timezone'], DateTimeZone::listIdentifiers())) {
+                update_post_meta($location_id, 'timezone', $meeting['timezone']);
+            } else {
+                delete_post_meta($location_id, 'timezone');
+            }
+        }
+
+        // save meeting to this location
+        $options = [
+            'post_title' => $meeting['name'],
+            'post_type' => 'tsml_meeting',
+            'post_status' => 'publish',
+            'post_parent' => $location_id,
+            'post_content' => trim($meeting['notes']), // not sure why recursive trim not catching this
+            'post_modified' => $meeting['post_modified'],
+            'post_modified_gmt' => $meeting['post_modified_gmt'],
+            'post_author' => $meeting['post_author'],
+        ];
+        // if ID is included, this is a meeting update
+        if ($meeting_id) {
+            $options['ID'] = $meeting_id;
+        }
+        if (!empty($meeting['slug'])) {
+            $options['post_name'] = $meeting['slug'];
+        }
+        // @TODO: check if $meeting_id is WP_Error / failed DB change
+        $meeting_id = wp_insert_post($options);
+
+        // log meeting
+        $info = '';
+        if (array_key_exists('last_import_note', $meeting)) {
+            $info = $meeting['last_import_note'];
+        } else {
+            $info = $is_new_meeting ? __('Meeting added', '12-step-meeting-list') : __('Meeting updated', '12-step-meeting-list');
+        }
+        tsml_log('import_meeting', $info, array(
+            'input' => $data_source_name . ' - ' . $meeting['name'] . ' - ' . tsml_format_day_and_time($meeting['day'], $meeting['time'], ' @ ', true), 
+            'meeting_id' => $meeting_id,
+        ));
+
+        // add day and time(s) if not appointment meeting
+        if (!empty($meeting['time']) && (!empty($meeting['day']) || (string) $meeting['day'] === '0')) {
+            update_post_meta($meeting_id, 'day', $meeting['day']);
+            update_post_meta($meeting_id, 'time', $meeting['time']);
+            update_post_meta($meeting_id, 'end_time', isset($meeting['end_time']) ? $meeting['end_time'] : '');
+        }
+
+        // add custom meeting fields if available
+        $custom_meeting_fields = array_merge(
+            ['types', 'data_source', 'conference_url', 'conference_url_notes', 'conference_phone', 'conference_phone_notes'],
+            array_keys($tsml_source_fields_map),
+            $tsml_entity_fields
+        );
+        if (!empty($tsml_custom_meeting_fields)) {
+            $custom_meeting_fields = array_merge($custom_meeting_fields, array_keys($tsml_custom_meeting_fields));
+        }
+        foreach ($custom_meeting_fields as $key) {
+            if (empty($meeting[$key])) {
+                if (metadata_exists('post', $meeting_id, $key)) {
+                    delete_post_meta($meeting_id, $key);
+                }
+            } else {
+                update_post_meta($meeting_id, $key, $meeting[$key]);
+            }
+        }
+
+        // Add Group Id and group specific info if applicable
+        if (!empty($group_id)) {
+            // link group to meeting
+            update_post_meta($meeting_id, 'group_id', $group_id);
+        }
+
+        // handle contact information (could be meeting or group)
+        $contact_entity_id = empty($group_id) ? $meeting_id : $group_id;
+        $contact_meta = array();
+
+        for ($i = 1; $i <= TSML_GROUP_CONTACT_COUNT; $i++) {
+            foreach (['name', 'phone', 'email'] as $field) {
+                $key = 'contact_' . $i . '_' . $field;
+                $contact_meta[$key] = isset($meeting[$key]) ? $meeting[$key] : '';
+            }
+        }
+        // update all contact fields (incoming blanks overwrite local blanks)
+        foreach ($tsml_contact_fields as $contact_field => $field_type) {
+            $value = isset($meeting[$contact_field]) ? $meeting[$contact_field] : '';
+            if ('url' === $field_type) {
+                $value = esc_url_raw($value, ['http', 'https']);
+            }
+            if ('date' === $field_type) {
+                $date = strtotime($value);
+                $value = ($date) ? date('Y-m-d', $date) : '';
+            }
+            $contact_meta[$contact_field] = $value;
+        }
+        // apply contact updates
+        foreach ($contact_meta as $key => $value) {
+            if (empty($value)) {
+                if (metadata_exists('post', $contact_entity_id, $key)) {
+                    delete_post_meta($contact_entity_id, $key);
+                }
+            } else {
+                update_post_meta($contact_entity_id, $key, $value);
+            }
+        }
+    }
+
+    // clean up orphaned locations & groups
+    tsml_delete_orphans();
+
+    // get latest counts
+    $meetings = tsml_count_meetings();
+    $locations = tsml_count_locations();
+    $regions = tsml_count_regions();
+    $groups = tsml_count_groups();
+
+    // update the data source counts in the database
+    foreach ($tsml_data_sources as $url => $props) {
+        $tsml_data_sources[$url]['count_meetings'] = count(tsml_get_data_source_ids($url));
+    }
+    update_option('tsml_data_sources', $tsml_data_sources);
+
+    // update ths TSML cache
+    tsml_cache_rebuild();
+
+    // have to update the cache of types in use
+    tsml_update_types_in_use();
+
+    // update viewport biasing for geocoding
+    tsml_bounds();
+
+    // remove post_modified thing added earlier
+    remove_filter('wp_insert_post_data', 'tsml_import_post_modified', 99);
+
+    // now format the counts for JSON output
+    foreach ($tsml_data_sources as $url => $props) {
+        $tsml_data_sources[$url]['count_meetings'] = number_format($props['count_meetings']);
+    }
+
+    return [
+        'errors' => $errors,
+        'remaining' => count($remaining),
+        'counts' => compact('meetings', 'locations', 'regions', 'groups'),
+        'data_sources' => $tsml_data_sources,
+        'descriptions' => [
+            // translators: %s is the number of meetings
+            'meetings' => sprintf(_n('%s meeting', '%s meetings', $meetings, '12-step-meeting-list'), number_format_i18n($meetings)),
+            // translators: %s is the number of locations
+            'locations' => sprintf(_n('%s location', '%s locations', $locations, '12-step-meeting-list'), number_format_i18n($locations)),
+            // translators: %s is the number of groups
+            'groups' => sprintf(_n('%s group', '%s groups', $groups, '12-step-meeting-list'), number_format_i18n($groups)),
+            // translators: %s is the number of regions
+            'regions' => sprintf(_n('%s region', '%s regions', $regions, '12-step-meeting-list'), number_format_i18n($regions)),
+        ],
+    ];
+}
+
+/**
  * sanitize and import an array of meetings to an 'import buffer' (an wp_option that's iterated on progressively)
  * called from admin_import.php (both CSV and JSON)
  * 
@@ -52,12 +541,14 @@ function tsml_import_buffer_set($meetings, $data_source_url = null, $data_source
 
 /**
  * Build output table to report on import changes
- * @param array $change_log Built from tsml_import_get_changed_meetings()
- * @return string
+ * @param array   $change_log   Built from tsml_import_get_changed_meetings()
+ * @param boolean $return_array Optionally return report as array
+ * @return string|array
  */
-function tsml_import_build_change_report($change_log)
+function tsml_import_build_change_report($change_log, $return_array = false)
 {
     global $tsml_days;
+    $rows = [];
     $message = '<table style="width:100%;margin-bottom:10px;text-align:left;border:1px solid #dddddd;padding:8px;border-spacing:5px">';
 
     foreach ($change_log as $change_entry) {
@@ -67,7 +558,7 @@ function tsml_import_build_change_report($change_log)
         $meeting_day_val = intval(isset($meeting['day']) ? $meeting['day'] : -1);
         $meeting_day = isset($tsml_days[$meeting_day_val]) ? $tsml_days[$meeting_day_val] : '?';
         $meeting_time = isset($meeting['time']) ? tsml_format_time($meeting['time']) : '?';
-        $notes = isset($change_entry['notes']) ? $change_entry['notes'] : '';
+        $info = isset($change_entry['info']) ? $change_entry['info'] : '';
 
         $permalink = get_permalink($meeting_id);
         if ($permalink !== false) {
@@ -75,9 +566,21 @@ function tsml_import_build_change_report($change_log)
         } else {
             $meeting_name_linked = $meeting_name;
         }
-        $message .= '<tr><td>' . $meeting_name_linked . '  ' . $meeting_day . ' @ ' . $meeting_time . ' </td>' . '<td>' . $notes . ' </td></tr>';
+        if ($return_array) {
+            $rows[] = [
+                'date' => time(),
+                'meeting_id' => $meeting_id,
+                'meeting' => "$meeting_name - $meeting_day @ $meeting_time",
+                'info' => $info,
+            ];
+        } else {
+            $message .= '<tr><td>' . $meeting_name_linked . '  ' . $meeting_day . ' @ ' . $meeting_time . ' </td>' . '<td>' . $info . ' </td></tr>';
+        }
     }
     $message .= '</table>';
+    if ($return_array) {
+        return $rows;
+    }
     return $message;
 }
 
@@ -87,14 +590,11 @@ function tsml_import_build_change_report($change_log)
  * @param array  $feed_meetings                array of feed meetings to test for changes
  * @param string $data_source_url              feed source url
  * @param int    $data_source_parent_region_id feed parent region id
- * @return array[array, array, array]
- *       $import_meetings    array of imported meetings that need to be processes
- *       $delete_meeting_ids array of existing meeting post id's to delete
- *       $change_log         array of changes to existing
+ * @return array array of changes, including action (add, remove, update), meeting, and meeting_id if available
  */
 function tsml_import_get_changed_meetings($feed_meetings, $data_source_url)
 {
-    $import_meetings = $delete_meeting_ids = $source_meetings = $found_meeting_ids = [];
+    $delete_meeting_ids = $source_meetings = $found_meeting_ids = [];
     $change_log = [];
 
     // get local meetings
@@ -133,28 +633,27 @@ function tsml_import_get_changed_meetings($feed_meetings, $data_source_url)
             $source_meeting = (array) $source_meeting;
             $found_meeting_ids[] = $source_meeting['id'];
             $changed_fields = tsml_compare_imported_meeting($source_meeting, $feed_meeting);
-            if (!empty($changed_fields)) {
-                $change_log[] = array(
-                    'action' => 'update',
-                    'description' => __('Updated', '12-step-meeting-list'),
-                    'notes' => __('Changed', '12-step-meeting-list') . ': ' . implode(', ', $changed_fields),
-                    'changed_fields' => $changed_fields,
-                    'meeting' => $feed_meeting,
-                    'meeting_id' => $source_meeting_id,
-                );
 
+            if (!empty($changed_fields)) {
+                $feed_meeting['last_import'] = current_time('timestamp');
+                $feed_meeting['last_import_note'] = __('Meeting updated', '12-step-meeting-list') . ': ' . implode(', ', $changed_fields);
                 // add `ID` field to meeting to trigger an existing post update versus new post insert
                 $feed_meeting['ID'] = $source_meeting_id;
-                $import_meetings[] = $feed_meeting;
+                $change_log[] = array(
+                    'meeting' => $feed_meeting,
+                    'meeting_id' => $source_meeting_id,
+                    'action' => 'update',
+                    'info' => $feed_meeting['last_import_note'],
+                );
             }
         } else {
+            $feed_meeting['last_import'] = current_time('timestamp');
+            $feed_meeting['last_import_note'] = __('Meeting added', '12-step-meeting-list');
             $change_log[] = array(
-                'action' => 'add',
-                'description' => __('New', '12-step-meeting-list'),
-                'notes' => __('New', '12-step-meeting-list'),
                 'meeting' => $feed_meeting,
+                'action' => 'add',
+                'info' => $feed_meeting['last_import_note'],
             );
-            $import_meetings[] = $feed_meeting;
         }
     }
 
@@ -165,15 +664,14 @@ function tsml_import_get_changed_meetings($feed_meetings, $data_source_url)
         $source_meeting_index = array_search($delete_meeting_id, $meeting_ids);
         $delete_meeting = ($source_meeting_index !== false) ? $source_meetings[$source_meeting_index] : null;
         $change_log[] = array(
-            'action' => 'remove',
-            'description' => __('Removed / Missing', '12-step-meeting-list'),
-            'notes' => __('Removed', '12-step-meeting-list'),
             'meeting' => $delete_meeting,
             'meeting_id' => $delete_meeting_id,
+            'action' => 'remove',
+            'info' => __('Meeting removed', '12-step-meeting-list'),
         );
     }
 
-    return array($import_meetings, $delete_meeting_ids, $change_log);
+    return $change_log;
 }
 
 /**
@@ -615,4 +1113,53 @@ function tsml_import_sanitize_meetings($meetings, $data_source_url = null, $data
     }
 
     return $meetings;
+}
+
+/**
+ * ensure cron event is scheduled when tsml_auto_import setting changes
+ *
+ * @param null|boolean $onoff Force schedule or unscheduling cron event (default use $tsml_auto_import setting)
+ * @return void
+ */
+function tsml_import_cron_check($onoff = null)
+{
+    global $tsml_auto_import;
+
+    $timestamp = wp_next_scheduled('tsml_auto_import');
+
+    if ((!$tsml_auto_import || false === $onoff) && $timestamp) {
+        wp_unschedule_event($timestamp, 'tsml_auto_import');
+    }
+
+    if (($tsml_auto_import || true === $onoff) && !$timestamp) {
+        wp_schedule_event(time(), 'ten_minutes', 'tsml_auto_import');
+    }
+}
+
+add_action( 'tsml_auto_import', 'tsml_auto_import_check' );
+function tsml_auto_import_check()
+{
+    global $tsml_data_sources;
+
+    //  1. If buffer has meetings to import, pull next 10
+    $meetings = tsml_get_option_array('tsml_import_buffer');
+    if (count($meetings)) {
+        tsml_import_buffer_next(10);
+    } else {
+        //  2. If any data source hasn't been refreshed in last 24 hours, queue up oldest
+        $oldest_data_source_url = null;
+        $oldest_data_source_last_import = null;
+        $cutoff = time() - (24 * 60 * 60); // 24 hours ago
+
+        foreach ($tsml_data_sources as $data_source_url => $data_source) {
+            $last_import = intval(isset($data_source['last_import']) ? $data_source['last_import'] : 0);
+            if ($cutoff > $last_import && (!$oldest_data_source_last_import || $last_import < $oldest_data_source_last_import)) {
+                $oldest_data_source_last_import = $last_import;
+                $oldest_data_source_url = $data_source_url;
+            }
+        }
+        if ($oldest_data_source_url) {
+            tsml_import_data_source($oldest_data_source_url);
+        }
+    }
 }

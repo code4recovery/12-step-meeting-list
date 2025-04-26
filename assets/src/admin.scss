@@ -2,8 +2,7 @@
 
 body {
 	//import & settings
-	&.tsml_meeting_page_import,
-	&.tsml_meeting_page_settings {
+	.wrap.tsml_admin_settings {
 		@import 'admin-import-settings.scss';
 	}
 
