@@ -84,7 +84,7 @@ function tsml_alert($message, $type = 'success')
 function tsml_assets()
 {
     global $post_type, $tsml_street_only, $tsml_programs, $tsml_strings, $tsml_program, $tsml_google_maps_key,
-    $tsml_mapbox_key, $tsml_mapbox_theme, $tsml_distance_units, $tsml_defaults, $tsml_columns, $tsml_nonce;
+    $tsml_mapbox_key, $tsml_mapbox_theme, $tsml_distance_units, $tsml_defaults, $tsml_columns, $tsml_nonce, $tsml_debug;
 
     // google maps api
     if ($tsml_google_maps_key) {
@@ -98,6 +98,7 @@ function tsml_assets()
         wp_localize_script('tsml_admin', 'tsml', [
             'ajaxurl' => admin_url('admin-ajax.php'),
             'debug' => WP_DEBUG,
+            'tsml_debug' => !!$tsml_debug,
             'google_maps_key' => $tsml_google_maps_key, // to see if map should have been called
             'mapbox_key' => $tsml_mapbox_key,
             'mapbox_theme' => $tsml_mapbox_theme,

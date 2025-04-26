@@ -185,10 +185,7 @@ add_action('admin_init', function () {
             </label>
             <?php tsml_input_url('conference_url', @$meeting->conference_url) ?>
             <small class="error_message" data-message="1">
-                <?php esc_html_e('Zoom conference urls require a valid meeting number. Example: https://zoom.us/j/1234567890', '12-step-meeting-list') ?>
-            </small>
-            <small class="warning_message" data-message="2">
-                <?php esc_html_e('Your conference url has been updated to follow the Zoom url standard.', '12-step-meeting-list') ?>
+                <?php esc_html_e('Zoom conference urls must be valid to join or register for a meeting. Example: https://zoom.us/j/1234567890', '12-step-meeting-list') ?>
             </small>
         </div>
         <div class="meta_form_row">

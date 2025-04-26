@@ -437,28 +437,24 @@ jQuery(function ($) {
             var conferenceUrl = decodeURI($fields.conference_url.val());
             // if is zoom...
             if (conferenceUrl.match(/\bzoom\.us\b/i)) {
+                // format 1: https://zoom.us/j/1234567890
                 // but doesn't include meeting number, error
-                var zoomUrlParts = conferenceUrl.match(/^(https?:\/\/)*([a-z0-9]+\.)*zoom\.us\/j\/(\d{8,20})(.*)$/i);
-                if (! zoomUrlParts ) {
+                let zoomFormat1 = conferenceUrl.match(/^(https?:\/\/)*([a-z0-9]+\.)*zoom\.us\/j\/(\d{8,20})(.*)$/i);
+                // format 2: https://us02web.zoom.us/meeting/register/abcdef123456_ABCDEF1234r#/registration
+                let zoomFormat2 = conferenceUrl.match(/^(https?:\/\/)*([a-z0-9]+\.)*zoom\.us\/meeting\/register\/[a-z0-9\_]{10,}.*/i)
+                if (!zoomFormat1 && !zoomFormat2) {
                     $fields.conference_url.setState('error', 1);
                     return;
-                }
-                // else cleanup zoom url
-                var newZoomUrl = 'https://zoom.us/j/' + zoomUrlParts[3];
-                var zoomPwd = conferenceUrl.match(/[\?\&](pwd=[a-z0-9]{28,36})/i);
-                if (zoomPwd) {
-                    newZoomUrl += '?' + zoomPwd[1];
-                }
-                if (conferenceUrl !== newZoomUrl) {
-                    $fields.conference_url.val(newZoomUrl);
-                    $fields.conference_url.setState('warning', 2);
                 }
             }
         };
 
+        // [20250426] Temporarily allow conference url check with $tsml_debug
         // validate conference url on change and once on initial load
-		// $fields.conference_url.on('change', $fields.conference_url.validate);
-        // $fields.conference_url.validate();
+        if (tsml.tsml_debug) {
+            $fields.conference_url.on('change', $fields.conference_url.validate);
+            $fields.conference_url.validate();
+        }
 
 		$fields.conference_phone.on('change', function () {
 			$fields.formatted_address.trigger('change');
