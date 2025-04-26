@@ -468,8 +468,8 @@ jQuery(function ($) {
         };
 
         // validate conference url on change and once on initial load
-		$fields.conference_url.on('change', $fields.conference_url.validate);
-        $fields.conference_url.validate();
+		// $fields.conference_url.on('change', $fields.conference_url.validate);
+        // $fields.conference_url.validate();
 
 		$fields.conference_phone.on('change', function () {
 			$fields.formatted_address.trigger('change');
