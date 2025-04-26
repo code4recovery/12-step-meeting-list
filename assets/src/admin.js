@@ -442,30 +442,30 @@ jQuery(function ($) {
 			$fields.formatted_address.trigger('change');
 		});
 
-        // Conference URL validation
-        $fields.conference_url.validate = function() {
-            $fields.conference_url.clearState();
-            var conferenceUrl = decodeURI($fields.conference_url.val());
-            // if is zoom...
-            if (conferenceUrl.match(/\bzoom\.us\b/i)) {
-                // format 1: https://zoom.us/j/1234567890
-                // but doesn't include meeting number, error
-                let zoomFormat1 = conferenceUrl.match(/^(https?:\/\/)*([a-z0-9]+\.)*zoom\.us\/j\/(\d{8,20})(.*)$/i);
-                // format 2: https://us02web.zoom.us/meeting/register/abcdef123456_ABCDEF1234r#/registration
-                let zoomFormat2 = conferenceUrl.match(/^(https?:\/\/)*([a-z0-9]+\.)*zoom\.us\/meeting\/register\/[a-z0-9\_]{10,}.*/i)
-                if (!zoomFormat1 && !zoomFormat2) {
-                    $fields.conference_url.setState('error', 1);
-                    return;
-                }
-            }
-        };
+		// Conference URL validation
+		$fields.conference_url.validate = function() {
+			$fields.conference_url.clearState();
+			var conferenceUrl = decodeURI($fields.conference_url.val());
+			// if is zoom...
+			if (conferenceUrl.match(/\bzoom\.us\b/i)) {
+				// format 1: https://zoom.us/j/1234567890
+				// but doesn't include meeting number, error
+				let zoomFormat1 = conferenceUrl.match(/^(https?:\/\/)*([a-z0-9]+\.)*zoom\.us\/j\/(\d{8,20})(.*)$/i);
+				// format 2: https://us02web.zoom.us/meeting/register/abcdef123456_ABCDEF1234r#/registration
+				let zoomFormat2 = conferenceUrl.match(/^(https?:\/\/)*([a-z0-9]+\.)*zoom\.us\/meeting\/register\/[a-z0-9\_]{10,}.*/i)
+				if (!zoomFormat1 && !zoomFormat2) {
+					$fields.conference_url.setState('error', 1);
+					return;
+				}
+			}
+		};
 
-        // [20250426] Temporarily allow conference url check with $tsml_debug
-        // validate conference url on change and once on initial load
-        if (tsml.tsml_debug) {
-            $fields.conference_url.on('change', $fields.conference_url.validate);
-            $fields.conference_url.validate();
-        }
+		// [20250426] Temporarily allow conference url check with $tsml_debug
+		// validate conference url on change and once on initial load
+		if (tsml.tsml_debug) {
+			$fields.conference_url.on('change', $fields.conference_url.validate);
+			$fields.conference_url.validate();
+		}
 
 		$fields.conference_phone.on('change', function () {
 			$fields.formatted_address.trigger('change');
