@@ -4,11 +4,11 @@ Don't make changes to this file! You'll need to reapply them every time you upda
 To customize your site, please follow the instructions in our FAQ:
 👉 https://wordpress.org/plugins/12-step-meeting-list/#faq-header
 */
-add_filter('cron_schedules', function($schedules) {
-    $schedules['ten_minutes'] = array(
+add_filter('cron_schedules', function ($schedules) {
+    $schedules['ten_minutes'] = [
         'interval' => 10 * 60,
-        'display'  => esc_html__('Every Ten Minutes')
-    );
+        'display' => esc_html__('Every Ten Minutes')
+    ];
     return $schedules;
 });
 
@@ -23,8 +23,8 @@ if (!$tsml_cache = get_option('tsml_cache')) {
 $tsml_cache_writable = boolval(get_option('tsml_cache_writable', 0));
 
 // define global variables that need to wait for translation in init
-$tsml_meeting_attendance_options = $tsml_columns = [];
-
+// these are empty now because polylang might change the language. gets set in the plugins_loaded hook
+$tsml_meeting_attendance_options = $tsml_columns = $tsml_days = $tsml_days_order = $tsml_programs = $tsml_types_in_use = $tsml_strings = [];
 
 // list of valid conference providers (matches Meeting Guide app). set this to null in your theme if you don't want to validate
 $tsml_conference_providers = [
@@ -623,13 +623,6 @@ $tsml_timezone = get_option('tsml_timezone', $default_tz);
 // for customizing TSML-UI
 $tsml_ui_config = [];
 
-// log configuration
-$tsml_log_config = array(
-    'max' => 1000,
-);
-
-// these are empty now because polylang might change the language. gets set in the plugins_loaded hook
-$tsml_days = $tsml_days_order = $tsml_programs = $tsml_types_in_use = $tsml_strings = [];
 
 // string url for the meeting finder, or false for no automatic archive page
 if (!isset($tsml_slug)) {

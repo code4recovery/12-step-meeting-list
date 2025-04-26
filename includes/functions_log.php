@@ -62,7 +62,7 @@ function tsml_log($type, $info = null, $input = null)
  */
 function tsml_log_save_updates()
 {
-    global $tsml_log_updates, $tsml_log_config;
+    global $tsml_log_updates;
     if (is_array($tsml_log_updates) && !empty($tsml_log_updates)) {
         $tsml_log = tsml_get_option_array('tsml_log');
         $tsml_log = array_filter($tsml_log, 'is_array');
@@ -80,8 +80,7 @@ function tsml_log_save_updates()
         $tsml_log = array_merge($tsml_log_updates, $tsml_log);
 
         // upper limit to log entries
-        $max = intval($tsml_log_config['max'] ? $tsml_log_config['max'] : 1000); 
-        $tsml_log = array_slice($tsml_log, 0, $max);
+        $tsml_log = array_slice($tsml_log, 0, 1000);
 
         update_option('tsml_log', $tsml_log);
     }
@@ -120,12 +119,13 @@ function tsml_log_get($args = array())
  * @param array $entry
  * @return string
  */
-function tsml_log_format_entry_msg($entry) {
+function tsml_log_format_entry_msg($entry)
+{
     $entry = (array) $entry;
     $msg = !empty($entry['input']) ? $entry['input'] : '';
     if ($msg && !empty($entry['meeting_id'])) {
         $url = admin_url('post.php?post=' . intval($entry['meeting_id']) . '&action=edit');
-        $msg = '<a href="'. esc_attr($url) . '">' . $msg . '</a>';
+        $msg = '<a href="' . esc_attr($url) . '">' . $msg . '</a>';
     }
     return $msg;
 }
