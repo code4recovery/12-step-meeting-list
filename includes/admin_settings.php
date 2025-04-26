@@ -15,22 +15,25 @@ if (!function_exists('tsml_settings_page')) {
 
         $tsml_data_sources = tsml_get_option_array('tsml_data_sources');
 
+        // is this a valid TSML post
+        $valid_nonce = isset($_POST['tsml_nonce']) && wp_verify_nonce($_POST['tsml_nonce'], $tsml_nonce);
+
         // change program
-        if (!empty($_POST['tsml_program']) && isset($_POST['tsml_nonce']) && wp_verify_nonce($_POST['tsml_nonce'], $tsml_nonce)) {
+        if (!empty($_POST['tsml_program']) && $valid_nonce) {
             $tsml_program = sanitize_text_field($_POST['tsml_program']);
             update_option('tsml_program', $tsml_program);
             tsml_alert(__('Program setting updated.', '12-step-meeting-list'));
         }
 
         // change distance units
-        if (!empty($_POST['tsml_distance_units']) && isset($_POST['tsml_nonce']) && wp_verify_nonce($_POST['tsml_nonce'], $tsml_nonce)) {
+        if (!empty($_POST['tsml_distance_units']) && $valid_nonce) {
             $tsml_distance_units = ($_POST['tsml_distance_units'] == 'mi') ? 'mi' : 'km';
             update_option('tsml_distance_units', $tsml_distance_units);
             tsml_alert(__('Distance units updated.', '12-step-meeting-list'));
         }
 
         // change contact display
-        if (!empty($_POST['tsml_contact_display']) && isset($_POST['tsml_nonce']) && wp_verify_nonce($_POST['tsml_nonce'], $tsml_nonce)) {
+        if (!empty($_POST['tsml_contact_display']) && $valid_nonce) {
             $tsml_contact_display = ($_POST['tsml_contact_display'] == 'public') ? 'public' : 'private';
             update_option('tsml_contact_display', $tsml_contact_display);
             tsml_cache_rebuild(); // this value affects what's in the cache
@@ -38,14 +41,14 @@ if (!function_exists('tsml_settings_page')) {
         }
 
         // change sharing setting
-        if (!empty($_POST['tsml_sharing']) && isset($_POST['tsml_nonce']) && wp_verify_nonce($_POST['tsml_nonce'], $tsml_nonce)) {
+        if (!empty($_POST['tsml_sharing']) && $valid_nonce) {
             $tsml_sharing = ($_POST['tsml_sharing'] == 'open') ? 'open' : 'restricted';
             update_option('tsml_sharing', $tsml_sharing);
             tsml_alert(__('Sharing setting updated.', '12-step-meeting-list'));
         }
 
         // add a sharing key
-        if (!empty($_POST['tsml_add_sharing_key']) && isset($_POST['tsml_nonce']) && wp_verify_nonce($_POST['tsml_nonce'], $tsml_nonce)) {
+        if (!empty($_POST['tsml_add_sharing_key']) && $valid_nonce) {
             $name = sanitize_text_field($_POST['tsml_add_sharing_key']);
             $key = md5(uniqid($name, true));
             $tsml_sharing_keys[$key] = $name;
@@ -65,7 +68,7 @@ if (!function_exists('tsml_settings_page')) {
         }
 
         // remove a sharing key
-        if (!empty($_POST['tsml_remove_sharing_key']) && isset($_POST['tsml_nonce']) && wp_verify_nonce($_POST['tsml_nonce'], $tsml_nonce)) {
+        if (!empty($_POST['tsml_remove_sharing_key']) && $valid_nonce) {
             $key = sanitize_text_field($_POST['tsml_remove_sharing_key']);
             if (array_key_exists($key, $tsml_sharing_keys)) {
                 unset($tsml_sharing_keys[$key]);
@@ -86,7 +89,7 @@ if (!function_exists('tsml_settings_page')) {
         }
 
         // add a feedback email
-        if (!empty($_POST['tsml_add_feedback_address']) && isset($_POST['tsml_nonce']) && wp_verify_nonce($_POST['tsml_nonce'], $tsml_nonce)) {
+        if (!empty($_POST['tsml_add_feedback_address']) && $valid_nonce) {
             $email = sanitize_text_field($_POST['tsml_add_feedback_address']);
             if (!is_email($email)) {
                 // theoretically should never get here, because WordPress checks entry first
@@ -106,7 +109,7 @@ if (!function_exists('tsml_settings_page')) {
         }
 
         // remove a feedback email
-        if (!empty($_POST['tsml_remove_feedback_address']) && isset($_POST['tsml_nonce']) && wp_verify_nonce($_POST['tsml_nonce'], $tsml_nonce)) {
+        if (!empty($_POST['tsml_remove_feedback_address']) && $valid_nonce) {
             $email = sanitize_text_field($_POST['tsml_remove_feedback_address']);
             if (($key = array_search($email, $tsml_feedback_addresses)) !== false) {
                 unset($tsml_feedback_addresses[$key]);
@@ -128,7 +131,7 @@ if (!function_exists('tsml_settings_page')) {
         }
 
         // add a notification email
-        if (!empty($_POST['tsml_add_notification_address']) && isset($_POST['tsml_nonce']) && wp_verify_nonce($_POST['tsml_nonce'], $tsml_nonce)) {
+        if (!empty($_POST['tsml_add_notification_address']) && $valid_nonce) {
             $email = sanitize_text_field($_POST['tsml_add_notification_address']);
             if (!is_email($email)) {
                 // theoretically should never get here, because WordPress checks entry first
@@ -147,7 +150,7 @@ if (!function_exists('tsml_settings_page')) {
         }
 
         // remove a notification email
-        if (!empty($_POST['tsml_remove_notification_address']) && isset($_POST['tsml_nonce']) && wp_verify_nonce($_POST['tsml_nonce'], $tsml_nonce)) {
+        if (!empty($_POST['tsml_remove_notification_address']) && $valid_nonce) {
             $email = sanitize_text_field($_POST['tsml_remove_notification_address']);
             if (($key = array_search($email, $tsml_notification_addresses)) !== false) {
                 unset($tsml_notification_addresses[$key]);
@@ -168,7 +171,7 @@ if (!function_exists('tsml_settings_page')) {
         }
 
         // add a Mapbox access token
-        if (isset($_POST['tsml_add_mapbox_key']) && isset($_POST['tsml_nonce']) && wp_verify_nonce($_POST['tsml_nonce'], $tsml_nonce)) {
+        if (isset($_POST['tsml_add_mapbox_key']) && $valid_nonce) {
             $tsml_mapbox_key = sanitize_text_field($_POST['tsml_add_mapbox_key']);
             if (empty($tsml_mapbox_key)) {
                 delete_option('tsml_mapbox_key');
@@ -184,7 +187,7 @@ if (!function_exists('tsml_settings_page')) {
         }
 
         // add a Google API key
-        if (isset($_POST['tsml_add_google_maps_key']) && isset($_POST['tsml_nonce']) && wp_verify_nonce($_POST['tsml_nonce'], $tsml_nonce)) {
+        if (isset($_POST['tsml_add_google_maps_key']) && $valid_nonce) {
             $key = sanitize_text_field($_POST['tsml_add_google_maps_key']);
             if (empty($key)) {
                 delete_option('tsml_google_maps_key');
@@ -201,7 +204,7 @@ if (!function_exists('tsml_settings_page')) {
         }
 
         // change user interface
-        if (!empty($_POST['tsml_user_interface']) && isset($_POST['tsml_nonce']) && wp_verify_nonce($_POST['tsml_nonce'], $tsml_nonce)) {
+        if (!empty($_POST['tsml_user_interface']) && $valid_nonce) {
             $tsml_user_interface = sanitize_text_field($_POST['tsml_user_interface']);
             update_option('tsml_user_interface', $tsml_user_interface);
 
@@ -219,7 +222,7 @@ if (!function_exists('tsml_settings_page')) {
         }
 
         // change timezone
-        if (isset($_POST['timezone']) && isset($_POST['tsml_nonce']) && wp_verify_nonce($_POST['tsml_nonce'], $tsml_nonce)) {
+        if (isset($_POST['timezone']) && $valid_nonce) {
             if (empty($_POST['timezone']) || tsml_timezone_is_valid($_POST['timezone'])) {
                 $tsml_timezone = sanitize_text_field($_POST['timezone']);
                 update_option('tsml_timezone', $tsml_timezone);
@@ -230,7 +233,7 @@ if (!function_exists('tsml_settings_page')) {
         }
 
         // save entity fields
-        if (isset($_POST['tsml_entity']) && isset($_POST['tsml_nonce']) && wp_verify_nonce($_POST['tsml_nonce'], $tsml_nonce)) {
+        if (isset($_POST['tsml_entity']) && $valid_nonce) {
             $current_tsml_entity = tsml_get_option_array('tsml_entity');
             $tsml_entity = [];
             global $tsml_entity_fields;
@@ -247,7 +250,7 @@ if (!function_exists('tsml_settings_page')) {
         ?>
 
         <!-- Admin page content should all be inside .wrap -->
-        <div class="wrap">
+        <div class="wrap tsml_admin_settings">
 
             <h1></h1> <!-- Set alerts here -->
 

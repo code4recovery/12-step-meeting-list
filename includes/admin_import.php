@@ -6,7 +6,7 @@ if (!function_exists('tsml_import_page')) {
 
     function tsml_import_page()
     {
-        global $tsml_data_sources, $tsml_programs, $tsml_program, $tsml_nonce, $tsml_sharing, $tsml_slug, $tsml_change_detect, $tsml_debug;
+        global $tsml_data_sources, $tsml_programs, $tsml_program, $tsml_nonce, $tsml_sharing, $tsml_slug, $tsml_change_detect, $tsml_auto_import, $tsml_debug;
 
         // todo consider whether this check is necessary, since it is run from add_submenu_page() which is already checking for the same permission
         // potentially tsml_import_page() could be a closure within the call to add_submenu_page which would prevent it from being reused elsewhere
@@ -15,8 +15,11 @@ if (!function_exists('tsml_import_page')) {
         $error = false;
         $tsml_data_sources = tsml_get_option_array('tsml_data_sources');
 
+        // is this a valid TSML post
+        $valid_nonce = isset($_POST['tsml_nonce']) && wp_verify_nonce($_POST['tsml_nonce'], $tsml_nonce);
+
         // if posting a CSV, check for errors and add it to the import buffer
-        if (isset($_FILES['tsml_import']) && isset($_POST['tsml_nonce']) && wp_verify_nonce($_POST['tsml_nonce'], $tsml_nonce)) {
+        if (isset($_FILES['tsml_import']) && $valid_nonce) {
             ini_set('auto_detect_line_endings', 1); //to handle mac \r line endings
             $extension = explode('.', strtolower($_FILES['tsml_import']['name']));
             $extension = end($extension);
@@ -156,132 +159,29 @@ if (!function_exists('tsml_import_page')) {
             }
         }
 
-        // add data source
-        if (!empty($_POST['tsml_add_data_source']) && isset($_POST['tsml_nonce']) && wp_verify_nonce($_POST['tsml_nonce'], $tsml_nonce)) {
-
-            // sanitize URL, name, parent region id, and Change Detection values
-            $data_source_url = $imported_data_source_url = trim(esc_url_raw($_POST['tsml_add_data_source'], ['http', 'https']));
-            $data_source_name = sanitize_text_field($_POST['tsml_add_data_source_name']);
-            $data_source_parent_region_id = (int) $_POST['tsml_add_data_source_parent_region_id'];
-            $data_source_change_detect = sanitize_text_field($_POST['tsml_add_data_source_change_detect']);
-
-            // use c4r sheets service for Google Sheets URLs
-            if (strpos($data_source_url, 'docs.google.com/spreadsheets') !== false) {
-                $url_parts = explode('/', $data_source_url);
-                $sheet_id = $url_parts[5];
-                $imported_data_source_url = 'https://sheets.code4recovery.org/tsml/' . $sheet_id;
-            }
-
-            // initialize variables 
-            $import_meetings = $delete_meeting_ids = [];
-            // try fetching	
-            $response = wp_safe_remote_get($imported_data_source_url, [
-                'timeout' => 30,
-                'sslverify' => false,
-            ]);
-            if (is_array($response) && !empty($response['body']) && ($meetings = json_decode($response['body'], true))) {
-
-                // allow reformatting as necessary
-                $meetings = tsml_import_sanitize_meetings($meetings, $imported_data_source_url, $data_source_parent_region_id);
-
-                // actual meetings to import
-                $import_meetings = [];
-
-                // data source
-                $current_data_source = array_key_exists($data_source_url, $tsml_data_sources) ? $tsml_data_sources[$data_source_url] : null;
-
-                // for new data sources we import every meeting, otherwise test for changed meetings
-                if (!$current_data_source) {
-                    $import_meetings = $meetings;
-                    $current_data_source = [
-                        'status' => 'OK',
-                        'last_import' => current_time('timestamp'),
-                        'count_meetings' => 0,
-                        'name' => $data_source_name,
-                        'parent_region_id' => $data_source_parent_region_id,
-                        'change_detect' => $data_source_change_detect,
-                        'type' => 'JSON',
-                    ];
-
-                    // create a cron job to run daily when Change Detection is enabled for the new data source
-                    if ($data_source_change_detect === 'enabled') {
-                        tsml_schedule_import_scan($data_source_url, $data_source_name);
-                    }
-                } else {
-                    // get updated feed import record set 
-                    list($import_meetings, $delete_meeting_ids, $change_log) = tsml_import_get_changed_meetings($meetings, $data_source_url);
-
-                    // drop meetings that weren't found in the import
-                    if (count($delete_meeting_ids)) {
-                        tsml_delete($delete_meeting_ids);
-                    }
-                    tsml_delete_orphans();
-
-                    if (count($change_log) && $tsml_debug) {
-                        $message = tsml_import_build_change_report($change_log);
-                        tsml_alert($message, 'info');
-                    }
-                    // empty change log means we're up to date
-                    if (!count($change_log)) {
-                        tsml_alert(__('Your meeting list is already in sync with the feed.', '12-step-meeting-list'), 'success');
-                    }
-
-                    // update data source timestamp
-                    $current_data_source['last_import'] = current_time('timestamp');
-                }
-
-                // import feed
-                tsml_import_buffer_set($import_meetings, $data_source_url, $data_source_parent_region_id);
-
-
-                // save data source configuration
-                $tsml_data_sources[$data_source_url] = $current_data_source;
-                update_option('tsml_data_sources', $tsml_data_sources);
-
-            } elseif (!is_array($response)) {
-                // translators: %s is the invalid response from the data source
-                tsml_alert(sprintf(__('Invalid response: <pre>%s</pre>.', '12-step-meeting-list'), print_r($response, true)), 'error');
-            } elseif (empty($response['body'])) {
-
-                tsml_alert(__('Data source gave an empty response, you might need to try again.', '12-step-meeting-list'), 'error');
-            } else {
-
-                switch (json_last_error()) {
-                    case JSON_ERROR_NONE:
-                        tsml_alert(__('JSON: no errors.', '12-step-meeting-list'), 'error');
-                        break;
-                    case JSON_ERROR_DEPTH:
-                        tsml_alert(__('JSON: Maximum stack depth exceeded.', '12-step-meeting-list'), 'error');
-                        break;
-                    case JSON_ERROR_STATE_MISMATCH:
-                        tsml_alert(__('JSON: Underflow or the modes mismatch.', '12-step-meeting-list'), 'error');
-                        break;
-                    case JSON_ERROR_CTRL_CHAR:
-                        tsml_alert(__('JSON: Unexpected control character found.', '12-step-meeting-list'), 'error');
-                        break;
-                    case JSON_ERROR_SYNTAX:
-                        tsml_alert(__('JSON: Syntax error, malformed JSON.', '12-step-meeting-list'), 'error');
-                        break;
-                    case JSON_ERROR_UTF8:
-                        tsml_alert(__('JSON: Malformed UTF-8 characters, possibly incorrectly encoded.', '12-step-meeting-list'), 'error');
-                        break;
-                    default:
-                        tsml_alert(__('JSON: Unknown error.', '12-step-meeting-list'), 'error');
-                        break;
-                }
-            }
+        // add or refresh a data source
+        if (!empty($_POST['tsml_add_data_source']) && $valid_nonce) {
+            tsml_import_data_source(
+                $_POST['tsml_add_data_source'], 
+                $_POST['tsml_add_data_source_name'], 
+                $_POST['tsml_add_data_source_parent_region_id'], 
+                $_POST['tsml_add_data_source_change_detect']
+            );
         }
 
         // check for existing import buffer
         $meetings = tsml_get_option_array('tsml_import_buffer');
 
         // remove data source
-        if (!empty($_POST['tsml_remove_data_source']) && isset($_POST['tsml_nonce']) && wp_verify_nonce($_POST['tsml_nonce'], $tsml_nonce)) {
+        if (!empty($_POST['tsml_remove_data_source']) && $valid_nonce) {
 
             // sanitize URL
             $_POST['tsml_remove_data_source'] = esc_url_raw($_POST['tsml_remove_data_source'], ['http', 'https']);
 
             if (array_key_exists($_POST['tsml_remove_data_source'], $tsml_data_sources)) {
+
+                // get data source for log entry
+                $data_source = $tsml_data_sources[$_POST['tsml_remove_data_source']];
 
                 // remove all meetings for this data source
                 tsml_delete(tsml_get_data_source_ids($_POST['tsml_remove_data_source']));
@@ -293,13 +193,24 @@ if (!function_exists('tsml_import_page')) {
                 unset($tsml_data_sources[$_POST['tsml_remove_data_source']]);
                 update_option('tsml_data_sources', $tsml_data_sources);
 
+                tsml_log('data_source', __('Removed', '12-step-meeting-list'), $data_source['name']);
+
                 tsml_alert(__('Data source removed.', '12-step-meeting-list'));
             }
         }
+
+        // change auto import
+        if (isset($_POST['tsml_auto_import']) && $valid_nonce) {
+            $tsml_auto_import = !!($_POST['tsml_auto_import']) ? 'on' : '';
+            update_option('tsml_auto_import', $tsml_auto_import);
+            tsml_alert(__('Automatic imports setting updated.', '12-step-meeting-list'));
+        }
+        // ensure cron follows setting
+        tsml_import_cron_check();
         ?>
 
         <!-- Admin page content should all be inside .wrap -->
-        <div class="wrap">
+        <div class="wrap tsml_admin_settings">
 
             <h1></h1> <!-- Set alerts here -->
 
@@ -621,104 +532,258 @@ if (!function_exists('tsml_import_page')) {
                     </div>
 
                     <!-- Wheres My Info? -->
-                    <div class="postbox stack">
-                        <?php
-                        $meetings = tsml_count_meetings();
-                        $locations = tsml_count_locations();
-                        $regions = tsml_count_regions();
-                        $groups = tsml_count_groups();
+                    <div class="stack">
+                        <div class="postbox stack">
+                            <?php
+                            $meetings = tsml_count_meetings();
+                            $locations = tsml_count_locations();
+                            $regions = tsml_count_regions();
+                            $groups = tsml_count_groups();
 
-                        $pdf_link = 'https://pdf.code4recovery.org/?' . http_build_query([
-                            'json' => admin_url('admin-ajax.php') . '?' . http_build_query([
-                                'action' => 'meetings',
-                                'nonce' => $tsml_sharing === 'restricted' ? wp_create_nonce($tsml_nonce) : null
-                            ])
-                        ]);
-                        ?>
-                        <h2>
-                            <?php esc_html_e('Where\'s My Info?', '12-step-meeting-list') ?>
-                        </h2>
-                        <?php if ($tsml_slug) { ?>
+                            $pdf_link = 'https://pdf.code4recovery.org/?' . http_build_query([
+                                'json' => admin_url('admin-ajax.php') . '?' . http_build_query([
+                                    'action' => 'meetings',
+                                    'nonce' => $tsml_sharing === 'restricted' ? wp_create_nonce($tsml_nonce) : null
+                                ])
+                            ]);
+                            ?>
+                            <h2>
+                                <?php esc_html_e('Where\'s My Info?', '12-step-meeting-list') ?>
+                            </h2>
+                            <?php if ($tsml_slug) { ?>
+                                <p>
+                                    <?php echo wp_kses(sprintf(
+                                        // translators: %s is the link to the public meetings page
+                                        __('Your public meetings page is <a href="%s">right here</a>. Link that page from your site\'s nav menu to make it visible to the public.', '12-step-meeting-list'),
+                                        get_post_type_archive_link('tsml_meeting')
+                                    ), TSML_ALLOWED_HTML) ?>
+                                </p>
+                                <?php
+                            } ?>
+
+                            <div id="tsml_counts" <?php if (!($meetings + $locations + $groups + $regions)) { ?> class="hidden"
+                                <?php } ?>>
+                                <p>
+                                    <?php esc_html_e('You have:', '12-step-meeting-list') ?>
+                                </p>
+                                <div class="table">
+                                    <ul class="ul-disc">
+                                        <li class="meetings<?php if (!$meetings) { ?> hidden<?php } ?>">
+                                            <?php echo esc_html(sprintf(
+                                                // translators: %s is the number of meetings
+                                                _n('%s meeting', '%s meetings', $meetings, '12-step-meeting-list'),
+                                                number_format_i18n($meetings)
+                                            )) ?>
+                                        </li>
+                                        <li class="locations<?php if (!$locations) { ?> hidden<?php } ?>">
+                                            <?php echo esc_html(sprintf(
+                                                // translators: %s is the number of locations
+                                                _n('%s location', '%s locations', $locations, '12-step-meeting-list'),
+                                                number_format_i18n($locations)
+                                            )) ?>
+                                        </li>
+                                        <li class="groups<?php if (!$groups) { ?> hidden<?php } ?>">
+                                            <?php echo esc_html(sprintf(
+                                                // translators: %s is the number of groups
+                                                _n('%s group', '%s groups', $groups, '12-step-meeting-list'),
+                                                number_format_i18n($groups)
+                                            )) ?>
+                                        </li>
+                                        <li class="regions<?php if (!$regions) { ?> hidden<?php } ?>">
+                                            <?php echo esc_html(sprintf(
+                                                // translators: %s is the number of regions
+                                                _n('%s region', '%s regions', $regions, '12-step-meeting-list'),
+                                                number_format_i18n($regions)
+                                            )) ?>
+                                        </li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Export Meeting List -->
+                        <div class="postbox stack">
+                            <h2>
+                                <?php esc_html_e('Export Meeting List', '12-step-meeting-list') ?>
+                            </h2>
+                            <?php
+                            if ($meetings) { ?>
+                                <p>
+                                    <a href="<?php echo esc_attr(admin_url('admin-ajax.php') . '?action=csv') ?>" target="_blank"
+                                        class="button">
+                                        <?php esc_html_e('Download CSV', '12-step-meeting-list') ?>
+                                    </a>
+                                    &nbsp;
+                                    <a href="<?php echo esc_attr($pdf_link) ?>" target="_blank" class="button">
+                                        <?php esc_html_e('Generate PDF', '12-step-meeting-list') ?>
+                                    </a>
+                                </p>
+
+                            <?php } ?>
                             <p>
                                 <?php echo wp_kses(sprintf(
-                                    // translators: %s is the link to the public meetings page
-                                    __('Your public meetings page is <a href="%s">right here</a>. Link that page from your site\'s nav menu to make it visible to the public.', '12-step-meeting-list'),
-                                    get_post_type_archive_link('tsml_meeting')
+                                    // translators: %s is the link to the contacts page
+                                    __('Want to send a mass email to your contacts? <a href="%s" target="_blank">Click here</a> to see their email addresses.', '12-step-meeting-list'),
+                                    admin_url('admin-ajax.php') . '?action=contacts'
                                 ), TSML_ALLOWED_HTML) ?>
                             </p>
-                            <?php
-                        } ?>
-
-                        <div id="tsml_counts" <?php if (!($meetings + $locations + $groups + $regions)) { ?> class="hidden"
-                            <?php } ?>>
-                            <p>
-                                <?php esc_html_e('You have:', '12-step-meeting-list') ?>
-                            </p>
-                            <div class="table">
-                                <ul class="ul-disc">
-                                    <li class="meetings<?php if (!$meetings) { ?> hidden<?php } ?>">
-                                        <?php echo esc_html(sprintf(
-                                            // translators: %s is the number of meetings
-                                            _n('%s meeting', '%s meetings', $meetings, '12-step-meeting-list'),
-                                            number_format_i18n($meetings)
-                                        )) ?>
-                                    </li>
-                                    <li class="locations<?php if (!$locations) { ?> hidden<?php } ?>">
-                                        <?php echo esc_html(sprintf(
-                                            // translators: %s is the number of locations
-                                            _n('%s location', '%s locations', $locations, '12-step-meeting-list'),
-                                            number_format_i18n($locations)
-                                        )) ?>
-                                    </li>
-                                    <li class="groups<?php if (!$groups) { ?> hidden<?php } ?>">
-                                        <?php echo esc_html(sprintf(
-                                            // translators: %s is the number of groups
-                                            _n('%s group', '%s groups', $groups, '12-step-meeting-list'),
-                                            number_format_i18n($groups)
-                                        )) ?>
-                                    </li>
-                                    <li class="regions<?php if (!$regions) { ?> hidden<?php } ?>">
-                                        <?php echo esc_html(sprintf(
-                                            // translators: %s is the number of regions
-                                            _n('%s region', '%s regions', $regions, '12-step-meeting-list'),
-                                            number_format_i18n($regions)
-                                        )) ?>
-                                    </li>
-                                </ul>
-                            </div>
                         </div>
                     </div>
 
-                    <!-- Export Meeting List -->
-                    <div class="postbox stack">
-                        <h2>
-                            <?php esc_html_e('Export Meeting List', '12-step-meeting-list') ?>
-                        </h2>
-                        <?php
-                        if ($meetings) { ?>
+                    <div class="stack">
+
+                        <!-- Automatic Import Settings -->
+                        <div class="postbox stack">
+                            <h2>
+                                <?php esc_html_e('Automatic Imports', '12-step-meeting-list') ?>
+                            </h2>
                             <p>
-                                <a href="<?php echo esc_attr(admin_url('admin-ajax.php') . '?action=csv') ?>" target="_blank"
-                                    class="button">
-                                    <?php esc_html_e('Download CSV', '12-step-meeting-list') ?>
-                                </a>
-                                &nbsp;
-                                <a href="<?php echo esc_attr($pdf_link) ?>" target="_blank" class="button">
-                                    <?php esc_html_e('Generate PDF', '12-step-meeting-list') ?>
+                                <?php esc_html_e('When enabled, meetings will be imported from your data sources automatically.', '12-step-meeting-list') ?>
+                            </p>
+                            <form class="row" method="post">
+                                <?php
+                                wp_nonce_field($tsml_nonce, 'tsml_nonce', false);
+                                ?>
+                                 <select name="tsml_auto_import" onchange="this.form.submit()">
+                                    <option value="on" <?php selected(!!$tsml_auto_import, true) ?>>
+                                        <?php esc_html_e('On', '12-step-meeting-list') ?>
+                                    </option>
+                                    <option value="" <?php selected(!!$tsml_auto_import, false) ?>>
+                                        <?php esc_html_e('Off', '12-step-meeting-list') ?>
+                                    </option>
+                                </select>
+                            </form>
+
+                        </div>
+
+                        <!-- Import Log -->
+                        <?php
+                        $log_entries = tsml_log_get(['count' => 5, 'type' => 'import_meeting']);
+                        ?>
+                        <div class="postbox stack">
+                            <h2>
+                                <?php esc_html_e('Import Log', '12-step-meeting-list') ?>
+                            </h2>
+                            <table class="log-table">
+                                <thead>
+                                    <tr>
+                                        <th><?php esc_html_e('Date', '12-step-meeting-list') ?></th>
+                                        <th><?php esc_html_e('Info', '12-step-meeting-list') ?></th>
+                                    </tr>
+                                </thead>
+                                <tbody id="tsml_import_log_widget">
+                                    <?php if ( count( $log_entries ) ) {
+                                        foreach( $log_entries as $entry) {
+                                            $msg = tsml_log_format_entry_msg($entry);
+                                            if (!empty($entry['info'])) {
+                                                $msg = $entry['info'] . '<br/>' . PHP_EOL . $msg;                                            
+                                            }
+                                            ?>
+                                            <tr class="log-table">
+                                                <td><?php echo tsml_date_localised(get_option('date_format'), intval($entry['timestamp'])); ?></td>
+                                                <td><?php echo $msg; ?></td>
+                                            </tr>
+                                            <?php
+                                        }
+                                    } else {
+                                        ?>
+                                        <tr class="log-table__empty">
+                                            <td colspan="4"><?php esc_html_e('Import log is empty', '12-step-meeting-list') ?></td>
+                                        </tr>
+                                        <?php
+                                    }
+                                    ?>
+                                </tbody>
+                            </table>                            
+                            <p>
+                                <a href="<?php echo admin_url('edit.php?post_type=tsml_meeting&page=log'); ?>">
+                                    <?php esc_html_e('View full log here', '12-step-meeting-list') ?>
                                 </a>
                             </p>
+                        </div>
 
-                        <?php } ?>
-                        <p>
-                            <?php echo wp_kses(sprintf(
-                                // translators: %s is the link to the contacts page
-                                __('Want to send a mass email to your contacts? <a href="%s" target="_blank">Click here</a> to see their email addresses.', '12-step-meeting-list'),
-                                admin_url('admin-ajax.php') . '?action=contacts'
-                            ), TSML_ALLOWED_HTML) ?>
-                        </p>
                     </div>
+
                 </div>
             </div>
         </div>
         <?php
     }
+}
+
+// import log admin page
+function tsml_log_page()
+{
+    $log_entries = tsml_log_get();
+    ?>
+
+    <!-- Admin page content should all be inside .wrap -->
+    <div class="wrap tsml_admin_settings">
+        <h1></h1> <!-- Set alerts here -->
+
+        <div class="stack">
+            <div class="postbox stack">
+                <h2>
+                    <?php esc_html_e('Event Log', '12-step-meeting-list') ?>
+                </h2>
+                <p>
+                    <?php esc_html_e('These are TSML events that have occurred within the last 30 days.', '12-step-meeting-list') ?>
+                </p>
+
+                <div class="tablenav top">
+                    <div class="alignleft">
+                        <label for="filter_type" class="screen-reader-text">
+                            <?php esc_html_e('Filter by event type', '12-step-meeting-list') ?>
+                        </label>
+                        <select name="filter_type" id="filter_type">
+                            <option value="">
+                                <?php esc_html_e('Filter by event type', '12-step-meeting-list') ?>
+                            </option>
+                            <?php foreach(TSML_LOG_TYPES as $key => $value) {?>
+                                <option value="<?php echo $key; ?>"><?php echo $value; ?></option>
+                            <?php } ?>
+                        </select>
+                    </div>
+                </div>
+
+                <table class="log-table log-table--large">
+                    <thead>
+                        <tr>
+                            <th><?php esc_html_e('Date', '12-step-meeting-list') ?></th>
+                            <th><?php esc_html_e('Type', '12-step-meeting-list') ?></th>
+                            <th><?php esc_html_e('Info', '12-step-meeting-list') ?></th>
+                            <th><?php esc_html_e('Data', '12-step-meeting-list') ?></th>
+                        </tr>
+                    </thead>
+                    <tbody id="tsml_import_log">
+                        <?php if ( count( $log_entries ) ) {
+                            foreach( $log_entries as $entry) {
+                                $type = strval(!empty($entry['type']) ? $entry['type'] : '');
+                                $type_label = isset(TSML_LOG_TYPES[$type]) ? TSML_LOG_TYPES[$type] : $type;
+                                $msg = tsml_log_format_entry_msg($entry);
+                                $row_class = (false !== strpos($type, 'error')) ? 'error' : '';
+                                ?>
+                                <tr class="log-table <?php echo $row_class; ?>" data-type="<?php echo esc_attr($type); ?>">
+                                    <td><?php echo tsml_date_localised(get_option('date_format') . ' ' . get_option('time_format'), intval($entry['timestamp'])); ?></td>
+                                    <td><?php echo $type_label; ?></td>
+                                    <td><?php echo $entry['info']; ?></td>
+                                    <td><?php echo $msg; ?></td>
+                                </tr>
+                                <?php
+                            }
+                        } else {
+                            ?>
+                            <tr class="log-table__empty">
+                                <td colspan="4"><?php esc_html_e('Import log is empty', '12-step-meeting-list') ?></td>
+                            </tr>
+                            <?php
+                        }
+                        ?>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <?php
 }
