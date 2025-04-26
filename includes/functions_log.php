@@ -62,7 +62,7 @@ function tsml_log($type, $info = null, $input = null)
  */
 function tsml_log_save_updates()
 {
-    global $tsml_log_updates;
+    global $tsml_log_updates, $tsml_log_config;
     if (is_array($tsml_log_updates) && !empty($tsml_log_updates)) {
         $tsml_log = tsml_get_option_array('tsml_log');
         $tsml_log = array_filter($tsml_log, 'is_array');
@@ -78,6 +78,11 @@ function tsml_log_save_updates()
         });
         // add updates
         $tsml_log = array_merge($tsml_log_updates, $tsml_log);
+
+        // upper limit to log entries
+        $max = intval($tsml_log_config['max'] ? $tsml_log_config['max'] : 1000); 
+        $tsml_log = array_slice($tsml_log, 0, $max);
+
         update_option('tsml_log', $tsml_log);
     }
 }
@@ -91,8 +96,6 @@ function tsml_log_save_updates()
  */
 function tsml_log_get($args = array())
 {
-    global $tsml_log_config;
-
     $args = (array) $args;
     $tsml_log = tsml_get_option_array('tsml_log');
     $tsml_log = array_filter($tsml_log, 'is_array');
@@ -105,10 +108,6 @@ function tsml_log_get($args = array())
     }
     $count = isset($args['count']) ? intval($args['count']) : 0;
     $start = isset($args['start']) ? intval($args['start']) : 0;
-
-    // upper limit to log entries
-    $max = intval($tsml_log_config['max'] ? $tsml_log_config['max'] : 1000); 
-    $tsml_log = array_slice($tsml_log, 0, $max);
 
     if ($count) {
         $tsml_log = array_slice($tsml_log, $start, $count);
