@@ -5,7 +5,7 @@
  * License: GPLv2 or later
  * License URI: https://www.gnu.org/licenses/gpl-2.0.html
  * Description: Manage a list of recovery meetings
- * Version: 3.16.18
+ * Version: 3.17
  * Requires PHP: 5.6
  * Author: Code for Recovery
  * Author URI: https://github.com/code4recovery/12-step-meeting-list
@@ -31,7 +31,7 @@ define('TSML_MEETING_GUIDE_APP_NOTIFY', 'appsupport@aa.org');
 define('TSML_MEETINGS_PERMISSION', 'edit_posts');
 define('TSML_PATH', plugin_dir_path(__FILE__));
 define('TSML_SETTINGS_PERMISSION', 'manage_options');
-define('TSML_VERSION', '3.16.18');
+define('TSML_VERSION', '3.17');
 
 // include these files first
 include TSML_PATH . '/includes/filter_meetings.php';
@@ -56,6 +56,7 @@ include TSML_PATH . '/includes/blocks.php';
 if (is_admin()) {
     include TSML_PATH . '/includes/admin_import.php';
     include TSML_PATH . '/includes/admin_lists.php';
+    include TSML_PATH . '/includes/admin_log.php';
     include TSML_PATH . '/includes/admin_meeting.php';
     include TSML_PATH . '/includes/admin_menu.php';
     include TSML_PATH . '/includes/admin_region.php';

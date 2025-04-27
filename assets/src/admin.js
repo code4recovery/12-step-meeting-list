@@ -50,14 +50,18 @@ jQuery(function ($) {
 	}
 
     // import log page
-    if ($('#tsml_import_log').length) {
-        const $filter = $('#filter_type');
-        const $log = $('#tsml_import_log');
-        // watch for filter change
-        $filter.on('change',(e) => {
+	const $filter = $('#filter_type');
+    if ($filter.length) {
+        $filter.on('change',() => {
             const type = $filter.val();
-            $log.find('tr').each((i,e) => $(e).toggle((!type && e.dataset?.type) || type === e.dataset?.type));
-        })
+            const url = new URL(window.location);
+			if (type) {
+				url.searchParams.set('filter_type', $filter.val());
+			} else if (url.searchParams.has('filter_type')) {
+				url.searchParams.delete('filter_type');
+			}
+			window.location = url.toString();
+        });
     }
 
 	//delete data source or email contact
