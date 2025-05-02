@@ -1025,7 +1025,7 @@ function tsml_load_config()
             'abbr' => __('EDA', '12-step-meeting-list'),
             'flags' => ['M', 'W', 'TC', 'ONL'], // for /men and /women at end of meeting name (used in tsml_format_name())
             'name' => __('Eating Disorders Anonymous', '12-step-meeting-list'),
-            'daa' => tsml_languages([
+            'types' => tsml_languages([
                 '11' => __('11th Step Meditation', '12-step-meeting-list'),
                 '12x12' => __('12 Steps & 12 Traditions', '12-step-meeting-list'),
                 'BA' => __('Babysitting Available', '12-step-meeting-list'),
