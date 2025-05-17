@@ -457,7 +457,14 @@ jQuery(function ($) {
 				let zoomFormat1 = conferenceUrl.match(/^(https?:\/\/)*([a-z0-9]+\.)*zoom\.us\/j\/(\d{8,20})(.*)$/i);
 				// format 2: https://us02web.zoom.us/meeting/register/abcdef123456_ABCDEF1234r#/registration
 				let zoomFormat2 = conferenceUrl.match(/^(https?:\/\/)*([a-z0-9]+\.)*zoom\.us\/meeting\/register\/[a-z0-9\_]{10,}.*/i)
-				if (!zoomFormat1 && !zoomFormat2) {
+				if (zoomFormat1 || zoomFormat2) {
+					// trim subdomains, which may indicate owning organizations
+					let newConferenceUrl = conferenceUrl.replace(/^(https?:\/\/)*([a-z0-9]+\.)*zoom\.us/, 'https://zoom.us');
+					if (newConferenceUrl !== conferenceUrl) {
+						$fields.conference_url.val(newConferenceUrl);
+						$fields.conference_url.setState('warning', 2);
+					}
+				} else {
 					$fields.conference_url.setState('error', 1);
 					return;
 				}
