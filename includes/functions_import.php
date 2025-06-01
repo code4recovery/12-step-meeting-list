@@ -333,7 +333,7 @@ function tsml_import_buffer_next($limit = 25)
             update_post_meta($location_id, 'approximate', $geocoded['approximate']);
             wp_set_object_terms($location_id, $region_id, 'tsml_region');
             // timezone
-            if (!empty($meeting['timezone']) && in_array($meeting['timezone'], DateTimeZone::listIdentifiers())) {
+            if (!empty($meeting['timezone'])) {
                 update_post_meta($location_id, 'timezone', $meeting['timezone']);
             } else {
                 delete_post_meta($location_id, 'timezone');
@@ -750,6 +750,21 @@ function tsml_import_sanitize_meetings($meetings, $data_source_url = null, $data
     $group_fields[] = 'group_notes';
     $groups = [];
 
+    // track locations to normalize
+    $locations = [];
+    $location_fields = [
+        'latitude',
+        'longitude',
+        'approximate',
+        'location',
+        'location_notes',
+        'timezone',
+        'region',
+    ];
+
+    // for sanitizing timezone values
+    $all_timezones = DateTimeZone::listIdentifiers();
+
     // track sanitized meeting slug counts
     $meeting_slugs = array();
 
@@ -1065,17 +1080,45 @@ function tsml_import_sanitize_meetings($meetings, $data_source_url = null, $data
             }
         }
 
-        // track group values
-        if (isset($meetings[$i]['group']) && !empty($meetings[$i]['group'])) {
+        // sanitize timezone if present
+        if (!empty($meetings[$i]['timezone'])) {
+            if (!in_array($meetings[$i]['timezone'], $all_timezones)) {
+                // make an attempt to find timezone
+                $timezone = str_replace(' ', '_', $meetings[$i]['timezone']);
+                $matches = array_values(array_filter($all_timezones, function($tz) use ($timezone) {
+                    return false !== stripos($tz, $timezone);
+                }));
+                if (count($matches)) {
+                    $meetings[$i]['timezone'] = $matches[0];
+                } else {
+                    unset($meetings[$i]['timezone']);
+                }
+            }
+        }
+
+        // collect group values
+        if (!empty($meetings[$i]['group'])) {
             $group = $meetings[$i]['group'];
             if (!isset($groups[$group])) {
                 $groups[$group] = array();
             }
             // currently first group value wins
-            // @TODO: add some weighting to track / use most common value by occurence
             foreach ($group_fields as $group_field) {
-                if (isset($meetings[$i][$group_field]) && !empty($meetings[$i][$group_field]) && !isset($groups[$group][$group_field])) {
+                if (!empty($meetings[$i][$group_field]) && !isset($groups[$group][$group_field])) {
                     $groups[$group][$group_field] = $meetings[$i][$group_field];
+                }
+            }
+        }
+
+        // collect location values
+        if (!empty($meetings[$i]['formatted_address'])) {
+            $formatted_address = $meetings[$i]['formatted_address'];
+            if (!isset($locations[$formatted_address])) {
+                $locations[$formatted_address] = array();
+            }
+            foreach ($location_fields as $location_field) {
+                if (!empty($meetings[$i][$location_field]) && !isset($locations[$formatted_address][$location_field])) {
+                    $locations[$formatted_address][$location_field] = $meetings[$i][$location_field];
                 }
             }
         }
@@ -1099,11 +1142,16 @@ function tsml_import_sanitize_meetings($meetings, $data_source_url = null, $data
     // normalize group fields across potentially blank rows
     foreach ($meetings as $i => $meeting) {
         $group = isset($meeting['group']) ? $meeting['group'] : '';
-        if (!$group) {
-            continue;
+        if ($group && isset($groups[$group])) {
+            foreach ($groups[$group] as $field => $value) {
+                $meetings[$i][$field] = $value;
+            }
         }
-        foreach ($groups[$group] as $field => $value) {
-            $meetings[$i][$field] = $value;
+        $formatted_address = isset($meeting['formatted_address']) ? $meeting['formatted_address'] : '';
+        if ($formatted_address && isset($locations[$formatted_address])) {
+            foreach ($locations[$formatted_address] as $field => $value) {
+                $meetings[$i][$field] = $value;
+            }
         }
     }
 
