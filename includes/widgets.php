@@ -19,6 +19,8 @@ class TSML_Widget_Upcoming extends WP_Widget
     // front-end display of widget
     public function widget($args, $instance)
     {
+        global $tsml_user_interface;
+
         $table = tsml_next_meetings($instance);
         if (empty($table)) {
             return false;
@@ -110,7 +112,7 @@ class TSML_Widget_Upcoming extends WP_Widget
         $output .= $table;
         $meetings = tsml_get_meetings(['day' => intval(current_time('w')), 'time' => 'upcoming']);
         $meetings_link = get_post_type_archive_link('tsml_meeting');
-        if (!count($meetings) && !empty($instance['message'])) {
+        if ($tsml_user_interface == 'tsml_ui' || (!count($meetings) && !empty($instance['message']))) {
             $link = $meetings_link;
         } else {
             $link = $meetings_link . ((strpos($meetings_link, '?') === false) ? '?' : '&') . 'tsml-time=upcoming';
