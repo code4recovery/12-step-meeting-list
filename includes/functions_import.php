@@ -762,9 +762,6 @@ function tsml_import_sanitize_meetings($meetings, $data_source_url = null, $data
         'region',
     ];
 
-    // for sanitizing timezone values
-    $all_timezones = DateTimeZone::listIdentifiers();
-
     // track sanitized meeting slug counts
     $meeting_slugs = array();
 
@@ -1082,17 +1079,12 @@ function tsml_import_sanitize_meetings($meetings, $data_source_url = null, $data
 
         // sanitize timezone if present
         if (!empty($meetings[$i]['timezone'])) {
-            if (!in_array($meetings[$i]['timezone'], $all_timezones)) {
-                // make an attempt to find timezone
-                $timezone = str_replace(' ', '_', $meetings[$i]['timezone']);
-                $matches = array_values(array_filter($all_timezones, function($tz) use ($timezone) {
-                    return false !== stripos($tz, $timezone);
-                }));
-                if (count($matches)) {
-                    $meetings[$i]['timezone'] = $matches[0];
-                } else {
-                    unset($meetings[$i]['timezone']);
-                }
+            // make an attempt to find timezone
+            $timezone = tsml_timezone_parse($meetings[$i]['timezone']);
+            if ($timezone) {
+                $meetings[$i]['timezone'] = $timezone;
+            } else {
+                unset($meetings[$i]['timezone']);
             }
         }
 
