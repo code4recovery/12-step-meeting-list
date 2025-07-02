@@ -1136,6 +1136,35 @@ function tsml_load_config()
                 'Y' => __('Young People', '12-step-meeting-list'),
             ]),
         ],
+        'ma' => [
+            'abbr' => __('MA', '12-step-meeting-list'),
+            'flags' => ['M', 'W', 'TC', 'ONL'], // for /men and /women at end of meeting name (used in tsml_format_name())
+            'name' => __('Marijuana Anonymous', '12-step-meeting-list'),
+            'type_descriptions' => [
+                'C' => __('Closed meetings are for MA members only, or for those who have a desire to stop using marijuana.', '12-step-meeting-list'),
+                'O' => __('Open meetings are available to anyone interested in Marijuana Anonymous’ program of recovery from marijuana. Non-addicts may attend open meetings as observers.', '12-step-meeting-list'),
+            ],
+            'types' => tsml_languages([
+                'BB' => __('Book Study', '12-step-meeting-list'),
+                'BE' => __('Beginners', '12-step-meeting-list'),
+                'BUS' => __('Business', '12-step-meeting-list'),
+                'CCAP' => __('Closed Captions', '12-step-meeting-list'),
+                'D' => __('Discussion', '12-step-meeting-list'),
+                'H' => __('Chip', '12-step-meeting-list'),
+                'LGBTQIA' => __('LGBTQIA+', '12-step-meeting-list'),
+                'M' => __('Men', '12-step-meeting-list'),
+                'MED' => __('Meditation', '12-step-meeting-list'),
+                'NB' => __('Non-Binary', '12-step-meeting-list'),
+                'O' => __('Open to Non-Addicts', '12-step-meeting-list'),
+                'OUT' => __('Outdoor', '12-step-meeting-list'),
+                'POC' => __('Persons of Color', '12-step-meeting-list'),
+                'SP' => __('Speaker', '12-step-meeting-list'),
+                'T' => __('Transgender', '12-step-meeting-list'),
+                'W' => __('Women', '12-step-meeting-list'),
+                'X' => __('Wheelchair Accessible', '12-step-meeting-list'),
+                'Y' => __('Young People', '12-step-meeting-list'),
+            ]),
+        ],
         'na' => [
             'abbr' => __('NA', '12-step-meeting-list'),
             'flags' => ['M', 'W', 'TC', 'ONL'], // for /men and /women at end of meeting name (used in tsml_format_name())
