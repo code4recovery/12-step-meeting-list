@@ -1138,7 +1138,7 @@ function tsml_load_config()
         ],
         'ma' => [
             'abbr' => __('MA', '12-step-meeting-list'),
-            'flags' => ['M', 'W', 'TC', 'ONL'], // for /men and /women at end of meeting name (used in tsml_format_name())
+            'flags' => ['M', 'W', 'O', 'CCAP'], // type included at end of meeting name (used in tsml_format_name())
             'name' => __('Marijuana Anonymous', '12-step-meeting-list'),
             'type_descriptions' => [
                 'C' => __('Closed meetings are for MA members only, or for those who have a desire to stop using marijuana.', '12-step-meeting-list'),
@@ -1147,7 +1147,6 @@ function tsml_load_config()
             'types' => tsml_languages([
                 'BB' => __('Book Study', '12-step-meeting-list'),
                 'BE' => __('Beginners', '12-step-meeting-list'),
-                'BUS' => __('Business', '12-step-meeting-list'),
                 'CCAP' => __('Closed Captions', '12-step-meeting-list'),
                 'D' => __('Discussion', '12-step-meeting-list'),
                 'H' => __('Chip', '12-step-meeting-list'),
