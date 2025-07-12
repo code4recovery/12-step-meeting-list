@@ -179,7 +179,7 @@ function tsml_import_data_source($data_source_url, $data_source_name = '', $data
  */
 function tsml_import_buffer_next($limit = 25)
 {
-    global $tsml_data_sources, $tsml_custom_meeting_fields, $tsml_source_fields_map, $tsml_contact_fields, $tsml_entity_fields, $tsml_array_fields;
+    global $tsml_data_sources, $tsml_custom_meeting_fields, $tsml_source_fields_map, $tsml_contact_fields, $tsml_import_fields, $tsml_entity_fields, $tsml_array_fields;
 
     $meetings = tsml_get_option_array('tsml_import_buffer');
     $errors = $remaining = [];
@@ -384,6 +384,7 @@ function tsml_import_buffer_next($limit = 25)
         $custom_meeting_fields = array_merge(
             ['types', 'data_source', 'conference_url', 'conference_url_notes', 'conference_phone', 'conference_phone_notes'],
             array_keys($tsml_source_fields_map),
+            $tsml_import_fields,
             $tsml_entity_fields
         );
         if (!empty($tsml_custom_meeting_fields)) {
@@ -614,6 +615,7 @@ function tsml_import_get_changed_meetings($feed_meetings, $data_source_url)
     // list changed and new meetings found in the data source feed
     foreach ($feed_meetings as $index => $feed_meeting) {
         $feed_meeting_slug = $source_meeting = $source_meeting_id = null;
+        $feed_meeting['import_hash'] = tsml_get_import_hash($feed_meeting);
 
         if (empty($feed_meeting) || !is_array($feed_meeting)) {
             continue;
@@ -632,6 +634,11 @@ function tsml_import_get_changed_meetings($feed_meetings, $data_source_url)
         if ($source_meeting) {
             $source_meeting = (array) $source_meeting;
             $found_meeting_ids[] = $source_meeting['id'];
+
+            if (!empty($source_meeting['import_hash']) && $source_meeting['import_hash'] === $feed_meeting['import_hash']) {
+                continue;
+            }
+
             $changed_fields = tsml_compare_imported_meeting($source_meeting, $feed_meeting);
 
             if (!empty($changed_fields)) {

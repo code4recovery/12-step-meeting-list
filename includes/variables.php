@@ -75,6 +75,11 @@ for ($i = 1; $i <= TSML_GROUP_CONTACT_COUNT; $i++) {
     }
 }
 
+// define additional import metadata fields
+$tsml_import_fields = [
+    'import_hash',
+];
+
 // define entity fields (stored in option tsml_entity)
 $tsml_entity_fields = [
     'entity',
@@ -177,6 +182,7 @@ $tsml_source_fields_map = [
     'source_region' => 'region',
     'source_sub_region' => 'sub_region',
     'source_slug' => 'slug',
+    'source_location' => 'location',
 ];
 
 // load email addresses to send user feedback about meetings
