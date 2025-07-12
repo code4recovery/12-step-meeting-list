@@ -72,6 +72,7 @@ function tsml_ajax_typeahead()
             'value' => html_entity_decode($region->name),
             'type' => 'region',
             'tokens' => tsml_string_tokens($region->name),
+            'id' => $region->slug // needed by legacy search typeahead menu
         ];
     }
 
@@ -334,7 +335,7 @@ add_action('wp_ajax_tsml_geocodes', function () {
 
 // ajax function to import the meetings in the import buffer
 // used by admin_import.php
-add_action('wp_ajax_tsml_import', function (){
+add_action('wp_ajax_tsml_import', function () {
     tsml_require_meetings_permission();
     $response = tsml_import_buffer_next(25);
     wp_send_json($response);
