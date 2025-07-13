@@ -428,7 +428,7 @@ function tsml_feedback_url($meeting)
  */
 function tsml_get_meetings($arguments = [], $from_cache = true, $full_export = false)
 {
-    global $tsml_cache, $tsml_cache_writable, $tsml_contact_fields, $tsml_contact_display, $tsml_data_sources, $tsml_custom_meeting_fields, $tsml_source_fields_map, $tsml_entity_fields, $tsml_array_fields;
+    global $tsml_cache, $tsml_cache_writable, $tsml_contact_fields, $tsml_contact_display, $tsml_data_sources, $tsml_custom_meeting_fields, $tsml_source_fields_map, $tsml_import_fields, $tsml_entity_fields, $tsml_array_fields;
 
     $tsml_entity = tsml_get_entity();
 
@@ -550,6 +550,12 @@ function tsml_get_meetings($arguments = [], $from_cache = true, $full_export = f
             // add feedback_url only if present
             if ($feedback_url = tsml_feedback_url($meeting)) {
                 $meeting['feedback_url'] = $feedback_url;
+            }
+
+            foreach ($tsml_import_fields as $field) {
+                if (!empty($meeting_meta[$post->ID][$field])) {
+                    $meeting[$field] = $meeting_meta[$post->ID][$field];
+                }
             }
 
             // add entity fields
@@ -686,7 +692,7 @@ function tsml_get_meetings($arguments = [], $from_cache = true, $full_export = f
  */
 function tsml_get_meta($type, $id = null)
 {
-    global $wpdb, $tsml_custom_meeting_fields, $tsml_contact_fields, $tsml_source_fields_map, $tsml_entity_fields, $tsml_array_fields;
+    global $wpdb, $tsml_custom_meeting_fields, $tsml_contact_fields, $tsml_source_fields_map, $tsml_import_fields, $tsml_entity_fields, $tsml_array_fields;
     $keys = [
         'tsml_group' => array_keys($tsml_contact_fields),
         'tsml_location' => ['formatted_address', 'latitude', 'longitude', 'approximate', 'timezone'],
@@ -705,6 +711,7 @@ function tsml_get_meta($type, $id = null)
             ],
             array_keys($tsml_contact_fields),
             array_keys($tsml_source_fields_map),
+            $tsml_import_fields,
             $tsml_entity_fields,
             empty($tsml_custom_meeting_fields) ? [] : array_keys($tsml_custom_meeting_fields)
         ),

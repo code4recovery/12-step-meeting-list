@@ -179,7 +179,7 @@ function tsml_import_data_source($data_source_url, $data_source_name = '', $data
  */
 function tsml_import_buffer_next($limit = 25)
 {
-    global $tsml_data_sources, $tsml_custom_meeting_fields, $tsml_source_fields_map, $tsml_contact_fields, $tsml_entity_fields, $tsml_array_fields;
+    global $tsml_data_sources, $tsml_custom_meeting_fields, $tsml_source_fields_map, $tsml_contact_fields, $tsml_import_fields, $tsml_entity_fields, $tsml_array_fields;
 
     $meetings = tsml_get_option_array('tsml_import_buffer');
     $errors = $remaining = [];
@@ -333,7 +333,7 @@ function tsml_import_buffer_next($limit = 25)
             update_post_meta($location_id, 'approximate', $geocoded['approximate']);
             wp_set_object_terms($location_id, $region_id, 'tsml_region');
             // timezone
-            if (!empty($meeting['timezone']) && in_array($meeting['timezone'], DateTimeZone::listIdentifiers())) {
+            if (!empty($meeting['timezone'])) {
                 update_post_meta($location_id, 'timezone', $meeting['timezone']);
             } else {
                 delete_post_meta($location_id, 'timezone');
@@ -384,6 +384,7 @@ function tsml_import_buffer_next($limit = 25)
         $custom_meeting_fields = array_merge(
             ['types', 'data_source', 'conference_url', 'conference_url_notes', 'conference_phone', 'conference_phone_notes'],
             array_keys($tsml_source_fields_map),
+            $tsml_import_fields,
             $tsml_entity_fields
         );
         if (!empty($tsml_custom_meeting_fields)) {
@@ -614,6 +615,7 @@ function tsml_import_get_changed_meetings($feed_meetings, $data_source_url)
     // list changed and new meetings found in the data source feed
     foreach ($feed_meetings as $index => $feed_meeting) {
         $feed_meeting_slug = $source_meeting = $source_meeting_id = null;
+        $feed_meeting['import_hash'] = tsml_get_import_hash($feed_meeting);
 
         if (empty($feed_meeting) || !is_array($feed_meeting)) {
             continue;
@@ -632,6 +634,11 @@ function tsml_import_get_changed_meetings($feed_meetings, $data_source_url)
         if ($source_meeting) {
             $source_meeting = (array) $source_meeting;
             $found_meeting_ids[] = $source_meeting['id'];
+
+            if (!empty($source_meeting['import_hash']) && $source_meeting['import_hash'] === $feed_meeting['import_hash']) {
+                continue;
+            }
+
             $changed_fields = tsml_compare_imported_meeting($source_meeting, $feed_meeting);
 
             if (!empty($changed_fields)) {
@@ -749,6 +756,18 @@ function tsml_import_sanitize_meetings($meetings, $data_source_url = null, $data
     }
     $group_fields[] = 'group_notes';
     $groups = [];
+
+    // track locations to normalize
+    $locations = [];
+    $location_fields = [
+        'latitude',
+        'longitude',
+        'approximate',
+        'location',
+        'location_notes',
+        'timezone',
+        'region',
+    ];
 
     // track sanitized meeting slug counts
     $meeting_slugs = array();
@@ -1065,17 +1084,40 @@ function tsml_import_sanitize_meetings($meetings, $data_source_url = null, $data
             }
         }
 
-        // track group values
-        if (isset($meetings[$i]['group']) && !empty($meetings[$i]['group'])) {
+        // sanitize timezone if present
+        if (!empty($meetings[$i]['timezone'])) {
+            // make an attempt to find timezone
+            $timezone = tsml_timezone_parse($meetings[$i]['timezone']);
+            if ($timezone) {
+                $meetings[$i]['timezone'] = $timezone;
+            } else {
+                unset($meetings[$i]['timezone']);
+            }
+        }
+
+        // collect group values
+        if (!empty($meetings[$i]['group'])) {
             $group = $meetings[$i]['group'];
             if (!isset($groups[$group])) {
                 $groups[$group] = array();
             }
             // currently first group value wins
-            // @TODO: add some weighting to track / use most common value by occurence
             foreach ($group_fields as $group_field) {
-                if (isset($meetings[$i][$group_field]) && !empty($meetings[$i][$group_field]) && !isset($groups[$group][$group_field])) {
+                if (!empty($meetings[$i][$group_field]) && !isset($groups[$group][$group_field])) {
                     $groups[$group][$group_field] = $meetings[$i][$group_field];
+                }
+            }
+        }
+
+        // collect location values
+        if (!empty($meetings[$i]['formatted_address'])) {
+            $formatted_address = $meetings[$i]['formatted_address'];
+            if (!isset($locations[$formatted_address])) {
+                $locations[$formatted_address] = array();
+            }
+            foreach ($location_fields as $location_field) {
+                if (!empty($meetings[$i][$location_field]) && !isset($locations[$formatted_address][$location_field])) {
+                    $locations[$formatted_address][$location_field] = $meetings[$i][$location_field];
                 }
             }
         }
@@ -1099,11 +1141,16 @@ function tsml_import_sanitize_meetings($meetings, $data_source_url = null, $data
     // normalize group fields across potentially blank rows
     foreach ($meetings as $i => $meeting) {
         $group = isset($meeting['group']) ? $meeting['group'] : '';
-        if (!$group) {
-            continue;
+        if ($group && isset($groups[$group])) {
+            foreach ($groups[$group] as $field => $value) {
+                $meetings[$i][$field] = $value;
+            }
         }
-        foreach ($groups[$group] as $field => $value) {
-            $meetings[$i][$field] = $value;
+        $formatted_address = isset($meeting['formatted_address']) ? $meeting['formatted_address'] : '';
+        if ($formatted_address && isset($locations[$formatted_address])) {
+            foreach ($locations[$formatted_address] as $field => $value) {
+                $meetings[$i][$field] = $value;
+            }
         }
     }
 

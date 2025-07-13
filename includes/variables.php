@@ -75,6 +75,11 @@ for ($i = 1; $i <= TSML_GROUP_CONTACT_COUNT; $i++) {
     }
 }
 
+// define additional import metadata fields
+$tsml_import_fields = [
+    'import_hash',
+];
+
 // define entity fields (stored in option tsml_entity)
 $tsml_entity_fields = [
     'entity',
@@ -619,6 +624,13 @@ $tsml_timestamp = microtime(true);
 // timezone
 $default_tz = tsml_timezone_is_valid(wp_timezone_string()) ? wp_timezone_string() : null;
 $tsml_timezone = get_option('tsml_timezone', $default_tz);
+// common timezone aliases
+$tsml_timezone_aliases = [
+    'America/New_York' => ['ET', 'EST', 'EDT', 'Eastern'],
+    'America/Chicago' => ['CT', 'CST', 'CDT', 'Central'],
+    'America/Denver' => ['MT', 'MST', 'MDT', 'Mountain'],
+    'America/Los_Angeles' => ['PT', 'PST', 'PDT', 'Pacific', 'West_Coast'],
+];
 
 // for customizing TSML-UI
 $tsml_ui_config = [];

@@ -1632,6 +1632,26 @@ function tsml_compare_imported_meeting($local_meeting, $import_meeting, $transla
     return count($diff_fields) ? $diff_fields : null;
 }
 
+/**
+ * Return hash for imported meeting, for later comparison
+ *
+ * @param [array] $meeting
+ * @return string
+ */
+function tsml_get_import_hash($meeting)
+{
+    $remove_fields = explode(',', ',row,import_hash');
+    if (is_array($meeting)) {
+        foreach ($meeting as $field => $value) {
+            if (in_array(strtolower($field), $remove_fields)) {
+                unset($meeting[$field]);
+            }
+        }
+
+    }
+    return md5(serialize($meeting));
+}
+
 function tsml_header()
 {
     if (function_exists('wp_is_block_theme') && wp_is_block_theme()) {
