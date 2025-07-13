@@ -182,7 +182,6 @@ $tsml_source_fields_map = [
     'source_region' => 'region',
     'source_sub_region' => 'sub_region',
     'source_slug' => 'slug',
-    'source_location' => 'location',
 ];
 
 // load email addresses to send user feedback about meetings
