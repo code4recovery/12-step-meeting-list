@@ -303,6 +303,10 @@ Yes, you will need to know the key name of the field. Then include an array in y
 
 = 3.17 =
 * Automated import refreshing [more info](https://github.com/code4recovery/12-step-meeting-list/issues/1286)
+* Add Marijuana Anonymous [more info](https://github.com/code4recovery/12-step-meeting-list/pull/1703)
+* Fix Eating Disorders Anonymous types [more info](https://github.com/code4recovery/12-step-meeting-list/issues/1673)
+* Fix 'view more' button in Upcoming Meetings Widget when using TSML UI [more info](https://github.com/code4recovery/12-step-meeting-list/pull/1690)
+* Fix search typeahead in Legacy UI [more info](https://github.com/code4recovery/12-step-meeting-list/issues/1706)
 
 = 3.16.18 =
 * Temporarily stop requiring Zoom IDs in conference URLs [more info](https://github.com/code4recovery/12-step-meeting-list/discussions/1665)
