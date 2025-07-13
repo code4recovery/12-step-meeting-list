@@ -3,6 +3,15 @@
 // import log admin page
 function tsml_log_page()
 {
+    global $tsml_nonce;
+
+    // clear log entries
+    $valid_nonce = isset($_POST['tsml_nonce']) && wp_verify_nonce($_POST['tsml_nonce'], $tsml_nonce);
+    if ($valid_nonce && isset($_POST['clear_log'])) {
+        delete_option('tsml_log');
+        tsml_alert(__('Log cleared', '12-step-meeting-list'));
+    }
+
     // get all entries to count them for the dropdown filter
     $log_entries = tsml_log_get();
 
@@ -37,13 +46,13 @@ function tsml_log_page()
                         <?php esc_html_e('These are the most recent events within the last month.', '12-step-meeting-list') ?>
                     </p>
 
-                    <div class="tablenav top">
+                    <div>
                         <div class="alignleft">
                             <label for="filter_type" class="screen-reader-text">
                                 <?php esc_html_e('Filter by event type', '12-step-meeting-list') ?>
                             </label>
                             <select name="filter_type" id="filter_type">
-                                <option value="">
+                                <option>
                                     <?php esc_html_e('Filter by event type', '12-step-meeting-list') ?>
                                 </option>
                                 <?php foreach (TSML_LOG_TYPES as $key => $value) {
@@ -57,6 +66,12 @@ function tsml_log_page()
                                 <?php } ?>
                             </select>
                         </div>
+                        <form class="alignright" method="post">
+                            <?php
+                            wp_nonce_field($tsml_nonce, 'tsml_nonce', false);
+                            tsml_input_submit(__('Clear log', '12-step-meeting-list'), ['class' => 'button', 'name' => 'clear_log']);
+                            ?>
+                        </form>
                     </div>
 
                     <table class="log-table log-table--large">
