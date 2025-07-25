@@ -704,7 +704,7 @@ function tsml_load_config()
                 'C' => __('This meeting is closed; only those who have a desire to recover from the effects of growing up in an alcoholic or otherwise dysfunctional family may attend.', '12-step-meeting-list'),
                 'O' => __('This meeting is open and anyone may attend.', '12-step-meeting-list'),
             ],
-            'types' => tsml_languages([
+            'types' => [
                 'ANH' => __('A New Hope', '12-step-meeting-list'),
                 'A' => __('Age Restricted 18+', '12-step-meeting-list'),
                 'AV' => __('Audio / Visual', '12-step-meeting-list'),
@@ -721,11 +721,9 @@ function tsml_load_config()
                 'G' => __('Gay/Lesbian', '12-step-meeting-list'),
                 'LLW' => __('Laundry Lists Workbook', '12-step-meeting-list'),
                 'LGBTQ' => __('LGBTQ+', '12-step-meeting-list'),
-                'TC' => __('Location Temporarily Closed', '12-step-meeting-list'),
                 'LPG' => __('Loving Parent Guidebook', '12-step-meeting-list'),
                 'M' => __('Men', '12-step-meeting-list'),
                 'NS' => __('Needs Support', '12-step-meeting-list'),
-                'ONL' => __('Online Meeting', '12-step-meeting-list'),
                 'O' => __('Open', '12-step-meeting-list'),
                 'ASL' => __('Sign Language ASL', '12-step-meeting-list'),
                 'SM' => __('Smoking Permitted', '12-step-meeting-list'),
@@ -739,7 +737,7 @@ function tsml_load_config()
                 'WOR' => __('Workshop', '12-step-meeting-list'),
                 'Y' => __('Yellow Workbook Study', '12-step-meeting-list'),
                 'YA' => __('Young Adult (Ages 18 to 26)', '12-step-meeting-list'),
-            ]),
+            ],
         ],
         'al-anon' => [
             'abbr' => __('Al-Anon', '12-step-meeting-list'),
@@ -749,7 +747,7 @@ function tsml_load_config()
                 'C' => __('Closed Meetings are limited to members and prospective members. These are persons who feel their lives have been or are being affected by alcoholism in a family member or friend.', '12-step-meeting-list'),
                 'O' => __('Open to anyone interested in the family disease of alcoholism. Some groups invite members of the professional community to hear how the Al-Anon program aids in recovery.', '12-step-meeting-list'),
             ],
-            'types' => tsml_languages([
+            'types' => [
                 'AC' => __('Adult Child Focus', '12-step-meeting-list'),
                 'Y' => __('Alateen', '12-step-meeting-list'),
                 'A' => __('Atheist / Agnostic', '12-step-meeting-list'),
@@ -763,9 +761,7 @@ function tsml_load_config()
                 'G' => __('Gay', '12-step-meeting-list'),
                 'L' => __('Lesbian', '12-step-meeting-list'),
                 'LGBTQIA' => __('LGBTQIA+', '12-step-meeting-list'),
-                'TC' => __('Location Temporarily Closed', '12-step-meeting-list'),
                 'M' => __('Men', '12-step-meeting-list'),
-                'ONL' => __('Online Meeting', '12-step-meeting-list'),
                 'POA' => __('Parents of Alcoholics', '12-step-meeting-list'),
                 'POC' => __('People of Color', '12-step-meeting-list'),
                 'SM' => __('Smoking Permitted', '12-step-meeting-list'),
@@ -775,7 +771,7 @@ function tsml_load_config()
                 'X' => __('Wheelchair Accessible', '12-step-meeting-list'),
                 'W' => __('Women', '12-step-meeting-list'),
                 'YA' => __('Young Adults', '12-step-meeting-list'),
-            ]),
+            ],
         ],
         'aa' => [
             'abbr' => __('AA', '12-step-meeting-list'),
@@ -785,7 +781,7 @@ function tsml_load_config()
                 'C' => __('Closed meetings are for A.A. members only, or for those who have a drinking problem and “have a desire to stop drinking.”', '12-step-meeting-list'),
                 'O' => __('Open meetings are available to anyone interested in Alcoholics Anonymous’ program of recovery from alcoholism. Nonalcoholics may attend open meetings as observers.', '12-step-meeting-list'),
             ],
-            'types' => tsml_languages([
+            'types' => [
                 '11' => __('11th Step Meditation', '12-step-meeting-list'),
                 '12x12' => __('12 Steps & 12 Traditions', '12-step-meeting-list'),
                 'ABSI' => __('As Bill Sees It', '12-step-meeting-list'),
@@ -811,13 +807,11 @@ function tsml_load_config()
                 'LIT' => __('Literature', '12-step-meeting-list'),
                 'LS' => __('Living Sober', '12-step-meeting-list'),
                 'LGBTQ' => __('LGBTQ', '12-step-meeting-list'),
-                'TC' => __('Location Temporarily Closed', '12-step-meeting-list'),
                 'MED' => __('Meditation', '12-step-meeting-list'),
                 'M' => __('Men', '12-step-meeting-list'),
                 'N' => __('Native American', '12-step-meeting-list'),
                 'BE' => __('Newcomer', '12-step-meeting-list'),
                 'NB' => __('Non-Binary', '12-step-meeting-list'),
-                'ONL' => __('Online Meeting', '12-step-meeting-list'),
                 'O' => __('Open', '12-step-meeting-list'),
                 'OUT' => __('Outdoor Meeting', '12-step-meeting-list'),
                 'POC' => __('People of Color', '12-step-meeting-list'),
@@ -835,7 +829,7 @@ function tsml_load_config()
                 'XB' => __('Wheelchair-Accessible Bathroom', '12-step-meeting-list'),
                 'W' => __('Women', '12-step-meeting-list'),
                 'Y' => __('Young People', '12-step-meeting-list'),
-            ]),
+            ],
         ],
         'cma' => [
             'abbr' => __('CMA', '12-step-meeting-list'),
@@ -845,14 +839,13 @@ function tsml_load_config()
                 'C' => __('Closed meetings are for C.M.A members only, or for those who have a using problem and “have a desire to stop using.”', '12-step-meeting-list'),
                 'O' => __('Open meetings are available to anyone interested in Crystal Meth Anonymous’ program of recovery from using. Non users may attend open meetings as observers.', '12-step-meeting-list'),
             ],
-            'types' => tsml_languages([
+            'types' => [
                 'ASL' => __('Sign Language', '12-step-meeting-list'),
                 'C' => __('Closed', '12-step-meeting-list'),
                 'LGBTQ' => __('LGBTQ', '12-step-meeting-list'),
                 'LIT' => __('Literature', '12-step-meeting-list'),
                 'M' => __('Men', '12-step-meeting-list'),
                 'BE' => __('Newcomer', '12-step-meeting-list'),
-                'ONL' => __('Online (only)', '12-step-meeting-list'),
                 'O' => __('Open', '12-step-meeting-list'),
                 'OUT' => __('Outdoor Meeting', '12-step-meeting-list'),
                 'POC' => __('People of Color', '12-step-meeting-list'),
@@ -860,18 +853,17 @@ function tsml_load_config()
                 'SP' => __('Speaker', '12-step-meeting-list'),
                 'ST' => __('Step Meeting', '12-step-meeting-list'),
                 'T' => __('Transgender', '12-step-meeting-list'),
-                'TC' => __('Location Temporarily Closed', '12-step-meeting-list'),
                 'W' => __('Women', '12-step-meeting-list'),
                 'Y' => __('Young People', '12-step-meeting-list'),
                 'X' => __('Wheelchair Access', '12-step-meeting-list'),
                 'XB' => __('Wheelchair-Accessible Bathroom', '12-step-meeting-list'),
-            ]),
+            ],
         ],
         'coda' => [
             'abbr' => __('CoDA', '12-step-meeting-list'),
             'flags' => ['M', 'W', 'TC', 'ONL'], // for /men and /women at end of meeting name (used in tsml_format_name())
             'name' => __('Co-Dependents Anonymous', '12-step-meeting-list'),
-            'types' => tsml_languages([
+            'types' => [
                 'A' => __('Atheist / Agnostic', '12-step-meeting-list'),
                 'BA' => __('Babysitting Available', '12-step-meeting-list'),
                 'BE' => __('Beginner', '12-step-meeting-list'),
@@ -890,10 +882,8 @@ function tsml_load_config()
                 'L' => __('Lesbian', '12-step-meeting-list'),
                 'LIT' => __('Literature', '12-step-meeting-list'),
                 'LGBTQ' => __('LGBTQ', '12-step-meeting-list'),
-                'TC' => __('Location Temporarily Closed', '12-step-meeting-list'),
                 'MED' => __('Meditation', '12-step-meeting-list'),
                 'M' => __('Men', '12-step-meeting-list'),
-                'ONL' => __('Online Meeting', '12-step-meeting-list'),
                 'O' => __('Open', '12-step-meeting-list'),
                 'QA' => __('Q & A', '12-step-meeting-list'),
                 'READ' => __('Reading', '12-step-meeting-list'),
@@ -910,7 +900,7 @@ function tsml_load_config()
                 'W' => __('Women', '12-step-meeting-list'),
                 'WRITE' => __('Writing', '12-step-meeting-list'),
                 'Y' => __('Young People', '12-step-meeting-list'),
-            ]),
+            ],
         ],
         'ca' => [
             'abbr' => __('CA', '12-step-meeting-list'),
@@ -920,7 +910,7 @@ function tsml_load_config()
                 'C' => __('This meeting is closed; only those who have a desire to stop using may attend.', '12-step-meeting-list'),
                 'O' => __('This meeting is open and anyone may attend.', '12-step-meeting-list'),
             ],
-            'types' => tsml_languages([
+            'types' => [
                 '11' => __('11th Step Meditation', '12-step-meeting-list'),
                 '12x12' => __('12 Steps & 12 Traditions', '12-step-meeting-list'),
                 'ABSI' => __('As Bill Sees It', '12-step-meeting-list'),
@@ -946,12 +936,10 @@ function tsml_load_config()
                 'LIT' => __('Literature', '12-step-meeting-list'),
                 'LS' => __('Living Sober', '12-step-meeting-list'),
                 'LGBTQ' => __('LGBTQ', '12-step-meeting-list'),
-                'TC' => __('Location Temporarily Closed', '12-step-meeting-list'),
                 'MED' => __('Meditation', '12-step-meeting-list'),
                 'M' => __('Men', '12-step-meeting-list'),
                 'N' => __('Native American', '12-step-meeting-list'),
                 'BE' => __('Newcomer', '12-step-meeting-list'),
-                'ONL' => __('Online Meeting', '12-step-meeting-list'),
                 'O' => __('Open', '12-step-meeting-list'),
                 'ASL' => __('Sign Language', '12-step-meeting-list'),
                 'SM' => __('Smoking Permitted', '12-step-meeting-list'),
@@ -962,13 +950,13 @@ function tsml_load_config()
                 'X' => __('Wheelchair Access', '12-step-meeting-list'),
                 'W' => __('Women', '12-step-meeting-list'),
                 'Y' => __('Young People', '12-step-meeting-list'),
-            ]),
+            ],
         ],
         'cea-how' => [
             'abbr' => __('CEA-HOW', '12-step-meeting-list'),
             'flags' => [], // for /men and /women at end of meeting name (used in tsml_format_name())
             'name' => __('Compulsive Eaters Anonymous-HOW', '12-step-meeting-list'),
-            'types' => tsml_languages([
+            'types' => [
                 '12x12' => __('12 Steps & 12 Traditions', '12-step-meeting-list'),
                 'AACOA' => __('AA Comes of Age', '12-step-meeting-list'),
                 'ABSI' => __('As Bill Sees It', '12-step-meeting-list'),
@@ -986,22 +974,20 @@ function tsml_load_config()
                 'RANDR' => __('Relapse and Recovery', '12-step-meeting-list'),
                 'ST' => __('Steps/Traditions', '12-step-meeting-list'),
                 'D' => __('Topic/Discussion', '12-step-meeting-list'),
-            ]),
+            ],
         ],
         'da' => [
             'abbr' => __('DA', '12-step-meeting-list'),
             'flags' => ['M', 'W', 'TC', 'ONL'], // for /men and /women at end of meeting name (used in tsml_format_name())
             'name' => __('Debtors Anonymous', '12-step-meeting-list'),
-            'types' => tsml_languages([
+            'types' => [
                 'AB' => __('Abundance', '12-step-meeting-list'),
                 'AR' => __('Artist', '12-step-meeting-list'),
                 'B' => __('Business Owner', '12-step-meeting-list'),
                 'C' => __('Closed', '12-step-meeting-list'),
                 'CL' => __('Clutter', '12-step-meeting-list'),
-                'TC' => __('Location Temporarily Closed', '12-step-meeting-list'),
                 'M' => __('Men', '12-step-meeting-list'),
                 'N' => __('Numbers', '12-step-meeting-list'),
-                'ONL' => __('Online Meeting', '12-step-meeting-list'),
                 'O' => __('Open', '12-step-meeting-list'),
                 'P' => __('Prosperity', '12-step-meeting-list'),
                 'SP' => __('Speaker', '12-step-meeting-list'),
@@ -1011,33 +997,31 @@ function tsml_load_config()
                 'V' => __('Vision', '12-step-meeting-list'),
                 'X' => __('Wheelchair Accessible', '12-step-meeting-list'),
                 'W' => __('Women', '12-step-meeting-list'),
-            ]),
+            ],
         ],
         'daa' => [
             'abbr' => __('DAA', '12-step-meeting-list'),
             'flags' => ['M', 'W', 'TC', 'ONL'], // for /men and /women at end of meeting name (used in tsml_format_name())
             'name' => __('Drug Addicts Anonymous', '12-step-meeting-list'),
-            'types' => tsml_languages([
+            'types' => [
                 '12x12' => __('12 Steps & 12 Traditions', '12-step-meeting-list'),
                 'BA' => __('Babysitting Available', '12-step-meeting-list'),
                 'B' => __('Big Book Study', '12-step-meeting-list'),
                 'C' => __('Closed', '12-step-meeting-list'),
                 'D' => __('Discussion', '12-step-meeting-list'),
-                'TC' => __('Location Temporarily Closed', '12-step-meeting-list'),
                 'M' => __('Men', '12-step-meeting-list'),
-                'ONL' => __('Online Meeting', '12-step-meeting-list'),
                 'O' => __('Open', '12-step-meeting-list'),
                 'ST' => __('Step Meeting', '12-step-meeting-list'),
                 'SS' => __('Step Speaker', '12-step-meeting-list'),
                 'W' => __('Women', '12-step-meeting-list'),
                 'YP' => __('Young People', '12-step-meeting-list'),
-            ]),
+            ],
         ],
         'eda' => [
             'abbr' => __('EDA', '12-step-meeting-list'),
             'flags' => ['M', 'W', 'TC', 'ONL'], // for /men and /women at end of meeting name (used in tsml_format_name())
             'name' => __('Eating Disorders Anonymous', '12-step-meeting-list'),
-            'types' => tsml_languages([
+            'types' => [
                 '11' => __('11th Step Meditation', '12-step-meeting-list'),
                 '12x12' => __('12 Steps & 12 Traditions', '12-step-meeting-list'),
                 'BA' => __('Babysitting Available', '12-step-meeting-list'),
@@ -1051,7 +1035,6 @@ function tsml_load_config()
                 'LGBTQ' => __('LGBTQ+', '12-step-meeting-list'),
                 'MED' => __('Meditation', '12-step-meeting-list'),
                 'M' => __('Men', '12-step-meeting-list'),
-                'ONL' => __('Online', '12-step-meeting-list'),
                 'O' => __('Open', '12-step-meeting-list'),
                 'OUT' => __('Outdoor', '12-step-meeting-list'),
                 'POC' => __('People of Color', '12-step-meeting-list'),
@@ -1068,7 +1051,7 @@ function tsml_load_config()
                 'W' => __('Women', '12-step-meeting-list'),
                 'WR' => __('Writing', '12-step-meeting-list'),
                 'Y' => __('Young People', '12-step-meeting-list'),
-            ]),
+            ],
         ],
         'ga' => [
             'abbr' => __('GA', '12-step-meeting-list'),
@@ -1077,7 +1060,7 @@ function tsml_load_config()
             'type_descriptions' => [
                 'C' => __('This meeting is closed; only those who have a desire to stop gambling may attend.', '12-step-meeting-list'),
             ],
-            'types' => tsml_languages([
+            'types' => [
                 '20' => __('20 Questions/Beginner Focus', '12-step-meeting-list'),
                 'BA' => __('Babysitting Available', '12-step-meeting-list'),
                 'B' => __('Big Book', '12-step-meeting-list'),
@@ -1092,11 +1075,9 @@ function tsml_load_config()
                 'GAM' => __('Gam Anon', '12-step-meeting-list'),
                 'LIT' => __('Literature', '12-step-meeting-list'),
                 'LGBTQ' => __('LGBTQ', '12-step-meeting-list'),
-                'TC' => __('Location Temporarily Closed', '12-step-meeting-list'),
                 'MED' => __('Meditation', '12-step-meeting-list'),
                 'M' => __('Men', '12-step-meeting-list'),
                 'BE' => __('Newcomer', '12-step-meeting-list'),
-                'ONL' => __('Online Meeting', '12-step-meeting-list'),
                 'O' => __('Open', '12-step-meeting-list'),
                 'PAR' => __('Parking Meters Available', '12-step-meeting-list'),
                 'ASL' => __('Sign Language', '12-step-meeting-list'),
@@ -1108,13 +1089,13 @@ function tsml_load_config()
                 'X' => __('Wheelchair Access', '12-step-meeting-list'),
                 'W' => __('Women', '12-step-meeting-list'),
                 'Y' => __('Young People', '12-step-meeting-list'),
-            ]),
+            ],
         ],
         'ha' => [
             'abbr' => __('HA', '12-step-meeting-list'),
             'flags' => ['M', 'W', 'TC', 'ONL'], // for /men and /women at end of meeting name (used in tsml_format_name())
             'name' => __('Heroin Anonymous', '12-step-meeting-list'),
-            'types' => tsml_languages([
+            'types' => [
                 'CPT' => __('12 Concepts', '12-step-meeting-list'),
                 'BT' => __('Basic Text', '12-step-meeting-list'),
                 'BEG' => __('Beginner/Newcomer', '12-step-meeting-list'),
@@ -1128,11 +1109,9 @@ function tsml_load_config()
                 'JFT' => __('Just For Today Study', '12-step-meeting-list'),
                 'LIT' => __('Literature Study', '12-step-meeting-list'),
                 'LC' => __('Living Clean', '12-step-meeting-list'),
-                'TC' => __('Location Temporarily Closed', '12-step-meeting-list'),
                 'M' => __('Men', '12-step-meeting-list'),
                 'MED' => __('Meditation', '12-step-meeting-list'),
                 'NS' => __('Non-Smoking', '12-step-meeting-list'),
-                'ONL' => __('Online Meeting', '12-step-meeting-list'),
                 'O' => __('Open', '12-step-meeting-list'),
                 'QA' => __('Questions & Answers', '12-step-meeting-list'),
                 'RA' => __('Restricted Access', '12-step-meeting-list'),
@@ -1146,7 +1125,7 @@ function tsml_load_config()
                 'X' => __('Wheelchair Accessible', '12-step-meeting-list'),
                 'W' => __('Women', '12-step-meeting-list'),
                 'Y' => __('Young People', '12-step-meeting-list'),
-            ]),
+            ],
         ],
         'ma' => [
             'abbr' => __('MA', '12-step-meeting-list'),
@@ -1156,7 +1135,7 @@ function tsml_load_config()
                 'C' => __('Closed meetings are for MA members only, or for those who have a desire to stop using marijuana.', '12-step-meeting-list'),
                 'O' => __('Open meetings are available to anyone interested in Marijuana Anonymous’ program of recovery from marijuana. Non-addicts may attend open meetings as observers.', '12-step-meeting-list'),
             ],
-            'types' => tsml_languages([
+            'types' => [
                 'BB' => __('Book Study', '12-step-meeting-list'),
                 'BE' => __('Beginners', '12-step-meeting-list'),
                 'CCAP' => __('Closed Captions', '12-step-meeting-list'),
@@ -1174,13 +1153,13 @@ function tsml_load_config()
                 'W' => __('Women', '12-step-meeting-list'),
                 'X' => __('Wheelchair Accessible', '12-step-meeting-list'),
                 'Y' => __('Young People', '12-step-meeting-list'),
-            ]),
+            ],
         ],
         'na' => [
             'abbr' => __('NA', '12-step-meeting-list'),
             'flags' => ['M', 'W', 'TC', 'ONL'], // for /men and /women at end of meeting name (used in tsml_format_name())
             'name' => __('Narcotics Anonymous', '12-step-meeting-list'),
-            'types' => tsml_languages([
+            'types' => [
                 'CPT' => __('12 Concepts', '12-step-meeting-list'),
                 'BT' => __('Basic Text', '12-step-meeting-list'),
                 'BEG' => __('Beginner/Newcomer', '12-step-meeting-list'),
@@ -1194,11 +1173,9 @@ function tsml_load_config()
                 'JFT' => __('Just For Today Study', '12-step-meeting-list'),
                 'LIT' => __('Literature Study', '12-step-meeting-list'),
                 'LC' => __('Living Clean', '12-step-meeting-list'),
-                'TC' => __('Location Temporarily Closed', '12-step-meeting-list'),
                 'M' => __('Men', '12-step-meeting-list'),
                 'MED' => __('Meditation', '12-step-meeting-list'),
                 'NS' => __('Non-Smoking', '12-step-meeting-list'),
-                'ONL' => __('Online Meeting', '12-step-meeting-list'),
                 'O' => __('Open', '12-step-meeting-list'),
                 'QA' => __('Questions & Answers', '12-step-meeting-list'),
                 'RA' => __('Restricted Access', '12-step-meeting-list'),
@@ -1213,13 +1190,13 @@ function tsml_load_config()
                 'X' => __('Wheelchair Accessible', '12-step-meeting-list'),
                 'W' => __('Women', '12-step-meeting-list'),
                 'Y' => __('Young People', '12-step-meeting-list'),
-            ]),
+            ],
         ],
         'oa' => [
             'abbr' => __('OA', '12-step-meeting-list'),
             'flags' => ['TC', 'ONL'],
             'name' => __('Overeaters Anonymous', '12-step-meeting-list'),
-            'types' => tsml_languages([
+            'types' => [
                 '11TH' => __('11th Step', '12-step-meeting-list'),
                 '90D' => __('90 Day', '12-step-meeting-list'),
                 'AA12' => __('AA 12/12', '12-step-meeting-list'),
@@ -1230,7 +1207,6 @@ function tsml_load_config()
                 'LI' => __('Lifeline', '12-step-meeting-list'),
                 'LIS' => __('Lifeline Sampler', '12-step-meeting-list'),
                 'LIT' => __('Literature Study', '12-step-meeting-list'),
-                'TC' => __('Location Temporarily Closed', '12-step-meeting-list'),
                 'MAIN' => __('Maintenance', '12-step-meeting-list'),
                 'MED' => __('Meditation', '12-step-meeting-list'),
                 'NEWB' => __('New Beginnings', '12-step-meeting-list'),
@@ -1238,7 +1214,6 @@ function tsml_load_config()
                 'HOW' => __('OA H.O.W.', '12-step-meeting-list'),
                 'OA23' => __('OA Second and/or Third Edition', '12-step-meeting-list'),
                 'ST' => __('OA Steps and/or Traditions Study', '12-step-meeting-list'),
-                'ONL' => __('Online Meeting', '12-step-meeting-list'),
                 'RELA' => __('Relapse/12th Step Within', '12-step-meeting-list'),
                 'SSP' => __('Seeking the Spiritual Path', '12-step-meeting-list'),
                 'SP' => __('Speaker', '12-step-meeting-list'),
@@ -1252,25 +1227,23 @@ function tsml_load_config()
                 'VOR' => __('Voices of Recovery', '12-step-meeting-list'),
                 'WORK' => __('Work Book Study', '12-step-meeting-list'),
                 'WRIT' => __('Writing', '12-step-meeting-list'),
-            ]),
+            ],
         ],
         'pal' => [
             'abbr' => 'PAL',
             'flags' => [],
             'name' => 'Parents of Addicted Loved Ones',
-            'types' => tsml_languages([]),
+            'types' => [],
         ],
         'rca' => [
             'abbr' => __('RCA', '12-step-meeting-list'),
             'flags' => ['TC', 'ONL'],
             'name' => __('Recovering Couples Anonymous', '12-step-meeting-list'),
-            'types' => tsml_languages([
+            'types' => [
                 'C' => __('Closed', '12-step-meeting-list'),
-                'TC' => __('Location Temporarily Closed', '12-step-meeting-list'),
-                'ONL' => __('Online Meeting', '12-step-meeting-list'),
                 'O' => __('Open', '12-step-meeting-list'),
                 'SP' => __('Speaker', '12-step-meeting-list'),
-            ]),
+            ],
         ],
         'rd' => [
             'abbr' => __('Recovery Dharma', '12-step-meeting-list'),
@@ -1280,7 +1253,7 @@ function tsml_load_config()
                 'M' => __('Men’s meetings are for anyone who identifies as male.', '12-step-meeting-list'),
                 'W' => __('Women’s meetings are for anyone who identifies as female.', '12-step-meeting-list'),
             ],
-            'types' => tsml_languages([
+            'types' => [
                 'BE' => __('Beginners', '12-step-meeting-list'),
                 'BB' => __('Book Study', '12-step-meeting-list'),
                 'CC' => __('Child Care Available', '12-step-meeting-list'),
@@ -1290,15 +1263,13 @@ function tsml_load_config()
                 'IS' => __('Inquiry Study', '12-step-meeting-list'),
                 'IW' => __('Inquiry Writing', '12-step-meeting-list'),
                 'LGBTQ' => __('LGBTQ', '12-step-meeting-list'),
-                'TC' => __('Location Temporarily Closed', '12-step-meeting-list'),
                 'M' => __('Men', '12-step-meeting-list'),
                 'MI' => __('Mindfulness Practice', '12-step-meeting-list'),
-                'ONL' => __('Online Meeting', '12-step-meeting-list'),
                 'O' => __('Open', '12-step-meeting-list'),
                 'PR' => __('Process Addictions', '12-step-meeting-list'),
                 'WA' => __('Wheelchair Access', '12-step-meeting-list'),
                 'W' => __('Women', '12-step-meeting-list'),
-            ]),
+            ],
         ],
         'rr' => [
             'abbr' => __('Refuge Recovery', '12-step-meeting-list'),
@@ -1308,7 +1279,7 @@ function tsml_load_config()
                 'M' => __('Men’s meetings are for anyone who identifies as male.', '12-step-meeting-list'),
                 'W' => __('Women’s meetings are for anyone who identifies as female.', '12-step-meeting-list'),
             ],
-            'types' => tsml_languages([
+            'types' => [
                 'BE' => __('Beginners', '12-step-meeting-list'),
                 'BB' => __('Book Study', '12-step-meeting-list'),
                 'CC' => __('Child Care Available', '12-step-meeting-list'),
@@ -1318,74 +1289,66 @@ function tsml_load_config()
                 'IS' => __('Inventory Study', '12-step-meeting-list'),
                 'IW' => __('Inventory Writing', '12-step-meeting-list'),
                 'LGBTQ' => __('LGBTQ', '12-step-meeting-list'),
-                'TC' => __('Location Temporarily Closed', '12-step-meeting-list'),
                 'M' => __('Men', '12-step-meeting-list'),
                 'MI' => __('Mindfulness Practice', '12-step-meeting-list'),
-                'ONL' => __('Online Meeting', '12-step-meeting-list'),
                 'O' => __('Open', '12-step-meeting-list'),
                 'PR' => __('Process Addictions', '12-step-meeting-list'),
                 'WA' => __('Wheelchair Access', '12-step-meeting-list'),
                 'W' => __('Women', '12-step-meeting-list'),
-            ]),
+            ],
         ],
         'saa' => [
             'abbr' => __('SAA', '12-step-meeting-list'),
             'flags' => ['M', 'W', 'TC', 'ONL'], // for /men and /women at end of meeting name (used in tsml_format_name())
             'name' => __('Sex Addicts Anonymous', '12-step-meeting-list'),
-            'types' => tsml_languages([
+            'types' => [
                 'C' => __('Closed', '12-step-meeting-list'),
                 'M' => __('Men', '12-step-meeting-list'),
-                'ONL' => __('Online Meeting', '12-step-meeting-list'),
                 'O' => __('Open', '12-step-meeting-list'),
                 'ST' => __('Step Meeting', '12-step-meeting-list'),
                 'LGBTQ' => __('LGBTQ', '12-step-meeting-list'),
-                'TC' => __('Location Temporarily Closed', '12-step-meeting-list'),
                 'W' => __('Women', '12-step-meeting-list'),
-            ]),
+            ],
         ],
         'sa' => [
             'abbr' => __('SA', '12-step-meeting-list'),
             'flags' => ['M', 'W', 'TC', 'ONL'], // for /men and /women at end of meeting name (used in tsml_format_name())
             'name' => __('Sexaholics Anonymous', '12-step-meeting-list'),
-            'types' => tsml_languages([
+            'types' => [
                 'BE' => __('Beginner', '12-step-meeting-list'),
                 'B' => __('Book Study', '12-step-meeting-list'),
                 'C' => __('Closed', '12-step-meeting-list'),
-                'TC' => __('Location Temporarily Closed', '12-step-meeting-list'),
                 'MED' => __('Meditation', '12-step-meeting-list'),
                 'M' => __('Men', '12-step-meeting-list'),
                 'MI' => __('Mixed', '12-step-meeting-list'),
-                'ONL' => __('Online Meeting', '12-step-meeting-list'),
                 'O' => __('Open', '12-step-meeting-list'),
                 'PP' => __('Primary Purpose', '12-step-meeting-list'),
                 'SP' => __('Speaker', '12-step-meeting-list'),
                 'ST' => __('Step Study', '12-step-meeting-list'),
                 'W' => __('Women', '12-step-meeting-list'),
-            ]),
+            ],
         ],
         'sca' => [
             'abbr' => __('SCA', '12-step-meeting-list'),
             'flags' => ['TC', 'ONL'],
             'name' => __('Sexual Compulsives Anonymous', '12-step-meeting-list'),
-            'types' => tsml_languages([
+            'types' => [
                 'BE' => __('Beginner', '12-step-meeting-list'),
                 'H' => __('Chip', '12-step-meeting-list'),
                 'C' => __('Closed', '12-step-meeting-list'),
                 'COURT' => __('Court', '12-step-meeting-list'),
                 'D' => __('Discussion', '12-step-meeting-list'),
                 'GL' => __('Graphic Language', '12-step-meeting-list'),
-                'TC' => __('Location Temporarily Closed', '12-step-meeting-list'),
-                'ONL' => __('Online Meeting', '12-step-meeting-list'),
                 'O' => __('Open', '12-step-meeting-list'),
                 'SP' => __('Speaker', '12-step-meeting-list'),
                 'ST' => __('Step', '12-step-meeting-list'),
-            ]),
+            ],
         ],
         'slaa' => [
             'abbr' => __('SLAA', '12-step-meeting-list'),
             'flags' => ['M', 'W', 'TC', 'ONL'], // for /men and /women at end of meeting name (used in tsml_format_name())
             'name' => __('Sex and Love Addicts Anonymous', '12-step-meeting-list'),
-            'types' => tsml_languages([
+            'types' => [
                 'AN' => __('Anorexia Focus', '12-step-meeting-list'),
                 'B' => __('Book Study', '12-step-meeting-list'),
                 'H' => __('Chips', '12-step-meeting-list'),
@@ -1396,11 +1359,9 @@ function tsml_load_config()
                 'X' => __('Handicapped Accessible', '12-step-meeting-list'),
                 'HR' => __('Healthy Relationships', '12-step-meeting-list'),
                 'LIT' => __('Literature Reading', '12-step-meeting-list'),
-                'TC' => __('Location Temporarily Closed', '12-step-meeting-list'),
                 'MED' => __('Meditation', '12-step-meeting-list'),
                 'M' => __('Men', '12-step-meeting-list'),
                 'NC' => __('Newcomers', '12-step-meeting-list'),
-                'ONL' => __('Online Meeting', '12-step-meeting-list'),
                 'O' => __('Open', '12-step-meeting-list'),
                 'PRI' => __('Prison', '12-step-meeting-list'),
                 'SP' => __('Speaker', '12-step-meeting-list'),
@@ -1408,7 +1369,7 @@ function tsml_load_config()
                 'D' => __('Topic Discussion', '12-step-meeting-list'),
                 'TR' => __('Tradition Study', '12-step-meeting-list'),
                 'W' => __('Women', '12-step-meeting-list'),
-            ]),
+            ],
         ],
         'sg' => [
             'flags' => [],
@@ -1419,7 +1380,7 @@ function tsml_load_config()
             'abbr' => __('SIA', '12-step-meeting-list'),
             'flags' => ['M', 'W', 'TC', 'ONL'],
             'name' => __('Survivors of Incest Anonymous', '12-step-meeting-list'),
-            'types' => tsml_languages([
+            'types' => [
                 '12x12' => __('12 Steps & 12 Traditions', '12-step-meeting-list'),
                 'ASL' => __('American Sign Language', '12-step-meeting-list'),
                 'B' => __('Big Book', '12-step-meeting-list'),
@@ -1429,11 +1390,9 @@ function tsml_load_config()
                 'NDG' => __('Indigenous', '12-step-meeting-list'),
                 'LGBTQ' => __('LGBTQ', '12-step-meeting-list'),
                 'LIT' => __('Literature', '12-step-meeting-list'),
-                'TC' => __('Location Temporarily Closed', '12-step-meeting-list'),
                 'M' => __('Men', '12-step-meeting-list'),
                 'N' => __('Native American', '12-step-meeting-list'),
                 'BE' => __('Newcomer', '12-step-meeting-list'),
-                'ONL' => __('Online Meeting', '12-step-meeting-list'),
                 'O' => __('Open', '12-step-meeting-list'),
                 'OSH' => __('Open Share Format', '12-step-meeting-list'),
                 'POC' => __('People of Color', '12-step-meeting-list'),
@@ -1445,34 +1404,40 @@ function tsml_load_config()
                 'X' => __('Wheelchair Access', '12-step-meeting-list'),
                 'XB' => __('Wheelchair-Accessible Bathroom', '12-step-meeting-list'),
                 'W' => __('Women', '12-step-meeting-list'),
-            ]),
+            ],
         ],
         'ua' => [
             'abbr' => __('UA', '12-step-meeting-list'),
             'flags' => ['M', 'W', 'TC', 'ONL'], // for /men and /women at end of meeting name (used in tsml_format_name())
             'name' => __('Underearners Anonymous', '12-step-meeting-list'),
-            'types' => tsml_languages([
+            'types' => [
                 'BIPOC' => __('BIPOC', '12-step-meeting-list'),
                 'M' => __('Men', '12-step-meeting-list'),
                 'ST' => __('Steps', '12-step-meeting-list'),
                 'T' => __('Tools', '12-step-meeting-list'),
                 'W' => __('Women', '12-step-meeting-list'),
-            ]),
+            ],
         ],
         'va' => [
             'abbr' => __('VA', '12-step-meeting-list'),
             'flags' => ['M', 'W', 'TC', 'ONL'], // for /men and /women at end of meeting name (used in tsml_format_name())
             'name' => __('Violence Anonymous', '12-step-meeting-list'),
-            'types' => tsml_languages([
+            'types' => [
                 '12x12' => __('12 Steps & 12 Traditions', '12-step-meeting-list'),
                 'C' => __('Closed', '12-step-meeting-list'),
                 'BE' => __('Newcomer', '12-step-meeting-list'),
-                'TC' => __('Location Temporarily Closed', '12-step-meeting-list'),
-                'ONL' => __('Online Meeting', '12-step-meeting-list'),
                 'O' => __('Open', '12-step-meeting-list'),
-            ]),
+            ],
         ],
     ];
+
+    // add 'TC', 'ONL', and languages to all programs
+    foreach ($tsml_programs as $key => $value) {
+        $tsml_programs[$key]['types'] = tsml_languages(array_merge([
+            'ONL' => __('Online Meeting', '12-step-meeting-list'),
+            'TC' => __('Location Temporarily Closed', '12-step-meeting-list'),
+        ], $tsml_programs[$key]['types']));
+    }
 
     // remove 'TC' and 'ONL' from default flags if meeting finder is TSML UI
     if ($tsml_user_interface === 'tsml_ui') {
