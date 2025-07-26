@@ -303,6 +303,7 @@ Yes, you will need to know the key name of the field. Then include an array in y
 
 = 3.17.1 =
 * Fix online meeting issue for Support Groups [more info](https://github.com/code4recovery/12-step-meeting-list/issues/1716)
+* Try to make meetings more discoverable on sites with open sharing settings
 
 = 3.17 =
 * Automated import refreshing [more info](https://github.com/code4recovery/12-step-meeting-list/issues/1286)
