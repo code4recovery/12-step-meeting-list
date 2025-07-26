@@ -129,12 +129,11 @@ if (is_admin()) {
     }
 } else {
     // add plugin version number to header on public site
-
     add_action('wp_head', function () {
         global $tsml_sharing, $tsml_program, $tsml_programs;
         echo '<meta name="12_step_meeting_list" content="' . esc_attr(TSML_VERSION) . '">' . PHP_EOL;
         if ($tsml_sharing == 'open') {
-            echo '<link rel="alternate" type="application/json" title="Meetings Feed" href="' . esc_attr(admin_url('admin-ajax.php?action=meetings')) . '">';
+            echo '<link rel="alternate" type="application/json" title="Meetings Feed" href="' . esc_attr(admin_url('admin-ajax.php?action=meetings')) . '">' . PHP_EOL;
             extract($tsml_programs[$tsml_program]);
             echo '<script type="application/ld+json">' . json_encode([
                 '@context' => 'http://schema.org',
@@ -151,7 +150,7 @@ if (is_admin()) {
                         'httpMethod' => 'GET'
                     ]
                 ]
-            ]) . '</script>';
+            ]) . '</script>' . PHP_EOL;
         }
     });
 }
