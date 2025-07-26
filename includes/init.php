@@ -11,7 +11,7 @@ add_action('init', function () {
 
     // meeting list page
     add_filter('archive_template', function ($template) {
-        global $tsml_user_interface, $tsml_sharing;
+        global $tsml_user_interface;
 
         if (is_post_type_archive('tsml_meeting')) {
             if ($tsml_user_interface == 'tsml_ui') {
@@ -28,7 +28,7 @@ add_action('init', function () {
             }
         }
 
-        if ($tsml_sharing === 'open' && is_post_type_archive('tsml_location')) {
+        if (is_post_type_archive('tsml_location')) {
             return dirname(__FILE__) . '/../templates/archive-locations.php';
         }
 

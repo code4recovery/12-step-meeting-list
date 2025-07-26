@@ -9,7 +9,7 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"POT-Creation-Date: 2025-07-26T15:09:14+00:00\n"
+"POT-Creation-Date: 2025-07-26T17:51:47+00:00\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "X-Generator: WP-CLI 2.12.0\n"
 "X-Domain: 12-step-meeting-list\n"
@@ -499,7 +499,7 @@ msgstr ""
 #: includes/save.php:495
 #: includes/save.php:497
 #: includes/variables.php:1456
-#: templates/archive-meetings.php:647
+#: templates/archive-meetings.php:651
 msgid "Appointment"
 msgstr ""
 
@@ -746,7 +746,7 @@ msgid "Apply this updated address to all meetings at this location"
 msgstr ""
 
 #: includes/admin_meeting.php:326
-#: templates/archive-meetings.php:376
+#: templates/archive-meetings.php:380
 msgid "Map"
 msgstr ""
 
@@ -3371,7 +3371,7 @@ msgid "Any Time"
 msgstr ""
 
 #: templates/archive-meetings.php:151
-#: templates/archive-meetings.php:484
+#: templates/archive-meetings.php:488
 msgid "Upcoming"
 msgstr ""
 
@@ -3391,15 +3391,15 @@ msgstr ""
 msgid "in"
 msgstr ""
 
-#: templates/archive-meetings.php:371
+#: templates/archive-meetings.php:375
 msgid "List"
 msgstr ""
 
-#: templates/archive-meetings.php:401
+#: templates/archive-meetings.php:405
 msgid "Switch to Districts"
 msgstr ""
 
-#: templates/archive-meetings.php:406
+#: templates/archive-meetings.php:410
 msgid "Switch to Regions"
 msgstr ""
 
