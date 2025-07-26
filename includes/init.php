@@ -129,14 +129,31 @@ if (is_admin()) {
     }
 } else {
     // add plugin version number to header on public site
+
     add_action('wp_head', function () {
-        global $tsml_sharing, $tsml_program;
+        global $tsml_sharing, $tsml_program, $tsml_programs;
         echo '<meta name="12_step_meeting_list" content="' . esc_attr(TSML_VERSION) . '">' . PHP_EOL;
-        echo '<meta name="tsml-version" content="' . esc_attr(TSML_VERSION) . '">' . PHP_EOL;
-        echo '<meta name="tsml-program" content="' . esc_attr(strtoupper($tsml_program)) . '">' . PHP_EOL;
         if ($tsml_sharing == 'open') {
-            echo '<link rel="alternate" type="application/json" title="Meetings Feed" href="' . esc_attr(admin_url('admin-ajax.php?action=meetings')) . '">' . PHP_EOL;
-            echo '<link rel="alternate" type="application/json" title="Meetings API" href="' . esc_attr(rest_url('tsml/v1/meetings')) . '">' . PHP_EOL;
+            echo '<link rel="alternate" type="application/json" title="Meetings Feed"
+                href="' . esc_attr(admin_url('admin-ajax.php?action=meetings')) . '">';
+            extract($tsml_programs[$tsml_program]);
+            $schema_content = json_encode([
+                '@context' => 'http://schema.org',
+                '@type' => 'WebAPI',
+                'name' => __(sprintf('%s Meetings API', $abbr), '12-step-meeting-list'),
+                'description' => __(sprintf('API for finding %s meetings.', $name), '12-step-meeting-list'),
+                'url' => rest_url('tsml/v1/meetings'),
+                'documentation' => 'https://github.com/code4recovery/spec?tab=readme-ov-file#specification',
+                'serviceEndpoint' => [
+                    [
+                        '@type' => 'EntryPoint',
+                        'urlTemplate' => rest_url('tsml/v1/meetings'),
+                        'name' => __(sprintf('Get %s Meetings', $abbr), '12-step-meeting-list'),
+                        'httpMethod' => 'GET'
+                    ]
+                ]
+            ]);
+            echo '<script type="application/ld+json">' . $schema_content . '</script>';
         }
     });
 }
