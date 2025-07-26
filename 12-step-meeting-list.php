@@ -46,6 +46,7 @@ include TSML_PATH . '/includes/variables.php';
 
 // include public files
 include TSML_PATH . '/includes/ajax.php';
+include TSML_PATH . '/includes/api.php';
 include TSML_PATH . '/includes/init.php';
 include TSML_PATH . '/includes/shortcodes.php';
 include TSML_PATH . '/includes/widgets.php';
