@@ -293,7 +293,7 @@ function tsml_get_meeting($meeting_id = false)
     if ($meeting->post_parent) {
         $location = get_post($meeting->post_parent);
         $meeting->location_id = $location->ID;
-        $custom = array_merge($custom, get_post_meta($location->ID));
+        $custom = array_merge($custom, (array) get_post_meta($location->ID));
         $meeting->location = htmlentities($location->post_title, ENT_QUOTES);
         $meeting->location_notes = esc_html($location->post_content);
         if ($region = get_the_terms($location, 'tsml_region')) {
