@@ -45,6 +45,8 @@ add_action('admin_init', function () {
 
         $languages = tsml_languages();
 
+        $types = array_diff_key($tsml_programs[$tsml_program]['types'], array_merge($languages, array_fill_keys(['ONL', 'TC'], true)));
+
         $user_language = strtoupper(substr(get_user_locale(), 0, 2));
 
         // time is before the end of april and not currently using temporary closure
@@ -93,7 +95,7 @@ add_action('admin_init', function () {
             tsml_input_text('end_time', @$meeting->end_time, ['class' => 'time', 'data-time-format' => get_option('time_format'), 'disabled' => !strlen(@$meeting->day)]);
             ?>
         </div>
-        <?php if (tsml_program_has_types()) { ?>
+        <?php if (count($types)) { ?>
             <div class="meta_form_row">
                 <label for="types">
                     <?php esc_html_e('Types', '12-step-meeting-list') ?>
@@ -101,12 +103,7 @@ add_action('admin_init', function () {
                 <div
                     class="checkboxes<?php if (!empty($tsml_types_in_use) && count($tsml_types_in_use) !== count($tsml_programs[$tsml_program]['types'])) { ?> has_more<?php } ?>">
                     <?php
-                    foreach ($tsml_programs[$tsml_program]['types'] as $key => $type) {
-                        if ($key == 'ONL' || $key == 'TC' || array_key_exists($key, $languages)) {
-                            // hide "Online Meeting" since it's not manually settable, neither is location Temporarily Closed
-                            continue;
-                        }
-                        ?>
+                    foreach ($types as $key => $type) { ?>
                         <label <?php if (!empty($tsml_types_in_use) && !in_array($key, $tsml_types_in_use)) {
                             echo ' class="not_in_use"';
                         } ?>>

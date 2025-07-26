@@ -4,7 +4,7 @@ Donate link: https://code4recovery.org/contribute
 Requires at least: 3.2
 Requires PHP: 7.2
 Tested up to: 6.8
-Stable tag: 3.17
+Stable tag: 3.17.1
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -300,6 +300,9 @@ Yes, you will need to know the key name of the field. Then include an array in y
 1. Edit location
 
 == Changelog ==
+
+= 3.17.1 =
+* Fix online meeting issue for Support Groups [more info](https://github.com/code4recovery/12-step-meeting-list/issues/1716)
 
 = 3.17 =
 * Automated import refreshing [more info](https://github.com/code4recovery/12-step-meeting-list/issues/1286)
