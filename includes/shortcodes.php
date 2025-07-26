@@ -227,39 +227,3 @@ add_shortcode('tsml_regions_list', function () {
 
     return '<h3>Regions</h3>' . get_regions();
 });
-
-// output a list of meetings for SEO
-add_shortcode('tsml_index', function () {
-    global $tsml_days;
-    $return = '
-    <p>This page is intended for web crawlers. To find a meeting, please visit our <a
-            href="' . esc_url(get_post_type_archive_link('tsml_meeting')) . '">meetings page</a>.</p>
-    <table border="1" cellpadding="5" cellspacing="0">
-        <thead>
-            <tr>
-                <th>Day</th>
-                <th>Time</th>
-                <th>Meeting</th>
-                <th>Location</th>
-                <th>Formatted Address</th>
-                <th>Region</th>
-                <th>Sub-Region</th>
-            </tr>
-        </thead>
-        <tbody>';
-
-    $meetings = tsml_get_meetings();
-    foreach ($meetings as $meeting) {
-        $return .= '<tr>';
-        $return .= '<td>' . @$tsml_days[$meeting['day']] . '</td>';
-        $return .= '<td>' . tsml_format_time(@$meeting['time']) . '</td>';
-        $return .= '<td><a href="' . esc_url($meeting['url']) . '">' . esc_html($meeting['name']) . '</a></td>';
-        $return .= '<td>' . esc_html($meeting['location'] ?? '') . '</td>';
-        $return .= '<td>' . esc_html($meeting['formatted_address'] ?? '') . '</td>';
-        $return .= '<td>' . esc_html($meeting['region'] ?? '') . '</td>';
-        $return .= '<td>' . esc_html($meeting['sub_region'] ?? '') . '</td>';
-        $return .= '</tr>';
-    }
-    $return .= '</tbody></table>';
-    return $return;
-});

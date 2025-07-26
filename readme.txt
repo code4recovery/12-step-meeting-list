@@ -302,7 +302,7 @@ Yes, you will need to know the key name of the field. Then include an array in y
 == Changelog ==
 
 = 3.17.2 =
-* Try to make meetings more discoverable for SEO and AI
+* Try to make meeting data more discoverable for SEO and AI
 
 = 3.17.1 =
 * Fix online meeting issue for Support Groups [more info](https://github.com/code4recovery/12-step-meeting-list/issues/1716)
