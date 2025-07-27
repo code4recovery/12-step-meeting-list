@@ -68,9 +68,9 @@ $schema = [
             $entry['location']['description'] = $meeting['location_notes'];
         }
         return $entry;
-    }, array_filter($meetings, function ($meeting) {
+    }, array_values(array_filter($meetings, function ($meeting) {
         return !empty($meeting['name']) && !empty($meeting['day']) && !empty($meeting['time']);
-    })),
+    }))),
 ];
 ?><!doctype html>
 <html lang="<?php echo esc_attr(substr(get_bloginfo('language'), 0, 2)); ?>">
