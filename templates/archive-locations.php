@@ -89,7 +89,7 @@ $schema = [
         }
         return $entry;
     }, array_values(array_filter($meetings, function ($meeting) {
-        return !empty($meeting['name']) && !empty($meeting['day']) && !empty($meeting['time']);
+        return !empty($meeting['name']) && isset($meeting['day']) && !empty($meeting['time']);
     }))),
 ];
 ?><!doctype html>
