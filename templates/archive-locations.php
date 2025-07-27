@@ -1,4 +1,8 @@
 <?php
+$title = sprintf(
+    __('Index of %s Meetings', '12-step-meeting-list'),
+    $tsml_programs[$tsml_program]['name']
+);
 
 $meetings = tsml_get_meetings();
 
@@ -35,7 +39,7 @@ $schema = [
                 '@type' => 'Place',
                 'name' => @$meeting['location'],
                 'address' => @$meeting['formatted_address'],
-                'geo' => ('yes' == $meeting['approximate'] ?
+                'geo' => ('yes' == $meeting['approximate']) ?
                     [
                         '@type' => 'GeoCircle',
                         'geoMidpoint' => [
@@ -70,26 +74,32 @@ $schema = [
 ];
 ?>
 <!doctype html>
-<html lang="<?php echo substr(get_locale(), 0, 2); ?>">
 
+<html lang="<?php echo esc_attr(substr(get_bloginfo('language'), 0, 2)); ?>">
 <head>
+    <meta charset="utf-8">
     <title><?php echo esc_html($title); ?></title>
     <script type="application/ld+json">
-        <?php echo json_encode($schema); ?>
+        <?php echo json_encode($schema, JSON_PRETTY_PRINT); ?>
     </script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            line-height: 1.6;
+            font-size: 16px;
+            margin: 1em;
+            color: #333;
+        }
+    </style>
 </head>
-
 <body>
-
     <h1><?php echo esc_html($title); ?></h1>
-
     <p>
-        <?php _e(sprintf(
-            'This page is intended for web crawlers. To find a meeting, please visit our <a href="%s">meetings page</a>.',
+        <?php echo sprintf(
+            __('This page is intended for web crawlers. To find a meeting, please visit our <a href="%s">meetings page</a>.', '12-step-meeting-list'),
             esc_url(get_post_type_archive_link('tsml_meeting'))
-        ), '12-step-meeting-list'); ?>
+        ); ?>
     </p>
-
     <table border="1" cellpadding="5" cellspacing="0">
         <thead>
             <tr>
