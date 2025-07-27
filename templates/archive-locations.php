@@ -6,7 +6,7 @@ $title = __(sprintf('Index of %s Meetings', $tsml_programs[$tsml_program]['name'
 
 $days = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
 
-$website_timezone = get_option('timezone_string');
+$website_timezone = $tsml_timezone ? $tsml_timezone : get_option('timezone_string');
 
 $schema = [
     '@context' => 'https://schema.org',
@@ -18,8 +18,7 @@ $schema = [
             $meeting['end_time'] = DateTime::createFromFormat('H:i', $meeting['end_time']);
         }
         $timezone = $meeting['timezone'] ?? $website_timezone;
-
-        return [
+        $entry = [
             '@type' => 'Event',
             'name' => $meeting['name'],
             'url' => @$meeting['url'],
@@ -36,13 +35,35 @@ $schema = [
                 '@type' => 'Place',
                 'name' => @$meeting['location'],
                 'address' => @$meeting['formatted_address'],
-                'geo' => [
-                    '@type' => $meeting['approximate'] ? 'GeoCircle' : 'GeoCoordinates',
-                    'latitude' => @$meeting['latitude'],
-                    'longitude' => @$meeting['longitude']
-                ]
+                'geo' => ('yes' == $meeting['approximate'] ?
+                    [
+                        '@type' => 'GeoCircle',
+                        'geoMidpoint' => [
+                            '@type' => 'GeoCoordinates',
+                            'latitude' => @$meeting['latitude'],
+                            'longitude' => @$meeting['longitude']
+                        ],
+                        'geoRadius' => 50
+                    ] :
+                    [
+                        '@type' => 'GeoCoordinates',
+                        'latitude' => @$meeting['latitude'],
+                        'longitude' => @$meeting['longitude']
+                    ]
             ]
         ];
+        if (!empty($meeting['group'])) {
+            $entry['organizer'] = [
+                '@type' => 'Organization',
+                'name' => $meeting['group'],
+                'url' => @$meeting['group_url'],
+                'description' => @$meeting['group_notes']
+            ];
+        }
+        if (!empty($meeting['location_notes'])) {
+            $entry['location']['description'] = $meeting['location_notes'];
+        }
+        return $entry;
     }, array_filter($meetings, function ($meeting) {
         return !empty($meeting['name']) && !empty($meeting['day']) && !empty($meeting['time']);
     })),
