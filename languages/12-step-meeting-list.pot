@@ -9,7 +9,7 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"POT-Creation-Date: 2025-07-26T17:51:47+00:00\n"
+"POT-Creation-Date: 2025-07-27T04:17:00+00:00\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "X-Generator: WP-CLI 2.12.0\n"
 "X-Domain: 12-step-meeting-list\n"
@@ -466,11 +466,13 @@ msgstr ""
 #: includes/functions.php:535
 #: includes/shortcodes.php:81
 #: includes/variables.php:668
+#: templates/archive-locations.php:70
 msgid "Meeting"
 msgstr ""
 
 #: includes/admin_lists.php:114
 #: includes/admin_meeting.php:75
+#: templates/archive-locations.php:68
 msgid "Day"
 msgstr ""
 
@@ -479,6 +481,7 @@ msgstr ""
 #: includes/shortcodes.php:80
 #: includes/variables.php:666
 #: includes/variables.php:995
+#: templates/archive-locations.php:68
 msgid "Time"
 msgstr ""
 
@@ -489,6 +492,7 @@ msgstr ""
 #: includes/functions.php:489
 #: includes/shortcodes.php:83
 #: includes/variables.php:671
+#: templates/archive-locations.php:73
 msgid "Region"
 msgstr ""
 
@@ -587,6 +591,7 @@ msgstr ""
 #: includes/admin_meeting.php:101
 #: includes/ajax.php:228
 #: includes/variables.php:673
+#: templates/archive-locations.php:72
 msgid "Types"
 msgstr ""
 
@@ -704,6 +709,7 @@ msgstr ""
 #: includes/ajax.php:236
 #: includes/functions.php:556
 #: includes/shortcodes.php:82
+#: templates/archive-locations.php:71
 msgid "Location"
 msgstr ""
 
@@ -3316,6 +3322,16 @@ msgstr ""
 
 #: includes/widgets_init.php:9
 msgid "Location Detail Bottom"
+msgstr ""
+
+#: templates/archive-locations.php:3
+#, php-format
+msgid "Index of %s Meetings"
+msgstr ""
+
+#: templates/archive-locations.php:60
+#, php-format
+msgid "This page is intended for web crawlers. To find a meeting, please visit our <a href=\"%s\">meetings page</a>."
 msgstr ""
 
 #: templates/archive-meetings.php:8
