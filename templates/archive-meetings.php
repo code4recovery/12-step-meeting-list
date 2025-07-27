@@ -315,6 +315,10 @@ tsml_header();
 ?>
 <div id="tsml">
 
+    <a hidden href="<?php echo esc_url(get_post_type_archive_link('tsml_location')) ?>">
+        <?php _e(sprintf('Index of %s Meetings', $tsml_programs[$tsml_program]['name']), '12-step-meeting-list') ?>
+    </a>
+
     <div id="meetings" data-view="<?php echo esc_attr($view) ?>" data-mode="<?php echo esc_attr($mode) ?>"
         tax-mode="<?php echo $district ? 'district' : 'region' ?>"
         class="container<?php if (!count($meetings)) { ?> empty<?php } ?>" role="main">

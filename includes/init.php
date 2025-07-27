@@ -27,6 +27,11 @@ add_action('init', function () {
                 return dirname(__FILE__) . '/../templates/archive-meetings.php';
             }
         }
+
+        if (is_post_type_archive('tsml_location')) {
+            return dirname(__FILE__) . '/../templates/archive-locations.php';
+        }
+
         return $template;
     });
 
