@@ -9,7 +9,7 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"POT-Creation-Date: 2025-07-27T16:48:01+00:00\n"
+"POT-Creation-Date: 2025-07-27T16:49:58+00:00\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "X-Generator: WP-CLI 2.12.0\n"
 "X-Domain: 12-step-meeting-list\n"
@@ -466,11 +466,13 @@ msgstr ""
 #: includes/functions.php:535
 #: includes/shortcodes.php:81
 #: includes/variables.php:668
+#: templates/archive-locations.php:116
 msgid "Meeting"
 msgstr ""
 
 #: includes/admin_lists.php:114
 #: includes/admin_meeting.php:75
+#: templates/archive-locations.php:114
 msgid "Day"
 msgstr ""
 
@@ -479,6 +481,7 @@ msgstr ""
 #: includes/shortcodes.php:80
 #: includes/variables.php:666
 #: includes/variables.php:995
+#: templates/archive-locations.php:115
 msgid "Time"
 msgstr ""
 
@@ -489,6 +492,7 @@ msgstr ""
 #: includes/functions.php:489
 #: includes/shortcodes.php:83
 #: includes/variables.php:671
+#: templates/archive-locations.php:119
 msgid "Region"
 msgstr ""
 
@@ -587,6 +591,7 @@ msgstr ""
 #: includes/admin_meeting.php:101
 #: includes/ajax.php:228
 #: includes/variables.php:673
+#: templates/archive-locations.php:121
 msgid "Types"
 msgstr ""
 
@@ -704,6 +709,7 @@ msgstr ""
 #: includes/ajax.php:236
 #: includes/functions.php:556
 #: includes/shortcodes.php:82
+#: templates/archive-locations.php:117
 msgid "Location"
 msgstr ""
 
@@ -1297,36 +1303,43 @@ msgstr ""
 
 #: includes/functions.php:119
 #: includes/variables.php:679
+#: templates/archive-locations.php:12
 msgid "Sunday"
 msgstr ""
 
 #: includes/functions.php:120
 #: includes/variables.php:680
+#: templates/archive-locations.php:13
 msgid "Monday"
 msgstr ""
 
 #: includes/functions.php:121
 #: includes/variables.php:681
+#: templates/archive-locations.php:14
 msgid "Tuesday"
 msgstr ""
 
 #: includes/functions.php:122
 #: includes/variables.php:682
+#: templates/archive-locations.php:15
 msgid "Wednesday"
 msgstr ""
 
 #: includes/functions.php:123
 #: includes/variables.php:683
+#: templates/archive-locations.php:16
 msgid "Thursday"
 msgstr ""
 
 #: includes/functions.php:124
 #: includes/variables.php:684
+#: templates/archive-locations.php:17
 msgid "Friday"
 msgstr ""
 
 #: includes/functions.php:125
 #: includes/variables.php:685
+#: templates/archive-locations.php:18
 msgid "Saturday"
 msgstr ""
 
@@ -3323,9 +3336,25 @@ msgstr ""
 msgid "Index of %s Meetings"
 msgstr ""
 
-#: templates/archive-locations.php:99
+#: templates/archive-locations.php:107
 #, php-format
 msgid "This page is intended for web crawlers. To find a meeting, please visit our <a href=\"%s\">meetings page</a>."
+msgstr ""
+
+#: templates/archive-locations.php:118
+msgid "Formatted Address"
+msgstr ""
+
+#: templates/archive-locations.php:120
+msgid "Sub-Region"
+msgstr ""
+
+#: templates/archive-locations.php:122
+msgid "Latitude"
+msgstr ""
+
+#: templates/archive-locations.php:123
+msgid "Longitude"
 msgstr ""
 
 #: templates/archive-meetings.php:8

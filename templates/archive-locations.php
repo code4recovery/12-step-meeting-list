@@ -8,7 +8,15 @@ $meetings = tsml_get_meetings();
 
 $title = __(sprintf('Index of %s Meetings', $tsml_programs[$tsml_program]['name']), '12-step-meeting-list');
 
-$days = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+$days = [
+    __('Sunday', '12-step-meeting-list'),
+    __('Monday', '12-step-meeting-list'),
+    __('Tuesday', '12-step-meeting-list'),
+    __('Wednesday', '12-step-meeting-list'),
+    __('Thursday', '12-step-meeting-list'),
+    __('Friday', '12-step-meeting-list'),
+    __('Saturday', '12-step-meeting-list')
+];
 
 $website_timezone = $tsml_timezone ? $tsml_timezone : get_option('timezone_string');
 
@@ -103,16 +111,16 @@ $schema = [
     <table border="1" cellpadding="5" cellspacing="0">
         <thead>
             <tr>
-                <th>Day</th>
-                <th>Time</th>
-                <th>Meeting</th>
-                <th>Location</th>
-                <th>Formatted Address</th>
-                <th>Region</th>
-                <th>Sub-Region</th>
-                <th>Types</th>
-                <th>Latitude</th>
-                <th>Longitude</th>
+                <th><?php _e('Day', '12-step-meeting-list'); ?></th>
+                <th><?php _e('Time', '12-step-meeting-list'); ?></th>
+                <th><?php _e('Meeting', '12-step-meeting-list'); ?></th>
+                <th><?php _e('Location', '12-step-meeting-list'); ?></th>
+                <th><?php _e('Formatted Address', '12-step-meeting-list'); ?></th>
+                <th><?php _e('Region', '12-step-meeting-list'); ?></th>
+                <th><?php _e('Sub-Region', '12-step-meeting-list'); ?></th>
+                <th><?php _e('Types', '12-step-meeting-list'); ?></th>
+                <th><?php _e('Latitude', '12-step-meeting-list'); ?></th>
+                <th><?php _e('Longitude', '12-step-meeting-list'); ?></th>
             </tr>
         </thead>
         <tbody>
