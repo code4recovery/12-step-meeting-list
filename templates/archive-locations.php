@@ -18,12 +18,23 @@ $days = [
     __('Saturday', '12-step-meeting-list')
 ];
 
+$days_en = [
+    'Sunday',
+    'Monday',
+    'Tuesday',
+    'Wednesday',
+    'Thursday',
+    'Friday',
+    'Saturday'
+];
+
 $website_timezone = $tsml_timezone ? $tsml_timezone : get_option('timezone_string');
 
 $schema = [
     '@context' => 'https://schema.org',
-    '@graph' => array_map(function ($meeting) use ($days, $website_timezone) {
+    '@graph' => array_map(function ($meeting) use ($days_en, $website_timezone) {
         $meeting['time'] = DateTime::createFromFormat('H:i', $meeting['time']);
+        $meeting['start_date'] = new DateTime('this ' . $days_en[$meeting['day']]);
         if (empty($meeting['end_time'])) {
             $meeting['end_time'] = $meeting['time']->modify('+1 hour');
         } else {
@@ -38,7 +49,8 @@ $schema = [
             "eventSchedule" => [
                 "@type" => "Schedule",
                 "repeatFrequency" => "P1W",
-                "byDay" => "https://schema.org/" . $days[$meeting['day']],
+                "byDay" => "https://schema.org/" . $days_en[$meeting['day']],
+                "startDate" => $meeting['start_date']->format('Y-m-d'),
                 "startTime" => $meeting['time']->format('H:i'),
                 "endTime" => $meeting['end_time']->format('H:i'),
                 "scheduleTimezone" => $timezone
@@ -77,7 +89,7 @@ $schema = [
         }
         return $entry;
     }, array_values(array_filter($meetings, function ($meeting) {
-        return !empty($meeting['name']) && !empty($meeting['day']) && !empty($meeting['time']);
+        return !empty($meeting['name']) && isset($meeting['day']) && !empty($meeting['time']);
     }))),
 ];
 ?><!doctype html>
