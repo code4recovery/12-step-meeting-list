@@ -2,14 +2,14 @@
 # This file is distributed under the GPLv2 or later.
 msgid ""
 msgstr ""
-"Project-Id-Version: 12 Step Meeting List 3.18\n"
-"Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/trunk\n"
+"Project-Id-Version: 12 Step Meeting List 3.18.1\n"
+"Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/12-step-meeting-list\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"POT-Creation-Date: 2025-07-27T16:49:58+00:00\n"
+"POT-Creation-Date: 2025-08-02T19:18:54+00:00\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "X-Generator: WP-CLI 2.12.0\n"
 "X-Domain: 12-step-meeting-list\n"
@@ -466,13 +466,13 @@ msgstr ""
 #: includes/functions.php:535
 #: includes/shortcodes.php:81
 #: includes/variables.php:668
-#: templates/archive-locations.php:116
+#: templates/archive-locations.php:128
 msgid "Meeting"
 msgstr ""
 
 #: includes/admin_lists.php:114
 #: includes/admin_meeting.php:75
-#: templates/archive-locations.php:114
+#: templates/archive-locations.php:126
 msgid "Day"
 msgstr ""
 
@@ -481,7 +481,7 @@ msgstr ""
 #: includes/shortcodes.php:80
 #: includes/variables.php:666
 #: includes/variables.php:995
-#: templates/archive-locations.php:115
+#: templates/archive-locations.php:127
 msgid "Time"
 msgstr ""
 
@@ -492,7 +492,7 @@ msgstr ""
 #: includes/functions.php:489
 #: includes/shortcodes.php:83
 #: includes/variables.php:671
-#: templates/archive-locations.php:119
+#: templates/archive-locations.php:131
 msgid "Region"
 msgstr ""
 
@@ -591,7 +591,7 @@ msgstr ""
 #: includes/admin_meeting.php:101
 #: includes/ajax.php:228
 #: includes/variables.php:673
-#: templates/archive-locations.php:121
+#: templates/archive-locations.php:133
 msgid "Types"
 msgstr ""
 
@@ -709,7 +709,7 @@ msgstr ""
 #: includes/ajax.php:236
 #: includes/functions.php:556
 #: includes/shortcodes.php:82
-#: templates/archive-locations.php:117
+#: templates/archive-locations.php:129
 msgid "Location"
 msgstr ""
 
@@ -763,7 +763,7 @@ msgid "Enable maps on the <a href=\"%s\">Import & Settings</a> page."
 msgstr ""
 
 #: includes/admin_meeting.php:343
-#: includes/admin_settings.php:560
+#: includes/admin_settings.php:559
 msgid "Timezone"
 msgstr ""
 
@@ -1004,22 +1004,22 @@ msgid "If you enable SSL (https), your users will be able to search near their l
 msgstr ""
 
 #: includes/admin_settings.php:285
-#: includes/admin_settings.php:604
+#: includes/admin_settings.php:603
 msgid "Enter Mapbox access token here"
 msgstr ""
 
 #: includes/admin_settings.php:288
 #: includes/admin_settings.php:317
 #: includes/admin_settings.php:507
-#: includes/admin_settings.php:605
-#: includes/admin_settings.php:621
-#: includes/admin_settings.php:677
-#: includes/admin_settings.php:713
+#: includes/admin_settings.php:604
+#: includes/admin_settings.php:620
+#: includes/admin_settings.php:676
+#: includes/admin_settings.php:712
 msgid "Add"
 msgstr ""
 
 #: includes/admin_settings.php:314
-#: includes/admin_settings.php:620
+#: includes/admin_settings.php:619
 msgid "Enter Google API key here"
 msgstr ""
 
@@ -1144,6 +1144,11 @@ msgstr ""
 msgid "You may allow access to your meeting data for specific purposes, such as the Meeting Guide App."
 msgstr ""
 
+#: includes/admin_settings.php:490
+#: includes/admin_settings.php:521
+msgid "Alternate Feed"
+msgstr ""
+
 #: includes/admin_settings.php:506
 msgid "Meeting Guide"
 msgstr ""
@@ -1156,90 +1161,90 @@ msgstr ""
 msgid "The following feed contains your publicly available meeting information."
 msgstr ""
 
-#: includes/admin_settings.php:521
+#: includes/admin_settings.php:520
 msgid "Public Data Source"
 msgstr ""
 
-#: includes/admin_settings.php:532
+#: includes/admin_settings.php:531
 msgid "User Interface Display"
 msgstr ""
 
 #. translators: %s is a link to the meeting finder page
-#: includes/admin_settings.php:537
+#: includes/admin_settings.php:536
 #, php-format
 msgid "Please select the user interface that is right for your <a href=\"%s\" target=\"_blank\">meeting finder page</a>. Choose between our latest design that we call <b>TSML UI</b> or stay with the standard <b>Legacy UI</b>."
 msgstr ""
 
-#: includes/admin_settings.php:546
+#: includes/admin_settings.php:545
 msgid "Legacy UI"
 msgstr ""
 
-#: includes/admin_settings.php:549
+#: includes/admin_settings.php:548
 msgid "TSML UI"
 msgstr ""
 
-#: includes/admin_settings.php:564
+#: includes/admin_settings.php:563
 msgid "If your site features meetings in a variety of timezones, leave this blank and meetings will be displayed in the user's timezone. This requires a timezone to be set on each meeting location."
 msgstr ""
 
-#: includes/admin_settings.php:568
+#: includes/admin_settings.php:567
 msgid "If your site features meetings in a single timezone, select it here and meetings will be displayed in that timezone. There is no need to specify a timezone for each meeting."
 msgstr ""
 
-#: includes/admin_settings.php:577
+#: includes/admin_settings.php:576
 msgid "Timezone settings are only relevant to the TSML UI interface."
 msgstr ""
 
-#: includes/admin_settings.php:587
+#: includes/admin_settings.php:586
 msgid "Maps"
 msgstr ""
 
-#: includes/admin_settings.php:590
+#: includes/admin_settings.php:589
 msgid "Display of maps requires an authorization key from <strong><a href=\"https://www.mapbox.com/\" target=\"_blank\">Mapbox</a></strong> or <strong><a href=\"https://console.cloud.google.com/home/\" target=\"_blank\">Google</a></strong>."
 msgstr ""
 
-#: includes/admin_settings.php:593
+#: includes/admin_settings.php:592
 msgid "Please note that TSML UI only supports Mapbox."
 msgstr ""
 
-#: includes/admin_settings.php:598
+#: includes/admin_settings.php:597
 msgid "Mapbox Access Token"
 msgstr ""
 
-#: includes/admin_settings.php:605
-#: includes/admin_settings.php:621
+#: includes/admin_settings.php:604
+#: includes/admin_settings.php:620
 msgid "Update"
 msgstr ""
 
-#: includes/admin_settings.php:612
+#: includes/admin_settings.php:611
 msgid "Google Maps API Key"
 msgstr ""
 
-#: includes/admin_settings.php:615
+#: includes/admin_settings.php:614
 msgid "Be sure to enable JavaScript Maps API (<a href=\"https://developers.google.com/maps/documentation/javascript/get-api-key\" target=\"_blank\">read more</a>)."
 msgstr ""
 
-#: includes/admin_settings.php:634
+#: includes/admin_settings.php:633
 msgid "About Us"
 msgstr ""
 
-#: includes/admin_settings.php:643
+#: includes/admin_settings.php:642
 msgid "Email Addresses"
 msgstr ""
 
-#: includes/admin_settings.php:648
+#: includes/admin_settings.php:647
 msgid "User Feedback Emails"
 msgstr ""
 
-#: includes/admin_settings.php:651
+#: includes/admin_settings.php:650
 msgid "Enable a meeting info feedback form by adding email addresses here."
 msgstr ""
 
-#: includes/admin_settings.php:684
+#: includes/admin_settings.php:683
 msgid "Change Notification Emails"
 msgstr ""
 
-#: includes/admin_settings.php:687
+#: includes/admin_settings.php:686
 msgid "Receive notifications of meeting changes at the email addresses below."
 msgstr ""
 
@@ -1547,176 +1552,176 @@ msgstr ""
 msgid "No groups found."
 msgstr ""
 
-#: includes/functions.php:1003
+#: includes/functions.php:1007
 msgid "Afrikaans"
 msgstr ""
 
-#: includes/functions.php:1004
+#: includes/functions.php:1008
 msgid "Amharic"
 msgstr ""
 
-#: includes/functions.php:1005
+#: includes/functions.php:1009
 msgid "Arabic"
 msgstr ""
 
-#: includes/functions.php:1006
+#: includes/functions.php:1010
 msgid "Bulgarian"
 msgstr ""
 
-#: includes/functions.php:1007
+#: includes/functions.php:1011
 msgid "Danish"
 msgstr ""
 
-#: includes/functions.php:1008
+#: includes/functions.php:1012
 msgid "German"
 msgstr ""
 
-#: includes/functions.php:1009
+#: includes/functions.php:1013
 msgid "Greek"
 msgstr ""
 
-#: includes/functions.php:1010
+#: includes/functions.php:1014
 msgid "English"
 msgstr ""
 
-#: includes/functions.php:1011
+#: includes/functions.php:1015
 msgid "Spanish"
 msgstr ""
 
-#: includes/functions.php:1012
+#: includes/functions.php:1016
 msgid "Persian"
 msgstr ""
 
-#: includes/functions.php:1013
+#: includes/functions.php:1017
 msgid "Finnish"
 msgstr ""
 
-#: includes/functions.php:1014
+#: includes/functions.php:1018
 msgid "French"
 msgstr ""
 
-#: includes/functions.php:1015
+#: includes/functions.php:1019
 msgid "Hebrew"
 msgstr ""
 
-#: includes/functions.php:1016
+#: includes/functions.php:1020
 msgid "Hindi"
 msgstr ""
 
-#: includes/functions.php:1017
+#: includes/functions.php:1021
 msgid "Croatian"
 msgstr ""
 
-#: includes/functions.php:1018
+#: includes/functions.php:1022
 msgid "Hungarian"
 msgstr ""
 
-#: includes/functions.php:1019
+#: includes/functions.php:1023
 msgid "Icelandic"
 msgstr ""
 
-#: includes/functions.php:1020
+#: includes/functions.php:1024
 msgid "Italian"
 msgstr ""
 
-#: includes/functions.php:1021
+#: includes/functions.php:1025
 msgid "Japanese"
 msgstr ""
 
-#: includes/functions.php:1022
+#: includes/functions.php:1026
 msgid "Georgian"
 msgstr ""
 
-#: includes/functions.php:1023
+#: includes/functions.php:1027
 msgid "Korean"
 msgstr ""
 
-#: includes/functions.php:1024
+#: includes/functions.php:1028
 msgid "Lithuanian"
 msgstr ""
 
-#: includes/functions.php:1025
+#: includes/functions.php:1029
 msgid "Malayalam"
 msgstr ""
 
-#: includes/functions.php:1026
+#: includes/functions.php:1030
 msgid "Maltese"
 msgstr ""
 
-#: includes/functions.php:1027
+#: includes/functions.php:1031
 msgid "Nepali"
 msgstr ""
 
-#: includes/functions.php:1028
+#: includes/functions.php:1032
 msgid "Norwegian"
 msgstr ""
 
-#: includes/functions.php:1029
+#: includes/functions.php:1033
 msgid "Dutch"
 msgstr ""
 
-#: includes/functions.php:1030
+#: includes/functions.php:1034
 msgid "Polish"
 msgstr ""
 
-#: includes/functions.php:1031
+#: includes/functions.php:1035
 msgid "Portuguese"
 msgstr ""
 
-#: includes/functions.php:1032
+#: includes/functions.php:1036
 msgid "Punjabi"
 msgstr ""
 
-#: includes/functions.php:1033
+#: includes/functions.php:1037
 msgid "Russian"
 msgstr ""
 
-#: includes/functions.php:1034
+#: includes/functions.php:1038
 msgid "Slovak"
 msgstr ""
 
-#: includes/functions.php:1035
+#: includes/functions.php:1039
 msgid "Slovenian"
 msgstr ""
 
-#: includes/functions.php:1036
+#: includes/functions.php:1040
 msgid "Swedish"
 msgstr ""
 
-#: includes/functions.php:1037
+#: includes/functions.php:1041
 msgid "Thai"
 msgstr ""
 
-#: includes/functions.php:1038
+#: includes/functions.php:1042
 msgid "Tagalog"
 msgstr ""
 
-#: includes/functions.php:1039
+#: includes/functions.php:1043
 msgid "Turkish"
 msgstr ""
 
-#: includes/functions.php:1040
+#: includes/functions.php:1044
 msgid "Ukrainian"
 msgstr ""
 
 #. translators: %s is the permission required
-#: includes/functions.php:1222
-#: includes/functions.php:1235
+#: includes/functions.php:1226
+#: includes/functions.php:1239
 #, php-format
 msgid "You do not have sufficient permissions to access this page (<code>%s</code>)."
 msgstr ""
 
 #. translators: %s is the name of the data source
-#: includes/functions.php:1452
+#: includes/functions.php:1456
 #, php-format
 msgid "Please sign in to your website and refresh the <strong>%s</strong> feed on the Import & Export page."
 msgstr ""
 
-#: includes/functions.php:1455
+#: includes/functions.php:1459
 msgid "Go to Import & Export page"
 msgstr ""
 
-#: includes/functions.php:1457
+#: includes/functions.php:1461
 msgid "Data Source Changes Detected"
 msgstr ""
 
@@ -3336,24 +3341,24 @@ msgstr ""
 msgid "Index of %s Meetings"
 msgstr ""
 
-#: templates/archive-locations.php:107
+#: templates/archive-locations.php:119
 #, php-format
 msgid "This page is intended for web crawlers. To find a meeting, please visit our <a href=\"%s\">meetings page</a>."
 msgstr ""
 
-#: templates/archive-locations.php:118
+#: templates/archive-locations.php:130
 msgid "Formatted Address"
 msgstr ""
 
-#: templates/archive-locations.php:120
+#: templates/archive-locations.php:132
 msgid "Sub-Region"
 msgstr ""
 
-#: templates/archive-locations.php:122
+#: templates/archive-locations.php:134
 msgid "Latitude"
 msgstr ""
 
-#: templates/archive-locations.php:123
+#: templates/archive-locations.php:135
 msgid "Longitude"
 msgstr ""
 

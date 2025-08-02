@@ -603,6 +603,10 @@ function tsml_custom_post_types()
             'capabilities' => ['create_posts' => false],
         ]
     );
+
+    // /tsmlfeed/[key] or /tsmlfeed
+    add_rewrite_rule( '^tsmlfeed/([A-Za-z0-9]{12,32})/?$', 'index.php?tsml_feed=$matches[1]', 'top' );
+    add_rewrite_rule( '^tsmlfeed/?$', 'index.php?tsml_feed=open', 'top' );
 }
 
 /**
