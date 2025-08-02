@@ -35,7 +35,6 @@ add_action('init', function () {
         return $template;
     });
 
-
     // meeting & location detail pages
     add_filter('single_template', function ($template) {
         global $post, $tsml_user_interface;
@@ -85,9 +84,7 @@ add_action('init', function () {
         return $classes;
     });
 
-    add_rewrite_rule( '^tsmlfeed/([A-Za-z0-9]{12,32})/?$', 'index.php?tsml_feed=$matches[1]', 'top' );
-    add_rewrite_rule( '^tsmlfeed/?$', 'index.php?tsml_feed=open', 'top' );
-
+    // support /tsmlfeed path
     add_filter( 'query_vars', function( $query_vars ) {
         $query_vars[] = 'tsml_feed';
         return $query_vars;
@@ -95,19 +92,14 @@ add_action('init', function () {
     
     add_filter( 'template_include', function( $template ) {
         global $tsml_sharing, $tsml_sharing_keys;
-
         $tsml_feed = get_query_var( 'tsml_feed' );
-
-        if ($tsml_feed) {
-            if ('open' === $tsml_sharing || array_key_exists($tsml_feed, $tsml_sharing_keys)) {
-                if (!headers_sent()) {
-                    header('Access-Control-Allow-Origin: *');
-                }
-                wp_send_json(tsml_get_meetings(empty($_POST) ? $_GET : $_POST));
-                exit;
+        if ($tsml_feed && ('open' === $tsml_sharing || array_key_exists($tsml_feed, $tsml_sharing_keys))) {
+            if (!headers_sent()) {
+                header('Access-Control-Allow-Origin: *');
             }
+            wp_send_json(tsml_get_meetings(empty($_POST) ? $_GET : $_POST));
+            exit;
         }
-
         return $template;
     } );
 

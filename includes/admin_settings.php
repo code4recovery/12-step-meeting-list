@@ -478,16 +478,16 @@ if (!function_exists('tsml_settings_page')) {
                                 <?php if (count($tsml_sharing_keys)) { ?>
                                     <table class="tsml_sharing_list">
                                         <?php foreach ($tsml_sharing_keys as $key => $name) {
-                                            $address = admin_url('admin-ajax.php?') . http_build_query([
+                                            $feed_url = site_url('/tsmlfeed/' . $key);
+                                            $feed_url_ajax = admin_url('admin-ajax.php?') . http_build_query([
                                                 'action' => 'meetings',
                                                 'key' => $key,
                                             ]);
                                             ?>
                                             <tr>
                                                 <td>
-                                                    <a href="<?php echo esc_attr($address) ?>" target="_blank">
-                                                        <?php echo esc_html($name) ?>
-                                                    </a>
+                                                    <a href="<?php echo esc_attr($feed_url_ajax) ?>" target="_blank"><?php echo esc_html($name) ?></a>
+                                                    (<a href="<?php echo esc_attr($feed_url) ?>" target="_blank"><?php esc_html_e('Alternate Feed', '12-step-meeting-list') ?></a>)
                                                 </td>
                                                 <td>
                                                     <form method="post">
@@ -517,9 +517,8 @@ if (!function_exists('tsml_settings_page')) {
                                     <?php esc_html_e('The following feed contains your publicly available meeting information.', '12-step-meeting-list') ?>
                                 </p>
                                 <p>
-                                    <a href="<?php echo esc_attr(admin_url('admin-ajax.php?action=meetings')); ?>" target="_blank">
-                                        <?php esc_html_e('Public Data Source', '12-step-meeting-list'); ?>
-                                    </a>
+                                    <a href="<?php echo esc_attr(admin_url('admin-ajax.php?action=meetings')); ?>" target="_blank"><?php esc_html_e('Public Data Source', '12-step-meeting-list'); ?></a>
+                                    (<a href="<?php echo esc_attr(site_url('/tsmlfeed/')); ?>" target="_blank"><?php esc_html_e('Alternate Feed', '12-step-meeting-list'); ?></a>)
                                 </p>
                             </div>
                         <?php } ?>
