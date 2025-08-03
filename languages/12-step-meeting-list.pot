@@ -2,14 +2,14 @@
 # This file is distributed under the GPLv2 or later.
 msgid ""
 msgstr ""
-"Project-Id-Version: 12 Step Meeting List 3.18\n"
-"Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/trunk\n"
+"Project-Id-Version: 12 Step Meeting List 3.18.2\n"
+"Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/12-step-meeting-list\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"POT-Creation-Date: 2025-07-27T16:49:58+00:00\n"
+"POT-Creation-Date: 2025-08-03T15:36:17+00:00\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "X-Generator: WP-CLI 2.12.0\n"
 "X-Domain: 12-step-meeting-list\n"
@@ -466,13 +466,13 @@ msgstr ""
 #: includes/functions.php:535
 #: includes/shortcodes.php:81
 #: includes/variables.php:668
-#: templates/archive-locations.php:116
+#: templates/archive-locations.php:128
 msgid "Meeting"
 msgstr ""
 
 #: includes/admin_lists.php:114
 #: includes/admin_meeting.php:75
-#: templates/archive-locations.php:114
+#: templates/archive-locations.php:126
 msgid "Day"
 msgstr ""
 
@@ -481,7 +481,7 @@ msgstr ""
 #: includes/shortcodes.php:80
 #: includes/variables.php:666
 #: includes/variables.php:995
-#: templates/archive-locations.php:115
+#: templates/archive-locations.php:127
 msgid "Time"
 msgstr ""
 
@@ -492,7 +492,7 @@ msgstr ""
 #: includes/functions.php:489
 #: includes/shortcodes.php:83
 #: includes/variables.php:671
-#: templates/archive-locations.php:119
+#: templates/archive-locations.php:131
 msgid "Region"
 msgstr ""
 
@@ -591,7 +591,7 @@ msgstr ""
 #: includes/admin_meeting.php:101
 #: includes/ajax.php:228
 #: includes/variables.php:673
-#: templates/archive-locations.php:121
+#: templates/archive-locations.php:133
 msgid "Types"
 msgstr ""
 
@@ -709,7 +709,7 @@ msgstr ""
 #: includes/ajax.php:236
 #: includes/functions.php:556
 #: includes/shortcodes.php:82
-#: templates/archive-locations.php:117
+#: templates/archive-locations.php:129
 msgid "Location"
 msgstr ""
 
@@ -1862,6 +1862,10 @@ msgstr ""
 
 #: includes/functions_log.php:10
 msgid "Geocoding connection error"
+msgstr ""
+
+#: includes/rest.php:26
+msgid "This meeting list is restricted."
 msgstr ""
 
 #: includes/save.php:13
@@ -3336,24 +3340,24 @@ msgstr ""
 msgid "Index of %s Meetings"
 msgstr ""
 
-#: templates/archive-locations.php:107
+#: templates/archive-locations.php:119
 #, php-format
 msgid "This page is intended for web crawlers. To find a meeting, please visit our <a href=\"%s\">meetings page</a>."
 msgstr ""
 
-#: templates/archive-locations.php:118
+#: templates/archive-locations.php:130
 msgid "Formatted Address"
 msgstr ""
 
-#: templates/archive-locations.php:120
+#: templates/archive-locations.php:132
 msgid "Sub-Region"
 msgstr ""
 
-#: templates/archive-locations.php:122
+#: templates/archive-locations.php:134
 msgid "Latitude"
 msgstr ""
 
-#: templates/archive-locations.php:123
+#: templates/archive-locations.php:135
 msgid "Longitude"
 msgstr ""
 
