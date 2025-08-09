@@ -67,6 +67,7 @@ add_action('post_updated', function ($post_id, $post, $post_before) {
             $old_meeting->{$key} = html_entity_decode($old_meeting->{$key});
         }
     }
+    $old_meeting->post_status = $post_before->post_status;
     $old_meeting->name = html_entity_decode($post_before->post_title);
     $old_meeting->notes = html_entity_decode($post_before->post_content);
 

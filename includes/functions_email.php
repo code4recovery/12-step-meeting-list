@@ -34,13 +34,33 @@ function tsml_email_meeting_change($email_to, $meeting, $old_meeting) {
     }
 
     $message = ' <p>';
-    $message .= sprintf(
-        // translators: %1$s is the user's name, %2$s is the meeting URL, %3$s is the site name
-        __('This is to notify you that %1$s updated a <a href="%2$s">meeting</a> on the %3$s site.', '12-step-meeting-list'),
-        $user->display_name,
-        get_permalink($meeting->ID),
-        get_bloginfo('name')
-    );
+    $subject = '';
+    if ('publish' === $update_type) {
+        $subject = __('Meeting Published', '12-step-meeting-list');
+        $message .= sprintf(
+            __('This is to notify you that %1$s published a <a href="%2$s">meeting</a> on the %3$s site.', '12-step-meeting-list'),
+            $user->display_name,
+            get_permalink($meeting->ID),
+            get_bloginfo('name')
+        );
+    } elseif ('draft' === $update_type) {
+        $subject = __('Meeting moved to Draft', '12-step-meeting-list');
+        $message .= sprintf(
+            __('This is to notify you that %1$s saved a <a href="%2$s">meeting</a> as a draft on the %3$s site.', '12-step-meeting-list'),
+            $user->display_name,
+            get_permalink($meeting->ID),
+            get_bloginfo('name')
+        );
+    } else {
+        $subject = __('Meeting Updated', '12-step-meeting-list');
+        $message .= sprintf(
+            __('This is to notify you that %1$s updated a <a href="%2$s">meeting</a> on the %3$s site.', '12-step-meeting-list'),
+            $user->display_name,
+            get_permalink($meeting->ID),
+            get_bloginfo('name')
+        );
+    }
+    $subject .= ': ' . sanitize_text_field($meeting->name);
     $message .= '</p><table style="font:14px arial;width:100%;border-collapse:collapse;padding:0;">';
 
     foreach ($fields as $field) {
@@ -66,13 +86,10 @@ function tsml_email_meeting_change($email_to, $meeting, $old_meeting) {
                 $message .= '<strike style="color:#999">' . $old . '</strike> ';
             }
             $message .= $new . '</td></tr>';
-        } elseif (!empty($old)) {
-            $message .= '<tr style="border:1px solid #999;background-color:#eee;"><td style="width:150px;padding:5px">' . $field_name . '</td><td style="padding:5px">' . $old . '</td></tr>';
+        } elseif (!empty($new)) {
+            $message .= '<tr style="border:1px solid #999;background-color:#eee;"><td style="width:150px;padding:5px">' . $field_name . '</td><td style="padding:5px">' . $new . '</td></tr>';
         }
     }
     $message .= '</table>';
-
-    $subject = __('Meeting Change Notification', '12-step-meeting-list');
-    $subject .= ': ' . sanitize_text_field($_POST['post_title']);
     tsml_email($email_to, $subject, $message);
 }
