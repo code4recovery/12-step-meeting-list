@@ -19,6 +19,9 @@ function tsml_email_meeting_change($email_to, $meeting, $old_meeting) {
         $update_type = 'publish';
     } elseif ('draft' === $meeting->post_status && 'draft' !== $old_meeting->post_status) {
         $update_type = 'draft';
+    } elseif ('draft' === $meeting->post_status && 'draft' === $old_meeting->post_status) {
+        // no email when staying in draft
+        return;
     }
 
     $fields = array_keys($tsml_export_columns);
