@@ -639,7 +639,7 @@ function tsml_import_get_changed_meetings($feed_meetings, $data_source_url)
                 continue;
             }
 
-            $changed_fields = tsml_compare_meetings($source_meeting, $feed_meeting, true);
+            $changed_fields = tsml_compare_meetings($source_meeting, $feed_meeting, true, true);
 
             if (!empty($changed_fields)) {
                 $feed_meeting['last_import'] = current_time('timestamp');

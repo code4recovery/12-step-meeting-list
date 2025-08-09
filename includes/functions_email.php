@@ -25,7 +25,7 @@ function tsml_email_meeting_change($email_to, $meeting, $old_meeting) {
     $fields_changed = [];
     if ('publish' !== $update_type) {
         // for updates only share changed fields
-        $fields_changed = tsml_compare_meetings($old_meeting, $meeting, false, false);
+        $fields_changed = tsml_compare_meetings($old_meeting, $meeting);
         if (null === $fields_changed) {
             return;
         }

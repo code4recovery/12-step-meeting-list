@@ -1570,10 +1570,10 @@ function tsml_date_localised($format, $timestamp = null)
  * @param array   $meeting_old      Old version of meeting (local version)
  * @param array   $meeting_new      New version of meeting (imported version)
  * @param boolean $compare_import   [default false] Imported meetings use source fields for comparison
- * @param boolean $translate_fields [default true] Translate system fields to field labels
+ * @param boolean $translate_fields [default false] Translate system fields to field labels
  * @return array|null
  */
-function tsml_compare_meetings($meeting_old, $meeting_new, $compare_import = false, $translate_fields = true)
+function tsml_compare_meetings($meeting_old, $meeting_new, $compare_import = false, $translate_fields = false)
 {
     global $tsml_export_columns, $tsml_source_fields_map, $tsml_entity_fields, $tsml_array_fields;
 
