@@ -21,7 +21,7 @@ function tsml_next_meetings($arguments)
         return false;
     }
     if (!count($meetings) && !empty($arguments['message'])) {
-        return '<div class="tsml-no-upcoming-meetings">' . $arguments['message'] . '</div>';
+        return '<div class="tsml-no-upcoming-meetings">' . sanitize_text_field($arguments['message']) . '</div>';
     }
 
     $meetings = array_slice($meetings, 0, $arguments['count']);
