@@ -1567,12 +1567,13 @@ function tsml_date_localised($format, $timestamp = null)
 
 /**
  * Compares content of an import meeting against local meeting
- * @param array   $local_meeting   Local meeting
- * @param array   $import_meeting  Import meeting
- * @param boolean $translate_field [default true] Translate system fields to field labels
+ * @param array   $local_meeting    Local meeting
+ * @param array   $import_meeting   Import meeting
+ * @param boolean $compare_import   [default false] Imported meetings use source fields for comparison
+ * @param boolean $translate_fields [default true] Translate system fields to field labels
  * @return array|null
  */
-function tsml_compare_imported_meeting($local_meeting, $import_meeting, $translate_fields = true)
+function tsml_compare_meetings($local_meeting, $import_meeting, $compare_import = false, $translate_fields = true)
 {
     global $tsml_export_columns, $tsml_source_fields_map, $tsml_entity_fields, $tsml_array_fields;
 
@@ -1580,18 +1581,20 @@ function tsml_compare_imported_meeting($local_meeting, $import_meeting, $transla
     $import_meeting = (array) $import_meeting;
 
     // update local meeting with stored source field values
-    foreach ($tsml_source_fields_map as $source_field => $field) {
-        if (isset($local_meeting[$source_field])) {
-            $local_meeting[$field] = $local_meeting[$source_field];
-        } else {
-            unset($local_meeting[$field]);
+    if ($compare_import) {
+        foreach ($tsml_source_fields_map as $source_field => $field) {
+            if (isset($local_meeting[$source_field])) {
+                $local_meeting[$field] = $local_meeting[$source_field];
+            } else {
+                unset($local_meeting[$field]);
+            }
         }
     }
     $compare_fields = array_merge(array_keys($tsml_export_columns), $tsml_entity_fields);
     $compare_fields = array_diff(
         $compare_fields,
-        // these fields are unique internal fields, not content fields for comparison
-        explode(',', 'id,slug,author,data_source,data_source_name,updated')
+        // these fields are internal fields, not content fields for comparison
+        explode(',', 'id,slug,author,data_source,data_source_name,updated,latitude,longitude')
     );
 
     // normalize meetings for comparison

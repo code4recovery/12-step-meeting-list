@@ -36,6 +36,7 @@ define('TSML_VERSION', '3.18.4');
 // include these files first
 include TSML_PATH . '/includes/filter_meetings.php';
 include TSML_PATH . '/includes/functions.php';
+include TSML_PATH . '/includes/functions_email.php';
 include TSML_PATH . '/includes/functions_format.php';
 include TSML_PATH . '/includes/functions_get.php';
 include TSML_PATH . '/includes/functions_import.php';
