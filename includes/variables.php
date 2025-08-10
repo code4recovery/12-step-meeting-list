@@ -1432,16 +1432,16 @@ function tsml_load_config()
     ];
 
     // add 'TC', 'ONL', and languages to all programs
-    foreach ($tsml_programs as $tsml_program => $value) {
-        $tsml_programs[$tsml_program]['types']['ONL'] = __('Online Meeting', '12-step-meeting-list');
-        $tsml_programs[$tsml_program]['types']['TC'] = __('Location Temporarily Closed', '12-step-meeting-list');
-        $tsml_programs[$tsml_program]['types'] = tsml_languages($tsml_programs[$tsml_program]['types'], );
+    foreach ($tsml_programs as $key => $value) {
+        $tsml_programs[$key]['types']['ONL'] = __('Online Meeting', '12-step-meeting-list');
+        $tsml_programs[$key]['types']['TC'] = __('Location Temporarily Closed', '12-step-meeting-list');
+        $tsml_programs[$key]['types'] = tsml_languages($tsml_programs[$key]['types'], );
     }
 
     // remove 'TC' and 'ONL' from default flags if meeting finder is TSML UI
     if ($tsml_user_interface === 'tsml_ui') {
-        foreach ($tsml_programs as $tsml_program => $value) {
-            $tsml_programs[$tsml_program]['flags'] = array_diff($value['flags'], ['TC', 'ONL']);
+        foreach ($tsml_programs as $key => $value) {
+            $tsml_programs[$key]['flags'] = array_diff($value['flags'], ['TC', 'ONL']);
         }
     }
 
