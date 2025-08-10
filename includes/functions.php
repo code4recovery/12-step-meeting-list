@@ -994,9 +994,11 @@ function tsml_meeting_types($types)
  * return an array of languages, with legacy code substitutions per-program
  * used: variables.php, meeting-edit.php
  */
-function tsml_languages($types = [])
+function tsml_languages($types = [], $program = null)
 {
     global $tsml_program;
+
+    $program = $program ? $tsml_program : $program;
 
     // https://en.wikipedia.org/wiki/List_of_ISO_639_language_codes
     $languages = [
@@ -1111,11 +1113,11 @@ function tsml_languages($types = [])
         }
     }
 
-    $languages = array_merge($types, $languages);
-
-    asort($languages);
-
-    return $languages;
+    foreach($languages as $key => $value) {
+        $types[$key] = $value;
+    }
+    asort($types);
+    return $types;
 }
 
 /**
