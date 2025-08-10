@@ -341,7 +341,7 @@ function tsml_plugin_deactivation()
     if (post_type_exists('tsml_group')) {
         unregister_post_type('tsml_group');
     }
-    tsml_import_cron_check( false );
+    tsml_import_cron_check(false);
     flush_rewrite_rules();
 }
 
@@ -994,11 +994,9 @@ function tsml_meeting_types($types)
  * return an array of languages, with legacy code substitutions per-program
  * used: variables.php, meeting-edit.php
  */
-function tsml_languages($types = [], $program = null)
+function tsml_languages($types = [])
 {
     global $tsml_program;
-
-    $program = $program ? $tsml_program : $program;
 
     // https://en.wikipedia.org/wiki/List_of_ISO_639_language_codes
     $languages = [
@@ -1113,7 +1111,7 @@ function tsml_languages($types = [], $program = null)
         }
     }
 
-    foreach($languages as $key => $value) {
+    foreach ($languages as $key => $value) {
         $types[$key] = $value;
     }
     asort($types);

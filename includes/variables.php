@@ -1435,7 +1435,7 @@ function tsml_load_config()
     foreach ($tsml_programs as $key => $value) {
         $tsml_programs[$key]['types']['ONL'] = __('Online Meeting', '12-step-meeting-list');
         $tsml_programs[$key]['types']['TC'] = __('Location Temporarily Closed', '12-step-meeting-list');
-        $tsml_programs[$key]['types'] = tsml_languages($tsml_programs[$key]['types'], );
+        $tsml_programs[$key]['types'] = tsml_languages($tsml_programs[$key]['types']);
     }
 
     // remove 'TC' and 'ONL' from default flags if meeting finder is TSML UI
