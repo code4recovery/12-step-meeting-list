@@ -17,7 +17,7 @@ function tsml_import_data_source($data_source_url, $data_source_name = '', $data
     $data_source_url = $imported_data_source_url = trim(esc_url_raw($data_source_url, ['http', 'https']));
     $data_source_name = sanitize_text_field($data_source_name);
     $data_source_parent_region_id = (int) $data_source_parent_region_id;
-    $data_source_change_detect = sanitize_text_field($data_source_change_detect);    
+    $data_source_change_detect = sanitize_text_field($data_source_change_detect);
 
     // data source
     $current_data_source = array_key_exists($data_source_url, $tsml_data_sources) ? $tsml_data_sources[$data_source_url] : null;
@@ -37,13 +37,13 @@ function tsml_import_data_source($data_source_url, $data_source_name = '', $data
 
     // initialize variables 
     $import_meetings = $delete_meeting_ids = [];
-    
+
     // try fetching	
     $response = wp_safe_remote_get($imported_data_source_url, [
         'timeout' => 30,
         'sslverify' => false,
     ]);
-    
+
     if (is_array($response) && !empty($response['body']) && ($meetings = json_decode($response['body'], true))) {
 
         // allow reformatting as necessary
@@ -69,10 +69,10 @@ function tsml_import_data_source($data_source_url, $data_source_name = '', $data
             if ($data_source_change_detect === 'enabled') {
                 tsml_schedule_import_scan($data_source_url, $data_source_name);
             }
-            
+
             tsml_log(
-                'data_source', 
-                __('Added', '12-step-meeting-list') . ' - ' . $data_source_name, 
+                'data_source',
+                __('Added', '12-step-meeting-list') . ' - ' . $data_source_name,
                 sprintf(__('%s meetings', '12-step-meeting-list'), count($import_meetings))
             );
 
@@ -81,13 +81,13 @@ function tsml_import_data_source($data_source_url, $data_source_name = '', $data
             $change_log = tsml_import_get_changed_meetings($meetings, $data_source_url);
 
             tsml_log(
-                'data_source', 
-                __('Updates queued', '12-step-meeting-list') . ' - ' . $data_source_name, 
+                'data_source',
+                __('Updates queued', '12-step-meeting-list') . ' - ' . $data_source_name,
                 sprintf(__('%s updates', '12-step-meeting-list'), count($change_log))
             );
 
             // drop meetings that weren't found in the import
-            foreach($change_log as $change) {
+            foreach ($change_log as $change) {
                 $meeting = (array) $change['meeting'];
                 // just avoiding bad returns
                 if (empty($meeting)) {
@@ -97,8 +97,8 @@ function tsml_import_data_source($data_source_url, $data_source_name = '', $data
                 if ('remove' === $change['action']) {
                     // log meeting delete
                     tsml_log(
-                        'import_meeting', 
-                        $info, 
+                        'import_meeting',
+                        $info,
                         $data_source_name . ' - ' . $meeting['name'] . ' - ' . tsml_format_day_and_time($meeting['day'], $meeting['time'], ' @ ', true)
                     );
                     $delete_meeting_ids[] = $change['meeting_id'];
@@ -106,7 +106,7 @@ function tsml_import_data_source($data_source_url, $data_source_name = '', $data
                     $import_meetings[] = $meeting;
                 }
             }
-            
+
             if (count($delete_meeting_ids)) {
                 tsml_delete($delete_meeting_ids);
             }
@@ -168,7 +168,7 @@ function tsml_import_data_source($data_source_url, $data_source_name = '', $data
         tsml_log('data_source_error', __('Import failed', '12-step-meeting-list') . ' - ' . $data_source_name, $error_msg);
         tsml_alert($error_msg, 'error');
     }
-    
+
 }
 
 /**
@@ -369,7 +369,7 @@ function tsml_import_buffer_next($limit = 25)
             $info = $is_new_meeting ? __('Meeting added', '12-step-meeting-list') : __('Meeting updated', '12-step-meeting-list');
         }
         tsml_log('import_meeting', $info, array(
-            'input' => $data_source_name . ' - ' . $meeting['name'] . ' - ' . tsml_format_day_and_time($meeting['day'], $meeting['time'], ' @ ', true), 
+            'input' => $data_source_name . ' - ' . $meeting['name'] . ' - ' . tsml_format_day_and_time($meeting['day'], $meeting['time'], ' @ ', true),
             'meeting_id' => $meeting_id,
         ));
 
@@ -1183,7 +1183,7 @@ function tsml_import_cron_check($onoff = null)
     }
 }
 
-add_action( 'tsml_auto_import', 'tsml_auto_import_check' );
+add_action('tsml_auto_import', 'tsml_auto_import_check');
 function tsml_auto_import_check()
 {
     global $tsml_data_sources;

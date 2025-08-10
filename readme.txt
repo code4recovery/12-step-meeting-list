@@ -303,6 +303,9 @@ Yes, you will need to know the key name of the field. Then include an array in y
 
 = 3.18.4 =
 * Patching vulnerability finding in tsml shortcode
+* Fix 11th Step Meditation always being checked [more info](https://github.com/code4recovery/12-step-meeting-list/discussions/1728)
+* Add conference URL information to meeting change emails [more info](https://github.com/code4recovery/12-step-meeting-list/issues/802)
+* Don't send meeting change notification if the meeting isn't published yet [more info](https://github.com/code4recovery/12-step-meeting-list/issues/1325)
 
 = 3.18.3 =
 * Adding unversioned file

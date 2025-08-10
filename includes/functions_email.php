@@ -8,12 +8,13 @@
  * @param WP_Post $old_meeting Meeting before update
  * @return void
  */
-function tsml_email_meeting_change($email_to, $meeting, $old_meeting) {
-    
+function tsml_email_meeting_change($email_to, $meeting, $old_meeting)
+{
+
     global $tsml_export_columns, $tsml_array_fields, $tsml_days;
 
     $user = wp_get_current_user();
-    
+
     $update_type = 'update';
     if ('publish' === $meeting->post_status && 'publish' !== $old_meeting->post_status) {
         $update_type = 'publish';
@@ -80,7 +81,7 @@ function tsml_email_meeting_change($email_to, $meeting, $old_meeting) {
             $old = empty($old) ? '' : tsml_format_time($old);
             $new = empty($new) ? '' : tsml_format_time($new);
         }
-        
+
         $field_name = !empty($tsml_export_columns[$field]) ? $tsml_export_columns[$field] : ucwords(str_replace('_', ' ', $field));
 
         if (in_array($field, $fields_changed)) {
