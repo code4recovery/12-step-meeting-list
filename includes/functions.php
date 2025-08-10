@@ -341,7 +341,7 @@ function tsml_plugin_deactivation()
     if (post_type_exists('tsml_group')) {
         unregister_post_type('tsml_group');
     }
-    tsml_import_cron_check( false );
+    tsml_import_cron_check(false);
     flush_rewrite_rules();
 }
 
@@ -1111,11 +1111,11 @@ function tsml_languages($types = [])
         }
     }
 
-    $languages = array_merge($types, $languages);
-
-    asort($languages);
-
-    return $languages;
+    foreach ($languages as $key => $value) {
+        $types[$key] = $value;
+    }
+    asort($types);
+    return $types;
 }
 
 /**
