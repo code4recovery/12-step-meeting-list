@@ -839,7 +839,7 @@ function tsml_geocode($address)
  */
 function tsml_geocode_google($address)
 {
-    global $tsml_curl_handle, $tsml_language, $tsml_google_overrides, $tsml_bounds, $tsml_google_geocoding_key;
+    global $tsml_curl_handle, $tsml_language, $tsml_google_overrides, $tsml_bounds;
 
     // Can't Geocode an empty address
     if (empty($address)) {
@@ -860,23 +860,23 @@ function tsml_geocode_google($address)
         ]);
     }
 
-    // user can specify their own geocoding key in functions.php
-    $key = !empty($tsml_google_geocoding_key) ? $tsml_google_geocoding_key : 'AIzaSyDm-pU-DlU-WsTkXJPGEVowY2hICRFLNeQ';
-
-    // start list of options for geocoding request
+    // form geocoding request url
     $options = [
-        'key' => $key,
-        'address' => $address,
+        'application' => 'tsml',
         'language' => $tsml_language,
+        'referrer' => get_post_type_archive_link('tsml_meeting'),
+        'search' => $address,
     ];
 
-    // bias the viewport if we know the bounds
-    if ($tsml_bounds) {
-        $options['bounds'] = $tsml_bounds['south'] . ',' . $tsml_bounds['west'] . '|' . $tsml_bounds['north'] . ',' . $tsml_bounds['east'];
+    if (!empty($tsml_bounds) && is_array($tsml_bounds)) {
+        $options = array_merge($options, $tsml_bounds);
     }
 
+    $url = TSML_GEOCODING_URL . '/api/geocode?' . http_build_query($options);
+    tsml_dd($url);
+
     // send request to google
-    curl_setopt($tsml_curl_handle, CURLOPT_URL, 'https://maps.googleapis.com/maps/api/geocode/json?' . http_build_query($options));
+    curl_setopt($tsml_curl_handle, CURLOPT_URL, $url);
     curl_setopt($tsml_curl_handle, CURLOPT_RETURNTRANSFER, true);
 
     $result = curl_exec($tsml_curl_handle);
