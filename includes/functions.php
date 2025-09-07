@@ -873,7 +873,6 @@ function tsml_geocode_google($address)
     }
 
     $url = TSML_GEOCODING_URL . '/api/geocode?' . http_build_query($options);
-    tsml_dd($url);
 
     // send request to google
     curl_setopt($tsml_curl_handle, CURLOPT_URL, $url);
