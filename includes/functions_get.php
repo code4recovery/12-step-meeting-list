@@ -432,12 +432,18 @@ function tsml_get_meetings($arguments = [], $from_cache = true, $full_export = f
 
     $tsml_entity = tsml_get_entity();
 
-    // start by grabbing all meetings
+    $meetings = [];
+
+    // check cache
     if ($from_cache && $tsml_cache_writable && file_exists(WP_CONTENT_DIR . $tsml_cache) && $meetings = file_get_contents(WP_CONTENT_DIR . $tsml_cache)) {
         $meetings = json_decode($meetings, true);
-    } else {
-        // from database
-        $meetings = [];
+        if (!is_array($meetings)) {
+            $meetings = [];
+        }
+    }
+
+    // fetch from database
+    if (count($meetings) === 0) {
 
         // can specify post_status (for PR #33)
         if (empty($arguments['post_status'])) {
