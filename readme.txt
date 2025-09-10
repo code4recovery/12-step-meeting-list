@@ -303,6 +303,7 @@ Yes, you will need to know the key name of the field. Then include an array in y
 
 = 3.18.5 =
 * Switch geocoding service [more info](https://github.com/code4recovery/12-step-meeting-list/issues/1744)
+* Fix error with corrupted cache [more info](https://github.com/code4recovery/12-step-meeting-list/discussions/1746)
 
 = 3.18.4 =
 * Patching vulnerability finding in tsml shortcode
