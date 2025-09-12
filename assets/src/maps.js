@@ -245,5 +245,7 @@ function setSearchMarker(data) {
 	html.style.width = '26px';
 	html.style.height = '38.4px';
 
-	marker = new L.marker([data.latitude, data.longitude], {icon: L.divIcon({className: 'marker', html})}).addTo(tsmlmap);
+	var icon = L.divIcon({className: 'marker', html, iconAnchor: [13, 38.4], popupAnchor: [0, -22]});
+
+	marker = new L.marker([data.latitude, data.longitude], {icon}).addTo(tsmlmap);
 }
