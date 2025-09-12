@@ -1,6 +1,6 @@
 div.notice ul {
-    list-style: disc;
-    padding-left: 1rem;
+	list-style: disc;
+	padding-left: 1rem;
 }
 
 .postbox {
@@ -104,21 +104,21 @@ div.notice ul {
 		}
 	}
 
-    small {
-        display: none;
-        margin-left: 15%;
-        margin-top: 0.25rem;
-        font-size: 0.8rem;
-        &.error_message{
-            color: #d40047;
-        }
-        &.warning_message{
-            color: #a14c00;
-        }
-        &.show {
-            display: inline-block;
-        }
-    }
+	small {
+		display: none;
+		margin-left: 15%;
+		margin-top: 0.25rem;
+		font-size: 0.8rem;
+		&.error_message {
+			color: #d40047;
+		}
+		&.warning_message {
+			color: #a14c00;
+		}
+		&.show {
+			display: inline-block;
+		}
+	}
 
 	input,
 	select {
@@ -296,8 +296,7 @@ div.notice ul {
 			outline: none;
 		}
 
-		.mapboxgl-ctrl-logo,
-		.mapboxgl-ctrl-attrib {
+		.leaflet-control-attribution {
 			display: none;
 		}
 

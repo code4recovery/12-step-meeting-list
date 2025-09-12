@@ -75,53 +75,23 @@ $online_img: 'https://images.unsplash.com/photo-1588196749597-9ff075ee6b5b?crop=
 		font-family: inherit;
 		font-size: 85%;
 
-		button.mapboxgl-ctrl-icon {
-			&:focus {
-				background-color: rgba(0, 0, 0, 0);
-			}
-
+		.leaflet-control-zoom a {
+			background-color: white;
+			color: inherit;
+			line-height: 25px;
 			&:hover {
-				background-color: rgba(0, 0, 0, 0.05);
-			}
-
-			&:active {
-				background-color: rgba(0, 0, 0, 0.1);
-			}
-		}
-
-		.mapboxgl-popup-content-wrapper {
-			border-radius: 4px;
-		}
-
-		.mapboxgl-popup-content {
-			border-radius: 5px;
-			overflow: auto;
-			width: 260px;
-		}
-
-		.mapboxgl-ctrl-attrib {
-			font-size: 11px;
-
-			a {
-				color: #777;
-			}
-		}
-
-		button.mapboxgl-popup-close-button {
-			background-color: transparent;
-			color: #c3c3c3;
-			font-size: 1.5rem;
-			padding: 4px 8px;
-
-			&:hover {
-				background-color: transparent;
-				color: #777;
+				background-color: #f3f3f3;
 				text-decoration: none;
 			}
 		}
 
-		.mapboxgl-ctrl-group > button {
-			background-color: transparent;
+		.leaflet-popup-content {
+			width: 250px;
+			max-height: 250px;
+			overflow: auto;
+			h3 {
+				margin-top: 10px;
+			}
 		}
 
 		.marker {
@@ -132,8 +102,7 @@ $online_img: 'https://images.unsplash.com/photo-1588196749597-9ff075ee6b5b?crop=
 			width: 200px;
 		}
 
-		.tsml_infowindow,
-		.mapboxgl-popup-content {
+		.tsml_infowindow {
 			max-height: 250px;
 
 			h3 {
@@ -926,7 +895,6 @@ $online_img: 'https://images.unsplash.com/photo-1588196749597-9ff075ee6b5b?crop=
 				text-align: center;
 			}
 		}
-
 	}
 
 	body.tsml_fullscreen {
@@ -1208,22 +1176,22 @@ body {
 		text-decoration: line-through;
 	}
 
-    &.attendance-online .panel-online {
-        min-height: $height;
-        max-height: 1000px;
-        position: relative;
-        &::after {
-            content: '';
-            position: absolute;
-            width: 100%;
-            height: 100%;
-            background-image: url($online_img);
-            background-position: center center;
-            background-repeat: no-repeat;
-            background-size: cover;
-            opacity: 0.25;
-        }
-    }
+	&.attendance-online .panel-online {
+		min-height: $height;
+		max-height: 1000px;
+		position: relative;
+		&::after {
+			content: '';
+			position: absolute;
+			width: 100%;
+			height: 100%;
+			background-image: url($online_img);
+			background-position: center center;
+			background-repeat: no-repeat;
+			background-size: cover;
+			opacity: 0.25;
+		}
+	}
 
 	/* Special per-theme fixes */
 	&.twentyfourteen {

@@ -83,14 +83,12 @@ function tsml_alert($message, $type = 'success')
  */
 function tsml_assets()
 {
-    global $post_type, $tsml_street_only, $tsml_programs, $tsml_strings, $tsml_program, $tsml_google_maps_key,
-    $tsml_mapbox_key, $tsml_mapbox_theme, $tsml_distance_units, $tsml_defaults, $tsml_columns, $tsml_nonce, $tsml_debug;
+    global $post_type, $tsml_street_only, $tsml_programs, $tsml_strings, $tsml_program,
+    $tsml_distance_units, $tsml_defaults, $tsml_columns, $tsml_nonce, $tsml_debug;
 
-    // google maps api
-    if ($tsml_google_maps_key) {
-        wp_enqueue_script('google_maps_api', "//maps.googleapis.com/maps/api/js?key=$tsml_google_maps_key", [], TSML_VERSION, true);
-    }
 
+    wp_enqueue_script('leaflet', 'https://unpkg.com/leaflet@1.9.4/dist/leaflet.js', [], '1.9.4', true);
+    wp_enqueue_style('leaflet', 'https://unpkg.com/leaflet@1.9.4/dist/leaflet.css', [], '1.9.4');
     if (is_admin()) {
         // dashboard page assets
         wp_enqueue_style('tsml_admin', plugins_url('../assets/css/admin.min.css', __FILE__), [], TSML_VERSION);
@@ -99,9 +97,6 @@ function tsml_assets()
             'ajaxurl' => admin_url('admin-ajax.php'),
             'debug' => WP_DEBUG,
             'tsml_debug' => !!$tsml_debug,
-            'google_maps_key' => $tsml_google_maps_key, // to see if map should have been called
-            'mapbox_key' => $tsml_mapbox_key,
-            'mapbox_theme' => $tsml_mapbox_theme,
             'nonce' => wp_create_nonce($tsml_nonce),
         ]);
     } else {
@@ -128,9 +123,6 @@ function tsml_assets()
             'defaults' => $tsml_defaults,
             'distance_units' => $tsml_distance_units,
             'flags' => $tsml_programs[$tsml_program]['flags'],
-            'google_maps_key' => $tsml_google_maps_key, // to see if map should have been called
-            'mapbox_key' => $tsml_mapbox_key,
-            'mapbox_theme' => $tsml_mapbox_theme,
             'nonce' => wp_create_nonce($tsml_nonce),
             'program' => empty($tsml_programs[$tsml_program]['abbr']) ? $tsml_programs[$tsml_program]['name'] : $tsml_programs[$tsml_program]['abbr'],
             'street_only' => $tsml_street_only,
