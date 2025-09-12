@@ -4,7 +4,7 @@ Donate link: https://code4recovery.org/contribute
 Requires at least: 3.2
 Requires PHP: 7.2
 Tested up to: 6.8
-Stable tag: 3.18.5
+Stable tag: 3.19
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -27,7 +27,7 @@ This plugin was originally designed to maintain a list of A.A. meetings in Santa
 
 == Installation ==
 
-Just install the plugin, add a mapping API key from Mapbox (or Google), and start entering your meetings. That is all it takes to get started!
+Just install the plugin and start entering your meetings. That is all it takes to get started!
 
 == Frequently Asked Questions ==
 
@@ -54,7 +54,7 @@ Please note a few things about custom types:
 It depends on your Permalinks setup. The easiest way to find the link is to go to the **Dashboard > Meetings > Import & Export** page and look for it under "Where's My Info?"
 
 = I need to correct a meeting address or change a pin's location =
-We get our geocoding positions from Google (this true even if your maps are by Mapbox). Google is correct an amazing amount of the time, but not always. If you need to add a custom location, add this to your theme's functions.php.
+We get our geocoding positions from Google. Google is correct an amazing amount of the time, but not always. If you need to add a custom location, add this to your theme's functions.php.
 
 Note you can add multiple entries to the array below.
 
@@ -171,13 +171,6 @@ Add this to your theme's functions.php.
 By default, the plugin sorts by day, then time, then location name. To set your own sort index, add this to your functions.php:
 
 	$tsml_sort_by = 'region'; //options are name, location, address, time, or region
-
-= If I am using Mapbox can I change the theme? =
-By default this plugin uses the Streets theme, v9. To change this, add this to your functions.php:
-
-	$tsml_mapbox_theme = '<theme URL>'
-
-*Please note* the version of the Mapbox script we use doesn't support all the themes displayed on the Mapbox site. The themes which have been tested and are known to work are: mapbox://styles/mapbox/streets-v9, mapbox://styles/mapbox/outdoors-v9, mapbox://styles/mapbox/light-v9, mapbox://styles/mapbox/dark-v9, mapbox://styles/mapbox/satellite-v9, and mapbox://styles/mapbox/satellite-streets-v9.
 
 = How can I override the meeting list or detail pages? =
 If you are using the "Legacy UI" appearance, copy the files from the plugin's templates directory into your theme's root directory. If you're using a theme from the Theme Directory, you may be better off creating a [Child Theme](https://codex.wordpress.org/Child_Themes). Now, you may override those pages. The archive-meetings.php file controls the meeting list page, single-meetings.php controls the meetings detail, and single-locations.php controls the location detail.
@@ -300,6 +293,9 @@ Yes, you will need to know the key name of the field. Then include an array in y
 1. Edit location
 
 == Changelog ==
+
+= 3.19 =
+* Replace Google/Mapbox with OSM/Leaflet [more info](https://github.com/code4recovery/12-step-meeting-list/issues/1740)
 
 = 3.18.5 =
 * Switch geocoding service [more info](https://github.com/code4recovery/12-step-meeting-list/issues/1744)

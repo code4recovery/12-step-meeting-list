@@ -213,8 +213,7 @@ add_action('admin_init', function () {
         'location',
         __('Location Information', '12-step-meeting-list'),
         function () {
-            global $tsml_mapbox_key, $tsml_google_maps_key, $tsml_timezone, $tsml_user_interface;
-            // phpcs:ignore
+            global $tsml_timezone, $tsml_user_interface;
             $meeting = tsml_get_meeting();
             $location = $meetings = [];
             if ($meeting->post_parent) {
@@ -325,17 +324,7 @@ add_action('admin_init', function () {
             <label>
                 <?php esc_html_e('Map', '12-step-meeting-list') ?>
             </label>
-            <div id="map">
-                <?php if (empty($tsml_mapbox_key) && empty($tsml_google_maps_key)) { ?>
-                    <p>
-                        <?php echo wp_kses(sprintf(
-                                // translators: %s is the link to the Import & Settings page
-                                __('Enable maps on the <a href="%s">Import & Settings</a> page.', '12-step-meeting-list'),
-                                admin_url('edit.php?post_type=tsml_meeting&page=import')
-                            ), TSML_ALLOWED_HTML) ?>
-                    </p>
-                <?php } ?>
-            </div>
+            <div id="map"></div>
         </div>
 
         <div class="meta_form_row">

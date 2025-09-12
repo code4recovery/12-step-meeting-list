@@ -1,19 +1,14 @@
 <?php
 
 add_action('admin_menu', function () {
-    global $tsml_google_maps_key, $tsml_mapbox_key;
 
     // badge the settings page
     $warnings = 0;
-    if (empty($tsml_google_maps_key) && empty($tsml_mapbox_key)) {
-        $warnings++;
-    }
-
     if (!is_ssl()) {
         $warnings++;
     }
 
-    $badge = $warnings ? ' <span class="update-plugins"><span class="update-count">1</span></span>' : '';
+    $badge = $warnings ? ' <span class="update-plugins"><span class="update-count">' . $warnings . '</span></span>' : '';
 
     // add menu items
     add_submenu_page(

@@ -140,9 +140,7 @@ tsml_header();
                         </div>
                     </div>
                     <div class="col-md-8">
-                        <?php if (!empty($tsml_mapbox_key) || !empty($tsml_google_maps_key)) { ?>
-                            <div id="map" class="panel panel-default"></div>
-                        <?php } ?>
+                        <div id="map" class="panel panel-default"></div>
                     </div>
                 </div>
 

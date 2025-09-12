@@ -109,7 +109,7 @@ add_shortcode('tsml_types_list', function () {
 // output a react meeting finder widget https://github.com/code4recovery/tsml-ui
 function tsml_ui($arguments = [])
 {
-    global $tsml_mapbox_key, $tsml_nonce, $tsml_conference_providers, $tsml_language, $tsml_programs, $tsml_program, $tsml_ui_config,
+    global $tsml_nonce, $tsml_conference_providers, $tsml_language, $tsml_programs, $tsml_program, $tsml_ui_config,
     $tsml_feedback_addresses, $tsml_cache, $tsml_cache_writable, $tsml_distance_units, $tsml_columns, $tsml_timezone;
 
     $defaults = shortcode_atts([
@@ -191,10 +191,7 @@ function tsml_ui($arguments = [])
     $url = parse_url($data);
     $data = $url['path'] . '?' . $url['query'];
 
-    return '<div id="tsml-ui"
-					data-src="' . $data . '"
-					data-timezone="' . $tsml_timezone . '"
-					data-mapbox="' . $tsml_mapbox_key . '"></div>';
+    return '<div id="tsml-ui" data-src="' . $data . '" data-timezone="' . $tsml_timezone . '"></div>';
 }
 add_shortcode('tsml_react', 'tsml_ui');
 add_shortcode('tsml_ui', 'tsml_ui');
