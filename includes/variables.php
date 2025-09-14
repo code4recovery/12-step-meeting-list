@@ -187,9 +187,6 @@ $tsml_source_fields_map = [
 // load email addresses to send user feedback about meetings
 $tsml_feedback_addresses = tsml_get_option_array('tsml_feedback_addresses');
 
-// load the API key user saved, if any
-$tsml_google_maps_key = get_option('tsml_google_maps_key');
-
 // load the screen user interface choice
 $tsml_user_interface = get_option('tsml_user_interface', 'legacy_ui');
 
@@ -583,19 +580,6 @@ $tsml_google_overrides = [
 
 // get the blog's language (used as a parameter when geocoding)
 $tsml_language = substr(get_bloginfo('language'), 0, 2);
-
-// alternative maps provider
-$tsml_mapbox_key = get_option('tsml_mapbox_key');
-
-// if no maps key, check to see if the events calendar plugin has one
-if (empty($tsml_google_maps_key) && empty($tsml_mapbox_key)) {
-    if ($tribe_options = tsml_get_option_array('tribe_events_calendar_options')) {
-        if (array_key_exists('google_maps_js_api_key', $tribe_options)) {
-            $tsml_google_maps_key = $tribe_options['google_maps_js_api_key'];
-            update_option('tsml_google_maps_key', $tsml_google_maps_key);
-        }
-    }
-}
 
 // used to secure forms
 $tsml_nonce = plugin_basename(__FILE__);

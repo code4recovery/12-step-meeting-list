@@ -121,16 +121,6 @@ if (isset($_GET['tsml-mode']) && array_key_exists($_GET['tsml-mode'], $modes)) {
     $mode = $_GET['tsml-mode'];
 }
 
-if ($tsml_mapbox_key || $tsml_google_maps_key) {
-    $maps_enabled = true;
-    if (isset($_GET['tsml-view']) && in_array($_GET['tsml-view'], ['list', 'map'])) {
-        $view = $_GET['tsml-view'];
-    }
-} else {
-    $maps_enabled = false;
-    $view = 'list';
-}
-
 // day default
 $today = true;
 if (isset($_GET['tsml-day'])) {
@@ -367,20 +357,18 @@ tsml_header();
                 </form>
             </div>
             <div class="col-sm-6 col-md-2 col-md-push-8 control-view">
-                <?php if ($maps_enabled) { ?>
-                    <div class="btn-group btn-group-justified" id="action">
-                        <a class="btn btn-default toggle-view<?php if ($view == 'list') { ?> active<?php } ?>"
-                            href="<?php echo esc_attr(tsml_meetings_url(['tsml-view' => 'list'])) ?>" data-id="list"
-                            role="button">
-                            <?php esc_html_e('List', '12-step-meeting-list') ?>
-                        </a>
-                        <a class="btn btn-default toggle-view<?php if ($view == 'map') { ?> active<?php } ?>"
-                            href="<?php echo esc_attr(tsml_meetings_url(['tsml-view' => 'map'])) ?>" data-id="map"
-                            role="button">
-                            <?php esc_html_e('Map', '12-step-meeting-list') ?>
-                        </a>
-                    </div>
-                <?php } ?>
+                <div class="btn-group btn-group-justified" id="action">
+                    <a class="btn btn-default toggle-view<?php if ($view == 'list') { ?> active<?php } ?>"
+                        href="<?php echo esc_attr(tsml_meetings_url(['tsml-view' => 'list'])) ?>" data-id="list"
+                        role="button">
+                        <?php esc_html_e('List', '12-step-meeting-list') ?>
+                    </a>
+                    <a class="btn btn-default toggle-view<?php if ($view == 'map') { ?> active<?php } ?>"
+                        href="<?php echo esc_attr(tsml_meetings_url(['tsml-view' => 'map'])) ?>" data-id="map"
+                        role="button">
+                        <?php esc_html_e('Map', '12-step-meeting-list') ?>
+                    </a>
+                </div>
             </div>
             <div class="col-sm-6 col-md-2 col-md-pull-2 control-region">
                 <?php if ($regions_dropdown || $districts_dropdown) { ?>

@@ -1,82 +1,49 @@
-//map functions -- methods must all support both google maps and mapbox
+// map functions
 
-//declare some global variables
+// declare some global variables
 var infowindow,
 	searchLocation,
 	searchMarker,
 	tsmlmap,
 	markers = [],
 	bounds,
-	mapMode = 'none',
 	locationIcon,
 	searchIcon;
 
-//create an empty map
+// create an empty map
 function createMap(scrollwheel, locations, searchLocation) {
 	if (tsml.debug) console.log('createMap() locations', locations);
-	if (tsml.mapbox_key) {
-		mapMode = 'mapbox';
 
-		mapboxgl.accessToken = tsml.mapbox_key;
-
-		//init map
-		if (!tsmlmap) {
-			tsmlmap = new mapboxgl.Map({
-				container: 'map',
-				style: tsml.mapbox_theme || 'mapbox://styles/mapbox/streets-v9'
-			});
-
-			//add zoom control
-			tsmlmap.addControl(
-				new mapboxgl.NavigationControl({
-					showCompass: false
-				})
-			);
-		}
-
-		//init bounds
-		bounds = {
-			north: false,
-			south: false,
-			east: false,
-			west: false
-		};
-
-		//custom marker icons
-		locationIcon = window.btoa(
-			'<?xml version="1.0" encoding="utf-8"?><svg viewBox="-1.1 -1.086 43.182 63.273" xmlns="http://www.w3.org/2000/svg"><path fill="#f76458" stroke="#b3382c" stroke-width="3" d="M20.5,0.5 c11.046,0,20,8.656,20,19.333c0,10.677-12.059,21.939-20,38.667c-5.619-14.433-20-27.989-20-38.667C0.5,9.156,9.454,0.5,20.5,0.5z"/></svg>'
-		);
-		searchIcon = window.btoa(
-			'<?xml version="1.0" encoding="utf-8"?><svg viewBox="-1.1 -1.086 43.182 63.273" xmlns="http://www.w3.org/2000/svg"><path fill="#2c78b3" stroke="#2c52b3" stroke-width="3" d="M20.5,0.5 c11.046,0,20,8.656,20,19.333c0,10.677-12.059,21.939-20,38.667c-5.619-14.433-20-27.989-20-38.667C0.5,9.156,9.454,0.5,20.5,0.5z"/></svg>'
-		);
-	} else if (tsml.google_maps_key) {
-		//check to see if google ready (wp google maps was removing other map scripts for a while)
-		if (typeof google !== 'object') {
-			console.warn('google key present but google script not ready');
-			return;
-		}
-
-		mapMode = 'google';
-
-		//init map
-		if (!tsmlmap)
-			tsmlmap = new google.maps.Map(document.getElementById('map'), {
-				disableDefaultUI: true,
-				scrollwheel: scrollwheel,
-				zoomControl: true
-			});
-
-		//init popup
-		infowindow = new google.maps.InfoWindow();
-
-		//init bounds
-		bounds = new google.maps.LatLngBounds();
+	// init map
+	if (!tsmlmap) {
+		tsmlmap = L.map('map');
+		L.tileLayer('https://{s}s.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png', {
+			maxZoom: 19,
+			attribution:
+				'&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> &copy; <a href="https://carto.com/attributions">CARTO</a>'
+		}).addTo(tsmlmap);
 	}
+
+	// init bounds
+	bounds = {
+		north: false,
+		south: false,
+		east: false,
+		west: false
+	};
+
+	// custom marker icons
+	locationIcon = window.btoa(
+		'<?xml version="1.0" encoding="utf-8"?><svg viewBox="-1.1 -1.086 43.182 63.273" xmlns="http://www.w3.org/2000/svg"><path fill="#f76458" stroke="#b3382c" stroke-width="3" d="M20.5,0.5 c11.046,0,20,8.656,20,19.333c0,10.677-12.059,21.939-20,38.667c-5.619-14.433-20-27.989-20-38.667C0.5,9.156,9.454,0.5,20.5,0.5z"/></svg>'
+	);
+	searchIcon = window.btoa(
+		'<?xml version="1.0" encoding="utf-8"?><svg viewBox="-1.1 -1.086 43.182 63.273" xmlns="http://www.w3.org/2000/svg"><path fill="#2c78b3" stroke="#2c52b3" stroke-width="3" d="M20.5,0.5 c11.046,0,20,8.656,20,19.333c0,10.677-12.059,21.939-20,38.667c-5.619-14.433-20-27.989-20-38.667C0.5,9.156,9.454,0.5,20.5,0.5z"/></svg>'
+	);
 
 	setMapMarkers(locations, searchLocation);
 }
 
-//format an address: replace commas with breaks
+// format an address: replace commas with breaks
 function formatAddress(address, street_only) {
 	if (!address) return '';
 	address = address.split(', ');
@@ -89,7 +56,7 @@ function formatAddress(address, street_only) {
 	return address.join('<br>');
 }
 
-//format a link to a meeting result page, preserving all but the excluded query string keys
+// format a link to a meeting result page, preserving all but the excluded query string keys
 function formatLink(url, text, exclude) {
 	if (!url) return text;
 	if (location.search) {
@@ -106,7 +73,7 @@ function formatLink(url, text, exclude) {
 	return '<a href="' + url + '">' + text + '</a>';
 }
 
-//remove search marker
+// remove search marker
 function removeSearchMarker() {
 	searchLocation = null;
 	if (typeof searchMarker == 'object' && searchMarker) {
@@ -115,45 +82,26 @@ function removeSearchMarker() {
 	}
 }
 
-//set / initialize map
+// set / initialize map
 function setMapBounds() {
-	if (mapMode == 'google') {
-		if (markers.length > 1) {
-			//multiple markers
-			tsmlmap.fitBounds(bounds);
-		} else if (markers.length == 1) {
-			//if only one marker, zoom in and click the infowindow
-			var center = bounds.getCenter();
-			if (!center) return;
-			if (markers[0].getClickable()) {
-				tsmlmap.setCenter({lat: center.lat() + 0.0025, lng: center.lng()});
-				google.maps.event.trigger(markers[0], 'click');
-			} else {
-				tsmlmap.setCenter({lat: center.lat(), lng: center.lng()});
-			}
-			tsmlmap.setZoom(15);
-		}
-	} else if (mapMode == 'mapbox') {
-		if (markers.length > 1) {
-			//multiple markers
-			tsmlmap.fitBounds(
-				[
-					[bounds.west, bounds.south],
-					[bounds.east, bounds.north]
-				],
-				{
-					duration: 0,
-					padding: 100
-				}
-			);
-		} else if (markers.length == 1) {
-			//if only one marker, zoom in and open the popup if it exists
-			if (markers[0].getPopup()) {
-				tsmlmap.setZoom(14).setCenter([bounds.east, bounds.north + 0.0025]);
-				markers[0].togglePopup();
-			} else {
-				tsmlmap.setZoom(14).setCenter([bounds.east, bounds.north]);
-			}
+	if (markers.length > 1) {
+		//multiple markers
+		tsmlmap.fitBounds(
+			[
+				[bounds.south, bounds.west],
+				[bounds.north, bounds.east]
+			],
+			{padding: [10, 10]}
+		);
+	} else if (markers.length == 1) {
+		//if only one marker, zoom in and open the popup if it exists
+		if (markers[0].getPopup()) {
+			tsmlmap.setZoom(16);
+			tsmlmap.panTo([bounds.north + 0.0025, bounds.east]);
+			markers[0].togglePopup();
+		} else {
+			tsmlmap.setZoom(16);
+			tsmlmap.panTo([bounds.north, bounds.east]);
 		}
 	}
 }
@@ -165,55 +113,23 @@ function setMapMarker(title, position, content) {
 
 	var marker;
 
-	if (mapMode == 'google') {
-		//set new marker
-		marker = new google.maps.Marker({
-			position: position,
-			map: tsmlmap,
-			title: title,
-			icon: {
-				path: 'M20.5,0.5 c11.046,0,20,8.656,20,19.333c0,10.677-12.059,21.939-20,38.667c-5.619-14.433-20-27.989-20-38.667C0.5,9.156,9.454,0.5,20.5,0.5z',
-				fillColor: '#f76458',
-				fillOpacity: 1,
-				anchor: new google.maps.Point(40, 50),
-				strokeWeight: 2,
-				strokeColor: '#b3382c',
-				scale: 0.6
-			}
-		});
+	var html = document.createElement('div');
+	html.className = 'marker';
+	html.style.backgroundImage = 'url(data:image/svg+xml;base64,' + locationIcon + ')';
+	html.style.width = '26px';
+	html.style.height = '38.4px';
 
-		//add infowindow event
-		if (content) {
-			google.maps.event.addListener(
-				marker,
-				'click',
-				(function (marker) {
-					return function () {
-						infowindow.setContent('<div class="tsml_infowindow">' + content + '</div>');
-						infowindow.open(tsmlmap, marker);
-					};
-				})(marker)
-			);
-		} else {
-			marker.setClickable(false); //we'll check this when setting center
-		}
-	} else if (mapMode == 'mapbox') {
-		var el = document.createElement('div');
-		el.className = 'marker';
-		el.style.backgroundImage = 'url(data:image/svg+xml;base64,' + locationIcon + ')';
-		el.style.width = '26px';
-		el.style.height = '38.4px';
+	var icon = L.divIcon({className: 'marker', html, iconAnchor: [13, 38.4], popupAnchor: [0, -22]});
 
-		marker = new mapboxgl.Marker(el).setLngLat(position);
+	marker = new L.marker(position, {icon}).addTo(tsmlmap);
 
-		if (content) {
-			var popup = new mapboxgl.Popup({offset: 25});
-			popup.setHTML(content);
-			marker.setPopup(popup);
-		}
-
-		marker.addTo(tsmlmap);
+	if (content) {
+		var popup = new L.popup();
+		popup.setContent(content);
+		marker.bindPopup(popup);
 	}
+
+	marker.addTo(tsmlmap);
 
 	return marker;
 }
@@ -223,11 +139,7 @@ function setMapMarkers(locations, searchLocation) {
 	//remove existing markers
 	if (markers.length) {
 		for (var i = 0; i < markers.length; i++) {
-			if (mapMode == 'google') {
-				markers[i].setMap(null);
-			} else if (mapMode == 'mapbox') {
-				markers[i].remove();
-			}
+			markers[i].remove();
 		}
 		markers = [];
 	}
@@ -308,16 +220,11 @@ function setMapMarkers(locations, searchLocation) {
 
 		//manage bounds and set "visibility" if not approximate location
 		if (typeof marker == 'object' && marker) {
-			if (mapMode == 'google') {
-				bounds.extend(marker.position);
-				if (location.approximate === 'yes') marker.setVisible(false);
-			} else if (mapMode == 'mapbox') {
-				if (!bounds.north || position.lat > bounds.north) bounds.north = position.lat;
-				if (!bounds.south || position.lat < bounds.south) bounds.south = position.lat;
-				if (!bounds.east || position.lng > bounds.east) bounds.east = position.lng;
-				if (!bounds.west || position.lng < bounds.west) bounds.west = position.lng;
-				if (location.approximate === 'yes') marker.remove();
-			}
+			if (!bounds.north || position.lat > bounds.north) bounds.north = position.lat;
+			if (!bounds.south || position.lat < bounds.south) bounds.south = position.lat;
+			if (!bounds.east || position.lng > bounds.east) bounds.east = position.lng;
+			if (!bounds.west || position.lng < bounds.west) bounds.west = position.lng;
+			if (location.approximate === 'yes') marker.remove();
 		}
 
 		if (tsml.debug) console.log('setMapMarkers() marker', marker);
@@ -332,29 +239,13 @@ function setMapMarkers(locations, searchLocation) {
 function setSearchMarker(data) {
 	removeSearchMarker();
 	if (!data || !data.latitude) return;
-	if (mapMode == 'google') {
-		searchMarker = new google.maps.Marker({
-			icon: {
-				path: 'M20.5,0.5 c11.046,0,20,8.656,20,19.333c0,10.677-12.059,21.939-20,38.667c-5.619-14.433-20-27.989-20-38.667C0.5,9.156,9.454,0.5,20.5,0.5z',
-				fillColor: '#2c78b3',
-				fillOpacity: 1,
-				anchor: new google.maps.Point(40, 50),
-				strokeWeight: 2,
-				strokeColor: '#2c52b3',
-				scale: 0.6
-			},
-			position: new google.maps.LatLng(data.latitude, data.longitude),
-			map: tsmlmap
-		});
+	var html = document.createElement('div');
+	html.className = 'marker';
+	html.style.backgroundImage = 'url(data:image/svg+xml;base64,' + searchIcon + ')';
+	html.style.width = '26px';
+	html.style.height = '38.4px';
 
-		bounds.extend(searchMarker.position);
-	} else if (mapMode == 'mapbox') {
-		var el = document.createElement('div');
-		el.className = 'marker';
-		el.style.backgroundImage = 'url(data:image/svg+xml;base64,' + searchIcon + ')';
-		el.style.width = '26px';
-		el.style.height = '38.4px';
+	var icon = L.divIcon({className: 'marker', html, iconAnchor: [13, 38.4], popupAnchor: [0, -22]});
 
-		marker = new mapboxgl.Marker(el).setLngLat([data.longitude, data.latitude]).addTo(tsmlmap);
-	}
+	marker = new L.marker([data.latitude, data.longitude], {icon}).addTo(tsmlmap);
 }

@@ -6,8 +6,7 @@ if (!function_exists('tsml_settings_page')) {
     function tsml_settings_page()
     {
         global $tsml_data_sources, $tsml_programs, $tsml_program, $tsml_nonce, $tsml_feedback_addresses, $tsml_notification_addresses,
-        $tsml_distance_units, $tsml_sharing, $tsml_sharing_keys, $tsml_contact_display, $tsml_google_maps_key, $tsml_mapbox_key,
-        $tsml_user_interface, $tsml_timezone;
+        $tsml_distance_units, $tsml_sharing, $tsml_sharing_keys, $tsml_contact_display, $tsml_user_interface, $tsml_timezone;
 
         // todo consider whether this check is necessary, since it is run from add_submenu_page() which is already checking for the same permission
         // potentially tsml_settings_page() could be a closure within the call to add_submenu_page which would prevent it from being reused elsewhere
@@ -170,39 +169,6 @@ if (!function_exists('tsml_settings_page')) {
             }
         }
 
-        // add a Mapbox access token
-        if (isset($_POST['tsml_add_mapbox_key']) && $valid_nonce) {
-            $tsml_mapbox_key = sanitize_text_field($_POST['tsml_add_mapbox_key']);
-            if (empty($tsml_mapbox_key)) {
-                delete_option('tsml_mapbox_key');
-                tsml_alert(__('API key removed.', '12-step-meeting-list'));
-            } else {
-                update_option('tsml_mapbox_key', $tsml_mapbox_key);
-                tsml_alert(__('API key saved.', '12-step-meeting-list'));
-            }
-
-            // there can be only one
-            $tsml_google_maps_key = null;
-            delete_option('tsml_google_maps_key');
-        }
-
-        // add a Google API key
-        if (isset($_POST['tsml_add_google_maps_key']) && $valid_nonce) {
-            $key = sanitize_text_field($_POST['tsml_add_google_maps_key']);
-            if (empty($key)) {
-                delete_option('tsml_google_maps_key');
-                tsml_alert(__('API key removed.', '12-step-meeting-list'));
-            } else {
-                update_option('tsml_google_maps_key', $key);
-                $tsml_google_maps_key = $key;
-                tsml_alert(__('API key saved.', '12-step-meeting-list'));
-            }
-
-            // there can be only one
-            $tsml_mapbox_key = null;
-            delete_option('tsml_mapbox_key');
-        }
-
         // change user interface
         if (!empty($_POST['tsml_user_interface']) && $valid_nonce) {
             $tsml_user_interface = sanitize_text_field($_POST['tsml_user_interface']);
@@ -259,64 +225,6 @@ if (!function_exists('tsml_settings_page')) {
                     <p>
                         <?php esc_attr_e('If you enable SSL (https), your users will be able to search near their location.', '12-step-meeting-list') ?>
                     </p>
-                </div>
-            <?php } ?>
-
-            <?php if (empty($tsml_mapbox_key) && empty($tsml_google_maps_key)) { ?>
-                <div class="notice notice-warning">
-                    <h2>Enable Maps on Your Site</h2>
-                    <p>
-                        If you want to enable maps on your site you have two options: <strong>Mapbox</strong> or
-                        <strong>Google</strong>. They are both good options, although Google is not completely supported by all our
-                        features! In all likelihood neither one will charge you money. Mapbox gives
-                        <a href="https://www.mapbox.com/pricing/" target="_blank">50,000 free map views</a> / month, Google gives
-                        <a href="https://cloud.google.com/maps-platform/pricing/" target="_blank">28,500 free views</a>.
-                        That's a lot of traffic!
-                    </p>
-
-                    <p>
-                        To sign up for Mapbox <a href="https://www.mapbox.com/signup/" target="_blank">go here</a>. You will only
-                        need a valid email address, no credit card required. Copy your access token and paste it below:
-                    </p>
-
-                    <form class="row" method="post">
-                        <?php wp_nonce_field($tsml_nonce, 'tsml_nonce', false) ?>
-                        <div class="input">
-                            <?php tsml_input_text('tsml_add_mapbox_key', '', ['placeholder' => __('Enter Mapbox access token here', '12-step-meeting-list')]); ?>
-                        </div>
-                        <div class="btn">
-                            <?php tsml_input_submit(__('Add', '12-step-meeting-list')); ?>
-                        </div>
-                    </form>
-
-                    <p>* Please note: our <strong>TSML UI</strong> user interface supports Mapbox, not Google.
-
-                    <p>
-                        For our legacy user interface (<strong>Legacy UI</strong>), you can alternatively choose to use Google.
-                        Their interface is slightly more complex because they offer more services. <a
-                            href="https://developers.google.com/maps/documentation/javascript/get-api-key" target="_blank">Go
-                            here</a> to get a key from Google. The process should only take a few minutes, although you will have to
-                        enter a credit card.
-                    </p>
-
-                    <p>
-                        Be sure to:<br>
-                        <span class="dashicons dashicons-yes"></span> Enable the Google Maps Javascript API<br>
-                        <span class="dashicons dashicons-yes"></span> Secure your credentials by adding your website URL to the list
-                        of allowed referrers
-                    </p>
-
-                    <p>Once you're done, paste your new key below.</p>
-
-                    <form class="row" method="post">
-                        <?php wp_nonce_field($tsml_nonce, 'tsml_nonce', false) ?>
-                        <div class="input">
-                            <?php tsml_input_text('tsml_add_google_maps_key', '', ['placeholder' => __('Enter Google API key here', '12-step-meeting-list')]); ?>
-                        </div>
-                        <div class="btn">
-                            <?php tsml_input_submit(__('Add', '12-step-meeting-list')); ?>
-                        </div>
-                    </form>
                 </div>
             <?php } ?>
 
@@ -580,50 +488,6 @@ if (!function_exists('tsml_settings_page')) {
                         </div>
                     </div>
 
-                    <!-- Map Settings -->
-                    <div class="postbox stack">
-                        <div class="stack compact">
-                            <h2>
-                                <?php esc_html_e('Maps', '12-step-meeting-list') ?>
-                            </h2>
-                            <p>
-                                <?php echo wp_kses(__('Display of maps requires an authorization key from <strong><a href="https://www.mapbox.com/" target="_blank">Mapbox</a></strong> or <strong><a href="https://console.cloud.google.com/home/" target="_blank">Google</a></strong>.', '12-step-meeting-list'), TSML_ALLOWED_HTML) ?>
-                            </p>
-                            <p>
-                                <?php esc_html_e('Please note that TSML UI only supports Mapbox.', '12-step-meeting-list') ?>
-                            </p>
-                        </div>
-                        <div class="stack compact">
-                            <h3>
-                                <?php esc_html_e('Mapbox Access Token', '12-step-meeting-list') ?>
-                            </h3>
-
-                            <form class="row" method="post">
-                                <?php
-                                wp_nonce_field($tsml_nonce, 'tsml_nonce', false);
-                                tsml_input_text('tsml_add_mapbox_key', $tsml_mapbox_key, ['placeholder' => __('Enter Mapbox access token here', '12-step-meeting-list')]);
-                                tsml_input_submit(empty($tsml_mapbox_key) ? __('Add', '12-step-meeting-list') : __('Update', '12-step-meeting-list'));
-                                ?>
-                            </form>
-                        </div>
-
-                        <div class="stack compact">
-                            <h3>
-                                <?php esc_html_e('Google Maps API Key', '12-step-meeting-list') ?>
-                            </h3>
-                            <p>
-                                <?php echo wp_kses(__('Be sure to enable JavaScript Maps API (<a href="https://developers.google.com/maps/documentation/javascript/get-api-key" target="_blank">read more</a>).', '12-step-meeting-list'), TSML_ALLOWED_HTML) ?>
-                            </p>
-                            <form class="row" method="post">
-                                <?php
-                                wp_nonce_field($tsml_nonce, 'tsml_nonce', false);
-                                tsml_input_text('tsml_add_google_maps_key', $tsml_google_maps_key, ['placeholder' => __('Enter Google API key here', '12-step-meeting-list')]);
-                                tsml_input_submit(empty($tsml_google_maps_key) ? __('Add', '12-step-meeting-list') : __('Update', '12-step-meeting-list'));
-                                ?>
-                            </form>
-                        </div>
-
-                    </div>
                 </div>
 
                 <div class="stack">
