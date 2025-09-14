@@ -805,6 +805,15 @@ function tsml_import_sanitize_meetings($meetings, $data_source_url = null, $data
     $upper_types = array_map('strtoupper', $tsml_programs[$tsml_program]['types']);
     $upper_days = array_map('strtoupper', $tsml_days);
 
+    // fix legacy/alternate type names
+    $type_aliases = [
+        'aa' => [
+            'SIGN LANGUAGE' => 'ASL',
+            'OUTDOOR MEETING' => 'OUT',
+            'STEP MEETING' => 'ST',
+        ]
+    ];
+
     // get users, keyed by username
     $users = [];
     foreach (get_users(['fields' => ['ID', 'user_login'],]) as $user) {
@@ -1029,6 +1038,8 @@ function tsml_import_sanitize_meetings($meetings, $data_source_url = null, $data
                 $meetings[$i]['types'][] = $type;
             } elseif (in_array($upper_type, array_values($upper_types))) {
                 $meetings[$i]['types'][] = array_search($upper_type, $upper_types);
+            } elseif (array_key_exists($tsml_program, $type_aliases) && array_key_exists($upper_type, $type_aliases[$tsml_program])) {
+                $meetings[$i]['types'][] = $type_aliases[$tsml_program][$upper_type];
             } else {
                 $unused_types[] = $type;
             }
