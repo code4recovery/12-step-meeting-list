@@ -113,13 +113,13 @@ if (isset($_GET['tsml-time']) && (($_GET['tsml-time'] == 'upcoming') || array_ke
     $time = $_GET['tsml-time'];
 }
 
-if (isset($_GET['tsml-distance']) && intval($_GET['tsml-distance'])) {
-    $distance = $_GET['tsml-distance'];
-}
-
 if (isset($_GET['tsml-mode']) && array_key_exists($_GET['tsml-mode'], $modes)) {
     $mode = $_GET['tsml-mode'];
 }
+
+$distance = (isset($_GET['tsml-distance']) && array_key_exists(intval($_GET['tsml-distance']), $distances))
+    ? intval($_GET['tsml-distance'])
+    : $tsml_defaults['distance'];
 
 // day default
 $today = true;
