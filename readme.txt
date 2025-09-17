@@ -296,6 +296,7 @@ Yes, you will need to know the key name of the field. Then include an array in y
 
 = 3.19 =
 * Replace Google/Mapbox with OSM/Leaflet [more info](https://github.com/code4recovery/12-step-meeting-list/issues/1740)
+* Fix distance filters not persisting after reload [more info](https://github.com/code4recovery/12-step-meeting-list/issues/1753)
 
 = 3.18.5 =
 * Switch geocoding service [more info](https://github.com/code4recovery/12-step-meeting-list/issues/1744)
