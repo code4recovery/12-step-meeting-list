@@ -443,7 +443,7 @@ if (!function_exists('tsml_settings_page')) {
                                 <?php echo wp_kses(sprintf(
                                     // translators: %s is a link to the meeting finder page
                                     __('Please select the user interface that is right for your <a href="%s" target="_blank">meeting finder page</a>. Choose between our latest design that we call <b>TSML UI</b> or stay with the standard <b>Legacy UI</b>.', '12-step-meeting-list'),
-                                    get_post_type_archive_link('tsml_meeting')
+                                    tsml_meetings_url()
                                 ), TSML_ALLOWED_HTML) ?>
                             </p>
 

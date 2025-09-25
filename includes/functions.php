@@ -856,7 +856,7 @@ function tsml_geocode_google($address)
     $options = [
         'application' => 'tsml',
         'language' => $tsml_language,
-        'referrer' => get_post_type_archive_link('tsml_meeting'),
+        'referrer' => tsml_meetings_url(),
         'search' => $address,
     ];
 
@@ -1157,17 +1157,24 @@ function tsml_link_url($url, $exclude = '')
 }
 
 /**
- * link to meetings page with parameters (added to link dropdown menus for SEO)
- * used: archive-meetings.php
+ * link to meetings page with parameters
+ * used: admin_import.php, admin_settings.php, archive-meetings.php, init.php, widgets.php, tsml_geocode_google()
  * 
  * @param mixed $parameters
  * @return string
  */
-function tsml_meetings_url($parameters)
+function tsml_meetings_url($parameters = [])
 {
     $url = get_post_type_archive_link('tsml_meeting');
-    $url .= (strpos($url, '?') === false) ? '?' : '&';
-    $url .= http_build_query($parameters);
+
+    if (empty($url)) {
+        $url = get_home_url();
+    }
+
+    foreach ($parameters as $key => $value) {
+        $url = add_query_arg($key, $value, $url);
+    }
+
     return $url;
 }
 
@@ -1726,12 +1733,6 @@ function tsml_redirect_legacy_query_params()
     }
 
     if (count($replacements) > 0) {
-        $url = get_post_type_archive_link('tsml_meeting');
-
-        foreach ($replacements as $key => $value) {
-            $url = add_query_arg($key, $value, $url);
-        }
-
-        wp_redirect($url);
+        wp_redirect(tsml_meetings_url($replacements));
     }
 }

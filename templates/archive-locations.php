@@ -117,7 +117,7 @@ $schema = [
     <p>
         <?php echo sprintf(
             __('This page is intended for web crawlers. To find a meeting, please visit our <a href="%s">meetings page</a>.', '12-step-meeting-list'),
-            esc_url(get_post_type_archive_link('tsml_meeting'))
+            esc_url(tsml_meetings_url())
         ); ?>
     </p>
     <table border="1" cellpadding="5" cellspacing="0">

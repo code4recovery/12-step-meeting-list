@@ -57,8 +57,7 @@ tsml_header();
                     <div class="attendance-option">
                         <?php echo esc_html($tsml_meeting_attendance_options[$meeting->attendance_option]) ?>
                     </div>
-                    <a
-                        href="<?php echo esc_url(tsml_link_url(get_post_type_archive_link('tsml_meeting'), 'tsml_meeting')) ?>">
+                    <a href="<?php echo esc_url(tsml_link_url(tsml_meetings_url(), 'tsml_meeting')) ?>">
                         <em class="glyphicon glyphicon-chevron-right"></em>
                         <?php esc_html_e('Back to Meetings', '12-step-meeting-list') ?>
                     </a>
