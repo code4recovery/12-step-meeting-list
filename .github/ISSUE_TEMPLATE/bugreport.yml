@@ -1,12 +1,20 @@
-name: Bug Report (Developers Only)
-description: For developers only, please. End-users should ask a question in our Discussions Q&A for support.
-title: '[Bug]: '
+name: "🐞 Bug Report (Developers Only)"
+description: "🚫 For developers only. End-users must use Discussions for support."
+title: "[Bug]: "
 labels: [bug]
 body:
   - type: markdown
     attributes:
       value: |
-        Thanks for taking the time to fill out this bug report!
+        # ✋🛑 STOP — READ THIS FIRST
+
+        This **Bug Report form is for the TSML developer team only**.
+
+        👉 If you are an **end-user** (WordPress site owner, meeting list admin, etc.) and need help,  
+        please do **not** open an issue. Instead, go to **[Discussions → Q&A](https://github.com/<org>/<repo>/discussions/categories/q-a)**.  
+        
+        Issues opened here that are not by maintainers will be **closed without response**.  
+        Thank you for helping us keep GitHub Issues focused on development work.
   - type: input
     id: contact
     attributes:
