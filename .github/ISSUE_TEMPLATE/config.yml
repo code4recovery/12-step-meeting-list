@@ -1,1 +1,15 @@
-blank_issues_enabled: false
+name: "🐞 Bug Report (Developers Only)"
+description: "🚫 For developers only. End-users must use Discussions for support."
+title: "[Bug]: "
+labels: [bug]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        # ✋🛑 STOP — READ THIS FIRST
+
+        This **Bug Report form is for the Code for Recovery TSML team only**.
+
+        👉 Please **[Create a Discussion]()** to get help from our support rotation.  
+
+        
