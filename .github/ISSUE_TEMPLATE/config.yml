@@ -1,5 +1,5 @@
 name: "🐞 Bug Report (Developers Only)"
-description: "🚫 For developers only. End-users must use Discussions for support."
+description: "🚫 For developers only. End-users please use Discussions for support."
 title: "[Bug]: "
 labels: [bug]
 body:
@@ -10,6 +10,4 @@ body:
 
         This **Bug Report form is for the Code for Recovery TSML team only**.
 
-        👉 Please **[Create a Discussion]()** to get help from our support rotation.  
-
-        
+        👉 Please **[Create a Discussion](https://github.com/code4recovery/12-step-meeting-list/discussions/new?category=q-a)** to get help from our support rotation.  
