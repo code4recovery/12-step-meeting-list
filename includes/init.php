@@ -44,8 +44,8 @@ add_action('init', function () {
 
             // when TSML UI is enabled, redirect legacy meeting detail page to TSML UI detail page
             if ($tsml_user_interface === 'tsml_ui') {
-                $mtg_permalink = get_post_type_archive_link('tsml_meeting');
-                wp_redirect(add_query_arg('meeting', $post->post_name, $mtg_permalink));
+                $url = tsml_meetings_url(['meeting' => $post->post_name]);
+                wp_redirect($url);
                 exit;
             }
 
@@ -61,8 +61,8 @@ add_action('init', function () {
 
             // when TSML UI is enabled, redirect legacy location page to main meetings page
             if ($tsml_user_interface == 'tsml_ui') {
-                $mtg_permalink = get_post_type_archive_link('tsml_meeting');
-                wp_redirect($mtg_permalink);
+                $url = tsml_meetings_url();
+                wp_redirect($url);
                 exit;
             }
 

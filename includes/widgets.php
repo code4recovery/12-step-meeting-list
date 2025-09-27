@@ -111,12 +111,9 @@ class TSML_Widget_Upcoming extends WP_Widget
         }
         $output .= $table;
         $meetings = tsml_get_meetings(['day' => intval(current_time('w')), 'time' => 'upcoming']);
-        $meetings_link = get_post_type_archive_link('tsml_meeting');
-        if ($tsml_user_interface == 'tsml_ui' || (!count($meetings) && !empty($instance['message']))) {
-            $link = $meetings_link;
-        } else {
-            $link = $meetings_link . ((strpos($meetings_link, '?') === false) ? '?' : '&') . 'tsml-time=upcoming';
-        }
+        $link = ($tsml_user_interface == 'tsml_ui' || (!count($meetings) && !empty($instance['message'])))
+            ? tsml_meetings_url()
+            : tsml_meetings_url(['tsml-time' => 'upcoming']);
         $output .= '<p><a href="' . $link . '">' . __('View More…', '12-step-meeting-list') . '</a></p>';
         $output .= $args['after_widget'];
 

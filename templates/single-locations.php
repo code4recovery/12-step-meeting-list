@@ -35,8 +35,7 @@ tsml_header();
                         <?php echo esc_html($location->post_title) ?>
                     </h1>
                     <div>
-                        <a
-                            href="<?php echo esc_url(tsml_link_url(get_post_type_archive_link('tsml_meeting'), 'tsml_location')) ?>">
+                        <a href="<?php echo esc_url(tsml_link_url(tsml_meetings_url(), 'tsml_location')) ?>">
                             <em class="glyphicon glyphicon-chevron-right"></em>
                             <?php esc_html_e('Back to Meetings', '12-step-meeting-list') ?>
                         </a>

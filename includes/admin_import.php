@@ -537,7 +537,7 @@ if (!function_exists('tsml_import_page')) {
                                     <?php echo wp_kses(sprintf(
                                         // translators: %s is the link to the public meetings page
                                         __('Your public meetings page is <a href="%s">right here</a>. Link that page from your site\'s nav menu to make it visible to the public.', '12-step-meeting-list'),
-                                        get_post_type_archive_link('tsml_meeting')
+                                        tsml_meetings_url()
                                     ), TSML_ALLOWED_HTML) ?>
                                 </p>
                                 <?php
