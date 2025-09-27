@@ -1171,9 +1171,7 @@ function tsml_meetings_url($parameters = [])
         $url = get_home_url();
     }
 
-    foreach ($parameters as $key => $value) {
-        $url = add_query_arg($key, $value, $url);
-    }
+    $url = add_query_arg($parameters, $url);
 
     return $url;
 }
