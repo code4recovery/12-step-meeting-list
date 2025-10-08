@@ -42,6 +42,7 @@ function tsml_email_meeting_change($email_to, $meeting, $old_meeting)
     if ('publish' === $update_type) {
         $subject = __('Meeting Published', '12-step-meeting-list');
         $message .= sprintf(
+            // translators: 1: user display name, 2: meeting permalink, 3: site name
             __('This is to notify you that %1$s published a <a href="%2$s">meeting</a> on the %3$s site.', '12-step-meeting-list'),
             $user->display_name,
             get_permalink($meeting->ID),
@@ -50,6 +51,7 @@ function tsml_email_meeting_change($email_to, $meeting, $old_meeting)
     } elseif ('draft' === $update_type) {
         $subject = __('Meeting moved to Draft', '12-step-meeting-list');
         $message .= sprintf(
+            // translators: 1: user display name, 2: meeting permalink, 3: site name
             __('This is to notify you that %1$s saved a <a href="%2$s">meeting</a> as a draft on the %3$s site.', '12-step-meeting-list'),
             $user->display_name,
             get_permalink($meeting->ID),
@@ -58,6 +60,7 @@ function tsml_email_meeting_change($email_to, $meeting, $old_meeting)
     } else {
         $subject = __('Meeting Updated', '12-step-meeting-list');
         $message .= sprintf(
+            // translators: 1: user display name, 2: meeting permalink, 3: site name
             __('This is to notify you that %1$s updated a <a href="%2$s">meeting</a> on the %3$s site.', '12-step-meeting-list'),
             $user->display_name,
             get_permalink($meeting->ID),

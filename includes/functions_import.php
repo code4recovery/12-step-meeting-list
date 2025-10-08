@@ -73,6 +73,7 @@ function tsml_import_data_source($data_source_url, $data_source_name = '', $data
             tsml_log(
                 'data_source',
                 __('Added', '12-step-meeting-list') . ' - ' . $data_source_name,
+                // translators: %s is the number of meetings
                 sprintf(__('%s meetings', '12-step-meeting-list'), count($import_meetings))
             );
 
@@ -83,6 +84,7 @@ function tsml_import_data_source($data_source_url, $data_source_name = '', $data
             tsml_log(
                 'data_source',
                 __('Updates queued', '12-step-meeting-list') . ' - ' . $data_source_name,
+                // translators: %s is the number of updates
                 sprintf(__('%s updates', '12-step-meeting-list'), count($change_log))
             );
 
