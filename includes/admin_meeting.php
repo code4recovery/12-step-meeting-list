@@ -57,6 +57,7 @@ add_action('admin_init', function () {
         if (!empty($meeting->data_source)) {
             $data_source_name = property_exists($meeting, 'data_source_name') ? $meeting->data_source_name : $meeting->data_source;
             $message = sprintf(
+                // translators: %s is the data source name
                 __('This meeting was imported from an external feed %s. Any changes you make here will be overwritten when you refresh the data.', '12-step-meeting-list'),
                 "<strong>$data_source_name</strong>"
             );

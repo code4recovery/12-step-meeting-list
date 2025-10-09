@@ -4,7 +4,7 @@ Donate link: https://code4recovery.org/contribute
 Requires at least: 3.2
 Requires PHP: 7.2
 Tested up to: 6.8
-Stable tag: 3.19
+Stable tag: 3.19.1
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -293,6 +293,10 @@ Yes, you will need to know the key name of the field. Then include an array in y
 1. Edit location
 
 == Changelog ==
+
+= 3.19.1 =
+* Sync types with spec [more info](https://github.com/code4recovery/12-step-meeting-list/issues/924)
+* Fix issues when `$tsml_slug` is empty
 
 = 3.19 =
 * Replace Google/Mapbox with OSM/Leaflet [more info](https://github.com/code4recovery/12-step-meeting-list/issues/1740)

@@ -1,11 +1,13 @@
 <?php
 $title = sprintf(
+    // translators: %s is the program name, e.g. "AA"
     __('Index of %s Meetings', '12-step-meeting-list'),
     $tsml_programs[$tsml_program]['name']
 );
 
 $meetings = tsml_get_meetings();
 
+// translators: %s is the program name, e.g. "AA"
 $title = __(sprintf('Index of %s Meetings', $tsml_programs[$tsml_program]['name']), '12-step-meeting-list');
 
 $days = [
@@ -116,6 +118,7 @@ $schema = [
     <h1><?php echo esc_html($title); ?></h1>
     <p>
         <?php echo sprintf(
+            // translators: %s is the URL of the meetings page
             __('This page is intended for web crawlers. To find a meeting, please visit our <a href="%s">meetings page</a>.', '12-step-meeting-list'),
             esc_url(tsml_meetings_url())
         ); ?>
