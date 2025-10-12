@@ -44,9 +44,7 @@ add_action('init', function () {
 
             // when TSML UI is enabled, redirect legacy meeting detail page to TSML UI detail page
             if ($tsml_user_interface === 'tsml_ui') {
-                $url = tsml_meetings_url(['meeting' => $post->post_name]);
-                wp_redirect($url);
-                exit;
+                return dirname(__FILE__) . '/../templates/archive-tsml-ui.php';
             }
 
             // user has a custom meeting detail page

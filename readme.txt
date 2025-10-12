@@ -297,6 +297,7 @@ Yes, you will need to know the key name of the field. Then include an array in y
 = 3.19.1 =
 * Sync types with spec [more info](https://github.com/code4recovery/12-step-meeting-list/issues/924)
 * Fix issues when `$tsml_slug` is empty
+* Add support for TSML UI "pretty permalinks" [more info](https://github.com/code4recovery/tsml-ui/pull/475)
 
 = 3.19 =
 * Replace Google/Mapbox with OSM/Leaflet [more info](https://github.com/code4recovery/12-step-meeting-list/issues/1740)
