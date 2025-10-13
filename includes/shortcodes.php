@@ -122,6 +122,7 @@ function tsml_ui($arguments = [])
         'type' => '',
         'view' => '',
         'weekday' => '',
+        'pretty' => false,
     ], $arguments, 'tsml_ui');
 
     // sanitize arrays
@@ -194,7 +195,7 @@ function tsml_ui($arguments = [])
 
     // pretty permalinks
     $permalink_structure = get_option('permalink_structure');
-    $tsml_path = in_array($permalink_structure, ['/%postname%', '/%postname%/'])
+    $tsml_path = $defaults['pretty'] && in_array($permalink_structure, ['/%postname%', '/%postname%/'])
         ? str_replace('%postname%', $tsml_slug, $permalink_structure)
         : '';
 

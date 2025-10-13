@@ -16,7 +16,7 @@ tsml_header();
         </div>
     <?php }
 
-    echo tsml_ui();
+    echo tsml_ui(['pretty' => true]);
 
     if (is_active_sidebar('tsml_meetings_bottom')) { ?>
         <div class="widgets meetings-widgets meetings-widgets-bottom" role="complementary">
