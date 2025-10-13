@@ -110,7 +110,8 @@ add_shortcode('tsml_types_list', function () {
 function tsml_ui($arguments = [])
 {
     global $tsml_nonce, $tsml_conference_providers, $tsml_language, $tsml_programs, $tsml_program, $tsml_ui_config,
-    $tsml_feedback_addresses, $tsml_cache, $tsml_cache_writable, $tsml_distance_units, $tsml_columns, $tsml_timezone;
+    $tsml_feedback_addresses, $tsml_cache, $tsml_cache_writable, $tsml_distance_units, $tsml_columns, $tsml_timezone,
+    $tsml_slug;
 
     $defaults = shortcode_atts([
         'distance' => '',
@@ -191,7 +192,13 @@ function tsml_ui($arguments = [])
     $url = parse_url($data);
     $data = $url['path'] . '?' . $url['query'];
 
-    return '<div id="tsml-ui" data-src="' . $data . '" data-timezone="' . $tsml_timezone . '"></div>';
+    // pretty permalinks
+    $permalink_structure = get_option('permalink_structure');
+    $tsml_path = in_array($permalink_structure, ['/%postname%', '/%postname%/'])
+        ? str_replace('%postname%', $tsml_slug, $permalink_structure)
+        : '';
+
+    return "<div id='tsml-ui' data-src='$data' data-timezone='$tsml_timezone' data-path='$tsml_path'></div>";
 }
 add_shortcode('tsml_react', 'tsml_ui');
 add_shortcode('tsml_ui', 'tsml_ui');
