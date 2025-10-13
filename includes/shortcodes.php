@@ -194,7 +194,9 @@ function tsml_ui($arguments = [])
 
     // pretty permalinks
     $permalink_structure = get_option('permalink_structure');
-    $tsml_path = str_replace('%postname%', $tsml_slug, $permalink_structure);
+    $tsml_path = in_array($permalink_structure, ['/%postname%', '/%postname%/'])
+        ? str_replace('%postname%', $tsml_slug, $permalink_structure)
+        : "";
 
     return "<div id='tsml-ui' data-src='$data' data-timezone='$tsml_timezone' data-path='$tsml_path'></div>";
 }
