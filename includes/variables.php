@@ -1122,12 +1122,12 @@ function tsml_load_config()
                 'O' => __('Open meetings are available to anyone interested in Marijuana Anonymous’ program of recovery from marijuana. Non-addicts may attend open meetings as observers.', '12-step-meeting-list'),
             ],
             'types' => [
+                // Standard C4R Attributes
                 'BB' => __('Book Study', '12-step-meeting-list'),
                 'BE' => __('Beginners', '12-step-meeting-list'),
                 'CCAP' => __('Closed Captions', '12-step-meeting-list'),
                 'D' => __('Discussion', '12-step-meeting-list'),
                 'H' => __('Chip', '12-step-meeting-list'),
-                'LGBTQIA' => __('LGBTQIA+', '12-step-meeting-list'),
                 'M' => __('Men', '12-step-meeting-list'),
                 'MED' => __('Meditation', '12-step-meeting-list'),
                 'NB' => __('Non-Binary', '12-step-meeting-list'),
@@ -1139,6 +1139,8 @@ function tsml_load_config()
                 'W' => __('Women', '12-step-meeting-list'),
                 'X' => __('Wheelchair Accessible', '12-step-meeting-list'),
                 'Y' => __('Young People', '12-step-meeting-list'),
+                // Legacy MAWS Attributes
+                'LGBTQI+' => __('LGBTQI+', '12-step-meeting-list'),
             ],
         ],
         'na' => [
