@@ -9,6 +9,25 @@ add_action('init', function () {
     // register post types and taxonomies
     tsml_custom_post_types();
 
+    // Handle legacy redirects
+    add_action('template_redirect', function() {
+        if (is_post_type_archive('tsml_meeting') && isset($_GET['post_type']) && $_GET['post_type'] === 'tsml_meeting') {
+            $get_params = $_GET;
+            unset($get_params['post_type']);
+            if (empty($get_params) || (count($get_params) == 1 && isset($get_params['page_id']))) {
+                $redirect_url = tsml_meetings_url();
+                if (!headers_sent()) {
+                    wp_redirect($redirect_url);
+                    exit;
+                } else {
+                    // Fallback: JavaScript redirect if headers already sent
+                    echo '<script>window.location.href="' . esc_js($redirect_url) . '";</script>';
+                    exit;
+                }
+            }
+        }
+    });
+
     // meeting list page
     add_filter('archive_template', function ($template) {
         global $tsml_user_interface;
