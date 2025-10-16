@@ -111,7 +111,7 @@ function tsml_ui($arguments = [])
 {
     global $tsml_nonce, $tsml_conference_providers, $tsml_language, $tsml_programs, $tsml_program, $tsml_ui_config,
     $tsml_feedback_addresses, $tsml_cache, $tsml_cache_writable, $tsml_distance_units, $tsml_columns, $tsml_timezone,
-    $tsml_slug;
+    $tsml_slug, $wp;
 
     $defaults = shortcode_atts([
         'distance' => '',
@@ -122,7 +122,6 @@ function tsml_ui($arguments = [])
         'type' => '',
         'view' => '',
         'weekday' => '',
-        'pretty' => false,
     ], $arguments, 'tsml_ui');
 
     // sanitize arrays
@@ -194,10 +193,8 @@ function tsml_ui($arguments = [])
     $data = $url['path'] . '?' . $url['query'];
 
     // pretty permalinks
-    $permalink_structure = get_option('permalink_structure');
-    $tsml_path = $defaults['pretty'] && in_array($permalink_structure, ['/%postname%', '/%postname%/'])
-        ? str_replace('%postname%', $tsml_slug, $permalink_structure)
-        : '';
+    $folders = explode('/', $wp->request);
+    $tsml_path = $tsml_slug === $folders[0] ? "/$tsml_slug" : '';
 
     return "<div id='tsml-ui' data-src='$data' data-timezone='$tsml_timezone' data-path='$tsml_path'></div>";
 }
