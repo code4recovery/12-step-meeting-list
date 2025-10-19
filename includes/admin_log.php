@@ -5,6 +5,16 @@ function tsml_log_page()
 {
     global $tsml_nonce;
 
+    // tsml_log types, with translated labels for admin page
+    define('TSML_LOG_TYPES', [
+        'data_source' => __('Data source', '12-step-meeting-list'),
+        'data_source_error' => __('Data source error', '12-step-meeting-list'),
+        'import_meeting' => __('Meeting import', '12-step-meeting-list'),
+        'geocode_success' => __('Geocoding success', '12-step-meeting-list'),
+        'geocode_error' => __('Geocoding error', '12-step-meeting-list'),
+        'geocode_connection_error' => __('Geocoding connection error', '12-step-meeting-list'),
+    ]);
+
     // clear log entries
     $valid_nonce = isset($_POST['tsml_nonce']) && wp_verify_nonce($_POST['tsml_nonce'], $tsml_nonce);
     if ($valid_nonce && isset($_POST['clear_log'])) {
