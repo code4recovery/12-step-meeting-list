@@ -4,7 +4,7 @@ Donate link: https://code4recovery.org/contribute
 Requires at least: 3.2
 Requires PHP: 7.2
 Tested up to: 6.8
-Stable tag: 3.19.3
+Stable tag: 3.19.4
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -293,6 +293,10 @@ Yes, you will need to know the key name of the field. Then include an array in y
 1. Edit location
 
 == Changelog ==
+
+= 3.19.4 =
+* Fix TSML UI path param when inside a subdirectory [more info](https://github.com/code4recovery/12-step-meeting-list/discussions/1781)
+* Fix translation warning [more info](https://github.com/code4recovery/12-step-meeting-list/issues/1784)
 
 = 3.19.3 =
 * Fix TSML UI rendering [more info](https://github.com/code4recovery/12-step-meeting-list/discussions/1781)

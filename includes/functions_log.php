@@ -1,15 +1,5 @@
 <?php
 
-// tsml_log types, with translated labels for admin page
-define('TSML_LOG_TYPES', [
-    'data_source' => __('Data source', '12-step-meeting-list'),
-    'data_source_error' => __('Data source error', '12-step-meeting-list'),
-    'import_meeting' => __('Meeting import', '12-step-meeting-list'),
-    'geocode_success' => __('Geocoding success', '12-step-meeting-list'),
-    'geocode_error' => __('Geocoding error', '12-step-meeting-list'),
-    'geocode_connection_error' => __('Geocoding connection error', '12-step-meeting-list'),
-]);
-
 /**
  * add an entry to the activity log
  * used in tsml_ajax_info, tsml_geocode and anywhere else something could go wrong

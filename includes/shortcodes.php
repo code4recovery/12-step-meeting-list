@@ -111,7 +111,7 @@ function tsml_ui($arguments = [])
 {
     global $tsml_nonce, $tsml_conference_providers, $tsml_language, $tsml_programs, $tsml_program, $tsml_ui_config,
     $tsml_feedback_addresses, $tsml_cache, $tsml_cache_writable, $tsml_distance_units, $tsml_columns, $tsml_timezone,
-    $tsml_slug, $wp;
+    $tsml_slug;
 
     $defaults = shortcode_atts([
         'distance' => '',
@@ -193,8 +193,9 @@ function tsml_ui($arguments = [])
     $data = $url['path'] . '?' . $url['query'];
 
     // pretty permalinks
-    $folders = explode('/', $wp->request);
-    $tsml_path = $tsml_slug === $folders[0] ? "/$tsml_slug" : '';
+    $meeting_finder = parse_url(tsml_meetings_url());
+    $request_starts_with_meeting_finder_path = substr($_SERVER['REQUEST_URI'], 0, strlen($meeting_finder['path'])) === $meeting_finder['path'];
+    $tsml_path = empty($meeting_finder['query']) && $request_starts_with_meeting_finder_path ? $meeting_finder['path'] : '';
 
     return "<div id='tsml-ui' data-src='$data' data-timezone='$tsml_timezone' data-path='$tsml_path'></div>";
 }
