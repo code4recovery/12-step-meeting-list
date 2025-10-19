@@ -827,7 +827,7 @@ function tsml_import_sanitize_meetings($meetings, $data_source_url = null, $data
     // convert the array to UTF-8
     if (function_exists('mb_detect_encoding')) {
         array_walk_recursive($meetings, function ($value) {
-            if (!mb_detect_encoding($value, 'utf-8', true)) {
+            if (!mb_detect_encoding((string)$value, 'utf-8', true)) {
                 return (string) mb_convert_encoding($value, 'UTF-8', 'auto');
             }
             return $value;
@@ -837,7 +837,7 @@ function tsml_import_sanitize_meetings($meetings, $data_source_url = null, $data
     // trim and sanitize everything
     array_walk_recursive($meetings, function (&$value, $key) {
         // preserve <br>s as line breaks if present, otherwise clean up
-        $value = preg_replace('/\<br(\s*)?\/?\>/i', PHP_EOL, $value);
+        $value = preg_replace('/\<br(\s*)?\/?\>/i', PHP_EOL, (string)$value);
         $value = stripslashes($value);
         $value = trim($value);
 
