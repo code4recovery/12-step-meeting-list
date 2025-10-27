@@ -4,7 +4,11 @@
 		"start": "npx mix watch",
 		"build": "npm run build:mix && npm run build:wp",
 		"build:mix": "npx mix --production",
-		"build:wp": "wp-scripts build --webpack-src-dir=assets/src --output-path=assets/build"
+		"build:wp": "wp-scripts build --webpack-src-dir=assets/src --output-path=assets/build",
+		"docker:start": "wp-env start",
+		"docker:stop": "wp-env stop",
+		"docker:down": "wp-env destroy",
+		"docker:reseed": "wp-env run cli wp tsml-dev import --force"
 	},
 	"devDependencies": {
 		"@wordpress/babel-preset-default": "^8.11.0",
