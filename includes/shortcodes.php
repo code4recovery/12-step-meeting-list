@@ -147,8 +147,8 @@ function tsml_ui($arguments = [])
     // distance must be an integer
     $defaults['distance'] = intval($defaults['distance']);
     $defaults['distance'] = in_array($defaults['distance'], [1, 2, 5, 10, 15, 25, 50, 100])
-        ? [strval($defaults['distance'])]
-        : [];
+        ? strval($defaults['distance'])
+        : '';
 
 
     // enqueue app script
