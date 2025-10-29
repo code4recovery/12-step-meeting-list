@@ -609,7 +609,7 @@ function tsml_custom_types($types)
     add_action('init', function () use ($types) {
         global $tsml_programs, $tsml_program;
         foreach ($types as $key => $value) {
-            if (empty($value) && array_key_exists($key, $tsml_programs[$tsml_program]['types'])) {
+            if (empty($value)) {
                 // if empty, remove existing type
                 unset($tsml_programs[$tsml_program]['types'][$key]);
                 continue;
