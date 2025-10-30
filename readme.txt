@@ -4,7 +4,7 @@ Donate link: https://code4recovery.org/contribute
 Requires at least: 3.2
 Requires PHP: 7.2
 Tested up to: 6.8
-Stable tag: 3.19.5
+Stable tag: 3.19.6
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -293,6 +293,9 @@ Yes, you will need to know the key name of the field. Then include an array in y
 1. Edit location
 
 == Changelog ==
+
+= 3.19.6 =
+* Add Sign Language type for Al-Anon [more info](https://github.com/code4recovery/12-step-meeting-list/discussions/1807)
 
 = 3.19.5 =
 * Allow removing a type using tsml_custom_types [more info](https://github.com/code4recovery/12-step-meeting-list/discussions/1802)

@@ -748,6 +748,7 @@ function tsml_load_config()
                 'M' => __('Men', '12-step-meeting-list'),
                 'POA' => __('Parents of Alcoholics', '12-step-meeting-list'),
                 'POC' => __('People of Color', '12-step-meeting-list'),
+                'ASL' => __('Sign Language', '12-step-meeting-list'),
                 'SM' => __('Smoking Permitted', '12-step-meeting-list'),
                 'SP' => __('Speaker', '12-step-meeting-list'),
                 'ST' => __('Step Meeting', '12-step-meeting-list'),
