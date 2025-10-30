@@ -294,6 +294,9 @@ Yes, you will need to know the key name of the field. Then include an array in y
 
 == Changelog ==
 
+= 3.19.6 =
+* Add Sign Language type for Al-Anon [more info](https://github.com/code4recovery/12-step-meeting-list/discussions/1807)
+
 = 3.19.5 =
 * Allow removing a type using tsml_custom_types [more info](https://github.com/code4recovery/12-step-meeting-list/discussions/1802)
 * Fix distance setting in TSML UI shortcode
