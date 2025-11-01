@@ -1,0 +1,16 @@
+{
+  "plugins": [
+    ".",
+    "https://downloads.wordpress.org/plugin/query-monitor.latest-stable.zip"
+  ],
+  "config": {
+    "WP_DEBUG": true,
+    "SCRIPT_DEBUG": true
+  },
+  "mappings": {
+    "wp-content/mu-plugins": "./.wp-mu-plugins"
+  },
+  "lifecycleScripts": {
+    "afterStart": "node scripts/bootstrap.js"
+  }
+}

@@ -55,3 +55,35 @@ To update the `./languages/12-step-meeting-list.pot` file, install [WP Cli](http
 ```bash
 wp i18n make-pot . ./languages/12-step-meeting-list.pot --exclude=assets/
 ```
+
+## Local Development (Dockerized with [`wp-env`](https://developer.wordpress.org/block-editor/reference-guides/packages/packages-env/))
+
+**Prereqs:** [Docker Desktop](https://www.docker.com/products/docker-desktop/), [Node.js 18+](https://nodejs.org/en), [Git](https://git-scm.com/)
+
+> Note: the repository already defines `start` for asset watching (`npx mix watch`). To avoid conflicts, use the `docker:*` commands below for the Dockerized WordPress environment.
+
+### First-time (environment)
+```bash
+npm install -g @wordpress/env
+npm install
+npm run docker:start
+```
+On first run this will:
+- create a **Meetings** page with `[tsml_ui]` and set it as the front page
+- import demo data from [**template.csv**](https://github.com/code4recovery/12-step-meeting-list/blob/main/template.csv) only if no meetings exist
+
+### Daily development
+```bash
+npm run docker:start   # bring up Dockerized WordPress (idempotent)
+npx mix watch          # existing dev script for assets
+```
+
+### Optional
+```bash
+npm run docker:reseed  # force a re-import (dev only)
+npm run docker:stop    # stop containers (keep data)
+npm run docker:down    # destroy containers + volumes
+```
+
+### Notes
+- **Query Monitor** is auto-installed inside the dev container
