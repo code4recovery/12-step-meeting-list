@@ -294,6 +294,10 @@ Yes, you will need to know the key name of the field. Then include an array in y
 
 == Changelog ==
 
+= 3.19.7 =
+* Don't append unrecognized types to notes when importing [more info](https://github.com/code4recovery/12-step-meeting-list/discussions/1812)
+* Improvement to distance settings (was appending &distance= to permalinks in some cases)
+
 = 3.19.6 =
 * Add Sign Language type for Al-Anon [more info](https://github.com/code4recovery/12-step-meeting-list/discussions/1807)
 
