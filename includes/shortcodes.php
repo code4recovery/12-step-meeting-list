@@ -149,7 +149,7 @@ function tsml_ui($arguments = [])
     $defaults['distance'] = in_array($defaults['distance'], [1, 2, 5, 10, 15, 25, 50, 100])
         ? strval($defaults['distance'])
         : '';
-    if (!$defaults['distance']) {
+    if (empty($defaults['distance'])) {
         unset($defaults['distance']);
     }
 
