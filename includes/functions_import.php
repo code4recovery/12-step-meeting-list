@@ -1052,14 +1052,6 @@ function tsml_import_sanitize_meetings($meetings, $data_source_url = null, $data
             $meetings[$i]['types'] = array_diff($meetings[$i]['types'], ['O']);
         }
 
-        // append unused types to notes
-        if (count($unused_types)) {
-            if (!empty($meetings[$i]['notes'])) {
-                $meetings[$i]['notes'] .= str_repeat(PHP_EOL, 2);
-            }
-            $meetings[$i]['notes'] .= trim(implode(', ', $unused_types));
-        }
-
         // If Conference URL, validate; or if phone, force 'ONL' type, else remove 'ONL'
         $meetings[$i]['types'] = array_values(array_diff($meetings[$i]['types'], ['ONL']));
         if (!empty($meetings[$i]['conference_url'])) {
