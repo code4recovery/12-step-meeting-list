@@ -169,7 +169,7 @@ function tsml_ui($arguments = [])
     wp_localize_script(
         'tsml_ui',
         'tsml_react_config',
-        array_merge(
+        array_replace_recursive(
             [
                 'columns' => array_keys($tsml_columns),
                 'defaults' => $defaults,
@@ -178,7 +178,12 @@ function tsml_ui($arguments = [])
                 'feedback_emails' => array_values($tsml_feedback_addresses),
                 'flags' => $tsml_programs[$tsml_program]['flags'],
                 'strings' => [
-                    $tsml_language => array_merge($tsml_columns, compact('types', 'type_descriptions')),
+                    $tsml_language => array_replace_recursive(
+                        $tsml_columns,
+                        compact('types', 'type_descriptions'),
+                        // Get any existing strings for this language if they exist
+                        !empty($tsml_ui_config['strings'][$tsml_language]) ? $tsml_ui_config['strings'][$tsml_language] : []
+                    ),
                 ],
             ],
             $tsml_ui_config
