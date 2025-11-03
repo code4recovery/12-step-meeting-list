@@ -75,8 +75,8 @@ function tsml_email_meeting_change($email_to, $meeting, $old_meeting)
         $new = property_exists($meeting, $field) ? $meeting->$field : '';
 
         if (in_array($field, $tsml_array_fields)) {
-            $new = implode(', ', $new);
-            $old = implode(', ', $old);
+            if (is_array($new)) $new = implode(', ', $new);
+            if (is_array($old)) $old = implode(', ', $old);
         } elseif ($field == 'day') {
             $old = in_array($old, ['0', '1', '2', '3', '4', '5', '6']) ? $tsml_days[$old] : __('Appointment', '12-step-meeting-list');
             $new = in_array($new, ['0', '1', '2', '3', '4', '5', '6']) ? $tsml_days[$new] : __('Appointment', '12-step-meeting-list');
