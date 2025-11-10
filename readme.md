@@ -16,7 +16,7 @@ To report a security issue, please use the [Security Tab](https://github.com/cod
 
 ## Helping with Development
 
-Do you want to help develop the plugin? We welcome new members! Please find out more at [code4recovery.org](https://code4recovery.org). See the [development setup guide](./development.md) for local setup instructions.
+Do you want to help develop the plugin? We welcome new members! Please find out more at [code4recovery.org](https://code4recovery.org). See the [development setup guide](./CONTRIBUTING.md) for local setup instructions.
 
 ## Coding Suggestions
 
