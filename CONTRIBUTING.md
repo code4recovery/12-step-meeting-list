@@ -143,17 +143,17 @@ Once WordPress and TSML are running:
 2. Add the **Meetings** block to any template/page/post using the visual editor, or insert the `[tsml_ui]` shortcode in code view.  
    *(Recommended: keep the page content empty below the block and make it as wide as possible)*
 
-   ![Add Meeting Block](https://github.com/user-attachments/assets/96927ccb-5623-4078-85e6-4efb511473b2)
+   ![Add Meeting Block](https://github.com/curtisappl/tsml-assets/blob/v2/add-meeting-block.png?raw=true)
 
 3. Import or create meetings:  
    Go to **Meetings → Import & Export** and use [this template CSV](https://github.com/code4recovery/12-step-meeting-list/blob/main/template.csv).  
    You can also click **Meetings → Add Meeting** to add entries manually.
 
-   ![Add Meetings](https://github.com/user-attachments/assets/1c49c8e2-1314-4e0a-acde-1f535386257e)
+   ![Add Meetings](https://github.com/curtisappl/tsml-assets/blob/v2/import-meetings.png?raw=true)
 
 4. View your meetings page — you should see the meeting list rendered.  
 
-   ![Meeting List](https://github.com/user-attachments/assets/ebb933f3-e2ad-4b26-8277-4c018910a946)
+   ![Meeting List](https://github.com/curtisappl/tsml-assets/blob/v2/meeting-list.png?raw=true)
 
 ---
 
