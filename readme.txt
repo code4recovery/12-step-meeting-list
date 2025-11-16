@@ -295,6 +295,9 @@ Yes, you will need to know the key name of the field. Then include an array in y
 == Changelog ==
 
 = 3.19.8 =
+* Add additional SLAA meeting types [more info](https://github.com/code4recovery/12-step-meeting-list/issues/1829)
+
+= 3.19.8 =
 * Improve handling custom types in TSML UI [more info](https://github.com/code4recovery/12-step-meeting-list/discussions/1793)
 
 = 3.19.7 =
