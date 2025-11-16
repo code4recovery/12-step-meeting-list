@@ -294,7 +294,7 @@ Yes, you will need to know the key name of the field. Then include an array in y
 
 == Changelog ==
 
-= 3.19.8 =
+= 3.19.9 =
 * Add additional SLAA meeting types [more info](https://github.com/code4recovery/12-step-meeting-list/issues/1829)
 
 = 3.19.8 =
