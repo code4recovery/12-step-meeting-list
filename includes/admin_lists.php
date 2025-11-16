@@ -18,6 +18,8 @@ add_action('restrict_manage_posts', function ($post_type) {
         'hide_if_empty' => true,
     ]);
 
+
+    // $type='foo';implode(',', $type);
     $types = [];
     foreach ($tsml_types_in_use as $type) {
         $types[$type] = $tsml_programs[$tsml_program]['types'][$type];
