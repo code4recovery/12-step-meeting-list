@@ -20,6 +20,9 @@ add_action('restrict_manage_posts', function ($post_type) {
 
     $types = [];
     foreach ($tsml_types_in_use as $type) {
+        if (!isset($tsml_programs[$tsml_program]['types'][$type])) {
+            continue;
+        }
         $types[$type] = $tsml_programs[$tsml_program]['types'][$type];
     }
     asort($types);
@@ -54,7 +57,7 @@ add_filter(
         global $post_type, $pagenow, $wpdb, $tsml_data_sources;
 
         if ($pagenow === 'edit.php' && $post_type === 'tsml_meeting' && $query->is_main_query()) {
-            
+
             $meta_query = [];
 
             if (!empty($_GET['region'])) {
@@ -98,7 +101,7 @@ add_filter(
             }
 
             if (!empty($meta_query)) {
-                $query->set('meta_query', $meta_query);            
+                $query->set('meta_query', $meta_query);
             }
         }
     }
