@@ -1,6 +1,99 @@
 <?php
 
 /**
+ * normalize a data source URL to prevent duplicates
+ * handles HTML entities, double slashes, and other inconsistencies
+ *
+ * @param string $url The URL to normalize
+ * @return string The normalized URL
+ */
+function tsml_normalize_data_source_url($url)
+{
+    if (empty($url)) {
+        return '';
+    }
+
+    // Decode HTML entities (e.g., &amp; -> &)
+    $url = html_entity_decode($url, ENT_QUOTES | ENT_HTML5, 'UTF-8');
+
+    // Remove double slashes in the path (but preserve ://)
+    $url = preg_replace('#(?<!:)/{2,}#', '/', $url);
+
+    // Trim and sanitize
+    $url = trim($url);
+    $url = esc_url_raw($url, ['http', 'https']);
+
+    return $url;
+}
+
+/**
+ * normalize and deduplicate data sources array
+ * merges duplicate entries that normalize to the same URL
+ * also updates meeting meta to reference normalized URLs
+ *
+ * @param array $data_sources The data sources array
+ * @return array The normalized and deduplicated data sources array
+ */
+function tsml_normalize_data_sources($data_sources)
+{
+    if (empty($data_sources) || !is_array($data_sources)) {
+        return [];
+    }
+
+    global $wpdb;
+    $normalized = [];
+    $updated = false;
+    $key_mapping = []; // track old key -> new key mappings
+
+    foreach ($data_sources as $key => $value) {
+        $normalized_key = tsml_normalize_data_source_url($key);
+        
+        // track key changes for updating meeting meta
+        if ($normalized_key !== $key) {
+            $key_mapping[$key] = $normalized_key;
+            $updated = true;
+        }
+        
+        // if we already have this normalized key, merge the data (keep the most recent)
+        if (isset($normalized[$normalized_key])) {
+            $updated = true;
+            // keep the entry with the most recent last_import timestamp
+            if (isset($value['last_import']) && isset($normalized[$normalized_key]['last_import'])) {
+                if ($value['last_import'] > $normalized[$normalized_key]['last_import']) {
+                    $normalized[$normalized_key] = $value;
+                }
+            } elseif (isset($value['last_import'])) {
+                $normalized[$normalized_key] = $value;
+            }
+        } else {
+            $normalized[$normalized_key] = $value;
+        }
+    }
+
+    // if we made changes, save the normalized version and update meeting meta
+    if ($updated) {
+        update_option('tsml_data_sources', $normalized);
+        
+        // update meeting meta that references old URLs
+        if (!empty($key_mapping)) {
+            foreach ($key_mapping as $old_key => $new_key) {
+                // update all meeting meta entries that reference the old key
+                $wpdb->update(
+                    $wpdb->postmeta,
+                    ['meta_value' => $new_key],
+                    [
+                        'meta_key' => 'data_source',
+                        'meta_value' => $old_key
+                    ]
+                );
+            }
+        }
+    }
+
+    return $normalized;
+}
+
+/**
  * trigger import of a data source to the import buffer
  *
  * @param mixed $data_source_url
@@ -13,14 +106,34 @@ function tsml_import_data_source($data_source_url, $data_source_name = '', $data
 {
     global $tsml_data_sources, $tsml_debug;
 
-    // sanitize URL, name, parent region id, and Change Detection values
-    $data_source_url = $imported_data_source_url = trim(esc_url_raw($data_source_url, ['http', 'https']));
+    // normalize and sanitize URL to prevent duplicates
+    $data_source_url = tsml_normalize_data_source_url($data_source_url);
+    $imported_data_source_url = $data_source_url;
     $data_source_name = sanitize_text_field($data_source_name);
     $data_source_parent_region_id = (int) $data_source_parent_region_id;
     $data_source_change_detect = sanitize_text_field($data_source_change_detect);
 
-    // data source
+    // check for existing data source by normalized URL
+    // first check direct match
     $current_data_source = array_key_exists($data_source_url, $tsml_data_sources) ? $tsml_data_sources[$data_source_url] : null;
+    $existing_key = $data_source_url;
+    
+    // if not found, check if any existing key normalizes to the same URL (handles duplicates)
+    if (!$current_data_source) {
+        foreach ($tsml_data_sources as $key => $value) {
+            $normalized_key = tsml_normalize_data_source_url($key);
+            if ($normalized_key === $data_source_url) {
+                $current_data_source = $value;
+                $existing_key = $key;
+                break;
+            }
+        }
+    }
+    
+    // if we found a duplicate with a different key, remove the old entry
+    if ($current_data_source && $existing_key !== $data_source_url) {
+        unset($tsml_data_sources[$existing_key]);
+    }
 
     if ($current_data_source) {
         $data_source_name = $current_data_source['name'];
@@ -517,18 +630,33 @@ function tsml_import_buffer_set($meetings, $data_source_url = null, $data_source
         if (empty($meeting_data_source)) {
             $meetings[$i]['data_source'] = $data_source_url;
         } else {
-            // Check if this data sources is in our list of feeds
-            if (!array_key_exists($meeting_data_source, $tsml_data_sources)) {
-                // Not already there, so add it
-                $tsml_data_sources[$meeting_data_source] = [
-                    'status' => 'OK',
-                    'last_import' => current_time('timestamp'),
-                    'count_meetings' => 0,
-                    'name' => parse_url($meeting_data_source, PHP_URL_HOST),
-                    'parent_region_id' => $data_source_parent_region_id,
-                    'change_detect' => null,
-                    'type' => 'JSON',
-                ];
+            // Normalize the meeting's data source URL
+            $normalized_meeting_data_source = tsml_normalize_data_source_url($meeting_data_source);
+            $meetings[$i]['data_source'] = $normalized_meeting_data_source;
+            
+            // Check if this data source is in our list of feeds (using normalized URL)
+            if (!array_key_exists($normalized_meeting_data_source, $tsml_data_sources)) {
+                // Check if any existing key normalizes to the same URL
+                $found_existing = false;
+                foreach ($tsml_data_sources as $key => $value) {
+                    if (tsml_normalize_data_source_url($key) === $normalized_meeting_data_source) {
+                        $found_existing = true;
+                        break;
+                    }
+                }
+                
+                // Not already there, so add it with normalized URL
+                if (!$found_existing) {
+                    $tsml_data_sources[$normalized_meeting_data_source] = [
+                        'status' => 'OK',
+                        'last_import' => current_time('timestamp'),
+                        'count_meetings' => 0,
+                        'name' => parse_url($normalized_meeting_data_source, PHP_URL_HOST),
+                        'parent_region_id' => $data_source_parent_region_id,
+                        'change_detect' => null,
+                        'type' => 'JSON',
+                    ];
+                }
             }
         }
 

@@ -108,7 +108,9 @@ $tsml_url_fields = [
 $tsml_curl_handle = null;
 
 // load the array of URLs that we're using
+// normalize on load to prevent duplicates and ensure consistency everywhere
 $tsml_data_sources = tsml_get_option_array('tsml_data_sources');
+$tsml_data_sources = tsml_normalize_data_sources($tsml_data_sources);
 
 // meeting search defaults
 $tsml_defaults = [

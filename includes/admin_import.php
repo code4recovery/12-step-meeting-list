@@ -175,8 +175,22 @@ if (!function_exists('tsml_import_page')) {
         // remove data source
         if (!empty($_POST['tsml_remove_data_source']) && $valid_nonce) {
 
-            // sanitize URL
-            $_POST['tsml_remove_data_source'] = esc_url_raw($_POST['tsml_remove_data_source'], ['http', 'https']);
+            // normalize URL to handle duplicates
+            $remove_url = tsml_normalize_data_source_url($_POST['tsml_remove_data_source']);
+
+            // check for direct match first
+            if (array_key_exists($remove_url, $tsml_data_sources)) {
+                $_POST['tsml_remove_data_source'] = $remove_url;
+            } else {
+                // check if any existing key normalizes to the same URL
+                foreach ($tsml_data_sources as $key => $value) {
+                    $normalized_key = tsml_normalize_data_source_url($key);
+                    if ($normalized_key === $remove_url) {
+                        $_POST['tsml_remove_data_source'] = $key;
+                        break;
+                    }
+                }
+            }
 
             if (array_key_exists($_POST['tsml_remove_data_source'], $tsml_data_sources)) {
 

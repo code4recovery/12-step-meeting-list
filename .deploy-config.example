@@ -1,0 +1,16 @@
+# Deployment Configuration
+# Copy this file to .deploy-config and edit with your server details
+
+# SSH hostname, IP, or SSH config alias (e.g., "aastag" if defined in ~/.ssh/config)
+# If using an SSH config alias, you can leave SSH_USER empty
+SSH_HOST="aastag"
+
+# SSH username (optional - leave empty if using SSH config alias)
+# SSH_USER="your-username"
+
+# Full path to plugin directory on staging server
+PLUGIN_PATH="/home/wpe-user/sites/aavirginiastag/wp-content/plugins/12-step-meeting-list"
+
+# Optional: Path to SSH private key (leave empty to use default ~/.ssh/id_rsa)
+# SSH_KEY="~/.ssh/id_rsa"
+
