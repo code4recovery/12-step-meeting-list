@@ -1,4 +1,4 @@
-@import 'tsml-jquery-ui.css';
+@import 'tsml-jquery-ui';
 
 body {
 	//import & settings
@@ -27,6 +27,15 @@ body {
 			width: 85px;
 		}
 	}
+
+    select#timezone {
+        optgroup {
+            font-size: 1rem;
+        }
+        option {
+            font-size: 0.9rem;
+        }
+    }
 
 
 }
