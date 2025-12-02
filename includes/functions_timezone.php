@@ -21,24 +21,47 @@ function tsml_timezone_is_valid($timezone)
  */
 function tsml_timezone_select($selected = null)
 {
-    $continents = [];
-    foreach (DateTimeZone::listIdentifiers() as $timezone) {
-        $count_slashes = substr_count($timezone, '/');
-        if ($count_slashes < 1) {
+    global $tsml_timezone, $wpdb;
+    $timezones = DateTimeZone::listIdentifiers();
+
+    $used = $wpdb->get_col(
+        $wpdb->prepare("SELECT DISTINCT meta_value FROM $wpdb->postmeta WHERE meta_key = 'timezone'")
+    );
+    $used[] = $tsml_timezone;
+    $used = array_filter(array_unique($used));
+    $used_timzones = [];
+    foreach ($used as $timezone) {
+        if (!in_array($timezone, $timezones)) {
+            continue;
+        }
+        $city = array_pop(explode('/', $timezone, 2));
+        $used_timzones[$timezone] = str_replace(['_', '/'], [' ', ' - '], $city);
+    }
+
+    $groups = [];
+    foreach ($timezones as $timezone) {
+        if (in_array($timezone, $used) || !substr_count($timezone, '/')) {
             continue;
         }
         list($continent, $city) = explode('/', $timezone, 2);
-        if (!isset($continents[$continent])) {
-            $continents[$continent] = [];
+        if (!isset($groups[$continent])) {
+            $groups[$continent] = [];
         }
-        $continents[$continent][$timezone] = str_replace('_', ' ', str_replace('/', ' - ', $city));
+        $groups[$continent][$timezone] = str_replace('_', ' ', str_replace('/', ' - ', $city));
     }
-    $continents['UTC'] = ['UTC' => 'UTC'];
+    $groups['UTC'] = ['UTC' => 'UTC'];
     ?>
     <select name="timezone" id="timezone">
         <option value="" <?php selected($timezone, null) ?>></option>
-        <?php foreach ($continents as $continent => $cities) { ?>
-            <optgroup label="<?php echo esc_attr($continent) ?>">
+        <optgroup label="<?php esc_attr_e('Currently In Use', '12-step-meeting-list'); ?>">
+            <?php foreach ($used_timzones as $timezone => $city) { ?>
+                <option value="<?php echo esc_attr($timezone) ?>" <?php selected($timezone, $selected) ?>>
+                    <?php echo esc_html($city) ?>
+                </option>
+            <?php } ?>
+        </optgroup>
+        <?php foreach ($groups as $group => $cities) { ?>
+            <optgroup label="<?php echo esc_attr($group) ?>">
                 <?php foreach ($cities as $timezone => $city) { ?>
                     <option value="<?php echo esc_attr($timezone) ?>" <?php selected($timezone, $selected) ?>>
                         <?php echo esc_html($city) ?>

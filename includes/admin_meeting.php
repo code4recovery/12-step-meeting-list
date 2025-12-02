@@ -10,7 +10,6 @@ add_filter('enter_title_here', function ($title) {
     return $title;
 });
 
-
 // move author meta box to right side
 add_action('do_meta_boxes', function () {
     remove_meta_box('authordiv', 'tsml_meeting', 'normal');
@@ -31,7 +30,6 @@ add_action('admin_init', function () {
     // compares versions and updates databases as needed for upgrades
     $tsml_version = get_option('tsml_version');
     if (version_compare($tsml_version, TSML_VERSION, '<')) {
-
 
         // do this every time
         update_option('tsml_version', TSML_VERSION);
@@ -214,7 +212,7 @@ add_action('admin_init', function () {
         'location',
         __('Location Information', '12-step-meeting-list'),
         function () {
-            global $tsml_timezone, $tsml_user_interface;
+            global $tsml_timezone, $tsml_user_interface, $post;
             $meeting = tsml_get_meeting();
             $location = $meetings = [];
             if ($meeting->post_parent) {
@@ -332,7 +330,15 @@ add_action('admin_init', function () {
             <label for="timezone">
                 <?php esc_html_e('Timezone', '12-step-meeting-list') ?>
             </label>
-            <?php tsml_timezone_select(@$location->timezone) ?>
+            <?php 
+                $timezone = null;
+                if ($location && $location->timezone) {
+                    $timezone = $location->timezone;
+                } elseif ($post && 'auto-draft' === $post->post_status) {
+                    $timezone = $tsml_timezone;
+                }
+                tsml_timezone_select($timezone) 
+            ?>
         </div>
 
         <?php if (empty($location->timezone) && empty($tsml_timezone) && $tsml_user_interface === 'tsml_ui') { ?>
