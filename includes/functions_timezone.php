@@ -29,13 +29,13 @@ function tsml_timezone_select($selected = null)
     );
     $used[] = $tsml_timezone;
     $used = array_filter(array_unique($used));
-    $used_timzones = [];
+    $used_timezones = [];
     foreach ($used as $timezone) {
         if (!in_array($timezone, $timezones)) {
             continue;
         }
         $city = array_pop(explode('/', $timezone, 2));
-        $used_timzones[$timezone] = str_replace(['_', '/'], [' ', ' - '], $city);
+        $used_timezones[$timezone] = str_replace(['_', '/'], [' ', ' - '], $city);
     }
 
     $groups = [];
@@ -53,13 +53,15 @@ function tsml_timezone_select($selected = null)
     ?>
     <select name="timezone" id="timezone">
         <option value="" <?php selected($timezone, null) ?>></option>
-        <optgroup label="<?php esc_attr_e('Currently In Use', '12-step-meeting-list'); ?>">
-            <?php foreach ($used_timzones as $timezone => $city) { ?>
-                <option value="<?php echo esc_attr($timezone) ?>" <?php selected($timezone, $selected) ?>>
-                    <?php echo esc_html($city) ?>
-                </option>
-            <?php } ?>
-        </optgroup>
+        <?php if (!empty($used_timezones)) : ?>
+            <optgroup label="<?php esc_attr_e('Currently In Use', '12-step-meeting-list'); ?>">
+                <?php foreach ($used_timezones as $timezone => $city) { ?>
+                    <option value="<?php echo esc_attr($timezone) ?>" <?php selected($timezone, $selected) ?>>
+                        <?php echo esc_html($city) ?>
+                    </option>
+                <?php } ?>
+            </optgroup>
+        <?php endif; ?>
         <?php foreach ($groups as $group => $cities) { ?>
             <optgroup label="<?php echo esc_attr($group) ?>">
                 <?php foreach ($cities as $timezone => $city) { ?>
