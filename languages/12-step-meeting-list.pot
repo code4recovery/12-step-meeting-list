@@ -1,15 +1,15 @@
-# Copyright (C) 2025 Code for Recovery
+# Copyright (C) 2026 Code for Recovery
 # This file is distributed under the GPLv2 or later.
 msgid ""
 msgstr ""
-"Project-Id-Version: 12 Step Meeting List 3.19.1\n"
+"Project-Id-Version: 12 Step Meeting List 3.19.9\n"
 "Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/trunk\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"POT-Creation-Date: 2025-10-08T15:10:05+00:00\n"
+"POT-Creation-Date: 2026-01-02T17:35:49+00:00\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "X-Generator: WP-CLI 2.12.0\n"
 "X-Domain: 12-step-meeting-list\n"
@@ -124,11 +124,11 @@ msgid "Change Detection"
 msgstr ""
 
 #: includes/admin_import.php:255
-#: includes/admin_lists.php:373
+#: includes/admin_lists.php:376
 #: includes/admin_meeting.php:349
 #: includes/admin_meeting.php:406
 #: includes/functions.php:526
-#: includes/variables.php:1452
+#: includes/variables.php:1481
 #: templates/archive-meetings.php:190
 #: templates/archive-meetings.php:206
 msgid "Meetings"
@@ -432,13 +432,13 @@ msgid "Import Log"
 msgstr ""
 
 #: includes/admin_import.php:652
-#: includes/admin_lists.php:118
-#: includes/admin_log.php:80
+#: includes/admin_lists.php:121
+#: includes/admin_log.php:90
 msgid "Date"
 msgstr ""
 
 #: includes/admin_import.php:653
-#: includes/admin_log.php:82
+#: includes/admin_log.php:92
 msgid "Info"
 msgstr ""
 
@@ -446,22 +446,22 @@ msgstr ""
 msgid "View full event log"
 msgstr ""
 
-#: includes/admin_lists.php:28
-#: includes/admin_log.php:81
+#: includes/admin_lists.php:31
+#: includes/admin_log.php:91
 msgid "Type"
 msgstr ""
 
-#: includes/admin_lists.php:35
+#: includes/admin_lists.php:38
 #: includes/admin_meeting.php:423
 msgid "None"
 msgstr ""
 
-#: includes/admin_lists.php:42
-#: includes/admin_lists.php:117
+#: includes/admin_lists.php:45
+#: includes/admin_lists.php:120
 msgid "Data Source"
 msgstr ""
 
-#: includes/admin_lists.php:113
+#: includes/admin_lists.php:116
 #: includes/ajax.php:223
 #: includes/functions.php:527
 #: includes/shortcodes.php:81
@@ -470,22 +470,22 @@ msgstr ""
 msgid "Meeting"
 msgstr ""
 
-#: includes/admin_lists.php:114
+#: includes/admin_lists.php:117
 #: includes/admin_meeting.php:76
 #: templates/archive-locations.php:129
 msgid "Day"
 msgstr ""
 
-#: includes/admin_lists.php:115
+#: includes/admin_lists.php:118
 #: includes/admin_meeting.php:92
 #: includes/shortcodes.php:80
 #: includes/variables.php:650
-#: includes/variables.php:981
+#: includes/variables.php:982
 #: templates/archive-locations.php:130
 msgid "Time"
 msgstr ""
 
-#: includes/admin_lists.php:116
+#: includes/admin_lists.php:119
 #: includes/admin_meeting.php:310
 #: includes/admin_meeting.php:319
 #: includes/ajax.php:244
@@ -496,23 +496,23 @@ msgstr ""
 msgid "Region"
 msgstr ""
 
-#: includes/admin_lists.php:140
+#: includes/admin_lists.php:143
 #: includes/admin_meeting.php:86
 #: includes/functions_email.php:81
 #: includes/functions_email.php:82
 #: includes/functions_format.php:43
 #: includes/functions_format.php:128
-#: includes/variables.php:1441
+#: includes/variables.php:1470
 #: templates/archive-meetings.php:639
 msgid "Appointment"
 msgstr ""
 
-#: includes/admin_lists.php:199
+#: includes/admin_lists.php:202
 msgid "Reopen for In Person Attendees"
 msgstr ""
 
 #. translators: %s is the number of meetings that were changed
-#: includes/admin_lists.php:315
+#: includes/admin_lists.php:318
 #, php-format
 msgid "Temporary Closure added to %s meeting"
 msgid_plural "Temporary Closure added to %s meetings"
@@ -520,7 +520,7 @@ msgstr[0] ""
 msgstr[1] ""
 
 #. translators: %s is the number of meetings that were changed
-#: includes/admin_lists.php:328
+#: includes/admin_lists.php:331
 #, php-format
 msgid "Temporary Closure removed from %s meeting"
 msgid_plural "Temporary Closure removed from %s meetings"
@@ -528,41 +528,65 @@ msgstr[0] ""
 msgstr[1] ""
 
 #. translators: %s is the number of meetings that were changed
-#: includes/admin_lists.php:341
+#: includes/admin_lists.php:344
 #, php-format
 msgid "%s meeting reopened for in person attendees"
 msgid_plural "%s meetings reopended for in person attendees"
 msgstr[0] ""
 msgstr[1] ""
 
+#: includes/admin_log.php:10
+msgid "Data source"
+msgstr ""
+
+#: includes/admin_log.php:11
+msgid "Data source error"
+msgstr ""
+
 #: includes/admin_log.php:12
+msgid "Meeting import"
+msgstr ""
+
+#: includes/admin_log.php:13
+msgid "Geocoding success"
+msgstr ""
+
+#: includes/admin_log.php:14
+msgid "Geocoding error"
+msgstr ""
+
+#: includes/admin_log.php:15
+msgid "Geocoding connection error"
+msgstr ""
+
+#: includes/admin_log.php:22
 msgid "Log cleared"
 msgstr ""
 
-#: includes/admin_log.php:37
+#: includes/admin_log.php:47
 #: includes/admin_menu.php:38
 #: includes/admin_menu.php:39
 msgid "Event Log"
 msgstr ""
 
-#: includes/admin_log.php:42
+#: includes/admin_log.php:52
 msgid "No events within the last month."
 msgstr ""
 
-#: includes/admin_log.php:46
+#: includes/admin_log.php:56
 msgid "These are the most recent events within the last month."
 msgstr ""
 
-#: includes/admin_log.php:52
-#: includes/admin_log.php:56
+#: includes/admin_log.php:62
+#: includes/admin_log.php:66
 msgid "Filter by event type"
 msgstr ""
 
-#: includes/admin_log.php:72
+#: includes/admin_log.php:82
 msgid "Clear log"
 msgstr ""
 
-#: includes/admin_log.php:83
+#: includes/admin_log.php:93
 msgid "Data"
 msgstr ""
 
@@ -834,7 +858,7 @@ msgid "Venmo"
 msgstr ""
 
 #: includes/admin_meeting.php:472
-msgid "Square Cash"
+msgid "Cash App"
 msgstr ""
 
 #: includes/admin_meeting.php:478
@@ -879,7 +903,7 @@ msgstr ""
 #: includes/admin_menu.php:17
 #: includes/functions.php:480
 #: includes/functions.php:482
-#: includes/variables.php:1455
+#: includes/variables.php:1484
 msgid "Regions"
 msgstr ""
 
@@ -1075,25 +1099,25 @@ msgstr ""
 
 #: includes/admin_settings.php:367
 #: includes/variables.php:711
-#: includes/variables.php:801
-#: includes/variables.php:835
-#: includes/variables.php:873
-#: includes/variables.php:929
-#: includes/variables.php:977
-#: includes/variables.php:999
-#: includes/variables.php:1024
-#: includes/variables.php:1067
-#: includes/variables.php:1101
-#: includes/variables.php:1165
-#: includes/variables.php:1230
-#: includes/variables.php:1254
-#: includes/variables.php:1280
-#: includes/variables.php:1293
-#: includes/variables.php:1310
-#: includes/variables.php:1328
-#: includes/variables.php:1351
-#: includes/variables.php:1382
-#: includes/variables.php:1415
+#: includes/variables.php:802
+#: includes/variables.php:836
+#: includes/variables.php:874
+#: includes/variables.php:930
+#: includes/variables.php:978
+#: includes/variables.php:1000
+#: includes/variables.php:1025
+#: includes/variables.php:1068
+#: includes/variables.php:1102
+#: includes/variables.php:1168
+#: includes/variables.php:1233
+#: includes/variables.php:1257
+#: includes/variables.php:1283
+#: includes/variables.php:1296
+#: includes/variables.php:1313
+#: includes/variables.php:1331
+#: includes/variables.php:1367
+#: includes/variables.php:1411
+#: includes/variables.php:1444
 msgid "Open"
 msgstr ""
 
@@ -1391,7 +1415,7 @@ msgstr ""
 
 #: includes/functions.php:547
 #: includes/functions.php:549
-#: includes/variables.php:1451
+#: includes/variables.php:1480
 msgid "Locations"
 msgstr ""
 
@@ -1441,7 +1465,7 @@ msgstr ""
 
 #: includes/functions.php:576
 #: includes/functions.php:578
-#: includes/variables.php:1450
+#: includes/variables.php:1479
 msgid "Groups"
 msgstr ""
 
@@ -1489,176 +1513,176 @@ msgstr ""
 msgid "No groups found."
 msgstr ""
 
-#: includes/functions.php:994
+#: includes/functions.php:999
 msgid "Afrikaans"
 msgstr ""
 
-#: includes/functions.php:995
+#: includes/functions.php:1000
 msgid "Amharic"
 msgstr ""
 
-#: includes/functions.php:996
+#: includes/functions.php:1001
 msgid "Arabic"
 msgstr ""
 
-#: includes/functions.php:997
+#: includes/functions.php:1002
 msgid "Bulgarian"
 msgstr ""
 
-#: includes/functions.php:998
+#: includes/functions.php:1003
 msgid "Danish"
 msgstr ""
 
-#: includes/functions.php:999
+#: includes/functions.php:1004
 msgid "German"
 msgstr ""
 
-#: includes/functions.php:1000
+#: includes/functions.php:1005
 msgid "Greek"
 msgstr ""
 
-#: includes/functions.php:1001
+#: includes/functions.php:1006
 msgid "English"
 msgstr ""
 
-#: includes/functions.php:1002
+#: includes/functions.php:1007
 msgid "Spanish"
 msgstr ""
 
-#: includes/functions.php:1003
+#: includes/functions.php:1008
 msgid "Persian"
 msgstr ""
 
-#: includes/functions.php:1004
+#: includes/functions.php:1009
 msgid "Finnish"
 msgstr ""
 
-#: includes/functions.php:1005
+#: includes/functions.php:1010
 msgid "French"
 msgstr ""
 
-#: includes/functions.php:1006
+#: includes/functions.php:1011
 msgid "Hebrew"
 msgstr ""
 
-#: includes/functions.php:1007
+#: includes/functions.php:1012
 msgid "Hindi"
 msgstr ""
 
-#: includes/functions.php:1008
+#: includes/functions.php:1013
 msgid "Croatian"
 msgstr ""
 
-#: includes/functions.php:1009
+#: includes/functions.php:1014
 msgid "Hungarian"
 msgstr ""
 
-#: includes/functions.php:1010
+#: includes/functions.php:1015
 msgid "Icelandic"
 msgstr ""
 
-#: includes/functions.php:1011
+#: includes/functions.php:1016
 msgid "Italian"
 msgstr ""
 
-#: includes/functions.php:1012
+#: includes/functions.php:1017
 msgid "Japanese"
 msgstr ""
 
-#: includes/functions.php:1013
+#: includes/functions.php:1018
 msgid "Georgian"
 msgstr ""
 
-#: includes/functions.php:1014
+#: includes/functions.php:1019
 msgid "Korean"
 msgstr ""
 
-#: includes/functions.php:1015
+#: includes/functions.php:1020
 msgid "Lithuanian"
 msgstr ""
 
-#: includes/functions.php:1016
+#: includes/functions.php:1021
 msgid "Malayalam"
 msgstr ""
 
-#: includes/functions.php:1017
+#: includes/functions.php:1022
 msgid "Maltese"
 msgstr ""
 
-#: includes/functions.php:1018
+#: includes/functions.php:1023
 msgid "Nepali"
 msgstr ""
 
-#: includes/functions.php:1019
+#: includes/functions.php:1024
 msgid "Dutch"
 msgstr ""
 
-#: includes/functions.php:1020
+#: includes/functions.php:1025
 msgid "Norwegian"
 msgstr ""
 
-#: includes/functions.php:1021
+#: includes/functions.php:1026
 msgid "Punjabi"
 msgstr ""
 
-#: includes/functions.php:1022
+#: includes/functions.php:1027
 msgid "Polish"
 msgstr ""
 
-#: includes/functions.php:1023
+#: includes/functions.php:1028
 msgid "Portuguese"
 msgstr ""
 
-#: includes/functions.php:1024
+#: includes/functions.php:1029
 msgid "Russian"
 msgstr ""
 
-#: includes/functions.php:1025
+#: includes/functions.php:1030
 msgid "Slovak"
 msgstr ""
 
-#: includes/functions.php:1026
+#: includes/functions.php:1031
 msgid "Slovenian"
 msgstr ""
 
-#: includes/functions.php:1027
+#: includes/functions.php:1032
 msgid "Swedish"
 msgstr ""
 
-#: includes/functions.php:1028
+#: includes/functions.php:1033
 msgid "Thai"
 msgstr ""
 
-#: includes/functions.php:1029
+#: includes/functions.php:1034
 msgid "Tagalog"
 msgstr ""
 
-#: includes/functions.php:1030
+#: includes/functions.php:1035
 msgid "Turkish"
 msgstr ""
 
-#: includes/functions.php:1031
+#: includes/functions.php:1036
 msgid "Ukrainian"
 msgstr ""
 
 #. translators: %s is the permission required
-#: includes/functions.php:1218
-#: includes/functions.php:1231
+#: includes/functions.php:1223
+#: includes/functions.php:1236
 #, php-format
 msgid "You do not have sufficient permissions to access this page (<code>%s</code>)."
 msgstr ""
 
 #. translators: %s is the name of the data source
-#: includes/functions.php:1448
+#: includes/functions.php:1453
 #, php-format
 msgid "Please sign in to your website and refresh the <strong>%s</strong> feed on the Import & Export page."
 msgstr ""
 
-#: includes/functions.php:1451
+#: includes/functions.php:1456
 msgid "Go to Import & Export page"
 msgstr ""
 
-#: includes/functions.php:1453
+#: includes/functions.php:1458
 msgid "Data Source Changes Detected"
 msgstr ""
 
@@ -1814,30 +1838,6 @@ msgstr ""
 msgid "%1$1s %2$2s at %3$3s"
 msgstr ""
 
-#: includes/functions_log.php:5
-msgid "Data source"
-msgstr ""
-
-#: includes/functions_log.php:6
-msgid "Data source error"
-msgstr ""
-
-#: includes/functions_log.php:7
-msgid "Meeting import"
-msgstr ""
-
-#: includes/functions_log.php:8
-msgid "Geocoding success"
-msgstr ""
-
-#: includes/functions_log.php:9
-msgid "Geocoding error"
-msgstr ""
-
-#: includes/functions_log.php:10
-msgid "Geocoding connection error"
-msgstr ""
-
 #: includes/rest.php:26
 msgid "This meeting list is restricted."
 msgstr ""
@@ -1883,7 +1883,7 @@ msgid "This meeting is closed; only those who have a desire to recover from the 
 msgstr ""
 
 #: includes/variables.php:689
-#: includes/variables.php:897
+#: includes/variables.php:898
 msgid "This meeting is open and anyone may attend."
 msgstr ""
 
@@ -1900,25 +1900,25 @@ msgid "Audio / Visual"
 msgstr ""
 
 #: includes/variables.php:695
-#: includes/variables.php:856
-#: includes/variables.php:950
-#: includes/variables.php:1125
-#: includes/variables.php:1244
-#: includes/variables.php:1270
-#: includes/variables.php:1305
-#: includes/variables.php:1339
+#: includes/variables.php:857
+#: includes/variables.php:951
+#: includes/variables.php:1127
+#: includes/variables.php:1247
+#: includes/variables.php:1273
+#: includes/variables.php:1308
+#: includes/variables.php:1347
 msgid "Book Study"
 msgstr ""
 
 #: includes/variables.php:696
-#: includes/variables.php:1126
-#: includes/variables.php:1243
-#: includes/variables.php:1269
+#: includes/variables.php:1128
+#: includes/variables.php:1246
+#: includes/variables.php:1272
 msgid "Beginners"
 msgstr ""
 
 #: includes/variables.php:697
-#: includes/variables.php:1400
+#: includes/variables.php:1429
 msgid "BIPOC"
 msgstr ""
 
@@ -1927,32 +1927,32 @@ msgid "Captions"
 msgstr ""
 
 #: includes/variables.php:699
-#: includes/variables.php:1245
-#: includes/variables.php:1271
-#: includes/variables.php:1341
+#: includes/variables.php:1248
+#: includes/variables.php:1274
+#: includes/variables.php:1349
 msgid "Child Care Available"
 msgstr ""
 
 #: includes/variables.php:700
-#: includes/variables.php:781
-#: includes/variables.php:830
-#: includes/variables.php:859
-#: includes/variables.php:910
-#: includes/variables.php:973
-#: includes/variables.php:996
-#: includes/variables.php:1018
-#: includes/variables.php:1055
-#: includes/variables.php:1090
-#: includes/variables.php:1154
-#: includes/variables.php:1229
-#: includes/variables.php:1246
-#: includes/variables.php:1272
-#: includes/variables.php:1291
-#: includes/variables.php:1306
-#: includes/variables.php:1324
-#: includes/variables.php:1342
-#: includes/variables.php:1373
-#: includes/variables.php:1413
+#: includes/variables.php:782
+#: includes/variables.php:831
+#: includes/variables.php:860
+#: includes/variables.php:911
+#: includes/variables.php:974
+#: includes/variables.php:997
+#: includes/variables.php:1019
+#: includes/variables.php:1056
+#: includes/variables.php:1091
+#: includes/variables.php:1157
+#: includes/variables.php:1232
+#: includes/variables.php:1249
+#: includes/variables.php:1275
+#: includes/variables.php:1294
+#: includes/variables.php:1309
+#: includes/variables.php:1327
+#: includes/variables.php:1351
+#: includes/variables.php:1402
+#: includes/variables.php:1442
 msgid "Closed"
 msgstr ""
 
@@ -1961,12 +1961,12 @@ msgid "Concepts of Service"
 msgstr ""
 
 #: includes/variables.php:702
-#: includes/variables.php:784
-#: includes/variables.php:916
-#: includes/variables.php:997
-#: includes/variables.php:1060
-#: includes/variables.php:1128
-#: includes/variables.php:1326
+#: includes/variables.php:785
+#: includes/variables.php:917
+#: includes/variables.php:998
+#: includes/variables.php:1061
+#: includes/variables.php:1130
+#: includes/variables.php:1329
 msgid "Discussion"
 msgstr ""
 
@@ -1976,17 +1976,16 @@ msgstr ""
 
 #: includes/variables.php:704
 #: includes/variables.php:744
-#: includes/variables.php:788
-#: includes/variables.php:865
-#: includes/variables.php:918
-#: includes/variables.php:1343
-#: includes/variables.php:1374
+#: includes/variables.php:789
+#: includes/variables.php:866
+#: includes/variables.php:919
+#: includes/variables.php:1403
 msgid "Fragrance Free"
 msgstr ""
 
 #: includes/variables.php:705
-#: includes/variables.php:1092
-#: includes/variables.php:1156
+#: includes/variables.php:1093
+#: includes/variables.php:1159
 msgid "Gay/Lesbian"
 msgstr ""
 
@@ -1995,7 +1994,8 @@ msgid "Laundry Lists Workbook"
 msgstr ""
 
 #: includes/variables.php:707
-#: includes/variables.php:1021
+#: includes/variables.php:1022
+#: includes/variables.php:1359
 msgid "LGBTQ+"
 msgstr ""
 
@@ -2005,25 +2005,25 @@ msgstr ""
 
 #: includes/variables.php:709
 #: includes/variables.php:748
-#: includes/variables.php:796
-#: includes/variables.php:833
-#: includes/variables.php:872
-#: includes/variables.php:926
-#: includes/variables.php:975
-#: includes/variables.php:998
-#: includes/variables.php:1023
-#: includes/variables.php:1065
-#: includes/variables.php:1098
-#: includes/variables.php:1131
-#: includes/variables.php:1162
-#: includes/variables.php:1252
-#: includes/variables.php:1278
-#: includes/variables.php:1292
-#: includes/variables.php:1308
-#: includes/variables.php:1349
-#: includes/variables.php:1379
-#: includes/variables.php:1401
-#: includes/variables.php:1453
+#: includes/variables.php:797
+#: includes/variables.php:834
+#: includes/variables.php:873
+#: includes/variables.php:927
+#: includes/variables.php:976
+#: includes/variables.php:999
+#: includes/variables.php:1024
+#: includes/variables.php:1066
+#: includes/variables.php:1099
+#: includes/variables.php:1132
+#: includes/variables.php:1165
+#: includes/variables.php:1255
+#: includes/variables.php:1281
+#: includes/variables.php:1295
+#: includes/variables.php:1311
+#: includes/variables.php:1362
+#: includes/variables.php:1408
+#: includes/variables.php:1430
+#: includes/variables.php:1482
 msgid "Men"
 msgstr ""
 
@@ -2036,38 +2036,38 @@ msgid "Sign Language ASL"
 msgstr ""
 
 #: includes/variables.php:713
-#: includes/variables.php:751
-#: includes/variables.php:807
-#: includes/variables.php:838
-#: includes/variables.php:878
-#: includes/variables.php:931
-#: includes/variables.php:1070
-msgid "Smoking Permitted"
-msgstr ""
-
-#: includes/variables.php:714
 #: includes/variables.php:752
 #: includes/variables.php:808
 #: includes/variables.php:839
 #: includes/variables.php:879
 #: includes/variables.php:932
-#: includes/variables.php:979
-#: includes/variables.php:1030
 #: includes/variables.php:1071
-#: includes/variables.php:1105
-#: includes/variables.php:1137
-#: includes/variables.php:1170
-#: includes/variables.php:1205
-#: includes/variables.php:1231
-#: includes/variables.php:1312
-#: includes/variables.php:1329
-#: includes/variables.php:1353
-#: includes/variables.php:1386
+msgid "Smoking Permitted"
+msgstr ""
+
+#: includes/variables.php:714
+#: includes/variables.php:753
+#: includes/variables.php:809
+#: includes/variables.php:840
+#: includes/variables.php:880
+#: includes/variables.php:933
+#: includes/variables.php:980
+#: includes/variables.php:1031
+#: includes/variables.php:1072
+#: includes/variables.php:1106
+#: includes/variables.php:1138
+#: includes/variables.php:1173
+#: includes/variables.php:1208
+#: includes/variables.php:1234
+#: includes/variables.php:1315
+#: includes/variables.php:1332
+#: includes/variables.php:1374
+#: includes/variables.php:1415
 msgid "Speaker"
 msgstr ""
 
 #: includes/variables.php:715
-#: includes/variables.php:1402
+#: includes/variables.php:1431
 msgid "Steps"
 msgstr ""
 
@@ -2084,38 +2084,38 @@ msgid "Traditions"
 msgstr ""
 
 #: includes/variables.php:719
-#: includes/variables.php:814
-#: includes/variables.php:844
-#: includes/variables.php:936
-#: includes/variables.php:1035
-#: includes/variables.php:1075
-#: includes/variables.php:1256
-#: includes/variables.php:1282
-#: includes/variables.php:1390
+#: includes/variables.php:815
+#: includes/variables.php:845
+#: includes/variables.php:937
+#: includes/variables.php:1036
+#: includes/variables.php:1076
+#: includes/variables.php:1259
+#: includes/variables.php:1285
+#: includes/variables.php:1419
 msgid "Wheelchair Access"
 msgstr ""
 
 #: includes/variables.php:720
-#: includes/variables.php:756
-#: includes/variables.php:813
-#: includes/variables.php:842
-#: includes/variables.php:886
-#: includes/variables.php:937
-#: includes/variables.php:985
-#: includes/variables.php:1002
-#: includes/variables.php:1037
-#: includes/variables.php:1076
-#: includes/variables.php:1112
-#: includes/variables.php:1139
-#: includes/variables.php:1177
-#: includes/variables.php:1257
-#: includes/variables.php:1283
-#: includes/variables.php:1296
-#: includes/variables.php:1314
-#: includes/variables.php:1357
-#: includes/variables.php:1392
-#: includes/variables.php:1404
-#: includes/variables.php:1456
+#: includes/variables.php:757
+#: includes/variables.php:814
+#: includes/variables.php:843
+#: includes/variables.php:887
+#: includes/variables.php:938
+#: includes/variables.php:986
+#: includes/variables.php:1003
+#: includes/variables.php:1038
+#: includes/variables.php:1077
+#: includes/variables.php:1113
+#: includes/variables.php:1140
+#: includes/variables.php:1180
+#: includes/variables.php:1260
+#: includes/variables.php:1286
+#: includes/variables.php:1299
+#: includes/variables.php:1317
+#: includes/variables.php:1385
+#: includes/variables.php:1421
+#: includes/variables.php:1433
+#: includes/variables.php:1485
 msgid "Women"
 msgstr ""
 
@@ -2153,25 +2153,25 @@ msgid "Alateen"
 msgstr ""
 
 #: includes/variables.php:737
-#: includes/variables.php:853
-#: includes/variables.php:903
+#: includes/variables.php:854
+#: includes/variables.php:904
 msgid "Atheist / Agnostic"
 msgstr ""
 
 #: includes/variables.php:738
-#: includes/variables.php:777
-#: includes/variables.php:854
-#: includes/variables.php:904
-#: includes/variables.php:994
-#: includes/variables.php:1013
-#: includes/variables.php:1051
+#: includes/variables.php:778
+#: includes/variables.php:855
+#: includes/variables.php:905
+#: includes/variables.php:995
+#: includes/variables.php:1014
+#: includes/variables.php:1052
 msgid "Babysitting Available"
 msgstr ""
 
 #: includes/variables.php:739
-#: includes/variables.php:855
-#: includes/variables.php:1304
-#: includes/variables.php:1322
+#: includes/variables.php:856
+#: includes/variables.php:1307
+#: includes/variables.php:1325
 msgid "Beginner"
 msgstr ""
 
@@ -2192,21 +2192,20 @@ msgid "Families and Friends Only"
 msgstr ""
 
 #: includes/variables.php:745
-#: includes/variables.php:789
-#: includes/variables.php:866
-#: includes/variables.php:919
+#: includes/variables.php:790
+#: includes/variables.php:867
+#: includes/variables.php:920
 msgid "Gay"
 msgstr ""
 
 #: includes/variables.php:746
-#: includes/variables.php:792
-#: includes/variables.php:868
-#: includes/variables.php:921
+#: includes/variables.php:793
+#: includes/variables.php:869
+#: includes/variables.php:922
 msgid "Lesbian"
 msgstr ""
 
 #: includes/variables.php:747
-#: includes/variables.php:1130
 msgid "LGBTQIA+"
 msgstr ""
 
@@ -2215,1023 +2214,1117 @@ msgid "Parents of Alcoholics"
 msgstr ""
 
 #: includes/variables.php:750
-#: includes/variables.php:805
-#: includes/variables.php:837
-#: includes/variables.php:1026
-#: includes/variables.php:1384
+#: includes/variables.php:806
+#: includes/variables.php:838
+#: includes/variables.php:1027
+#: includes/variables.php:1368
+#: includes/variables.php:1413
 msgid "People of Color"
 msgstr ""
 
-#: includes/variables.php:753
-#: includes/variables.php:840
-#: includes/variables.php:880
-#: includes/variables.php:933
-#: includes/variables.php:1000
-#: includes/variables.php:1072
-#: includes/variables.php:1294
-msgid "Step Meeting"
+#: includes/variables.php:751
+#: includes/variables.php:830
+#: includes/variables.php:878
+#: includes/variables.php:931
+#: includes/variables.php:1070
+msgid "Sign Language"
 msgstr ""
 
 #: includes/variables.php:754
-#: includes/variables.php:810
 #: includes/variables.php:841
-#: includes/variables.php:884
-#: includes/variables.php:935
-#: includes/variables.php:1034
-#: includes/variables.php:1138
-#: includes/variables.php:1389
-msgid "Transgender"
+#: includes/variables.php:881
+#: includes/variables.php:934
+#: includes/variables.php:1001
+#: includes/variables.php:1073
+#: includes/variables.php:1297
+msgid "Step Meeting"
 msgstr ""
 
 #: includes/variables.php:755
+#: includes/variables.php:811
+#: includes/variables.php:842
 #: includes/variables.php:885
-#: includes/variables.php:984
-#: includes/variables.php:1111
-#: includes/variables.php:1140
-#: includes/variables.php:1176
+#: includes/variables.php:936
+#: includes/variables.php:1035
+#: includes/variables.php:1139
+#: includes/variables.php:1418
+msgid "Transgender"
+msgstr ""
+
+#: includes/variables.php:756
+#: includes/variables.php:886
+#: includes/variables.php:985
+#: includes/variables.php:1112
+#: includes/variables.php:1141
+#: includes/variables.php:1179
 msgid "Wheelchair Accessible"
 msgstr ""
 
-#: includes/variables.php:757
+#: includes/variables.php:758
 msgid "Young Adults"
 msgstr ""
 
-#: includes/variables.php:761
+#: includes/variables.php:762
 msgid "AA"
 msgstr ""
 
-#: includes/variables.php:763
+#: includes/variables.php:764
 msgid "Alcoholics Anonymous"
 msgstr ""
 
-#: includes/variables.php:765
+#: includes/variables.php:766
 msgid "Closed meetings are for A.A. members only, or for those who have a drinking problem and “have a desire to stop drinking.”"
 msgstr ""
 
-#: includes/variables.php:766
+#: includes/variables.php:767
 msgid "Open meetings are available to anyone interested in Alcoholics Anonymous’ program of recovery from alcoholism. Nonalcoholics may attend open meetings as observers."
-msgstr ""
-
-#: includes/variables.php:769
-#: includes/variables.php:900
-#: includes/variables.php:1011
-msgid "11th Step Meditation"
 msgstr ""
 
 #: includes/variables.php:770
 #: includes/variables.php:901
-#: includes/variables.php:946
-#: includes/variables.php:993
 #: includes/variables.php:1012
-#: includes/variables.php:1370
-#: includes/variables.php:1412
-msgid "12 Steps & 12 Traditions"
+msgid "11th Step Meditation"
 msgstr ""
 
 #: includes/variables.php:771
-#: includes/variables.php:1028
-msgid "Secular"
+#: includes/variables.php:902
+#: includes/variables.php:947
+#: includes/variables.php:994
+#: includes/variables.php:1013
+#: includes/variables.php:1399
+#: includes/variables.php:1441
+msgid "12 Steps & 12 Traditions"
 msgstr ""
 
 #: includes/variables.php:772
-#: includes/variables.php:902
-#: includes/variables.php:948
-msgid "As Bill Sees It"
+#: includes/variables.php:1029
+#: includes/variables.php:1371
+msgid "Secular"
 msgstr ""
 
 #: includes/variables.php:773
-#: includes/variables.php:862
-#: includes/variables.php:913
-msgid "Concurrent with Alateen"
+#: includes/variables.php:903
+#: includes/variables.php:949
+msgid "As Bill Sees It"
 msgstr ""
 
 #: includes/variables.php:774
-#: includes/variables.php:861
-#: includes/variables.php:912
-msgid "Concurrent with Al-Anon"
+#: includes/variables.php:863
+#: includes/variables.php:914
+msgid "Concurrent with Alateen"
 msgstr ""
 
 #: includes/variables.php:775
-#: includes/variables.php:1371
-msgid "American Sign Language"
+#: includes/variables.php:862
+#: includes/variables.php:913
+msgid "Concurrent with Al-Anon"
 msgstr ""
 
 #: includes/variables.php:776
-#: includes/variables.php:905
-#: includes/variables.php:949
-#: includes/variables.php:1015
-#: includes/variables.php:1052
-#: includes/variables.php:1190
-#: includes/variables.php:1372
+#: includes/variables.php:1400
+msgid "American Sign Language"
+msgstr ""
+
+#: includes/variables.php:777
+#: includes/variables.php:906
+#: includes/variables.php:950
+#: includes/variables.php:1016
+#: includes/variables.php:1053
+#: includes/variables.php:1193
+#: includes/variables.php:1401
 msgid "Big Book"
 msgstr ""
 
-#: includes/variables.php:778
-#: includes/variables.php:834
-#: includes/variables.php:928
-#: includes/variables.php:1066
-#: includes/variables.php:1199
-#: includes/variables.php:1381
-#: includes/variables.php:1414
+#: includes/variables.php:779
+#: includes/variables.php:835
+#: includes/variables.php:929
+#: includes/variables.php:1067
+#: includes/variables.php:1202
+#: includes/variables.php:1410
+#: includes/variables.php:1443
 msgid "Newcomer"
 msgstr ""
 
-#: includes/variables.php:779
+#: includes/variables.php:780
 msgid "Bisexual"
 msgstr ""
 
-#: includes/variables.php:780
-#: includes/variables.php:907
+#: includes/variables.php:781
+#: includes/variables.php:908
 msgid "Breakfast"
 msgstr ""
 
-#: includes/variables.php:782
-#: includes/variables.php:860
-#: includes/variables.php:911
-#: includes/variables.php:1053
-#: includes/variables.php:1088
-#: includes/variables.php:1152
+#: includes/variables.php:783
+#: includes/variables.php:861
+#: includes/variables.php:912
+#: includes/variables.php:1054
+#: includes/variables.php:1089
+#: includes/variables.php:1155
 msgid "Candlelight"
 msgstr ""
 
-#: includes/variables.php:783
-#: includes/variables.php:857
-#: includes/variables.php:909
-#: includes/variables.php:1017
-#: includes/variables.php:1054
+#: includes/variables.php:784
+#: includes/variables.php:858
+#: includes/variables.php:910
+#: includes/variables.php:1018
+#: includes/variables.php:1055
 msgid "Child-Friendly"
 msgstr ""
 
-#: includes/variables.php:785
+#: includes/variables.php:786
 msgid "Digital Basket"
 msgstr ""
 
-#: includes/variables.php:786
-#: includes/variables.php:917
+#: includes/variables.php:787
+#: includes/variables.php:918
 msgid "Dual Diagnosis"
 msgstr ""
 
-#: includes/variables.php:787
-#: includes/variables.php:915
-#: includes/variables.php:953
-#: includes/variables.php:1059
+#: includes/variables.php:788
+#: includes/variables.php:916
+#: includes/variables.php:954
+#: includes/variables.php:1060
 msgid "Daily Reflections"
 msgstr ""
 
-#: includes/variables.php:790
-#: includes/variables.php:867
-#: includes/variables.php:920
+#: includes/variables.php:791
+#: includes/variables.php:868
+#: includes/variables.php:921
 msgid "Grapevine"
 msgstr ""
 
-#: includes/variables.php:791
-#: includes/variables.php:906
+#: includes/variables.php:792
+#: includes/variables.php:907
 msgid "Birthday"
-msgstr ""
-
-#: includes/variables.php:793
-#: includes/variables.php:831
-#: includes/variables.php:870
-#: includes/variables.php:924
-#: includes/variables.php:1063
-#: includes/variables.php:1251
-#: includes/variables.php:1277
-#: includes/variables.php:1295
-#: includes/variables.php:1377
-msgid "LGBTQ"
 msgstr ""
 
 #: includes/variables.php:794
 #: includes/variables.php:832
-#: includes/variables.php:869
-#: includes/variables.php:922
-#: includes/variables.php:1020
-#: includes/variables.php:1062
-#: includes/variables.php:1378
-msgid "Literature"
+#: includes/variables.php:871
+#: includes/variables.php:925
+#: includes/variables.php:1064
+#: includes/variables.php:1254
+#: includes/variables.php:1280
+#: includes/variables.php:1298
+#: includes/variables.php:1406
+msgid "LGBTQ"
 msgstr ""
 
 #: includes/variables.php:795
+#: includes/variables.php:833
+#: includes/variables.php:870
 #: includes/variables.php:923
-#: includes/variables.php:955
+#: includes/variables.php:1021
+#: includes/variables.php:1063
+#: includes/variables.php:1407
+msgid "Literature"
+msgstr ""
+
+#: includes/variables.php:796
+#: includes/variables.php:924
+#: includes/variables.php:956
 msgid "Living Sober"
 msgstr ""
 
-#: includes/variables.php:797
-#: includes/variables.php:871
-#: includes/variables.php:925
-#: includes/variables.php:957
-#: includes/variables.php:1022
-#: includes/variables.php:1064
-#: includes/variables.php:1099
-#: includes/variables.php:1132
-#: includes/variables.php:1163
-#: includes/variables.php:1197
-#: includes/variables.php:1307
-#: includes/variables.php:1348
+#: includes/variables.php:798
+#: includes/variables.php:872
+#: includes/variables.php:926
+#: includes/variables.php:958
+#: includes/variables.php:1023
+#: includes/variables.php:1065
+#: includes/variables.php:1100
+#: includes/variables.php:1133
+#: includes/variables.php:1166
+#: includes/variables.php:1200
+#: includes/variables.php:1310
+#: includes/variables.php:1361
 msgid "Meditation"
 msgstr ""
 
-#: includes/variables.php:798
-#: includes/variables.php:927
-#: includes/variables.php:1380
+#: includes/variables.php:799
+#: includes/variables.php:928
+#: includes/variables.php:1409
 msgid "Native American"
 msgstr ""
 
-#: includes/variables.php:799
-#: includes/variables.php:1133
+#: includes/variables.php:800
+#: includes/variables.php:1134
 msgid "Non-Binary"
 msgstr ""
 
-#: includes/variables.php:800
-#: includes/variables.php:1019
-#: includes/variables.php:1376
+#: includes/variables.php:801
+#: includes/variables.php:1020
+#: includes/variables.php:1405
 msgid "Indigenous"
 msgstr ""
 
-#: includes/variables.php:802
-#: includes/variables.php:1025
-#: includes/variables.php:1135
+#: includes/variables.php:803
+#: includes/variables.php:1026
+#: includes/variables.php:1136
 msgid "Outdoor"
 msgstr ""
 
-#: includes/variables.php:803
+#: includes/variables.php:804
 msgid "Professionals"
 msgstr ""
 
-#: includes/variables.php:804
+#: includes/variables.php:805
 msgid "Proof of Attendance"
 msgstr ""
 
-#: includes/variables.php:806
-#: includes/variables.php:1029
+#: includes/variables.php:807
+#: includes/variables.php:1030
+#: includes/variables.php:1372
 msgid "Seniors"
 msgstr ""
 
-#: includes/variables.php:809
-#: includes/variables.php:980
-#: includes/variables.php:1313
-#: includes/variables.php:1354
-#: includes/variables.php:1387
+#: includes/variables.php:810
+#: includes/variables.php:981
+#: includes/variables.php:1316
+#: includes/variables.php:1377
+#: includes/variables.php:1416
 msgid "Step Study"
 msgstr ""
 
-#: includes/variables.php:812
-#: includes/variables.php:934
-#: includes/variables.php:1033
-#: includes/variables.php:1074
-#: includes/variables.php:1356
+#: includes/variables.php:813
+#: includes/variables.php:935
+#: includes/variables.php:1034
+#: includes/variables.php:1075
+#: includes/variables.php:1381
 msgid "Tradition Study"
 msgstr ""
 
-#: includes/variables.php:815
-#: includes/variables.php:845
-#: includes/variables.php:1036
-#: includes/variables.php:1391
+#: includes/variables.php:816
+#: includes/variables.php:846
+#: includes/variables.php:1037
+#: includes/variables.php:1420
 msgid "Wheelchair-Accessible Bathroom"
 msgstr ""
 
-#: includes/variables.php:816
-#: includes/variables.php:863
-#: includes/variables.php:914
+#: includes/variables.php:817
+#: includes/variables.php:864
+#: includes/variables.php:915
+#: includes/variables.php:1352
 msgid "Cross Talk Permitted"
 msgstr ""
 
-#: includes/variables.php:817
-#: includes/variables.php:843
-#: includes/variables.php:888
-#: includes/variables.php:938
-#: includes/variables.php:1003
-#: includes/variables.php:1039
-#: includes/variables.php:1077
-#: includes/variables.php:1113
-#: includes/variables.php:1141
-#: includes/variables.php:1178
+#: includes/variables.php:818
+#: includes/variables.php:844
+#: includes/variables.php:889
+#: includes/variables.php:939
+#: includes/variables.php:1004
+#: includes/variables.php:1040
+#: includes/variables.php:1078
+#: includes/variables.php:1114
+#: includes/variables.php:1142
+#: includes/variables.php:1181
+#: includes/variables.php:1386
 msgid "Young People"
 msgstr ""
 
-#: includes/variables.php:821
+#: includes/variables.php:822
 msgid "CMA"
 msgstr ""
 
-#: includes/variables.php:823
+#: includes/variables.php:824
 msgid "Crystal Meth Anonymous"
 msgstr ""
 
-#: includes/variables.php:825
+#: includes/variables.php:826
 msgid "Closed meetings are for C.M.A members only, or for those who have a using problem and “have a desire to stop using.”"
 msgstr ""
 
-#: includes/variables.php:826
+#: includes/variables.php:827
 msgid "Open meetings are available to anyone interested in Crystal Meth Anonymous’ program of recovery from using. Non users may attend open meetings as observers."
 msgstr ""
 
-#: includes/variables.php:829
-#: includes/variables.php:877
-#: includes/variables.php:930
-#: includes/variables.php:1069
-msgid "Sign Language"
-msgstr ""
-
-#: includes/variables.php:836
+#: includes/variables.php:837
 msgid "Outdoor Meeting"
 msgstr ""
 
-#: includes/variables.php:849
+#: includes/variables.php:850
 msgid "CoDA"
 msgstr ""
 
-#: includes/variables.php:851
+#: includes/variables.php:852
 msgid "Co-Dependents Anonymous"
 msgstr ""
 
-#: includes/variables.php:858
-#: includes/variables.php:1340
+#: includes/variables.php:859
+#: includes/variables.php:1350
 msgid "Chips"
 msgstr ""
 
-#: includes/variables.php:864
+#: includes/variables.php:865
 msgid "Daily"
 msgstr ""
 
-#: includes/variables.php:874
+#: includes/variables.php:875
 msgid "Q & A"
 msgstr ""
 
-#: includes/variables.php:875
+#: includes/variables.php:876
 msgid "Reading"
 msgstr ""
 
-#: includes/variables.php:876
+#: includes/variables.php:877
 msgid "Sharing"
 msgstr ""
 
-#: includes/variables.php:881
+#: includes/variables.php:882
 msgid "Teens"
 msgstr ""
 
-#: includes/variables.php:882
-#: includes/variables.php:1355
+#: includes/variables.php:883
+#: includes/variables.php:1379
 msgid "Topic Discussion"
 msgstr ""
 
-#: includes/variables.php:883
-#: includes/variables.php:1109
-#: includes/variables.php:1174
+#: includes/variables.php:884
+#: includes/variables.php:1110
+#: includes/variables.php:1177
 msgid "Tradition"
 msgstr ""
 
-#: includes/variables.php:887
-#: includes/variables.php:1038
-#: includes/variables.php:1215
+#: includes/variables.php:888
+#: includes/variables.php:1039
+#: includes/variables.php:1218
 msgid "Writing"
 msgstr ""
 
-#: includes/variables.php:892
+#: includes/variables.php:893
 msgid "CA"
 msgstr ""
 
-#: includes/variables.php:894
+#: includes/variables.php:895
 msgid "Cocaine Anonymous"
 msgstr ""
 
-#: includes/variables.php:896
+#: includes/variables.php:897
 msgid "This meeting is closed; only those who have a desire to stop using may attend."
 msgstr ""
 
-#: includes/variables.php:908
+#: includes/variables.php:909
 msgid "Business"
 msgstr ""
 
-#: includes/variables.php:942
+#: includes/variables.php:943
 msgid "CEA-HOW"
 msgstr ""
 
-#: includes/variables.php:944
+#: includes/variables.php:945
 msgid "Compulsive Eaters Anonymous-HOW"
 msgstr ""
 
-#: includes/variables.php:947
+#: includes/variables.php:948
 msgid "AA Comes of Age"
 msgstr ""
 
-#: includes/variables.php:951
+#: includes/variables.php:952
 msgid "Came to Believe"
 msgstr ""
 
-#: includes/variables.php:952
+#: includes/variables.php:953
 msgid "CEA-HOW Concept/Tools"
 msgstr ""
 
-#: includes/variables.php:954
+#: includes/variables.php:955
 msgid "Happy Joyous and Free"
 msgstr ""
 
-#: includes/variables.php:956
-#: includes/variables.php:1196
+#: includes/variables.php:957
+#: includes/variables.php:1199
 msgid "Maintenance"
 msgstr ""
 
-#: includes/variables.php:958
+#: includes/variables.php:959
 msgid "Pitch/Speaker"
 msgstr ""
 
-#: includes/variables.php:959
+#: includes/variables.php:960
 msgid "Promises"
 msgstr ""
 
-#: includes/variables.php:960
+#: includes/variables.php:961
 msgid "Relapse and Recovery"
 msgstr ""
 
-#: includes/variables.php:961
+#: includes/variables.php:962
 msgid "Steps/Traditions"
 msgstr ""
 
-#: includes/variables.php:962
-#: includes/variables.php:1032
+#: includes/variables.php:963
+#: includes/variables.php:1033
 msgid "Topic/Discussion"
 msgstr ""
 
-#: includes/variables.php:966
+#: includes/variables.php:967
 msgid "DA"
 msgstr ""
 
-#: includes/variables.php:968
+#: includes/variables.php:969
 msgid "Debtors Anonymous"
 msgstr ""
 
-#: includes/variables.php:970
+#: includes/variables.php:971
 msgid "Abundance"
 msgstr ""
 
-#: includes/variables.php:971
+#: includes/variables.php:972
 msgid "Artist"
 msgstr ""
 
-#: includes/variables.php:972
+#: includes/variables.php:973
 msgid "Business Owner"
 msgstr ""
 
-#: includes/variables.php:974
+#: includes/variables.php:975
 msgid "Clutter"
 msgstr ""
 
-#: includes/variables.php:976
+#: includes/variables.php:977
 msgid "Numbers"
 msgstr ""
 
-#: includes/variables.php:978
+#: includes/variables.php:979
 msgid "Prosperity"
 msgstr ""
 
-#: includes/variables.php:982
+#: includes/variables.php:983
 msgid "Toolkit"
 msgstr ""
 
-#: includes/variables.php:983
+#: includes/variables.php:984
 msgid "Vision"
 msgstr ""
 
-#: includes/variables.php:989
+#: includes/variables.php:990
 msgid "DAA"
 msgstr ""
 
-#: includes/variables.php:991
+#: includes/variables.php:992
 msgid "Drug Addicts Anonymous"
 msgstr ""
 
-#: includes/variables.php:995
+#: includes/variables.php:996
 msgid "Big Book Study"
 msgstr ""
 
-#: includes/variables.php:1001
+#: includes/variables.php:1002
 msgid "Step Speaker"
 msgstr ""
 
-#: includes/variables.php:1007
+#: includes/variables.php:1008
 msgid "EDA"
 msgstr ""
 
-#: includes/variables.php:1009
+#: includes/variables.php:1010
 msgid "Eating Disorders Anonymous"
 msgstr ""
 
-#: includes/variables.php:1014
+#: includes/variables.php:1015
 msgid "Beginners'"
 msgstr ""
 
-#: includes/variables.php:1016
+#: includes/variables.php:1017
 msgid "Chair's Choice"
 msgstr ""
 
-#: includes/variables.php:1027
+#: includes/variables.php:1028
 msgid "Rotating Format"
 msgstr ""
 
-#: includes/variables.php:1031
-#: includes/variables.php:1106
-#: includes/variables.php:1171
-#: includes/variables.php:1330
+#: includes/variables.php:1032
+#: includes/variables.php:1107
+#: includes/variables.php:1174
+#: includes/variables.php:1333
 msgid "Step"
 msgstr ""
 
-#: includes/variables.php:1043
+#: includes/variables.php:1044
 msgid "GA"
 msgstr ""
 
-#: includes/variables.php:1045
+#: includes/variables.php:1046
 msgid "Gamblers Anonymous"
 msgstr ""
 
-#: includes/variables.php:1047
+#: includes/variables.php:1048
 msgid "This meeting is closed; only those who have a desire to stop gambling may attend."
 msgstr ""
 
-#: includes/variables.php:1050
+#: includes/variables.php:1051
 msgid "20 Questions/Beginner Focus"
 msgstr ""
 
-#: includes/variables.php:1056
+#: includes/variables.php:1057
 msgid "Combined GA/Gam Anon"
 msgstr ""
 
-#: includes/variables.php:1057
+#: includes/variables.php:1058
 msgid "Comment"
 msgstr ""
 
-#: includes/variables.php:1058
+#: includes/variables.php:1059
 msgid "Cross Comment"
 msgstr ""
 
-#: includes/variables.php:1061
+#: includes/variables.php:1062
 msgid "Gam Anon"
 msgstr ""
 
-#: includes/variables.php:1068
+#: includes/variables.php:1069
 msgid "Parking Meters Available"
 msgstr ""
 
-#: includes/variables.php:1073
-#: includes/variables.php:1108
-#: includes/variables.php:1173
-#: includes/variables.php:1211
+#: includes/variables.php:1074
+#: includes/variables.php:1109
+#: includes/variables.php:1176
+#: includes/variables.php:1214
 msgid "Topic"
 msgstr ""
 
-#: includes/variables.php:1081
+#: includes/variables.php:1082
 msgid "HA"
 msgstr ""
 
-#: includes/variables.php:1083
+#: includes/variables.php:1084
 msgid "Heroin Anonymous"
 msgstr ""
 
-#: includes/variables.php:1085
-#: includes/variables.php:1149
+#: includes/variables.php:1086
+#: includes/variables.php:1152
 msgid "12 Concepts"
 msgstr ""
 
-#: includes/variables.php:1086
-#: includes/variables.php:1150
+#: includes/variables.php:1087
+#: includes/variables.php:1153
 msgid "Basic Text"
 msgstr ""
 
-#: includes/variables.php:1087
-#: includes/variables.php:1151
+#: includes/variables.php:1088
+#: includes/variables.php:1154
 msgid "Beginner/Newcomer"
 msgstr ""
 
-#: includes/variables.php:1089
-#: includes/variables.php:1153
+#: includes/variables.php:1090
+#: includes/variables.php:1156
 msgid "Children Welcome"
 msgstr ""
 
-#: includes/variables.php:1091
-#: includes/variables.php:1155
+#: includes/variables.php:1092
+#: includes/variables.php:1158
 msgid "Discussion/Participation"
 msgstr ""
 
-#: includes/variables.php:1093
-#: includes/variables.php:1157
+#: includes/variables.php:1094
+#: includes/variables.php:1160
 msgid "IP Study"
 msgstr ""
 
-#: includes/variables.php:1094
-#: includes/variables.php:1158
+#: includes/variables.php:1095
+#: includes/variables.php:1161
 msgid "It Works Study"
 msgstr ""
 
-#: includes/variables.php:1095
-#: includes/variables.php:1159
+#: includes/variables.php:1096
+#: includes/variables.php:1162
 msgid "Just For Today Study"
 msgstr ""
 
-#: includes/variables.php:1096
-#: includes/variables.php:1160
-#: includes/variables.php:1195
+#: includes/variables.php:1097
+#: includes/variables.php:1163
+#: includes/variables.php:1198
 msgid "Literature Study"
 msgstr ""
 
-#: includes/variables.php:1097
-#: includes/variables.php:1161
+#: includes/variables.php:1098
+#: includes/variables.php:1164
 msgid "Living Clean"
 msgstr ""
 
-#: includes/variables.php:1100
-#: includes/variables.php:1164
+#: includes/variables.php:1101
+#: includes/variables.php:1167
 msgid "Non-Smoking"
 msgstr ""
 
-#: includes/variables.php:1102
-#: includes/variables.php:1166
+#: includes/variables.php:1103
+#: includes/variables.php:1169
 msgid "Questions & Answers"
 msgstr ""
 
-#: includes/variables.php:1103
-#: includes/variables.php:1167
+#: includes/variables.php:1104
+#: includes/variables.php:1170
 msgid "Restricted Access"
 msgstr ""
 
-#: includes/variables.php:1104
-#: includes/variables.php:1168
+#: includes/variables.php:1105
+#: includes/variables.php:1171
 msgid "Smoking"
 msgstr ""
 
-#: includes/variables.php:1107
-#: includes/variables.php:1172
+#: includes/variables.php:1108
+#: includes/variables.php:1175
 msgid "Step Working Guide Study"
 msgstr ""
 
-#: includes/variables.php:1110
-#: includes/variables.php:1175
+#: includes/variables.php:1111
+#: includes/variables.php:1178
 msgid "Format Varies"
 msgstr ""
 
-#: includes/variables.php:1117
+#: includes/variables.php:1118
 msgid "MA"
 msgstr ""
 
-#: includes/variables.php:1119
+#: includes/variables.php:1120
 msgid "Marijuana Anonymous"
 msgstr ""
 
-#: includes/variables.php:1121
+#: includes/variables.php:1122
 msgid "Closed meetings are for MA members only, or for those who have a desire to stop using marijuana."
 msgstr ""
 
-#: includes/variables.php:1122
+#: includes/variables.php:1123
 msgid "Open meetings are available to anyone interested in Marijuana Anonymous’ program of recovery from marijuana. Non-addicts may attend open meetings as observers."
 msgstr ""
 
-#: includes/variables.php:1127
+#: includes/variables.php:1129
 msgid "Closed Captions"
 msgstr ""
 
-#: includes/variables.php:1129
-#: includes/variables.php:1323
+#: includes/variables.php:1131
+#: includes/variables.php:1326
 msgid "Chip"
 msgstr ""
 
-#: includes/variables.php:1134
+#: includes/variables.php:1135
 msgid "Open to Non-Addicts"
 msgstr ""
 
-#: includes/variables.php:1136
+#: includes/variables.php:1137
 msgid "Persons of Color"
 msgstr ""
 
-#: includes/variables.php:1145
+#: includes/variables.php:1144
+msgid "LGBTQI+"
+msgstr ""
+
+#: includes/variables.php:1148
 msgid "NA"
 msgstr ""
 
-#: includes/variables.php:1147
+#: includes/variables.php:1150
 msgid "Narcotics Anonymous"
 msgstr ""
 
-#: includes/variables.php:1169
+#: includes/variables.php:1172
 msgid "Spiritual Principle a Day"
 msgstr ""
 
-#: includes/variables.php:1182
+#: includes/variables.php:1185
 msgid "OA"
 msgstr ""
 
-#: includes/variables.php:1184
+#: includes/variables.php:1187
 msgid "Overeaters Anonymous"
 msgstr ""
 
-#: includes/variables.php:1186
+#: includes/variables.php:1189
 msgid "11th Step"
 msgstr ""
 
-#: includes/variables.php:1187
+#: includes/variables.php:1190
 msgid "90 Day"
 msgstr ""
 
-#: includes/variables.php:1188
+#: includes/variables.php:1191
 msgid "AA 12/12"
 msgstr ""
 
-#: includes/variables.php:1189
+#: includes/variables.php:1192
 msgid "Ask-It-Basket"
 msgstr ""
 
-#: includes/variables.php:1191
+#: includes/variables.php:1194
 msgid "Dignity of Choice"
 msgstr ""
 
-#: includes/variables.php:1192
+#: includes/variables.php:1195
 msgid "For Today"
 msgstr ""
 
-#: includes/variables.php:1193
+#: includes/variables.php:1196
 msgid "Lifeline"
 msgstr ""
 
-#: includes/variables.php:1194
+#: includes/variables.php:1197
 msgid "Lifeline Sampler"
 msgstr ""
 
-#: includes/variables.php:1198
+#: includes/variables.php:1201
 msgid "New Beginnings"
 msgstr ""
 
-#: includes/variables.php:1200
+#: includes/variables.php:1203
 msgid "OA H.O.W."
 msgstr ""
 
-#: includes/variables.php:1201
+#: includes/variables.php:1204
 msgid "OA Second and/or Third Edition"
 msgstr ""
 
-#: includes/variables.php:1202
+#: includes/variables.php:1205
 msgid "OA Steps and/or Traditions Study"
 msgstr ""
 
-#: includes/variables.php:1203
+#: includes/variables.php:1206
 msgid "Relapse/12th Step Within"
 msgstr ""
 
-#: includes/variables.php:1204
+#: includes/variables.php:1207
 msgid "Seeking the Spiritual Path"
 msgstr ""
 
-#: includes/variables.php:1206
+#: includes/variables.php:1209
 msgid "Speaker/Discussion"
 msgstr ""
 
-#: includes/variables.php:1207
+#: includes/variables.php:1210
 msgid "Spirituality"
 msgstr ""
 
-#: includes/variables.php:1208
+#: includes/variables.php:1211
 msgid "Teen Friendly"
 msgstr ""
 
-#: includes/variables.php:1209
+#: includes/variables.php:1212
 msgid "The Promises"
 msgstr ""
 
-#: includes/variables.php:1210
-#: includes/variables.php:1403
+#: includes/variables.php:1213
+#: includes/variables.php:1432
 msgid "Tools"
 msgstr ""
 
-#: includes/variables.php:1212
+#: includes/variables.php:1215
 msgid "Varies"
 msgstr ""
 
-#: includes/variables.php:1213
+#: includes/variables.php:1216
 msgid "Voices of Recovery"
 msgstr ""
 
-#: includes/variables.php:1214
+#: includes/variables.php:1217
 msgid "Work Book Study"
 msgstr ""
 
-#: includes/variables.php:1225
+#: includes/variables.php:1228
 msgid "RCA"
 msgstr ""
 
-#: includes/variables.php:1227
+#: includes/variables.php:1230
 msgid "Recovering Couples Anonymous"
 msgstr ""
 
-#: includes/variables.php:1235
-#: includes/variables.php:1237
+#: includes/variables.php:1238
+#: includes/variables.php:1240
 msgid "Recovery Dharma"
 msgstr ""
 
-#: includes/variables.php:1239
-#: includes/variables.php:1265
+#: includes/variables.php:1242
+#: includes/variables.php:1268
 msgid "Men’s meetings are for anyone who identifies as male."
 msgstr ""
 
-#: includes/variables.php:1240
-#: includes/variables.php:1266
+#: includes/variables.php:1243
+#: includes/variables.php:1269
 msgid "Women’s meetings are for anyone who identifies as female."
 msgstr ""
 
-#: includes/variables.php:1247
-#: includes/variables.php:1273
+#: includes/variables.php:1250
+#: includes/variables.php:1276
 msgid "Dog Friendly"
 msgstr ""
 
-#: includes/variables.php:1248
-#: includes/variables.php:1274
+#: includes/variables.php:1251
+#: includes/variables.php:1277
 msgid "Eightfold Path Study"
 msgstr ""
 
-#: includes/variables.php:1249
+#: includes/variables.php:1252
 msgid "Inquiry Study"
 msgstr ""
 
-#: includes/variables.php:1250
+#: includes/variables.php:1253
 msgid "Inquiry Writing"
 msgstr ""
 
-#: includes/variables.php:1253
-#: includes/variables.php:1279
+#: includes/variables.php:1256
+#: includes/variables.php:1282
 msgid "Mindfulness Practice"
 msgstr ""
 
-#: includes/variables.php:1255
-#: includes/variables.php:1281
+#: includes/variables.php:1258
+#: includes/variables.php:1284
 msgid "Process Addictions"
 msgstr ""
 
-#: includes/variables.php:1261
-#: includes/variables.php:1263
+#: includes/variables.php:1264
+#: includes/variables.php:1266
 msgid "Refuge Recovery"
 msgstr ""
 
-#: includes/variables.php:1275
+#: includes/variables.php:1278
 msgid "Inventory Study"
 msgstr ""
 
-#: includes/variables.php:1276
+#: includes/variables.php:1279
 msgid "Inventory Writing"
 msgstr ""
 
-#: includes/variables.php:1287
+#: includes/variables.php:1290
 msgid "SAA"
 msgstr ""
 
-#: includes/variables.php:1289
+#: includes/variables.php:1292
 msgid "Sex Addicts Anonymous"
 msgstr ""
 
-#: includes/variables.php:1300
+#: includes/variables.php:1303
 msgid "SA"
 msgstr ""
 
-#: includes/variables.php:1302
+#: includes/variables.php:1305
 msgid "Sexaholics Anonymous"
 msgstr ""
 
-#: includes/variables.php:1309
+#: includes/variables.php:1312
 msgid "Mixed"
 msgstr ""
 
-#: includes/variables.php:1311
+#: includes/variables.php:1314
 msgid "Primary Purpose"
 msgstr ""
 
-#: includes/variables.php:1318
+#: includes/variables.php:1321
 msgid "SCA"
 msgstr ""
 
-#: includes/variables.php:1320
+#: includes/variables.php:1323
 msgid "Sexual Compulsives Anonymous"
 msgstr ""
 
-#: includes/variables.php:1325
+#: includes/variables.php:1328
 msgid "Court"
 msgstr ""
 
-#: includes/variables.php:1327
+#: includes/variables.php:1330
 msgid "Graphic Language"
 msgstr ""
 
-#: includes/variables.php:1334
+#: includes/variables.php:1337
 msgid "SLAA"
 msgstr ""
 
-#: includes/variables.php:1336
+#: includes/variables.php:1339
 msgid "Sex and Love Addicts Anonymous"
 msgstr ""
 
-#: includes/variables.php:1338
+#: includes/variables.php:1341
+msgid "Framework for Living (12x12x12)"
+msgstr ""
+
+#: includes/variables.php:1342
+msgid "All Genders Welcome"
+msgstr ""
+
+#: includes/variables.php:1343
 msgid "Anorexia Focus"
 msgstr ""
 
 #: includes/variables.php:1344
-msgid "Getting Current"
+msgid "State of Grace"
 msgstr ""
 
 #: includes/variables.php:1345
-msgid "Handicapped Accessible"
+msgid "Attendance Voucher"
 msgstr ""
 
 #: includes/variables.php:1346
+msgid "BDSM Focus"
+msgstr ""
+
+#: includes/variables.php:1348
+msgid "Camera On"
+msgstr ""
+
+#: includes/variables.php:1353
+msgid "Fantasy"
+msgstr ""
+
+#: includes/variables.php:1354
+msgid "Getting Current"
+msgstr ""
+
+#: includes/variables.php:1355
+msgid "Handicapped Accessible"
+msgstr ""
+
+#: includes/variables.php:1356
+msgid "H.O.W. Meeting"
+msgstr ""
+
+#: includes/variables.php:1357
 msgid "Healthy Relationships"
 msgstr ""
 
-#: includes/variables.php:1347
+#: includes/variables.php:1358
+msgid "Legal Consequences"
+msgstr ""
+
+#: includes/variables.php:1360
 msgid "Literature Reading"
 msgstr ""
 
-#: includes/variables.php:1350
+#: includes/variables.php:1363
+msgid "Multiple Addictions"
+msgstr ""
+
+#: includes/variables.php:1364
+msgid "Neurodivergent"
+msgstr ""
+
+#: includes/variables.php:1365
 msgid "Newcomers"
 msgstr ""
 
-#: includes/variables.php:1352
+#: includes/variables.php:1366
+msgid "No Fragrances"
+msgstr ""
+
+#: includes/variables.php:1369
 msgid "Prison"
 msgstr ""
 
-#: includes/variables.php:1366
-msgid "SIA"
+#: includes/variables.php:1370
+msgid "Screened"
 msgstr ""
 
-#: includes/variables.php:1368
-msgid "Survivors of Incest Anonymous"
+#: includes/variables.php:1373
+msgid "Sex Workers"
 msgstr ""
 
 #: includes/variables.php:1375
-msgid "Genderqueer"
+msgid "Special Interest"
+msgstr ""
+
+#: includes/variables.php:1376
+msgid "Sponsorship Focus"
+msgstr ""
+
+#: includes/variables.php:1378
+msgid "Steps 1, 2, and 3"
+msgstr ""
+
+#: includes/variables.php:1380
+msgid "Top Lines"
+msgstr ""
+
+#: includes/variables.php:1382
+msgid "Trauma Focus"
 msgstr ""
 
 #: includes/variables.php:1383
+msgid "Varied Format"
+msgstr ""
+
+#: includes/variables.php:1384
+msgid "Withdrawal"
+msgstr ""
+
+#: includes/variables.php:1395
+msgid "SIA"
+msgstr ""
+
+#: includes/variables.php:1397
+msgid "Survivors of Incest Anonymous"
+msgstr ""
+
+#: includes/variables.php:1404
+msgid "Genderqueer"
+msgstr ""
+
+#: includes/variables.php:1412
 msgid "Open Share Format"
 msgstr ""
 
-#: includes/variables.php:1385
+#: includes/variables.php:1414
 msgid "Ritual Abuse"
 msgstr ""
 
-#: includes/variables.php:1388
+#: includes/variables.php:1417
 msgid "Steps Workshop"
 msgstr ""
 
-#: includes/variables.php:1396
+#: includes/variables.php:1425
 msgid "UA"
 msgstr ""
 
-#: includes/variables.php:1398
+#: includes/variables.php:1427
 msgid "Underearners Anonymous"
 msgstr ""
 
-#: includes/variables.php:1408
+#: includes/variables.php:1437
 msgid "VA"
 msgstr ""
 
-#: includes/variables.php:1410
+#: includes/variables.php:1439
 msgid "Violence Anonymous"
 msgstr ""
 
-#: includes/variables.php:1422
+#: includes/variables.php:1451
 #: templates/single-meetings.php:132
 msgid "Online Meeting"
 msgstr ""
 
-#: includes/variables.php:1423
+#: includes/variables.php:1452
 msgid "Location Temporarily Closed"
 msgstr ""
 
-#: includes/variables.php:1442
+#: includes/variables.php:1471
 msgid "Got an improper response from the server, try refreshing the page."
 msgstr ""
 
-#: includes/variables.php:1443
+#: includes/variables.php:1472
 msgid "Email was not sent."
 msgstr ""
 
-#: includes/variables.php:1444
+#: includes/variables.php:1473
 msgid "Enter a location in the field above."
 msgstr ""
 
-#: includes/variables.php:1445
+#: includes/variables.php:1474
 msgid "Google could not find that location."
 msgstr ""
 
-#: includes/variables.php:1446
+#: includes/variables.php:1475
 msgid "Looking up address…"
 msgstr ""
 
-#: includes/variables.php:1447
+#: includes/variables.php:1476
 msgid "There was an error getting your location."
 msgstr ""
 
-#: includes/variables.php:1448
+#: includes/variables.php:1477
 msgid "Your browser does not appear to support geolocation."
 msgstr ""
 
-#: includes/variables.php:1449
+#: includes/variables.php:1478
 msgid "Finding you…"
 msgstr ""
 
-#: includes/variables.php:1454
+#: includes/variables.php:1483
 msgid "No meetings were found matching the selected criteria."
 msgstr ""
 
