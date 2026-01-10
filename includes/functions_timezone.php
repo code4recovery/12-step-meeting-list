@@ -24,9 +24,7 @@ function tsml_timezone_select($selected = null)
     global $tsml_timezone, $wpdb;
     $timezones = DateTimeZone::listIdentifiers();
 
-    $used = $wpdb->get_col(
-        $wpdb->prepare("SELECT DISTINCT meta_value FROM $wpdb->postmeta WHERE meta_key = 'timezone'")
-    );
+    $used = $wpdb->get_col("SELECT DISTINCT meta_value FROM $wpdb->postmeta WHERE meta_key = 'timezone'");
     $used[] = $tsml_timezone;
     $used = array_filter(array_unique($used));
     $used_timezones = [];

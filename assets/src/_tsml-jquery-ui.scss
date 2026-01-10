@@ -1,26 +1,25 @@
 $selected: #1980EC;
-$hover: #77777722;
 $border-radius: 4px;
-$shadow: 0 6px 12px rgba(0, 0, 0, 0.175);;
+$shadow: 0 6px 12px rgba(0, 0, 0, 0.175);
 
 .ui-autocomplete {
-    font-size: 0.9rem;
-    min-width: 270px;
-    font-family: inherit;
-    border-radius: $border-radius;
-    box-shadow: $shadow;
-    max-height: 50vh;
-    overflow-y: auto;
-    li.ui-menu-item {
-        padding: 0;
-        .ui-menu-item-wrapper {
-            padding: 0.25rem 1rem;
-        }
-        .ui-state-active {
-            background-color: $selected;
-            color: #fff;
-        }
-    }
+	font-size: 0.9rem;
+	min-width: 270px;
+	font-family: inherit;
+	border-radius: $border-radius;
+	box-shadow: $shadow;
+	max-height: 50vh;
+	overflow-y: auto;
+	li.ui-menu-item {
+		padding: 0;
+		.ui-menu-item-wrapper {
+			padding: 0.25rem 1rem;
+		}
+		.ui-state-active {
+			background-color: $selected;
+			color: #fff;
+		}
+	}
 }
 
 .ui-autocomplete-category {
@@ -37,18 +36,18 @@ $shadow: 0 6px 12px rgba(0, 0, 0, 0.175);;
 }
 
 .ui-timepicker-wrapper {
-    font-size: 0.9rem;
-    max-height: 25vh;
-    min-width: 200px;
-    border-radius: $border-radius;
-    box-shadow: $shadow;
-    ul.ui-timepicker-list {
-        li {
-            padding: 0.25rem 1rem;
-        }
-        .ui-timepicker-selected {
-            background-color: $selected;
-            color: #fff;
-        }
-    }
+	font-size: 0.9rem;
+	max-height: 25vh;
+	min-width: 200px;
+	border-radius: $border-radius;
+	box-shadow: $shadow;
+	ul.ui-timepicker-list {
+		li {
+			padding: 0.25rem 1rem;
+		}
+		.ui-timepicker-selected {
+			background-color: $selected;
+			color: #fff;
+		}
+	}
 }

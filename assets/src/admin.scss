@@ -28,14 +28,13 @@ body {
 		}
 	}
 
-    select#timezone {
-        optgroup {
-            font-size: 1rem;
-        }
-        option {
-            font-size: 0.9rem;
-        }
-    }
-
+	select {
+		optgroup {
+			font-size: 1rem;
+		}
+		option {
+			font-size: 0.9rem;
+		}
+	}
 
 }
