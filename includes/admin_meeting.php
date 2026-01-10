@@ -475,7 +475,7 @@ add_action('admin_init', function () {
             </div>
             <div class="meta_form_row">
                 <label>
-                    <?php esc_html_e('Square Cash', '12-step-meeting-list') ?>
+                    <?php esc_html_e('Cash App', '12-step-meeting-list') ?>
                 </label>
                 <?php tsml_input_text('square', @$meeting->square, ['placeholder' => '$Cashtag']) ?>
             </div>

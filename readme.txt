@@ -294,8 +294,11 @@ Yes, you will need to know the key name of the field. Then include an array in y
 
 == Changelog ==
 
-= 3.19.10 =
+= 3.19.11 =
 * Expanding use of Timezone picker, adding most used at top of list [more info](https://github.com/code4recovery/12-step-meeting-list/issues/1774)
+
+= 3.19.10 =
+* Updated "Square Cash" field label to "Cash App" [more info](https://github.com/code4recovery/12-step-meeting-list/issues/1857)
 
 = 3.19.9 =
 * Add additional SLAA meeting types [more info](https://github.com/code4recovery/12-step-meeting-list/issues/1829)
