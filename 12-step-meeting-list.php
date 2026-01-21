@@ -5,7 +5,7 @@
  * License: GPLv2 or later
  * License URI: https://www.gnu.org/licenses/gpl-2.0.html
  * Description: Manage a list of recovery meetings
- * Version: 3.19.10
+ * Version: 3.19.11-alpha
  * Requires PHP: 5.6
  * Author: Code for Recovery
  * Author URI: https://github.com/code4recovery/12-step-meeting-list
