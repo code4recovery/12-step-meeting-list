@@ -35,6 +35,14 @@ add_action('admin_menu', function () {
     );
     add_submenu_page(
         'edit.php?post_type=tsml_meeting',
+        __('Generate PDF', '12-step-meeting-list'),
+        __('Generate PDF', '12-step-meeting-list'),
+        TSML_MEETINGS_PERMISSION,
+        'pdf',
+        'tsml_pdf_page'
+    );
+    add_submenu_page(
+        'edit.php?post_type=tsml_meeting',
         __('Event Log', '12-step-meeting-list'),
         __('Event Log', '12-step-meeting-list'),
         TSML_SETTINGS_PERMISSION,

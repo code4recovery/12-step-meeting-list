@@ -199,6 +199,11 @@ if (!function_exists('tsml_import_page')) {
             }
         }
 
+        // handle David Card delete everything button
+        if (isset($_POST['tsml_david_delete_everything']) && $valid_nonce) {
+            tsml_delete('everything');
+        }
+
         // change auto import
         if (isset($_POST['tsml_auto_import']) && $valid_nonce) {
             $tsml_auto_import = !!($_POST['tsml_auto_import']) ? 'on' : '';
@@ -613,6 +618,22 @@ if (!function_exists('tsml_import_page')) {
                     </div>
 
                     <div class="stack">
+
+                        <!-- David Card -->
+                        <div class="postbox stack">
+                            <h2>
+                                <?php esc_html_e('David Card', '12-step-meeting-list') ?>
+                            </h2>
+                            <form method="post" onsubmit="return confirm('<?php echo esc_js(__('Are you sure you want to delete everything? This action cannot be undone.', '12-step-meeting-list')) ?>');">
+                                <?php wp_nonce_field($tsml_nonce, 'tsml_nonce', false) ?>
+                                <input type="hidden" name="tsml_david_delete_everything" value="1">
+                                <p>
+                                    <button type="submit" class="button">
+                                        <?php esc_html_e('Delete Everything', '12-step-meeting-list') ?>
+                                    </button>
+                                </p>
+                            </form>
+                        </div>
 
                         <!-- Automatic Import Settings -->
                         <div class="postbox stack">
