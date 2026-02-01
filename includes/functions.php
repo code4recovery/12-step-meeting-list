@@ -102,6 +102,7 @@ function tsml_assets()
             'ajaxurl' => admin_url('admin-ajax.php'),
             'debug' => WP_DEBUG,
             'tsml_debug' => !!$tsml_debug,
+            'map_provider' => $tsml_map_provider,
             'nonce' => wp_create_nonce($tsml_nonce),
         ]);
     } else {

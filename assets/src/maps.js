@@ -21,11 +21,23 @@ function createMap(scrollwheel, locations, searchLocation) {
 			// Initialize Yandex Map
 			ymaps.ready(function() {
 				tsmlmap = new ymaps.Map('map', {
-					center: [55.76, 37.64], // Default center (Moscow)
+					center: [55.76, 37.64], // Default center (will be adjusted by setMapBounds)
 					zoom: 10,
 					controls: ['zoomControl', 'typeSelector', 'fullscreenControl']
 				});
+				
+				// init bounds
+				bounds = {
+					north: false,
+					south: false,
+					east: false,
+					west: false
+				};
+				
+				// Set markers after map is ready
+				setMapMarkers(locations, searchLocation);
 			});
+			return; // Exit early, setMapMarkers will be called in ymaps.ready callback
 		} else {
 			// Initialize Leaflet Map
 			tsmlmap = L.map('map');
