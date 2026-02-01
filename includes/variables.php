@@ -127,6 +127,12 @@ $tsml_defaults = [
 // load the distance units that we're using (ie miles or kms)
 $tsml_distance_units = get_option('tsml_distance_units', 'mi');
 
+// load the map provider setting (leaflet or yandex)
+$tsml_map_provider = get_option('tsml_map_provider', 'leaflet');
+
+// load yandex maps api key
+$tsml_yandex_api_key = get_option('tsml_yandex_api_key', '');
+
 // define columns to output, always in English for portability (per Poland NA) - used in tsml_ajax_csv() and tsml_feedback_url()
 $tsml_export_columns = [
     'name' => 'Name',

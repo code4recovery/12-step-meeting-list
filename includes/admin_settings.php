@@ -6,7 +6,7 @@ if (!function_exists('tsml_settings_page')) {
     function tsml_settings_page()
     {
         global $tsml_data_sources, $tsml_programs, $tsml_program, $tsml_nonce, $tsml_feedback_addresses, $tsml_notification_addresses,
-        $tsml_distance_units, $tsml_sharing, $tsml_sharing_keys, $tsml_contact_display, $tsml_user_interface, $tsml_timezone;
+        $tsml_distance_units, $tsml_sharing, $tsml_sharing_keys, $tsml_contact_display, $tsml_user_interface, $tsml_timezone, $tsml_map_provider, $tsml_yandex_api_key;
 
         // todo consider whether this check is necessary, since it is run from add_submenu_page() which is already checking for the same permission
         // potentially tsml_settings_page() could be a closure within the call to add_submenu_page which would prevent it from being reused elsewhere
@@ -29,6 +29,20 @@ if (!function_exists('tsml_settings_page')) {
             $tsml_distance_units = ($_POST['tsml_distance_units'] == 'mi') ? 'mi' : 'km';
             update_option('tsml_distance_units', $tsml_distance_units);
             tsml_alert(__('Distance units updated.', '12-step-meeting-list'));
+        }
+
+        // change map provider
+        if (!empty($_POST['tsml_map_provider']) && $valid_nonce) {
+            $tsml_map_provider = ($_POST['tsml_map_provider'] == 'yandex') ? 'yandex' : 'leaflet';
+            update_option('tsml_map_provider', $tsml_map_provider);
+            tsml_alert(__('Map provider updated.', '12-step-meeting-list'));
+        }
+
+        // save yandex api key
+        if (isset($_POST['tsml_yandex_api_key']) && $valid_nonce) {
+            $tsml_yandex_api_key = sanitize_text_field($_POST['tsml_yandex_api_key']);
+            update_option('tsml_yandex_api_key', $tsml_yandex_api_key);
+            tsml_alert(__('Yandex Maps API key saved.', '12-step-meeting-list'));
         }
 
         // change contact display
@@ -268,6 +282,43 @@ if (!function_exists('tsml_settings_page')) {
                                 <?php } ?>
                             </select>
                         </form>
+                        <form class="stack compact" method="post">
+                            <h3>
+                                <?php esc_html_e('Map Provider', '12-step-meeting-list') ?>
+                            </h3>
+                            <p>
+                                <?php esc_html_e('Select the map provider to use for displaying meeting locations.', '12-step-meeting-list') ?>
+                            </p>
+                            <?php wp_nonce_field($tsml_nonce, 'tsml_nonce', false) ?>
+                            <select name="tsml_map_provider" onchange="this.form.submit()">
+                                <?php
+                                foreach (['leaflet' => __('OpenStreetMap (Leaflet)', '12-step-meeting-list'), 'yandex' => __('Yandex Maps', '12-step-meeting-list'),] as $key => $value) { ?>
+                                    <option value="<?php echo esc_attr($key) ?>" <?php selected($tsml_map_provider, $key) ?>>
+                                        <?php echo esc_html($value) ?>
+                                    </option>
+                                <?php } ?>
+                            </select>
+                        </form>
+                        <?php if ($tsml_map_provider == 'yandex') { ?>
+                            <form class="stack compact" method="post">
+                                <h3>
+                                    <?php esc_html_e('Yandex Maps API Key', '12-step-meeting-list') ?>
+                                </h3>
+                                <p>
+                                    <?php echo wp_kses(sprintf(
+                                        __('Enter your Yandex Maps API key. You can get one from <a href="%s" target="_blank">Yandex Developer Console</a>.', '12-step-meeting-list'),
+                                        'https://developer.tech.yandex.ru/'
+                                    ), TSML_ALLOWED_HTML) ?>
+                                </p>
+                                <?php wp_nonce_field($tsml_nonce, 'tsml_nonce', false) ?>
+                                <?php tsml_input_text('tsml_yandex_api_key', $tsml_yandex_api_key, [
+                                    'placeholder' => __('Enter Yandex Maps API Key', '12-step-meeting-list')
+                                ]) ?>
+                                <p>
+                                    <?php tsml_input_submit(__('Save', '12-step-meeting-list')); ?>
+                                </p>
+                            </form>
+                        <?php } ?>
                         <form class="stack compact" method="post">
                             <h3>
                                 <?php esc_html_e('Contact Visibility', '12-step-meeting-list') ?>
