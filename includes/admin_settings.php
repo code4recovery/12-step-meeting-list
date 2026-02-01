@@ -6,7 +6,7 @@ if (!function_exists('tsml_settings_page')) {
     function tsml_settings_page()
     {
         global $tsml_data_sources, $tsml_programs, $tsml_program, $tsml_nonce, $tsml_feedback_addresses, $tsml_notification_addresses,
-        $tsml_distance_units, $tsml_sharing, $tsml_sharing_keys, $tsml_contact_display, $tsml_user_interface, $tsml_timezone, $tsml_map_provider, $tsml_yandex_api_key;
+        $tsml_distance_units, $tsml_sharing, $tsml_sharing_keys, $tsml_contact_display, $tsml_user_interface, $tsml_timezone, $tsml_map_provider, $tsml_yandex_api_key, $tsml_geocoding_provider;
 
         // todo consider whether this check is necessary, since it is run from add_submenu_page() which is already checking for the same permission
         // potentially tsml_settings_page() could be a closure within the call to add_submenu_page which would prevent it from being reused elsewhere
@@ -43,6 +43,15 @@ if (!function_exists('tsml_settings_page')) {
             $tsml_yandex_api_key = sanitize_text_field($_POST['tsml_yandex_api_key']);
             update_option('tsml_yandex_api_key', $tsml_yandex_api_key);
             tsml_alert(__('Yandex Maps API key saved.', '12-step-meeting-list'));
+        }
+
+        // change geocoding provider
+        if (!empty($_POST['tsml_geocoding_provider']) && $valid_nonce) {
+            $tsml_geocoding_provider = ($_POST['tsml_geocoding_provider'] == 'yandex') ? 'yandex' : 'default';
+            update_option('tsml_geocoding_provider', $tsml_geocoding_provider);
+            // Clear address cache when changing geocoding provider
+            delete_option('tsml_addresses');
+            tsml_alert(__('Geocoding provider updated. Address cache cleared.', '12-step-meeting-list'));
         }
 
         // change contact display
@@ -317,6 +326,23 @@ if (!function_exists('tsml_settings_page')) {
                                 <p>
                                     <?php tsml_input_submit(__('Save', '12-step-meeting-list')); ?>
                                 </p>
+                            </form>
+                            <form class="stack compact" method="post">
+                                <h3>
+                                    <?php esc_html_e('Geocoding Provider', '12-step-meeting-list') ?>
+                                </h3>
+                                <p>
+                                    <?php esc_html_e('Choose which service to use for converting addresses to coordinates. Yandex Geocoder is recommended for Russia, Ukraine, and CIS countries.', '12-step-meeting-list') ?>
+                                </p>
+                                <?php wp_nonce_field($tsml_nonce, 'tsml_nonce', false) ?>
+                                <select name="tsml_geocoding_provider" onchange="this.form.submit()">
+                                    <?php
+                                    foreach (['default' => __('Default (geo.code4recovery.org)', '12-step-meeting-list'), 'yandex' => __('Yandex Geocoder', '12-step-meeting-list'),] as $key => $value) { ?>
+                                        <option value="<?php echo esc_attr($key) ?>" <?php selected($tsml_geocoding_provider, $key) ?>>
+                                            <?php echo esc_html($value) ?>
+                                        </option>
+                                    <?php } ?>
+                                </select>
                             </form>
                         <?php } ?>
                         <form class="stack compact" method="post">

@@ -133,6 +133,9 @@ $tsml_map_provider = get_option('tsml_map_provider', 'leaflet');
 // load yandex maps api key
 $tsml_yandex_api_key = get_option('tsml_yandex_api_key', '');
 
+// load geocoding provider setting (default or yandex)
+$tsml_geocoding_provider = get_option('tsml_geocoding_provider', 'default');
+
 // define columns to output, always in English for portability (per Poland NA) - used in tsml_ajax_csv() and tsml_feedback_url()
 $tsml_export_columns = [
     'name' => 'Name',
