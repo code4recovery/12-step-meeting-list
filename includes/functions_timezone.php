@@ -32,7 +32,7 @@ function tsml_timezone_select($selected = null)
         if (!in_array($timezone, $timezones)) {
             continue;
         }
-        $city = array_pop(explode('/', $timezone, 2));
+        list($continent, $city) = explode('/', $timezone, 2);
         $used_timezones[$timezone] = str_replace(['_', '/'], [' ', ' - '], $city);
     }
 
