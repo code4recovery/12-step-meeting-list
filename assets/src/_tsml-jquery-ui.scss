@@ -1,4 +1,4 @@
-$selected: #1980EC;
+$selected: #1980ec;
 $border-radius: 4px;
 $shadow: 0 6px 12px rgba(0, 0, 0, 0.175);
 
@@ -19,6 +19,9 @@ $shadow: 0 6px 12px rgba(0, 0, 0, 0.175);
 			background-color: $selected;
 			color: #fff;
 		}
+	}
+	&.ui-front {
+		z-index: 1000;
 	}
 }
 
