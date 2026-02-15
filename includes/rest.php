@@ -12,6 +12,7 @@ add_action('rest_api_init', function () {
                 'type' => 'string',
             ],
         ],
+        'permission_callback' => '__return_true',
     ]);
 });
 
