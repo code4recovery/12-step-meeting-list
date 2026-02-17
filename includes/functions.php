@@ -84,11 +84,16 @@ function tsml_alert($message, $type = 'success')
 function tsml_assets()
 {
     global $post_type, $tsml_street_only, $tsml_programs, $tsml_strings, $tsml_program,
-    $tsml_distance_units, $tsml_defaults, $tsml_columns, $tsml_nonce, $tsml_debug;
+    $tsml_distance_units, $tsml_defaults, $tsml_columns, $tsml_nonce, $tsml_debug, $tsml_map_provider, $tsml_yandex_api_key;
 
-
-    wp_enqueue_script('leaflet', 'https://unpkg.com/leaflet@1.9.4/dist/leaflet.js', [], '1.9.4', true);
-    wp_enqueue_style('leaflet', 'https://unpkg.com/leaflet@1.9.4/dist/leaflet.css', [], '1.9.4');
+    // Load map provider scripts
+    if ($tsml_map_provider == 'yandex' && !empty($tsml_yandex_api_key)) {
+        wp_enqueue_script('yandex-maps', 'https://api-maps.yandex.ru/2.1/?apikey=' . esc_attr($tsml_yandex_api_key) . '&lang=ru_RU', [], null, true);
+    } else {
+        wp_enqueue_script('leaflet', 'https://unpkg.com/leaflet@1.9.4/dist/leaflet.js', [], '1.9.4', true);
+        wp_enqueue_style('leaflet', 'https://unpkg.com/leaflet@1.9.4/dist/leaflet.css', [], '1.9.4');
+    }
+    
     if (is_admin()) {
         // dashboard page assets
         wp_enqueue_style('tsml_admin', plugins_url('../assets/css/admin.min.css', __FILE__), [], TSML_VERSION);
@@ -97,6 +102,7 @@ function tsml_assets()
             'ajaxurl' => admin_url('admin-ajax.php'),
             'debug' => WP_DEBUG,
             'tsml_debug' => !!$tsml_debug,
+            'map_provider' => $tsml_map_provider,
             'nonce' => wp_create_nonce($tsml_nonce),
         ]);
     } else {
@@ -123,6 +129,7 @@ function tsml_assets()
             'defaults' => $tsml_defaults,
             'distance_units' => $tsml_distance_units,
             'flags' => $tsml_programs[$tsml_program]['flags'],
+            'map_provider' => $tsml_map_provider,
             'nonce' => wp_create_nonce($tsml_nonce),
             'program' => empty($tsml_programs[$tsml_program]['abbr']) ? $tsml_programs[$tsml_program]['name'] : $tsml_programs[$tsml_program]['abbr'],
             'street_only' => $tsml_street_only,
@@ -791,7 +798,7 @@ function tsml_front_page($wp_query)
  */
 function tsml_geocode($address)
 {
-    global $tsml_google_overrides;
+    global $tsml_google_overrides, $tsml_geocoding_provider;
 
     $address = stripslashes($address);
 
@@ -813,7 +820,12 @@ function tsml_geocode($address)
         return $addresses[$address];
     }
 
-    $response = tsml_geocode_google($address);
+    // Use Yandex geocoder if selected
+    if ($tsml_geocoding_provider == 'yandex') {
+        $response = tsml_geocode_yandex($address);
+    } else {
+        $response = tsml_geocode_google($address);
+    }
 
     // Return if the status is error
     if ($response['status'] == 'error') {
@@ -961,6 +973,101 @@ function tsml_geocode_google($address)
     }
 
     return $response;
+}
+
+/**
+ * call Yandex for geocoding of the address
+ * 
+ * @param mixed $address
+ * @return mixed
+ */
+function tsml_geocode_yandex($address)
+{
+    global $tsml_yandex_api_key;
+
+    // Can't Geocode an empty address
+    if (empty($address)) {
+        return [
+            'status' => 'error',
+            'reason' => 'Address string was empty',
+        ];
+    }
+
+    // Check if API key is set
+    if (empty($tsml_yandex_api_key)) {
+        return [
+            'status' => 'error',
+            'reason' => 'Yandex Maps API key is not configured',
+        ];
+    }
+
+    // Build Yandex Geocoder API URL
+    $url = 'https://geocode-maps.yandex.ru/1.x/?' . http_build_query([
+        'apikey' => $tsml_yandex_api_key,
+        'geocode' => $address,
+        'format' => 'json',
+        'results' => 1,
+    ]);
+
+    // Make request
+    $response = wp_remote_get($url, ['timeout' => 15]);
+
+    // Check for errors
+    if (is_wp_error($response)) {
+        tsml_log('geocode_connection_error', $response->get_error_message(), $address);
+        return [
+            'status' => 'error',
+            'reason' => 'Could not connect to Yandex Geocoder: ' . $response->get_error_message(),
+        ];
+    }
+
+    $body = wp_remote_retrieve_body($response);
+    $data = json_decode($body, true);
+
+    // Check if we got valid results
+    if (empty($data['response']['GeoObjectCollection']['featureMember'])) {
+        tsml_log('geocode_error', 'ZERO_RESULTS', $address);
+        return [
+            'status' => 'error',
+            'reason' => 'Yandex could not validate the address <code>' . esc_html($address) . '</code>',
+        ];
+    }
+
+    $geo_object = $data['response']['GeoObjectCollection']['featureMember'][0]['GeoObject'];
+    
+    // Extract coordinates
+    $coords = explode(' ', $geo_object['Point']['pos']);
+    $longitude = floatval($coords[0]);
+    $latitude = floatval($coords[1]);
+
+    // Get formatted address
+    $formatted_address = $geo_object['metaDataProperty']['GeocoderMetaData']['text'];
+
+    // Determine if approximate
+    $precision = $geo_object['metaDataProperty']['GeocoderMetaData']['precision'];
+    $approximate = in_array($precision, ['other', 'street', 'near']) ? 'yes' : 'no';
+
+    // Extract city
+    $city = null;
+    if (!empty($geo_object['metaDataProperty']['GeocoderMetaData']['Address']['Components'])) {
+        foreach ($geo_object['metaDataProperty']['GeocoderMetaData']['Address']['Components'] as $component) {
+            if ($component['kind'] === 'locality') {
+                $city = $component['name'];
+                break;
+            }
+        }
+    }
+
+    tsml_log('geocode_success', $formatted_address, $address);
+
+    return [
+        'formatted_address' => $formatted_address,
+        'latitude' => $latitude,
+        'longitude' => $longitude,
+        'approximate' => $approximate,
+        'city' => $city,
+        'status' => 'geocode',
+    ];
 }
 
 /**

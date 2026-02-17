@@ -8,20 +8,45 @@ var infowindow,
 	markers = [],
 	bounds,
 	locationIcon,
-	searchIcon;
+	searchIcon,
+	mapProvider = tsml.map_provider || 'leaflet';
 
 // create an empty map
 function createMap(scrollwheel, locations, searchLocation) {
 	if (tsml.debug) console.log('createMap() locations', locations);
 
-	// init map
+	// init map based on provider
 	if (!tsmlmap) {
-		tsmlmap = L.map('map');
-		L.tileLayer('https://{s}s.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png', {
-			maxZoom: 19,
-			attribution:
-				'&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> &copy; <a href="https://carto.com/attributions">CARTO</a>'
-		}).addTo(tsmlmap);
+		if (mapProvider === 'yandex') {
+			// Initialize Yandex Map
+			ymaps.ready(function() {
+				tsmlmap = new ymaps.Map('map', {
+					center: [55.76, 37.64], // Default center (will be adjusted by setMapBounds)
+					zoom: 10,
+					controls: ['zoomControl', 'typeSelector', 'fullscreenControl']
+				});
+				
+				// init bounds
+				bounds = {
+					north: false,
+					south: false,
+					east: false,
+					west: false
+				};
+				
+				// Set markers after map is ready
+				setMapMarkers(locations, searchLocation);
+			});
+			return; // Exit early, setMapMarkers will be called in ymaps.ready callback
+		} else {
+			// Initialize Leaflet Map
+			tsmlmap = L.map('map');
+			L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png', {
+				maxZoom: 19,
+				attribution:
+					'&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> &copy; <a href="https://carto.com/attributions">CARTO</a>'
+			}).addTo(tsmlmap);
+		}
 	}
 
 	// init bounds
@@ -32,13 +57,15 @@ function createMap(scrollwheel, locations, searchLocation) {
 		west: false
 	};
 
-	// custom marker icons
-	locationIcon = window.btoa(
-		'<?xml version="1.0" encoding="utf-8"?><svg viewBox="-1.1 -1.086 43.182 63.273" xmlns="http://www.w3.org/2000/svg"><path fill="#f76458" stroke="#b3382c" stroke-width="3" d="M20.5,0.5 c11.046,0,20,8.656,20,19.333c0,10.677-12.059,21.939-20,38.667c-5.619-14.433-20-27.989-20-38.667C0.5,9.156,9.454,0.5,20.5,0.5z"/></svg>'
-	);
-	searchIcon = window.btoa(
-		'<?xml version="1.0" encoding="utf-8"?><svg viewBox="-1.1 -1.086 43.182 63.273" xmlns="http://www.w3.org/2000/svg"><path fill="#2c78b3" stroke="#2c52b3" stroke-width="3" d="M20.5,0.5 c11.046,0,20,8.656,20,19.333c0,10.677-12.059,21.939-20,38.667c-5.619-14.433-20-27.989-20-38.667C0.5,9.156,9.454,0.5,20.5,0.5z"/></svg>'
-	);
+	// custom marker icons for Leaflet
+	if (mapProvider === 'leaflet') {
+		locationIcon = window.btoa(
+			'<?xml version="1.0" encoding="utf-8"?><svg viewBox="-1.1 -1.086 43.182 63.273" xmlns="http://www.w3.org/2000/svg"><path fill="#f76458" stroke="#b3382c" stroke-width="3" d="M20.5,0.5 c11.046,0,20,8.656,20,19.333c0,10.677-12.059,21.939-20,38.667c-5.619-14.433-20-27.989-20-38.667C0.5,9.156,9.454,0.5,20.5,0.5z"/></svg>'
+		);
+		searchIcon = window.btoa(
+			'<?xml version="1.0" encoding="utf-8"?><svg viewBox="-1.1 -1.086 43.182 63.273" xmlns="http://www.w3.org/2000/svg"><path fill="#2c78b3" stroke="#2c52b3" stroke-width="3" d="M20.5,0.5 c11.046,0,20,8.656,20,19.333c0,10.677-12.059,21.939-20,38.667c-5.619-14.433-20-27.989-20-38.667C0.5,9.156,9.454,0.5,20.5,0.5z"/></svg>'
+		);
+	}
 
 	setMapMarkers(locations, searchLocation);
 }
@@ -77,7 +104,11 @@ function formatLink(url, text, exclude) {
 function removeSearchMarker() {
 	searchLocation = null;
 	if (typeof searchMarker == 'object' && searchMarker) {
-		searchMarker.setMap(null);
+		if (mapProvider === 'yandex') {
+			tsmlmap.geoObjects.remove(searchMarker);
+		} else {
+			searchMarker.setMap(null);
+		}
 		searchMarker = null;
 	}
 }
@@ -86,22 +117,39 @@ function removeSearchMarker() {
 function setMapBounds() {
 	if (markers.length > 1) {
 		//multiple markers
-		tsmlmap.fitBounds(
-			[
+		if (mapProvider === 'yandex') {
+			tsmlmap.setBounds([
 				[bounds.south, bounds.west],
 				[bounds.north, bounds.east]
-			],
-			{padding: [10, 10]}
-		);
+			], {
+				checkZoomRange: true,
+				zoomMargin: 10
+			});
+		} else {
+			tsmlmap.fitBounds(
+				[
+					[bounds.south, bounds.west],
+					[bounds.north, bounds.east]
+				],
+				{padding: [10, 10]}
+			);
+		}
 	} else if (markers.length == 1) {
 		//if only one marker, zoom in and open the popup if it exists
-		if (markers[0].getPopup()) {
-			tsmlmap.setZoom(16);
-			tsmlmap.panTo([bounds.north + 0.0025, bounds.east]);
-			markers[0].togglePopup();
+		if (mapProvider === 'yandex') {
+			tsmlmap.setCenter([bounds.north, bounds.east], 16);
+			if (markers[0].balloon) {
+				markers[0].balloon.open();
+			}
 		} else {
-			tsmlmap.setZoom(16);
-			tsmlmap.panTo([bounds.north, bounds.east]);
+			if (markers[0].getPopup()) {
+				tsmlmap.setZoom(16);
+				tsmlmap.panTo([bounds.north + 0.0025, bounds.east]);
+				markers[0].togglePopup();
+			} else {
+				tsmlmap.setZoom(16);
+				tsmlmap.panTo([bounds.north, bounds.east]);
+			}
 		}
 	}
 }
@@ -113,23 +161,36 @@ function setMapMarker(title, position, content) {
 
 	var marker;
 
-	var html = document.createElement('div');
-	html.className = 'marker';
-	html.style.backgroundImage = 'url(data:image/svg+xml;base64,' + locationIcon + ')';
-	html.style.width = '26px';
-	html.style.height = '38.4px';
+	if (mapProvider === 'yandex') {
+		// Create Yandex marker
+		marker = new ymaps.Placemark([position.lat, position.lng], {
+			hintContent: title,
+			balloonContent: content || title
+		}, {
+			preset: 'islands#redIcon'
+		});
+		
+		tsmlmap.geoObjects.add(marker);
+	} else {
+		// Create Leaflet marker
+		var html = document.createElement('div');
+		html.className = 'marker';
+		html.style.backgroundImage = 'url(data:image/svg+xml;base64,' + locationIcon + ')';
+		html.style.width = '26px';
+		html.style.height = '38.4px';
 
-	var icon = L.divIcon({className: 'marker', html, iconAnchor: [13, 38.4], popupAnchor: [0, -22]});
+		var icon = L.divIcon({className: 'marker', html, iconAnchor: [13, 38.4], popupAnchor: [0, -22]});
 
-	marker = new L.marker(position, {icon}).addTo(tsmlmap);
+		marker = new L.marker(position, {icon}).addTo(tsmlmap);
 
-	if (content) {
-		var popup = new L.popup();
-		popup.setContent(content);
-		marker.bindPopup(popup);
+		if (content) {
+			var popup = new L.popup();
+			popup.setContent(content);
+			marker.bindPopup(popup);
+		}
+
+		marker.addTo(tsmlmap);
 	}
-
-	marker.addTo(tsmlmap);
 
 	return marker;
 }
@@ -139,7 +200,11 @@ function setMapMarkers(locations, searchLocation) {
 	//remove existing markers
 	if (markers.length) {
 		for (var i = 0; i < markers.length; i++) {
-			markers[i].remove();
+			if (mapProvider === 'yandex') {
+				tsmlmap.geoObjects.remove(markers[i]);
+			} else {
+				markers[i].remove();
+			}
 		}
 		markers = [];
 	}
@@ -224,7 +289,13 @@ function setMapMarkers(locations, searchLocation) {
 			if (!bounds.south || position.lat < bounds.south) bounds.south = position.lat;
 			if (!bounds.east || position.lng > bounds.east) bounds.east = position.lng;
 			if (!bounds.west || position.lng < bounds.west) bounds.west = position.lng;
-			if (location.approximate === 'yes') marker.remove();
+			if (location.approximate === 'yes') {
+				if (mapProvider === 'yandex') {
+					marker.options.set('visible', false);
+				} else {
+					marker.remove();
+				}
+			}
 		}
 
 		if (tsml.debug) console.log('setMapMarkers() marker', marker);
@@ -239,13 +310,23 @@ function setMapMarkers(locations, searchLocation) {
 function setSearchMarker(data) {
 	removeSearchMarker();
 	if (!data || !data.latitude) return;
-	var html = document.createElement('div');
-	html.className = 'marker';
-	html.style.backgroundImage = 'url(data:image/svg+xml;base64,' + searchIcon + ')';
-	html.style.width = '26px';
-	html.style.height = '38.4px';
+	
+	if (mapProvider === 'yandex') {
+		searchMarker = new ymaps.Placemark([data.latitude, data.longitude], {
+			hintContent: 'Search Location'
+		}, {
+			preset: 'islands#blueIcon'
+		});
+		tsmlmap.geoObjects.add(searchMarker);
+	} else {
+		var html = document.createElement('div');
+		html.className = 'marker';
+		html.style.backgroundImage = 'url(data:image/svg+xml;base64,' + searchIcon + ')';
+		html.style.width = '26px';
+		html.style.height = '38.4px';
 
-	var icon = L.divIcon({className: 'marker', html, iconAnchor: [13, 38.4], popupAnchor: [0, -22]});
+		var icon = L.divIcon({className: 'marker', html, iconAnchor: [13, 38.4], popupAnchor: [0, -22]});
 
-	marker = new L.marker([data.latitude, data.longitude], {icon}).addTo(tsmlmap);
+		searchMarker = new L.marker([data.latitude, data.longitude], {icon}).addTo(tsmlmap);
+	}
 }
