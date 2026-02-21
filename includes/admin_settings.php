@@ -467,24 +467,18 @@ if (!function_exists('tsml_settings_page')) {
                             <h2>
                                 <?php esc_html_e('Timezone', '12-step-meeting-list') ?>
                             </h2>
-                            <?php if ($tsml_user_interface === 'tsml_ui') { ?>
-                                <p>
-                                    <?php esc_html_e('If your site features meetings in a variety of timezones, leave this blank and meetings will be displayed in the user\'s timezone. This requires a timezone to be set on each meeting location.', '12-step-meeting-list') ?>
-                                </p>
+                            <p>
+                                <?php esc_html_e('If your site features meetings in a variety of timezones, leave this blank and meetings will be displayed in the user\'s timezone. This requires a timezone to be set on each meeting location.', '12-step-meeting-list') ?>
+                            </p>
 
-                                <p>
-                                    <?php esc_html_e('If your site features meetings in a single timezone, select it here and meetings will be displayed in that timezone. There is no need to specify a timezone for each meeting.', '12-step-meeting-list') ?>
-                                </p>
+                            <p>
+                                <?php esc_html_e('If your site features meetings in a single timezone, select it here and meetings will be displayed in that timezone. There is no need to specify a timezone for each meeting.', '12-step-meeting-list') ?>
+                            </p>
 
-                                <form method="post" onchange="this.submit()">
-                                    <?php wp_nonce_field($tsml_nonce, 'tsml_nonce', false) ?>
-                                    <?php tsml_timezone_select($tsml_timezone) ?>
-                                </form>
-                            <?php } else { ?>
-                                <p>
-                                    <?php esc_html_e('Timezone settings are only relevant to the TSML UI interface.', '12-step-meeting-list') ?>
-                                </p>
-                            <?php } ?>
+                            <form method="post" onchange="this.submit()">
+                                <?php wp_nonce_field($tsml_nonce, 'tsml_nonce', false) ?>
+                                <?php tsml_timezone_select($tsml_timezone) ?>
+                            </form>
                         </div>
                     </div>
 
