@@ -21,10 +21,22 @@ function tsml_timezone_is_valid($timezone)
  */
 function tsml_timezone_select($selected = null)
 {
+    global $tsml_timezone, $wpdb;
+    $all_timezones = DateTimeZone::listIdentifiers();
+    $meeting_timezones = $wpdb->get_col("SELECT DISTINCT meta_value FROM $wpdb->postmeta WHERE meta_key = 'timezone'");
+    $meeting_timezones[] = $tsml_timezone;
+    $meeting_timezones = array_filter(array_unique($meeting_timezones));
+    $used = [];
+    foreach ($meeting_timezones as $timezone) {
+        if (in_array($timezone, $all_timezones)) {
+            list($continent, $city) = explode('/', $timezone, 2);
+            $used[$timezone] = str_replace(['_', '/'], [' ', ' - '], $city);
+        }
+    }
+
     $continents = [];
-    foreach (DateTimeZone::listIdentifiers() as $timezone) {
-        $count_slashes = substr_count($timezone, '/');
-        if ($count_slashes < 1) {
+    foreach ($all_timezones as $timezone) {
+        if (in_array($timezone, $meeting_timezones) || !substr_count($timezone, '/')) {
             continue;
         }
         list($continent, $city) = explode('/', $timezone, 2);
@@ -37,6 +49,15 @@ function tsml_timezone_select($selected = null)
     ?>
     <select name="timezone" id="timezone">
         <option value="" <?php selected($timezone, null) ?>></option>
+        <?php if (!empty($used)) : ?>
+            <optgroup label="<?php esc_attr_e('Currently In Use', '12-step-meeting-list'); ?>">
+                <?php foreach ($used as $timezone => $city) { ?>
+                    <option value="<?php echo esc_attr($timezone) ?>" <?php selected($timezone, $selected) ?>>
+                        <?php echo esc_html($city) ?>
+                    </option>
+                <?php } ?>
+            </optgroup>
+        <?php endif; ?>
         <?php foreach ($continents as $continent => $cities) { ?>
             <optgroup label="<?php echo esc_attr($continent) ?>">
                 <?php foreach ($cities as $timezone => $city) { ?>
