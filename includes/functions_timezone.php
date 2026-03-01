@@ -23,7 +23,7 @@ function tsml_timezone_select($selected = null)
 {
     global $tsml_timezone, $wpdb;
     $all_timezones = DateTimeZone::listIdentifiers();
-    $meeting_timezones = $wpdb->get_col("SELECT DISTINCT meta_value FROM $wpdb->postmeta WHERE meta_key = 'timezone'");
+    $meeting_timezones = $wpdb->get_col("SELECT DISTINCT m.meta_value FROM $wpdb->postmeta as m JOIN $wpdb->posts as p ON m.post_id = p.ID WHERE m.meta_key = 'timezone' AND p.post_type = 'tsml_location' AND p.post_status = 'publish'");
     $meeting_timezones[] = $tsml_timezone;
     $meeting_timezones = array_filter(array_unique($meeting_timezones));
     $used = [];
