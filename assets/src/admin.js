@@ -94,6 +94,7 @@ jQuery(function ($) {
             approximate:       $form.find('input#approximate'),
             latitude:          $form.find('input[name=latitude]'),
             longitude:         $form.find('input[name=longitude]'),
+            timezone:          $form.find('select[name=timezone]'),
 			group:             $form.find('input#group'),
 			group_notes:       $form.find('textarea[name=group_notes]'),
 			group_status:      $form.find('input[name="group_status"]'),
@@ -274,6 +275,7 @@ jQuery(function ($) {
 					$fields.longitude.val(location.longitude);
 					$('select[name=region] option[value=' + location.region + ']').prop('selected', true);
 					$fields.location_notes.val(location.notes);
+					$fields.timezone.val(location.timezone);
 				}
 			});
 		});

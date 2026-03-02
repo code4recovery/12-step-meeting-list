@@ -428,7 +428,7 @@ function tsml_feedback_url($meeting)
  */
 function tsml_get_meetings($arguments = [], $from_cache = true, $full_export = false)
 {
-    global $tsml_cache, $tsml_cache_writable, $tsml_contact_fields, $tsml_contact_display, $tsml_data_sources, $tsml_custom_meeting_fields, $tsml_source_fields_map, $tsml_import_fields, $tsml_entity_fields, $tsml_array_fields;
+    global $tsml_cache, $tsml_cache_writable, $tsml_contact_fields, $tsml_contact_display, $tsml_data_sources, $tsml_custom_meeting_fields, $tsml_source_fields_map, $tsml_import_fields, $tsml_entity_fields, $tsml_array_fields, $tsml_timezone;
 
     $tsml_entity = tsml_get_entity();
 
@@ -543,6 +543,11 @@ function tsml_get_meetings($arguments = [], $from_cache = true, $full_export = f
             // Ensure each meeting has an address approximate value
             if (empty($meeting['approximate'])) {
                 $meeting['approximate'] = 'no';
+            }
+
+            // Default timezone to the current set timezone
+            if (empty($meeting['timezone']) && $tsml_timezone) {
+                $meeting['timezone'] = $tsml_timezone;
             }
 
             // Calculate the attendance option
