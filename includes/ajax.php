@@ -362,6 +362,9 @@ function tsml_ajax_meetings()
         tsml_ajax_unauthorized();
     }
 
+    // ignore post_status from user input to prevent exposing drafts
+    unset($input['post_status']);
+
     if (!headers_sent()) {
         header('Access-Control-Allow-Origin: *');
     }
