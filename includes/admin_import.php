@@ -606,7 +606,7 @@ if (!function_exists('tsml_import_page')) {
                                 <?php echo wp_kses(sprintf(
                                     // translators: %s is the link to the contacts page
                                     __('Want to send a mass email to your contacts? <a href="%s" target="_blank">Click here</a> to see their email addresses.', '12-step-meeting-list'),
-                                    admin_url('admin-ajax.php') . '?action=contacts'
+                                    admin_url('admin-ajax.php') . '?action=contacts&nonce=' . wp_create_nonce($tsml_nonce)
                                 ), TSML_ALLOWED_HTML) ?>
                             </p>
                         </div>
