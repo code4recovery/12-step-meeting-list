@@ -129,10 +129,16 @@ add_action('wp_ajax_tsml_address', function () {
 // get all contact email addresses (for europe)
 // linked from admin_import.php
 add_action('wp_ajax_contacts', function () {
-    global $wpdb;
+    global $wpdb, $tsml_nonce;
     tsml_require_meetings_permission();
-    $post_ids = $wpdb->get_col('SELECT id FROM ' . $wpdb->posts . ' WHERE post_type IN ("tsml_group", "tsml_meeting")');
-    $emails = $wpdb->get_col('SELECT meta_value FROM ' . $wpdb->postmeta . ' WHERE meta_key IN ("email", "contact_1_email", "contact_2_email", "contact_3_email") AND post_id IN (' . implode(',', $post_ids) . ')');
+    if (!isset($_GET['nonce']) || !wp_verify_nonce($_GET['nonce'], $tsml_nonce)) {
+        wp_die(__('Security check failed.', '12-step-meeting-list'), 403);
+    }
+    $post_ids = $wpdb->get_col('SELECT id FROM ' . $wpdb->posts . ' WHERE post_type IN ("tsml_group", "tsml_meeting") AND post_status = "publish"');
+    if (empty($post_ids)) {
+        die('');
+    }
+    $emails = $wpdb->get_col('SELECT meta_value FROM ' . $wpdb->postmeta . ' WHERE meta_key IN ("email", "contact_1_email", "contact_2_email", "contact_3_email") AND post_id IN (' . implode(',', array_map('intval', $post_ids)) . ')');
     $emails = array_unique(array_filter($emails));
     sort($emails);
     die(wp_kses_post(implode(',<br>', $emails)));
