@@ -11,7 +11,9 @@
  */
 function tsml_import_data_source($data_source_url, $data_source_name = '', $data_source_parent_region_id = 0, $data_source_change_detect = 'disabled')
 {
-    global $tsml_data_sources, $tsml_debug;
+    global $tsml_debug;
+
+    $tsml_data_sources = tsml_get_option_array('tsml_data_sources');
 
     // sanitize URL, name, parent region id, and Change Detection values
     $data_source_url = $imported_data_source_url = trim(esc_url_raw($data_source_url, ['http', 'https']));
@@ -181,9 +183,10 @@ function tsml_import_data_source($data_source_url, $data_source_name = '', $data
  */
 function tsml_import_buffer_next($limit = 25)
 {
-    global $tsml_data_sources, $tsml_custom_meeting_fields, $tsml_source_fields_map, $tsml_contact_fields, $tsml_import_fields, $tsml_entity_fields, $tsml_array_fields;
+    global $tsml_custom_meeting_fields, $tsml_source_fields_map, $tsml_contact_fields, $tsml_import_fields, $tsml_entity_fields, $tsml_array_fields;
 
     $meetings = tsml_get_option_array('tsml_import_buffer');
+    $tsml_data_sources = tsml_get_option_array('tsml_data_sources');
     $errors = $remaining = [];
     $limit = max(1, min(50, intval($limit)));
 
@@ -503,7 +506,7 @@ function tsml_import_buffer_next($limit = 25)
  */
 function tsml_import_buffer_set($meetings, $data_source_url = null, $data_source_parent_region_id = null)
 {
-    global $tsml_programs, $tsml_program, $tsml_days, $tsml_meeting_attendance_options, $tsml_data_sources;
+    $tsml_data_sources = tsml_get_option_array('tsml_data_sources');
 
     /* 
      * Most of the meeting transformation code has been extracted to a function so it can be executed early before the the Data Comparison code.
@@ -747,7 +750,7 @@ function tsml_import_reformat_googlesheet($data)
 function tsml_import_sanitize_meetings($meetings, $data_source_url = null, $data_source_parent_region_id = null)
 {
 
-    global $tsml_programs, $tsml_program, $tsml_days, $tsml_meeting_attendance_options, $tsml_data_sources, $tsml_contact_fields, $tsml_entity_fields, $tsml_array_fields;
+    global $tsml_programs, $tsml_program, $tsml_days, $tsml_meeting_attendance_options, $tsml_contact_fields, $tsml_entity_fields, $tsml_array_fields;
 
     //track group fields and unique_group_values
     $group_fields = array_keys($tsml_contact_fields);
@@ -827,7 +830,7 @@ function tsml_import_sanitize_meetings($meetings, $data_source_url = null, $data
     // convert the array to UTF-8
     if (function_exists('mb_detect_encoding')) {
         array_walk_recursive($meetings, function ($value) {
-            if (!mb_detect_encoding((string)$value, 'utf-8', true)) {
+            if (!mb_detect_encoding((string) $value, 'utf-8', true)) {
                 return (string) mb_convert_encoding($value, 'UTF-8', 'auto');
             }
             return $value;
@@ -837,7 +840,7 @@ function tsml_import_sanitize_meetings($meetings, $data_source_url = null, $data
     // trim and sanitize everything
     array_walk_recursive($meetings, function (&$value, $key) {
         // preserve <br>s as line breaks if present, otherwise clean up
-        $value = preg_replace('/\<br(\s*)?\/?\>/i', PHP_EOL, (string)$value);
+        $value = preg_replace('/\<br(\s*)?\/?\>/i', PHP_EOL, (string) $value);
         $value = stripslashes($value);
         $value = trim($value);
 
@@ -1191,7 +1194,6 @@ function tsml_import_cron_check($onoff = null)
 add_action('tsml_auto_import', 'tsml_auto_import_check');
 function tsml_auto_import_check()
 {
-    global $tsml_data_sources;
 
     //  1. If buffer has meetings to import, pull next 10
     $meetings = tsml_get_option_array('tsml_import_buffer');
@@ -1202,6 +1204,7 @@ function tsml_auto_import_check()
         $oldest_data_source_url = null;
         $oldest_data_source_last_import = null;
         $cutoff = time() - (24 * 60 * 60); // 24 hours ago
+        $tsml_data_sources = tsml_get_option_array('tsml_data_sources');
 
         foreach ($tsml_data_sources as $data_source_url => $data_source) {
             $last_import = intval(isset($data_source['last_import']) ? $data_source['last_import'] : 0);

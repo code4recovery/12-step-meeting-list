@@ -107,9 +107,6 @@ $tsml_url_fields = [
 // empty global curl handle in case we need it
 $tsml_curl_handle = null;
 
-// load the array of URLs that we're using
-$tsml_data_sources = tsml_get_option_array('tsml_data_sources');
-
 // meeting search defaults
 $tsml_defaults = [
     'distance' => 2,
