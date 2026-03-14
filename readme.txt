@@ -296,6 +296,7 @@ Yes, you will need to know the key name of the field. Then include an array in y
 
 = 3.19.11 =
 * Clean up global variables for importing [more info](https://github.com/code4recovery/12-step-meeting-list/discussions/1895)
+* Fix distance filter when KM selected [more info](https://github.com/code4recovery/12-step-meeting-list/discussions/1897)
 
 = 3.19.10 =
 * Updated "Square Cash" field label to "Cash App" [more info](https://github.com/code4recovery/12-step-meeting-list/issues/1857)
