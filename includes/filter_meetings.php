@@ -52,7 +52,7 @@ class tsml_filter_meetings
         if (!empty($arguments['latitude']) && !empty($arguments['longitude'])) {
             $this->latitude = floatval($arguments['latitude']);
             $this->longitude = floatval($arguments['longitude']);
-            $this->distance_units = (!empty($arguments['longitude']) && $arguments['longitude'] == 'km') ? 'km' : 'mi';
+            $this->distance_units = (!empty($arguments['distance_units']) && $arguments['distance_units'] == 'km') ? 'km' : 'mi';
             if (!empty($arguments['distance'])) {
                 $this->distance = floatval($arguments['distance']);
             }
