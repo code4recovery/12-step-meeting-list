@@ -6,7 +6,7 @@ if (!function_exists('tsml_import_page')) {
 
     function tsml_import_page()
     {
-        global $tsml_data_sources, $tsml_programs, $tsml_program, $tsml_nonce, $tsml_sharing, $tsml_slug, $tsml_auto_import;
+        global $tsml_programs, $tsml_program, $tsml_nonce, $tsml_sharing, $tsml_slug, $tsml_auto_import;
 
         // todo consider whether this check is necessary, since it is run from add_submenu_page() which is already checking for the same permission
         // potentially tsml_import_page() could be a closure within the call to add_submenu_page which would prevent it from being reused elsewhere

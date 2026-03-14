@@ -5,14 +5,12 @@ if (!function_exists('tsml_settings_page')) {
 
     function tsml_settings_page()
     {
-        global $tsml_data_sources, $tsml_programs, $tsml_program, $tsml_nonce, $tsml_feedback_addresses, $tsml_notification_addresses,
+        global $tsml_programs, $tsml_program, $tsml_nonce, $tsml_feedback_addresses, $tsml_notification_addresses,
         $tsml_distance_units, $tsml_sharing, $tsml_sharing_keys, $tsml_contact_display, $tsml_user_interface, $tsml_timezone;
 
         // todo consider whether this check is necessary, since it is run from add_submenu_page() which is already checking for the same permission
         // potentially tsml_settings_page() could be a closure within the call to add_submenu_page which would prevent it from being reused elsewhere
         tsml_require_settings_permission();
-
-        $tsml_data_sources = tsml_get_option_array('tsml_data_sources');
 
         // is this a valid TSML post
         $valid_nonce = isset($_POST['tsml_nonce']) && wp_verify_nonce($_POST['tsml_nonce'], $tsml_nonce);

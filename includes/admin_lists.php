@@ -8,6 +8,8 @@ add_action('restrict_manage_posts', function ($post_type) {
         return;
     }
 
+    $tsml_data_sources = tsml_get_option_array('tsml_data_sources');
+
     wp_dropdown_categories([
         'show_option_all' => 'Region',
         'orderby' => 'tax_name',
@@ -54,11 +56,13 @@ add_action('restrict_manage_posts', function ($post_type) {
 add_filter(
     'pre_get_posts',
     function ($query) {
-        global $post_type, $pagenow, $wpdb, $tsml_data_sources;
+        global $post_type, $pagenow, $wpdb;
 
         if ($pagenow === 'edit.php' && $post_type === 'tsml_meeting' && $query->is_main_query()) {
 
             $meta_query = [];
+
+            $tsml_data_sources = tsml_get_option_array('tsml_data_sources');
 
             if (!empty($_GET['region'])) {
                 $parent_ids = $wpdb->get_col(
@@ -137,7 +141,7 @@ add_action(
 
 // custom list values for meetings
 add_action('manage_tsml_meeting_posts_custom_column', function ($column_name, $post_ID) {
-    global $tsml_days, $wpdb, $tsml_data_sources;
+    global $tsml_days, $wpdb;
     if ($column_name == 'day') {
         $day = get_post_meta($post_ID, 'day', true);
         echo (empty($day) && $day !== '0') ? esc_html__('Appointment', '12-step-meeting-list') : esc_html($tsml_days[$day]);
@@ -152,6 +156,7 @@ add_action('manage_tsml_meeting_posts_custom_column', function ($column_name, $p
 			JOIN ' . $wpdb->posts . ' p ON r.object_id = p.post_parent
 			WHERE p.ID = ' . intval($post_ID)));
     } elseif ($column_name == 'data_source') {
+        $tsml_data_sources = tsml_get_option_array('tsml_data_sources');
         $data_source = get_post_meta($post_ID, 'data_source', true);
         if ($data_source && isset($tsml_data_sources[$data_source])) {
             echo $tsml_data_sources[$data_source]['name'];

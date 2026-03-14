@@ -284,7 +284,7 @@ function tsml_get_locations()
  */
 function tsml_get_meeting($meeting_id = false)
 {
-    global $tsml_program, $tsml_programs, $tsml_contact_fields, $tsml_array_fields, $tsml_url_fields, $tsml_data_sources;
+    global $tsml_program, $tsml_programs, $tsml_contact_fields, $tsml_array_fields, $tsml_url_fields;
 
     $meeting = get_post($meeting_id);
     $custom = get_post_meta($meeting->ID);
@@ -334,6 +334,7 @@ function tsml_get_meeting($meeting_id = false)
     $meeting->notes = esc_html($meeting->post_content);
 
     if (property_exists($meeting, 'data_source') && $meeting->data_source && !empty($tsml_data_sources[$meeting->data_source])) {
+        $tsml_data_sources = tsml_get_option_array('tsml_data_sources');
         $meeting->data_source_name = $tsml_data_sources[$meeting->data_source]['name'];
     }
 
@@ -428,7 +429,7 @@ function tsml_feedback_url($meeting)
  */
 function tsml_get_meetings($arguments = [], $from_cache = true, $full_export = false)
 {
-    global $tsml_cache, $tsml_cache_writable, $tsml_contact_fields, $tsml_contact_display, $tsml_data_sources, $tsml_custom_meeting_fields, $tsml_source_fields_map, $tsml_import_fields, $tsml_entity_fields, $tsml_array_fields, $tsml_timezone;
+    global $tsml_cache, $tsml_cache_writable, $tsml_contact_fields, $tsml_contact_display, $tsml_custom_meeting_fields, $tsml_source_fields_map, $tsml_import_fields, $tsml_entity_fields, $tsml_array_fields, $tsml_timezone;
 
     $tsml_entity = tsml_get_entity();
 
@@ -463,6 +464,7 @@ function tsml_get_meetings($arguments = [], $from_cache = true, $full_export = f
         $meeting_meta = tsml_get_meta('tsml_meeting');
         $groups = tsml_get_groups();
         $locations = tsml_get_locations();
+        $tsml_data_sources = tsml_get_option_array('tsml_data_sources');
 
         // make an array of the meetings
         foreach ($posts as $post) {

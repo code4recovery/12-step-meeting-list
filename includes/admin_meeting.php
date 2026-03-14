@@ -39,7 +39,7 @@ add_action('admin_init', function () {
     };
 
     add_meta_box('info', __('Meeting Information', '12-step-meeting-list'), function () {
-        global $tsml_days, $tsml_programs, $tsml_program, $tsml_nonce, $tsml_types_in_use, $tsml_data_sources;
+        global $tsml_days, $tsml_programs, $tsml_program, $tsml_nonce, $tsml_types_in_use;
 
         $meeting = tsml_get_meeting();
 
@@ -332,15 +332,15 @@ add_action('admin_init', function () {
             <label for="timezone">
                 <?php esc_html_e('Timezone', '12-step-meeting-list') ?>
             </label>
-            <?php 
-            $timezone = null;
-            if ($location && $location->timezone) {
-                $timezone = $location->timezone;
-            } elseif ($post && 'auto-draft' === $post->post_status) {
-                $timezone = $tsml_timezone;
-            }
-            tsml_timezone_select($timezone);
-            ?>
+            <?php
+                $timezone = null;
+                if ($location && $location->timezone) {
+                    $timezone = $location->timezone;
+                } elseif ($post && 'auto-draft' === $post->post_status) {
+                    $timezone = $tsml_timezone;
+                }
+                tsml_timezone_select($timezone);
+                ?>
         </div>
 
         <?php if (empty($location->timezone) && empty($tsml_timezone) && $tsml_user_interface === 'tsml_ui') { ?>
