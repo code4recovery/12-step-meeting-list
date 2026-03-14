@@ -295,7 +295,7 @@ Yes, you will need to know the key name of the field. Then include an array in y
 == Changelog ==
 
 = 3.19.11 =
-* Clean up global variables for importing (more info)[https://github.com/code4recovery/12-step-meeting-list/discussions/1895]
+* Clean up global variables for importing [more info](https://github.com/code4recovery/12-step-meeting-list/discussions/1895)
 
 = 3.19.10 =
 * Updated "Square Cash" field label to "Cash App" [more info](https://github.com/code4recovery/12-step-meeting-list/issues/1857)
