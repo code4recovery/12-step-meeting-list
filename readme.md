@@ -39,8 +39,8 @@ Also some best practices:
 
 ## Compiling Assets
 
-If you're making changes to JavaScript or CSS, you will want to install SASS and webpack one time by running `npm i`. Then, while developing,
-run `npx mix watch` to compile assets as you make changes. When you are ready to make a pull request, run `npx mix --production`.
+If you're making changes to JavaScript or CSS, run `npm install` once to install dependencies. Then, while developing,
+run `npm start` to compile assets as you make changes. When you are ready to make a pull request, run `npm run build`.
 
 ## Rebuilding the POT file
 
