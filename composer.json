@@ -1,0 +1,9 @@
+{
+    "name": "code4recovery/12-step-meeting-list",
+    "description": "WordPress plugin for displaying and managing 12-step recovery program meetings",
+    "license": "GPL-2.0-or-later",
+    "require": {
+        "php": ">=7.2",
+        "code4recovery/spec": "*"
+    }
+}

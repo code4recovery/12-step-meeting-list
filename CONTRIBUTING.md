@@ -135,6 +135,24 @@ Follow [WordPress’s official manual installation guide](https://developer.word
 
 ---
 
+## PHP Dependencies
+
+The plugin uses [Composer](https://getcomposer.org/) to manage PHP dependencies (currently `code4recovery/spec`).
+
+**For local development**, install dependencies before starting your environment:
+
+```bash
+composer install
+```
+
+**When packaging a release**, install without dev dependencies so `vendor/` is included in the zip release artifact:
+
+```bash
+composer install --no-dev --optimize-autoloader
+```
+
+---
+
 ## Plugin Configuration
 
 Once WordPress and TSML are running:

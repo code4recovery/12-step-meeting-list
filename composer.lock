@@ -1,0 +1,61 @@
+{
+    "_readme": [
+        "This file locks the dependencies of your project to a known state",
+        "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
+        "This file is @generated automatically"
+    ],
+    "content-hash": "423d03e0f2dd9e32fb98b290b8915ff8",
+    "packages": [
+        {
+            "name": "code4recovery/spec",
+            "version": "v1.1.9",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/code4recovery/spec.git",
+                "reference": "404117ad6059f9b1cf85e57124367c3223afc255"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/code4recovery/spec/zipball/404117ad6059f9b1cf85e57124367c3223afc255",
+                "reference": "404117ad6059f9b1cf85e57124367c3223afc255",
+                "shasum": ""
+            },
+            "require": {
+                "ext-json": "*",
+                "php": ">=7.4"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "Code4Recovery\\": "src"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Code for Recovery"
+                }
+            ],
+            "description": "The goal of the Meeting Guide API is help sync information about AA meetings. It was developed for the Meeting Guide app, but it is non-proprietary and other systems are encouraged to make use of it.",
+            "support": {
+                "issues": "https://github.com/code4recovery/spec/issues",
+                "source": "https://github.com/code4recovery/spec/tree/v1.1.9"
+            },
+            "time": "2026-03-06T23:05:53+00:00"
+        }
+    ],
+    "packages-dev": [],
+    "aliases": [],
+    "minimum-stability": "stable",
+    "stability-flags": {},
+    "prefer-stable": false,
+    "prefer-lowest": false,
+    "platform": {
+        "php": ">=7.2"
+    },
+    "platform-dev": {},
+    "plugin-api-version": "2.9.0"
+}

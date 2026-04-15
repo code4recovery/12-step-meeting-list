@@ -36,6 +36,11 @@ define('TSML_PATH', plugin_dir_path(__FILE__));
 define('TSML_SETTINGS_PERMISSION', 'manage_options');
 define('TSML_VERSION', '3.19.12');
 
+// load Composer dependencies (e.g. code4recovery/spec)
+if (file_exists(TSML_PATH . 'vendor/autoload.php')) {
+    require_once TSML_PATH . 'vendor/autoload.php';
+}
+
 // include these files first
 include TSML_PATH . '/includes/filter_meetings.php';
 include TSML_PATH . '/includes/functions.php';

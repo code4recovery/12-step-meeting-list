@@ -169,6 +169,27 @@ function tsml_ui($arguments = [])
         ? $tsml_programs[$tsml_program]['type_descriptions']
         : [];
 
+    // Build strings for the current WordPress language (columns,types,descriptions).
+    // Types absent from the spec have no built-in tsml-ui translations, so also add them to every
+    // other supported language as a fallback so they remain filterable when the browser language
+    // differs from WordPress. Proper translations can be added via $tsml_ui_config['strings'][lang]['types'].
+    $custom_types = array_diff_key($types, \Code4Recovery\Spec::getTypesByLanguage('en'));
+    $strings = [
+        $tsml_language => array_replace_recursive(
+            $tsml_columns,
+            compact('types', 'type_descriptions'),
+            // Get any existing strings for this language if they exist
+            !empty($tsml_ui_config['strings'][$tsml_language]) ? $tsml_ui_config['strings'][$tsml_language] : []
+        ),
+    ];
+    if (!empty($custom_types)) {
+        foreach (array_keys(\Code4Recovery\Spec::getLanguages()) as $lang) {
+            if ($lang !== $tsml_language) {
+                $strings[$lang] = ['types' => $custom_types];
+            }
+        }
+    }
+
     // apply settings
     wp_localize_script(
         'tsml_ui',
@@ -182,14 +203,7 @@ function tsml_ui($arguments = [])
                 'feedback_emails' => array_values($tsml_feedback_addresses),
                 'flags' => $tsml_programs[$tsml_program]['flags'],
                 'language' => $defaults['language'],
-                'strings' => [
-                    $tsml_language => array_replace_recursive(
-                        $tsml_columns,
-                        compact('types', 'type_descriptions'),
-                        // Get any existing strings for this language if they exist
-                        !empty($tsml_ui_config['strings'][$tsml_language]) ? $tsml_ui_config['strings'][$tsml_language] : []
-                    ),
-                ],
+                'strings' => $strings,
             ],
             $tsml_ui_config
         )

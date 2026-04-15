@@ -8,3 +8,4 @@ docker-compose.yml
 .vscode
 .DS_Store
 *.map
+vendor/
