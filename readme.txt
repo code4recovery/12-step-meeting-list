@@ -295,7 +295,7 @@ Yes, you will need to know the key name of the field. Then include an array in y
 == Changelog ==
 
 = 3.19.12 =
-* Enable language setting in `[tsml_ui]` shortcode
+* Enable language setting in `[tsml_ui]` shortcode [more info](https://github.com/code4recovery/12-step-meeting-list/discussions/1846#discussioncomment-16610243)
 * Upgrade dependencies [more info](https://github.com/code4recovery/12-step-meeting-list/issues/1910)
 
 = 3.19.11 =

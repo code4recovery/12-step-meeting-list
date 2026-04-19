@@ -7,8 +7,8 @@
 		"build:wp": "wp-scripts build --config-name blocks"
 	},
 	"devDependencies": {
-		"@wordpress/babel-preset-default": "^8.11.0",
-		"@wordpress/scripts": "^31.6.0",
+		"@wordpress/babel-preset-default": "^8.44.0",
+		"@wordpress/scripts": "^32.0.0",
 		"bootstrap-sass": "^3.4.0",
 		"css-minimizer-webpack-plugin": "^8.0.0",
 		"mark.js": "^8.11.1",
