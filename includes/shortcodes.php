@@ -115,6 +115,7 @@ function tsml_ui($arguments = [])
 
     $defaults = shortcode_atts([
         'distance' => '',
+        'language' => '',
         'mode' => '',
         'region' => '',
         'search' => '',
@@ -130,6 +131,9 @@ function tsml_ui($arguments = [])
         $defaults[$key] = array_map('sanitize_title', $defaults[$key]);
         $defaults[$key] = array_filter($defaults[$key]);
     }
+
+    // sanitize language
+    $defaults['language'] = sanitize_text_field($defaults['language']);
 
     // sanitize search
     $defaults['search'] = sanitize_text_field($defaults['search']);
@@ -177,6 +181,7 @@ function tsml_ui($arguments = [])
                 'distance_unit' => $tsml_distance_units,
                 'feedback_emails' => array_values($tsml_feedback_addresses),
                 'flags' => $tsml_programs[$tsml_program]['flags'],
+                'language' => $defaults['language'],
                 'strings' => [
                     $tsml_language => array_replace_recursive(
                         $tsml_columns,
