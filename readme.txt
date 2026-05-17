@@ -3,8 +3,8 @@ Contributors: code4recovery
 Donate link: https://code4recovery.org/contribute
 Requires at least: 3.2
 Requires PHP: 7.2
-Tested up to: 6.8
-Stable tag: 3.19.12
+Tested up to: 7.0
+Stable tag: 3.19.13
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -293,6 +293,10 @@ Yes, you will need to know the key name of the field. Then include an array in y
 1. Edit location
 
 == Changelog ==
+
+= 3.19.13 =
+* WordPress 7.0 testing
+* Upgrade dependencies
 
 = 3.19.12 =
 * Enable language setting in `[tsml_ui]` shortcode [more info](https://github.com/code4recovery/12-step-meeting-list/discussions/1846#discussioncomment-16610243)
