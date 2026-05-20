@@ -2,7 +2,6 @@
 
 // declare some global variables
 var infowindow,
-	searchLocation,
 	searchMarker,
 	tsmlmap,
 	markers = [],

@@ -121,6 +121,10 @@ if (isset($_GET['tsml-mode']) && array_key_exists($_GET['tsml-mode'], $modes)) {
     $mode = $_GET['tsml-mode'];
 }
 
+if (isset($_GET['tsml-view']) && in_array($_GET['tsml-view'], ['list', 'map'])) {
+    $view = $_GET['tsml-view'];
+}
+
 // day default
 $today = true;
 if (isset($_GET['tsml-day'])) {
