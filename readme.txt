@@ -4,7 +4,7 @@ Donate link: https://code4recovery.org/contribute
 Requires at least: 3.2
 Requires PHP: 7.2
 Tested up to: 7.0
-Stable tag: 3.19.13
+Stable tag: 3.19.14
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -293,6 +293,10 @@ Yes, you will need to know the key name of the field. Then include an array in y
 1. Edit location
 
 == Changelog ==
+
+= 3.19.14 =
+* Maps were not rendering on the Legacy UI main meetings page [more info](https://github.com/code4recovery/12-step-meeting-list/discussions/1941)
+* When linking to the Legacy UI meetings page with map view selected, the list view was shown
 
 = 3.19.13 =
 * WordPress 7.0 testing

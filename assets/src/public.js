@@ -9,6 +9,7 @@ jQuery(function ($) {
 	//a) procedural logic
 	var $body = $('body');
 	var typeaheadEnabled = false;
+	var searchLocation = null;
 
 	if (typeof tsml_map !== 'object') {
 		//main meetings page
