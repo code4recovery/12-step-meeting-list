@@ -4,7 +4,7 @@ Donate link: https://code4recovery.org/contribute
 Requires at least: 3.2
 Requires PHP: 7.2
 Tested up to: 7.0
-Stable tag: 3.19.14
+Stable tag: 3.19.15
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -81,29 +81,16 @@ Yes, you can add, update, or remove these descriptions. Adapt this example as ne
 		]);
 	}
 
-= What is Change Detection? =
-Change Detection augments our data import utility by periodically polling your data sources and generating email notifications to Change Notification Email recipients who you registered on the Settings page.
+= Can I customize the map appearance? =
+You can customize the map tiles by adding code like this to your theme's functions.php. (In this example, you'd need to get a Mapbox API key at Mapbox.com. More providers are here: https://leaflet-extras.github.io/leaflet-providers/preview/)
 
-= How can I enable Change Detection for my disabled data source? =
-Change Detection can only be enabled when adding a data source to your list of Data Sources. Re-registering an existing data source is necessary to get Change Detection enabled. This includes:
-* To be safe, always make a backup of your existing meeting list by using the link on the Import tab to export your Meeting List.
-* If you are going to have change detection on multple data sources, you may choose to add the parent organization(s) to your list of Regions first (i.e. District 1, YourCity Intergroup, etc.).
-* Remove the data source (click on the X next to its Last Refresh timestamp) We suggest first noting the json feed URL (hover over the feed name to view the URL) for use when adding it back.
-* Set data source options: enter a name for your feed, set the feed URL, select the parent region from the Parent Region dropdown, and lastly choose the "Change Detection Enabled" option.
-* Pressing the "Add Data Source" button will register a WordPress Cron Job (tsml_scan_data_source) for the newly added and enabled data source. By default, this cron job is scheduled to run "Once Daily" starting at midnight (12:00 AM).
-The frequency and time that the cron job runs is optionally configurable with the [WP Crontrol[(https://wordpress.org/plugins/wp-crontrol/)] plugin.
+	$tsml_map = [
+		'tiles' => [
+			'url' => 'https://api.mapbox.com/styles/v1/mapbox/streets-v11/tiles/{z}/{x}/{y}?access_token=pk.your.mapbox.api.key',
+			'attribution' => 'Map data &copy; <a href="https://www.openstreetmap.org/">OpenStreetMap</a>, Imagery © <a href="https://www.mapbox.com/">Mapbox</a>',
+		]
+	];	
 
-= How can I convert a data source into a maintainable list for my new website? =
-When editing a data source record a warning is given that the record will be over-written when the data source is refreshed.
-To avoid this warning and prevent a refresh from altering an edited record it's necessary to follow a few simple steps to reimport the data source records:
-
-* Make a backup of your existing meeting list by using the export link found on the Import tab of the Import & Export page.
-* Open the exported file (meetings.csv) which you should find in your local Downloads folder.
-* Delete the entire 'Data Source' column found near the far right and then Save the file (recommend using Save As to rename the file to something unique such as my-meetings.csv).
-* Remove the imported data source (click on the X next to its Last Refresh timestamp).
-* Import the saved file using the Import CSV feature on the Import & Export page.
-
-Your meeting list records will now no longer display a warning message when being edited, and will not be overwritten by a data source refresh operation!
 
 = How can I make the Region dropdown not be collapsible? =
 Add this CSS to your theme:
@@ -293,6 +280,9 @@ Yes, you will need to know the key name of the field. Then include an array in y
 1. Edit location
 
 == Changelog ==
+
+= 3.19.15 =
+* Use custom map tiles [more info](https://github.com/code4recovery/12-step-meeting-list/discussions/1941)
 
 = 3.19.14 =
 * Maps were not rendering on the Legacy UI main meetings page [more info](https://github.com/code4recovery/12-step-meeting-list/discussions/1941)

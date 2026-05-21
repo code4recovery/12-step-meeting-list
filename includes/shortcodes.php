@@ -111,7 +111,7 @@ function tsml_ui($arguments = [])
 {
     global $tsml_nonce, $tsml_conference_providers, $tsml_language, $tsml_programs, $tsml_program, $tsml_ui_config,
     $tsml_feedback_addresses, $tsml_cache, $tsml_cache_writable, $tsml_distance_units, $tsml_columns, $tsml_timezone,
-    $tsml_slug;
+    $tsml_slug, $tsml_map;
 
     $defaults = shortcode_atts([
         'distance' => '',
@@ -182,6 +182,7 @@ function tsml_ui($arguments = [])
                 'feedback_emails' => array_values($tsml_feedback_addresses),
                 'flags' => $tsml_programs[$tsml_program]['flags'],
                 'language' => $defaults['language'],
+                'map' => $tsml_map,
                 'strings' => [
                     $tsml_language => array_replace_recursive(
                         $tsml_columns,
