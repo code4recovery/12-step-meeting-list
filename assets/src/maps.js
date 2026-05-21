@@ -15,11 +15,10 @@ function createMap(scrollwheel, locations, searchLocation) {
 
 	// init map
 	if (!tsmlmap) {
-		tsmlmap = L.map('map');
-		L.tileLayer('https://{s}s.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png', {
+		tsmlmap = L.map('map', {dragging: true});
+		L.tileLayer(tsml.map.tiles.url, {
 			maxZoom: 19,
-			attribution:
-				'&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> &copy; <a href="https://carto.com/attributions">CARTO</a>'
+			attribution: tsml.map.tiles.attribution
 		}).addTo(tsmlmap);
 	}
 

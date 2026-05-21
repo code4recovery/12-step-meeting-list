@@ -83,7 +83,7 @@ function tsml_alert($message, $type = 'success')
  */
 function tsml_assets()
 {
-    global $post_type, $tsml_street_only, $tsml_programs, $tsml_strings, $tsml_program,
+    global $tsml_map, $tsml_street_only, $tsml_programs, $tsml_strings, $tsml_program,
     $tsml_distance_units, $tsml_defaults, $tsml_columns, $tsml_nonce, $tsml_debug;
 
 
@@ -97,6 +97,7 @@ function tsml_assets()
             'ajaxurl' => admin_url('admin-ajax.php'),
             'debug' => WP_DEBUG,
             'tsml_debug' => !!$tsml_debug,
+            'map' => $tsml_map,
             'nonce' => wp_create_nonce($tsml_nonce),
         ]);
     } else {
@@ -123,6 +124,7 @@ function tsml_assets()
             'defaults' => $tsml_defaults,
             'distance_units' => $tsml_distance_units,
             'flags' => $tsml_programs[$tsml_program]['flags'],
+            'map' => $tsml_map,
             'nonce' => wp_create_nonce($tsml_nonce),
             'program' => empty($tsml_programs[$tsml_program]['abbr']) ? $tsml_programs[$tsml_program]['name'] : $tsml_programs[$tsml_program]['abbr'],
             'street_only' => $tsml_street_only,
