@@ -15,5 +15,10 @@
 		"sass": "^1.56.1",
 		"sass-loader": "^12.6.0",
 		"timepicker": "^1.13.15"
+	},
+	"overrides": {
+ 		"@wordpress/scripts": {
+    		"adm-zip": "^0.5.18"
+  		}
 	}
 }
