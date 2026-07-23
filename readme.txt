@@ -4,7 +4,7 @@ Donate link: https://code4recovery.org/contribute
 Requires at least: 3.2
 Requires PHP: 7.2
 Tested up to: 7.0
-Stable tag: 3.19.16
+Stable tag: 3.19.17
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -280,6 +280,9 @@ Yes, you will need to know the key name of the field. Then include an array in y
 1. Edit location
 
 == Changelog ==
+
+= 3.19.17 =
+* Include French translation [more info](https://github.com/code4recovery/tsml-ui/issues/540)
 
 = 3.19.16 =
 * Upgrade dependencies
