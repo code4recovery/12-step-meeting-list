@@ -1439,7 +1439,20 @@ add_action('tsml_scan_data_source', function ($data_source_url) {
     // try fetching
     $response = wp_safe_remote_get($data_source_url, ['timeout' => 30, 'sslverify' => false]);
 
-    if (empty($response['body']) || !($body = json_decode($response['body'], true))) {
+    // this runs unattended, so a failure has to be logged or it goes unnoticed
+    $response_error = tsml_import_response_error($response);
+
+    if ($response_error) {
+        tsml_log('data_source_error', __('Feed scan failed', '12-step-meeting-list') . ' - ' . $data_source_name, $response_error);
+        return;
+    }
+
+    if (!($body = json_decode($response['body'], true))) {
+        tsml_log(
+            'data_source_error',
+            __('Feed scan failed', '12-step-meeting-list') . ' - ' . $data_source_name,
+            __('JSON: Syntax error, malformed JSON.', '12-step-meeting-list')
+        );
         return;
     }
 

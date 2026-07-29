@@ -1,6 +1,47 @@
 <?php
 
 /**
+ * inspect a data source HTTP response for transport and status errors
+ *
+ * Runs before any JSON parsing so that a security challenge or an error page
+ * is reported as such, rather than surfacing as malformed JSON.
+ *
+ * @param mixed $response return value of wp_safe_remote_get()
+ * @return string|null error message, or null when the body is worth parsing
+ */
+function tsml_import_response_error($response)
+{
+    if (is_wp_error($response)) {
+        // translators: %s is the error reported by WordPress
+        return sprintf(__('Could not reach the data source: %s.', '12-step-meeting-list'), $response->get_error_message());
+    }
+
+    if (!is_array($response)) {
+        // translators: %s is the invalid response from the data source
+        return sprintf(__('Invalid response: <pre>%s</pre>.', '12-step-meeting-list'), print_r($response, true));
+    }
+
+    $response_code = (int) wp_remote_retrieve_response_code($response);
+
+    if ($response_code < 200 || $response_code > 299) {
+        // security services answer automated requests with an HTML challenge instead of the feed
+        if (wp_remote_retrieve_header($response, 'cf-ray') || stripos(wp_remote_retrieve_body($response), 'please enable cookies') !== false) {
+            // translators: %s is the HTTP status code
+            return sprintf(__('The data source returned HTTP %s because a security service challenged the request. Whoever hosts the feed will need to allow requests from this server.', '12-step-meeting-list'), $response_code);
+        }
+
+        // translators: %1$s is the HTTP status code, %2$s is the HTTP status message
+        return sprintf(__('The data source returned HTTP %1$s %2$s.', '12-step-meeting-list'), $response_code, wp_remote_retrieve_response_message($response));
+    }
+
+    if (empty($response['body'])) {
+        return __('Data source gave an empty response, you might need to try again.', '12-step-meeting-list');
+    }
+
+    return null;
+}
+
+/**
  * trigger import of a data source to the import buffer
  *
  * @param mixed $data_source_url
@@ -46,7 +87,9 @@ function tsml_import_data_source($data_source_url, $data_source_name = '', $data
         'sslverify' => false,
     ]);
 
-    if (is_array($response) && !empty($response['body']) && ($meetings = json_decode($response['body'], true))) {
+    $response_error = tsml_import_response_error($response);
+
+    if (!$response_error && ($meetings = json_decode($response['body'], true))) {
 
         // allow reformatting as necessary
         $meetings = tsml_import_sanitize_meetings($meetings, $imported_data_source_url, $data_source_parent_region_id);
@@ -138,13 +181,9 @@ function tsml_import_data_source($data_source_url, $data_source_name = '', $data
         update_option('tsml_data_sources', $tsml_data_sources);
 
     } else {
-        $error_msg = '';
-        if (!is_array($response)) {
-            // translators: %s is the invalid response from the data source
-            $error_msg = sprintf(__('Invalid response: <pre>%s</pre>.', '12-step-meeting-list'), print_r($response, true));
-        } elseif (empty($response['body'])) {
-            $error_msg = __('Data source gave an empty response, you might need to try again.', '12-step-meeting-list');
-        } else {
+        // a usable response that failed to parse is the only case left to describe
+        $error_msg = $response_error;
+        if (!$error_msg) {
             switch (json_last_error()) {
                 case JSON_ERROR_NONE:
                     $error_msg = __('JSON: no errors.', '12-step-meeting-list');
