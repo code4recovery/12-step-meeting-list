@@ -1,6 +1,59 @@
 <?php
 
 /**
+ * detect likely security challenge/interstitial responses
+ *
+ * Combines multiple signals (Cloudflare's cf-mitigated header, HTML content,
+ * known challenge-page markers) rather than any single one, because headers
+ * like cf-ray appear on ordinary error responses from proxied origins.
+ *
+ * @param array $response response array from wp_safe_remote_get()
+ * @return bool
+ */
+function tsml_import_is_security_challenge_response($response)
+{
+    $status_code = (int) wp_remote_retrieve_response_code($response);
+    if ($status_code >= 200 && $status_code <= 299) {
+        return false;
+    }
+
+    $body = strtolower((string) wp_remote_retrieve_body($response));
+    $content_type = strtolower((string) wp_remote_retrieve_header($response, 'content-type'));
+    $cf_mitigated = strtolower((string) wp_remote_retrieve_header($response, 'cf-mitigated'));
+
+    // explicit Cloudflare challenge signal
+    if ($cf_mitigated === 'challenge') {
+        return true;
+    }
+
+    // challenges are usually HTML interstitials, not feed payloads
+    $is_html = (strpos($content_type, 'text/html') !== false)
+        || (strpos($body, '<!doctype html') !== false)
+        || (strpos($body, '<html') !== false);
+
+    if (!$is_html) {
+        return false;
+    }
+
+    // keep this list short and high-confidence
+    $markers = [
+        '/cdn-cgi/challenge-platform/',
+        'cf-browser-verification',
+        'checking your browser before accessing',
+        'enable javascript and cookies to continue',
+        'please enable cookies',
+    ];
+
+    foreach ($markers as $marker) {
+        if (strpos($body, $marker) !== false) {
+            return true;
+        }
+    }
+
+    return false;
+}
+
+/**
  * inspect a data source HTTP response for transport and status errors
  *
  * Runs before any JSON parsing so that a security challenge or an error page
@@ -25,7 +78,7 @@ function tsml_import_response_error($response)
 
     if ($response_code < 200 || $response_code > 299) {
         // security services answer automated requests with an HTML challenge instead of the feed
-        if (wp_remote_retrieve_header($response, 'cf-ray') || stripos(wp_remote_retrieve_body($response), 'please enable cookies') !== false) {
+        if (tsml_import_is_security_challenge_response($response)) {
             // translators: %s is the HTTP status code
             return sprintf(__('The data source returned HTTP %s because a security service challenged the request. Whoever hosts the feed will need to allow requests from this server.', '12-step-meeting-list'), $response_code);
         }
