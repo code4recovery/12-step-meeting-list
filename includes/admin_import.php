@@ -656,13 +656,14 @@ if (!function_exists('tsml_import_page')) {
                                     <tbody id="tsml_import_log_widget">
                                         <?php foreach ($log_entries as $entry) {
                                             $msg = tsml_log_format_entry_msg($entry);
-                                            if (!empty($entry['info'])) {
-                                                $msg = $entry['info'] . '<br/>' . PHP_EOL . $msg;
+                                            $info = tsml_log_format_entry_info($entry);
+                                            if ($info) {
+                                                $msg = $info . '<br/>' . PHP_EOL . $msg;
                                             }
                                             ?>
                                             <tr class="log-table">
                                                 <td>
-                                                    <?php echo tsml_date_localised(get_option('date_format'), intval($entry['timestamp'])); ?>
+                                                    <?php echo esc_html(tsml_date_localised(get_option('date_format'), intval($entry['timestamp']))); ?>
                                                 </td>
                                                 <td><?php echo $msg; ?></td>
                                             </tr>

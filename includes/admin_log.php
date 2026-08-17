@@ -70,8 +70,8 @@ function tsml_log_page()
                                         continue;
                                     }
                                     ?>
-                                    <option value="<?php echo $key; ?>" <?php selected($key, $filter_type) ?>>
-                                        <?php echo $value ?> (<?php echo $log_types[$key] ?>)
+                                    <option value="<?php echo esc_attr($key); ?>" <?php selected($key, $filter_type) ?>>
+                                        <?php echo esc_html($value) ?> (<?php echo intval($log_types[$key]) ?>)
                                     </option>
                                 <?php } ?>
                             </select>
@@ -99,14 +99,15 @@ function tsml_log_page()
                                 $type = strval(!empty($entry['type']) ? $entry['type'] : '');
                                 $type_label = isset(TSML_LOG_TYPES[$type]) ? TSML_LOG_TYPES[$type] : $type;
                                 $msg = tsml_log_format_entry_msg($entry);
+                                $info = tsml_log_format_entry_info($entry);
                                 $row_class = (false !== strpos($type, 'error')) ? 'error' : '';
                                 ?>
-                                <tr class="log-table <?php echo $row_class; ?>" data-type="<?php echo esc_attr($type); ?>">
+                                <tr class="log-table <?php echo esc_attr($row_class); ?>" data-type="<?php echo esc_attr($type); ?>">
                                     <td>
-                                        <?php echo tsml_date_localised(get_option('date_format') . ' ' . get_option('time_format'), intval($entry['timestamp'])); ?>
+                                        <?php echo esc_html(tsml_date_localised(get_option('date_format') . ' ' . get_option('time_format'), intval($entry['timestamp']))); ?>
                                     </td>
-                                    <td><?php echo $type_label; ?></td>
-                                    <td><?php echo $entry['info']; ?></td>
+                                    <td><?php echo esc_html($type_label); ?></td>
+                                    <td><?php echo $info; ?></td>
                                     <td><?php echo $msg; ?></td>
                                 </tr>
                                 <?php
