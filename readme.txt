@@ -4,7 +4,7 @@ Donate link: https://code4recovery.org/contribute
 Requires at least: 3.2
 Requires PHP: 7.2
 Tested up to: 7.0
-Stable tag: 3.19.17
+Stable tag: 3.19.18
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -281,8 +281,13 @@ Yes, you will need to know the key name of the field. Then include an array in y
 
 == Changelog ==
 
+= 3.19.18 =
+* French translation
+
 = 3.19.17 =
-* Include French translation [more info](https://github.com/code4recovery/tsml-ui/issues/540)
+* Sanitize event log for security [more info](https://github.com/code4recovery/12-step-meeting-list/issues/1979)
+* Recognize Cloudflare security challenges when importing [more info](https://github.com/code4recovery/12-step-meeting-list/issues/1978)
+* Upgrade dependencies
 
 = 3.19.16 =
 * Upgrade dependencies
