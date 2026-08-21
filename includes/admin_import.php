@@ -314,7 +314,17 @@ if (!function_exists('tsml_import_page')) {
                                         </td>
 
                                         <td class="align-right">
-                                            <?php echo esc_html(date(get_option('date_format') . ' ' . get_option('time_format'), $properties['last_import'])) ?>
+                                            <?php
+                                            echo esc_html(date(get_option('date_format') . ' ' . get_option('time_format'), $properties['last_import']));
+
+                                            // a feed can keep failing for days while the timestamp above still reads OK, so say so here
+                                            if (!empty($properties['status']) && $properties['status'] === 'error') {
+                                                $last_error = isset($properties['last_error']) ? wp_strip_all_tags($properties['last_error']) : '';
+                                                ?>
+                                                <span class="dashicons dashicons-warning" title="<?php echo esc_attr($last_error) ?>"></span>
+                                                <?php
+                                            }
+                                            ?>
                                         </td>
 
                                         <td class="small">
