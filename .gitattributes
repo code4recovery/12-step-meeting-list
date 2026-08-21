@@ -1,0 +1,11 @@
+# Files excluded from `git archive`
+/.gitattributes     export-ignore
+/.github            export-ignore
+/.gitignore         export-ignore
+/.svnignore         export-ignore
+/.prettierrc        export-ignore
+/CLAUDE.md          export-ignore
+/CONTRIBUTING.md    export-ignore
+/SECURITY.md        export-ignore
+/Makefile           export-ignore
+/package-lock.json  export-ignore
