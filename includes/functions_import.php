@@ -156,6 +156,7 @@ function tsml_import_data_source($data_source_url, $data_source_name = '', $data
             $current_data_source = [
                 'status' => 'OK',
                 'last_import' => current_time('timestamp'),
+                'last_attempt' => current_time('timestamp'),
                 'count_meetings' => 0,
                 'name' => $data_source_name,
                 'parent_region_id' => $data_source_parent_region_id,
@@ -222,8 +223,11 @@ function tsml_import_data_source($data_source_url, $data_source_name = '', $data
                 tsml_alert(__('Your meeting list is already in sync with the feed.', '12-step-meeting-list'), 'success');
             }
 
-            // update data source timestamp
+            // update data source timestamp, and clear any error recorded by a previous attempt
             $current_data_source['last_import'] = current_time('timestamp');
+            $current_data_source['last_attempt'] = $current_data_source['last_import'];
+            $current_data_source['status'] = 'OK';
+            unset($current_data_source['last_error']);
         }
 
         // import feed
@@ -263,6 +267,16 @@ function tsml_import_data_source($data_source_url, $data_source_name = '', $data
         }
         tsml_log('data_source_error', __('Import failed', '12-step-meeting-list') . ' - ' . $data_source_name, $error_msg);
         tsml_alert($error_msg, 'error');
+
+        // record the failed attempt, otherwise last_import stays frozen at the last success and
+        // tsml_auto_import_check() picks this same feed on every run, starving the other feeds
+        if ($current_data_source) {
+            $current_data_source['status'] = 'error';
+            $current_data_source['last_error'] = $error_msg;
+            $current_data_source['last_attempt'] = current_time('timestamp');
+            $tsml_data_sources[$data_source_url] = $current_data_source;
+            update_option('tsml_data_sources', $tsml_data_sources);
+        }
     }
 
 }
@@ -1300,8 +1314,14 @@ function tsml_auto_import_check()
 
         foreach ($tsml_data_sources as $data_source_url => $data_source) {
             $last_import = intval(isset($data_source['last_import']) ? $data_source['last_import'] : 0);
-            if ($cutoff > $last_import && (!$oldest_data_source_last_import || $last_import < $oldest_data_source_last_import)) {
-                $oldest_data_source_last_import = $last_import;
+            $last_attempt = intval(isset($data_source['last_attempt']) ? $data_source['last_attempt'] : 0);
+
+            // rotate on the last attempt rather than the last success, so an unreachable feed
+            // waits its turn like every other feed instead of blocking the queue
+            $last_try = max($last_import, $last_attempt);
+
+            if ($cutoff > $last_try && (!$oldest_data_source_last_import || $last_try < $oldest_data_source_last_import)) {
+                $oldest_data_source_last_import = $last_try;
                 $oldest_data_source_url = $data_source_url;
             }
         }
