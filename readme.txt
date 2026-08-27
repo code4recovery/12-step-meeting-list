@@ -4,7 +4,7 @@ Donate link: https://code4recovery.org/contribute
 Requires at least: 3.2
 Requires PHP: 7.2
 Tested up to: 7.0
-Stable tag: 3.19.18
+Stable tag: 3.19.19
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -280,6 +280,9 @@ Yes, you will need to know the key name of the field. Then include an array in y
 1. Edit location
 
 == Changelog ==
+
+= 3.19.19 =
+* Don't let an unreachable data source block the auto-import queue [more info](https://github.com/code4recovery/12-step-meeting-list/pull/1990)
 
 = 3.19.18 =
 * Switch default map tiles from Carto to OpenStreetMap, as Carto now requires an API key [more info](https://github.com/code4recovery/12-step-meeting-list/pull/1994)
