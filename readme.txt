@@ -283,6 +283,7 @@ Yes, you will need to know the key name of the field. Then include an array in y
 
 = 3.19.18 =
 * Switch default map tiles from Carto to OpenStreetMap, as Carto now requires an API key [more info](https://github.com/code4recovery/12-step-meeting-list/pull/1994)
+* Don't let an unreachable data source block the auto-import queue [more info](https://github.com/code4recovery/12-step-meeting-list/pull/1990)
 
 = 3.19.17 =
 * Sanitize event log for security [more info](https://github.com/code4recovery/12-step-meeting-list/issues/1979)
