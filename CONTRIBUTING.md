@@ -157,6 +157,33 @@ Once WordPress and TSML are running:
 
 ---
 
+## Releasing
+
+Releases are cut by pushing a version tag. The `release` GitHub Action then builds the
+plugin zip, creates a GitHub release, and deploys to WordPress.org.
+
+1. Bump the version in **three** places, which must match exactly:
+   - `TSML_VERSION` in `12-step-meeting-list.php`
+   - `Version:` header in `12-step-meeting-list.php`
+   - `Stable tag:` in `readme.txt`
+2. Add a `= x.y.z =` changelog block for the new version to `readme.txt`.
+3. Rebuild committed assets if JS/SCSS changed: `npm run build`, then commit.
+4. Merge to `main`, then tag and push:
+
+   ```bash
+   git tag v3.19.18      # tag matches the version, with a "v" prefix
+   git push origin v3.19.18
+   ```
+
+The workflow aborts if the tag, the two plugin versions, and the readme stable tag
+don't all agree. WordPress.org deploy requires the `WORDPRESS_USERNAME` and
+`WORDPRESS_PASSWORD` repo secrets; without them it skips and only the GitHub release
+is made. Tags containing `beta` publish a GitHub prerelease and skip WordPress.org.
+
+To build the zip locally without releasing: `make build` (output in `build/`).
+
+---
+
 ### 👍 Thanks for contributing!
 
 Your help keeps TSML improving for groups and meetings everywhere.
