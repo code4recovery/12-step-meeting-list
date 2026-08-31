@@ -1,0 +1,74 @@
+name: "release"
+
+on:
+  push:
+    tags: ["v*"]
+
+jobs:
+  lint:
+    runs-on: ubuntu-24.04
+    steps:
+      - name: Check out code 🛒
+        uses: actions/checkout@v7
+
+      - name: Setup PHP 🐫
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: "8.3"
+
+      - name: Lint PHP 🧹
+        run: |
+          find . -path ./node_modules -prune -o -name '*.php' -print0 | xargs -0 -n1 -P4 php -l
+
+  release:
+    runs-on: ubuntu-24.04
+    needs: [lint]
+    permissions:
+      contents: write
+    env:
+      BUILD_DIR: "build"
+      PLUGIN: "12-step-meeting-list"
+      MAINFILE: "12-step-meeting-list.php"
+    steps:
+      - name: Check out code 🛒
+        uses: actions/checkout@v7
+
+      - name: Setup Node 🟩
+        uses: actions/setup-node@v7
+        with:
+          node-version: "20"
+
+      - name: Build package 🔧
+        id: build-package
+        run: |
+          make build
+          VERSION="$(make version)"
+          echo "ARTIFACT_PATH=$BUILD_DIR/$PLUGIN.$VERSION.zip" >> "$GITHUB_ENV"
+
+      - name: Generate release notes 📝
+        run: |
+          VERSION="${GITHUB_REF_NAME#v}"
+          awk -v ver="= ${VERSION} =" '
+            /^= .* =$/ { inblock = ($0 == ver); next }
+            inblock { print }
+          ' readme.txt | awk 'NF' > changelog.txt
+          if [ ! -s changelog.txt ]; then
+            echo "Release ${GITHUB_REF_NAME}" > changelog.txt
+          fi
+          RELEASE_TYPE=$(if [[ "$GITHUB_REF_NAME" == *"beta"* ]]; then echo "true"; else echo "false"; fi)
+          echo "RELEASE_TYPE=${RELEASE_TYPE}" >> "$GITHUB_ENV"
+
+      - name: Create GitHub release 🎉
+        uses: ncipollo/release-action@v1
+        with:
+          artifacts: ${{ env.ARTIFACT_PATH }}
+          bodyFile: "changelog.txt"
+          prerelease: ${{ env.RELEASE_TYPE }}
+
+      - name: Deploy to WordPress.org ⛴
+        if: ${{ !contains(github.ref, 'beta') }}
+        id: wordpress-release
+        env:
+          WORDPRESS_USERNAME: ${{ secrets.WORDPRESS_USERNAME }}
+          WORDPRESS_PASSWORD: ${{ secrets.WORDPRESS_PASSWORD }}
+        run: ./.github/scripts/deploy-wordpress.sh
