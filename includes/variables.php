@@ -4,6 +4,23 @@ Don't make changes to this file! You'll need to reapply them every time you upda
 To customize your site, please follow the instructions in our FAQ:
 👉 https://wordpress.org/plugins/12-step-meeting-list/#faq-header
 */
+
+// Declare these as globals before assigning them. Under WP-CLI, WordPress is
+// loaded from inside a method, so a plugin's top-level file runs in that method's
+// scope. Without these declarations, the bare assignments below would become local
+// variables that never reach the global scope, and every `global $tsml_...` inside
+// our functions would then read null (e.g. array_keys(null) fatals on PHP 8+ during
+// WP-CLI/cron imports). See https://github.com/code4recovery/12-step-meeting-list/discussions/2013
+global $tsml_bounds, $tsml_cache, $tsml_cache_writable, $tsml_meeting_attendance_options,
+    $tsml_columns, $tsml_days, $tsml_days_order, $tsml_programs, $tsml_types_in_use, $tsml_strings,
+    $tsml_conference_providers, $tsml_contact_display, $tsml_contact_fields, $tsml_import_fields,
+    $tsml_entity_fields, $tsml_array_fields, $tsml_url_fields, $tsml_curl_handle, $tsml_defaults,
+    $tsml_distance_units, $tsml_export_columns, $tsml_map, $tsml_source_fields_map,
+    $tsml_feedback_addresses, $tsml_user_interface, $tsml_auto_import, $tsml_google_overrides,
+    $tsml_language, $tsml_nonce, $tsml_notification_addresses, $tsml_program, $tsml_sharing,
+    $tsml_sharing_keys, $tsml_sort_by, $tsml_street_only, $tsml_timestamp, $tsml_timezone,
+    $tsml_timezone_aliases, $tsml_ui_config, $tsml_debug;
+
 add_filter('cron_schedules', function ($schedules) {
     $schedules['ten_minutes'] = [
         'interval' => 10 * 60,

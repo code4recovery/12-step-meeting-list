@@ -706,8 +706,9 @@ function tsml_get_meetings($arguments = [], $from_cache = true, $full_export = f
 function tsml_get_meta($type, $id = null)
 {
     global $wpdb, $tsml_custom_meeting_fields, $tsml_contact_fields, $tsml_source_fields_map, $tsml_import_fields, $tsml_entity_fields, $tsml_array_fields;
+    $contact_field_keys = empty($tsml_contact_fields) ? [] : array_keys($tsml_contact_fields);
     $keys = [
-        'tsml_group' => array_keys($tsml_contact_fields),
+        'tsml_group' => $contact_field_keys,
         'tsml_location' => ['formatted_address', 'latitude', 'longitude', 'approximate', 'timezone'],
         'tsml_meeting' => array_merge(
             [
@@ -722,10 +723,10 @@ function tsml_get_meta($type, $id = null)
                 'conference_phone_notes',
                 'data_source',
             ],
-            array_keys($tsml_contact_fields),
-            array_keys($tsml_source_fields_map),
-            $tsml_import_fields,
-            $tsml_entity_fields,
+            $contact_field_keys,
+            empty($tsml_source_fields_map) ? [] : array_keys($tsml_source_fields_map),
+            empty($tsml_import_fields) ? [] : $tsml_import_fields,
+            empty($tsml_entity_fields) ? [] : $tsml_entity_fields,
             empty($tsml_custom_meeting_fields) ? [] : array_keys($tsml_custom_meeting_fields)
         ),
     ];
