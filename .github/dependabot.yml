@@ -1,0 +1,37 @@
+# Dependency updates.
+#
+# Grouped and monthly, so the whole tree bumps in one PR per ecosystem rather
+# than one PR per package. CI proves the lockfile builds together, which is the
+# only signal that matters for a bump, and a single grouped PR is a single
+# review of a single green run.
+version: 2
+
+updates:
+  - package-ecosystem: npm
+    directory: /
+    schedule:
+      interval: monthly
+    open-pull-requests-limit: 5
+    groups:
+      dev-dependencies:
+        dependency-type: development
+      production-dependencies:
+        dependency-type: production
+    labels:
+      - dependencies
+    commit-message:
+      prefix: deps
+      prefix-development: deps-dev
+
+  - package-ecosystem: github-actions
+    directory: /
+    schedule:
+      interval: monthly
+    groups:
+      actions:
+        patterns:
+          - '*'
+    labels:
+      - dependencies
+    commit-message:
+      prefix: ci
