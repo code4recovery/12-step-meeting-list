@@ -171,8 +171,8 @@ plugin zip, creates a GitHub release, and deploys to WordPress.org.
 4. Merge to `main`, then tag and push:
 
    ```bash
-   git tag v3.19.18      # tag matches the version, with a "v" prefix
-   git push origin v3.19.18
+   git tag v3.19.19      # tag matches the version, with a "v" prefix
+   git push origin v3.19.19
    ```
 
 The workflow aborts if the tag, the two plugin versions, and the readme stable tag
