@@ -6,7 +6,20 @@ if (!function_exists('tsml_import_page')) {
 
     function tsml_import_page()
     {
-        global $tsml_programs, $tsml_program, $tsml_nonce, $tsml_sharing, $tsml_slug, $tsml_auto_import;
+        $state = tsml_state_get_many([
+            'tsml_programs',
+            'tsml_program',
+            'tsml_nonce',
+            'tsml_sharing',
+            'tsml_slug' => null,
+            'tsml_auto_import',
+        ]);
+        $tsml_programs = $state['tsml_programs'];
+        $tsml_program = $state['tsml_program'];
+        $tsml_nonce = $state['tsml_nonce'];
+        $tsml_sharing = $state['tsml_sharing'];
+        $tsml_slug = $state['tsml_slug'];
+        $tsml_auto_import = $state['tsml_auto_import'];
 
         // todo consider whether this check is necessary, since it is run from add_submenu_page() which is already checking for the same permission
         // potentially tsml_import_page() could be a closure within the call to add_submenu_page which would prevent it from being reused elsewhere
@@ -202,6 +215,7 @@ if (!function_exists('tsml_import_page')) {
         // change auto import
         if (isset($_POST['tsml_auto_import']) && $valid_nonce) {
             $tsml_auto_import = !!($_POST['tsml_auto_import']) ? 'on' : '';
+            tsml_state_set('tsml_auto_import', $tsml_auto_import, TSML_State::CATEGORY_SETTING);
             update_option('tsml_auto_import', $tsml_auto_import);
             tsml_alert(__('Automatic imports setting updated.', '12-step-meeting-list'));
         }

@@ -21,7 +21,8 @@ function tsml_timezone_is_valid($timezone)
  */
 function tsml_timezone_select($selected = null)
 {
-    global $tsml_timezone, $wpdb;
+    global $wpdb;
+    $tsml_timezone = tsml_state_get('tsml_timezone');
     $all_timezones = DateTimeZone::listIdentifiers();
     $meeting_timezones = $wpdb->get_col("SELECT DISTINCT m.meta_value FROM $wpdb->postmeta as m JOIN $wpdb->posts as p ON m.post_id = p.ID WHERE m.meta_key = 'timezone' AND p.post_type = 'tsml_location' AND p.post_status = 'publish'");
     $meeting_timezones[] = $tsml_timezone;
@@ -79,7 +80,8 @@ function tsml_timezone_select($selected = null)
  */
 function tsml_timezone_parse($value = null)
 {
-    global $tsml_timezone_aliases, $_tsml_timezone_matches;
+    global $_tsml_timezone_matches;
+    $tsml_timezone_aliases = tsml_state_get('tsml_timezone_aliases');
 
     $_tsml_timezone_matches = (array) $_tsml_timezone_matches;
     if (isset($_tsml_timezone_matches[$value])) {

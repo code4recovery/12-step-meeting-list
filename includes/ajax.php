@@ -25,7 +25,7 @@ add_action('wp_ajax_tsml_locations', function () {
 
 // ajax for the meeting edit group typeahead
 add_action('wp_ajax_tsml_groups', function () {
-    global $tsml_contact_fields;
+    $tsml_contact_fields = tsml_state_get('tsml_contact_fields');
 
     tsml_require_meetings_permission();
 
@@ -150,7 +150,20 @@ add_action('wp_ajax_contacts', function () {
 add_action('wp_ajax_csv', function () {
 
     // going to need this later
-    global $tsml_days, $tsml_programs, $tsml_program, $tsml_sharing, $tsml_export_columns, $tsml_custom_meeting_fields;
+    $state = tsml_state_get_many([
+        'tsml_days',
+        'tsml_programs',
+        'tsml_program',
+        'tsml_sharing',
+        'tsml_export_columns',
+        'tsml_custom_meeting_fields' => [],
+    ]);
+    $tsml_days = $state['tsml_days'];
+    $tsml_programs = $state['tsml_programs'];
+    $tsml_program = $state['tsml_program'];
+    $tsml_sharing = $state['tsml_sharing'];
+    $tsml_export_columns = $state['tsml_export_columns'];
+    $tsml_custom_meeting_fields = $state['tsml_custom_meeting_fields'];
 
     // security
     tsml_require_meetings_permission();
@@ -216,7 +229,8 @@ add_action('wp_ajax_tsml_feedback', 'tsml_ajax_feedback');
 add_action('wp_ajax_nopriv_tsml_feedback', 'tsml_ajax_feedback');
 function tsml_ajax_feedback()
 {
-    global $tsml_feedback_addresses, $tsml_nonce;
+    $tsml_feedback_addresses = tsml_state_get('tsml_feedback_addresses');
+    $tsml_nonce = tsml_state_get('tsml_nonce');
 
     $meeting = tsml_get_meeting(intval($_POST['meeting_id']));
     $name = sanitize_text_field($_POST['tsml_name']);
@@ -295,7 +309,7 @@ add_action('wp_ajax_tsml_geocode', 'tsml_ajax_geocode');
 add_action('wp_ajax_nopriv_tsml_geocode', 'tsml_ajax_geocode');
 function tsml_ajax_geocode()
 {
-    global $tsml_nonce;
+    $tsml_nonce = tsml_state_get('tsml_nonce');
     if (!wp_verify_nonce(@$_GET['nonce'], $tsml_nonce)) {
         tsml_ajax_unauthorized();
     }
@@ -305,7 +319,7 @@ function tsml_ajax_geocode()
 // function: get a list of all the geocodes in the database
 // used: for debugging
 add_action('wp_ajax_tsml_geocodes', function () {
-    global $tsml_google_overrides;
+    $tsml_google_overrides = tsml_state_get('tsml_google_overrides');
 
     tsml_require_meetings_permission();
 
@@ -353,7 +367,14 @@ add_action('wp_ajax_meetings', 'tsml_ajax_meetings');
 add_action('wp_ajax_nopriv_meetings', 'tsml_ajax_meetings');
 function tsml_ajax_meetings()
 {
-    global $tsml_sharing, $tsml_sharing_keys, $tsml_nonce;
+    $state = tsml_state_get_many([
+        'tsml_sharing',
+        'tsml_sharing_keys',
+        'tsml_nonce',
+    ]);
+    $tsml_sharing = $state['tsml_sharing'];
+    $tsml_sharing_keys = $state['tsml_sharing_keys'];
+    $tsml_nonce = $state['tsml_nonce'];
 
     // accepts GET or POST
     $input = empty($_POST) ? $_GET : $_POST;
@@ -382,7 +403,7 @@ add_action('wp_ajax_meeting_guide', 'tsml_ajax_meeting_guide');
 add_action('wp_ajax_nopriv_meeting_guide', 'tsml_ajax_meeting_guide');
 function tsml_ajax_meeting_guide()
 {
-    global $tsml_sharing_keys;
+    $tsml_sharing_keys = tsml_state_get('tsml_sharing_keys');
 
     $mg_key = false;
 
@@ -398,6 +419,7 @@ function tsml_ajax_meeting_guide()
         $mg_key = md5(uniqid('Meeting Guide', true));
         $tsml_sharing_keys[$mg_key] = 'Meeting Guide';
         asort($tsml_sharing_keys);
+        tsml_state_set('tsml_sharing_keys', $tsml_sharing_keys, TSML_State::CATEGORY_SETTING);
         update_option('tsml_sharing_keys', $tsml_sharing_keys);
     }
 

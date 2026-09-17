@@ -2,7 +2,7 @@
 
 // catch meetings without locations and save them as a draft, also format text
 add_filter('wp_insert_post_data', function ($post) {
-    global $tsml_days;
+    $tsml_days = tsml_state_get('tsml_days');
 
     // sanitize text (remove html, trim)
     if ($post['post_type'] == 'tsml_meeting') {
@@ -23,7 +23,17 @@ add_filter('wp_insert_post_data', function ($post) {
 
 // handle all the metadata, location
 add_action('post_updated', function ($post_id, $post, $post_before) {
-    global $tsml_nonce, $wpdb, $tsml_notification_addresses, $tsml_days, $tsml_contact_fields;
+    global $wpdb;
+    $state = tsml_state_get_many([
+        'tsml_nonce',
+        'tsml_notification_addresses',
+        'tsml_days',
+        'tsml_contact_fields',
+    ]);
+    $tsml_nonce = $state['tsml_nonce'];
+    $tsml_notification_addresses = $state['tsml_notification_addresses'];
+    $tsml_days = $state['tsml_days'];
+    $tsml_contact_fields = $state['tsml_contact_fields'];
 
     // security
     if (defined('DOING_AUTOSAVE') && DOING_AUTOSAVE) {

@@ -83,9 +83,28 @@ function tsml_alert($message, $type = 'success')
  */
 function tsml_assets()
 {
-    global $tsml_map, $tsml_street_only, $tsml_programs, $tsml_strings, $tsml_program,
-    $tsml_distance_units, $tsml_defaults, $tsml_columns, $tsml_nonce, $tsml_debug;
-
+    $state = tsml_state_get_many([
+        'tsml_map',
+        'tsml_street_only',
+        'tsml_programs',
+        'tsml_strings',
+        'tsml_program',
+        'tsml_distance_units',
+        'tsml_defaults',
+        'tsml_columns',
+        'tsml_nonce',
+        'tsml_debug',
+    ]);
+    $tsml_map = $state['tsml_map'];
+    $tsml_street_only = $state['tsml_street_only'];
+    $tsml_programs = $state['tsml_programs'];
+    $tsml_strings = $state['tsml_strings'];
+    $tsml_program = $state['tsml_program'];
+    $tsml_distance_units = $state['tsml_distance_units'];
+    $tsml_defaults = $state['tsml_defaults'];
+    $tsml_columns = $state['tsml_columns'];
+    $tsml_nonce = $state['tsml_nonce'];
+    $tsml_debug = $state['tsml_debug'];
 
     wp_enqueue_script('leaflet', 'https://unpkg.com/leaflet@1.9.4/dist/leaflet.js', [], '1.9.4', true);
     wp_enqueue_style('leaflet', 'https://unpkg.com/leaflet@1.9.4/dist/leaflet.css', [], '1.9.4');
@@ -142,7 +161,7 @@ function tsml_assets()
  */
 function tsml_bounds()
 {
-    global $wpdb, $tsml_bounds;
+    global $wpdb;
 
     // get north & south
     $latitudes = $wpdb->get_row('SELECT
@@ -174,6 +193,7 @@ function tsml_bounds()
             'west' => $longitudes->west - $width,
         ];
 
+        tsml_state_set('tsml_bounds', $tsml_bounds, TSML_State::CATEGORY_SETTING);
         update_option('tsml_bounds', $tsml_bounds);
     }
 }
@@ -347,7 +367,7 @@ function tsml_plugin_deactivation()
  */
 function tsml_conference_provider($url)
 {
-    global $tsml_conference_providers;
+    $tsml_conference_providers = tsml_state_get('tsml_conference_providers');
     if (empty($tsml_conference_providers)) {
         return true; // don't provide validation
     }
@@ -369,7 +389,7 @@ function tsml_conference_provider($url)
  */
 function tsml_conference_providers()
 {
-    global $tsml_conference_providers;
+    $tsml_conference_providers = tsml_state_get('tsml_conference_providers');
     if (empty($tsml_conference_providers)) {
         return [];
     }
@@ -431,8 +451,9 @@ function tsml_count_regions()
  */
 function tsml_custom_addresses($custom_overrides)
 {
-    global $tsml_google_overrides;
+    $tsml_google_overrides = tsml_state_get('tsml_google_overrides');
     $tsml_google_overrides = array_merge((array) $tsml_google_overrides, (array) $custom_overrides);
+    tsml_state_set('tsml_google_overrides', $tsml_google_overrides, TSML_State::CATEGORY_CONFIGURATION);
 }
 
 /**
@@ -445,8 +466,10 @@ function tsml_custom_addresses($custom_overrides)
 function tsml_custom_descriptions($descriptions)
 {
     add_action('init', function () use ($descriptions) {
-        global $tsml_programs, $tsml_program;
+        $tsml_programs = tsml_state_get('tsml_programs');
+        $tsml_program = tsml_state_get('tsml_program');
         $tsml_programs[$tsml_program]['type_descriptions'] = $descriptions;
+        tsml_state_set('tsml_programs', $tsml_programs, TSML_State::CATEGORY_RUNTIME);
     });
 }
 
@@ -460,8 +483,10 @@ function tsml_custom_descriptions($descriptions)
 function tsml_custom_flags($flags)
 {
     add_action('init', function () use ($flags) {
-        global $tsml_programs, $tsml_program;
+        $tsml_programs = tsml_state_get('tsml_programs');
+        $tsml_program = tsml_state_get('tsml_program');
         $tsml_programs[$tsml_program]['flags'] = $flags;
+        tsml_state_set('tsml_programs', $tsml_programs, TSML_State::CATEGORY_RUNTIME);
     });
 }
 
@@ -473,7 +498,7 @@ function tsml_custom_flags($flags)
  */
 function tsml_custom_post_types()
 {
-    global $tsml_slug;
+    $tsml_slug = tsml_state_get('tsml_slug');
 
     $is_public = !empty($tsml_slug);
 
@@ -609,7 +634,8 @@ function tsml_custom_post_types()
 function tsml_custom_types($types)
 {
     add_action('init', function () use ($types) {
-        global $tsml_programs, $tsml_program;
+        $tsml_programs = tsml_state_get('tsml_programs');
+        $tsml_program = tsml_state_get('tsml_program');
         foreach ($types as $key => $value) {
             if (empty($value)) {
                 // if empty, remove existing type
@@ -619,6 +645,7 @@ function tsml_custom_types($types)
             $tsml_programs[$tsml_program]['types'][$key] = $value;
         }
         asort($tsml_programs[$tsml_program]['types']);
+        tsml_state_set('tsml_programs', $tsml_programs, TSML_State::CATEGORY_RUNTIME);
     });
 }
 
@@ -793,7 +820,7 @@ function tsml_front_page($wp_query)
  */
 function tsml_geocode($address)
 {
-    global $tsml_google_overrides;
+    $tsml_google_overrides = tsml_state_get('tsml_google_overrides');
 
     $address = stripslashes($address);
 
@@ -803,6 +830,7 @@ function tsml_geocode($address)
             $tsml_google_overrides[$address]['approximate'] = 'no';
         }
         $tsml_google_overrides[$address]['status'] = 'override';
+        tsml_state_set('tsml_google_overrides', $tsml_google_overrides, TSML_State::CATEGORY_CONFIGURATION);
         return $tsml_google_overrides[$address];
     }
 
@@ -838,7 +866,10 @@ function tsml_geocode($address)
  */
 function tsml_geocode_google($address)
 {
-    global $tsml_curl_handle, $tsml_language, $tsml_google_overrides, $tsml_bounds;
+    $tsml_curl_handle = tsml_state_get('tsml_curl_handle');
+    $tsml_language = tsml_state_get('tsml_language');
+    $tsml_google_overrides = tsml_state_get('tsml_google_overrides');
+    $tsml_bounds = tsml_state_get('tsml_bounds');
 
     // Can't Geocode an empty address
     if (empty($address)) {
@@ -857,6 +888,7 @@ function tsml_geocode_google($address)
             CURLOPT_TIMEOUT => 60,
             CURLOPT_SSL_VERIFYPEER => false,
         ]);
+        tsml_state_set('tsml_curl_handle', $tsml_curl_handle, TSML_State::CATEGORY_RUNTIME);
     }
 
     // form geocoding request url
@@ -974,7 +1006,8 @@ function tsml_geocode_google($address)
  */
 function tsml_meeting_types($types)
 {
-    global $tsml_programs, $tsml_program;
+    $tsml_programs = tsml_state_get('tsml_programs');
+    $tsml_program = tsml_state_get('tsml_program');
     if (empty($tsml_programs[$tsml_program]['types'])) {
         return;
     }
@@ -994,7 +1027,7 @@ function tsml_meeting_types($types)
  */
 function tsml_languages($types = [])
 {
-    global $tsml_program;
+    $tsml_program = tsml_state_get('tsml_program');
 
     // https://en.wikipedia.org/wiki/List_of_ISO_639_language_codes
     $languages = [
@@ -1209,7 +1242,8 @@ function tsml_paragraphs($string)
  */
 function tsml_program_has_types()
 {
-    global $tsml_programs, $tsml_program;
+    $tsml_programs = tsml_state_get('tsml_programs');
+    $tsml_program = tsml_state_get('tsml_program');
     return !empty($tsml_programs[$tsml_program]['types']);
 }
 
@@ -1247,7 +1281,7 @@ function tsml_require_settings_permission()
  */
 function tsml_update_types_in_use()
 {
-    global $tsml_types_in_use, $wpdb;
+    global $wpdb;
 
     // shortcut to getting all meta values without getting all posts first
     $types = $wpdb->get_col('SELECT
@@ -1269,6 +1303,7 @@ function tsml_update_types_in_use()
 
     // update global variable
     $tsml_types_in_use = array_unique($all_types);
+    tsml_state_set('tsml_types_in_use', $tsml_types_in_use, TSML_State::CATEGORY_RUNTIME);
 
     // set option value
     update_option('tsml_types_in_use', $tsml_types_in_use);
@@ -1370,7 +1405,7 @@ function tsml_to_css_classes($types, $prefix = 'type-')
  */
 function tsml_sanitize_data_sort($string)
 {
-    global $tsml_sanitize_data_sort_regexps;
+    $tsml_sanitize_data_sort_regexps = tsml_state_get('tsml_sanitize_data_sort_regexps');
 
     // Populate regex array only once
     if (!isset($tsml_sanitize_data_sort_regexps)) {
@@ -1382,6 +1417,7 @@ function tsml_sanitize_data_sort($string)
             ['/\-+/', '-'], // Convert runs of dashes into a single dash
             ['/^\-|\-$/', ''] // Strip trailing/leading dash
         ];
+        tsml_state_set('tsml_sanitize_data_sort_regexps', $tsml_sanitize_data_sort_regexps, TSML_State::CATEGORY_RUNTIME);
     }
 
     // Convert all html entities to chars so encodings are uniform
@@ -1591,7 +1627,16 @@ function tsml_date_localised($format, $timestamp = null)
  */
 function tsml_compare_meetings($meeting_old, $meeting_new, $compare_import = false, $translate_fields = false)
 {
-    global $tsml_export_columns, $tsml_source_fields_map, $tsml_entity_fields, $tsml_array_fields;
+    $state = tsml_state_get_many([
+        'tsml_export_columns',
+        'tsml_source_fields_map',
+        'tsml_entity_fields',
+        'tsml_array_fields',
+    ]);
+    $tsml_export_columns = $state['tsml_export_columns'];
+    $tsml_source_fields_map = $state['tsml_source_fields_map'];
+    $tsml_entity_fields = $state['tsml_entity_fields'];
+    $tsml_array_fields = $state['tsml_array_fields'];
 
     $meeting_old = (array) $meeting_old;
     $meeting_new = (array) $meeting_new;
@@ -1695,7 +1740,8 @@ function tsml_footer()
 function tsml_redirect_legacy_query_params()
 {
 
-    global $tsml_program, $tsml_programs;
+    $tsml_program = tsml_state_get('tsml_program');
+    $tsml_programs = tsml_state_get('tsml_programs');
 
     $replacements = [];
 

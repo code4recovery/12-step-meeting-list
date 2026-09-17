@@ -96,7 +96,7 @@ function tsml_get_data_source_ids($source)
  */
 function tsml_get_entity()
 {
-    global $tsml_feedback_addresses;
+    $tsml_feedback_addresses = tsml_state_get('tsml_feedback_addresses');
     $saved_tsml_entity = tsml_get_option_array('tsml_entity');
     $tsml_entity = [
         'entity' => !empty($saved_tsml_entity['entity']) ? $saved_tsml_entity['entity'] : get_bloginfo('name'),
@@ -123,7 +123,7 @@ function tsml_get_entity()
  */
 function tsml_get_groups()
 {
-    global $tsml_contact_fields;
+    $tsml_contact_fields = tsml_state_get('tsml_contact_fields');
 
     $groups = array();
 
@@ -284,7 +284,18 @@ function tsml_get_locations()
  */
 function tsml_get_meeting($meeting_id = false)
 {
-    global $tsml_program, $tsml_programs, $tsml_contact_fields, $tsml_array_fields, $tsml_url_fields;
+    $state = tsml_state_get_many([
+        'tsml_program',
+        'tsml_programs',
+        'tsml_contact_fields',
+        'tsml_array_fields',
+        'tsml_url_fields',
+    ]);
+    $tsml_program = $state['tsml_program'];
+    $tsml_programs = $state['tsml_programs'];
+    $tsml_contact_fields = $state['tsml_contact_fields'];
+    $tsml_array_fields = $state['tsml_array_fields'];
+    $tsml_url_fields = $state['tsml_url_fields'];
 
     $meeting = get_post($meeting_id);
     $custom = get_post_meta($meeting->ID);
@@ -399,7 +410,8 @@ function tsml_get_meeting($meeting_id = false)
  */
 function tsml_feedback_url($meeting)
 {
-    global $tsml_export_columns, $tsml_feedback_url;
+    $tsml_export_columns = tsml_state_get('tsml_export_columns');
+    $tsml_feedback_url = tsml_state_get('tsml_feedback_url');
 
     if (empty($tsml_feedback_url)) {
         return;
@@ -429,7 +441,28 @@ function tsml_feedback_url($meeting)
  */
 function tsml_get_meetings($arguments = [], $from_cache = true, $full_export = false)
 {
-    global $tsml_cache, $tsml_cache_writable, $tsml_contact_fields, $tsml_contact_display, $tsml_custom_meeting_fields, $tsml_source_fields_map, $tsml_import_fields, $tsml_entity_fields, $tsml_array_fields, $tsml_timezone;
+    $state = tsml_state_get_many([
+        'tsml_cache',
+        'tsml_cache_writable',
+        'tsml_contact_fields',
+        'tsml_contact_display',
+        'tsml_custom_meeting_fields' => [],
+        'tsml_source_fields_map',
+        'tsml_import_fields',
+        'tsml_entity_fields',
+        'tsml_array_fields',
+        'tsml_timezone',
+    ]);
+    $tsml_cache = $state['tsml_cache'];
+    $tsml_cache_writable = $state['tsml_cache_writable'];
+    $tsml_contact_fields = $state['tsml_contact_fields'];
+    $tsml_contact_display = $state['tsml_contact_display'];
+    $tsml_custom_meeting_fields = $state['tsml_custom_meeting_fields'];
+    $tsml_source_fields_map = $state['tsml_source_fields_map'];
+    $tsml_import_fields = $state['tsml_import_fields'];
+    $tsml_entity_fields = $state['tsml_entity_fields'];
+    $tsml_array_fields = $state['tsml_array_fields'];
+    $tsml_timezone = $state['tsml_timezone'];
 
     $tsml_entity = tsml_get_entity();
 
@@ -612,8 +645,11 @@ function tsml_get_meetings($arguments = [], $from_cache = true, $full_export = f
             // Check if the file is writable, and if so, write it
             if (count($meetings) && is_writable($filepath) || (!file_exists($filepath) && is_writable(WP_CONTENT_DIR))) {
                 $filesize = file_put_contents($filepath, json_encode($meetings));
-                update_option('tsml_cache_writable', $filesize === false ? 0 : 1);
+                $tsml_cache_writable = $filesize === false ? 0 : 1;
+                tsml_state_set('tsml_cache_writable', (bool) $tsml_cache_writable, TSML_State::CATEGORY_SETTING);
+                update_option('tsml_cache_writable', $tsml_cache_writable);
             } else {
+                tsml_state_set('tsml_cache_writable', false, TSML_State::CATEGORY_SETTING);
                 update_option('tsml_cache_writable', 0);
             }
         }
@@ -644,7 +680,8 @@ function tsml_get_meetings($arguments = [], $from_cache = true, $full_export = f
 
     // sort meetings
     usort($meetings, function ($a, $b) {
-        global $tsml_days_order, $tsml_sort_by;
+        $tsml_days_order = tsml_state_get('tsml_days_order');
+        $tsml_sort_by = tsml_state_get('tsml_sort_by');
 
         // sub_regions are regions in this scenario
         if (!empty($a['sub_region'])) {
@@ -705,7 +742,21 @@ function tsml_get_meetings($arguments = [], $from_cache = true, $full_export = f
  */
 function tsml_get_meta($type, $id = null)
 {
-    global $wpdb, $tsml_custom_meeting_fields, $tsml_contact_fields, $tsml_source_fields_map, $tsml_import_fields, $tsml_entity_fields, $tsml_array_fields;
+    global $wpdb;
+    $state = tsml_state_get_many([
+        'tsml_custom_meeting_fields' => [],
+        'tsml_contact_fields',
+        'tsml_source_fields_map',
+        'tsml_import_fields',
+        'tsml_entity_fields',
+        'tsml_array_fields',
+    ]);
+    $tsml_custom_meeting_fields = $state['tsml_custom_meeting_fields'];
+    $tsml_contact_fields = $state['tsml_contact_fields'];
+    $tsml_source_fields_map = $state['tsml_source_fields_map'];
+    $tsml_import_fields = $state['tsml_import_fields'];
+    $tsml_entity_fields = $state['tsml_entity_fields'];
+    $tsml_array_fields = $state['tsml_array_fields'];
     $contact_field_keys = empty($tsml_contact_fields) ? [] : array_keys($tsml_contact_fields);
     $keys = [
         'tsml_group' => $contact_field_keys,

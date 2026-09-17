@@ -20,6 +20,9 @@ jobs:
         run: |
           find . -path ./node_modules -prune -o -name '*.php' -print0 | xargs -0 -n1 -P4 php -l
 
+      - name: Test TSML state scope 🧪
+        run: php tests/state-loader-scope.php
+
   release:
     runs-on: ubuntu-24.04
     needs: [lint]

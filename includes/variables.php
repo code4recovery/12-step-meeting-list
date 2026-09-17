@@ -5,21 +5,57 @@ To customize your site, please follow the instructions in our FAQ:
 👉 https://wordpress.org/plugins/12-step-meeting-list/#faq-header
 */
 
-// Declare these as globals before assigning them. Under WP-CLI, WordPress is
-// loaded from inside a method, so a plugin's top-level file runs in that method's
-// scope. Without these declarations, the bare assignments below would become local
-// variables that never reach the global scope, and every `global $tsml_...` inside
-// our functions would then read null (e.g. array_keys(null) fatals on PHP 8+ during
-// WP-CLI/cron imports). See https://github.com/code4recovery/12-step-meeting-list/discussions/2013
-global $tsml_bounds, $tsml_cache, $tsml_cache_writable, $tsml_meeting_attendance_options,
-    $tsml_columns, $tsml_days, $tsml_days_order, $tsml_programs, $tsml_types_in_use, $tsml_strings,
-    $tsml_conference_providers, $tsml_contact_display, $tsml_contact_fields, $tsml_import_fields,
-    $tsml_entity_fields, $tsml_array_fields, $tsml_url_fields, $tsml_curl_handle, $tsml_defaults,
-    $tsml_distance_units, $tsml_export_columns, $tsml_map, $tsml_source_fields_map,
-    $tsml_feedback_addresses, $tsml_user_interface, $tsml_auto_import, $tsml_google_overrides,
-    $tsml_language, $tsml_nonce, $tsml_notification_addresses, $tsml_program, $tsml_sharing,
-    $tsml_sharing_keys, $tsml_sort_by, $tsml_street_only, $tsml_timestamp, $tsml_timezone,
-    $tsml_timezone_aliases, $tsml_ui_config, $tsml_debug;
+// Register legacy globals before assigning state. Under WP-CLI, WordPress may
+// load plugins from inside a method scope, so this file must not rely on bare
+// top-level assignments becoming PHP globals. TSML_State is the authoritative
+// internal store; these names remain a compatibility API for downstream code.
+tsml_state_register_legacy_globals([
+    'tsml_bounds',
+    'tsml_cache',
+    'tsml_cache_writable',
+    'tsml_meeting_attendance_options',
+    'tsml_columns',
+    'tsml_days',
+    'tsml_days_order',
+    'tsml_programs',
+    'tsml_types_in_use',
+    'tsml_strings',
+    'tsml_conference_providers',
+    'tsml_contact_display',
+    'tsml_contact_fields',
+    'tsml_import_fields',
+    'tsml_entity_fields',
+    'tsml_array_fields',
+    'tsml_url_fields',
+    'tsml_curl_handle',
+    'tsml_defaults',
+    'tsml_distance_units',
+    'tsml_export_columns',
+    'tsml_map',
+    'tsml_source_fields_map',
+    'tsml_feedback_addresses',
+    'tsml_user_interface',
+    'tsml_auto_import',
+    'tsml_google_overrides',
+    'tsml_language',
+    'tsml_nonce',
+    'tsml_notification_addresses',
+    'tsml_program',
+    'tsml_sharing',
+    'tsml_sharing_keys',
+    'tsml_sort_by',
+    'tsml_street_only',
+    'tsml_timestamp',
+    'tsml_timezone',
+    'tsml_timezone_aliases',
+    'tsml_ui_config',
+    'tsml_debug',
+    'tsml_slug',
+    'tsml_feedback_url',
+    'tsml_google_geocoding_key',
+    'tsml_custom_meeting_fields',
+    'tsml_sanitize_data_sort_regexps',
+]);
 
 add_filter('cron_schedules', function ($schedules) {
     $schedules['ten_minutes'] = [
@@ -643,17 +679,67 @@ $tsml_ui_config = [];
 
 
 // string url for the meeting finder, or false for no automatic archive page
-if (!isset($tsml_slug)) {
-    $tsml_slug = null;
-}
+$tsml_slug = tsml_state_get('tsml_slug', null);
 
 // toggle debug mode
 $tsml_debug = false;
 
+tsml_state_set_many([
+    'tsml_conference_providers' => $tsml_conference_providers,
+    'tsml_contact_fields' => $tsml_contact_fields,
+    'tsml_import_fields' => $tsml_import_fields,
+    'tsml_entity_fields' => $tsml_entity_fields,
+    'tsml_array_fields' => $tsml_array_fields,
+    'tsml_url_fields' => $tsml_url_fields,
+    'tsml_defaults' => $tsml_defaults,
+    'tsml_export_columns' => $tsml_export_columns,
+    'tsml_map' => $tsml_map,
+    'tsml_source_fields_map' => $tsml_source_fields_map,
+    'tsml_google_overrides' => $tsml_google_overrides,
+    'tsml_timezone_aliases' => $tsml_timezone_aliases,
+], TSML_State::CATEGORY_CONFIGURATION);
+
+tsml_state_set_many([
+    'tsml_bounds' => $tsml_bounds,
+    'tsml_cache' => $tsml_cache,
+    'tsml_cache_writable' => $tsml_cache_writable,
+    'tsml_contact_display' => $tsml_contact_display,
+    'tsml_distance_units' => $tsml_distance_units,
+    'tsml_feedback_addresses' => $tsml_feedback_addresses,
+    'tsml_user_interface' => $tsml_user_interface,
+    'tsml_auto_import' => $tsml_auto_import,
+    'tsml_notification_addresses' => $tsml_notification_addresses,
+    'tsml_program' => $tsml_program,
+    'tsml_sharing' => $tsml_sharing,
+    'tsml_sharing_keys' => $tsml_sharing_keys,
+    'tsml_timezone' => $tsml_timezone,
+], TSML_State::CATEGORY_SETTING);
+
+tsml_state_set_many([
+    'tsml_meeting_attendance_options' => $tsml_meeting_attendance_options,
+    'tsml_columns' => $tsml_columns,
+    'tsml_days' => $tsml_days,
+    'tsml_days_order' => $tsml_days_order,
+    'tsml_programs' => $tsml_programs,
+    'tsml_types_in_use' => $tsml_types_in_use,
+    'tsml_strings' => $tsml_strings,
+    'tsml_curl_handle' => $tsml_curl_handle,
+    'tsml_language' => $tsml_language,
+    'tsml_nonce' => $tsml_nonce,
+    'tsml_sort_by' => $tsml_sort_by,
+    'tsml_street_only' => $tsml_street_only,
+    'tsml_timestamp' => $tsml_timestamp,
+    'tsml_ui_config' => $tsml_ui_config,
+    'tsml_slug' => $tsml_slug,
+    'tsml_debug' => $tsml_debug,
+], TSML_State::CATEGORY_RUNTIME);
+
 // set up globals, common variables once plugins are loaded, but before init
 function tsml_load_config()
 {
-    global $tsml_days, $tsml_days_order, $tsml_programs, $tsml_slug, $tsml_strings, $tsml_user_interface, $tsml_types_in_use, $tsml_meeting_attendance_options, $tsml_columns;
+    $tsml_columns = tsml_state_get('tsml_columns');
+    $tsml_slug = tsml_state_get('tsml_slug', null);
+    $tsml_user_interface = tsml_state_get('tsml_user_interface');
 
     // load internationalization
     load_plugin_textdomain('12-step-meeting-list', false, '12-step-meeting-list/languages');
@@ -1511,4 +1597,15 @@ function tsml_load_config()
     if (!is_array($tsml_types_in_use)) {
         $tsml_types_in_use = [];
     }
+
+    tsml_state_set_many([
+        'tsml_meeting_attendance_options' => $tsml_meeting_attendance_options,
+        'tsml_columns' => $tsml_columns,
+        'tsml_days' => $tsml_days,
+        'tsml_days_order' => $tsml_days_order,
+        'tsml_programs' => $tsml_programs,
+        'tsml_slug' => $tsml_slug,
+        'tsml_strings' => $tsml_strings,
+        'tsml_types_in_use' => $tsml_types_in_use,
+    ], TSML_State::CATEGORY_RUNTIME);
 }

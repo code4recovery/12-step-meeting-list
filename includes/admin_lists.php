@@ -2,7 +2,14 @@
 
 // adding region dropdown to filter
 add_action('restrict_manage_posts', function ($post_type) {
-    global $tsml_program, $tsml_programs, $tsml_types_in_use, $tsml_data_sources;
+    $state = tsml_state_get_many([
+        'tsml_program',
+        'tsml_programs',
+        'tsml_types_in_use',
+    ]);
+    $tsml_program = $state['tsml_program'];
+    $tsml_programs = $state['tsml_programs'];
+    $tsml_types_in_use = $state['tsml_types_in_use'];
 
     if ($post_type !== 'tsml_meeting') {
         return;
@@ -141,7 +148,8 @@ add_action(
 
 // custom list values for meetings
 add_action('manage_tsml_meeting_posts_custom_column', function ($column_name, $post_ID) {
-    global $tsml_days, $wpdb;
+    global $wpdb;
+    $tsml_days = tsml_state_get('tsml_days');
     if ($column_name == 'day') {
         $day = get_post_meta($post_ID, 'day', true);
         echo (empty($day) && $day !== '0') ? esc_html__('Appointment', '12-step-meeting-list') : esc_html($tsml_days[$day]);

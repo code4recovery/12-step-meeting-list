@@ -37,6 +37,7 @@ define('TSML_SETTINGS_PERMISSION', 'manage_options');
 define('TSML_VERSION', '3.19.19');
 
 // include these files first
+include TSML_PATH . '/includes/state.php';
 include TSML_PATH . '/includes/filter_meetings.php';
 include TSML_PATH . '/includes/functions.php';
 include TSML_PATH . '/includes/functions_email.php';

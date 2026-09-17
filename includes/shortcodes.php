@@ -10,7 +10,7 @@ add_shortcode('tsml_region_count', 'tsml_count_regions');
 // used here and in widgets.php
 function tsml_next_meetings($arguments)
 {
-    global $tsml_meeting_attendance_options;
+    $tsml_meeting_attendance_options = tsml_state_get('tsml_meeting_attendance_options');
     $arguments = shortcode_atts(['count' => 5, 'message' => ''], $arguments, 'tsml_next_meetings');
     $meetings = tsml_get_meetings([
         'day' => intval(current_time('w')),
@@ -90,7 +90,16 @@ add_shortcode('tsml_next_meetings', 'tsml_next_meetings');
 
 // output a list of types with links for AA-DC
 add_shortcode('tsml_types_list', function () {
-    global $tsml_types_in_use, $tsml_programs, $tsml_program, $tsml_user_interface;
+    $state = tsml_state_get_many([
+        'tsml_types_in_use',
+        'tsml_programs',
+        'tsml_program',
+        'tsml_user_interface',
+    ]);
+    $tsml_types_in_use = $state['tsml_types_in_use'];
+    $tsml_programs = $state['tsml_programs'];
+    $tsml_program = $state['tsml_program'];
+    $tsml_user_interface = $state['tsml_user_interface'];
     $types = [];
     foreach ($tsml_types_in_use as $type) {
         if ($tsml_user_interface === 'tsml_ui') {
@@ -109,9 +118,36 @@ add_shortcode('tsml_types_list', function () {
 // output a react meeting finder widget https://github.com/code4recovery/tsml-ui
 function tsml_ui($arguments = [])
 {
-    global $tsml_nonce, $tsml_conference_providers, $tsml_language, $tsml_programs, $tsml_program, $tsml_ui_config,
-    $tsml_feedback_addresses, $tsml_cache, $tsml_cache_writable, $tsml_distance_units, $tsml_columns, $tsml_timezone,
-    $tsml_slug, $tsml_map;
+    $state = tsml_state_get_many([
+        'tsml_nonce',
+        'tsml_conference_providers',
+        'tsml_language',
+        'tsml_programs',
+        'tsml_program',
+        'tsml_ui_config',
+        'tsml_feedback_addresses',
+        'tsml_cache',
+        'tsml_cache_writable',
+        'tsml_distance_units',
+        'tsml_columns',
+        'tsml_timezone',
+        'tsml_slug' => null,
+        'tsml_map',
+    ]);
+    $tsml_nonce = $state['tsml_nonce'];
+    $tsml_conference_providers = $state['tsml_conference_providers'];
+    $tsml_language = $state['tsml_language'];
+    $tsml_programs = $state['tsml_programs'];
+    $tsml_program = $state['tsml_program'];
+    $tsml_ui_config = $state['tsml_ui_config'];
+    $tsml_feedback_addresses = $state['tsml_feedback_addresses'];
+    $tsml_cache = $state['tsml_cache'];
+    $tsml_cache_writable = $state['tsml_cache_writable'];
+    $tsml_distance_units = $state['tsml_distance_units'];
+    $tsml_columns = $state['tsml_columns'];
+    $tsml_timezone = $state['tsml_timezone'];
+    $tsml_slug = $state['tsml_slug'];
+    $tsml_map = $state['tsml_map'];
 
     $defaults = shortcode_atts([
         'distance' => '',
@@ -220,7 +256,7 @@ add_shortcode('tsml_regions_list', function () {
     // run function recursively
     function get_regions($parent = 0)
     {
-        global $tsml_user_interface;
+        $tsml_user_interface = tsml_state_get('tsml_user_interface');
         $taxonomy = 'tsml_region';
         // phpcs:ignore
         $terms = get_terms(compact('taxonomy', 'parent'));

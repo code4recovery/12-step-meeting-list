@@ -19,7 +19,7 @@ class TSML_Widget_Upcoming extends WP_Widget
     // front-end display of widget
     public function widget($args, $instance)
     {
-        global $tsml_user_interface;
+        $tsml_user_interface = tsml_state_get('tsml_user_interface');
 
         $table = tsml_next_meetings($instance);
         if (empty($table)) {

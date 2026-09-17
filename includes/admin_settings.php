@@ -5,8 +5,30 @@ if (!function_exists('tsml_settings_page')) {
 
     function tsml_settings_page()
     {
-        global $tsml_programs, $tsml_program, $tsml_nonce, $tsml_feedback_addresses, $tsml_notification_addresses,
-        $tsml_distance_units, $tsml_sharing, $tsml_sharing_keys, $tsml_contact_display, $tsml_user_interface, $tsml_timezone;
+        $state = tsml_state_get_many([
+            'tsml_programs',
+            'tsml_program',
+            'tsml_nonce',
+            'tsml_feedback_addresses',
+            'tsml_notification_addresses',
+            'tsml_distance_units',
+            'tsml_sharing',
+            'tsml_sharing_keys',
+            'tsml_contact_display',
+            'tsml_user_interface',
+            'tsml_timezone',
+        ]);
+        $tsml_programs = $state['tsml_programs'];
+        $tsml_program = $state['tsml_program'];
+        $tsml_nonce = $state['tsml_nonce'];
+        $tsml_feedback_addresses = $state['tsml_feedback_addresses'];
+        $tsml_notification_addresses = $state['tsml_notification_addresses'];
+        $tsml_distance_units = $state['tsml_distance_units'];
+        $tsml_sharing = $state['tsml_sharing'];
+        $tsml_sharing_keys = $state['tsml_sharing_keys'];
+        $tsml_contact_display = $state['tsml_contact_display'];
+        $tsml_user_interface = $state['tsml_user_interface'];
+        $tsml_timezone = $state['tsml_timezone'];
 
         // todo consider whether this check is necessary, since it is run from add_submenu_page() which is already checking for the same permission
         // potentially tsml_settings_page() could be a closure within the call to add_submenu_page which would prevent it from being reused elsewhere
@@ -18,6 +40,7 @@ if (!function_exists('tsml_settings_page')) {
         // change program
         if (!empty($_POST['tsml_program']) && $valid_nonce) {
             $tsml_program = sanitize_text_field($_POST['tsml_program']);
+            tsml_state_set('tsml_program', $tsml_program, TSML_State::CATEGORY_SETTING);
             update_option('tsml_program', $tsml_program);
             tsml_alert(__('Program setting updated.', '12-step-meeting-list'));
         }
@@ -25,6 +48,7 @@ if (!function_exists('tsml_settings_page')) {
         // change distance units
         if (!empty($_POST['tsml_distance_units']) && $valid_nonce) {
             $tsml_distance_units = ($_POST['tsml_distance_units'] == 'mi') ? 'mi' : 'km';
+            tsml_state_set('tsml_distance_units', $tsml_distance_units, TSML_State::CATEGORY_SETTING);
             update_option('tsml_distance_units', $tsml_distance_units);
             tsml_alert(__('Distance units updated.', '12-step-meeting-list'));
         }
@@ -32,6 +56,7 @@ if (!function_exists('tsml_settings_page')) {
         // change contact display
         if (!empty($_POST['tsml_contact_display']) && $valid_nonce) {
             $tsml_contact_display = ($_POST['tsml_contact_display'] == 'public') ? 'public' : 'private';
+            tsml_state_set('tsml_contact_display', $tsml_contact_display, TSML_State::CATEGORY_SETTING);
             update_option('tsml_contact_display', $tsml_contact_display);
             tsml_cache_rebuild(); // this value affects what's in the cache
             tsml_alert(__('Contact privacy updated.', '12-step-meeting-list'));
@@ -40,6 +65,7 @@ if (!function_exists('tsml_settings_page')) {
         // change sharing setting
         if (!empty($_POST['tsml_sharing']) && $valid_nonce) {
             $tsml_sharing = ($_POST['tsml_sharing'] == 'open') ? 'open' : 'restricted';
+            tsml_state_set('tsml_sharing', $tsml_sharing, TSML_State::CATEGORY_SETTING);
             update_option('tsml_sharing', $tsml_sharing);
             tsml_alert(__('Sharing setting updated.', '12-step-meeting-list'));
         }
@@ -50,6 +76,7 @@ if (!function_exists('tsml_settings_page')) {
             $key = md5(uniqid($name, true));
             $tsml_sharing_keys[$key] = $name;
             asort($tsml_sharing_keys);
+            tsml_state_set('tsml_sharing_keys', $tsml_sharing_keys, TSML_State::CATEGORY_SETTING);
             update_option('tsml_sharing_keys', $tsml_sharing_keys);
             tsml_alert(__('Sharing key added.', '12-step-meeting-list'));
 
@@ -74,6 +101,7 @@ if (!function_exists('tsml_settings_page')) {
                 } else {
                     update_option('tsml_sharing_keys', $tsml_sharing_keys);
                 }
+                tsml_state_set('tsml_sharing_keys', $tsml_sharing_keys, TSML_State::CATEGORY_SETTING);
                 tsml_alert(__('Sharing key removed.', '12-step-meeting-list'));
             } else {
                 // theoretically should never get here, because user is choosing from a list
@@ -99,6 +127,7 @@ if (!function_exists('tsml_settings_page')) {
                 $tsml_feedback_addresses[] = $email;
                 $tsml_feedback_addresses = array_unique($tsml_feedback_addresses);
                 sort($tsml_feedback_addresses);
+                tsml_state_set('tsml_feedback_addresses', $tsml_feedback_addresses, TSML_State::CATEGORY_SETTING);
                 update_option('tsml_feedback_addresses', $tsml_feedback_addresses);
                 tsml_alert(__('Feedback address added.', '12-step-meeting-list'));
                 tsml_cache_rebuild(); // these values affect what's in the cache
@@ -115,6 +144,7 @@ if (!function_exists('tsml_settings_page')) {
                 } else {
                     update_option('tsml_feedback_addresses', $tsml_feedback_addresses);
                 }
+                tsml_state_set('tsml_feedback_addresses', $tsml_feedback_addresses, TSML_State::CATEGORY_SETTING);
                 tsml_alert(__('Feedback address removed.', '12-step-meeting-list'));
                 tsml_cache_rebuild(); // these values affect what's in the cache
             } else {
@@ -141,6 +171,7 @@ if (!function_exists('tsml_settings_page')) {
                 $tsml_notification_addresses[] = $email;
                 $tsml_notification_addresses = array_unique($tsml_notification_addresses);
                 sort($tsml_notification_addresses);
+                tsml_state_set('tsml_notification_addresses', $tsml_notification_addresses, TSML_State::CATEGORY_SETTING);
                 update_option('tsml_notification_addresses', $tsml_notification_addresses);
                 tsml_alert(__('Notification address added.', '12-step-meeting-list'));
             }
@@ -156,6 +187,7 @@ if (!function_exists('tsml_settings_page')) {
                 } else {
                     update_option('tsml_notification_addresses', $tsml_notification_addresses);
                 }
+                tsml_state_set('tsml_notification_addresses', $tsml_notification_addresses, TSML_State::CATEGORY_SETTING);
                 tsml_alert(__('Notification address removed.', '12-step-meeting-list'));
             } else {
                 // theoretically should never get here, because user is choosing from a list
@@ -170,6 +202,7 @@ if (!function_exists('tsml_settings_page')) {
         // change user interface
         if (!empty($_POST['tsml_user_interface']) && $valid_nonce) {
             $tsml_user_interface = sanitize_text_field($_POST['tsml_user_interface']);
+            tsml_state_set('tsml_user_interface', $tsml_user_interface, TSML_State::CATEGORY_SETTING);
             update_option('tsml_user_interface', $tsml_user_interface);
 
             if ($tsml_user_interface == 'tsml_ui') {
@@ -189,6 +222,7 @@ if (!function_exists('tsml_settings_page')) {
         if (isset($_POST['timezone']) && $valid_nonce) {
             if (empty($_POST['timezone']) || tsml_timezone_is_valid($_POST['timezone'])) {
                 $tsml_timezone = sanitize_text_field($_POST['timezone']);
+                tsml_state_set('tsml_timezone', $tsml_timezone, TSML_State::CATEGORY_SETTING);
                 update_option('tsml_timezone', $tsml_timezone);
                 tsml_alert(__('Timezone updated.', '12-step-meeting-list'));
             } else {
@@ -200,7 +234,7 @@ if (!function_exists('tsml_settings_page')) {
         if (isset($_POST['tsml_entity']) && $valid_nonce) {
             $current_tsml_entity = tsml_get_option_array('tsml_entity');
             $tsml_entity = [];
-            global $tsml_entity_fields;
+            $tsml_entity_fields = tsml_state_get('tsml_entity_fields');
             foreach ($tsml_entity_fields as $field) {
                 $tsml_entity[$field] = isset($current_tsml_entity[$field]) ? $current_tsml_entity[$field] : '';
                 if (isset($_POST["tsml_$field"])) {

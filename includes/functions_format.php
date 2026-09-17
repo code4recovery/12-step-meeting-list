@@ -37,7 +37,7 @@ function tsml_format_address($formatted_address, $street_only = false)
  */
 function tsml_format_day_and_time($day, $time, $separator = ', ', $short = false)
 {
-    global $tsml_days;
+    $tsml_days = tsml_state_get('tsml_days');
     // translators: Appt is abbreviation for Appointment
     if (empty($tsml_days[$day]) || empty($time)) {
         return $short ? __('Appt', '12-step-meeting-list') : __('Appointment', '12-step-meeting-list');
@@ -55,7 +55,8 @@ function tsml_format_day_and_time($day, $time, $separator = ', ', $short = false
  */
 function tsml_format_name($name, $types = null)
 {
-    global $tsml_program, $tsml_programs;
+    $tsml_program = tsml_state_get('tsml_program');
+    $tsml_programs = tsml_state_get('tsml_programs');
     if (!is_array($types)) {
         $types = [];
     }
@@ -97,7 +98,8 @@ function tsml_format_notes($notes)
  */
 function tsml_format_types($types = [])
 {
-    global $tsml_program, $tsml_programs;
+    $tsml_program = tsml_state_get('tsml_program');
+    $tsml_programs = tsml_state_get('tsml_programs');
     if (!is_array($types)) {
         $types = [];
     }

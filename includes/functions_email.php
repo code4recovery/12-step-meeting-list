@@ -11,7 +11,14 @@
 function tsml_email_meeting_change($email_to, $meeting, $old_meeting)
 {
 
-    global $tsml_export_columns, $tsml_array_fields, $tsml_days;
+    $state = tsml_state_get_many([
+        'tsml_export_columns',
+        'tsml_array_fields',
+        'tsml_days',
+    ]);
+    $tsml_export_columns = $state['tsml_export_columns'];
+    $tsml_array_fields = $state['tsml_array_fields'];
+    $tsml_days = $state['tsml_days'];
 
     $user = wp_get_current_user();
 

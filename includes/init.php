@@ -11,7 +11,7 @@ add_action('init', function () {
 
     // meeting list page
     add_filter('archive_template', function ($template) {
-        global $tsml_user_interface;
+        $tsml_user_interface = tsml_state_get('tsml_user_interface');
 
         if (is_post_type_archive('tsml_meeting')) {
             if ($tsml_user_interface == 'tsml_ui') {
@@ -38,7 +38,8 @@ add_action('init', function () {
 
     // meeting & location detail pages
     add_filter('single_template', function ($template) {
-        global $post, $tsml_user_interface;
+        global $post;
+        $tsml_user_interface = tsml_state_get('tsml_user_interface');
 
         if ($post->post_type === 'tsml_meeting') {
 
@@ -133,7 +134,7 @@ if (is_admin()) {
 } else {
     // add plugin version number to header on public site
     add_action('wp_head', function () {
-        global $tsml_sharing;
+        $tsml_sharing = tsml_state_get('tsml_sharing');
         echo '<meta name="12_step_meeting_list" content="' . esc_attr(TSML_VERSION) . '">' . PHP_EOL;
         if ($tsml_sharing == 'open') {
             echo '<link rel="alternate" type="application/json" title="Meetings Feed" href="' . esc_attr(admin_url('admin-ajax.php?action=meetings')) . '">' . PHP_EOL;

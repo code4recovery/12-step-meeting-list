@@ -1,0 +1,25 @@
+name: "test"
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  php:
+    runs-on: ubuntu-24.04
+
+    steps:
+      - name: Check out code 🛒
+        uses: actions/checkout@v7
+
+      - name: Setup PHP 🐫
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: "8.3"
+
+      - name: Lint PHP 🧹
+        run: |
+          find . -path ./node_modules -prune -o -name '*.php' -print0 | xargs -0 -n1 -P4 php -l
+
+      - name: Test TSML state scope 🧪
+        run: php tests/state-loader-scope.php

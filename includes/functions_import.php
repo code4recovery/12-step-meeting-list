@@ -105,7 +105,7 @@ function tsml_import_response_error($response)
  */
 function tsml_import_data_source($data_source_url, $data_source_name = '', $data_source_parent_region_id = 0, $data_source_change_detect = 'disabled')
 {
-    global $tsml_debug;
+    $tsml_debug = tsml_state_get('tsml_debug');
 
     $tsml_data_sources = tsml_get_option_array('tsml_data_sources');
 
@@ -289,7 +289,20 @@ function tsml_import_data_source($data_source_url, $data_source_name = '', $data
  */
 function tsml_import_buffer_next($limit = 25)
 {
-    global $tsml_custom_meeting_fields, $tsml_source_fields_map, $tsml_contact_fields, $tsml_import_fields, $tsml_entity_fields, $tsml_array_fields;
+    $state = tsml_state_get_many([
+        'tsml_custom_meeting_fields' => [],
+        'tsml_source_fields_map',
+        'tsml_contact_fields',
+        'tsml_import_fields',
+        'tsml_entity_fields',
+        'tsml_array_fields',
+    ]);
+    $tsml_custom_meeting_fields = $state['tsml_custom_meeting_fields'];
+    $tsml_source_fields_map = $state['tsml_source_fields_map'];
+    $tsml_contact_fields = $state['tsml_contact_fields'];
+    $tsml_import_fields = $state['tsml_import_fields'];
+    $tsml_entity_fields = $state['tsml_entity_fields'];
+    $tsml_array_fields = $state['tsml_array_fields'];
 
     $meetings = tsml_get_option_array('tsml_import_buffer');
     $tsml_data_sources = tsml_get_option_array('tsml_data_sources');
@@ -659,7 +672,7 @@ function tsml_import_buffer_set($meetings, $data_source_url = null, $data_source
  */
 function tsml_import_build_change_report($change_log, $return_array = false)
 {
-    global $tsml_days;
+    $tsml_days = tsml_state_get('tsml_days');
     $rows = [];
     $message = '<table style="width:100%;margin-bottom:10px;text-align:left;border:1px solid #dddddd;padding:8px;border-spacing:5px">';
 
@@ -856,7 +869,22 @@ function tsml_import_reformat_googlesheet($data)
 function tsml_import_sanitize_meetings($meetings, $data_source_url = null, $data_source_parent_region_id = null)
 {
 
-    global $tsml_programs, $tsml_program, $tsml_days, $tsml_meeting_attendance_options, $tsml_contact_fields, $tsml_entity_fields, $tsml_array_fields;
+    $state = tsml_state_get_many([
+        'tsml_programs',
+        'tsml_program',
+        'tsml_days',
+        'tsml_meeting_attendance_options',
+        'tsml_contact_fields',
+        'tsml_entity_fields',
+        'tsml_array_fields',
+    ]);
+    $tsml_programs = $state['tsml_programs'];
+    $tsml_program = $state['tsml_program'];
+    $tsml_days = $state['tsml_days'];
+    $tsml_meeting_attendance_options = $state['tsml_meeting_attendance_options'];
+    $tsml_contact_fields = $state['tsml_contact_fields'];
+    $tsml_entity_fields = $state['tsml_entity_fields'];
+    $tsml_array_fields = $state['tsml_array_fields'];
 
     //track group fields and unique_group_values
     $group_fields = array_keys($tsml_contact_fields);
@@ -1284,7 +1312,7 @@ function tsml_import_sanitize_meetings($meetings, $data_source_url = null, $data
  */
 function tsml_import_cron_check($onoff = null)
 {
-    global $tsml_auto_import;
+    $tsml_auto_import = tsml_state_get('tsml_auto_import');
 
     $timestamp = wp_next_scheduled('tsml_auto_import');
 

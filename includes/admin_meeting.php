@@ -39,7 +39,18 @@ add_action('admin_init', function () {
     };
 
     add_meta_box('info', __('Meeting Information', '12-step-meeting-list'), function () {
-        global $tsml_days, $tsml_programs, $tsml_program, $tsml_nonce, $tsml_types_in_use;
+        $state = tsml_state_get_many([
+            'tsml_days',
+            'tsml_programs',
+            'tsml_program',
+            'tsml_nonce',
+            'tsml_types_in_use',
+        ]);
+        $tsml_days = $state['tsml_days'];
+        $tsml_programs = $state['tsml_programs'];
+        $tsml_program = $state['tsml_program'];
+        $tsml_nonce = $state['tsml_nonce'];
+        $tsml_types_in_use = $state['tsml_types_in_use'];
 
         $meeting = tsml_get_meeting();
 
@@ -214,7 +225,9 @@ add_action('admin_init', function () {
         'location',
         __('Location Information', '12-step-meeting-list'),
         function () {
-            global $tsml_timezone, $tsml_user_interface, $post;
+            global $post;
+            $tsml_timezone = tsml_state_get('tsml_timezone');
+            $tsml_user_interface = tsml_state_get('tsml_user_interface');
             $meeting = tsml_get_meeting();
             $location = $meetings = [];
             if ($meeting->post_parent) {
@@ -374,7 +387,7 @@ add_action('admin_init', function () {
     );
 
     add_meta_box('group', __('Contact Information <small>Optional</small>', '12-step-meeting-list'), function () {
-        global $tsml_contact_display;
+        $tsml_contact_display = tsml_state_get('tsml_contact_display');
         $meeting = tsml_get_meeting();
         $meetings = [];
         $district = 0;

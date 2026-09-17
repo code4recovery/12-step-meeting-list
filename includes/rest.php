@@ -18,7 +18,8 @@ add_action('rest_api_init', function () {
 
 function tsml_rest_feed_endpoint($wp_rest_request)
 {
-    global $tsml_sharing, $tsml_sharing_keys;
+    $tsml_sharing = tsml_state_get('tsml_sharing');
+    $tsml_sharing_keys = tsml_state_get('tsml_sharing_keys');
     $key = $wp_rest_request->get_param('key');
     if ($tsml_sharing === 'open' || (is_string($key) && array_key_exists($key, (array) $tsml_sharing_keys))) {
         $meetings = tsml_get_meetings();

@@ -3,7 +3,7 @@
 // import log admin page
 function tsml_log_page()
 {
-    global $tsml_nonce;
+    $tsml_nonce = tsml_state_get('tsml_nonce');
 
     // tsml_log types, with translated labels for admin page
     define('TSML_LOG_TYPES', [
