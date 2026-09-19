@@ -61,7 +61,7 @@ vendor:
 composer: vendor  ## Install/refresh PHP (Composer) dependencies
 
 .PHONY: lint
-lint: | vendor  ## PHP lint (PHPCS, scoped to tests/)
+lint: | vendor  ## PHP lint (PHPCS)
 	vendor/bin/phpcs
 
 .PHONY: fmt

@@ -185,7 +185,7 @@ Runs the suite with the PCOV driver, prints a coverage summary, and writes a bro
 
 ### Linting
 
-PHP code style is checked with [PHP_CodeSniffer](https://github.com/PHPCSStandards/PHP_CodeSniffer) (PSR-12). Lint is currently scoped to the `tests/` directory; widen the `<file>` list in `.phpcs.xml` to bring more of the codebase under the standard over time.
+PHP code style is checked with [PHP_CodeSniffer](https://github.com/PHPCSStandards/PHP_CodeSniffer) (PSR-12). Lint covers the whole plugin except compiled output in `assets/build/`; see `.phpcs.xml` for the ruleset and exclusions.
 
 ```bash
 make lint   # report style violations

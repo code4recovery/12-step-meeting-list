@@ -2,12 +2,7 @@
 <ruleset name='12 Step Meeting List'>
     <description>Coding standards for 12 Step Meeting List.</description>
 
-    <!--
-    Lint is currently scoped to the tests/ directory only. The legacy plugin
-    code in includes/ predates this ruleset; widen the <file> list below to
-    bring more of the codebase under PSR-12 over time.
-    -->
-    <file>tests</file>
+    <file>.</file>
 
     <arg name='encoding' value='utf-8'/>
     <arg name='extensions' value='php'/>
@@ -20,6 +15,8 @@
 
     <exclude-pattern>vendor/*</exclude-pattern>
     <exclude-pattern>node_modules/*</exclude-pattern>
+    <!-- Compiled output; format the sources in assets/src instead. -->
+    <exclude-pattern>assets/build/*</exclude-pattern>
 
     <rule ref="PSR12">
         <!-- WordPress test classes conventionally use Snake_Case names. -->
@@ -28,5 +25,7 @@
         <exclude name="PSR1.Methods.CamelCapsMethodName"/>
         <!-- WordPress test cases are global classes, not namespaced. -->
         <exclude name="PSR1.Classes.ClassDeclaration.MissingNamespace"/>
+        <!-- includes/widgets.php declares all of the plugin's widgets together. -->
+        <exclude name="PSR1.Classes.ClassDeclaration.MultipleClasses"/>
     </rule>
 </ruleset>
