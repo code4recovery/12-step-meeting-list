@@ -1,4 +1,5 @@
 <?php
+
 // Load autoloader
 require_once 'blocks/class-tsml-blocks.php';
 

@@ -41,7 +41,6 @@ add_action('init', function () {
         global $post, $tsml_user_interface;
 
         if ($post->post_type === 'tsml_meeting') {
-
             // when TSML UI is enabled, redirect legacy meeting detail page to TSML UI detail page
             if ($tsml_user_interface === 'tsml_ui') {
                 return dirname(__FILE__) . '/../templates/archive-tsml-ui.php';
@@ -56,7 +55,6 @@ add_action('init', function () {
             // show legacy meeting detail page
             return dirname(__FILE__) . '/../templates/single-meetings.php';
         } elseif ($post->post_type == 'tsml_location') {
-
             // when TSML UI is enabled, redirect legacy location page to main meetings page
             if ($tsml_user_interface == 'tsml_ui') {
                 $url = tsml_meetings_url();
@@ -83,7 +81,6 @@ add_action('init', function () {
         $classes[] = sanitize_title($theme->Template);
         return $classes;
     });
-
 });
 
 if (is_admin()) {

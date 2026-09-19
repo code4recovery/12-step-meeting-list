@@ -3,7 +3,7 @@
 /**
  * render an input field
  * used by the other functions in this file
- * 
+ *
  * @param mixed $attributes
  * @return void
  */
@@ -20,7 +20,7 @@ function tsml_input($attributes = [])
 
 /**
  * render a date input field
- * 
+ *
  * @param mixed $name
  * @param mixed $value
  * @param mixed $attributes
@@ -33,7 +33,7 @@ function tsml_input_date($name, $value = '', $attributes = [])
 
 /**
  * render an email input field
- * 
+ *
  * @param mixed $name
  * @param mixed $value
  * @param mixed $attributes
@@ -46,7 +46,7 @@ function tsml_input_email($name, $value = '', $attributes = [])
 
 /**
  * render a hidden input field
- * 
+ *
  * @param mixed $name
  * @param mixed $value
  * @param mixed $attributes
@@ -59,7 +59,7 @@ function tsml_input_hidden($name, $value = '', $attributes = [])
 
 /**
  * render a submit button
- * 
+ *
  * @param mixed $value
  * @param mixed $attributes
  * @return void
@@ -83,7 +83,7 @@ function tsml_input_text($name, $value = '', $attributes = [])
 
 /**
  * render a url field
- * 
+ *
  * @param mixed $name
  * @param mixed $value
  * @param mixed $attributes

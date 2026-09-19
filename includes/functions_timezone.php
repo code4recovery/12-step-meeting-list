@@ -88,7 +88,7 @@ function tsml_timezone_parse($value = null)
 
     $timezone = null;
     $all_timezones = DateTimeZone::listIdentifiers();
-   
+
     // first look for exact match
     if (in_array($value, $all_timezones)) {
         $timezone = $value;
@@ -98,7 +98,7 @@ function tsml_timezone_parse($value = null)
     if (!$timezone) {
         $value_match = strtolower(trim(strval($value)));
         $value_underscore = str_replace(' ', '_', $value_match);
-        $matches = array_values(array_filter($all_timezones, function($tz) use ($value_underscore) {
+        $matches = array_values(array_filter($all_timezones, function ($tz) use ($value_underscore) {
             return false !== stripos($tz, $value_underscore);
         }));
         if (1 === count($matches)) {
@@ -109,7 +109,7 @@ function tsml_timezone_parse($value = null)
     // if we still don't have a match, check TZ aliases
     if (!$timezone) {
         foreach ($tsml_timezone_aliases as $tz_value => $tz_aliases) {
-            $match = array_filter($tz_aliases, function($alias) use ($value_match) {
+            $match = array_filter($tz_aliases, function ($alias) use ($value_match) {
                 return $value_match === strtolower($alias);
             });
             if (count($match)) {

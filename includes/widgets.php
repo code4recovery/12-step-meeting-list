@@ -3,7 +3,6 @@
 // upcoming meetings widget
 class TSML_Widget_Upcoming extends WP_Widget
 {
-
     // constructor
     public function __construct()
     {
@@ -196,7 +195,6 @@ class TSML_Widget_Upcoming extends WP_Widget
 // app store links widget
 class TSML_Widget_App_Store extends WP_Widget
 {
-
     // constructor
     public function __construct()
     {

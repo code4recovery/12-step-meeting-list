@@ -75,4 +75,3 @@ add_action(
         wp_add_dashboard_widget('tsml_help_widget', '12 Step Meeting List Plugin', 'tsml_about_message', null, null, 'normal', 'high');
     }
 );
-

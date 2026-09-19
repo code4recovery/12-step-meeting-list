@@ -1,4 +1,5 @@
 <?php
+
 // enables widgets on the meeting archive page
 add_action('widgets_init', function () {
 

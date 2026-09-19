@@ -194,7 +194,6 @@ add_action('post_updated', function ($post_id, $post, $post_before) {
     if (empty($_POST['formatted_address'])) {
         $location_id = null;
     } else {
-
         // save location information (set this value or get caught in a loop)
         $_POST['post_type'] = 'tsml_location';
 
@@ -299,7 +298,6 @@ add_action('post_updated', function ($post_id, $post, $post_before) {
         // individual meeting
         $contact_entity_id = $post->ID;
         delete_post_meta($post->ID, 'group_id');
-
     } else {
         // group
         if ($groups = $wpdb->get_results($wpdb->prepare('SELECT ID, post_title, post_content FROM ' . $wpdb->posts . ' WHERE post_type = "tsml_group" AND post_title = "%s" ORDER BY id', stripslashes($_POST['group'])))) {

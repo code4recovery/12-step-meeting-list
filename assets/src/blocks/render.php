@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Renders the meetings block
  */
@@ -15,7 +16,7 @@ if (isset($attributes['fontSize']) && $attributes['fontSize'] !== null) {
             break;
         }
     }
-    
+
     if (in_array($fontSize, $fontSizes)) {
         // set to the size to var(--wp--preset--font-size--x-large)
         $size = "var(--wp--preset--font-size--$fontSize)";
@@ -33,9 +34,9 @@ $styles = [
     '--online' => $attributes['onlineBadgeColor'] ?? null,
     '--text' => $attributes['textColor'] ?? null,
     '--focus' => $attributes['focusColor'] ?? null,
-    '--border-radius' => isset($attributes['borderRadius']) ? $attributes['borderRadius'].'px' : null,
-    '--font-family' => isset($attributes['fontFamily']) ? 'var(--wp--preset--font-family--'.$attributes['fontFamily'].')' : null,
-    '--online-background-image' => isset($attributes['onlineBackgroundImage']) ? 'url('.$attributes['onlineBackgroundImage'].')' : null,
+    '--border-radius' => isset($attributes['borderRadius']) ? $attributes['borderRadius'] . 'px' : null,
+    '--font-family' => isset($attributes['fontFamily']) ? 'var(--wp--preset--font-family--' . $attributes['fontFamily'] . ')' : null,
+    '--online-background-image' => isset($attributes['onlineBackgroundImage']) ? 'url(' . $attributes['onlineBackgroundImage'] . ')' : null,
     "--font-size" => $size ?? null,
 ];
 
@@ -44,8 +45,8 @@ tsml_assets();
 
 /** Loop through styles & output inline <style> */
 $styleStr = "";
-foreach($styles as $key => $value) {
-    if($value) {
+foreach ($styles as $key => $value) {
+    if ($value) {
         $styleStr .= "$key: $value;";
     }
 }

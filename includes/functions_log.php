@@ -3,7 +3,7 @@
 /**
  * add an entry to the activity log
  * used in tsml_ajax_info, tsml_geocode and anywhere else something could go wrong
- * 
+ *
  * @param mixed $type something short you can filter by, eg 'geocode_error'
  * @param mixed $info the bad result you got back
  * @param mixed $input any input that might have contributed to the result

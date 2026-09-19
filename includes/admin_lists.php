@@ -49,7 +49,6 @@ add_action('restrict_manage_posts', function ($post_type) {
         echo '<option value="' . esc_attr($key) . '"' . selected(isset($_GET['data_source']) && $_GET['data_source'] == $key) . '>' . esc_html($value) . '</option>';
     }
     echo '</select>';
-
 }, 10, 1);
 
 // if filter is set, restrict results
@@ -59,7 +58,6 @@ add_filter(
         global $post_type, $pagenow, $wpdb;
 
         if ($pagenow === 'edit.php' && $post_type === 'tsml_meeting' && $query->is_main_query()) {
-
             $meta_query = [];
 
             $tsml_data_sources = tsml_get_option_array('tsml_data_sources');

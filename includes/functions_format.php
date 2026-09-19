@@ -3,7 +3,7 @@
 /**
  * take a full address and return it formatted for the front-end
  * used on template pages
- * 
+ *
  * @param mixed $formatted_address
  * @param mixed $street_only
  * @return string
@@ -28,7 +28,7 @@ function tsml_format_address($formatted_address, $street_only = false)
 /**
  * takes 0, 18:30 and returns Sunday, 6:30 pm (depending on your settings)
  * used on admin_edit.php, archive-meetings.php, single-meetings.php
- * 
+ *
  * @param mixed $day
  * @param mixed $time
  * @param mixed $separator
@@ -48,7 +48,7 @@ function tsml_format_day_and_time($day, $time, $separator = ', ', $short = false
 /**
  * appends men or women (or custom flags) if type present
  * used on archive-meetings.php
- * 
+ *
  * @param mixed $name
  * @param mixed $types
  * @return mixed
@@ -79,7 +79,7 @@ function tsml_format_name($name, $types = null)
 
 /**
  * format notes with sanitized paragraphs and line breaks
- * 
+ *
  * @param mixed $notes
  * @return void
  */
@@ -91,7 +91,7 @@ function tsml_format_notes($notes)
 /**
  * get meeting types
  * used on archive-meetings.php
- * 
+ *
  * @param mixed $types
  * @return string
  */
@@ -118,7 +118,7 @@ function tsml_format_types($types = [])
 /**
  * takes 18:30 and returns 6:30 pm (depending on your settings)
  * used on tsml_get_meetings(), single-meetings.php, admin_lists.php
- * 
+ *
  * @param mixed $string
  * @return string
  */
@@ -140,7 +140,7 @@ function tsml_format_time($string)
 /**
  * takes a time string, eg 6:30 pm, and returns 18:30
  * used on tsml_import(), tsml_time_duration()
- * 
+ *
  * @param mixed $string
  * @return string
  */
@@ -153,7 +153,7 @@ function tsml_format_time_reverse($string)
 /**
  * takes a website URL, eg https://www.groupname.org and returns the domain
  * used on single-meetings.php
- * 
+ *
  * @param mixed $url
  * @return mixed
  */

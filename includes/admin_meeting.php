@@ -31,8 +31,6 @@ add_action('admin_init', function () {
     // compares versions and updates databases as needed for upgrades
     $tsml_version = get_option('tsml_version');
     if (version_compare($tsml_version, TSML_VERSION, '<')) {
-
-
         // do this every time
         update_option('tsml_version', TSML_VERSION);
         flush_rewrite_rules();
@@ -102,12 +100,12 @@ add_action('admin_init', function () {
                     <?php esc_html_e('Types', '12-step-meeting-list') ?>
                 </label>
                 <div
-                    class="checkboxes<?php if (!empty($tsml_types_in_use) && count($tsml_types_in_use) !== count($tsml_programs[$tsml_program]['types'])) { ?> has_more<?php } ?>">
+                    class="checkboxes<?php echo !empty($tsml_types_in_use) && count($tsml_types_in_use) !== count($tsml_programs[$tsml_program]['types']) ? ' has_more' : '' ?>">
                     <?php
                     foreach ($types as $key => $type) { ?>
                         <label <?php if (!empty($tsml_types_in_use) && !in_array($key, $tsml_types_in_use)) {
                             echo ' class="not_in_use"';
-                        } ?>>
+                               } ?>>
                             <input type="checkbox" name="types[]" value="<?php echo esc_attr($key) ?>" <?php checked(in_array($key, @$meeting->types)) ?>>
                             <?php echo esc_html($type) ?>
                         </label>
@@ -132,11 +130,11 @@ add_action('admin_init', function () {
                 <?php esc_html_e('Languages', '12-step-meeting-list') ?>
             </label>
             <div
-                class="checkboxes<?php if (!empty($tsml_types_in_use) && count($tsml_types_in_use) !== count($tsml_programs[$tsml_program]['types'])) { ?> has_more<?php } ?>">
+                class="checkboxes<?php echo !empty($tsml_types_in_use) && count($tsml_types_in_use) !== count($tsml_programs[$tsml_program]['types']) ? ' has_more' : '' ?>">
                 <?php foreach ($languages as $key => $type) { ?>
                     <label <?php if (!empty($tsml_types_in_use) && !in_array($key, $tsml_types_in_use) && $key !== $user_language) {
                         echo ' class="not_in_use"';
-                    } ?>>
+                           } ?>>
                         <input type="checkbox" name="types[]" value="<?php echo esc_attr($key) ?>" <?php checked(in_array($key, @$meeting->types)) ?>>
                         <?php echo esc_html($type) ?>
                     </label>
@@ -278,7 +276,7 @@ add_action('admin_init', function () {
                 tsml_input_hidden('approximate', @$location->approximate);
                 tsml_input_hidden('latitude', @$location->latitude);
                 tsml_input_hidden('longitude', @$location->longitude);
-                ?>
+            ?>
             <small class="error_message" data-message="1">
                 <?php esc_html_e('Error: In person meetings must have a specific address.', '12-step-meeting-list') ?>
             </small>
@@ -295,14 +293,14 @@ add_action('admin_init', function () {
                 <?php esc_html_e('Address: Philadelphia, PA, USA', '12-step-meeting-list') ?>
             </small>
         </div>
-        <?php if (count($meetings) > 1) { ?>
+            <?php if (count($meetings) > 1) { ?>
             <div class="meta_form_row checkbox apply_address_to_location hidden">
                 <label>
                     <input type="checkbox" name="apply_address_to_location">
                     <?php esc_html_e('Apply this updated address to all meetings at this location', '12-step-meeting-list') ?>
                 </label>
             </div>
-        <?php }
+            <?php }
             // phpcs:ignore
             if (wp_count_terms('tsml_region')) { ?>
             <div class="meta_form_row">
@@ -319,7 +317,7 @@ add_action('admin_init', function () {
                         'show_option_none' => __('Region', '12-step-meeting-list'),
                     ]) ?>
             </div>
-        <?php } ?>
+            <?php } ?>
 
         <div class="meta_form_row">
             <label>
@@ -334,31 +332,31 @@ add_action('admin_init', function () {
             </label>
             <?php
                 $timezone = null;
-                if ($location && $location->timezone) {
-                    $timezone = $location->timezone;
-                } elseif ($post && 'auto-draft' === $post->post_status) {
-                    $timezone = $tsml_timezone;
-                }
+            if ($location && $location->timezone) {
+                $timezone = $location->timezone;
+            } elseif ($post && 'auto-draft' === $post->post_status) {
+                $timezone = $tsml_timezone;
+            }
                 tsml_timezone_select($timezone);
-                ?>
+            ?>
         </div>
 
-        <?php if (empty($location->timezone) && empty($tsml_timezone) && $tsml_user_interface === 'tsml_ui') { ?>
+            <?php if (empty($location->timezone) && empty($tsml_timezone) && $tsml_user_interface === 'tsml_ui') { ?>
             <div class="meta_form_separator">
                 <p>
                     <?php esc_html_e('Because your site does not have a default timezone set, a timezone must be selected here for the meeting to appear on the meeting finder page.', '12-step-meeting-list') ?>
                 </p>
             </div>
-        <?php } ?>
+            <?php } ?>
 
-        <?php if (count($meetings) > 1) { ?>
+            <?php if (count($meetings) > 1) { ?>
             <div class="meta_form_row">
                 <label>
                     <?php esc_html_e('Meetings', '12-step-meeting-list') ?>
                 </label>
                 <?php tsml_admin_meeting_list($meetings, $meeting->ID) ?>
             </div>
-        <?php } ?>
+            <?php } ?>
         <div class="meta_form_row">
             <label>
                 <?php esc_html_e('Location Notes', '12-step-meeting-list') ?>
@@ -366,7 +364,7 @@ add_action('admin_init', function () {
             <textarea name="location_notes"
                 placeholder="<?php esc_html_e('eg. Around back, basement, ring buzzer', '12-step-meeting-list') ?>"><?php echo esc_attr(@$location->post_content) ?></textarea>
         </div>
-        <?php
+            <?php
         },
         'tsml_meeting',
         'normal',

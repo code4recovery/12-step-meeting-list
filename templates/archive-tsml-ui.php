@@ -7,7 +7,7 @@ tsml_header();
 
     <a hidden href="<?php echo esc_url(get_post_type_archive_link('tsml_location')) ?>"><?php
        _e(sprintf('Index of %s Meetings', $tsml_programs[$tsml_program]['name']), '12-step-meeting-list')
-           ?></a>
+    ?></a>
 
 
     <?php if (is_active_sidebar('tsml_meetings_top')) { ?>

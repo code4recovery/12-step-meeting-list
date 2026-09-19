@@ -3,7 +3,7 @@
 /**
  * "about this plugin" content
  * used: admin_menu.php and admin_settings.php
- * 
+ *
  * @return void
  */
 function tsml_about_message()
@@ -40,7 +40,7 @@ function tsml_about_message()
 /**
  * render a list of meetings for a location or group
  * used: admin_meeting.php
- * 
+ *
  * @param mixed $meetings
  * @param mixed $meeting_id
  * @return void
@@ -65,7 +65,7 @@ function tsml_admin_meeting_list($meetings, $meeting_id)
 /**
  * add an admin screen update message
  * used: tsml_import() and admin_types.php
- * 
+ *
  * @param mixed $message
  * @param mixed $type can be success, warning, info, or error
  * @return void
@@ -78,7 +78,7 @@ function tsml_alert($message, $type = 'success')
 /**
  * enqueue assets for public or admin page
  * used: in templates and on admin_edit.php
- * 
+ *
  * @return void
  */
 function tsml_assets()
@@ -137,7 +137,7 @@ function tsml_assets()
 
 /**
  * set geo boundaries from current data (for biased geocoding)
- * 
+ *
  * @return void
  */
 function tsml_bounds()
@@ -162,7 +162,6 @@ function tsml_bounds()
 
     // if results, get bounding box and cache it
     if ($latitudes && $longitudes) {
-
         // add 25% margin to the bounds
         $width = ($longitudes->east - $longitudes->west) / 25;
         $height = ($latitudes->north - $latitudes->south) / 25;
@@ -180,7 +179,7 @@ function tsml_bounds()
 
 /**
  * try to build a cache of meetings to help with CPU load
- * 
+ *
  * @return void
  */
 function tsml_cache_rebuild()
@@ -195,7 +194,7 @@ function tsml_cache_rebuild()
 /**
  * calculate attendance option given types and address
  * called in tsml_get_meetings()
- * 
+ *
  * @param mixed $types
  * @param mixed $approximate
  * @return string
@@ -234,12 +233,13 @@ function tsml_calculate_attendance_option($types, $approximate)
 
 /**
  * Render svg icon icon
- * 
+ *
  * @param string $icon cash|directions|email|link|phone
  * @return void
  */
 function tsml_icon($icon)
-{ ?>
+{
+    ?>
     <svg class="icon" viewBox="0 0 16 16" fill="currentColor">
         <?php if ($icon === 'cash') { ?>
             <path d="M14 3H1a1 1 0 0 1 1-1h12a1 1 0 0 1 1 1h-1z" />
@@ -281,7 +281,7 @@ function tsml_icon($icon)
 
 /**
  * Used on frontend pages
- * 
+ *
  * @param mixed $link
  * @param mixed $text
  * @param mixed $icon cash|directions|email|link|phone
@@ -300,7 +300,7 @@ function tsml_icon_button($link, $text, $icon)
 /**
  * handle plugin activation
  * called by register_activation_hook in 12-step-meeting-list.php
- * 
+ *
  * @return void
  */
 function tsml_plugin_activation()
@@ -312,7 +312,7 @@ function tsml_plugin_activation()
 /**
  * clean up custom taxonomies / post types and flush rewrite rules
  * called by register_deactivation_hook in 12-step-meeting-list.php
- * 
+ *
  * @return void
  */
 function tsml_plugin_deactivation()
@@ -341,7 +341,7 @@ function tsml_plugin_deactivation()
 
 /**
  * validate conference provider and return name
- * 
+ *
  * @param mixed $url
  * @return mixed
  */
@@ -364,7 +364,7 @@ function tsml_conference_provider($url)
 /**
  * get an array of conference provider names
  * used: meeting edit screen
- * 
+ *
  * @return array
  */
 function tsml_conference_providers()
@@ -381,7 +381,7 @@ function tsml_conference_providers()
 /**
  * return integer number of live groups
  * used: shortcode, admin-import.php, tsml_ajax_import()
- * 
+ *
  * @return int
  */
 function tsml_count_groups()
@@ -392,7 +392,7 @@ function tsml_count_groups()
 /**
  * return integer number of live locations
  * used: shortcode, admin-import.php, tsml_ajax_import()
- * 
+ *
  * @return int
  */
 function tsml_count_locations()
@@ -403,7 +403,7 @@ function tsml_count_locations()
 /**
  * return integer number of live meetings
  * used: shortcode, admin-import.php, tsml_ajax_import()
- * 
+ *
  * @return int
  */
 function tsml_count_meetings()
@@ -414,7 +414,7 @@ function tsml_count_meetings()
 /**
  * return integer number of live regions
  * used: shortcode, admin-import.php, tsml_ajax_import()
- * 
+ *
  * @return int
  */
 function tsml_count_regions()
@@ -425,7 +425,7 @@ function tsml_count_regions()
 /**
  * add local overrides to google (this may someday be removed)
  * used: in user themes
- * 
+ *
  * @param mixed $custom_overrides
  * @return void
  */
@@ -438,7 +438,7 @@ function tsml_custom_addresses($custom_overrides)
 /**
  * define custom descriptions for your area
  * used: theme's functions.php
- * 
+ *
  * @param mixed $descriptions
  * @return void
  */
@@ -453,7 +453,7 @@ function tsml_custom_descriptions($descriptions)
 /**
  * define custom flags for your area
  * used: theme's functions.php
- * 
+ *
  * @param mixed $flags
  * @return void
  */
@@ -468,7 +468,7 @@ function tsml_custom_flags($flags)
 /**
  * register custom post types
  * used: init.php on every request, also in change_activation_state() for plugin activation or deactivation
- * 
+ *
  * @return void
  */
 function tsml_custom_post_types()
@@ -602,7 +602,7 @@ function tsml_custom_post_types()
 /**
  * define custom meeting types for your area
  * used: theme's functions.php
- * 
+ *
  * @param mixed $types
  * @return void
  */
@@ -624,7 +624,7 @@ function tsml_custom_types($types)
 
 /**
  * function used for debugging
- * 
+ *
  * @param mixed $obj
  * @return never
  */
@@ -639,7 +639,7 @@ function tsml_dd($obj)
 /**
  * efficiently remove an array of post_ids
  * used: tsml_delete_orphans(), admin-import.php
- * 
+ *
  * @param mixed $post_ids
  * @return void
  */
@@ -649,7 +649,6 @@ function tsml_delete($post_ids)
 
     //special case
     if ($post_ids == 'everything') {
-
         $post_ids = get_posts([
             'post_type' => ['tsml_meeting', 'tsml_location', 'tsml_group'],
             'post_status' => 'any',
@@ -685,7 +684,7 @@ function tsml_delete($post_ids)
 /**
  * efficiently deletes all orphaned locations and groups (have no meetings associated)
  * used: save_post filter
- * 
+ *
  * @return void
  */
 function tsml_delete_orphans()
@@ -708,7 +707,7 @@ function tsml_delete_orphans()
 /**
  * send a nice-looking email
  * used by tsml_ajax_feedback() and save.php (change notifications)
- * 
+ *
  * @param mixed $to
  * @param mixed $subject
  * @param mixed $message
@@ -765,7 +764,7 @@ function tsml_email($to, $subject, $message, $reply_to = false)
 /**
  * display meeting list on home page (must be set to a static page)
  * used: by themes that want it, such as https://github.com/code4recovery/one-page-meeting-list
- * 
+ *
  * @param mixed $wp_query
  * @return void
  */
@@ -787,7 +786,7 @@ function tsml_front_page($wp_query)
 /**
  * request accurate address information from google
  * used: tsml_ajax_import(), tsml_ajax_geocode()
- * 
+ *
  * @param mixed $address
  * @return mixed
  */
@@ -832,7 +831,7 @@ function tsml_geocode($address)
 
 /**
  * call Google for geocoding of the address
- * 
+ *
  * @param mixed $address
  * @return mixed
  */
@@ -968,7 +967,7 @@ function tsml_geocode_google($address)
 /**
  * return spelled-out meeting types
  * called from save.php (updates) and archive-meetings.php (display)
- * 
+ *
  * @param mixed $types
  * @return string | void
  */
@@ -1145,7 +1144,7 @@ function tsml_link($url, $string, $exclude = '', $class = false)
 
 /**
  * return string link with current query string appended
- * 
+ *
  * @param string $url
  * @param mixed $exclude
  * @return string
@@ -1166,7 +1165,7 @@ function tsml_link_url($url, $exclude = '')
 /**
  * link to meetings page with parameters
  * used: admin_import.php, admin_settings.php, archive-meetings.php, init.php, widgets.php, tsml_geocode_google()
- * 
+ *
  * @param mixed $parameters
  * @return string
  */
@@ -1186,7 +1185,7 @@ function tsml_meetings_url($parameters = [])
 /**
  * convert line breaks in plain text to HTML paragraphs
  * used: save.php in lieu of nl2br()
- * 
+ *
  * @param mixed $string
  * @return string
  */
@@ -1204,7 +1203,7 @@ function tsml_paragraphs($string)
 /**
  * boolean whether current program has types
  * used: meeting edit screen, meeting save
- * 
+ *
  * @return bool
  */
 function tsml_program_has_types()
@@ -1215,7 +1214,7 @@ function tsml_program_has_types()
 
 /**
  * exit if user does not have permission to edit meetings
- * 
+ *
  * @return void
  */
 function tsml_require_meetings_permission()
@@ -1228,7 +1227,7 @@ function tsml_require_meetings_permission()
 
 /**
  * exit if user does not have permission to edit settings
- * 
+ *
  * @return void
  */
 function tsml_require_settings_permission()
@@ -1242,7 +1241,7 @@ function tsml_require_settings_permission()
 /**
  * set an option with the currently-used types
  * used tsml_import() and save.php
- * 
+ *
  * @return void
  */
 function tsml_update_types_in_use()
@@ -1277,7 +1276,7 @@ function tsml_update_types_in_use()
 /**
  * sanitize a value
  * used: save.php
- * 
+ *
  * @param mixed $type
  * @param mixed $value
  * @return array|string|null
@@ -1310,7 +1309,7 @@ function tsml_sanitize_text_area($value)
 /**
  * does a string end with another string
  * used: save.php
- * 
+ *
  * @param mixed $string
  * @param mixed $end
  * @return bool
@@ -1417,7 +1416,7 @@ function tsml_activate_data_source_scan()
 }
 
 // function:    scans passed data source url looking for recent updates
-// used:		fired by cron job tsml_scan_data_source
+// used:        fired by cron job tsml_scan_data_source
 // todo - think about what the right place for this is
 add_action('tsml_scan_data_source', function ($data_source_url) {
 
@@ -1477,7 +1476,7 @@ add_action('tsml_scan_data_source', function ($data_source_url) {
 
 /**
  * Creates and configures cron job to run a scheduled data source scan
- * 
+ *
  * @param mixed $data_source_url
  * @param mixed $data_source_name
  * @return void
@@ -1509,7 +1508,7 @@ function tsml_schedule_import_scan($data_source_url, $data_source_name)
 /**
  * incorporates wp timezone into php's StrToTime() function
  * used: here, admin-import.php
- * 
+ *
  * @param mixed $str
  * @return string
  */
@@ -1543,7 +1542,7 @@ function tsml_strtotime($str)
 /**
  * incorporates wp timezone into php's date() function
  * used: here, admin-import.php
- * 
+ *
  * @param mixed $format
  * @param mixed $timestamp
  * @return string
@@ -1666,7 +1665,6 @@ function tsml_get_import_hash($meeting)
                 unset($meeting[$field]);
             }
         }
-
     }
     return md5(serialize($meeting));
 }
@@ -1741,8 +1739,9 @@ function tsml_redirect_legacy_query_params()
     if (isset($_GET['tsml-type'])) {
         $types = explode(',', $_GET['tsml-type']);
         foreach ($types as $type) {
-            if (array_key_exists($type, $tsml_programs[$tsml_program]['types']))
+            if (array_key_exists($type, $tsml_programs[$tsml_program]['types'])) {
                 $replacements['type'][] = sanitize_title($tsml_programs[$tsml_program]['types'][$type]);
+            }
         }
     }
 

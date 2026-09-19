@@ -313,7 +313,6 @@ tsml_header();
                                             <?php }
                                             if (!empty($meeting->entity_phone)) {
                                                 tsml_icon_button('tel:' . $meeting->entity_phone, $meeting->entity_phone, 'phone');
-
                                             }
                                             if (!empty($meeting->entity_url)) {
                                                 tsml_icon_button($meeting->entity_url, preg_replace('%^https?\:\/+%', '', $meeting->entity_url), 'link');

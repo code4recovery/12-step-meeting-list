@@ -3,7 +3,6 @@
 // this is a workaround because we can't use closures in order to support php < 5.3
 class tsml_filter_meetings
 {
-
     public $data_source;
     public $day;
     public $distance;

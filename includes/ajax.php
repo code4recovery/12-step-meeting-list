@@ -145,8 +145,8 @@ add_action('wp_ajax_contacts', function () {
 });
 
 
-// function:	export csv
-// used:		linked from admin-import.php
+// function:    export csv
+// used:        linked from admin-import.php
 add_action('wp_ajax_csv', function () {
 
     // going to need this later
@@ -211,7 +211,7 @@ add_action('wp_ajax_csv', function () {
 });
 
 // function: receives user feedback, sends email to admin
-// used:		single-meetings.php
+// used:        single-meetings.php
 add_action('wp_ajax_tsml_feedback', 'tsml_ajax_feedback');
 add_action('wp_ajax_nopriv_tsml_feedback', 'tsml_ajax_feedback');
 function tsml_ajax_feedback()

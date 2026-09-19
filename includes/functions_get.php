@@ -3,7 +3,7 @@
 /**
  * get all groups in the system
  * used: tsml_group_count(), tsml_import(), and admin_import.php
- * 
+ *
  * @param mixed $status
  * @return array
  */
@@ -21,7 +21,7 @@ function tsml_get_all_groups($status = 'any')
 /**
  * get all locations in the system
  * used: tsml_location_count(), tsml_import(), and admin_import.php
- * 
+ *
  * @param mixed $status
  * @return array
  */
@@ -39,7 +39,7 @@ function tsml_get_all_locations($status = 'any')
 /**
  * get all meetings in the system
  * used: tsml_meeting_count(), tsml_import() and admin_import.php
- * 
+ *
  * @param mixed $status
  * @return array
  */
@@ -57,7 +57,7 @@ function tsml_get_all_meetings($status = 'any')
 /**
  * get all regions in the system
  * used: tsml_region_count(), tsml_import() and admin_import.php
- * 
+ *
  * @return mixed
  */
 function tsml_get_all_regions()
@@ -91,7 +91,7 @@ function tsml_get_data_source_ids($source)
 /**
  * build and return the entity array of fields
  * used: tsml_get_meetings, to supply entity for locally managed meetings / non-imported meetings
- * 
+ *
  * @return array
  */
 function tsml_get_entity()
@@ -118,7 +118,7 @@ function tsml_get_entity()
 /**
  * get all locations with full location information
  * used: tsml_get_meetings()
- * 
+ *
  * @return array
  */
 function tsml_get_groups()
@@ -145,7 +145,6 @@ function tsml_get_groups()
 
     // make an array of all groups
     foreach ($posts as $post) {
-
         $district_id = !empty($group_meta[$post->ID]['district_id']) ? $group_meta[$post->ID]['district_id'] : null;
         if (array_key_exists($district_id, $districts_with_parents)) {
             $district = $districts[$districts_with_parents[$district_id]];
@@ -176,7 +175,7 @@ function tsml_get_groups()
  * template tag to get location, attach custom fields to it
  * $location_id can be false if there is a global $post object, eg on the single location template page
  * used: single-locations.php
- * 
+ *
  * @param mixed $location_id
  * @return array|WP_Post|null
  */
@@ -208,7 +207,7 @@ function tsml_get_location($location_id = false)
 /**
  * get all locations with full location information
  * used: tsml_import(), tsml_get_meetings(), admin_edit
- * 
+ *
  * @return array
  */
 function tsml_get_locations()
@@ -278,7 +277,7 @@ function tsml_get_locations()
  * template tag to get meeting and location, attach custom fields to it
  * $meeting_id can be false if there is a global $post object, eg on the single meeting template page
  * used: single-meetings.php
- * 
+ *
  * @param mixed $meeting_id
  * @return array|WP_Post|null
  */
@@ -393,7 +392,7 @@ function tsml_get_meeting($meeting_id = false)
 /**
  * get feedback_url
  * called in tsml_get_meta
- * 
+ *
  * @param mixed $meeting
  * @return mixed
  */
@@ -421,7 +420,7 @@ function tsml_feedback_url($meeting)
  * get meetings based on unsanitized $arguments
  * $from_cache is only false when calling from tsml_cache_rebuild()
  * used in tsml_ajax_meetings(), single-locations.php, archive-meetings.php
- * 
+ *
  * @param mixed $arguments
  * @param mixed $from_cache
  * @param mixed $full_export
@@ -445,7 +444,6 @@ function tsml_get_meetings($arguments = [], $from_cache = true, $full_export = f
 
     // fetch from database
     if (count($meetings) === 0) {
-
         // can specify post_status (for PR #33)
         if (empty($arguments['post_status'])) {
             $arguments['post_status'] = 'publish';
@@ -698,7 +696,7 @@ function tsml_get_meetings($arguments = [], $from_cache = true, $full_export = f
 /**
  * get metadata for all meetings very quickly
  * called in tsml_get_meetings(), tsml_get_locations()
- * 
+ *
  * @param mixed $type
  * @param mixed $id
  * @return mixed
@@ -786,7 +784,7 @@ function tsml_get_meta($type, $id = null)
 
 /**
  * get an array from wp options and confirm it's an array
- * 
+ *
  * @param mixed $option
  * @param mixed $default
  * @return mixed

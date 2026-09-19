@@ -131,10 +131,10 @@ function tsml_import_data_source($data_source_url, $data_source_name = '', $data
         $imported_data_source_url = 'https://sheets.code4recovery.org/tsml/' . $sheet_id;
     }
 
-    // initialize variables 
+    // initialize variables
     $import_meetings = $delete_meeting_ids = [];
 
-    // try fetching	
+    // try fetching
     $response = wp_safe_remote_get($imported_data_source_url, [
         'timeout' => 30,
         'sslverify' => false,
@@ -143,7 +143,6 @@ function tsml_import_data_source($data_source_url, $data_source_name = '', $data
     $response_error = tsml_import_response_error($response);
 
     if (!$response_error && ($meetings = json_decode($response['body'], true))) {
-
         // allow reformatting as necessary
         $meetings = tsml_import_sanitize_meetings($meetings, $imported_data_source_url, $data_source_parent_region_id);
 
@@ -175,9 +174,8 @@ function tsml_import_data_source($data_source_url, $data_source_name = '', $data
                 // translators: %s is the number of meetings
                 sprintf(__('%s meetings', '12-step-meeting-list'), count($import_meetings))
             );
-
         } else {
-            // get updated feed import record set 
+            // get updated feed import record set
             $change_log = tsml_import_get_changed_meetings($meetings, $data_source_url);
 
             tsml_log(
@@ -236,7 +234,6 @@ function tsml_import_data_source($data_source_url, $data_source_name = '', $data
         // save data source configuration
         $tsml_data_sources[$data_source_url] = $current_data_source;
         update_option('tsml_data_sources', $tsml_data_sources);
-
     } else {
         // a usable response that failed to parse is the only case left to describe
         $error_msg = $response_error;
@@ -278,7 +275,6 @@ function tsml_import_data_source($data_source_url, $data_source_name = '', $data
             update_option('tsml_data_sources', $tsml_data_sources);
         }
     }
-
 }
 
 /**
@@ -604,7 +600,7 @@ function tsml_import_buffer_next($limit = 25)
 /**
  * sanitize and import an array of meetings to an 'import buffer' (an wp_option that's iterated on progressively)
  * called from admin_import.php (both CSV and JSON)
- * 
+ *
  * @param mixed $meetings
  * @param mixed $data_source_url
  * @param mixed $data_source_parent_region_id
@@ -614,10 +610,10 @@ function tsml_import_buffer_set($meetings, $data_source_url = null, $data_source
 {
     $tsml_data_sources = tsml_get_option_array('tsml_data_sources');
 
-    /* 
+    /*
      * Most of the meeting transformation code has been extracted to a function so it can be executed early before the the Data Comparison code.
      * Only those feed records deemed to be out-of-sync with those already stored locally will be passed here. Google Sheets and CSV Imports do
-     * not pass through the compare code and are passed here directly where the full meetings feed is transformed before updating. 
+     * not pass through the compare code and are passed here directly where the full meetings feed is transformed before updating.
      * */
 
     foreach ($meetings as $i => $meeting) {
@@ -795,7 +791,7 @@ function tsml_import_get_changed_meetings($feed_meetings, $data_source_url)
 /**
  * filter workaround for setting post_modified dates
  * used in tsml_ajax_import
- * 
+ *
  * @param mixed $data
  * @param mixed $postarr
  * @return mixed
@@ -815,7 +811,7 @@ function tsml_import_post_modified($data, $postarr)
 /**
  * function: translates a Meeting Guide format Google Sheet to proper format for import
  * used: tsml_import_buffer_set
- * 
+ *
  * @param mixed $data
  * @return array
  */
@@ -829,7 +825,6 @@ function tsml_import_reformat_googlesheet($data)
     $header_count = count($header);
 
     foreach ($data['values'] as $row) {
-
         // creates a meeting array with elements corresponding to each column header of the Google Sheet; updated for Google Sheets v4 API
         $meeting = [];
         for ($j = 0; $j < $header_count; $j++) {
@@ -847,7 +842,7 @@ function tsml_import_reformat_googlesheet($data)
 /**
  * return array of sanitized meetings
  * sanitizes imported meetings before processing
- * 
+ *
  * @param mixed $meetings
  * @param mixed $data_source_url
  * @param mixed $data_source_parent_region_id
@@ -969,7 +964,6 @@ function tsml_import_sanitize_meetings($meetings, $data_source_url = null, $data
     $indexes_to_remove = [];
 
     for ($i = 0; $i < count($meetings); $i++) {
-
         // figure out a singular slug from available sources, starting with 'slug' (of course)
         $meeting_slug = '';
         foreach (array('slug', 'post_name', 'ID', 'id', 'name', 'title', 'group', 'location') as $field) {
@@ -1019,7 +1013,6 @@ function tsml_import_sanitize_meetings($meetings, $data_source_url = null, $data
     // prepare array for import buffer
     $count_meetings = count($meetings);
     for ($i = 0; $i < $count_meetings; $i++) {
-
         // column aliases
         if (empty($meetings[$i]['postal_code']) && !empty($meetings[$i]['zip'])) {
             $meetings[$i]['postal_code'] = $meetings[$i]['zip'];

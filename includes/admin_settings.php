@@ -371,7 +371,6 @@ if (!function_exists('tsml_settings_page')) {
                         </form>
 
                         <?php if ($tsml_sharing == 'restricted') { ?>
-
                             <div class="stack compact">
                                 <h3>
                                     <?php esc_html_e('Authorized Apps', '12-step-meeting-list') ?>

@@ -1,4 +1,5 @@
 <?php
+
 /*
 Don't make changes to this file! You'll need to reapply them every time you update the plugin.
 To customize your site, please follow the instructions in our FAQ:

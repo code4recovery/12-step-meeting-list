@@ -50,7 +50,6 @@ if (!function_exists('tsml_import_page')) {
             } elseif (!$handle = fopen($_FILES['tsml_import']['tmp_name'], 'r')) {
                 $error = __('Error opening CSV file', '12-step-meeting-list');
             } else {
-
                 // extract meetings from CSV
                 while (($data = fgetcsv($handle, 3000, ',')) !== false) {
                     //skip empty rows
@@ -66,7 +65,6 @@ if (!function_exists('tsml_import_page')) {
                 if (count($meetings) < 2) {
                     $error = __('Nothing was imported because no data rows were found.', '12-step-meeting-list');
                 } else {
-
                     // allow theme-defined function to reformat CSV prior to import (New Hampshire, Ventura)
                     if (function_exists('tsml_import_reformat')) {
                         // phpcs:ignore
@@ -83,7 +81,6 @@ if (!function_exists('tsml_import_page')) {
                     if (!in_array('address', $header) && !in_array('city', $header)) {
                         $error = __('Either Address or City is required.', '12-step-meeting-list');
                     } else {
-
                         // loop through data and convert to array
                         foreach ($meetings as &$meeting) {
                             // check length
@@ -103,7 +100,6 @@ if (!function_exists('tsml_import_page')) {
 
                         // run deletes
                         if ($_POST['delete'] == 'regions') {
-
                             // get all regions present in array
                             $regions = [];
                             foreach ($meetings as $meeting) {
@@ -136,7 +132,6 @@ if (!function_exists('tsml_import_page')) {
 
                             tsml_delete_orphans();
                         } elseif ($_POST['delete'] == 'no_data_source') {
-
                             tsml_delete(get_posts([
                                 'post_type' => 'tsml_meeting',
                                 'numberposts' => -1,
@@ -174,12 +169,10 @@ if (!function_exists('tsml_import_page')) {
 
         // remove data source
         if (!empty($_POST['tsml_remove_data_source']) && $valid_nonce) {
-
             // sanitize URL
             $_POST['tsml_remove_data_source'] = esc_url_raw($_POST['tsml_remove_data_source'], ['http', 'https']);
 
             if (array_key_exists($_POST['tsml_remove_data_source'], $tsml_data_sources)) {
-
                 // get data source for log entry
                 $data_source = $tsml_data_sources[$_POST['tsml_remove_data_source']];
 
@@ -553,35 +546,34 @@ if (!function_exists('tsml_import_page')) {
                                 <?php
                             } ?>
 
-                            <div id="tsml_counts" <?php if (!($meetings + $locations + $groups + $regions)) { ?> class="hidden"
-                                <?php } ?>>
+                            <div id="tsml_counts"<?php echo !($meetings + $locations + $groups + $regions) ? ' class="hidden"' : '' ?>>
                                 <p>
                                     <?php esc_html_e('You have:', '12-step-meeting-list') ?>
                                 </p>
                                 <div class="table">
                                     <ul class="ul-disc">
-                                        <li class="meetings<?php if (!$meetings) { ?> hidden<?php } ?>">
+                                        <li class="meetings<?php echo !$meetings ? ' hidden' : '' ?>">
                                             <?php echo esc_html(sprintf(
                                                 // translators: %s is the number of meetings
                                                 _n('%s meeting', '%s meetings', $meetings, '12-step-meeting-list'),
                                                 number_format_i18n($meetings)
                                             )) ?>
                                         </li>
-                                        <li class="locations<?php if (!$locations) { ?> hidden<?php } ?>">
+                                        <li class="locations<?php echo !$locations ? ' hidden' : '' ?>">
                                             <?php echo esc_html(sprintf(
                                                 // translators: %s is the number of locations
                                                 _n('%s location', '%s locations', $locations, '12-step-meeting-list'),
                                                 number_format_i18n($locations)
                                             )) ?>
                                         </li>
-                                        <li class="groups<?php if (!$groups) { ?> hidden<?php } ?>">
+                                        <li class="groups<?php echo !$groups ? ' hidden' : '' ?>">
                                             <?php echo esc_html(sprintf(
                                                 // translators: %s is the number of groups
                                                 _n('%s group', '%s groups', $groups, '12-step-meeting-list'),
                                                 number_format_i18n($groups)
                                             )) ?>
                                         </li>
-                                        <li class="regions<?php if (!$regions) { ?> hidden<?php } ?>">
+                                        <li class="regions<?php echo !$regions ? ' hidden' : '' ?>">
                                             <?php echo esc_html(sprintf(
                                                 // translators: %s is the number of regions
                                                 _n('%s region', '%s regions', $regions, '12-step-meeting-list'),
