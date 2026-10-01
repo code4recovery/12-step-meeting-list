@@ -7,12 +7,12 @@
 		"build:wp": "wp-scripts build --config-name blocks"
 	},
 	"devDependencies": {
-		"@wordpress/babel-preset-default": "^8.44.0",
-		"@wordpress/scripts": "^35.0.0",
+		"@wordpress/babel-preset-default": "^8.56.0",
+		"@wordpress/scripts": "^36.0.0",
 		"bootstrap-sass": "^3.4.0",
 		"css-minimizer-webpack-plugin": "^8.0.0",
 		"mark.js": "^8.11.1",
-		"sass": "^1.56.1",
+		"sass": "^1.105.0",
 		"sass-loader": "^17.0.1",
 		"timepicker": "^1.13.15"
 	},
