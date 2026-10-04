@@ -326,6 +326,29 @@ add_action('admin_init', function () {
             <div id="map"></div>
         </div>
 
+            <?php $use_custom_coordinates = @$location->use_custom_coordinates === 'yes'; ?>
+        <div class="meta_form_row checkbox use_custom_coordinates<?php echo @$location->approximate === 'yes' ? ' hidden' : '' ?>">
+            <label>
+                <input type="checkbox" name="use_custom_coordinates" id="use_custom_coordinates" value="yes" <?php checked($use_custom_coordinates) ?>>
+                <?php esc_html_e('Set the map pin manually (applies to all meetings at this address)', '12-step-meeting-list') ?>
+            </label>
+        </div>
+        <div class="meta_form_row custom_coordinates<?php echo $use_custom_coordinates ? '' : ' hidden' ?>">
+            <label for="custom_coordinates">
+                <?php esc_html_e('Coordinates', '12-step-meeting-list') ?>
+            </label>
+            <?php tsml_input_text('custom_coordinates', $use_custom_coordinates ? $location->latitude . ', ' . $location->longitude : '', [
+                'name' => false,
+                'placeholder' => '-34.0652985, 18.8359404',
+            ]) ?>
+            <small class="show">
+                <?php esc_html_e('Drag the pin on the map, or paste coordinates as latitude, longitude.', '12-step-meeting-list') ?>
+            </small>
+            <small class="error_message" data-message="1">
+                <?php esc_html_e('Error: Coordinates must be a latitude between -90 and 90 and a longitude between -180 and 180, separated by a comma.', '12-step-meeting-list') ?>
+            </small>
+        </div>
+
         <div class="meta_form_row">
             <label for="timezone">
                 <?php esc_html_e('Timezone', '12-step-meeting-list') ?>

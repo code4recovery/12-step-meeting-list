@@ -105,6 +105,9 @@ add_action('post_updated', function ($post_id, $post, $post_before) {
     // re-geocode to determine whether location is approximate
     $approximate = (empty($_POST['formatted_address']) || tsml_geocode($_POST['formatted_address'])['approximate'] === 'yes');
 
+    // manually placed map pin, only for specific addresses with usable coordinates
+    $use_custom_coordinates = !$approximate && @$_POST['use_custom_coordinates'] === 'yes' && tsml_coordinates_valid($_POST['latitude'], $_POST['longitude']);
+
     // add TC if location is specific and and can't attend in person
     if ($_POST['in_person'] === 'no' && !$approximate) {
         $_POST['types'][] = 'TC';
@@ -223,11 +226,18 @@ add_action('post_updated', function ($post_id, $post, $post_before) {
                 wp_update_post(['ID' => $location_id, 'post_status' => 'publish']);
             }
 
-            // latitude longitude only if updated
-            foreach (['latitude', 'longitude'] as $field) {
-                if ($old_meeting->{$field} != $_POST[$field]) {
-                    update_post_meta($location_id, $field, floatval($_POST[$field]));
+            // a meeting moving to an address with a manually placed pin keeps that pin, unless it submits its own
+            $keep_custom_coordinates = !$use_custom_coordinates && @$old_meeting->location_id != $location_id
+                && get_post_meta($location_id, 'use_custom_coordinates', true) === 'yes';
+
+            if (!$keep_custom_coordinates) {
+                // latitude longitude only if updated
+                foreach (['latitude', 'longitude'] as $field) {
+                    if ($old_meeting->{$field} != $_POST[$field]) {
+                        update_post_meta($location_id, $field, floatval($_POST[$field]));
+                    }
                 }
+                tsml_update_use_custom_coordinates($location_id, $use_custom_coordinates);
             }
             update_post_meta($location_id, 'approximate', $approximate ? 'yes' : 'no');
 
@@ -252,6 +262,7 @@ add_action('post_updated', function ($post_id, $post, $post_before) {
             update_post_meta($location_id, 'latitude', floatval($_POST['latitude']));
             update_post_meta($location_id, 'longitude', floatval($_POST['longitude']));
             update_post_meta($location_id, 'approximate', $approximate ? 'yes' : 'no');
+            tsml_update_use_custom_coordinates($location_id, $use_custom_coordinates);
             if (!empty($_POST['region'])) {
                 wp_set_object_terms($location_id, intval($_POST['region']), 'tsml_region');
             }

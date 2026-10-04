@@ -782,6 +782,22 @@ msgid "Map"
 msgstr ""
 
 #: includes/admin_meeting.php:333
+msgid "Set the map pin manually (applies to all meetings at this address)"
+msgstr ""
+
+#: includes/admin_meeting.php:338
+msgid "Coordinates"
+msgstr ""
+
+#: includes/admin_meeting.php:345
+msgid "Drag the pin on the map, or paste coordinates as latitude, longitude."
+msgstr ""
+
+#: includes/admin_meeting.php:348
+msgid "Error: Coordinates must be a latitude between -90 and 90 and a longitude between -180 and 180, separated by a comma."
+msgstr ""
+
+#: includes/admin_meeting.php:333
 #: includes/admin_settings.php:468
 msgid "Timezone"
 msgstr ""

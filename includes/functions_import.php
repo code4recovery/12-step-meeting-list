@@ -435,8 +435,11 @@ function tsml_import_buffer_next($limit = 25)
         }
         if ($location_id) {
             update_post_meta($location_id, 'formatted_address', $geocoded['formatted_address']);
-            update_post_meta($location_id, 'latitude', $geocoded['latitude']);
-            update_post_meta($location_id, 'longitude', $geocoded['longitude']);
+            // keep a map pin that was placed manually
+            if (get_post_meta($location_id, 'use_custom_coordinates', true) !== 'yes') {
+                update_post_meta($location_id, 'latitude', $geocoded['latitude']);
+                update_post_meta($location_id, 'longitude', $geocoded['longitude']);
+            }
             update_post_meta($location_id, 'approximate', $geocoded['approximate']);
             wp_set_object_terms($location_id, $region_id, 'tsml_region');
             // timezone
