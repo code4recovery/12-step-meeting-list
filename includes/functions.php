@@ -379,6 +379,19 @@ function tsml_conference_providers()
 }
 
 /**
+ * check that a latitude and longitude can be used as a map position
+ * used: save.php
+ *
+ * @param mixed $latitude
+ * @param mixed $longitude
+ * @return bool
+ */
+function tsml_coordinates_valid($latitude, $longitude)
+{
+    return is_numeric($latitude) && is_numeric($longitude) && abs($latitude) <= 90 && abs($longitude) <= 180;
+}
+
+/**
  * return integer number of live groups
  * used: shortcode, admin-import.php, tsml_ajax_import()
  *
@@ -1235,6 +1248,23 @@ function tsml_require_settings_permission()
     if (!current_user_can(TSML_SETTINGS_PERMISSION)) {
         // translators: %s is the permission required
         wp_die(wp_kses(sprintf(__('You do not have sufficient permissions to access this page (<code>%s</code>).', '12-step-meeting-list'), TSML_SETTINGS_PERMISSION), TSML_ALLOWED_HTML));
+    }
+}
+
+/**
+ * flag whether a location's map pin was placed manually
+ * used: save.php
+ *
+ * @param int $location_id
+ * @param bool $use_custom_coordinates
+ * @return void
+ */
+function tsml_update_use_custom_coordinates($location_id, $use_custom_coordinates)
+{
+    if ($use_custom_coordinates) {
+        update_post_meta($location_id, 'use_custom_coordinates', 'yes');
+    } else {
+        delete_post_meta($location_id, 'use_custom_coordinates');
     }
 }
 
