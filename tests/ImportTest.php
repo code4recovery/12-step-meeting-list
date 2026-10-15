@@ -42,6 +42,23 @@ class ImportTest extends WP_UnitTestCase
         $this->assertArrayNotHasKey('address', $meeting);
     }
 
+    public function test_sanitize_meetings_without_data_source_url_has_no_deprecations()
+    {
+        // a CSV upload has no data source url
+        $deprecations = [];
+        set_error_handler(function ($errno, $errstr) use (&$deprecations) {
+            $deprecations[] = $errstr;
+            return true;
+        }, E_DEPRECATED);
+
+        tsml_import_sanitize_meetings([
+            ['name' => 'Monday Group', 'day' => 'Monday', 'time' => '7:00 PM', 'address' => '123 Main St'],
+        ]);
+
+        restore_error_handler();
+        $this->assertSame([], $deprecations);
+    }
+
     public function test_sanitize_meetings_without_time_is_by_appointment()
     {
         $meetings = tsml_import_sanitize_meetings([

@@ -20,7 +20,6 @@ if (!function_exists('tsml_import_page')) {
 
         // if posting a CSV, check for errors and add it to the import buffer
         if (isset($_FILES['tsml_import']) && $valid_nonce) {
-            ini_set('auto_detect_line_endings', 1); //to handle mac \r line endings
             $extension = explode('.', strtolower($_FILES['tsml_import']['name']));
             $extension = end($extension);
             if ($_FILES['tsml_import']['error'] > 0) {
@@ -47,9 +46,13 @@ if (!function_exists('tsml_import_page')) {
             } elseif (!in_array($extension, ['csv', 'txt'])) {
                 // translators: %s is the file extension
                 $error = sprintf(__('Please upload a csv file. Your file ended in .%s.', '12-step-meeting-list'), $extension);
-            } elseif (!$handle = fopen($_FILES['tsml_import']['tmp_name'], 'r')) {
+            } elseif (($csv = file_get_contents($_FILES['tsml_import']['tmp_name'])) === false || !$handle = fopen('php://temp', 'r+')) {
                 $error = __('Error opening CSV file', '12-step-meeting-list');
             } else {
+                // handle mac \r line endings here, since PHP 8.1 deprecated auto_detect_line_endings
+                fwrite($handle, str_replace(["\r\n", "\r"], "\n", $csv));
+                rewind($handle);
+
                 // extract meetings from CSV
                 while (($data = fgetcsv($handle, 3000, ',')) !== false) {
                     //skip empty rows

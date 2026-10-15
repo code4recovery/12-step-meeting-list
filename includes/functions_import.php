@@ -879,13 +879,13 @@ function tsml_import_sanitize_meetings($meetings, $data_source_url = null, $data
     $meeting_slugs = array();
 
     // handle requests to Google Sheets API (obsolete - remove on or after May 2025)
-    if (strpos($data_source_url, "sheets.googleapis.com") !== false) {
+    if (strpos((string) $data_source_url, "sheets.googleapis.com") !== false) {
         tsml_alert(__('You can now add a Google Sheet directly to TSML. Please replace this feed with the Sheet URL. We will be dropping support for the Google Sheets API in a future release.', '12-step-meeting-list'), 'warning');
         $meetings = tsml_import_reformat_googlesheet($meetings);
     }
 
     // handle requests to C4R sheets service
-    if (strpos($data_source_url, "sheets.code4recovery.org/tsml") !== false) {
+    if (strpos((string) $data_source_url, "sheets.code4recovery.org/tsml") !== false) {
         if (count($meetings['warnings'])) {
             $warnings = __('The following issues were detected with this Google Sheet:', '12-step-meeting-list') . '</p><ol>' .
                 implode(array_map(function ($warning) {
