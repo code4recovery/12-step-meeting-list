@@ -268,6 +268,11 @@ function tsml_get_locations()
         if (count($regions_array)) {
             $locations[$post->ID]['regions'] = array_reverse($regions_array);
         }
+
+        // flag a manually placed map pin so sites importing the feed keep it, omit otherwise
+        if (!empty($location_meta[$post->ID]['use_custom_coordinates']) && $location_meta[$post->ID]['use_custom_coordinates'] === 'yes') {
+            $locations[$post->ID]['use_custom_coordinates'] = 'yes';
+        }
     }
 
     return $locations;
@@ -707,7 +712,7 @@ function tsml_get_meta($type, $id = null)
     $contact_field_keys = empty($tsml_contact_fields) ? [] : array_keys($tsml_contact_fields);
     $keys = [
         'tsml_group' => $contact_field_keys,
-        'tsml_location' => ['formatted_address', 'latitude', 'longitude', 'approximate', 'timezone'],
+        'tsml_location' => ['formatted_address', 'latitude', 'longitude', 'approximate', 'timezone', 'use_custom_coordinates'],
         'tsml_meeting' => array_merge(
             [
                 'day',

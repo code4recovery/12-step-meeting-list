@@ -2,11 +2,17 @@
 
 /**
  * Tests for manually placed map pins (the use_custom_coordinates location flag):
- * validation, the distance limit, the flag helper, imports keeping the pin, and the tsml_address lookup.
+ * validation, the distance limit, the flag helper, imports keeping the pin, the tsml_address lookup,
+ * and pins carrying over from another site's feed.
  */
 class CustomCoordinatesTest extends WP_Ajax_UnitTestCase
 {
     const ADDRESS = '82 Firmount Road, Goede Hoop, Cape Town, 7130, South Africa';
+    const FEED = 'https://district.example.org/wp-admin/admin-ajax.php?action=meetings';
+    const OTHER_FEED = 'https://other.example.org/wp-admin/admin-ajax.php?action=meetings';
+
+    // a pin placed manually on the source site, away from the geocoded and local positions
+    const SOURCE_PIN = ['use_custom_coordinates' => 'yes', 'latitude' => -34.0600000, 'longitude' => 18.8300000];
 
     private $max_distance;
     private $distance_units;
@@ -162,6 +168,166 @@ class CustomCoordinatesTest extends WP_Ajax_UnitTestCase
 
         $this->assertSame('Community Hall', $response['location']);
         $this->assertArrayNotHasKey('use_custom_coordinates', $response);
+    }
+
+    public function test_locations_flag_manually_placed_pin()
+    {
+        $location_id = $this->create_location(true);
+
+        $this->assertSame('yes', tsml_get_locations()[$location_id]['use_custom_coordinates']);
+    }
+
+    public function test_locations_omit_flag_for_geocoded_pin()
+    {
+        $location_id = $this->create_location(false);
+
+        $this->assertArrayNotHasKey('use_custom_coordinates', tsml_get_locations()[$location_id]);
+    }
+
+    public function test_feed_import_uses_source_pin()
+    {
+        $location_id = $this->import_from_feed($this->feed_meeting(self::SOURCE_PIN));
+
+        $this->assertEquals(-34.06, get_post_meta($location_id, 'latitude', true));
+        $this->assertEquals(18.83, get_post_meta($location_id, 'longitude', true));
+        $this->assertSame('yes', get_post_meta($location_id, 'use_custom_coordinates', true));
+        $this->assertSame(self::FEED, get_post_meta($location_id, 'custom_coordinates_data_source', true));
+    }
+
+    public function test_feed_import_geocodes_unflagged_coordinates()
+    {
+        $location_id = $this->import_from_feed($this->feed_meeting(['latitude' => -34.06, 'longitude' => 18.83]));
+
+        $this->assertEquals(-34.065333, get_post_meta($location_id, 'latitude', true));
+        $this->assertFalse(metadata_exists('post', $location_id, 'use_custom_coordinates'));
+    }
+
+    public function test_feed_import_geocodes_invalid_source_pin()
+    {
+        $location_id = $this->import_from_feed($this->feed_meeting(['latitude' => 95] + self::SOURCE_PIN));
+
+        $this->assertEquals(-34.065333, get_post_meta($location_id, 'latitude', true));
+        $this->assertFalse(metadata_exists('post', $location_id, 'use_custom_coordinates'));
+    }
+
+    public function test_feed_import_geocodes_source_pin_on_approximate_address()
+    {
+        $location_id = $this->import_from_feed($this->feed_meeting(['approximate' => 'yes'] + self::SOURCE_PIN));
+
+        $this->assertEquals(-34.065333, get_post_meta($location_id, 'latitude', true));
+        $this->assertFalse(metadata_exists('post', $location_id, 'use_custom_coordinates'));
+    }
+
+    public function test_feed_import_source_pin_replaces_local_pin()
+    {
+        $location_id = $this->create_location(true);
+
+        $this->import_from_feed($this->feed_meeting(self::SOURCE_PIN));
+
+        $this->assertEquals(-34.06, get_post_meta($location_id, 'latitude', true));
+        $this->assertSame(self::FEED, get_post_meta($location_id, 'custom_coordinates_data_source', true));
+    }
+
+    public function test_feed_import_keeps_local_pin_when_source_has_none()
+    {
+        $location_id = $this->create_location(true);
+
+        $this->import_from_feed($this->feed_meeting());
+
+        $this->assertSame('-34.0652985', get_post_meta($location_id, 'latitude', true));
+        $this->assertSame('yes', get_post_meta($location_id, 'use_custom_coordinates', true));
+    }
+
+    public function test_feed_import_removes_pin_the_source_removed()
+    {
+        $location_id = $this->import_from_feed($this->feed_meeting(self::SOURCE_PIN));
+
+        $this->import_from_feed($this->feed_meeting());
+
+        $this->assertEquals(-34.065333, get_post_meta($location_id, 'latitude', true));
+        $this->assertFalse(metadata_exists('post', $location_id, 'use_custom_coordinates'));
+        $this->assertFalse(metadata_exists('post', $location_id, 'custom_coordinates_data_source'));
+    }
+
+    public function test_feed_import_keeps_pin_from_another_feed()
+    {
+        $location_id = $this->import_from_feed($this->feed_meeting(self::SOURCE_PIN));
+
+        $this->import_from_feed($this->feed_meeting(), self::OTHER_FEED);
+
+        $this->assertEquals(-34.06, get_post_meta($location_id, 'latitude', true));
+        $this->assertSame(self::FEED, get_post_meta($location_id, 'custom_coordinates_data_source', true));
+    }
+
+    public function test_change_detection_ignores_unchanged_source_pin()
+    {
+        $this->import_from_feed($this->feed_meeting(self::SOURCE_PIN));
+
+        $this->assertSame([], $this->changes($this->feed_meeting(self::SOURCE_PIN)));
+    }
+
+    public function test_change_detection_finds_moved_source_pin()
+    {
+        $this->import_from_feed($this->feed_meeting(self::SOURCE_PIN));
+
+        $changes = $this->changes($this->feed_meeting(['latitude' => -34.0610000] + self::SOURCE_PIN));
+
+        $this->assertCount(1, $changes);
+        $this->assertSame('update', $changes[0]['action']);
+        $this->assertStringContainsString('Map pin', $changes[0]['info']);
+    }
+
+    public function test_change_detection_finds_removed_source_pin()
+    {
+        $this->import_from_feed($this->feed_meeting(self::SOURCE_PIN));
+
+        $changes = $this->changes($this->feed_meeting());
+
+        $this->assertCount(1, $changes);
+        $this->assertStringContainsString('Map pin', $changes[0]['info']);
+    }
+
+    public function test_change_detection_ignores_local_pin()
+    {
+        $this->create_location(true);
+        $this->import_from_feed($this->feed_meeting());
+
+        $this->assertSame([], $this->changes($this->feed_meeting()));
+    }
+
+    private function feed_meeting($fields = [])
+    {
+        return array_merge([
+            'name' => 'Monday Group',
+            'slug' => 'monday-group',
+            'day' => 'Monday',
+            'time' => '7:00 PM',
+            'location' => 'Community Hall',
+            'formatted_address' => self::ADDRESS,
+            'latitude' => -34.0652985,
+            'longitude' => 18.8359404,
+            'approximate' => 'no',
+        ], $fields);
+    }
+
+    private function import_from_feed($meeting, $data_source_url = self::FEED)
+    {
+        tsml_import_buffer_set(tsml_import_sanitize_meetings([$meeting], $data_source_url), $data_source_url);
+        tsml_import_buffer_next(25);
+
+        $locations = get_posts([
+            'post_type' => 'tsml_location',
+            'numberposts' => 1,
+            'post_status' => 'any',
+            'meta_key' => 'formatted_address',
+            'meta_value' => self::ADDRESS,
+        ]);
+        return $locations[0]->ID;
+    }
+
+    private function changes($meeting)
+    {
+        return tsml_import_get_changed_meetings(tsml_import_sanitize_meetings([$meeting], self::FEED), self::FEED);
     }
 
     private function address_lookup()

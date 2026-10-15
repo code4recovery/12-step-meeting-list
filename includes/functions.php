@@ -1312,19 +1312,27 @@ function tsml_require_settings_permission()
 }
 
 /**
- * flag whether a location's map pin was placed manually
- * used: save.php
+ * flag whether a location's map pin was placed manually, and which data source it was imported from
+ * used: save.php, tsml_import_buffer_next()
  *
  * @param int $location_id
  * @param bool $use_custom_coordinates
+ * @param string|null $data_source url of the feed the pin came from, empty when placed on this site
  * @return void
  */
-function tsml_update_use_custom_coordinates($location_id, $use_custom_coordinates)
+function tsml_update_use_custom_coordinates($location_id, $use_custom_coordinates, $data_source = null)
 {
     if ($use_custom_coordinates) {
         update_post_meta($location_id, 'use_custom_coordinates', 'yes');
     } else {
         delete_post_meta($location_id, 'use_custom_coordinates');
+    }
+
+    // remembering the feed lets a later import remove the pin if the source does
+    if ($use_custom_coordinates && $data_source) {
+        update_post_meta($location_id, 'custom_coordinates_data_source', $data_source);
+    } else {
+        delete_post_meta($location_id, 'custom_coordinates_data_source');
     }
 }
 

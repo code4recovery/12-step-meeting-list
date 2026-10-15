@@ -426,10 +426,23 @@ function tsml_import_buffer_next($limit = 25)
         }
         if ($location_id) {
             update_post_meta($location_id, 'formatted_address', $geocoded['formatted_address']);
-            // keep a map pin that was placed manually
-            if (get_post_meta($location_id, 'use_custom_coordinates', true) !== 'yes') {
+
+            // map pin: one placed manually on the source wins, then one placed manually here, then the geocoded position
+            $custom_coordinates = $geocoded['approximate'] === 'no' ? tsml_import_custom_coordinates($meeting) : null;
+
+            // keep a pin placed manually, unless it came from this feed and the source has since removed it
+            $pin_data_source = get_post_meta($location_id, 'custom_coordinates_data_source', true);
+            $keep_pin = get_post_meta($location_id, 'use_custom_coordinates', true) === 'yes'
+                && (!$pin_data_source || $pin_data_source !== $data_source_url);
+
+            if ($custom_coordinates) {
+                update_post_meta($location_id, 'latitude', $custom_coordinates['latitude']);
+                update_post_meta($location_id, 'longitude', $custom_coordinates['longitude']);
+                tsml_update_use_custom_coordinates($location_id, true, $data_source_url);
+            } elseif (!$keep_pin) {
                 update_post_meta($location_id, 'latitude', $geocoded['latitude']);
                 update_post_meta($location_id, 'longitude', $geocoded['longitude']);
+                tsml_update_use_custom_coordinates($location_id, false);
             }
             update_post_meta($location_id, 'approximate', $geocoded['approximate']);
             wp_set_object_terms($location_id, $region_id, 'tsml_region');
@@ -735,11 +748,19 @@ function tsml_import_get_changed_meetings($feed_meetings, $data_source_url)
             $source_meeting = (array) $source_meeting;
             $found_meeting_ids[] = $source_meeting['id'];
 
-            if (!empty($source_meeting['import_hash']) && $source_meeting['import_hash'] === $feed_meeting['import_hash']) {
+            // checked even when the hash matches, for pins published before this site could import them
+            $map_pin_changed = tsml_import_map_pin_changed($source_meeting, $feed_meeting, $data_source_url);
+
+            if (!empty($source_meeting['import_hash']) && $source_meeting['import_hash'] === $feed_meeting['import_hash'] && !$map_pin_changed) {
                 continue;
             }
 
             $changed_fields = tsml_compare_meetings($source_meeting, $feed_meeting, true, true);
+
+            // coordinates aren't compared above, so add a manually placed pin that moved
+            if ($map_pin_changed) {
+                $changed_fields = array_merge((array) $changed_fields, [__('Map pin', '12-step-meeting-list')]);
+            }
 
             if (!empty($changed_fields)) {
                 $feed_meeting['last_import'] = current_time('timestamp');
@@ -779,6 +800,55 @@ function tsml_import_get_changed_meetings($feed_meetings, $data_source_url)
     }
 
     return $change_log;
+}
+
+/**
+ * get the coordinates of a map pin the source placed manually, if usable
+ * used: tsml_import_buffer_next(), tsml_import_map_pin_changed()
+ *
+ * @param array $meeting meeting from the import
+ * @return array|null latitude and longitude, or null to geocode instead
+ */
+function tsml_import_custom_coordinates($meeting)
+{
+    if (empty($meeting['use_custom_coordinates']) || $meeting['use_custom_coordinates'] !== 'yes') {
+        return null;
+    }
+    if (!empty($meeting['approximate']) && $meeting['approximate'] === 'yes') {
+        return null;
+    }
+    if (!isset($meeting['latitude'], $meeting['longitude']) || !tsml_coordinates_valid($meeting['latitude'], $meeting['longitude'])) {
+        return null;
+    }
+    return [
+        'latitude' => floatval($meeting['latitude']),
+        'longitude' => floatval($meeting['longitude']),
+    ];
+}
+
+/**
+ * check whether a feed meeting's manually placed map pin needs applying here, or removing
+ * used: tsml_import_get_changed_meetings()
+ *
+ * @param array $local_meeting meeting as stored on this site
+ * @param array $feed_meeting meeting from the feed
+ * @param string $data_source_url
+ * @return bool
+ */
+function tsml_import_map_pin_changed($local_meeting, $feed_meeting, $data_source_url)
+{
+    $local_pin = !empty($local_meeting['use_custom_coordinates']) && $local_meeting['use_custom_coordinates'] === 'yes';
+
+    // the source placed the pin, so it changed unless this site already has the same one
+    if ($feed_pin = tsml_import_custom_coordinates($feed_meeting)) {
+        return !$local_pin
+            || round(floatval($local_meeting['latitude']), 5) !== round($feed_pin['latitude'], 5)
+            || round(floatval($local_meeting['longitude']), 5) !== round($feed_pin['longitude'], 5);
+    }
+
+    // the source removed a pin this site got from the same feed
+    return $local_pin && !empty($local_meeting['location_id'])
+        && get_post_meta($local_meeting['location_id'], 'custom_coordinates_data_source', true) === $data_source_url;
 }
 
 /**
@@ -862,6 +932,7 @@ function tsml_import_sanitize_meetings($meetings, $data_source_url = null, $data
         'latitude',
         'longitude',
         'approximate',
+        'use_custom_coordinates',
         'location',
         'location_notes',
         'timezone',
