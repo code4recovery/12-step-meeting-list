@@ -82,4 +82,37 @@ class ImportTest extends WP_UnitTestCase
 
         $this->assertCount(0, $meetings);
     }
+
+    public function test_remove_change_detection_clears_scans_and_setting()
+    {
+        $feed = 'https://district.example.org/wp-admin/admin-ajax.php?action=meetings';
+        $removed_feed = 'https://removed.example.org/wp-admin/admin-ajax.php?action=meetings';
+        $other_feed = 'https://other.example.org/wp-admin/admin-ajax.php?action=meetings';
+        update_option('tsml_data_sources', [
+            $feed => ['name' => 'District', 'count_meetings' => 6, 'change_detect' => 'enabled', 'type' => 'JSON'],
+            $other_feed => ['name' => 'Other', 'count_meetings' => 3, 'type' => 'JSON'],
+        ]);
+        wp_schedule_event(time(), 'daily', 'tsml_scan_data_source', [$feed]);
+        wp_schedule_event(time(), 'daily', 'tsml_scan_data_source', [$removed_feed]);
+        wp_schedule_event(time(), 'hourly', 'tsml_auto_import');
+
+        tsml_import_remove_change_detection();
+
+        $this->assertFalse(wp_next_scheduled('tsml_scan_data_source', [$feed]));
+        $this->assertFalse(wp_next_scheduled('tsml_scan_data_source', [$removed_feed]));
+        $this->assertNotFalse(wp_next_scheduled('tsml_auto_import'));
+        $this->assertSame([
+            $feed => ['name' => 'District', 'count_meetings' => 6, 'type' => 'JSON'],
+            $other_feed => ['name' => 'Other', 'count_meetings' => 3, 'type' => 'JSON'],
+        ], get_option('tsml_data_sources'));
+    }
+
+    public function test_remove_change_detection_without_data_sources_adds_no_option()
+    {
+        delete_option('tsml_data_sources');
+
+        tsml_import_remove_change_detection();
+
+        $this->assertFalse(get_option('tsml_data_sources'));
+    }
 }

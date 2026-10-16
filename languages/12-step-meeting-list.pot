@@ -119,10 +119,6 @@ msgstr ""
 msgid "Parent Region"
 msgstr ""
 
-#: includes/admin_import.php:252
-msgid "Change Detection"
-msgstr ""
-
 #: includes/admin_import.php:255
 #: includes/admin_lists.php:376
 #: includes/admin_meeting.php:357
@@ -149,10 +145,6 @@ msgstr ""
 #: includes/admin_import.php:287
 #: includes/admin_import.php:292
 msgid "Top-level region"
-msgstr ""
-
-#: includes/admin_import.php:305
-msgid "Disabled"
 msgstr ""
 
 #: includes/admin_import.php:337
@@ -1670,20 +1662,6 @@ msgstr ""
 #: includes/functions.php:1236
 #, php-format
 msgid "You do not have sufficient permissions to access this page (<code>%s</code>)."
-msgstr ""
-
-#. translators: %s is the name of the data source
-#: includes/functions.php:1453
-#, php-format
-msgid "Please sign in to your website and refresh the <strong>%s</strong> feed on the Import & Export page."
-msgstr ""
-
-#: includes/functions.php:1456
-msgid "Go to Import & Export page"
-msgstr ""
-
-#: includes/functions.php:1458
-msgid "Data Source Changes Detected"
 msgstr ""
 
 #: includes/functions_email.php:43
