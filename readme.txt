@@ -56,7 +56,11 @@ It depends on your Permalinks setup. The easiest way to find the link is to go t
 = I need to correct a meeting address or change a pin's location =
 We get our geocoding positions from Google. Google is correct an amazing amount of the time, but not always.
 
-To move a pin, edit any meeting at that address and tick **Set the map pin manually** under the map. You can then drag the pin, or paste coordinates (latitude, longitude) into the **Coordinates** field. The pin applies to all meetings at that address, and is kept when the address is geocoded again.
+To move a pin, edit any meeting at that address and tick **Adjust the map pin manually** under the map. You can then drag the pin, or paste coordinates (latitude, longitude) into the **Coordinates** field. The pin applies to all meetings at that address, and is kept when the address is geocoded again.
+
+The pin can be moved up to 100 m (330 ft) from where the address puts it. To change this limit, add this to your theme's functions.php, with the distance in metres.
+
+	$tsml_custom_coordinates_max_distance_meters = 200;
 
 If you need to correct the address itself, or prefer to manage locations in code, add this to your theme's functions.php.
 

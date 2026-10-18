@@ -2,15 +2,23 @@
 
 /**
  * Tests for manually placed map pins (the use_custom_coordinates location flag):
- * validation, the flag helper, imports keeping the pin, and the tsml_address lookup.
+ * validation, the distance limit, the flag helper, imports keeping the pin, and the tsml_address lookup.
  */
 class CustomCoordinatesTest extends WP_Ajax_UnitTestCase
 {
     const ADDRESS = '82 Firmount Road, Goede Hoop, Cape Town, 7130, South Africa';
 
+    private $max_distance;
+    private $distance_units;
+
     public function set_up()
     {
+        global $tsml_custom_coordinates_max_distance_meters, $tsml_distance_units;
         parent::set_up();
+
+        // some tests change these
+        $this->max_distance = $tsml_custom_coordinates_max_distance_meters;
+        $this->distance_units = $tsml_distance_units;
 
         // geocode from the overrides list so no network request is made
         tsml_custom_addresses([
@@ -22,6 +30,14 @@ class CustomCoordinatesTest extends WP_Ajax_UnitTestCase
                 'approximate' => 'no',
             ],
         ]);
+    }
+
+    public function tear_down()
+    {
+        global $tsml_custom_coordinates_max_distance_meters, $tsml_distance_units;
+        $tsml_custom_coordinates_max_distance_meters = $this->max_distance;
+        $tsml_distance_units = $this->distance_units;
+        parent::tear_down();
     }
 
     private function create_location($use_custom_coordinates)
@@ -56,6 +72,45 @@ class CustomCoordinatesTest extends WP_Ajax_UnitTestCase
         $this->assertFalse(tsml_coordinates_valid('0', '180.1'));
         $this->assertFalse(tsml_coordinates_valid('', '18.8'));
         $this->assertFalse(tsml_coordinates_valid('north', '18.8'));
+    }
+
+    public function test_distance_matches_leaflet()
+    {
+        // one degree of latitude on Leaflet's sphere, which has a radius of 6371 km
+        $this->assertEqualsWithDelta(111194.93, tsml_distance(0, 0, 1, 0), 0.01);
+        $this->assertEqualsWithDelta(0, tsml_distance(-34.0652985, 18.8359404, -34.0652985, 18.8359404), 0.001);
+    }
+
+    public function test_custom_coordinates_allowed_only_near_the_address()
+    {
+        $geocoded = tsml_geocode(self::ADDRESS);
+
+        // 0.0009 degrees of latitude is about 100 m, 0.001 is about 111 m
+        $this->assertTrue(tsml_custom_coordinates_allowed(-34.065333 + 0.0009, 18.836000, $geocoded));
+        $this->assertFalse(tsml_custom_coordinates_allowed(-34.065333 + 0.001, 18.836000, $geocoded));
+
+        // unusable coordinates, or nothing to measure from
+        $this->assertFalse(tsml_custom_coordinates_allowed('north', 18.836000, $geocoded));
+        $this->assertFalse(tsml_custom_coordinates_allowed(-34.065333, 18.836000, ['status' => 'error']));
+    }
+
+    public function test_max_distance_can_be_changed()
+    {
+        global $tsml_custom_coordinates_max_distance_meters;
+        $tsml_custom_coordinates_max_distance_meters = 200;
+
+        $this->assertTrue(tsml_custom_coordinates_allowed(-34.065333 + 0.001, 18.836000, tsml_geocode(self::ADDRESS)));
+    }
+
+    public function test_max_distance_label_follows_distance_units()
+    {
+        global $tsml_distance_units;
+
+        $tsml_distance_units = 'km';
+        $this->assertSame('100 m', tsml_custom_coordinates_max_distance_label());
+
+        $tsml_distance_units = 'mi';
+        $this->assertSame('330 ft', tsml_custom_coordinates_max_distance_label());
     }
 
     public function test_update_use_custom_coordinates_sets_and_clears_flag()

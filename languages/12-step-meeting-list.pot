@@ -782,19 +782,39 @@ msgid "Map"
 msgstr ""
 
 #: includes/admin_meeting.php:333
-msgid "Set the map pin manually (applies to all meetings at this address)"
+msgid "Adjust the map pin manually (applies to all meetings at this address)"
 msgstr ""
 
 #: includes/admin_meeting.php:338
 msgid "Coordinates"
 msgstr ""
 
-#: includes/admin_meeting.php:345
-msgid "Drag the pin on the map, or paste coordinates as latitude, longitude."
+#. translators: %s is a distance, eg 100 m or 330 ft
+#: includes/admin_meeting.php:347
+#, php-format
+msgid "Drag the pin on the map, or paste coordinates as latitude, longitude. The pin can be up to %s from the address."
 msgstr ""
 
-#: includes/admin_meeting.php:348
+#: includes/admin_meeting.php:352
 msgid "Error: Coordinates must be a latitude between -90 and 90 and a longitude between -180 and 180, separated by a comma."
+msgstr ""
+
+#. translators: %s is a distance, eg 100 m or 330 ft
+#: includes/admin_meeting.php:357
+#, php-format
+msgid "Error: The pin must be within %s of the address. To move it further, correct the address."
+msgstr ""
+
+#. translators: %s is a distance in metres
+#: includes/functions.php:428
+#, php-format
+msgid "%s m"
+msgstr ""
+
+#. translators: %s is a distance in feet
+#: includes/functions.php:432
+#, php-format
+msgid "%s ft"
 msgstr ""
 
 #: includes/admin_meeting.php:333

@@ -330,6 +330,9 @@ jQuery(function ($) {
 		var geocoded_position = null;
 		//a manually placed pin belongs to the address it was placed for
 		var resolved_address = $fields.use_custom_coordinates.prop('checked') ? $fields.formatted_address.attr('data-original-value') : null;
+		//how far a manually placed pin can be from where the address puts it, in metres
+		var max_distance = parseFloat(tsml.custom_coordinates_max_distance_meters);
+		var limit_circle = null;
 
 		//move the pin, keeping the hidden fields, coordinates field and map in sync
 		function setPin(latitude, longitude, approximate) {
@@ -340,17 +343,59 @@ jQuery(function ($) {
 			//the map hides approximate pins
 			createMap(false, {0: $.extend({approximate: approximate}, pin_position)});
 			updatePinDragging();
+			//eg a saved pin, after the address has been geocoded to somewhere else
+			if ($fields.use_custom_coordinates.prop('checked') && !pinWithinLimit(latitude, longitude)) {
+				$fields.custom_coordinates.setState('error', 2);
+			}
 		}
 
-		//the pin can only be dragged while it is being placed manually
+		//whether a manually placed pin is close enough to where the address puts it
+		function pinWithinLimit(latitude, longitude) {
+			//nothing to measure from until the address is geocoded, and save.php checks again
+			if (!geocoded_position) return true;
+			var distance = L.latLng(geocoded_position.latitude, geocoded_position.longitude).distanceTo([latitude, longitude]);
+			//a metre to spare for rounding, the same as save.php
+			return distance <= max_distance + 1;
+		}
+
+		//the nearest position within the limit, so a dragged pin stops at the edge of the circle
+		function limitPinPosition(position) {
+			if (!geocoded_position) return position;
+			var center = L.latLng(geocoded_position.latitude, geocoded_position.longitude);
+			var distance = center.distanceTo(position);
+			if (distance <= max_distance) return position;
+			var scale = max_distance / distance;
+			return L.latLng(center.lat + (position.lat - center.lat) * scale, center.lng + (position.lng - center.lng) * scale);
+		}
+
+		//the pin can only be dragged while it is being placed manually, and only as far as the circle
 		function updatePinDragging() {
+			if (limit_circle) {
+				limit_circle.remove();
+				limit_circle = null;
+			}
 			var marker = getMapMarkers()[0];
 			if (!marker || !marker.dragging) return;
 			if (!$fields.use_custom_coordinates.prop('checked')) {
 				marker.dragging.disable();
 				return;
 			}
+			if (geocoded_position) {
+				limit_circle = L.circle([geocoded_position.latitude, geocoded_position.longitude], {
+					radius: max_distance,
+					color: '#2271b1',
+					weight: 2,
+					dashArray: '4 4',
+					fillOpacity: 0.08,
+					interactive: false
+				}).addTo(getMap());
+			}
 			marker.dragging.enable();
+			marker.off('drag').on('drag', function () {
+				var position = marker.getLatLng();
+				var limited = limitPinPosition(position);
+				if (limited !== position) marker.setLatLng(limited);
+			});
 			marker.off('dragend').on('dragend', function () {
 				var position = marker.getLatLng();
 				//7 decimal places is about 1cm, plenty for a map pin
@@ -386,6 +431,11 @@ jQuery(function ($) {
 				var longitude = match ? parseFloat(match[2]) : NaN;
 				if (!(Math.abs(latitude) <= 90 && Math.abs(longitude) <= 180)) {
 					$fields.custom_coordinates.setState('error', 1);
+					return;
+				}
+				//too far away: leave the pin where it is
+				if (!pinWithinLimit(latitude, longitude)) {
+					$fields.custom_coordinates.setState('error', 2);
 					return;
 				}
 				setPin(latitude, longitude);

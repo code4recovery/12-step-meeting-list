@@ -103,10 +103,21 @@ add_action('post_updated', function ($post_id, $post, $post_before) {
     }
 
     // re-geocode to determine whether location is approximate
-    $approximate = (empty($_POST['formatted_address']) || tsml_geocode($_POST['formatted_address'])['approximate'] === 'yes');
+    $geocoded = empty($_POST['formatted_address']) ? null : tsml_geocode($_POST['formatted_address']);
+    $approximate = (empty($_POST['formatted_address']) || $geocoded['approximate'] === 'yes');
 
-    // manually placed map pin, only for specific addresses with usable coordinates
-    $use_custom_coordinates = !$approximate && @$_POST['use_custom_coordinates'] === 'yes' && tsml_coordinates_valid($_POST['latitude'], $_POST['longitude']);
+    // manually placed map pin, only for specific addresses with usable coordinates near where the address puts it
+    $use_custom_coordinates = !$approximate && @$_POST['use_custom_coordinates'] === 'yes'
+        && tsml_custom_coordinates_allowed($_POST['latitude'], $_POST['longitude'], $geocoded);
+
+    // a manually placed pin that can't be used goes back to where the address puts it
+    if (
+        @$_POST['use_custom_coordinates'] === 'yes' && !$use_custom_coordinates
+        && isset($geocoded['latitude'], $geocoded['longitude'])
+    ) {
+        $_POST['latitude'] = $geocoded['latitude'];
+        $_POST['longitude'] = $geocoded['longitude'];
+    }
 
     // add TC if location is specific and and can't attend in person
     if ($_POST['in_person'] === 'no' && !$approximate) {
