@@ -162,8 +162,7 @@ if (!function_exists('tsml_import_page')) {
             tsml_import_data_source(
                 $_POST['tsml_add_data_source'],
                 $_POST['tsml_add_data_source_name'],
-                $_POST['tsml_add_data_source_parent_region_id'],
-                'disabled'
+                $_POST['tsml_add_data_source_parent_region_id']
             );
         }
 
@@ -244,9 +243,6 @@ if (!function_exists('tsml_import_page')) {
                                     <th class="align-left">
                                         <?php esc_html_e('Parent Region', '12-step-meeting-list') ?>
                                     </th>
-                                    <th class="align-left">
-                                        <?php esc_html_e('Change Detection', '12-step-meeting-list') ?>
-                                    </th>
                                     <th class="align-center">
                                         <?php esc_html_e('Meetings', '12-step-meeting-list') ?>
                                     </th>
@@ -266,7 +262,6 @@ if (!function_exists('tsml_import_page')) {
                                                 tsml_input_hidden('tsml_add_data_source', $feed);
                                                 tsml_input_hidden('tsml_add_data_source_name', @$properties['name']);
                                                 tsml_input_hidden('tsml_add_data_source_parent_region_id', @$properties['parent_region_id']);
-                                                tsml_input_hidden('tsml_add_data_source_change_detect', @$properties['change_detect']);
                                                 tsml_input_submit(__('Refresh', '12-step-meeting-list'));
                                                 ?>
                                             </form>
@@ -292,17 +287,6 @@ if (!function_exists('tsml_import_page')) {
                                                 $parent_region = $regions[$properties['parent_region_id']];
                                             }
                                             echo esc_html($parent_region);
-                                            ?>
-                                        </td>
-                                        <td>
-                                            <?php
-                                            $change_detect = null;
-                                            if (empty($properties['change_detect']) || $properties['change_detect'] == -1) {
-                                                $change_detect = __('Disabled', '12-step-meeting-list');
-                                            } else {
-                                                $change_detect = ucfirst($properties['change_detect']);
-                                            }
-                                            echo esc_html($change_detect);
                                             ?>
                                         </td>
                                         <td class="align-center count_meetings">

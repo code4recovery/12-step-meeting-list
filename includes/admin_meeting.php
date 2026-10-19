@@ -34,6 +34,9 @@ add_action('admin_init', function () {
         // do this every time
         update_option('tsml_version', TSML_VERSION);
         flush_rewrite_rules();
+
+        // change detection was retired, so clear the daily scans and setting older feeds still have
+        tsml_import_remove_change_detection();
     };
 
     add_meta_box('info', __('Meeting Information', '12-step-meeting-list'), function () {

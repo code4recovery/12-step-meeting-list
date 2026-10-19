@@ -100,20 +100,18 @@ function tsml_import_response_error($response)
  * @param mixed $data_source_url
  * @param mixed $data_source_name
  * @param mixed $data_source_parent_region_id
- * @param mixed $data_source_change_detect
  * @return void
  */
-function tsml_import_data_source($data_source_url, $data_source_name = '', $data_source_parent_region_id = 0, $data_source_change_detect = 'disabled')
+function tsml_import_data_source($data_source_url, $data_source_name = '', $data_source_parent_region_id = 0)
 {
     global $tsml_debug;
 
     $tsml_data_sources = tsml_get_option_array('tsml_data_sources');
 
-    // sanitize URL, name, parent region id, and Change Detection values
+    // sanitize URL, name, and parent region id
     $data_source_url = $imported_data_source_url = trim(esc_url_raw($data_source_url, ['http', 'https']));
     $data_source_name = sanitize_text_field($data_source_name);
     $data_source_parent_region_id = (int) $data_source_parent_region_id;
-    $data_source_change_detect = sanitize_text_field($data_source_change_detect);
 
     // data source
     $current_data_source = array_key_exists($data_source_url, $tsml_data_sources) ? $tsml_data_sources[$data_source_url] : null;
@@ -121,7 +119,6 @@ function tsml_import_data_source($data_source_url, $data_source_name = '', $data
     if ($current_data_source) {
         $data_source_name = $current_data_source['name'];
         $data_source_parent_region_id = $current_data_source['parent_region_id'];
-        $data_source_change_detect = $current_data_source['change_detect'];
     }
 
     // use c4r sheets service for Google Sheets URLs
@@ -159,14 +156,8 @@ function tsml_import_data_source($data_source_url, $data_source_name = '', $data
                 'count_meetings' => 0,
                 'name' => $data_source_name,
                 'parent_region_id' => $data_source_parent_region_id,
-                'change_detect' => $data_source_change_detect,
                 'type' => 'JSON',
             ];
-
-            // create a cron job to run daily when Change Detection is enabled for the new data source
-            if ($data_source_change_detect === 'enabled') {
-                tsml_schedule_import_scan($data_source_url, $data_source_name);
-            }
 
             tsml_log(
                 'data_source',
@@ -634,7 +625,6 @@ function tsml_import_buffer_set($meetings, $data_source_url = null, $data_source
                     'count_meetings' => 0,
                     'name' => parse_url($meeting_data_source, PHP_URL_HOST),
                     'parent_region_id' => $data_source_parent_region_id,
-                    'change_detect' => null,
                     'type' => 'JSON',
                 ];
             }
@@ -1270,6 +1260,30 @@ function tsml_import_sanitize_meetings($meetings, $data_source_url = null, $data
     }
 
     return $meetings;
+}
+
+/**
+ * remove what's left of the retired change detection feature: daily scans and the per-feed setting
+ * used: upgrade check in admin_meeting.php
+ *
+ * @return void
+ */
+function tsml_import_remove_change_detection()
+{
+    if (function_exists('wp_unschedule_hook')) {
+        wp_unschedule_hook('tsml_scan_data_source');
+    }
+
+    $tsml_data_sources = tsml_get_option_array('tsml_data_sources');
+    if (empty($tsml_data_sources)) {
+        return;
+    }
+    foreach ($tsml_data_sources as $url => $data_source) {
+        if (is_array($data_source)) {
+            unset($tsml_data_sources[$url]['change_detect']);
+        }
+    }
+    update_option('tsml_data_sources', $tsml_data_sources);
 }
 
 /**

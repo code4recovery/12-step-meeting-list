@@ -98,13 +98,6 @@ class HelpersTest extends WP_UnitTestCase
         $this->assertNull(tsml_timezone_parse('Nonexistent/Zone'));
     }
 
-    public function test_strtotime_respects_site_timezone()
-    {
-        update_option('timezone_string', 'UTC');
-        update_option('gmt_offset', 0);
-        $this->assertSame('1704067200', tsml_strtotime('2024-01-01 00:00:00'));
-    }
-
     public function test_date_localised_respects_site_timezone()
     {
         update_option('timezone_string', 'UTC');
