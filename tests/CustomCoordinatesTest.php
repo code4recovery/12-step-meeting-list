@@ -11,8 +11,11 @@ class CustomCoordinatesTest extends WP_Ajax_UnitTestCase
     const FEED = 'https://district.example.org/wp-admin/admin-ajax.php?action=meetings';
     const OTHER_FEED = 'https://other.example.org/wp-admin/admin-ajax.php?action=meetings';
 
-    // a pin placed manually on the source site, away from the geocoded and local positions
-    const SOURCE_PIN = ['use_custom_coordinates' => 'yes', 'latitude' => -34.0600000, 'longitude' => 18.8300000];
+    // a pin placed manually on the source site, about 60 m from the geocoded position and away from the local pin
+    const SOURCE_PIN = ['use_custom_coordinates' => 'yes', 'latitude' => -34.0650000, 'longitude' => 18.8355000];
+
+    // a pin placed manually on the source site, about 800 m from the geocoded position
+    const FAR_SOURCE_PIN = ['use_custom_coordinates' => 'yes', 'latitude' => -34.0600000, 'longitude' => 18.8300000];
 
     private $max_distance;
     private $distance_units;
@@ -188,8 +191,8 @@ class CustomCoordinatesTest extends WP_Ajax_UnitTestCase
     {
         $location_id = $this->import_from_feed($this->feed_meeting(self::SOURCE_PIN));
 
-        $this->assertEquals(-34.06, get_post_meta($location_id, 'latitude', true));
-        $this->assertEquals(18.83, get_post_meta($location_id, 'longitude', true));
+        $this->assertEquals(-34.065, get_post_meta($location_id, 'latitude', true));
+        $this->assertEquals(18.8355, get_post_meta($location_id, 'longitude', true));
         $this->assertSame('yes', get_post_meta($location_id, 'use_custom_coordinates', true));
         $this->assertSame(self::FEED, get_post_meta($location_id, 'custom_coordinates_data_source', true));
     }
@@ -218,13 +221,32 @@ class CustomCoordinatesTest extends WP_Ajax_UnitTestCase
         $this->assertFalse(metadata_exists('post', $location_id, 'use_custom_coordinates'));
     }
 
+    public function test_feed_import_geocodes_source_pin_beyond_limit()
+    {
+        $location_id = $this->import_from_feed($this->feed_meeting(self::FAR_SOURCE_PIN));
+
+        $this->assertEquals(-34.065333, get_post_meta($location_id, 'latitude', true));
+        $this->assertFalse(metadata_exists('post', $location_id, 'use_custom_coordinates'));
+    }
+
+    public function test_feed_import_drops_source_pin_moved_beyond_limit()
+    {
+        $location_id = $this->import_from_feed($this->feed_meeting(self::SOURCE_PIN));
+
+        $this->import_from_feed($this->feed_meeting(self::FAR_SOURCE_PIN));
+
+        $this->assertEquals(-34.065333, get_post_meta($location_id, 'latitude', true));
+        $this->assertFalse(metadata_exists('post', $location_id, 'use_custom_coordinates'));
+        $this->assertFalse(metadata_exists('post', $location_id, 'custom_coordinates_data_source'));
+    }
+
     public function test_feed_import_source_pin_replaces_local_pin()
     {
         $location_id = $this->create_location(true);
 
         $this->import_from_feed($this->feed_meeting(self::SOURCE_PIN));
 
-        $this->assertEquals(-34.06, get_post_meta($location_id, 'latitude', true));
+        $this->assertEquals(-34.065, get_post_meta($location_id, 'latitude', true));
         $this->assertSame(self::FEED, get_post_meta($location_id, 'custom_coordinates_data_source', true));
     }
 
@@ -255,7 +277,7 @@ class CustomCoordinatesTest extends WP_Ajax_UnitTestCase
 
         $this->import_from_feed($this->feed_meeting(), self::OTHER_FEED);
 
-        $this->assertEquals(-34.06, get_post_meta($location_id, 'latitude', true));
+        $this->assertEquals(-34.065, get_post_meta($location_id, 'latitude', true));
         $this->assertSame(self::FEED, get_post_meta($location_id, 'custom_coordinates_data_source', true));
     }
 
@@ -270,7 +292,7 @@ class CustomCoordinatesTest extends WP_Ajax_UnitTestCase
     {
         $this->import_from_feed($this->feed_meeting(self::SOURCE_PIN));
 
-        $changes = $this->changes($this->feed_meeting(['latitude' => -34.0610000] + self::SOURCE_PIN));
+        $changes = $this->changes($this->feed_meeting(['latitude' => -34.0651000] + self::SOURCE_PIN));
 
         $this->assertCount(1, $changes);
         $this->assertSame('update', $changes[0]['action']);
@@ -285,6 +307,14 @@ class CustomCoordinatesTest extends WP_Ajax_UnitTestCase
 
         $this->assertCount(1, $changes);
         $this->assertStringContainsString('Map pin', $changes[0]['info']);
+    }
+
+    public function test_change_detection_ignores_source_pin_beyond_limit()
+    {
+        // otherwise every refresh would report a pin that never gets saved
+        $this->import_from_feed($this->feed_meeting(self::FAR_SOURCE_PIN));
+
+        $this->assertSame([], $this->changes($this->feed_meeting(self::FAR_SOURCE_PIN)));
     }
 
     public function test_change_detection_ignores_local_pin()

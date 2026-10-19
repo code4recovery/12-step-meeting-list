@@ -1824,7 +1824,7 @@ msgstr ""
 msgid "Meeting updated"
 msgstr ""
 
-#: includes/functions_import.php:772
+#: includes/functions_import.php:762
 msgid "Map pin"
 msgstr ""
 

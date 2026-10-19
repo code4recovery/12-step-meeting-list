@@ -58,7 +58,7 @@ We get our geocoding positions from Google. Google is correct an amazing amount 
 
 To move a pin, edit any meeting at that address and tick **Adjust the map pin manually** under the map. You can then drag the pin, or paste coordinates (latitude, longitude) into the **Coordinates** field. The pin applies to all meetings at that address, and is kept when the address is geocoded again. Other sites running 12 Step Meeting List that import your meeting feed will use your pin too.
 
-The pin can be moved up to 100 m (330 ft) from where the address puts it. To change this limit, add this to your theme's functions.php, with the distance in metres.
+The pin can be moved up to 100 m (330 ft) from where the address puts it. A site importing your feed checks your pin against its own limit, and uses the geocoded position if your pin is further away. To change the limit on your site, add this to your theme's functions.php, with the distance in metres.
 
 	$tsml_custom_coordinates_max_distance_meters = 200;
 

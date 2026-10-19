@@ -395,7 +395,7 @@ function tsml_coordinates_valid($latitude, $longitude)
 
 /**
  * check that a manually placed map pin is usable and close enough to where the address puts it
- * used: save.php
+ * used: save.php, tsml_import_custom_coordinates()
  *
  * @param mixed $latitude
  * @param mixed $longitude
