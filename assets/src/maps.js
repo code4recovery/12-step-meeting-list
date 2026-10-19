@@ -248,8 +248,20 @@ function setSearchMarker(data) {
 	marker = new L.marker([data.latitude, data.longitude], {icon}).addTo(tsmlmap);
 }
 
+// the map, used by admin.js to show how far the meeting pin can be dragged
+function getMap() {
+	return tsmlmap;
+}
+
+// the markers currently on the map, used by admin.js to drag the meeting pin
+function getMapMarkers() {
+	return markers;
+}
+
 // Expose functions needed by admin.js and public.js (webpack modules don't share scope)
 window.createMap = createMap;
 window.formatAddress = formatAddress;
 window.formatLink = formatLink;
+window.getMap = getMap;
+window.getMapMarkers = getMapMarkers;
 window.removeSearchMarker = removeSearchMarker;

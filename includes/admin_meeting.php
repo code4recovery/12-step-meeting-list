@@ -326,6 +326,40 @@ add_action('admin_init', function () {
             <div id="map"></div>
         </div>
 
+            <?php $use_custom_coordinates = @$location->use_custom_coordinates === 'yes'; ?>
+        <div class="meta_form_row checkbox use_custom_coordinates<?php echo @$location->approximate === 'yes' ? ' hidden' : '' ?>">
+            <label>
+                <input type="checkbox" name="use_custom_coordinates" id="use_custom_coordinates" value="yes" <?php checked($use_custom_coordinates) ?>>
+                <?php esc_html_e('Adjust the map pin manually (applies to all meetings at this address)', '12-step-meeting-list') ?>
+            </label>
+        </div>
+        <div class="meta_form_row custom_coordinates<?php echo $use_custom_coordinates ? '' : ' hidden' ?>">
+            <label for="custom_coordinates">
+                <?php esc_html_e('Coordinates', '12-step-meeting-list') ?>
+            </label>
+            <?php tsml_input_text('custom_coordinates', $use_custom_coordinates ? $location->latitude . ', ' . $location->longitude : '', [
+                'name' => false,
+                'placeholder' => '-34.0652985, 18.8359404',
+            ]) ?>
+            <small class="show">
+                <?php echo esc_html(sprintf(
+                    // translators: %s is a distance, eg 100 m or 330 ft
+                    __('Drag the pin on the map, or paste coordinates as latitude, longitude. The pin can be up to %s from the address.', '12-step-meeting-list'),
+                    tsml_custom_coordinates_max_distance_label()
+                )) ?>
+            </small>
+            <small class="error_message" data-message="1">
+                <?php esc_html_e('Error: Coordinates must be a latitude between -90 and 90 and a longitude between -180 and 180, separated by a comma.', '12-step-meeting-list') ?>
+            </small>
+            <small class="error_message" data-message="2">
+                <?php echo esc_html(sprintf(
+                    // translators: %s is a distance, eg 100 m or 330 ft
+                    __('Error: The pin must be within %s of the address. To move it further, correct the address.', '12-step-meeting-list'),
+                    tsml_custom_coordinates_max_distance_label()
+                )) ?>
+            </small>
+        </div>
+
         <div class="meta_form_row">
             <label for="timezone">
                 <?php esc_html_e('Timezone', '12-step-meeting-list') ?>

@@ -108,8 +108,11 @@ add_action('wp_ajax_tsml_address', function () {
         !$posts = get_posts([
             'post_type' => 'tsml_location',
             'numberposts' => 1,
+            'orderby' => 'id',
+            'order' => 'ASC',
             'meta_key' => 'formatted_address',
             'meta_value' => sanitize_text_field($_GET['formatted_address']),
+            'post_status' => 'any',
         ])
     ) {
         wp_send_json(false);
@@ -118,11 +121,20 @@ add_action('wp_ajax_tsml_address', function () {
     $region = get_the_terms($posts[0]->ID, 'tsml_region');
 
     // return info to user
-    wp_send_json([
+    $response = [
         'location' => $posts[0]->post_title,
         'location_notes' => $posts[0]->post_content,
         'region' => $region[0]->term_id,
-    ]);
+    ];
+
+    // include a manually placed map pin so the editor can show it
+    if (get_post_meta($posts[0]->ID, 'use_custom_coordinates', true) === 'yes') {
+        $response['use_custom_coordinates'] = 'yes';
+        $response['latitude'] = get_post_meta($posts[0]->ID, 'latitude', true);
+        $response['longitude'] = get_post_meta($posts[0]->ID, 'longitude', true);
+    }
+
+    wp_send_json($response);
 });
 
 

@@ -94,6 +94,8 @@ jQuery(function ($) {
             approximate:       $form.find('input#approximate'),
             latitude:          $form.find('input[name=latitude]'),
             longitude:         $form.find('input[name=longitude]'),
+            use_custom_coordinates: $form.find('input[name=use_custom_coordinates]'),
+            custom_coordinates: $form.find('input#custom_coordinates'),
             timezone:          $form.find('select[name=timezone]'),
 			group:             $form.find('input#group'),
 			group_notes:       $form.find('textarea[name=group_notes]'),
@@ -323,6 +325,129 @@ jQuery(function ($) {
 			$('div#group .apply_group_to_location').removeClass('hidden');
 		});
 
+		//map pin: the hidden latitude and longitude fields are what gets saved
+		var pin_position = {latitude: $fields.latitude.val(), longitude: $fields.longitude.val()};
+		var geocoded_position = null;
+		//a manually placed pin belongs to the address it was placed for
+		var resolved_address = $fields.use_custom_coordinates.prop('checked') ? $fields.formatted_address.attr('data-original-value') : null;
+		//how far a manually placed pin can be from where the address puts it, in metres
+		var max_distance = parseFloat(tsml.custom_coordinates_max_distance_meters);
+		var limit_circle = null;
+
+		//move the pin, keeping the hidden fields, coordinates field and map in sync
+		function setPin(latitude, longitude, approximate) {
+			pin_position = {latitude: latitude, longitude: longitude};
+			$fields.latitude.val(latitude);
+			$fields.longitude.val(longitude);
+			$fields.custom_coordinates.val(latitude + ', ' + longitude).clearState();
+			//the map hides approximate pins
+			createMap(false, {0: $.extend({approximate: approximate}, pin_position)});
+			updatePinDragging();
+			//eg a saved pin, after the address has been geocoded to somewhere else
+			if ($fields.use_custom_coordinates.prop('checked') && !pinWithinLimit(latitude, longitude)) {
+				$fields.custom_coordinates.setState('error', 2);
+			}
+		}
+
+		//whether a manually placed pin is close enough to where the address puts it
+		function pinWithinLimit(latitude, longitude) {
+			//nothing to measure from until the address is geocoded, and save.php checks again
+			if (!geocoded_position) return true;
+			var distance = L.latLng(geocoded_position.latitude, geocoded_position.longitude).distanceTo([latitude, longitude]);
+			//a metre to spare for rounding, the same as save.php
+			return distance <= max_distance + 1;
+		}
+
+		//the nearest position within the limit, so a dragged pin stops at the edge of the circle
+		function limitPinPosition(position) {
+			if (!geocoded_position) return position;
+			var center = L.latLng(geocoded_position.latitude, geocoded_position.longitude);
+			var distance = center.distanceTo(position);
+			if (distance <= max_distance) return position;
+			var scale = max_distance / distance;
+			return L.latLng(center.lat + (position.lat - center.lat) * scale, center.lng + (position.lng - center.lng) * scale);
+		}
+
+		//the pin can only be dragged while it is being placed manually, and only as far as the circle
+		function updatePinDragging() {
+			if (limit_circle) {
+				limit_circle.remove();
+				limit_circle = null;
+			}
+			var marker = getMapMarkers()[0];
+			if (!marker || !marker.dragging) return;
+			if (!$fields.use_custom_coordinates.prop('checked')) {
+				marker.dragging.disable();
+				return;
+			}
+			if (geocoded_position) {
+				limit_circle = L.circle([geocoded_position.latitude, geocoded_position.longitude], {
+					radius: max_distance,
+					color: '#2271b1',
+					weight: 2,
+					dashArray: '4 4',
+					fillOpacity: 0.08,
+					interactive: false
+				}).addTo(getMap());
+			}
+			marker.dragging.enable();
+			marker.off('drag').on('drag', function () {
+				var position = marker.getLatLng();
+				var limited = limitPinPosition(position);
+				if (limited !== position) marker.setLatLng(limited);
+			});
+			marker.off('dragend').on('dragend', function () {
+				var position = marker.getLatLng();
+				//7 decimal places is about 1cm, plenty for a map pin
+				pin_position = {latitude: +position.lat.toFixed(7), longitude: +position.lng.toFixed(7)};
+				$fields.latitude.val(pin_position.latitude);
+				$fields.longitude.val(pin_position.longitude);
+				$fields.custom_coordinates.val(pin_position.latitude + ', ' + pin_position.longitude).clearState();
+			});
+		}
+
+		//tick or untick manual pin placement, showing the coordinates field to match
+		function setUseCustomCoordinates(custom) {
+			$fields.use_custom_coordinates.prop('checked', custom);
+			$('.meta_form_row.custom_coordinates').toggleClass('hidden', !custom);
+			if (!custom) $fields.custom_coordinates.clearState();
+			updatePinDragging();
+		}
+
+		$fields.use_custom_coordinates.on('change', function () {
+			var custom = $(this).prop('checked');
+			setUseCustomCoordinates(custom);
+			if (!custom && geocoded_position) {
+				//back to where the address puts it
+				setPin(geocoded_position.latitude, geocoded_position.longitude);
+			}
+		});
+
+		//pasted or typed coordinates, eg -34.0652985, 18.8359404
+		$fields.custom_coordinates
+			.on('change', function () {
+				var match = $(this).val().trim().match(/^(-?\d+(?:\.\d+)?)\s*[,\s]\s*(-?\d+(?:\.\d+)?)$/);
+				var latitude = match ? parseFloat(match[1]) : NaN;
+				var longitude = match ? parseFloat(match[2]) : NaN;
+				if (!(Math.abs(latitude) <= 90 && Math.abs(longitude) <= 180)) {
+					$fields.custom_coordinates.setState('error', 1);
+					return;
+				}
+				//too far away: leave the pin where it is
+				if (!pinWithinLimit(latitude, longitude)) {
+					$fields.custom_coordinates.setState('error', 2);
+					return;
+				}
+				setPin(latitude, longitude);
+			})
+			.on('keydown', function (e) {
+				//enter would submit the whole post form
+				if (e.key === 'Enter') {
+					e.preventDefault();
+					$(this).trigger('change');
+				}
+			});
+
 		//address / map
 		$fields.formatted_address
 			.on('change', function () {
@@ -363,10 +488,20 @@ jQuery(function ($) {
                             return;
                         }
 
-						//set lat + lng
-						$fields.latitude.val(geocoded.latitude);
-						$fields.longitude.val(geocoded.longitude);
-						createMap(false, {0: geocoded});
+						//manual pins are only for specific addresses
+						var approximate = geocoded.approximate === 'yes';
+						$('.meta_form_row.use_custom_coordinates').toggleClass('hidden', approximate);
+						if (approximate) setUseCustomCoordinates(false);
+
+						//set lat + lng, keeping a manually placed pin while the address stays the same
+						var same_address = geocoded.formatted_address === resolved_address;
+						resolved_address = geocoded.formatted_address;
+						geocoded_position = {latitude: geocoded.latitude, longitude: geocoded.longitude};
+						if (same_address && $fields.use_custom_coordinates.prop('checked')) {
+							setPin(pin_position.latitude, pin_position.longitude);
+						} else {
+							setPin(geocoded.latitude, geocoded.longitude, geocoded.approximate);
+						}
 
 						//guess region if not set
 						var region_id = false;
@@ -401,6 +536,16 @@ jQuery(function ($) {
 										$('select[name=region] option[value=' + data.region + ']').prop('selected', true);
 									}
 									$fields.location_notes.val(data.location_notes);
+								}
+
+								//a newly entered address uses its location's manually placed pin, if it has one
+								if (!same_address && !approximate) {
+									if (data && data.use_custom_coordinates === 'yes') {
+										setUseCustomCoordinates(true);
+										setPin(data.latitude, data.longitude);
+									} else {
+										setUseCustomCoordinates(false);
+									}
 								}
 
 								if ((!data || !data.region) && !$('select#region option[selected]').length && region_id) {

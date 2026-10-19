@@ -84,7 +84,8 @@ function tsml_alert($message, $type = 'success')
 function tsml_assets()
 {
     global $tsml_map, $tsml_street_only, $tsml_programs, $tsml_strings, $tsml_program,
-    $tsml_distance_units, $tsml_defaults, $tsml_columns, $tsml_nonce, $tsml_debug;
+    $tsml_distance_units, $tsml_defaults, $tsml_columns, $tsml_nonce, $tsml_debug,
+    $tsml_custom_coordinates_max_distance_meters;
 
 
     wp_enqueue_script('leaflet', 'https://unpkg.com/leaflet@1.9.4/dist/leaflet.js', [], '1.9.4', true);
@@ -95,6 +96,7 @@ function tsml_assets()
         wp_enqueue_script('tsml_admin', plugins_url('../assets/js/admin.min.js', __FILE__), ['jquery'], TSML_VERSION, true);
         wp_localize_script('tsml_admin', 'tsml', [
             'ajaxurl' => admin_url('admin-ajax.php'),
+            'custom_coordinates_max_distance_meters' => $tsml_custom_coordinates_max_distance_meters,
             'debug' => WP_DEBUG,
             'tsml_debug' => !!$tsml_debug,
             'map' => $tsml_map,
@@ -376,6 +378,77 @@ function tsml_conference_providers()
     $providers = array_unique(array_values($tsml_conference_providers));
     natcasesort($providers);
     return $providers;
+}
+
+/**
+ * check that a latitude and longitude can be used as a map position
+ * used: tsml_custom_coordinates_allowed()
+ *
+ * @param mixed $latitude
+ * @param mixed $longitude
+ * @return bool
+ */
+function tsml_coordinates_valid($latitude, $longitude)
+{
+    return is_numeric($latitude) && is_numeric($longitude) && abs($latitude) <= 90 && abs($longitude) <= 180;
+}
+
+/**
+ * check that a manually placed map pin is usable and close enough to where the address puts it
+ * used: save.php
+ *
+ * @param mixed $latitude
+ * @param mixed $longitude
+ * @param array $geocoded the result of tsml_geocode() for the address
+ * @return bool
+ */
+function tsml_custom_coordinates_allowed($latitude, $longitude, $geocoded)
+{
+    global $tsml_custom_coordinates_max_distance_meters;
+    if (!tsml_coordinates_valid($latitude, $longitude) || !isset($geocoded['latitude'], $geocoded['longitude'])) {
+        return false;
+    }
+    $distance = tsml_distance($geocoded['latitude'], $geocoded['longitude'], $latitude, $longitude);
+    // a metre to spare for rounding, the same as admin.js
+    return $distance <= $tsml_custom_coordinates_max_distance_meters + 1;
+}
+
+/**
+ * how far a manually placed map pin can be from the address, in the site's distance units, eg 100 m or 330 ft
+ * used: admin_meeting.php
+ *
+ * @return string
+ */
+function tsml_custom_coordinates_max_distance_label()
+{
+    global $tsml_custom_coordinates_max_distance_meters, $tsml_distance_units;
+    $meters = $tsml_custom_coordinates_max_distance_meters;
+    if ($tsml_distance_units === 'km') {
+        // translators: %s is a distance in metres
+        return sprintf(__('%s m', '12-step-meeting-list'), number_format_i18n($meters));
+    }
+    // feet, rounded to the nearest 10
+    // translators: %s is a distance in feet
+    return sprintf(__('%s ft', '12-step-meeting-list'), number_format_i18n(round($meters * 3.28084, -1)));
+}
+
+/**
+ * distance in metres between two points, using the same formula as Leaflet's distanceTo() so it matches the map
+ * used: tsml_custom_coordinates_allowed()
+ *
+ * @param float $latitude1
+ * @param float $longitude1
+ * @param float $latitude2
+ * @param float $longitude2
+ * @return float
+ */
+function tsml_distance($latitude1, $longitude1, $latitude2, $longitude2)
+{
+    $sin_latitude = sin(deg2rad($latitude2 - $latitude1) / 2);
+    $sin_longitude = sin(deg2rad($longitude2 - $longitude1) / 2);
+    $a = $sin_latitude * $sin_latitude
+        + cos(deg2rad($latitude1)) * cos(deg2rad($latitude2)) * $sin_longitude * $sin_longitude;
+    return 6371000 * 2 * atan2(sqrt($a), sqrt(1 - $a));
 }
 
 /**
@@ -1235,6 +1308,23 @@ function tsml_require_settings_permission()
     if (!current_user_can(TSML_SETTINGS_PERMISSION)) {
         // translators: %s is the permission required
         wp_die(wp_kses(sprintf(__('You do not have sufficient permissions to access this page (<code>%s</code>).', '12-step-meeting-list'), TSML_SETTINGS_PERMISSION), TSML_ALLOWED_HTML));
+    }
+}
+
+/**
+ * flag whether a location's map pin was placed manually
+ * used: save.php
+ *
+ * @param int $location_id
+ * @param bool $use_custom_coordinates
+ * @return void
+ */
+function tsml_update_use_custom_coordinates($location_id, $use_custom_coordinates)
+{
+    if ($use_custom_coordinates) {
+        update_post_meta($location_id, 'use_custom_coordinates', 'yes');
+    } else {
+        delete_post_meta($location_id, 'use_custom_coordinates');
     }
 }
 

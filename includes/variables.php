@@ -20,7 +20,7 @@ global $tsml_bounds, $tsml_cache, $tsml_cache_writable, $tsml_meeting_attendance
     $tsml_feedback_addresses, $tsml_user_interface, $tsml_auto_import, $tsml_google_overrides,
     $tsml_language, $tsml_nonce, $tsml_notification_addresses, $tsml_program, $tsml_sharing,
     $tsml_sharing_keys, $tsml_sort_by, $tsml_street_only, $tsml_timestamp, $tsml_timezone,
-    $tsml_timezone_aliases, $tsml_ui_config, $tsml_debug;
+    $tsml_timezone_aliases, $tsml_ui_config, $tsml_debug, $tsml_custom_coordinates_max_distance_meters;
 
 add_filter('cron_schedules', function ($schedules) {
     $schedules['ten_minutes'] = [
@@ -141,6 +141,9 @@ $tsml_defaults = [
 
 // load the distance units that we're using (ie miles or kms)
 $tsml_distance_units = get_option('tsml_distance_units', 'mi');
+
+// how far a manually placed map pin can be from where the address puts it, in metres
+$tsml_custom_coordinates_max_distance_meters = 100;
 
 // define columns to output, always in English for portability (per Poland NA) - used in tsml_ajax_csv() and tsml_feedback_url()
 $tsml_export_columns = [
