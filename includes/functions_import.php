@@ -428,7 +428,7 @@ function tsml_import_buffer_next($limit = 25)
             update_post_meta($location_id, 'formatted_address', $geocoded['formatted_address']);
 
             // map pin: one placed manually on the source wins, then one placed manually here, then the geocoded position
-            $custom_coordinates = $geocoded['approximate'] === 'no' ? tsml_import_custom_coordinates($meeting) : null;
+            $custom_coordinates = tsml_import_custom_coordinates($meeting, $geocoded);
 
             // keep a pin placed manually, unless it came from this feed and the source has since removed it
             $pin_data_source = get_post_meta($location_id, 'custom_coordinates_data_source', true);
@@ -803,13 +803,14 @@ function tsml_import_get_changed_meetings($feed_meetings, $data_source_url)
 }
 
 /**
- * get the coordinates of a map pin the source placed manually, if usable
+ * get the coordinates of a map pin the source placed manually, if usable on this site
  * used: tsml_import_buffer_next(), tsml_import_map_pin_changed()
  *
  * @param array $meeting meeting from the import
+ * @param array|null $geocoded the result of tsml_geocode() for the meeting's address, looked up if not given
  * @return array|null latitude and longitude, or null to geocode instead
  */
-function tsml_import_custom_coordinates($meeting)
+function tsml_import_custom_coordinates($meeting, $geocoded = null)
 {
     if (empty($meeting['use_custom_coordinates']) || $meeting['use_custom_coordinates'] !== 'yes') {
         return null;
@@ -817,7 +818,21 @@ function tsml_import_custom_coordinates($meeting)
     if (!empty($meeting['approximate']) && $meeting['approximate'] === 'yes') {
         return null;
     }
-    if (!isset($meeting['latitude'], $meeting['longitude']) || !tsml_coordinates_valid($meeting['latitude'], $meeting['longitude'])) {
+    if (!isset($meeting['latitude'], $meeting['longitude'])) {
+        return null;
+    }
+
+    // held to the same limit as a pin placed on this site, measured from where this site geocodes the address
+    if ($geocoded === null) {
+        if (empty($meeting['formatted_address'])) {
+            return null;
+        }
+        $geocoded = tsml_geocode($meeting['formatted_address']);
+    }
+    if (empty($geocoded['approximate']) || $geocoded['approximate'] !== 'no') {
+        return null;
+    }
+    if (!tsml_custom_coordinates_allowed($meeting['latitude'], $meeting['longitude'], $geocoded)) {
         return null;
     }
     return [
