@@ -48,6 +48,7 @@ $schema = [
             'name' => $meeting['name'],
             'url' => @$meeting['url'],
             'description' => tsml_meeting_types($meeting['types']),
+            "startDate" => $meeting['start_date']->format('Y-m-d'),
             "eventSchedule" => [
                 "@type" => "Schedule",
                 "repeatFrequency" => "P1W",
