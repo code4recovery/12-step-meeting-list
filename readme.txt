@@ -4,7 +4,7 @@ Donate link: https://code4recovery.org/contribute
 Requires at least: 3.2
 Requires PHP: 7.2
 Tested up to: 7.0
-Stable tag: 3.19.19
+Stable tag: 3.19.20
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -288,6 +288,14 @@ Yes, you will need to know the key name of the field. Then include an array in y
 1. Edit location
 
 == Changelog ==
+
+= 3.19.20 =
+* Improve SEO by tweaking JSON schema [more info](https://github.com/code4recovery/12-step-meeting-list/pull/2028)
+* Retire change detection [more info](https://github.com/code4recovery/12-step-meeting-list/pull/2034)
+* Allow map pin to be moved [more info](https://github.com/code4recovery/12-step-meeting-list/pull/2026)
+* Fix PHP deprecation notices when uploading a CSV [more info](https://github.com/code4recovery/12-step-meeting-list/pull/2032)
+* Developer updates [more info](https://github.com/code4recovery/12-step-meeting-list/pull/2019) and [more info](https://github.com/code4recovery/12-step-meeting-list/pull/2015)
+* Upgrade dependencies
 
 = 3.19.19 =
 * Declare `variables.php` globals so WP-CLI and cron imports don't fatal on PHP 8+ [more info](https://github.com/code4recovery/12-step-meeting-list/pull/2013)
