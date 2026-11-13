@@ -25,6 +25,9 @@ require_once "{$tsml_tests_dir}/includes/functions.php";
 function tsml_tests_manually_load_plugin()
 {
     require dirname(__DIR__) . '/12-step-meeting-list.php';
+
+    // admin-only files whose hooks are tested (the plugin loads them only when is_admin())
+    require dirname(__DIR__) . '/includes/admin_region.php';
 }
 tests_add_filter('muplugins_loaded', 'tsml_tests_manually_load_plugin');
 
