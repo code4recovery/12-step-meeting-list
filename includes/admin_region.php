@@ -43,10 +43,14 @@ add_action(
     function ($region_id) {
         tsml_require_meetings_permission();
 
-        // set updated time for all meetings in region if a region is edited
-        $meetings = tsml_get_meetings(['region' => $region_id]);
-        foreach ($meetings as $meeting) {
-            wp_update_post(['ID' => $meeting['id']]);
+        // set updated time for all meetings in this region and its sub-regions
+        // (the region filter takes a slug, and an empty filter would match every meeting)
+        $region = get_term($region_id, 'tsml_region');
+        if (!empty($region->slug)) {
+            $meetings = tsml_get_meetings(['region' => $region->slug]);
+            foreach ($meetings as $meeting) {
+                wp_update_post(['ID' => $meeting['id']]);
+            }
         }
 
         // delete this region and reassign its locations to another region
@@ -68,13 +72,22 @@ add_action(
                 wp_set_object_terms($location_id, intval($_POST['delete_and_reassign']), 'tsml_region');
             }
 
-            // delete term
+            // delete term (this also rebuilds the cache, see delete_tsml_region below)
             wp_delete_term($region_id, 'tsml_region');
 
             // redirect to regions list
             wp_safe_redirect(admin_url('edit-tags.php?taxonomy=tsml_region&post_type=tsml_location'));
+            return;
         }
+
+        // the feed lists each meeting's regions from the region hierarchy, so rebuild it
+        tsml_cache_rebuild();
     },
     10,
     2
 );
+
+// when a region is deleted, its locations lose it and its sub-regions move up to its parent
+add_action('delete_tsml_region', function () {
+    tsml_cache_rebuild();
+});
