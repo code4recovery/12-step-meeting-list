@@ -289,6 +289,9 @@ if (!function_exists('tsml_settings_page')) {
                         <!-- Entity Form -->
                         <?php
                         $tsml_entity = tsml_get_entity();
+                        if (!isset($tsml_entity['entity_email'])) {
+                            $tsml_entity['entity_email'] = '';
+                        }
                         if (!isset($tsml_entity['entity_phone'])) {
                             $tsml_entity['entity_phone'] = '';
                         }
@@ -303,6 +306,11 @@ if (!function_exists('tsml_settings_page')) {
                             <p>
                                 <?php esc_html_e('Enter information for your service entity here to help identity the meeting source when sharing feeds with others.', '12-step-meeting-list') ?>
                             </p>
+                            <?php if ($tsml_program === 'aa') { ?>
+                                <p>
+                                    <?php esc_html_e('If your meetings are listed in the Meeting Guide app, the app will use this information too.', '12-step-meeting-list') ?>
+                                </p>
+                            <?php } ?>
 
                             <form method="post" class="stack compact">
                                 <?php wp_nonce_field($tsml_nonce, 'tsml_nonce', false) ?>
@@ -314,7 +322,7 @@ if (!function_exists('tsml_settings_page')) {
                                     'placeholder' => __('Entity Name', '12-step-meeting-list')
                                 ]) ?>
                                 <label class="h3" for="tsml_entity_email">
-                                    <?php esc_html_e('Administrative Contact Email', '12-step-meeting-list') ?>
+                                    <?php esc_html_e('Public Meeting Feedback Email', '12-step-meeting-list') ?>
                                 </label>
                                 <?php tsml_input_text('tsml_entity_email', $tsml_entity['entity_email'], [
                                     'maxlength' => 100,
