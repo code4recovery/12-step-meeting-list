@@ -72,6 +72,27 @@ class MeetingsTest extends WP_UnitTestCase
         $this->assertNull($this->find_meeting($meetings, $meeting_id));
     }
 
+    public function test_feed_does_not_default_entity_email_to_site_admin()
+    {
+        delete_option('tsml_entity');
+        list(, $meeting_id) = $this->create_meeting();
+
+        $meeting = $this->find_meeting(tsml_get_meetings([], false), $meeting_id);
+
+        $this->assertArrayNotHasKey('entity_email', $meeting);
+        $this->assertArrayNotHasKey('entity_email', tsml_get_entity());
+    }
+
+    public function test_feed_includes_saved_entity_email()
+    {
+        update_option('tsml_entity', ['entity_email' => 'intergroup@example.org']);
+        list(, $meeting_id) = $this->create_meeting();
+
+        $meeting = $this->find_meeting(tsml_get_meetings([], false), $meeting_id);
+
+        $this->assertSame('intergroup@example.org', $meeting['entity_email']);
+    }
+
     public function test_count_meetings_reflects_published_posts()
     {
         $before = tsml_count_meetings();

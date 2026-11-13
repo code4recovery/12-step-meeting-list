@@ -1072,13 +1072,17 @@ msgstr ""
 msgid "Enter information for your service entity here to help identity the meeting source when sharing feeds with others."
 msgstr ""
 
+#: includes/admin_settings.php:311
+msgid "If your meetings are listed in the Meeting Guide app, the app will use this information too."
+msgstr ""
+
 #: includes/admin_settings.php:310
 #: includes/admin_settings.php:314
 msgid "Entity Name"
 msgstr ""
 
-#: includes/admin_settings.php:317
-msgid "Administrative Contact Email"
+#: includes/admin_settings.php:325
+msgid "Public Meeting Feedback Email"
 msgstr ""
 
 #: includes/admin_settings.php:324

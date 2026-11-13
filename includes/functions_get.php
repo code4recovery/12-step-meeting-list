@@ -100,9 +100,12 @@ function tsml_get_entity()
     $saved_tsml_entity = tsml_get_option_array('tsml_entity');
     $tsml_entity = [
         'entity' => !empty($saved_tsml_entity['entity']) ? $saved_tsml_entity['entity'] : get_bloginfo('name'),
-        'entity_email' => !empty($saved_tsml_entity['entity_email']) ? $saved_tsml_entity['entity_email'] : get_bloginfo('admin_email'),
         'entity_url' => !empty($saved_tsml_entity['entity_url']) ? $saved_tsml_entity['entity_url'] : get_bloginfo('url'),
     ];
+    // no default: the site admin email may be someone's personal address, and this one is public
+    if (!empty($saved_tsml_entity['entity_email'])) {
+        $tsml_entity['entity_email'] = $saved_tsml_entity['entity_email'];
+    }
     if (!empty($saved_tsml_entity['entity_phone'])) {
         $tsml_entity['entity_phone'] = $saved_tsml_entity['entity_phone'];
     }
