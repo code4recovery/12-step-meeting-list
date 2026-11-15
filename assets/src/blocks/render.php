@@ -6,7 +6,7 @@
 
 /** Set font size from attribute */
 $fontSizeList = ['px', 'em', 'rem', 'vh', 'vw'];
-$fontSizes    = ['small', 'medium', 'large', 'x-large', 'xx-large'];
+$fontSizes = ['small', 'medium', 'large', 'x-large', 'xx-large'];
 if (isset($attributes['fontSize']) && $attributes['fontSize'] !== null) {
     $fontSize = $attributes['fontSize'];
     foreach ($fontSizeList as $unit) {
@@ -43,14 +43,39 @@ $styles = [
 /** Load TSML assets */
 tsml_assets();
 
-/** Loop through styles & output inline <style> */
-$styleStr = "";
+/** Filter each declaration before outputting CSS in a style element. */
+$styleStr = '';
 foreach ($styles as $key => $value) {
-    if ($value) {
-        $styleStr .= "$key: $value;";
+    if (!is_string($value) || $value === '') {
+        continue;
+    }
+
+    // A value must not introduce HTML, another declaration, or another rule.
+    if (preg_match('/[<>{};\x00-\x1f\x7f]/', $value)) {
+        continue;
+    }
+
+    $properties = [
+        '--border-radius' => 'border-radius',
+        '--font-family' => 'font-family',
+        '--online-background-image' => 'background-image',
+        '--font-size' => 'font-size',
+    ];
+    $property = isset($properties[$key]) ? $properties[$key] : 'color';
+    $declaration = safecss_filter_attr("$property: $value");
+    // Older WordPress CSS filters reject even simple rgb()/rgba() colours.
+    if ($declaration === '' && $property === 'color' && preg_match('/^rgba?\(\s*\d+(?:\.\d+)?%?\s*,\s*\d+(?:\.\d+)?%?\s*,\s*\d+(?:\.\d+)?%?(?:\s*,\s*(?:\d*\.)?\d+%?)?\s*\)$/iD', $value)) {
+        $declaration = "$property: $value";
+    }
+    if ($declaration !== '' && !preg_match('/[<>{}]/', $declaration)) {
+        $styleStr .= $key . substr($declaration, strpos($declaration, ':')) . ';';
     }
 }
-echo '<style>#tsml-ui {' . $styleStr . '}</style>';
+
+if ($styleStr !== '') {
+    // Only constrained, filtered CSS declarations reach this style element.
+    echo '<style>#tsml-ui {' . $styleStr . '}</style>';
+}
 ?>
 
 <div <?php echo wp_kses_data(get_block_wrapper_attributes()); ?>>
