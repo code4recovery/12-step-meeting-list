@@ -3,7 +3,6 @@
  */
 import {BlockIcon, InspectorControls, MediaUpload, useBlockProps} from '@wordpress/block-editor';
 import {
-	__experimentalDivider as Divider,
     Button,
     ColorPalette,
     PanelBody,
@@ -64,6 +63,11 @@ const Edit = ({attributes, setAttributes}) => {
 		padding: '0',
 		marginBottom: '1.5em'
 	}
+	const dividerStyles = {
+		border: 0,
+		borderTop: '1px solid #e0e0e0',
+		margin: '1.5em 0',
+	}
 	const helpStyles = {
 		marginTop: '-.5em',
 		marginBottom: '1.5em',
@@ -84,7 +88,7 @@ const Edit = ({attributes, setAttributes}) => {
 							onChange={(value) => setAttributes({backgroundColor: value})}
 						/>
 					</div>
-					<Divider />
+					<hr style={dividerStyles} />
 					<div>
 						<legend style={{...legendStyles}}>Online Background image</legend>
 						<p style={{...helpStyles}}>
@@ -116,12 +120,12 @@ const Edit = ({attributes, setAttributes}) => {
 						<legend style={{...legendStyles}}>Text color</legend>
 						<ColorPalette value={textColor} colors={[...colorPalette]} onChange={(value) => setAttributes({textColor: value})} />
 					</div>
-					<Divider />
+					<hr style={dividerStyles} />
 					<div>
 						<legend style={{...legendStyles}}>Link color</legend>
 						<ColorPalette value={linkColor} colors={[...colorPalette]} onChange={(value) => setAttributes({linkColor: value})} />
 					</div>
-					<Divider />
+					<hr style={dividerStyles} />
 					<div>
 						<legend style={{...legendStyles}}>Input focus shadow color</legend>
 						<ColorPalette
@@ -141,7 +145,7 @@ const Edit = ({attributes, setAttributes}) => {
 							onChange={(value) => setAttributes({alertBackgroundColor: value})}
 						/>
 					</div>
-					<Divider />
+					<hr style={dividerStyles} />
 					<div>
 						<legend style={{...legendStyles}}>Text color</legend>
 						<ColorPalette value={alertTextColor} colors={[...colorPalette]} onChange={(value) => setAttributes({alertTextColor: value})} />
@@ -156,7 +160,7 @@ const Edit = ({attributes, setAttributes}) => {
 							onChange={(value) => setAttributes({inPersonBadgeColor: value})}
 						/>
 					</div>
-					<Divider />
+					<hr style={dividerStyles} />
 					<div>
 						<legend style={{...legendStyles}}>Inactive meeting</legend>
 						<ColorPalette
@@ -165,7 +169,7 @@ const Edit = ({attributes, setAttributes}) => {
 							onChange={(value) => setAttributes({inactiveBadgeColor: value})}
 						/>
 					</div>
-					<Divider />
+					<hr style={dividerStyles} />
 					<div>
 						<legend style={{...legendStyles}}>Online meeting</legend>
 						<ColorPalette

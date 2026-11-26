@@ -88,8 +88,8 @@ function tsml_assets()
     $tsml_custom_coordinates_max_distance_meters;
 
 
-    wp_enqueue_script('leaflet', 'https://unpkg.com/leaflet@1.9.4/dist/leaflet.js', [], '1.9.4', true);
-    wp_enqueue_style('leaflet', 'https://unpkg.com/leaflet@1.9.4/dist/leaflet.css', [], '1.9.4');
+    wp_enqueue_script('leaflet', plugins_url('../assets/leaflet/leaflet.js', __FILE__), [], '1.9.4', true);
+    wp_enqueue_style('leaflet', plugins_url('../assets/leaflet/leaflet.css', __FILE__), [], '1.9.4');
     if (is_admin()) {
         // dashboard page assets
         wp_enqueue_style('tsml_admin', plugins_url('../assets/css/admin.min.css', __FILE__), [], TSML_VERSION);
