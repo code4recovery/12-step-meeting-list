@@ -3,6 +3,7 @@ const CssMinimizerPlugin = require('css-minimizer-webpack-plugin');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 const TerserPlugin = require('terser-webpack-plugin');
 const webpack = require('webpack');
+const CopyPlugin = require('copy-webpack-plugin');
 const defaultConfig = require('@wordpress/scripts/config/webpack.config');
 
 // Webpack creates empty .js files for CSS-only entry points; this removes them
@@ -88,6 +89,15 @@ const assetConfig = {
 			filename: '[name].css',
 		}),
 		new RemoveEmptyJsPlugin(),
+		// Leaflet is served from the plugin rather than a CDN (WordPress.org guideline 8)
+		new CopyPlugin({
+			patterns: [
+				{from: 'leaflet.js', context: 'node_modules/leaflet/dist', to: 'leaflet/'},
+				{from: 'leaflet.css', context: 'node_modules/leaflet/dist', to: 'leaflet/'},
+				{from: 'images/*.png', context: 'node_modules/leaflet/dist', to: 'leaflet/'},
+				{from: 'LICENSE', context: 'node_modules/leaflet', to: 'leaflet/'},
+			],
+		}),
 	],
 	optimization: {
 		minimizer: [new TerserPlugin({extractComments: false}), new CssMinimizerPlugin()],
@@ -96,7 +106,6 @@ const assetConfig = {
 };
 
 // wp-scripts config for blocks
-const CopyPlugin = require('copy-webpack-plugin');
 const blocksConfig = {
 	...defaultConfig,
 	name: 'blocks',

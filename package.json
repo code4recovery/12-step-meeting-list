@@ -11,6 +11,7 @@
 		"@wordpress/scripts": "^37.1.0",
 		"bootstrap-sass": "^3.4.0",
 		"css-minimizer-webpack-plugin": "^8.0.0",
+		"leaflet": "1.9.4",
 		"mark.js": "^8.11.1",
 		"sass": "^1.107.1",
 		"sass-loader": "^17.1.0",
