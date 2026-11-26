@@ -65,10 +65,10 @@ jQuery(function ($) {
     }
 
 	//delete data source or email contact
-	$('table form span').click(function () {
+	$('table form span').on('click', function () {
 		const feedName = $(this).parents('[data-source]').find('[data-source-name]').text().trim();
         if (confirm(`Remove the ${feedName} feed?`)) {
-            $(this).parent().submit();
+            $(this).parent().trigger('submit');
         }
 	});
 
@@ -192,7 +192,7 @@ jQuery(function ($) {
 			$fields.formatted_address.removeClass('warning');
 		}
 
-		$form.submit(function () {
+		$form.on('submit', function () {
 			return form_valid;
 		});
 

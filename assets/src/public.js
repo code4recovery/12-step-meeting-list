@@ -263,7 +263,7 @@ jQuery(function ($) {
 		});
 
 	//toggle between list and map
-	$('#meetings #action .toggle-view').click(function (e) {
+	$('#meetings #action .toggle-view').on('click', function (e) {
 		//these are live hrefs now
 		e.preventDefault();
 
@@ -295,7 +295,7 @@ jQuery(function ($) {
 	});
 
 	//resize fullscreen on resize
-	$(window).resize(function (e) {
+	$(window).on('resize', function (e) {
 		if ($('#meetings').hasClass('tsml_fullscreen')) {
 			var center = map.getCenter();
 			var height = $(window).height() - 79;
